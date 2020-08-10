@@ -1,0 +1,31 @@
+version: '3.4'
+
+services:
+  db:
+    build: postgres-with-pgloader
+    container_name: postgres-db
+    ports:
+      - 5432:5432
+    restart: always
+    volumes:
+      - ./data.db:/data.db:rw
+      - database_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: root
+  
+  togo:
+    image: togo
+    build: .
+    depends_on:
+      - db
+    ports:
+      - 5051:5051
+    environment:
+      POSTGRES_DB: 'postgres'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'root'
+      POSTGRES_HOST: 'db'
+
+volumes:
+  database_data:
+    driver: local

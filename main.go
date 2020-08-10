@@ -2,24 +2,29 @@ package main
 
 import (
 	"database/sql"
-	"log"
 	"net/http"
 
+	_ "github.com/lib/pq"
 	"github.com/manabie-com/togo/internal/services"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
-
-	_ "github.com/mattn/go-sqlite3"
+	postgres "github.com/manabie-com/togo/internal/storages/postgres"
 )
 
 func main() {
-	db, err := sql.Open("sqlite3", "./data.db")
+	connStr := "postgres://postgres:root@db:5432/postgres?sslmode=disable"
+	db, err := sql.Open("postgres", connStr)
 	if err != nil {
-		log.Fatal("error opening db", err)
+		panic(err)
+	}
+	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		panic(err)
 	}
 
-	http.ListenAndServe(":5050", &services.ToDoService{
+	http.ListenAndServe(":5051", &services.ToDoService{
 		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
+		Store: &postgres.PgDB{
 			DB: db,
 		},
 	})

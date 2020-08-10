@@ -11,20 +11,35 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/storages"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	postgres "github.com/manabie-com/togo/internal/storages/postgres"
 )
 
 // ToDoService implement HTTP server
 type ToDoService struct {
 	JWTKey string
-	Store  *sqllite.LiteDB
+	Store  *postgres.PgDB
+}
+
+func enableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	(*w).Header().Set("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS")
+	(*w).Header().Set("Access-Control-Allow-Headers", "*")
+	(*w).Header().Set("Access-Control-Expose-Headers", "Authorization")
+	(*w).Header().Set("Access-Control-Allow-Credentials", "true")
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	log.Println(req.Method, req.URL.Path)
+	enableCors(&resp)
+
+	if req.Method == "OPTIONS" {
+		resp.WriteHeader(http.StatusOK)
+		return
+	}
+
 	switch req.URL.Path {
 	case "/login":
-		s.getAuthToken(resp, req)
+		s.GetAuthToken(resp, req)
 		return
 	case "/tasks":
 		var ok bool
@@ -44,7 +59,8 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
+// GetAuthToken auth with user, pass
+func (s *ToDoService) GetAuthToken(resp http.ResponseWriter, req *http.Request) {
 	id := value(req, "user_id")
 	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
 		resp.WriteHeader(http.StatusUnauthorized)
@@ -64,8 +80,11 @@ func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string]string{
-		"data": token,
+	json.NewEncoder(resp).Encode(map[string]*storages.User{
+		"data": &storages.User{
+			ID:    id.String,
+			Token: token,
+		},
 	})
 }
 
@@ -111,6 +130,25 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	t.CreatedDate = now.Format("2006-01-02")
 
 	resp.Header().Set("Content-Type", "application/json")
+
+	numTask, err := s.Store.CountTaskToday(req.Context(), sql.NullString{
+		String: userID,
+		Valid:  true,
+	})
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+	if numTask >= 5 {
+		resp.WriteHeader(http.StatusTooManyRequests)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": "Limited to create only 5 task only per day",
+		})
+		return
+	}
 
 	err = s.Store.AddTask(req.Context(), t)
 	if err != nil {
