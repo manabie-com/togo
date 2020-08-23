@@ -19,3 +19,4 @@ out/
 .idea
 
 __debug_bin
+.vscode/launch.json
