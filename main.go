@@ -32,43 +32,34 @@ type EnvConfig struct {
 	dbName     string
 	dbUser     string
 	dbPass     string
+	JWTKey     string
 }
 
 func main() {
 	config := readEnv()
-
-	db := connectDb(config)
+	db := connectDbAndInit(config)
 
 	taskHandler := &handlers.TaskHandler{Repo: &repo.TaskRepository{Store: &postgre.Storage{DB: db}}}
-
-	authHandler := &handlers.AuthHandler{Repo: &repo.UserRepository{Store: &postgre.Storage{DB: db}}, JWTKey: "123"}
+	authHandler := &handlers.AuthHandler{Repo: &repo.UserRepository{Store: &postgre.Storage{DB: db}}, JWTKey: config.JWTKey}
 
 	router := mux.NewRouter()
-
 	router.HandleFunc("/tasks", taskHandler.AddTask).Methods("POST")
-
 	router.HandleFunc("/tasks/{id}", taskHandler.GetByID).Methods("GET", "PUT")
-
 	router.HandleFunc("/tasks", taskHandler.GetAll).Methods("GET").Queries("created_date", "{createdDate}")
-
-	authRouter := mux.NewRouter()
-
-	authRouter.HandleFunc("/login", authHandler.Login).Methods("POST")
-
 	router.Use(middlewares.Authen)
 	router.Use(middlewares.LogRequest)
-	authRouter.Use(middlewares.LogRequest)
-
 	http.Handle("/", router)
 
+	authRouter := mux.NewRouter()
+	authRouter.HandleFunc("/login", authHandler.Login).Methods("POST")
+	authRouter.Use(middlewares.LogRequest)
 	http.Handle("/login", authRouter)
 
 	log.Printf("Server is listening at %s:%s \n", config.serverHost, config.serverPort)
-
 	http.ListenAndServe(config.serverPort, nil)
 }
 
-func connectDb(config *EnvConfig) *pg.DB {
+func connectDbAndInit(config *EnvConfig) *pg.DB {
 	db := pg.Connect(&pg.Options{
 		Addr:     config.dbHost,
 		User:     config.dbUser,
@@ -103,6 +94,7 @@ func readEnv() *EnvConfig {
 		dbUser:     os.Getenv("DB_USER"),
 		dbPass:     os.Getenv("DB_PASS"),
 		dbName:     os.Getenv("DATABASE"),
+		JWTKey:     os.Getenv("JWTKEY"),
 	}
 
 	return &config

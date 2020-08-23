@@ -48,7 +48,6 @@ func (handler *AuthHandler) Login(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(map[string]map[string]string{
 		"data": {
 			"token":    token,
-			"id":       user.ID,
 			"userName": user.Username,
 		},
 	})
