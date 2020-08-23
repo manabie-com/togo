@@ -11,4 +11,5 @@ require (
 	github.com/joho/godotenv v1.3.0
 	github.com/mattn/go-sqlite3 v1.14.1
 	github.com/pkg/errors v0.9.1 // indirect
+	google.golang.org/appengine v1.6.6
 )

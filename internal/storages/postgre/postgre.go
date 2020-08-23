@@ -28,3 +28,13 @@ func (pgres *Storage) GetAll(createdDate string) ([]entity.Task, error) {
 
 	return tasks, err
 }
+
+// GetByID get task by id
+func (pgres *Storage) GetByID(taskID string) (*entity.Task, error) {
+
+	task := &entity.Task{}
+
+	err := pgres.DB.Model(task).Where("id = (?)", taskID).Select()
+
+	return task, err
+}

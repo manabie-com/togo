@@ -45,7 +45,9 @@ func main() {
 
 	router := mux.NewRouter()
 
-	router.HandleFunc("/task", taskHandler.AddTask).Methods("POST")
+	router.HandleFunc("/tasks", taskHandler.AddTask).Methods("POST")
+
+	router.HandleFunc("/tasks/{id}", taskHandler.GetByID).Methods("GET", "PUT")
 
 	router.HandleFunc("/tasks", taskHandler.GetAll).Methods("GET").Queries("created_date", "{createdDate}")
 
