@@ -8,10 +8,11 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/google/uuid"
 	taskRepository "github.com/manabie-com/togo/internal/repository"
 
 	entity "github.com/manabie-com/togo/internal/entities"
+
+	"github.com/manabie-com/togo/internal/services"
 )
 
 // TaskHandler handles all action with Task entity
@@ -21,17 +22,30 @@ type TaskHandler struct {
 
 // AddTask add new task
 func (handler *TaskHandler) AddTask(resp http.ResponseWriter, req *http.Request) {
-	t := &entity.Task{}
+	task := &entity.Task{}
 
-	now := time.Now()
-	//	userID, _ := userIDFromCtx(req.Context())
-	t.ID = uuid.New().String()
-	//	t.UserID = userID
-	t.CreatedDate = now.Format("2006-01-02")
+	var res map[string]interface{}
 
-	res, err := handler.Repo.Add(t)
+	json.NewDecoder(req.Body).Decode(&res)
 
-	//err = s.Store.AddTask(req.Context(), t)
+	userID, _ := services.UserIDFromCtx(req.Context())
+
+	tasksOfCurrentUser, _ := handler.Repo.GetByUserID(userID, time.Now().Format("2006-01-02"))
+
+	if len(tasksOfCurrentUser) > 5 {
+		resp.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": "Reach out the daily limit",
+		})
+		return
+	}
+
+	task.UserID = userID
+
+	task.Content = res["content"].(string)
+
+	result, err := handler.Repo.Add(task)
+
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
@@ -41,7 +55,7 @@ func (handler *TaskHandler) AddTask(resp http.ResponseWriter, req *http.Request)
 	}
 
 	json.NewEncoder(resp).Encode(map[string]*entity.Task{
-		"data": res,
+		"data": result,
 	})
 }
 

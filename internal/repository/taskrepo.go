@@ -1,6 +1,9 @@
 package repository
 
 import (
+	"time"
+
+	"github.com/google/uuid"
 	entity "github.com/manabie-com/togo/internal/entities"
 
 	postgre "github.com/manabie-com/togo/internal/storages/postgre"
@@ -13,6 +16,11 @@ type TaskRepository struct {
 
 // Add func add new task
 func (repo *TaskRepository) Add(entity *entity.Task) (*entity.Task, error) {
+	now := time.Now()
+
+	entity.CreatedDate = now.Format("2006-01-02")
+
+	entity.ID = uuid.New().String()
 
 	result, err := repo.Store.Add(entity)
 
@@ -31,6 +39,14 @@ func (repo *TaskRepository) GetAll(createdDate string) ([]entity.Task, error) {
 func (repo *TaskRepository) GetByID(taskID string) (*entity.Task, error) {
 
 	result, err := repo.Store.GetByID(taskID)
+
+	return result, err
+}
+
+// GetByUserID func retrives task by userID and createdDate
+func (repo *TaskRepository) GetByUserID(userID string, createdDate string) ([]entity.Task, error) {
+
+	result, err := repo.Store.GetByUserID(userID, createdDate)
 
 	return result, err
 }

@@ -52,3 +52,13 @@ func (pgres *Storage) ValidateUser(username string, password string) (*entity.Us
 
 	return user, err
 }
+
+// GetByUserID get task by userID
+func (pgres *Storage) GetByUserID(userID string, createdDate string) ([]entity.Task, error) {
+
+	var tasks []entity.Task
+
+	err := pgres.DB.Model(&tasks).Where("user_id = (?)", userID).Where("created_date = (?)", createdDate).Select()
+
+	return tasks, err
+}

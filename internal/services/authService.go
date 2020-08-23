@@ -9,7 +9,7 @@ import (
 )
 
 // ValidateToken validate token
-func ValidateToken(resp http.ResponseWriter, req *http.Request) (bool, error) {
+func ValidateToken(resp http.ResponseWriter, req *http.Request) (bool, *http.Request) {
 	token := req.Header.Get("Authorization")
 
 	claims := make(jwt.MapClaims)
@@ -23,30 +23,32 @@ func ValidateToken(resp http.ResponseWriter, req *http.Request) (bool, error) {
 	if err != nil {
 		log.Println(err)
 		http.Error(resp, "UnAuthorization", http.StatusUnauthorized)
-		return false, err
+		return false, req
 	}
 
 	if !t.Valid {
 		http.Error(resp, "UnAuthorization", http.StatusUnauthorized)
-		return false, nil
+		return false, req
 	}
 
 	id, ok := claims["userId"].(string)
 
 	if !ok {
 		http.Error(resp, "UnAuthorization", http.StatusUnauthorized)
-		return false, nil
+		return false, req
 	}
 
-	req.WithContext(context.WithValue(req.Context(), userAuthKey(0), id))
+	req = req.WithContext(context.WithValue(req.Context(), UserAuthKey("userId"), id))
 
-	return true, nil
+	return true, req
 }
 
-type userAuthKey int8
+// UserAuthKey struct for key which using in Context
+type UserAuthKey string
 
-func userIDFromCtx(ctx context.Context) (string, bool) {
-	v := ctx.Value(userAuthKey(0))
+// UserIDFromCtx extract userId from context
+func UserIDFromCtx(ctx context.Context) (string, bool) {
+	v := ctx.Value(UserAuthKey("userId"))
 	id, ok := v.(string)
 	return id, ok
 }
