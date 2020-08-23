@@ -9,36 +9,38 @@ import (
 )
 
 // ValidateToken validate token
-func ValidateToken(resp http.ResponseWriter, req *http.Request) {
+func ValidateToken(resp http.ResponseWriter, req *http.Request) (bool, error) {
 	token := req.Header.Get("Authorization")
 
 	claims := make(jwt.MapClaims)
 
 	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
 
-		return []byte(""), nil
+		return []byte("123"), nil
 
 	})
 
 	if err != nil {
 		log.Println(err)
-		resp.WriteHeader(http.StatusUnauthorized)
-		return
+		http.Error(resp, "UnAuthorization", http.StatusUnauthorized)
+		return false, err
 	}
 
 	if !t.Valid {
-		resp.WriteHeader(http.StatusUnauthorized)
-		return
+		http.Error(resp, "UnAuthorization", http.StatusUnauthorized)
+		return false, nil
 	}
 
-	id, ok := claims["user_id"].(string)
+	id, ok := claims["userId"].(string)
 
 	if !ok {
-		resp.WriteHeader(http.StatusUnauthorized)
-		return
+		http.Error(resp, "UnAuthorization", http.StatusUnauthorized)
+		return false, nil
 	}
 
 	req.WithContext(context.WithValue(req.Context(), userAuthKey(0), id))
+
+	return true, nil
 }
 
 type userAuthKey int8

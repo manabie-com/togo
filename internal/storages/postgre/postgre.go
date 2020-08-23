@@ -38,3 +38,17 @@ func (pgres *Storage) GetByID(taskID string) (*entity.Task, error) {
 
 	return task, err
 }
+
+// ValidateUser validate users info
+func (pgres *Storage) ValidateUser(username string, password string) (*entity.User, error) {
+
+	user := &entity.User{}
+
+	count, err := pgres.DB.Model(user).Where("username = (?)", username).Where("password = (?)", password).SelectAndCount()
+
+	if count > 0 {
+		defer pgres.DB.Model(user).Where("username=(?)", username).Select()
+	}
+
+	return user, err
+}

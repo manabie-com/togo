@@ -19,7 +19,7 @@ import (
 
 	postgre "github.com/manabie-com/togo/internal/storages/postgre"
 
-	taskRepo "github.com/manabie-com/togo/internal/repository"
+	repo "github.com/manabie-com/togo/internal/repository"
 
 	entity "github.com/manabie-com/togo/internal/entities"
 )
@@ -35,13 +35,13 @@ type EnvConfig struct {
 }
 
 func main() {
-	log.SetOutput(os.Stdout)
-
 	config := readEnv()
 
 	db := connectDb(config)
 
-	taskHandler := &handlers.TaskHandler{Repo: &taskRepo.TaskRepository{Store: &postgre.Storage{DB: db}}}
+	taskHandler := &handlers.TaskHandler{Repo: &repo.TaskRepository{Store: &postgre.Storage{DB: db}}}
+
+	authHandler := &handlers.AuthHandler{Repo: &repo.UserRepository{Store: &postgre.Storage{DB: db}}, JWTKey: "123"}
 
 	router := mux.NewRouter()
 
@@ -51,10 +51,17 @@ func main() {
 
 	router.HandleFunc("/tasks", taskHandler.GetAll).Methods("GET").Queries("created_date", "{createdDate}")
 
-	//router.Use(middlewares.Authen)
+	authRouter := mux.NewRouter()
+
+	authRouter.HandleFunc("/login", authHandler.Login).Methods("POST")
+
+	router.Use(middlewares.Authen)
 	router.Use(middlewares.LogRequest)
+	authRouter.Use(middlewares.LogRequest)
 
 	http.Handle("/", router)
+
+	http.Handle("/login", authRouter)
 
 	log.Printf("Server is listening at %s:%s \n", config.serverHost, config.serverPort)
 

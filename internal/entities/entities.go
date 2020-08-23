@@ -2,18 +2,19 @@ package entities
 
 // Task reflects tasks in DB
 type Task struct {
-	BaseEntity
+	baseEntity
 	Content string `json:"content"`
 	UserID  string `json:"user_id"`
 }
 
 // User reflects users data from DB
 type User struct {
-	BaseEntity
+	baseEntity
+	Username string
 	Password string
 }
 
-type BaseEntity struct {
+type baseEntity struct {
 	ID          string `json:"id"`
 	CreatedDate string `json:"created_date"`
 	UpdatedDate string `json:"updated_date"`
