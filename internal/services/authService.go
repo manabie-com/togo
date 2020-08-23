@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"os"
 
 	jwt "github.com/dgrijalva/jwt-go"
 )
@@ -16,7 +17,7 @@ func ValidateToken(resp http.ResponseWriter, req *http.Request) (bool, *http.Req
 
 	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
 
-		return []byte("123"), nil
+		return []byte(os.Getenv("JWTKEY")), nil
 
 	})
 
@@ -27,6 +28,7 @@ func ValidateToken(resp http.ResponseWriter, req *http.Request) (bool, *http.Req
 	}
 
 	if !t.Valid {
+		log.Println(err)
 		http.Error(resp, "UnAuthorization", http.StatusUnauthorized)
 		return false, req
 	}
@@ -34,6 +36,7 @@ func ValidateToken(resp http.ResponseWriter, req *http.Request) (bool, *http.Req
 	id, ok := claims["userId"].(string)
 
 	if !ok {
+		log.Println(err)
 		http.Error(resp, "UnAuthorization", http.StatusUnauthorized)
 		return false, req
 	}
