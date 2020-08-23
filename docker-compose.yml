@@ -1,0 +1,21 @@
+version: "3"
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: admin
+      POSTGRES_DB: togo
+    container_name: togo_db
+    ports:
+      - 5423:5432
+
+  db_test:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: admin
+      POSTGRES_DB: togo_test
+    container_name: togo_test_db
+    ports:
+      - 15423:5432

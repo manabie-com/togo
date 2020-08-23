@@ -1,0 +1,9 @@
+local:
+  dialect: postgres
+  datasource: user=admin password=password host=127.0.0.1 port=5423 dbname=togo sslmode=disable
+  dir: data/migration
+
+local_test:
+  dialect: postgres
+  datasource: user=admin password=password host=127.0.0.1 port=15423 dbname=togo_test sslmode=disable
+  dir: data/migration
