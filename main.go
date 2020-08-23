@@ -1,26 +1,117 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
 
-	"github.com/manabie-com/togo/internal/services"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	"github.com/gorilla/mux"
 
-	_ "github.com/mattn/go-sqlite3"
+	"os"
+
+	"github.com/joho/godotenv"
+
+	"github.com/go-pg/pg/v10"
+
+	"github.com/go-pg/pg/v10/orm"
+
+	"github.com/manabie-com/togo/internal/handlers"
+	"github.com/manabie-com/togo/internal/middlewares"
+
+	postgre "github.com/manabie-com/togo/internal/storages/postgre"
+
+	taskRepo "github.com/manabie-com/togo/internal/repository"
+
+	entity "github.com/manabie-com/togo/internal/entities"
 )
 
+// EnvConfig model
+type EnvConfig struct {
+	serverHost string
+	serverPort string
+	dbHost     string
+	dbName     string
+	dbUser     string
+	dbPass     string
+}
+
 func main() {
-	db, err := sql.Open("sqlite3", "./data.db")
-	if err != nil {
-		log.Fatal("error opening db", err)
+	log.SetOutput(os.Stdout)
+
+	config := readEnv()
+
+	db := connectDb(config)
+
+	taskHandler := &handlers.TaskHandler{Repo: &taskRepo.TaskRepository{Store: &postgre.Storage{DB: db}}}
+
+	router := mux.NewRouter()
+
+	router.HandleFunc("/task", taskHandler.AddTask).Methods("POST")
+
+	router.HandleFunc("/tasks", taskHandler.GetAll).Methods("GET").Queries("created_date", "{createdDate}")
+
+	//router.Use(middlewares.Authen)
+	router.Use(middlewares.LogRequest)
+
+	http.Handle("/", router)
+
+	log.Printf("Server is listening at %s:%s \n", config.serverHost, config.serverPort)
+
+	http.ListenAndServe(config.serverPort, nil)
+}
+
+func connectDb(config *EnvConfig) *pg.DB {
+	db := pg.Connect(&pg.Options{
+		Addr:     config.dbHost,
+		User:     config.dbUser,
+		Password: config.dbPass,
+		Database: config.dbName,
+	})
+
+	log.Print("Connecting with db \n")
+
+	if db == nil {
+		defer db.Close()
+		log.Fatal("Error when connect with db. Exit app")
 	}
 
-	http.ListenAndServe(":5050", &services.ToDoService{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
-			DB: db,
-		},
-	})
+	createSchema(db)
+
+	return db
+}
+
+func readEnv() *EnvConfig {
+	err := godotenv.Load()
+
+	if err != nil {
+		log.Fatal("Error when reading env. Exit app")
+	}
+
+	// temp solution. need to use reflect type to binding value into struct
+	config := EnvConfig{
+		serverHost: os.Getenv("SERVER_HOST"),
+		serverPort: os.Getenv("SERVER_PORT"),
+		dbHost:     os.Getenv("DB_HOST"),
+		dbUser:     os.Getenv("DB_USER"),
+		dbPass:     os.Getenv("DB_PASS"),
+		dbName:     os.Getenv("DATABASE"),
+	}
+
+	return &config
+}
+
+func createSchema(db *pg.DB) error {
+	models := []interface{}{
+		(*entity.Task)(nil),
+		(*entity.User)(nil),
+	}
+
+	for _, model := range models {
+		err := db.Model(model).CreateTable(&orm.CreateTableOptions{
+			Temp: false,
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
