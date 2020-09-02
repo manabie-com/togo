@@ -2,23 +2,24 @@ package integration_test
 
 import (
 	"database/sql"
-	"encoding/json"
-	"fmt"
 	"log"
-	"net/http"
-	"net/http/httptest"
+	"os"
+	"testing"
+	"time"
 
+	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/services"
+	"github.com/manabie-com/togo/internal/storages"
 	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 )
 
-var toDoService http.Handler
+var toDoService *services.ToDoService
 
-func init() {
-	createServices()
+func TestMain(m *testing.M) {
+	os.Exit(createServices(m))
 }
 
-func createServices() {
+func createServices(m *testing.M) int {
 	db, err := sql.Open("sqlite3", "../../data.db")
 	if err != nil {
 		log.Fatalf("error opening db %v", err)
@@ -29,25 +30,67 @@ func createServices() {
 			DB: db,
 		},
 	}
+	return m.Run()
 }
 
-func getToken(method string, validLoginUrl string) (string, error) {
-	r := httptest.NewRequest(method, validLoginUrl, nil)
-	w := httptest.NewRecorder()
-	toDoService.ServeHTTP(w, r)
-
-	if w.Code != http.StatusOK {
-		return "", fmt.Errorf("wrong status code want %v but get %v", http.StatusOK, w.Code)
-	}
-	dataJson := make(map[string]interface{})
-	err := json.Unmarshal(w.Body.Bytes(), &dataJson)
+func truncate(db *sql.DB) error {
+	tx, err := db.Begin()
 	if err != nil {
-		return "", fmt.Errorf("can not parse response data %v", err)
-	}
-	token, ok := dataJson["data"].(string)
-	if !ok {
-		return "", fmt.Errorf("data is invalid, get %v", token)
+		return err
 	}
 
-	return token, nil
+	stmt := `DELETE FROM users`
+	if _, err := tx.Exec(stmt); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	stmt = `DELETE FROM tasks`
+	if _, err := tx.Exec(stmt); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func seedUser(db *sql.DB) (*storages.User, error) {
+	u := storages.User{
+		ID:       "UserTest1",
+		Password: "example",
+	}
+
+	stmt := `INSERT INTO users (id, password) VALUES (?, ?)`
+
+	_, err := db.Exec(stmt, &u.ID, &u.Password)
+	if err != nil {
+		return nil, err
+	}
+	return &u, nil
+}
+
+func seedTaskItems(db *sql.DB, u *storages.User) ([]storages.Task, error) {
+	now := time.Now()
+	taskItems := []storages.Task{
+		{
+			ID:          uuid.New().String(),
+			Content:     "write content here",
+			UserID:      u.ID,
+			CreatedDate: now.Format("2006-01-02"),
+		},
+	}
+
+	for _, task := range taskItems {
+		stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
+		_, err := db.Exec(stmt, &task.ID, &task.Content, &task.UserID, &task.CreatedDate)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return taskItems, nil
 }
