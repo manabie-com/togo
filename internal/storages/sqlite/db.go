@@ -3,6 +3,7 @@ package sqllite
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/manabie-com/togo/internal/storages"
 )
@@ -60,4 +61,35 @@ func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) b
 	}
 
 	return true
+}
+
+// GetUserMaxTask get max task that user can add per day
+func (l *LiteDB) GetUserMaxTask(ctx context.Context, userID string) (int, error) {
+	stmt := `SELECT max_todo FROM users WHERE id = ?`
+	row := l.DB.QueryRowContext(ctx, stmt, userID)
+
+	var maxTask int
+	err := row.Scan(&maxTask)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return maxTask, nil
+}
+
+// GetUserTodayTask get number of task that user added today
+func (l *LiteDB) GetUserTodayTask(ctx context.Context, userID string) (int, error) {
+	now := time.Now()
+	stmt := `SELECT COUNT(*) FROM tasks WHERE user_id = ? AND created_date = ?`
+	row := l.DB.QueryRowContext(ctx, stmt, userID, now.Format("2006-01-02"))
+
+	var countTask int
+	err := row.Scan(&countTask)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return countTask, nil
 }

@@ -30,7 +30,8 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		resp.WriteHeader(http.StatusOK)
 		return
 	}
-
+	// not handle "/" at the end
+	// should use another data structure instead of switch case for routing
 	switch req.URL.Path {
 	case "/login":
 		s.getAuthToken(resp, req)
@@ -47,6 +48,10 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		case http.MethodGet:
 			s.listTasks(resp, req)
 		case http.MethodPost:
+			if !s.canAddTask(resp, req) {
+				resp.WriteHeader(http.StatusNotAcceptable)
+				return
+			}
 			s.addTask(resp, req)
 		}
 		return
@@ -102,6 +107,27 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
 		"data": tasks,
 	})
+}
+
+func (s *ToDoService) canAddTask(resp http.ResponseWriter, req *http.Request) bool {
+	userID, _ := userIDFromCtx(req.Context())
+	maxTask, err := s.Store.GetUserMaxTask(req.Context(), userID)
+	if err != nil {
+		log.Println(err)
+		return false
+	}
+
+	countTodayTask, err := s.Store.GetUserTodayTask(req.Context(), userID)
+
+	if err != nil {
+		log.Println(err)
+		return false
+	}
+
+	if countTodayTask < maxTask {
+		return true
+	}
+	return false
 }
 
 func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {

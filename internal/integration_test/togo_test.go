@@ -115,7 +115,7 @@ func TestGetTaskList(t *testing.T) {
 		validLoginUrl := fmt.Sprintf("http://localhost:5050/login?user_id=%v&password=%v", user.ID, user.Password)
 		token, err := login(http.MethodGet, validLoginUrl)
 		if err != nil {
-			t.Errorf("error can not get token %v\n", err)
+			t.Errorf("error can not login %v\n", err)
 		}
 
 		// Create request and response
@@ -171,6 +171,30 @@ func TestAddTask(t *testing.T) {
 			content:    `happy to see content`,
 			statusCode: http.StatusOK,
 		},
+		{
+			url:        `http://localhost:5050/tasks`,
+			inputJSON:  `{"content": "another content again"}`,
+			content:    `another content again`,
+			statusCode: http.StatusOK,
+		},
+		{
+			url:        `http://localhost:5050/tasks`,
+			inputJSON:  `{"content": "sad of content"}`,
+			content:    `sad of content`,
+			statusCode: http.StatusOK,
+		},
+		{
+			url:        `http://localhost:5050/tasks`,
+			inputJSON:  `{"content": "this content will not be added"}`,
+			content:    ``,
+			statusCode: http.StatusNotAcceptable,
+		},
+		{
+			url:        `http://localhost:5050/tasks`,
+			inputJSON:  `{"content": "this content will still not be added"}`,
+			content:    ``,
+			statusCode: http.StatusNotAcceptable,
+		},
 	}
 
 	// create new user in database users table
@@ -185,7 +209,7 @@ func TestAddTask(t *testing.T) {
 		validLoginUrl := fmt.Sprintf("http://localhost:5050/login?user_id=%v&password=%v", u.ID, u.Password)
 		token, err := login(http.MethodGet, validLoginUrl)
 		if err != nil {
-			t.Errorf("error can not get token %v\n", err)
+			t.Errorf("error can not login %v\n", err)
 		}
 
 		// Create new request
@@ -197,6 +221,11 @@ func TestAddTask(t *testing.T) {
 		// Validate answer
 		if w.Code != sample.statusCode {
 			t.Errorf("wrong status code want %v but get %v\n", sample.statusCode, w.Code)
+		}
+
+		// this sample can be added to database because user reach max task perday so we dont need to validate the content
+		if w.Code != http.StatusOK {
+			continue
 		}
 
 		dataJSON := make(map[string]storages.Task)
@@ -222,16 +251,16 @@ func login(method string, validLoginUrl string) (string, error) {
 	toDoService.ServeHTTP(w, r)
 
 	if w.Code != http.StatusOK {
-		return "", fmt.Errorf("wrong status code want %v but get %v\n", http.StatusOK, w.Code)
+		return "", fmt.Errorf("wrong status code want %v but get %v", http.StatusOK, w.Code)
 	}
 	dataJson := make(map[string]interface{})
 	err := json.Unmarshal(w.Body.Bytes(), &dataJson)
 	if err != nil {
-		return "", fmt.Errorf("can not parse response data %v\n", err)
+		return "", fmt.Errorf("can not parse response data %v", err)
 	}
 	token, ok := dataJson["data"].(string)
 	if !ok {
-		return "", fmt.Errorf("data is invalid, get %v\n", token)
+		return "", fmt.Errorf("data is invalid, get %v", token)
 	}
 
 	return token, nil
