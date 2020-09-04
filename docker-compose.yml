@@ -1,0 +1,27 @@
+version: '3'
+services:
+    togoapp:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports: 
+            - 5050:5050
+        depends_on: 
+            - database
+        env_file: 
+            - togo.env
+    database:
+        # image: "postgres"
+        build: 
+            context: .
+            dockerfile: Dockerfile-db
+        restart: always
+        ports:
+            - 5432:5432
+        env_file: 
+            - database.env
+        # volumes:
+        #     - dbdata:/var/lib/postgresql/data
+
+volumes: 
+    dbdata:

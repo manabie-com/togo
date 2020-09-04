@@ -14,7 +14,7 @@ import (
 
 func TestLogin(t *testing.T) {
 	//Create new user
-	u, err := seedUser(toDoService.Store.DB)
+	u, err := seedUser(DB)
 	if err != nil {
 		t.Errorf("Can not create new user %v\n", err)
 	}
@@ -69,20 +69,20 @@ func TestLogin(t *testing.T) {
 	}
 
 	// Refresh the tables
-	if err = truncate(toDoService.Store.DB); err != nil {
+	if err = truncate(DB); err != nil {
 		t.Errorf("cant not truncate database tables %v\n", err)
 	}
 }
 
 func TestGetTaskList(t *testing.T) {
 
-	user, err := seedUser(toDoService.Store.DB)
+	user, err := seedUser(DB)
 	if err != nil {
 		t.Errorf("Can not create new user %v\n", err)
 	}
 
 	// taskitems belong to new user
-	taskItems, err := seedTaskItems(toDoService.Store.DB, user)
+	taskItems, err := seedTaskItems(DB, user)
 	if err != nil {
 		t.Errorf("Can not create task items sample %v\n", err)
 	}
@@ -141,7 +141,7 @@ func TestGetTaskList(t *testing.T) {
 	}
 
 	// Refresh the tables
-	if err = truncate(toDoService.Store.DB); err != nil {
+	if err = truncate(DB); err != nil {
 		t.Errorf("cant not truncate database tables %v\n", err)
 	}
 }
@@ -198,7 +198,7 @@ func TestAddTask(t *testing.T) {
 	}
 
 	// create new user in database users table
-	u, err := seedUser(toDoService.Store.DB)
+	u, err := seedUser(DB)
 	if err != nil {
 		t.Errorf("Can not create new user %v\n", err)
 	}
@@ -240,7 +240,7 @@ func TestAddTask(t *testing.T) {
 	}
 
 	// Refresh the tables
-	if err = truncate(toDoService.Store.DB); err != nil {
+	if err = truncate(DB); err != nil {
 		t.Errorf("cant not truncate database tables %v\n", err)
 	}
 }
