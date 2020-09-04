@@ -7,8 +7,7 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/manabie-com/togo/config"
 	"github.com/manabie-com/togo/internal/services"
-	"github.com/manabie-com/togo/internal/storages/postgres"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	"github.com/manabie-com/togo/internal/storages"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -26,23 +25,16 @@ func main() {
 
 	log.Println("connect database successfully")
 
-	switch v := dbconnecter.(type) {
-	case *config.Postgres:
-		log.Printf("use database %v\n", v)
-		http.ListenAndServe(":5050", &services.ToDoService{
-			JWTKey: "wqGyEBBfPK9w3Lxw",
-			Store: &postgres.PqDB{
-				DB: db,
-			},
-		})
-	case *config.Sqlite:
-		log.Printf("use database %v\n", v)
-		http.ListenAndServe(":5050", &services.ToDoService{
-			JWTKey: "wqGyEBBfPK9w3Lxw",
-			Store: &sqllite.LiteDB{
-				DB: db,
-			},
-		})
+	todoService := services.ToDoService{
+		JWTKey: "wqGyEBBfPK9w3Lxw",
+		Store: storages.DBStore{
+			DB: db,
+		},
 	}
+
+	todoService.AddRoute("/login", todoService.LoginHandlerFunc)
+	todoService.AddRoute("/tasks", todoService.TaskHandlerFunc)
+
+	http.ListenAndServe(":5050", &todoService)
 
 }
