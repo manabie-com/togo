@@ -1,20 +1,15 @@
 version: '3'
 services:
-    # togoapp:
-    #     build:
-    #         context: .
-    #         dockerfile: Dockerfile
-    #     ports: 
-    #         - 5050:5050
-    #     depends_on: 
-    #         - database
-        # env_file: 
-        #     - database.env
-        # volumes: 
-        #     - dbdata:/var/lib/postgresql/data
-        # networks: 
-        #     - backend
-
+    togoapp:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports: 
+            - 5050:5050
+        depends_on: 
+            - database
+        env_file: 
+            - togo.env
     database:
         # image: "postgres"
         build: 
@@ -23,24 +18,10 @@ services:
         restart: always
         ports:
             - 5432:5432
-        # environment:
-        #     POSTGRES_PASSWORD: 'postgres'
         env_file: 
             - database.env
-        # networks: 
-        #     - backend
-        # volumes: 
+        # volumes:
         #     - dbdata:/var/lib/postgresql/data
-            # - dbrestore:./
-        # command: 
-        #     - 
 
-
-# volumes: 
-#     dbdata:
-    # dbrestore:
-
-# Networks to be created to facilitate communication between containers 
-networks:
-    backend:
-        driver: bridge
+volumes: 
+    dbdata:

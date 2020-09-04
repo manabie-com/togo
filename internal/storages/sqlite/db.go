@@ -3,6 +3,7 @@ package sqllite
 import (
 	"context"
 	"database/sql"
+	"log"
 	"time"
 
 	"github.com/manabie-com/togo/internal/storages"
@@ -57,6 +58,7 @@ func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) b
 	u := &storages.User{}
 	err := row.Scan(&u.ID)
 	if err != nil {
+		log.Println(err)
 		return false
 	}
 

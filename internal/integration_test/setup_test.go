@@ -10,10 +10,11 @@ import (
 	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/services"
 	"github.com/manabie-com/togo/internal/storages"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	"github.com/manabie-com/togo/internal/storages/postgres"
 )
 
 var toDoService *services.ToDoService
+var DB *sql.DB
 
 func TestMain(m *testing.M) {
 	os.Exit(createServices(m))
@@ -26,10 +27,11 @@ func createServices(m *testing.M) int {
 	}
 	toDoService = &services.ToDoService{
 		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
+		Store: &postgres.PqDB{
 			DB: db,
 		},
 	}
+	DB = db
 	return m.Run()
 }
 
