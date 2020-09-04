@@ -3,7 +3,7 @@
 --
 
 -- Dumped from database version 12.4 (Debian 12.4-1.pgdg100+1)
--- Dumped by pg_dump version 12.4 (Ubuntu 12.4-0ubuntu0.20.04.1)
+-- Dumped by pg_dump version 12.4 (Debian 12.4-1.pgdg100+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -52,6 +52,11 @@ ALTER TABLE public.users OWNER TO togoapp;
 --
 
 COPY public.tasks (id, content, user_id, created_date) FROM stdin;
+e1da0b9b-7ecc-44f9-82ff-4623cc50446a	first content	firstUser	2020-06-29 00:00:00
+055261ab-8ba8-49e1-a9e8-e9f725ba9104	second content	firstUser	2020-06-29 00:00:00
+2bf3d510-c0fb-41e9-ad12-4b9a60b37e7a	another content	firstUser	2020-06-29 00:00:00
+e35e13f8-35f3-409f-8e2f-f3e0173fcca3	sadsa	firstUser	2020-08-10 00:00:00
+2a73a4d5-dd05-4c77-bcbd-f5e51a6d6809	sadsad	firstUser	2020-08-11 00:00:00
 \.
 
 

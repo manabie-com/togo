@@ -1,7 +1,6 @@
 package storages
 
 import (
-	"context"
 	"database/sql"
 )
 
@@ -25,10 +24,10 @@ type DBConnecter interface {
 }
 
 // IToGoDB interface for database, database management systems should implement all the method bellow
-type IToGoDB interface {
-	RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*Task, error)
-	AddTask(ctx context.Context, t *Task) error
-	ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool
-	GetUserMaxTask(ctx context.Context, userID string) (int, error)
-	GetUserTodayTask(ctx context.Context, userID string) (int, error)
-}
+// type IToGoDB interface {
+// 	RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*Task, error)
+// 	AddTask(ctx context.Context, t *Task) error
+// 	ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool
+// 	GetUserMaxTask(ctx context.Context, userID string) (int, error)
+// 	GetUserTodayTask(ctx context.Context, userID string) (int, error)
+// }

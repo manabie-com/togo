@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/manabie-com/togo/config"
 	"github.com/manabie-com/togo/internal/services"
 	"github.com/manabie-com/togo/internal/storages"
-	"github.com/manabie-com/togo/internal/storages/postgres"
 )
 
 var toDoService *services.ToDoService
@@ -21,13 +21,24 @@ func TestMain(m *testing.M) {
 }
 
 func createServices(m *testing.M) int {
-	db, err := sql.Open("sqlite3", "../../data.db")
+	// db, err := sql.Open("sqlite3", "../../data.db")
+	// if err != nil {
+	// 	log.Fatalf("error opening db %v", err)
+	// }
+
+	dbconnecter, err := config.GetDBConnecter()
 	if err != nil {
-		log.Fatalf("error opening db %v", err)
+		log.Println(err)
+		return 0
+	}
+
+	db, err := dbconnecter.Connect()
+	if err != nil {
+		log.Fatal("error opening db", err)
 	}
 	toDoService = &services.ToDoService{
 		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &postgres.PqDB{
+		Store: storages.DBStore{
 			DB: db,
 		},
 	}

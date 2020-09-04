@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"path"
+	"strings"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -15,8 +17,9 @@ import (
 
 // ToDoService implement HTTP server
 type ToDoService struct {
-	JWTKey string
-	Store  storages.IToGoDB
+	JWTKey   string
+	Store    storages.DBStore
+	routeMap map[string]http.HandlerFunc
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
@@ -29,32 +32,84 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		resp.WriteHeader(http.StatusOK)
 		return
 	}
+
 	// not handle "/" at the end
 	// should use another data structure instead of switch case for routing
-	switch req.URL.Path {
-	case "/login":
-		s.getAuthToken(resp, req)
-		return
-	case "/tasks":
-		var ok bool
-		req, ok = s.validToken(req)
-		if !ok {
-			resp.WriteHeader(http.StatusUnauthorized)
-			return
-		}
+	// switch req.URL.Path {
+	// case "/login":
+	// 	s.getAuthToken(resp, req)
+	// 	return
+	// case "/tasks":
+	// 	var ok bool
+	// 	req, ok = s.validToken(req)
+	// 	if !ok {
+	// 		resp.WriteHeader(http.StatusUnauthorized)
+	// 		return
+	// 	}
 
-		switch req.Method {
-		case http.MethodGet:
-			s.listTasks(resp, req)
-		case http.MethodPost:
-			if !s.canAddTask(resp, req) {
-				resp.WriteHeader(http.StatusNotAcceptable)
-				return
-			}
-			s.addTask(resp, req)
-		}
+	// 	switch req.Method {
+	// 	case http.MethodGet:
+	// 		s.listTasks(resp, req)
+	// 	case http.MethodPost:
+	// 		if !s.canAddTask(resp, req) {
+	// 			resp.WriteHeader(http.StatusNotAcceptable)
+	// 			return
+	// 		}
+	// 		s.addTask(resp, req)
+	// 	}
+	// 	return
+	// }
+
+	path := cleanPath(req.URL.Path)
+	if _, ok := s.routeMap[path]; !ok {
+		s.notFound(resp, req)
 		return
 	}
+	s.routeMap[path].ServeHTTP(resp, req)
+}
+
+func (s *ToDoService) notFound(resp http.ResponseWriter, req *http.Request) {
+	resp.WriteHeader(http.StatusNotFound)
+	return
+}
+
+//LoginHandlerFunc ...
+func (s *ToDoService) LoginHandlerFunc(resp http.ResponseWriter, req *http.Request) {
+	s.getAuthToken(resp, req)
+	return
+}
+
+// TaskHandlerFunc ...
+func (s *ToDoService) TaskHandlerFunc(resp http.ResponseWriter, req *http.Request) {
+	var ok bool
+	req, ok = s.validToken(req)
+	if !ok {
+		resp.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	switch req.Method {
+	case http.MethodGet:
+		s.listTasks(resp, req)
+	case http.MethodPost:
+		if !s.canAddTask(resp, req) {
+			resp.WriteHeader(http.StatusNotAcceptable)
+			return
+		}
+		s.addTask(resp, req)
+	}
+	return
+}
+
+// AddRoute ...
+func (s *ToDoService) AddRoute(pattern string, handlerFunc http.HandlerFunc) {
+	if s.routeMap == nil {
+		s.routeMap = make(map[string]http.HandlerFunc)
+	}
+	if _, ok := s.routeMap[pattern]; ok {
+		return
+	}
+	s.routeMap[pattern] = handlerFunc
 }
 
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
@@ -210,4 +265,26 @@ func userIDFromCtx(ctx context.Context) (string, bool) {
 	v := ctx.Value(userAuthKey(0))
 	id, ok := v.(string)
 	return id, ok
+}
+
+// cleanPath returns the canonical path for p, eliminating . and .. elements.
+func cleanPath(p string) string {
+	if p == "" {
+		return "/"
+	}
+	if p[0] != '/' {
+		p = "/" + p
+	}
+	np := path.Clean(p)
+	// path.Clean removes trailing slash except for root;
+	// put the trailing slash back if necessary.
+	if p[len(p)-1] == '/' && np != "/" {
+		// Fast path for common case of p being the string we want:
+		if len(p) == len(np)+1 && strings.HasPrefix(p, np) {
+			np = p
+		} else {
+			np += "/"
+		}
+	}
+	return np
 }
