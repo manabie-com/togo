@@ -54,3 +54,19 @@ CREATE TABLE tasks (
 
 ### Sequence diagram
 ![auth and create tasks request](https://github.com/manabie-com/togo/blob/master/docs/sequence.svg)
+
+
+run docker-compose
+```
+	docker-compose up
+```
+access database by psql. run database service
+```
+	docker-compose run database bash
+```
+backup database by using pg_dump
+```
+	docker-compose exec database pg_dump -h database -U togoapp togodb > togodb.sql
+
+	then enter password: togoapp
+```
