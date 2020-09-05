@@ -14,17 +14,20 @@ import (
 
 func TestLogin(t *testing.T) {
 	//Create new user
-	u, err := seedUser(DB)
+	user, err := seedUser(DB)
 	if err != nil {
 		t.Errorf("Can not create new user %v\n", err)
+		return
 	}
+
+	defer refreshUserWhenDone(t, user)
 
 	samples := []struct {
 		url        string
 		statusCode int
 	}{
 		{
-			url:        fmt.Sprintf("http://localhost:5050/login?user_id=%v&password=%v", u.ID, u.Password),
+			url:        fmt.Sprintf("http://localhost:5050/login?user_id=%v&password=%v", user.ID, user.Password),
 			statusCode: http.StatusOK,
 		},
 		{
@@ -65,13 +68,10 @@ func TestLogin(t *testing.T) {
 
 		if w.Code != sample.statusCode {
 			t.Errorf("wrong status code want %v but get %v", sample.statusCode, w.Code)
+			return
 		}
 	}
 
-	// Refresh the tables
-	if err = truncate(DB); err != nil {
-		t.Errorf("cant not truncate database tables %v\n", err)
-	}
 }
 
 func TestGetTaskList(t *testing.T) {
@@ -79,13 +79,19 @@ func TestGetTaskList(t *testing.T) {
 	user, err := seedUser(DB)
 	if err != nil {
 		t.Errorf("Can not create new user %v\n", err)
+		return
 	}
+
+	defer refreshUserWhenDone(t, user)
 
 	// taskitems belong to new user
 	taskItems, err := seedTaskItems(DB, user)
 	if err != nil {
 		t.Errorf("Can not create task items sample %v\n", err)
+		return
 	}
+
+	defer refreshTasksWhenDone(t, taskItems)
 
 	samples := []struct {
 		url          string
@@ -100,12 +106,12 @@ func TestGetTaskList(t *testing.T) {
 		{
 			url:          `http://localhost:5050/tasks?created_date=2020--11`,
 			numberOfTask: 0,
-			statusCode:   http.StatusOK,
+			statusCode:   http.StatusInternalServerError,
 		},
 		{
 			url:          `http://localhost:5050/tasks?yesterday`,
 			numberOfTask: 0,
-			statusCode:   http.StatusOK,
+			statusCode:   http.StatusInternalServerError,
 		},
 	}
 
@@ -116,6 +122,7 @@ func TestGetTaskList(t *testing.T) {
 		token, err := login(http.MethodGet, validLoginUrl)
 		if err != nil {
 			t.Errorf("error can not login %v\n", err)
+			return
 		}
 
 		// Create request and response
@@ -127,22 +134,25 @@ func TestGetTaskList(t *testing.T) {
 		// Validate answer
 		if w.Code != sample.statusCode {
 			t.Errorf("wrong status code want %v but get %v\n", sample.statusCode, w.Code)
+			return
+		}
+
+		// request in wrong and expect no response data
+		if sample.numberOfTask == 0 {
+			return
 		}
 
 		dataJSON := make(map[string][]storages.Task)
 		err = json.Unmarshal(w.Body.Bytes(), &dataJSON)
 		if err != nil {
 			t.Errorf("can not parse data response %v\n", err)
+			return
 		}
 
 		if sample.numberOfTask != len(dataJSON["data"]) {
 			t.Errorf("get task list fail want %v items but only get %v items\n", len(taskItems), len(dataJSON["data"]))
+			return
 		}
-	}
-
-	// Refresh the tables
-	if err = truncate(DB); err != nil {
-		t.Errorf("cant not truncate database tables %v\n", err)
 	}
 }
 
@@ -198,18 +208,23 @@ func TestAddTask(t *testing.T) {
 	}
 
 	// create new user in database users table
-	u, err := seedUser(DB)
+	user, err := seedUser(DB)
 	if err != nil {
 		t.Errorf("Can not create new user %v\n", err)
+		return
 	}
+	defer refreshUserWhenDone(t, user)
+
+	var addedTask storages.Task
 
 	for i, sample := range samples {
 		fmt.Printf("run test: %v/%v\n", i+1, len(samples))
 		// Login to get token of new user
-		validLoginUrl := fmt.Sprintf("http://localhost:5050/login?user_id=%v&password=%v", u.ID, u.Password)
+		validLoginUrl := fmt.Sprintf("http://localhost:5050/login?user_id=%v&password=%v", user.ID, user.Password)
 		token, err := login(http.MethodGet, validLoginUrl)
 		if err != nil {
 			t.Errorf("error can not login %v\n", err)
+			return
 		}
 
 		// Create new request
@@ -221,6 +236,7 @@ func TestAddTask(t *testing.T) {
 		// Validate answer
 		if w.Code != sample.statusCode {
 			t.Errorf("wrong status code want %v but get %v\n", sample.statusCode, w.Code)
+			return
 		}
 
 		// this sample can be added to database because user reach max task perday so we dont need to validate the content
@@ -232,16 +248,14 @@ func TestAddTask(t *testing.T) {
 		err = json.Unmarshal(w.Body.Bytes(), &dataJSON)
 		if err != nil {
 			t.Errorf("can not parse data response %v\n", err)
+			return
 		}
-
-		if sample.content != dataJSON["data"].Content {
+		addedTask = dataJSON["data"]
+		defer refreshSingleTasksWhenDone(t, &addedTask)
+		if sample.content != addedTask.Content {
 			t.Errorf("not the same content expect \"%v\" but got \"%v\" \n", sample.content, dataJSON["content"])
+			return
 		}
-	}
-
-	// Refresh the tables
-	if err = truncate(DB); err != nil {
-		t.Errorf("cant not truncate database tables %v\n", err)
 	}
 }
 
@@ -264,4 +278,25 @@ func login(method string, validLoginUrl string) (string, error) {
 	}
 
 	return token, nil
+}
+
+// after seed user in database if any error occur or func return then need to refresh database table
+func refreshUserWhenDone(t *testing.T, user *storages.User) {
+	if err := refreshUser(DB, user); err != nil {
+		t.Errorf("cant not refresh table users %v\n", err)
+	}
+}
+
+// after seed task list in database if any error occur or func return then need to refresh database table
+func refreshTasksWhenDone(t *testing.T, tasks []storages.Task) {
+	if err := refreshTasks(DB, tasks); err != nil {
+		t.Errorf("cant not refresh table users %v\n", err)
+	}
+}
+
+// after seed task in database if any error occur or func return then need to refresh database table
+func refreshSingleTasksWhenDone(t *testing.T, tasks *storages.Task) {
+	if err := refreshSingleTask(DB, tasks); err != nil {
+		t.Errorf("cant not refresh table users %v\n", err)
+	}
 }

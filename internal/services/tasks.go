@@ -35,37 +35,30 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 
 	// not handle "/" at the end
 	// should use another data structure instead of switch case for routing
-	// switch req.URL.Path {
-	// case "/login":
-	// 	s.getAuthToken(resp, req)
-	// 	return
-	// case "/tasks":
-	// 	var ok bool
-	// 	req, ok = s.validToken(req)
-	// 	if !ok {
-	// 		resp.WriteHeader(http.StatusUnauthorized)
-	// 		return
-	// 	}
+	switch req.URL.Path {
+	case "/login":
+		s.getAuthToken(resp, req)
+		return
+	case "/tasks":
+		var ok bool
+		req, ok = s.validToken(req)
+		if !ok {
+			resp.WriteHeader(http.StatusUnauthorized)
+			return
+		}
 
-	// 	switch req.Method {
-	// 	case http.MethodGet:
-	// 		s.listTasks(resp, req)
-	// 	case http.MethodPost:
-	// 		if !s.canAddTask(resp, req) {
-	// 			resp.WriteHeader(http.StatusNotAcceptable)
-	// 			return
-	// 		}
-	// 		s.addTask(resp, req)
-	// 	}
-	// 	return
-	// }
-
-	path := cleanPath(req.URL.Path)
-	if _, ok := s.routeMap[path]; !ok {
-		s.notFound(resp, req)
+		switch req.Method {
+		case http.MethodGet:
+			s.listTasks(resp, req)
+		case http.MethodPost:
+			if !s.canAddTask(resp, req) {
+				resp.WriteHeader(http.StatusNotAcceptable)
+				return
+			}
+			s.addTask(resp, req)
+		}
 		return
 	}
-	s.routeMap[path].ServeHTTP(resp, req)
 }
 
 func (s *ToDoService) notFound(resp http.ResponseWriter, req *http.Request) {
@@ -99,17 +92,6 @@ func (s *ToDoService) TaskHandlerFunc(resp http.ResponseWriter, req *http.Reques
 		s.addTask(resp, req)
 	}
 	return
-}
-
-// AddRoute ...
-func (s *ToDoService) AddRoute(pattern string, handlerFunc http.HandlerFunc) {
-	if s.routeMap == nil {
-		s.routeMap = make(map[string]http.HandlerFunc)
-	}
-	if _, ok := s.routeMap[pattern]; ok {
-		return
-	}
-	s.routeMap[pattern] = handlerFunc
 }
 
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {

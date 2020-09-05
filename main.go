@@ -32,9 +32,6 @@ func main() {
 		},
 	}
 
-	todoService.AddRoute("/login", todoService.LoginHandlerFunc)
-	todoService.AddRoute("/tasks", todoService.TaskHandlerFunc)
-
 	http.ListenAndServe(":5050", &todoService)
 
 }
