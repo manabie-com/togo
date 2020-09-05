@@ -67,7 +67,7 @@ func connectDbAndInit(config *EnvConfig) *pg.DB {
 		Database: config.dbName,
 	})
 
-	log.Print("Connecting with db \n")
+	log.Printf("Connecting with db: %s \n", config.dbHost)
 
 	if db == nil {
 		defer db.Close()
@@ -110,7 +110,9 @@ func createSchema(db *pg.DB) error {
 		err := db.Model(model).CreateTable(&orm.CreateTableOptions{
 			Temp: false,
 		})
+		log.Print("Create schema db \n", model)
 		if err != nil {
+			log.Printf("Create schema error %s \n", err)
 			return err
 		}
 	}

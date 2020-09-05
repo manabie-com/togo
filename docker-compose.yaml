@@ -2,7 +2,8 @@ version: '3.1'
 
 services:
 
-  database:
+  postgres:
+    container_name: togodb-postgre
     image: postgres
     restart: always
     environment:
@@ -11,14 +12,18 @@ services:
         - 5432:5432
 
   togo-app:
-    image: .
+    container_name: togo-api
+    build: 
+      dockerfile: Dockerfile
+      context: .
     restart: always
     environment:
-      DB_HOST: database
-      DB_USER: postgre
-      DB_PASS: postgre
-      DATABASE: postgre
+      DB_HOST: togodb-postgre:5432
+      DB_USER: postgres
+      DB_PASS: postgres
+      DATABASE: postgres
     ports:
       - 8080:8080
-      
+    volumes: 
+      - ./:/app
 
