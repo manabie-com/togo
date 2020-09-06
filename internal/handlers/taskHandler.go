@@ -8,7 +8,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	taskRepository "github.com/manabie-com/togo/internal/repository"
+	"github.com/manabie-com/togo/internal/repository"
 
 	entity "github.com/manabie-com/togo/internal/entities"
 
@@ -17,7 +17,7 @@ import (
 
 // TaskHandler handles all action with Task entity
 type TaskHandler struct {
-	Repo *taskRepository.TaskRepository
+	//Repo *taskRepository.TaskRepository
 }
 
 // AddTask add new task
@@ -30,7 +30,7 @@ func (handler *TaskHandler) AddTask(resp http.ResponseWriter, req *http.Request)
 
 	userID, _ := services.UserIDFromCtx(req.Context())
 
-	tasksOfCurrentUser, _ := handler.Repo.GetByUserID(userID, time.Now().Format("2006-01-02"))
+	tasksOfCurrentUser, _ := repository.TaskRepo.GetByUserID(userID, time.Now().Format("2006-01-02"))
 
 	if len(tasksOfCurrentUser) > 5 {
 		resp.WriteHeader(http.StatusBadRequest)
@@ -44,7 +44,7 @@ func (handler *TaskHandler) AddTask(resp http.ResponseWriter, req *http.Request)
 
 	task.Content = res["content"].(string)
 
-	result, err := handler.Repo.Add(task)
+	result, err := repository.TaskRepo.Add(task)
 
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
@@ -63,7 +63,7 @@ func (handler *TaskHandler) AddTask(resp http.ResponseWriter, req *http.Request)
 func (handler *TaskHandler) GetAll(resp http.ResponseWriter, req *http.Request) {
 	var createdDate = req.FormValue("created_date")
 
-	tasks, err := handler.Repo.GetAll(createdDate)
+	tasks, err := repository.TaskRepo.GetAll(createdDate)
 
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
@@ -84,7 +84,7 @@ func (handler *TaskHandler) GetByID(resp http.ResponseWriter, req *http.Request)
 
 	log.Printf("Get task by id %s \n", id)
 
-	task, err := handler.Repo.GetByID(id)
+	task, err := repository.TaskRepo.GetByID(id)
 
 	if task.ID == "" {
 		resp.WriteHeader(http.StatusNotFound)

@@ -9,6 +9,17 @@ import (
 	postgre "github.com/manabie-com/togo/internal/storages/postgre"
 )
 
+var (
+	TaskRepo taskRepository = &TaskRepository{}
+)
+
+type taskRepository interface {
+	Add(entity *entity.Task) (*entity.Task, error)
+	GetByUserID(userID string, createdDate string) ([]entity.Task, error)
+	GetAll(createdDate string) ([]entity.Task, error)
+	GetByID(taskID string) (*entity.Task, error)
+}
+
 // TaskRepository action CRUD with Task entity
 type TaskRepository struct {
 	Store *postgre.Storage
