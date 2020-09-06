@@ -6,20 +6,19 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"path"
-	"strings"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"github.com/manabie-com/togo/internal/storages"
 )
 
 // ToDoService implement HTTP server
 type ToDoService struct {
-	JWTKey   string
-	Store    storages.DBStore
-	routeMap map[string]http.HandlerFunc
+	Router *mux.Router
+	JWTKey string
+	Store  storages.DBStore
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
@@ -33,83 +32,46 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// not handle "/" at the end
-	// should use another data structure instead of switch case for routing
-	// switch req.URL.Path {
-	// case "/login":
-	// 	s.getAuthToken(resp, req)
-	// 	return
-	// case "/tasks":
-	// 	var ok bool
-	// 	req, ok = s.validToken(req)
-	// 	if !ok {
-	// 		resp.WriteHeader(http.StatusUnauthorized)
-	// 		return
-	// 	}
-
-	// 	switch req.Method {
-	// 	case http.MethodGet:
-	// 		s.listTasks(resp, req)
-	// 	case http.MethodPost:
-	// 		if !s.canAddTask(resp, req) {
-	// 			resp.WriteHeader(http.StatusNotAcceptable)
-	// 			return
-	// 		}
-	// 		s.addTask(resp, req)
-	// 	}
-	// 	return
-	// }
-
-	path := cleanPath(req.URL.Path)
-	if _, ok := s.routeMap[path]; !ok {
-		s.notFound(resp, req)
-		return
-	}
-	s.routeMap[path].ServeHTTP(resp, req)
+	s.Router.ServeHTTP(resp, req)
 }
 
-func (s *ToDoService) notFound(resp http.ResponseWriter, req *http.Request) {
-	resp.WriteHeader(http.StatusNotFound)
-	return
-}
-
-//LoginHandlerFunc ...
-func (s *ToDoService) LoginHandlerFunc(resp http.ResponseWriter, req *http.Request) {
+//LoginHandler ...
+func (s *ToDoService) LoginHandler(resp http.ResponseWriter, req *http.Request) {
 	s.getAuthToken(resp, req)
-	return
 }
 
-// TaskHandlerFunc ...
-func (s *ToDoService) TaskHandlerFunc(resp http.ResponseWriter, req *http.Request) {
-	var ok bool
-	req, ok = s.validToken(req)
-	if !ok {
-		resp.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-
-	switch req.Method {
-	case http.MethodGet:
-		s.listTasks(resp, req)
-	case http.MethodPost:
-		if !s.canAddTask(resp, req) {
-			resp.WriteHeader(http.StatusNotAcceptable)
-			return
-		}
-		s.addTask(resp, req)
-	}
-	return
+// GetTasksHandler ...
+func (s *ToDoService) GetTasksHandler(resp http.ResponseWriter, req *http.Request) {
+	s.listTasks(resp, req)
 }
 
-// AddRoute ...
-func (s *ToDoService) AddRoute(pattern string, handlerFunc http.HandlerFunc) {
-	if s.routeMap == nil {
-		s.routeMap = make(map[string]http.HandlerFunc)
-	}
-	if _, ok := s.routeMap[pattern]; ok {
+// CreateTaskHandler ...
+func (s *ToDoService) CreateTaskHandler(resp http.ResponseWriter, req *http.Request) {
+	if !s.canAddTask(resp, req) {
+		resp.WriteHeader(http.StatusNotAcceptable)
 		return
 	}
-	s.routeMap[pattern] = handlerFunc
+	s.addTask(resp, req)
+}
+
+// UpdateTaskStatusHandler ...
+func (s *ToDoService) UpdateTaskStatusHandler(resp http.ResponseWriter, req *http.Request) {
+	s.updateTaskStatus(resp, req)
+}
+
+// UpdateAllTaskStatusHandler ...
+func (s *ToDoService) UpdateAllTaskStatusHandler(resp http.ResponseWriter, req *http.Request) {
+	s.updateAllTasksStatus(resp, req)
+}
+
+// DeleteTaskHandler ...
+func (s *ToDoService) DeleteTaskHandler(resp http.ResponseWriter, req *http.Request) {
+	s.deleteTask(resp, req)
+}
+
+// DeleteTasksHandler ...
+func (s *ToDoService) DeleteTasksHandler(resp http.ResponseWriter, req *http.Request) {
+	s.deleteTasks(resp, req)
 }
 
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
@@ -157,7 +119,6 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 		})
 		return
 	}
-
 	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
 		"data": tasks,
 	})
@@ -165,13 +126,24 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 
 func (s *ToDoService) canAddTask(resp http.ResponseWriter, req *http.Request) bool {
 	userID, _ := userIDFromCtx(req.Context())
-	maxTask, err := s.Store.GetUserMaxTask(req.Context(), userID)
+	maxTask, err := s.Store.GetUserMaxTask(
+		req.Context(),
+		sql.NullString{
+			String: userID,
+			Valid:  true,
+		})
 	if err != nil {
 		log.Println(err)
 		return false
 	}
 
-	countTodayTask, err := s.Store.GetUserTodayTask(req.Context(), userID)
+	countTodayTask, err := s.Store.GetUserTodayTask(
+		req.Context(),
+		sql.NullString{
+			String: userID,
+			Valid:  true,
+		},
+	)
 
 	if err != nil {
 		log.Println(err)
@@ -212,6 +184,114 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 
 	json.NewEncoder(resp).Encode(map[string]*storages.Task{
 		"data": t,
+	})
+}
+
+func (s *ToDoService) updateTaskStatus(resp http.ResponseWriter, req *http.Request) {
+	userID, _ := userIDFromCtx(req.Context())
+	vars := mux.Vars(req)
+	taskID := vars["id"]
+	status := value(req, "status")
+	err := s.Store.UpdateStatusTask(
+		req.Context(),
+		sql.NullString{
+			String: userID,
+			Valid:  true,
+		},
+		sql.NullString{
+			String: taskID,
+			Valid:  true,
+		},
+		status)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+}
+
+func (s *ToDoService) updateAllTasksStatus(resp http.ResponseWriter, req *http.Request) {
+	userID, _ := userIDFromCtx(req.Context())
+	// now := time.Now()
+	// createdDate := now.Format("2006-01-02")
+	createdDate := value(req, "created_date")
+	status := value(req, "status")
+	err := s.Store.UpdateAllStatusTasks(
+		req.Context(),
+		sql.NullString{
+			String: userID,
+			Valid:  true,
+		},
+		createdDate,
+		status)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+}
+
+func (s *ToDoService) deleteTask(resp http.ResponseWriter, req *http.Request) {
+	userID, _ := userIDFromCtx(req.Context())
+	vars := mux.Vars(req)
+	taskID := vars["id"]
+
+	err := s.Store.DeleteTask(
+		req.Context(),
+		sql.NullString{
+			String: userID,
+			Valid:  true,
+		},
+		sql.NullString{
+			String: taskID,
+			Valid:  true,
+		},
+	)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+}
+
+func (s *ToDoService) deleteTasks(resp http.ResponseWriter, req *http.Request) {
+	userID, _ := userIDFromCtx(req.Context())
+	// now := time.Now()
+	// createdDate := now.Format("2006-01-02")
+	createdDate := value(req, "created_date")
+	err := s.Store.DeleteTasks(
+		req.Context(),
+		sql.NullString{
+			String: userID,
+			Valid:  true,
+		},
+		createdDate,
+	)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+}
+
+// Validate function, which will be called for each request
+func (s *ToDoService) Validate(next http.HandlerFunc) http.HandlerFunc {
+	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
+		var ok bool
+		req, ok = s.validToken(req)
+		if !ok {
+			resp.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		next.ServeHTTP(resp, req)
 	})
 }
 
@@ -265,26 +345,4 @@ func userIDFromCtx(ctx context.Context) (string, bool) {
 	v := ctx.Value(userAuthKey(0))
 	id, ok := v.(string)
 	return id, ok
-}
-
-// cleanPath returns the canonical path for p, eliminating . and .. elements.
-func cleanPath(p string) string {
-	if p == "" {
-		return "/"
-	}
-	if p[0] != '/' {
-		p = "/" + p
-	}
-	np := path.Clean(p)
-	// path.Clean removes trailing slash except for root;
-	// put the trailing slash back if necessary.
-	if p[len(p)-1] == '/' && np != "/" {
-		// Fast path for common case of p being the string we want:
-		if len(p) == len(np)+1 && strings.HasPrefix(p, np) {
-			np = p
-		} else {
-			np += "/"
-		}
-	}
-	return np
 }
