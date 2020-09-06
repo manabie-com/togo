@@ -137,10 +137,6 @@ func seedTaskItems(db *sql.DB, u *storages.User) ([]storages.Task, error) {
 			Content:     "write content here",
 			UserID:      u.ID,
 			CreatedDate: now.Format("2006-01-02"),
-			// CreatedDate: sql.NullTime{
-			// 	Time:  now,
-			// 	Valid: true,
-			// },
 		},
 	}
 

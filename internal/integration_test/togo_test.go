@@ -54,10 +54,10 @@ func TestLogin(t *testing.T) {
 			url:        `http://localhost:5050/login?`,
 			statusCode: http.StatusUnauthorized,
 		},
-		// {
-		// 	url:        `http://localhost:5050/login/`,
-		// 	statusCode: http.StatusUnauthorized,
-		// },
+		{
+			url:        `http://localhost:5050/login/`,
+			statusCode: http.StatusUnauthorized,
+		},
 	}
 
 	for i, sample := range samples {

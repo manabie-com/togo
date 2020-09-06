@@ -214,8 +214,6 @@ func (s *ToDoService) updateTaskStatus(resp http.ResponseWriter, req *http.Reque
 
 func (s *ToDoService) updateAllTasksStatus(resp http.ResponseWriter, req *http.Request) {
 	userID, _ := userIDFromCtx(req.Context())
-	// now := time.Now()
-	// createdDate := now.Format("2006-01-02")
 	createdDate := value(req, "created_date")
 	status := value(req, "status")
 	err := s.Store.UpdateAllStatusTasks(
@@ -262,8 +260,6 @@ func (s *ToDoService) deleteTask(resp http.ResponseWriter, req *http.Request) {
 
 func (s *ToDoService) deleteTasks(resp http.ResponseWriter, req *http.Request) {
 	userID, _ := userIDFromCtx(req.Context())
-	// now := time.Now()
-	// createdDate := now.Format("2006-01-02")
 	createdDate := value(req, "created_date")
 	err := s.Store.DeleteTasks(
 		req.Context(),
