@@ -14,6 +14,7 @@ import (
 	"github.com/manabie-com/togo/config"
 	"github.com/manabie-com/togo/internal/services"
 	"github.com/manabie-com/togo/internal/storages"
+	"github.com/manabie-com/togo/internal/storages/postgres"
 )
 
 var toDoService services.ToDoService
@@ -38,7 +39,7 @@ func createServices(m *testing.M) int {
 	toDoService = services.ToDoService{
 		Router: mux.NewRouter(),
 		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: storages.DBStore{
+		Store: &postgres.DBStore{
 			DB: db,
 		},
 	}

@@ -18,7 +18,7 @@ import (
 type ToDoService struct {
 	Router *mux.Router
 	JWTKey string
-	Store  storages.DBStore
+	Store  storages.IToGoDB
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {

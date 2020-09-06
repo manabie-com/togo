@@ -8,7 +8,7 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/manabie-com/togo/config"
 	"github.com/manabie-com/togo/internal/services"
-	"github.com/manabie-com/togo/internal/storages"
+	"github.com/manabie-com/togo/internal/storages/postgres"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -29,7 +29,7 @@ func main() {
 	todoService := services.ToDoService{
 		Router: mux.NewRouter(),
 		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: storages.DBStore{
+		Store: &postgres.DBStore{
 			DB: db,
 		},
 	}
