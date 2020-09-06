@@ -6,20 +6,19 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"path"
-	"strings"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"github.com/manabie-com/togo/internal/storages"
 )
 
 // ToDoService implement HTTP server
 type ToDoService struct {
-	JWTKey   string
-	Store    storages.DBStore
-	routeMap map[string]http.HandlerFunc
+	Router *mux.Router
+	JWTKey string
+	Store  storages.DBStore
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
@@ -33,65 +32,26 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// not handle "/" at the end
-	// should use another data structure instead of switch case for routing
-	switch req.URL.Path {
-	case "/login":
-		s.getAuthToken(resp, req)
-		return
-	case "/tasks":
-		var ok bool
-		req, ok = s.validToken(req)
-		if !ok {
-			resp.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-
-		switch req.Method {
-		case http.MethodGet:
-			s.listTasks(resp, req)
-		case http.MethodPost:
-			if !s.canAddTask(resp, req) {
-				resp.WriteHeader(http.StatusNotAcceptable)
-				return
-			}
-			s.addTask(resp, req)
-		}
-		return
-	}
+	s.Router.ServeHTTP(resp, req)
 }
 
-func (s *ToDoService) notFound(resp http.ResponseWriter, req *http.Request) {
-	resp.WriteHeader(http.StatusNotFound)
-	return
-}
-
-//LoginHandlerFunc ...
-func (s *ToDoService) LoginHandlerFunc(resp http.ResponseWriter, req *http.Request) {
+//LoginHandler ...
+func (s *ToDoService) LoginHandler(resp http.ResponseWriter, req *http.Request) {
 	s.getAuthToken(resp, req)
-	return
 }
 
-// TaskHandlerFunc ...
-func (s *ToDoService) TaskHandlerFunc(resp http.ResponseWriter, req *http.Request) {
-	var ok bool
-	req, ok = s.validToken(req)
-	if !ok {
-		resp.WriteHeader(http.StatusUnauthorized)
+// GetTasksHandler ...
+func (s *ToDoService) GetTasksHandler(resp http.ResponseWriter, req *http.Request) {
+	s.listTasks(resp, req)
+}
+
+// CreateTaskHandler ...
+func (s *ToDoService) CreateTaskHandler(resp http.ResponseWriter, req *http.Request) {
+	if !s.canAddTask(resp, req) {
+		resp.WriteHeader(http.StatusNotAcceptable)
 		return
 	}
-
-	switch req.Method {
-	case http.MethodGet:
-		s.listTasks(resp, req)
-	case http.MethodPost:
-		if !s.canAddTask(resp, req) {
-			resp.WriteHeader(http.StatusNotAcceptable)
-			return
-		}
-		s.addTask(resp, req)
-	}
-	return
+	s.addTask(resp, req)
 }
 
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
@@ -139,7 +99,7 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 		})
 		return
 	}
-
+	log.Printf("response task %v", len(tasks))
 	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
 		"data": tasks,
 	})
@@ -197,6 +157,21 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	})
 }
 
+// Validate function, which will be called for each request
+func (s *ToDoService) Validate(next http.HandlerFunc) http.HandlerFunc {
+	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
+		var ok bool
+		req, ok = s.validToken(req)
+		id, ok := userIDFromCtx(req.Context())
+		log.Printf("authen %v\n", id)
+		if !ok {
+			resp.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		next.ServeHTTP(resp, req)
+	})
+}
+
 func value(req *http.Request, p string) sql.NullString {
 	return sql.NullString{
 		String: req.FormValue(p),
@@ -247,26 +222,4 @@ func userIDFromCtx(ctx context.Context) (string, bool) {
 	v := ctx.Value(userAuthKey(0))
 	id, ok := v.(string)
 	return id, ok
-}
-
-// cleanPath returns the canonical path for p, eliminating . and .. elements.
-func cleanPath(p string) string {
-	if p == "" {
-		return "/"
-	}
-	if p[0] != '/' {
-		p = "/" + p
-	}
-	np := path.Clean(p)
-	// path.Clean removes trailing slash except for root;
-	// put the trailing slash back if necessary.
-	if p[len(p)-1] == '/' && np != "/" {
-		// Fast path for common case of p being the string we want:
-		if len(p) == len(np)+1 && strings.HasPrefix(p, np) {
-			np = p
-		} else {
-			np += "/"
-		}
-	}
-	return np
 }

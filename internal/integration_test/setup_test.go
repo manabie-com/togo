@@ -3,18 +3,20 @@ package integration_test
 import (
 	"database/sql"
 	"log"
+	"net/http"
 	"os"
 	"testing"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	"github.com/manabie-com/togo/config"
 	"github.com/manabie-com/togo/internal/services"
 	"github.com/manabie-com/togo/internal/storages"
 )
 
-var toDoService *services.ToDoService
+var toDoService services.ToDoService
 var DB *sql.DB
 
 func TestMain(m *testing.M) {
@@ -33,12 +35,17 @@ func createServices(m *testing.M) int {
 	if err != nil {
 		log.Fatal("error opening db", err)
 	}
-	toDoService = &services.ToDoService{
+	toDoService = services.ToDoService{
+		Router: mux.NewRouter(),
 		JWTKey: "wqGyEBBfPK9w3Lxw",
 		Store: storages.DBStore{
 			DB: db,
 		},
 	}
+
+	toDoService.Router.HandleFunc("/login", toDoService.LoginHandler)
+	toDoService.Router.HandleFunc("/tasks", toDoService.Validate(toDoService.GetTasksHandler)).Methods(http.MethodGet)
+	toDoService.Router.HandleFunc("/tasks", toDoService.Validate(toDoService.CreateTaskHandler)).Methods(http.MethodPost)
 	DB = db
 	return m.Run()
 }
