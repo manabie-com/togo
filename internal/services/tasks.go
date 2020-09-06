@@ -54,13 +54,14 @@ func (s *ToDoService) CreateTaskHandler(resp http.ResponseWriter, req *http.Requ
 	s.addTask(resp, req)
 }
 
-// UpdateTaskHandler ...
-func (s *ToDoService) UpdateTaskHandler(resp http.ResponseWriter, req *http.Request) {
-	if !s.canAddTask(resp, req) {
-		resp.WriteHeader(http.StatusNotAcceptable)
-		return
-	}
-	s.addTask(resp, req)
+// UpdateTaskStatusHandler ...
+func (s *ToDoService) UpdateTaskStatusHandler(resp http.ResponseWriter, req *http.Request) {
+	s.updateTaskStatus(resp, req)
+}
+
+// UpdateAllTaskStatusHandler ...
+func (s *ToDoService) UpdateAllTaskStatusHandler(resp http.ResponseWriter, req *http.Request) {
+	s.updateAllTasksStatus(resp, req)
 }
 
 // DeleteTaskHandler ...
@@ -70,11 +71,7 @@ func (s *ToDoService) DeleteTaskHandler(resp http.ResponseWriter, req *http.Requ
 
 // DeleteTasksHandler ...
 func (s *ToDoService) DeleteTasksHandler(resp http.ResponseWriter, req *http.Request) {
-	if !s.canAddTask(resp, req) {
-		resp.WriteHeader(http.StatusNotAcceptable)
-		return
-	}
-	s.addTask(resp, req)
+	s.deleteTasks(resp, req)
 }
 
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
@@ -122,7 +119,6 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 		})
 		return
 	}
-	log.Printf("response task %v", len(tasks))
 	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
 		"data": tasks,
 	})
@@ -130,13 +126,24 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 
 func (s *ToDoService) canAddTask(resp http.ResponseWriter, req *http.Request) bool {
 	userID, _ := userIDFromCtx(req.Context())
-	maxTask, err := s.Store.GetUserMaxTask(req.Context(), userID)
+	maxTask, err := s.Store.GetUserMaxTask(
+		req.Context(),
+		sql.NullString{
+			String: userID,
+			Valid:  true,
+		})
 	if err != nil {
 		log.Println(err)
 		return false
 	}
 
-	countTodayTask, err := s.Store.GetUserTodayTask(req.Context(), userID)
+	countTodayTask, err := s.Store.GetUserTodayTask(
+		req.Context(),
+		sql.NullString{
+			String: userID,
+			Valid:  true,
+		},
+	)
 
 	if err != nil {
 		log.Println(err)
@@ -180,12 +187,92 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	})
 }
 
+func (s *ToDoService) updateTaskStatus(resp http.ResponseWriter, req *http.Request) {
+	userID, _ := userIDFromCtx(req.Context())
+	vars := mux.Vars(req)
+	taskID := vars["id"]
+	status := value(req, "status")
+	err := s.Store.UpdateStatusTask(
+		req.Context(),
+		sql.NullString{
+			String: userID,
+			Valid:  true,
+		},
+		sql.NullString{
+			String: taskID,
+			Valid:  true,
+		},
+		status)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+}
+
+func (s *ToDoService) updateAllTasksStatus(resp http.ResponseWriter, req *http.Request) {
+	userID, _ := userIDFromCtx(req.Context())
+	// now := time.Now()
+	// createdDate := now.Format("2006-01-02")
+	createdDate := value(req, "created_date")
+	status := value(req, "status")
+	err := s.Store.UpdateAllStatusTasks(
+		req.Context(),
+		sql.NullString{
+			String: userID,
+			Valid:  true,
+		},
+		createdDate,
+		status)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+}
+
 func (s *ToDoService) deleteTask(resp http.ResponseWriter, req *http.Request) {
 	userID, _ := userIDFromCtx(req.Context())
 	vars := mux.Vars(req)
 	taskID := vars["id"]
 
-	err := s.Store.DeleteTask(req.Context(), userID, taskID)
+	err := s.Store.DeleteTask(
+		req.Context(),
+		sql.NullString{
+			String: userID,
+			Valid:  true,
+		},
+		sql.NullString{
+			String: taskID,
+			Valid:  true,
+		},
+	)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+}
+
+func (s *ToDoService) deleteTasks(resp http.ResponseWriter, req *http.Request) {
+	userID, _ := userIDFromCtx(req.Context())
+	// now := time.Now()
+	// createdDate := now.Format("2006-01-02")
+	createdDate := value(req, "created_date")
+	err := s.Store.DeleteTasks(
+		req.Context(),
+		sql.NullString{
+			String: userID,
+			Valid:  true,
+		},
+		createdDate,
+	)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
@@ -200,8 +287,6 @@ func (s *ToDoService) Validate(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
 		var ok bool
 		req, ok = s.validToken(req)
-		id, ok := userIDFromCtx(req.Context())
-		log.Printf("authen %v\n", id)
 		if !ok {
 			resp.WriteHeader(http.StatusUnauthorized)
 			return

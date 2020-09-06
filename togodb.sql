@@ -28,7 +28,8 @@ CREATE TABLE public.tasks (
     id text NOT NULL,
     content text NOT NULL,
     user_id text NOT NULL,
-    created_date timestamp without time zone NOT NULL
+    created_date timestamp without time zone NOT NULL,
+    status boolean DEFAULT false NOT NULL
 );
 
 
@@ -51,12 +52,12 @@ ALTER TABLE public.users OWNER TO togoapp;
 -- Data for Name: tasks; Type: TABLE DATA; Schema: public; Owner: togoapp
 --
 
-COPY public.tasks (id, content, user_id, created_date) FROM stdin;
-e1da0b9b-7ecc-44f9-82ff-4623cc50446a	first content	firstUser	2020-06-29 00:00:00
-055261ab-8ba8-49e1-a9e8-e9f725ba9104	second content	firstUser	2020-06-29 00:00:00
-2bf3d510-c0fb-41e9-ad12-4b9a60b37e7a	another content	firstUser	2020-06-29 00:00:00
-e35e13f8-35f3-409f-8e2f-f3e0173fcca3	sadsa	firstUser	2020-08-10 00:00:00
-2a73a4d5-dd05-4c77-bcbd-f5e51a6d6809	sadsad	firstUser	2020-08-11 00:00:00
+COPY public.tasks (id, content, user_id, created_date, status) FROM stdin;
+e1da0b9b-7ecc-44f9-82ff-4623cc50446a	first content	firstUser	2020-06-29 00:00:00	f
+055261ab-8ba8-49e1-a9e8-e9f725ba9104	second content	firstUser	2020-06-29 00:00:00	f
+2bf3d510-c0fb-41e9-ad12-4b9a60b37e7a	another content	firstUser	2020-06-29 00:00:00	f
+e35e13f8-35f3-409f-8e2f-f3e0173fcca3	sadsa	firstUser	2020-08-10 00:00:00	f
+2a73a4d5-dd05-4c77-bcbd-f5e51a6d6809	sadsad	firstUser	2020-08-11 00:00:00	f
 \.
 
 
