@@ -37,6 +37,6 @@ func main() {
 	todoService.Router.HandleFunc("/login", todoService.LoginHandler)
 	todoService.Router.HandleFunc("/tasks", todoService.Validate(todoService.GetTasksHandler)).Methods(http.MethodGet)
 	todoService.Router.HandleFunc("/tasks", todoService.Validate(todoService.CreateTaskHandler)).Methods(http.MethodPost)
-
+	todoService.Router.HandleFunc("/tasks/{id}", todoService.Validate(todoService.DeleteTaskHandler)).Methods(http.MethodDelete)
 	http.ListenAndServe(":5050", &todoService)
 }

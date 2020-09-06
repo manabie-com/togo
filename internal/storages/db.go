@@ -48,6 +48,17 @@ func (l *DBStore) AddTask(ctx context.Context, t *Task) error {
 	return nil
 }
 
+// DeleteTask adds a new task to DB
+func (l *DBStore) DeleteTask(ctx context.Context, userID, taskID string) error {
+	stmt := `DELETE FROM tasks WHERE user_id = $1 AND id = $2`
+	_, err := l.DB.ExecContext(ctx, stmt, userID, taskID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // ValidateUser returns tasks if match userID AND password
 func (l *DBStore) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
 	stmt := `SELECT id FROM users WHERE id = $1 AND password = $2`

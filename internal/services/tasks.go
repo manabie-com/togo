@@ -54,6 +54,29 @@ func (s *ToDoService) CreateTaskHandler(resp http.ResponseWriter, req *http.Requ
 	s.addTask(resp, req)
 }
 
+// UpdateTaskHandler ...
+func (s *ToDoService) UpdateTaskHandler(resp http.ResponseWriter, req *http.Request) {
+	if !s.canAddTask(resp, req) {
+		resp.WriteHeader(http.StatusNotAcceptable)
+		return
+	}
+	s.addTask(resp, req)
+}
+
+// DeleteTaskHandler ...
+func (s *ToDoService) DeleteTaskHandler(resp http.ResponseWriter, req *http.Request) {
+	s.deleteTask(resp, req)
+}
+
+// DeleteTasksHandler ...
+func (s *ToDoService) DeleteTasksHandler(resp http.ResponseWriter, req *http.Request) {
+	if !s.canAddTask(resp, req) {
+		resp.WriteHeader(http.StatusNotAcceptable)
+		return
+	}
+	s.addTask(resp, req)
+}
+
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
 	id := value(req, "user_id")
 	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
@@ -155,6 +178,21 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(map[string]*storages.Task{
 		"data": t,
 	})
+}
+
+func (s *ToDoService) deleteTask(resp http.ResponseWriter, req *http.Request) {
+	userID, _ := userIDFromCtx(req.Context())
+	vars := mux.Vars(req)
+	taskID := vars["id"]
+
+	err := s.Store.DeleteTask(req.Context(), userID, taskID)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
 }
 
 // Validate function, which will be called for each request
