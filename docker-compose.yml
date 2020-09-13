@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  database:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: togo_db
+    ports:
+      - 5432:5432 # expose port
+    volumes:
+    - pgdata:/var/lib/postgresql/data/ # persist data
+
+  togo:
+    build: .
+    ports:
+      - 8888:8888
+    restart: always
+    depends_on:
+      - database
+
+volumes:
+  pgdata:
