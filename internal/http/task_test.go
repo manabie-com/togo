@@ -42,7 +42,7 @@ func (repo *dummyTaskRepo) ByUserDate(ctx context.Context, userId string, date t
 
 var taskHandler TaskHandler
 
-func reset() {
+func resetTaskHandler() {
   taskHandler = TaskHandler{
     taskRepo: &dummyTaskRepo{make(map[string]map[time.Time][]*core.Task)},
     getToday: func() time.Time {
@@ -53,7 +53,7 @@ func reset() {
 
 func TestTaskHandler_create(t *testing.T) {
   t.Run("Add task", func(t *testing.T) {
-    reset()
+    resetTaskHandler()
     user := core.User{ID: "dummy", MaxTodo: 1}
     err := taskHandler.create(context.Background(), &user, &core.Task{Content: ""})
     if err != nil {
@@ -70,7 +70,7 @@ func TestTaskHandler_create(t *testing.T) {
 
   for n := 2; n < 10; n++ {
     t.Run(fmt.Sprintf("Add less than max todo %d", n), func(t *testing.T) {
-      reset()
+      resetTaskHandler()
       addCount := n-1
       user := core.User{ID: "dummy", MaxTodo: n}
       for i := 0; i < addCount; i++ {
@@ -89,7 +89,7 @@ func TestTaskHandler_create(t *testing.T) {
     })
 
     t.Run(fmt.Sprintf("Add equal to max todo %d", n), func(t *testing.T) {
-      reset()
+      resetTaskHandler()
       addCount := n
       user := core.User{ID: "dummy", MaxTodo: n}
       for i := 0; i < addCount; i++ {
@@ -108,7 +108,7 @@ func TestTaskHandler_create(t *testing.T) {
     })
 
     t.Run(fmt.Sprintf("Add more than max todo %d", n), func(t *testing.T) {
-      reset()
+      resetTaskHandler()
       addCount := n+1
       user := core.User{ID: "dummy", MaxTodo: n}
       for i := 0; i < n; i++ {

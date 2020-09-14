@@ -1,24 +1,28 @@
-package sqlite
+package postgresql
 
 import (
   "database/sql"
+  "github.com/lib/pq"
   "github.com/manabie-com/togo/internal/context"
   "github.com/manabie-com/togo/internal/core"
-  "github.com/mattn/go-sqlite3"
+  "golang.org/x/crypto/bcrypt"
   "log"
 )
 
+var pqErrUniqueConstraint = pq.ErrorCode("23505")
 
 type UserRepo struct {
-  DB             *sql.DB
+  DB *sql.DB
+  Cost int
 }
 
 func (repo *UserRepo) Hash(password string) (string, error) {
-  return password, nil
+  hash, err := bcrypt.GenerateFromPassword([]byte(password), repo.Cost)
+  return string(hash), err
 }
 
 func (repo *UserRepo) Compare(password, hash string) bool {
-  return password == hash
+  return bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)) == nil
 }
 
 func (repo *UserRepo) Create(ctx context.Context, user *core.User, password string) (err error) {
@@ -26,15 +30,14 @@ func (repo *UserRepo) Create(ctx context.Context, user *core.User, password stri
   if err != nil {
     return
   }
-  rs, err := repo.DB.ExecContext(ctx, "insert into users(id, password, max_todo) values (?,?,?)", user.ID, user.Hash,
+  rs, err := repo.DB.ExecContext(ctx, "insert into users(id, hash, max_todo) values ($1,$2,$3);", user.ID, user.Hash,
     user.MaxTodo)
   if err != nil {
-    if sqliteErr, ok := err.(sqlite3.Error); ok && sqliteErr.ExtendedCode != sqlite3.ErrConstraintPrimaryKey {
-      log.Printf("[sqlite::UserRepo::Create - exec error: %v (code: %v, extCode: %v)]\n", err, int(sqliteErr.Code),
-        int(sqliteErr.ExtendedCode))
+    if pqErr, ok := err.(*pq.Error); ok && pqErr.Code != pqErrUniqueConstraint {
+      log.Printf("[postgresql::UserRepo::Create - exec error: %v (%v)]\n", err, pqErr.Code)
       return err
     } else if !ok {
-      log.Printf("[sqlite::UserRepo::Create - exec error: %v]\n", err)
+      log.Printf("[postgresql::UserRepo::Create - exec error: %v]\n", err)
       return err
     }
     return core.ErrUserAlreadyExists
@@ -48,11 +51,11 @@ func (repo *UserRepo) Create(ctx context.Context, user *core.User, password stri
 func (repo *UserRepo) ById(ctx context.Context, id string) (*core.User, error) {
   var user core.User
   user.ID = id
-  row := repo.DB.QueryRowContext(ctx, "select password, max_todo from users where id=?", id)
+  row := repo.DB.QueryRowContext(ctx, "select hash, max_todo from users where id=$1;", id)
   err := row.Scan(&user.Hash, &user.MaxTodo)
   if err != nil {
     if err != sql.ErrNoRows {
-      log.Printf("[sqlite::UserRepo::ByUser - row scan error: %v]\n", err)
+      log.Printf("[postgresql::UserRepo::ByUser - row scan error: %v]\n", err)
       return nil, err
     }
     return nil, core.ErrUserNotFound
@@ -63,11 +66,11 @@ func (repo *UserRepo) ById(ctx context.Context, id string) (*core.User, error) {
 func (repo *UserRepo) Validate(ctx context.Context, userId string, password string) (*core.User, error) {
   var user core.User
   user.ID = userId
-  row := repo.DB.QueryRowContext(ctx, "select password, max_todo from users where id=?", userId)
+  row := repo.DB.QueryRowContext(ctx, `select hash, max_todo from users where id = $1;`, userId)
   err := row.Scan(&user.Hash, &user.MaxTodo)
   if err != nil {
     if err != sql.ErrNoRows {
-      log.Printf("[sqlite::UserRepo::ValidateUser - row scan error: %v]\n", err)
+      log.Printf("[postgresql::UserRepo::ValidateUser - row scan error: %v]\n", err)
       return nil, err
     }
     return nil, core.ErrWrongIdPassword

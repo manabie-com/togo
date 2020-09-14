@@ -37,10 +37,28 @@ func respondData(w http.ResponseWriter, status int, data interface{}) {
 func jsonUserHandler(userRepo core.UserRepo, jwtKey string, expireTime time.Duration) *UserHandler {
   return &UserHandler{
     userRepo: userRepo,
-    parseIdPassword: func(r *http.Request) (id, password string) {
-      id = r.FormValue("user_id")
-      password = r.FormValue("password")
-      return
+    parseUserInfoPassword: func(r *http.Request) (user *core.User, s string, err error) {
+      temp := struct {
+        Id       string `json:"id"`
+        Password string `json:"password"`
+        MaxTodo  int    `json:"max_todo"`
+      }{}
+      err = json.NewDecoder(r.Body).Decode(&temp)
+      if err != nil {
+        return nil, "", err
+      }
+      return &core.User{ID: temp.Id, MaxTodo: temp.MaxTodo}, temp.Password, nil
+    },
+    parseIdPassword: func(r *http.Request) (string, string, error) {
+      temp := struct {
+        Id       string `json:"id"`
+        Password string `json:"password"`
+      }{}
+      err := json.NewDecoder(r.Body).Decode(&temp)
+      if err != nil {
+        return "", "", err
+      }
+      return temp.Id, temp.Password, nil
     },
     generateToken: func(user *core.User) (s string, err error) {
       claims := jwt.MapClaims{}
@@ -58,8 +76,19 @@ func jsonUserHandler(userRepo core.UserRepo, jwtKey string, expireTime time.Dura
     },
     respondLoginError: func(w http.ResponseWriter, r *http.Request, err error) {
       switch err {
-      case ErrWrongIdPassword:
+      case core.ErrWrongIdPassword:
         respondError(w, http.StatusUnauthorized, "User ID or password incorrect")
+      default:
+        respondUnknownError(w)
+      }
+    },
+    respondSignupSuccess: func(w http.ResponseWriter, r *http.Request, token string) {
+      respondData(w, http.StatusOK, token)
+    },
+    respondSignupError: func(w http.ResponseWriter, r *http.Request, err error) {
+      switch err {
+      case core.ErrUserAlreadyExists:
+        respondError(w, http.StatusConflict, "User already exists")
       default:
         respondUnknownError(w)
       }

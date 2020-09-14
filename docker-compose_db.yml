@@ -13,17 +13,5 @@ services:
     volumes:
     - pgdata:/var/lib/postgresql/data/ # persist data
 
-  togo:
-    build: .
-    ports:
-      - 8888:8888
-    restart: always
-    environment:
-      DATASOURCE: "host=database port=5432 user=admin password=admin dbname=togo_db sslmode=disable"
-      JWT_KEY: "wqGyEBBfPK9w3Lxw"
-      TOGO_PORT: 8888
-    depends_on:
-      - database
-
 volumes:
   pgdata:

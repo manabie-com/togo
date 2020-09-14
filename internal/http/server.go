@@ -29,7 +29,8 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) routes() {
-  s.router.HandleFunc("/login", s.userHandler.Login).Methods(http.MethodGet)
+  s.router.HandleFunc("/signup", s.userHandler.Signup).Methods(http.MethodPost)
+  s.router.HandleFunc("/login", s.userHandler.Login).Methods(http.MethodPost)
 
   s.router.Handle("/tasks", ApplyFunc(s.taskHandler.Index, s.authMw.SetUser,
     s.authMw.RequireUser)).Methods(http.MethodGet)
