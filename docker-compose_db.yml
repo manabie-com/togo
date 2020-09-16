@@ -11,7 +11,20 @@ services:
     ports:
       - 5432:5432 # expose port
     volumes:
-    - pgdata:/var/lib/postgresql/data/ # persist data
+    - pgdata_dev:/var/lib/postgresql/data/ # persist data
+
+  database_test:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: togo_db
+    ports:
+      - 15432:5432 # expose port
+    volumes:
+      - pgdata_dev_test:/var/lib/postgresql/data/ # persist data
 
 volumes:
-  pgdata:
+  pgdata_dev:
+  pgdata_dev_test:

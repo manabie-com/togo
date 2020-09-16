@@ -1,4 +1,4 @@
-package http
+package middleware
 
 import "net/http"
 
@@ -14,3 +14,4 @@ func Apply(h http.Handler, mws ...Middleware) http.Handler {
 func ApplyFunc(h http.HandlerFunc, mws ...Middleware) http.Handler {
   return Apply(h, mws...)
 }
+

@@ -11,7 +11,7 @@ services:
     ports:
       - 5432:5432 # expose port
     volumes:
-    - pgdata:/var/lib/postgresql/data/ # persist data
+    - pgdata_prod:/var/lib/postgresql/data/ # persist data
 
   togo:
     build: .
@@ -19,11 +19,13 @@ services:
       - 8888:8888
     restart: always
     environment:
-      DATASOURCE: "host=database port=5432 user=admin password=admin dbname=togo_db sslmode=disable"
+      POSTGRES_DATASOURCE: "host=database port=5432 user=admin password=admin dbname=togo_db sslmode=disable"
+      SQLITE_DATASOURCE: "./data.db"
+      DIALECT: "postgres"
       JWT_KEY: "wqGyEBBfPK9w3Lxw"
-      TOGO_PORT: 8888
+      TOGO_PORT: "8888"
     depends_on:
       - database
 
 volumes:
-  pgdata:
+  pgdata_prod:

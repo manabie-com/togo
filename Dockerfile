@@ -14,5 +14,7 @@ from alpine
 workdir /app
 copy --from=builder /app/togo .
 copy --from=builder /app/data.db .
+copy --from=builder /app/data_test.db .
+copy --from=builder /app/frontend ./frontend
 expose 8888
 entrypoint ["./togo"]

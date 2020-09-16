@@ -19,6 +19,8 @@ type TaskRepo interface {
   Create(ctx context.Context, task *Task) error
   ByUser(ctx context.Context, userId string) ([]*Task, error)
   ByUserDate(ctx context.Context, userId string, date time.Time) ([]*Task, error)
+  Update(ctx context.Context, user *User, task *Task) error
+  Delete(ctx context.Context, user *User, id string) error
 }
 
 type Hasher interface {

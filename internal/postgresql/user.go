@@ -35,7 +35,7 @@ func (repo *UserRepo) Create(ctx context.Context, user *core.User, password stri
   if err != nil {
     if pqErr, ok := err.(*pq.Error); ok && pqErr.Code != pqErrUniqueConstraint {
       log.Printf("[postgresql::UserRepo::Create - exec error: %v (%v)]\n", err, pqErr.Code)
-      return err
+      return nil
     } else if !ok {
       log.Printf("[postgresql::UserRepo::Create - exec error: %v]\n", err)
       return err

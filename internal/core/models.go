@@ -7,6 +7,8 @@ type Task struct {
   Content     string
   UserID      string
   CreatedDate time.Time
+  Done        bool
+  Deleted     bool
 }
 
 type User struct {

@@ -2,10 +2,8 @@ package http
 
 import (
   "github.com/gorilla/mux"
-  "github.com/manabie-com/togo/internal/core"
-  "log"
+  "github.com/manabie-com/togo/internal/http/middleware"
   "net/http"
-  "time"
 )
 
 type Server struct {
@@ -16,37 +14,57 @@ type Server struct {
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-  log.Printf("[http::Server::ServeHTTP - %s %s]\n", r.Method, r.URL.Path)
-  w.Header().Set("Access-Control-Allow-Origin", "*")
-  w.Header().Set("Access-Control-Allow-Headers", "*")
-  w.Header().Set("Access-Control-Allow-Methods", "*")
-
-  if r.Method == http.MethodOptions {
-    w.WriteHeader(http.StatusOK)
-    return
-  }
   s.router.ServeHTTP(w, r)
 }
 
 func (s *Server) routes() {
+  s.router.Use(func(handler http.Handler) http.Handler {
+    return middleware.Logger{}.MethodAndPath(handler)
+  })
+  s.router.Use(func(handler http.Handler) http.Handler {
+    return middleware.CORS{}.All(handler)
+  })
   s.router.HandleFunc("/signup", s.userHandler.Signup).Methods(http.MethodPost)
   s.router.HandleFunc("/login", s.userHandler.Login).Methods(http.MethodPost)
+  s.router.Handle("/logout", middleware.ApplyFunc(s.userHandler.Logout, s.authMw.SetUser,
+    s.authMw.RequireUser)).Methods(http.MethodPost)
 
-  s.router.Handle("/tasks", ApplyFunc(s.taskHandler.Index, s.authMw.SetUser,
+  s.router.Handle("/tasks", middleware.ApplyFunc(s.taskHandler.Index, s.authMw.SetUser,
     s.authMw.RequireUser)).Methods(http.MethodGet)
-  s.router.Handle("/tasks", ApplyFunc(s.taskHandler.Create, s.authMw.SetUser, s.authMw.RequireUser)).Methods(http.MethodPost)
+  s.router.Handle("/tasks", middleware.ApplyFunc(s.taskHandler.Create, s.authMw.SetUser,
+    s.authMw.RequireUser)).Methods(http.MethodPost)
+  s.router.Handle("/tasks", middleware.ApplyFunc(s.taskHandler.Update, s.authMw.SetUser,
+    s.authMw.RequireUser)).Methods(http.MethodPut)
+  s.router.Handle("/tasks", middleware.ApplyFunc(s.taskHandler.Delete, s.authMw.SetUser,
+    s.authMw.RequireUser)).Methods(http.MethodDelete)
 }
 
-func JSONServer(jwtKey string, userRepo core.UserRepo, taskRepo core.TaskRepo) *Server {
-  server := Server{
-    authMw: &jsonAuthMw{
-      jwtKey: jwtKey,
-      userRepo: userRepo,
-    },
-    userHandler: jsonUserHandler(userRepo, jwtKey, time.Minute*15),
-    taskHandler: jsonTaskHandler(taskRepo),
-    router: mux.NewRouter(),
+type ServerOption func(*Server)
+
+func WithAuthMiddleware(mw AuthMw) ServerOption {
+  return func(server *Server) {
+    server.authMw = mw
   }
-  server.routes()
-  return &server
+}
+
+func WithUserHandler(handler *UserHandler) ServerOption {
+  return func(server *Server) {
+    server.userHandler = handler
+  }
+}
+
+func WithTaskHandler(handler *TaskHandler) ServerOption {
+  return func(server *Server) {
+    server.taskHandler = handler
+  }
+}
+
+func NewServer(opts ...ServerOption) *Server {
+  s := Server{}
+  for _, opt := range opts {
+    opt(&s)
+  }
+  s.router = mux.NewRouter()
+  s.routes()
+  return &s
 }
