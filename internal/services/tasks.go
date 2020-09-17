@@ -11,13 +11,13 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/storages"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	sqllite "github.com/manabie-com/togo/internal/storages/database"
 )
 
 // ToDoService implement HTTP server
 type ToDoService struct {
 	JWTKey string
-	Store  *sqllite.LiteDB
+	Store  *sqllite.Vendor
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
@@ -118,7 +118,21 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	t.ID = uuid.New().String()
 	t.UserID = userID
 	t.CreatedDate = now.Format("2006-01-02")
-
+	u := s.Store.GetUserById(req.Context(), userID)
+	createdTasks, err := s.Store.RetrieveTasks(req.Context(),sql.NullString{
+		String: userID,
+		Valid:  true,
+	},sql.NullString{
+		String: t.CreatedDate,
+		Valid:  true,
+	});
+	if int32(len(createdTasks)) >= u.MaxTodo {
+		resp.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": "User daily limit is reached",
+		})
+		return
+	}
 	resp.Header().Set("Content-Type", "application/json")
 
 	err = s.Store.AddTask(req.Context(), t)
