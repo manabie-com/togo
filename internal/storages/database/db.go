@@ -14,8 +14,8 @@ type Vendor struct {
 
 // RetrieveTasks returns tasks if match userID AND createDate.
 func (vendor *Vendor) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*storages.Task, error) {
-	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = $1 AND created_date = $2`
-	rows, err := vendor.DB.QueryContext(ctx, stmt, userID, createdDate)
+	stmt := `SELECT id, content, user_id, created_date, status  FROM tasks WHERE user_id = $1 AND created_date = $2 AND status <> $3`
+	rows, err := vendor.DB.QueryContext(ctx, stmt, userID, createdDate, storages.DELETED)
 	if err != nil {
 		return nil, err
 	}
@@ -24,7 +24,7 @@ func (vendor *Vendor) RetrieveTasks(ctx context.Context, userID, createdDate sql
 	var tasks []*storages.Task
 	for rows.Next() {
 		t := &storages.Task{}
-		err := rows.Scan(&t.ID, &t.Content, &t.UserID, &t.CreatedDate)
+		err := rows.Scan(&t.ID, &t.Content, &t.UserID, &t.CreatedDate, &t.Status)
 		if err != nil {
 			return nil, err
 		}
@@ -40,8 +40,8 @@ func (vendor *Vendor) RetrieveTasks(ctx context.Context, userID, createdDate sql
 
 // AddTask adds a new task to DB
 func (vendor *Vendor) AddTask(ctx context.Context, t *storages.Task) error {
-	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES ($1, $2, $3, $4)`
-	_, err := vendor.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
+	stmt := `INSERT INTO tasks (id, content, user_id, created_date,status) VALUES ($1, $2, $3, $4, $5)`
+	_, err := vendor.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate, storages.ACTIVE)
 	if err != nil {
 		return err
 	}
@@ -70,4 +70,14 @@ func (vendor *Vendor) GetUserById(ctx context.Context, userID string) *storages.
 		return nil
 	}
 	return u
+}
+
+
+func (vendor *Vendor) UpdateTodoStatus(ctx context.Context, taskId sql.NullString, status storages.TaskType) error {
+	stmt := `UPDATE tasks SET status = $1 WHERE id = $2`
+	_, err := vendor.DB.ExecContext(ctx, stmt, status ,taskId)
+	if err != nil {
+		return err
+	}
+	return nil
 }

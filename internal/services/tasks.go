@@ -42,14 +42,16 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 			resp.WriteHeader(http.StatusUnauthorized)
 			return
 		}
-
 		switch req.Method {
 		case http.MethodGet:
 			s.listTasks(resp, req)
 		case http.MethodPost:
 			s.addTask(resp, req)
+		case http.MethodDelete:
+			s.removeTask(resp, req)
+		case http.MethodPut:
+			s.completeOrActiveTask(resp,req)
 		}
-		return
 	}
 }
 
@@ -118,6 +120,7 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	t.ID = uuid.New().String()
 	t.UserID = userID
 	t.CreatedDate = now.Format("2006-01-02")
+	t.Status = storages.ACTIVE;
 	u := s.Store.GetUserById(req.Context(), userID)
 	createdTasks, err := s.Store.RetrieveTasks(req.Context(),sql.NullString{
 		String: userID,
@@ -148,7 +151,6 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 		"data": t,
 	})
 }
-
 func value(req *http.Request, p string) sql.NullString {
 	return sql.NullString{
 		String: req.FormValue(p),
@@ -199,4 +201,40 @@ func userIDFromCtx(ctx context.Context) (string, bool) {
 	v := ctx.Value(userAuthKey(0))
 	id, ok := v.(string)
 	return id, ok
+}
+
+
+func (s *ToDoService) removeTask(resp http.ResponseWriter, req *http.Request) {
+	err := s.Store.UpdateTodoStatus(req.Context(), value(req, "id"), storages.DELETED);
+	resp.Header().Set("Content-Type", "application/json")
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+	json.NewEncoder(resp).Encode(map[string]string{
+		"data": "true",
+	})
+}
+
+
+func (s *ToDoService) completeOrActiveTask(resp http.ResponseWriter, req *http.Request) {
+	var taskType storages.TaskType = storages.ACTIVE
+	if req.FormValue("isComplete") == "true" {
+		taskType = storages.COMPLETED
+	}
+	err := s.Store.UpdateTodoStatus(req.Context(), value(req, "id"), taskType);
+	resp.Header().Set("Content-Type", "application/json")
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+	json.NewEncoder(resp).Encode(map[string]string{
+		"data": "true",
+	})
 }
