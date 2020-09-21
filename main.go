@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"github.com/manabie-com/togo/constants"
 	"github.com/manabie-com/togo/internal/services"
-	sqllite "github.com/manabie-com/togo/internal/storages/database"
+	"github.com/manabie-com/togo/internal/storages/database"
 	"log"
 	"net/http"
 
@@ -27,7 +27,7 @@ func main() {
 	}
 	err = http.ListenAndServe(":5050", &services.ToDoService{
 		JWTKey: constants.JWT_KEY,
-		Store: &sqllite.Vendor{
+		Store: &database.Vendor{
 			DB: db,
 		},
 	})
