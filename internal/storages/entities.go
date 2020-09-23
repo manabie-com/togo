@@ -12,4 +12,5 @@ type Task struct {
 type User struct {
 	ID       string
 	Password string
+	MaxTodo  int
 }

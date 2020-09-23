@@ -61,3 +61,15 @@ func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) b
 
 	return true
 }
+
+func (l *LiteDB) FindUserByID(ctx context.Context, userID string) (*storages.User, error) {
+	stmt := `SELECT id, max_todo FROM users WHERE id = ?`
+	row := l.DB.QueryRowContext(ctx, stmt, userID)
+	u := &storages.User{}
+	err := row.Scan(&u.ID, &u.MaxTodo)
+	if err != nil {
+		return nil, err
+	}
+
+	return u, nil
+}
