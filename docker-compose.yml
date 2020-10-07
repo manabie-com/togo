@@ -1,0 +1,25 @@
+version: "3"
+services:
+  togoapp:
+    container_name: togoapp
+    build: .
+    ports:
+      - 5050:5050
+    restart: on-failure
+    depends_on:
+      - postgres_db
+
+  postgres_db:
+    image: postgres
+    container_name: postgres_db
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+   
+volumes:
+  db-data:
