@@ -1,8 +1,12 @@
 package app
 
 import (
+	"context"
 	"fmt"
 	"log"
+	"os"
+	"os/signal"
+	"time"
 
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
@@ -32,9 +36,14 @@ func Run() {
 	if err := config.Load(); err != nil {
 		log.Fatalf("Load config error: %v", err)
 	} else {
-		fmt.Println("App running...")
-		// TODO:
+		fmt.Println("App started...")
+
 		db, err := util.CreateConnectionDB()
+		defer func() {
+			fmt.Println("App shutdown")
+			db.Close()
+		}()
+
 		if err != nil {
 			log.Fatalf("Connect DB error: %v", err)
 		}
@@ -43,12 +52,26 @@ func Run() {
 		// Load modules
 		module.LoadModules(e, db)
 
+		//TODO: https://echo.labstack.com/cookbook/graceful-shutdown
+
 		// Start server
-		port := config.Cfg.Port
-		if config.Cfg.Env == "local" {
-			log.Fatal(e.Start("localhost:" + port))
-		} else {
-			log.Fatal(e.Start(":" + port))
+		go func() {
+			address := ":" + config.Cfg.Port
+			if config.Cfg.Env == "local" {
+				address = "localhost:" + config.Cfg.Port
+			}
+			fmt.Println(e.Start(address))
+		}()
+
+		// Wait for interrupt signal to gracefully shutdown the server with
+		// a timeout of 10 seconds.
+		quit := make(chan os.Signal)
+		signal.Notify(quit, os.Interrupt)
+		<-quit
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		if err := e.Shutdown(ctx); err != nil {
+			e.Logger.Fatal(err)
 		}
 	}
 }
