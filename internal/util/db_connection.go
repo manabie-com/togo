@@ -27,7 +27,7 @@ func CreateConnectionDB() (*gorm.DB, error) {
 		fmt.Printf("Database %s connected\n", Driver)
 
 		if config.Cfg.Env == "local" {
-			db.LogMode(false)
+			db.LogMode(true)
 		}
 	}
 	return db, err

@@ -27,7 +27,7 @@ func (repo *repository) AddTask(userID uint64, content string) (Task, error) {
 
 func (repo *repository) RetrieveTasks(userID uint64, createdDate string) ([]Task, error) {
 	var tasks []Task
-	err := repo.db.Find(&tasks).Error
+	err := repo.db.Where("user_id = ? AND to_char(created_date,'YYYY-MM-DD') = ?", userID, createdDate).Find(&tasks).Error
 	if err != nil {
 		return tasks, err
 	}

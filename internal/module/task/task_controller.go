@@ -52,7 +52,7 @@ func (controller *controller) AddTask(c echo.Context) error {
 func (controller *controller) RetrieveTasks(c echo.Context) error {
 
 	userID := middleware.GetUserIDFromContext(c)
-	createdDate := c.Param("created_date")
+	createdDate := c.QueryParam("created_date")
 
 	tasks, err := controller.taskService.RetrieveTasks(userID, createdDate)
 	if err != nil {
