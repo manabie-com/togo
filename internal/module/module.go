@@ -23,6 +23,6 @@ func LoadModules(e *echo.Echo, db *gorm.DB) {
 
 	taskRepo, _ := task.NewTaskRepository(db)
 	taskService, _ := task.NewTaskService(taskRepo)
-	taskController, _ := task.NewTaskController(taskService)
+	taskController, _ := task.NewTaskController(taskService, userService)
 	task.LoadRoute(e, taskController)
 }
