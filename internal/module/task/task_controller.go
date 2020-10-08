@@ -1,7 +1,6 @@
 package task
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -14,6 +13,7 @@ import (
 type Controller interface {
 	AddTask(c echo.Context) error
 	RetrieveTasks(c echo.Context) error
+	AddManyTasks(c echo.Context) error
 }
 
 // NewTaskController func
@@ -55,8 +55,6 @@ func (controller *controller) AddTask(c echo.Context) error {
 		})
 	}
 
-	fmt.Println(numTasksToday, user)
-
 	if numTasksToday >= user.MaxTodo {
 		return c.JSON(http.StatusTooManyRequests, map[string]string{
 			"error": "Limited create task for today",
@@ -91,5 +89,53 @@ func (controller *controller) RetrieveTasks(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"data": tasks,
+	})
+}
+
+func (controller *controller) AddManyTasks(c echo.Context) error {
+	userID := middleware.GetUserIDFromContext(c)
+
+	addTasksDTO := new(dto.AddTasksDTO)
+	if err := c.Bind(addTasksDTO); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": err.Error(),
+		})
+	}
+	if err := c.Validate(addTasksDTO); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": err.Error(),
+		})
+	}
+
+	user, err := controller.userService.GetUser(userID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": err.Error(),
+		})
+	}
+
+	numTasksToday, err := controller.taskService.NumTasksToday(userID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": err.Error(),
+		})
+	}
+
+	if len(addTasksDTO.Contents)+numTasksToday >= user.MaxTodo {
+		return c.JSON(http.StatusTooManyRequests, map[string]string{
+			"error": "Limited create task for today",
+		})
+	}
+
+	err = controller.taskService.AddManyTasks(userID, addTasksDTO.Contents)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": err.Error(),
+		})
+	}
+	remainTaskToday := user.MaxTodo - numTasksToday - len(addTasksDTO.Contents)
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"remainTaskToday": remainTaskToday,
 	})
 }

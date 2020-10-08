@@ -16,4 +16,6 @@ func LoadRoute(e *echo.Echo, controller Controller) {
 
 	g.POST("", controller.AddTask)
 	g.GET("", controller.RetrieveTasks)
+
+	g.POST("/many", controller.AddManyTasks)
 }
