@@ -1,11 +1,11 @@
 package module
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo/v4"
 	"github.com/manabie-com/togo/internal/module/auth"
 	"github.com/manabie-com/togo/internal/module/task"
 	"github.com/manabie-com/togo/internal/module/user"
+	"gorm.io/gorm"
 )
 
 // LoadModules func

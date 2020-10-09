@@ -9,13 +9,13 @@ import (
 	"github.com/manabie-com/togo/internal/module/user"
 	"github.com/manabie-com/togo/internal/util"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"gorm.io/gorm"
 )
 
 func migrate(db *gorm.DB) {
 	// Drop tables
-	db.DropTable(&user.User{})
+
+	db.Migrator().DropTable(&user.User{})
 
 	// Migrate
 	db.AutoMigrate(&user.User{})
@@ -26,7 +26,7 @@ func seed(db *gorm.DB) {
 	password := util.HashPassword("12345678")
 
 	var userData = &user.User{
-		Email:    "test@yopmail.com",
+		Email:    "test@mail.com",
 		Password: password,
 		MaxTodo:  5,
 	}
@@ -42,7 +42,13 @@ func main() {
 
 	if db, err := util.CreateConnectionDB(); err != nil {
 	} else {
-		defer db.Close()
+		defer func() {
+			dbSQL, ok := db.DB()
+			if ok != nil {
+				defer dbSQL.Close()
+			}
+		}()
+
 		migrate(db)
 		seed(db)
 

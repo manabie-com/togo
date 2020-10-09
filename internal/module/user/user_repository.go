@@ -3,7 +3,7 @@ package user
 import (
 	"errors"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 // Repository interface
@@ -33,7 +33,7 @@ func (repo *repository) GetUser(id uint64) (User, error) {
 	if err != nil {
 		return u, err
 	}
-	if gorm.IsRecordNotFoundError(err) {
+	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return u, errors.New("user not found")
 	}
 	return u, err
@@ -46,7 +46,7 @@ func (repo *repository) GetUserByEmail(email string) (User, error) {
 	if err != nil {
 		return u, err
 	}
-	if gorm.IsRecordNotFoundError(err) {
+	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return u, errors.New("user not found")
 	}
 	return u, err
@@ -64,12 +64,12 @@ func (repo *repository) GetAll() ([]User, error) {
 
 func (repo *repository) CheckEmailExist(email string) (bool, error) {
 	var err error
-	count := 0
-	err = repo.db.Raw("SELECT count(*) FROM users WHERE email = ?", email).Count(&count).Error
+	var count int64
+	err = repo.db.Raw("SELECT count(*) FROM users WHERE email = ?", email).Scan(&count).Error
 	if err != nil {
 		return count > 0, err
 	}
-	if gorm.IsRecordNotFoundError(err) {
+	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return count > 0, errors.New("user not found")
 	}
 	return count > 0, err

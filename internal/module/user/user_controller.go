@@ -5,6 +5,7 @@ import (
 
 	"github.com/manabie-com/togo/internal/config"
 	"github.com/manabie-com/togo/internal/dto"
+	"github.com/manabie-com/togo/internal/middleware"
 	"github.com/manabie-com/togo/internal/util"
 
 	"github.com/labstack/echo/v4"
@@ -13,6 +14,7 @@ import (
 // Controller interface
 type Controller interface {
 	Register(c echo.Context) error
+	GetUser(c echo.Context) error
 }
 
 // NewUserController func
@@ -52,7 +54,6 @@ func (controller *controller) Register(c echo.Context) error {
 	}
 
 	password := util.HashPassword(registerDTO.Password)
-	println("password:", password)
 
 	user, err := controller.userService.Create(registerDTO.Email, password, config.Cfg.MaxTodoDefault)
 	if err != nil {
@@ -61,4 +62,18 @@ func (controller *controller) Register(c echo.Context) error {
 		})
 	}
 	return c.JSON(http.StatusOK, user.ToObject())
+}
+
+func (controller *controller) GetUser(c echo.Context) error {
+	userID := middleware.GetUserIDFromContext(c)
+
+	user, err := controller.userService.GetUser(userID)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": err.Error(),
+		})
+	}
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"data": user.ToObject(),
+	})
 }

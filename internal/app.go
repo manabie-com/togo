@@ -41,7 +41,10 @@ func Run() {
 		db, err := util.CreateConnectionDB()
 		defer func() {
 			fmt.Println("App shutdown")
-			db.Close()
+			dbSQL, ok := db.DB()
+			if ok != nil {
+				defer dbSQL.Close()
+			}
 		}()
 
 		if err != nil {

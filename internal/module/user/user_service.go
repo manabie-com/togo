@@ -50,6 +50,6 @@ func (service *service) CheckEmailExist(email string) (bool, error) {
 	return service.repository.CheckEmailExist(email)
 }
 
-func (service *service) Create(email string, password string,maxToto int) (User, error) {
+func (service *service) Create(email string, password string, maxToto int) (User, error) {
 	return service.repository.Create(email, password, maxToto)
 }

@@ -1,19 +1,17 @@
 package task
 
 import (
-	"fmt"
-	"strings"
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 // Repository interface
 type Repository interface {
 	AddTask(userID uint64, content string) (Task, error)
-	AddManyTasks(userID uint64, contents []string) error
+	AddManyTasks(userID uint64, contents []string) ([]Task, error)
 	RetrieveTasks(userID uint64, createdDate string) ([]Task, error)
-	NumTasksToday(userID uint64) (int, error)
+	NumTasksToday(userID uint64) (int64, error)
 }
 
 // NewTaskRepository func
@@ -29,39 +27,27 @@ type repository struct {
 
 func (repo *repository) AddTask(userID uint64, content string) (Task, error) {
 	task := Task{Content: content, UserID: userID, Status: StatusActive}
-	repo.db.Create(&task)
+
+	err := repo.db.Create(&task).Error
+	if err != nil {
+		return Task{}, err
+	}
 	return task, nil
 }
 
-func (repo *repository) AddManyTasks(userID uint64, contents []string) error {
-
-	tx := repo.db.Begin()
-	valueStrings := []string{}
-	valueArgs := []interface{}{}
-
-	for _, content := range contents {
-		valueStrings = append(valueStrings, "(?, ?, ?)")
-
-		valueArgs = append(valueArgs, content)
-		valueArgs = append(valueArgs, userID)
-		valueArgs = append(valueArgs, StatusActive)
-	}
+func (repo *repository) AddManyTasks(userID uint64, contents []string) ([]Task, error) {
 
 	// WARNING: Max parameters PostgreSQL supports is 65535
-	stmt := fmt.Sprintf("INSERT INTO tasks (content, user_id, status) VALUES %s", strings.Join(valueStrings, ","))
 
-	err := tx.Exec(stmt, valueArgs...).Error
-	if err != nil {
-		tx.Rollback()
-		return err
+	tasks := []Task{}
+	for _, content := range contents {
+		tasks = append(tasks, Task{Content: content, UserID: userID, Status: StatusActive})
 	}
-
-	err = tx.Commit().Error
+	err := repo.db.Create(&tasks).Error
 	if err != nil {
-		return err
+		return []Task{}, err
 	}
-
-	return nil
+	return tasks, nil
 }
 
 func (repo *repository) RetrieveTasks(userID uint64, createdDate string) ([]Task, error) {
@@ -73,14 +59,15 @@ func (repo *repository) RetrieveTasks(userID uint64, createdDate string) ([]Task
 	return tasks, nil
 }
 
-func (repo *repository) NumTasksToday(userID uint64) (int, error) {
-	var result int
+func (repo *repository) NumTasksToday(userID uint64) (int64, error) {
 	currentTime := time.Now()
 
-	err := repo.db.Table("tasks").Where("user_id = ? AND to_char(created_date,'YYYY-MM-DD') = ?", userID, currentTime.Format("2006-01-02")).Count(&result).Error
+	var count int64
+	err := repo.db.Raw("SELECT count(*) FROM tasks WHERE user_id = ? AND to_char(created_date,'YYYY-MM-DD') = ?", userID, currentTime.Format("2006-01-02")).Scan(&count).Error
+
 	if err != nil {
 		return 0, err
 	}
 
-	return result, nil
+	return count, nil
 }
