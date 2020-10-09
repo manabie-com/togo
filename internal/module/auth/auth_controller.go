@@ -43,7 +43,7 @@ func (controller *controller) Login(c echo.Context) error {
 
 	user, err := controller.userService.Login(loginDTO)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{
+		return c.JSON(http.StatusUnauthorized, map[string]string{
 			"error": err.Error(),
 		})
 	}

@@ -37,11 +37,11 @@ func (service *service) GetUser(id uint64) (User, error) {
 func (service *service) Login(dto *dto.LoginDTO) (User, error) {
 	user, err := service.repository.GetUserByEmail(dto.Email)
 	if err != nil {
-		return User{}, errors.New("wrong email")
+		return User{}, errors.New("Wrong email or password")
 	}
 	err = util.CompareHashPassword(dto.Password, user.Password)
 	if err != nil {
-		return User{}, errors.New("wrong password")
+		return User{}, errors.New("Wrong email or password")
 	}
 	return user, nil
 }
