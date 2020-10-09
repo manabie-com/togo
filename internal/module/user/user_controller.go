@@ -61,7 +61,7 @@ func (controller *controller) Register(c echo.Context) error {
 			"error": err.Error(),
 		})
 	}
-	return c.JSON(http.StatusOK, user.ToObject())
+	return c.JSON(http.StatusCreated, user.ToObject())
 }
 
 func (controller *controller) GetUser(c echo.Context) error {

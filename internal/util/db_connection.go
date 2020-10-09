@@ -7,24 +7,22 @@ import (
 	"time"
 
 	"github.com/manabie-com/togo/internal/config"
-
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
 // CreateConnectionDB func
-func CreateConnectionDB() (*gorm.DB, error) {
-	Driver := config.Cfg.DbDriver
-	DbHost := config.Cfg.DbHost
-	DbUser := config.Cfg.DbUser
-	DbPassword := config.Cfg.DbPassword
-	DbName := config.Cfg.DbName
-	DbPort := config.Cfg.DbPort
+func CreateConnectionDB(cfg config.Config) (*gorm.DB, error) {
+	DbHost := cfg.DbHost
+	DbUser := cfg.DbUser
+	DbPassword := cfg.DbPassword
+	DbName := cfg.DbName
+	DbPort := cfg.DbPort
 	dsn := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s", DbHost, DbPort, DbUser, DbName, DbPassword)
 
 	logLevel := logger.Warn
-	if config.Cfg.Env == "local" {
+	if cfg.Env == "local" {
 		logLevel = logger.Info
 	}
 	newLogger := logger.New(
@@ -42,8 +40,7 @@ func CreateConnectionDB() (*gorm.DB, error) {
 
 	if err != nil {
 		log.Panicf("Error: %s", err)
-	} else {
-		fmt.Printf("Database %s connected\n", Driver)
 	}
+
 	return db, err
 }

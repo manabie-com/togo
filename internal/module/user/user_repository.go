@@ -29,7 +29,7 @@ type repository struct {
 func (repo *repository) GetUser(id uint64) (User, error) {
 	var err error
 	var u User
-	err = repo.db.Raw("SELECT * FROM users WHERE id = ?", id).Scan(&u).Error
+	err = repo.db.Raw(`SELECT * FROM "users" WHERE id = ?`, id).Scan(&u).Error
 	if err != nil {
 		return u, err
 	}
@@ -42,7 +42,7 @@ func (repo *repository) GetUser(id uint64) (User, error) {
 func (repo *repository) GetUserByEmail(email string) (User, error) {
 	var err error
 	var u User
-	err = repo.db.Raw("SELECT * FROM users WHERE email = ?", email).Scan(&u).Error
+	err = repo.db.Raw(`SELECT * FROM "users" WHERE email = ?`, email).Scan(&u).Error
 	if err != nil {
 		return u, err
 	}
@@ -65,7 +65,7 @@ func (repo *repository) GetAll() ([]User, error) {
 func (repo *repository) CheckEmailExist(email string) (bool, error) {
 	var err error
 	var count int64
-	err = repo.db.Raw("SELECT count(*) FROM users WHERE email = ?", email).Scan(&count).Error
+	err = repo.db.Raw(`SELECT count(*) FROM "users" WHERE email = ?`, email).Scan(&count).Error
 	if err != nil {
 		return count > 0, err
 	}

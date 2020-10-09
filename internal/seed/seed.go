@@ -41,7 +41,7 @@ func main() {
 		log.Fatalf("Error env, %v", err)
 	}
 
-	if db, err := util.CreateConnectionDB(); err != nil {
+	if db, err := util.CreateConnectionDB(config.Cfg); err != nil {
 	} else {
 		defer func() {
 			dbSQL, ok := db.DB()

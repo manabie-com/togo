@@ -38,7 +38,7 @@ func Run() {
 	} else {
 		fmt.Println("App started...")
 
-		db, err := util.CreateConnectionDB()
+		db, err := util.CreateConnectionDB(config.Cfg)
 		defer func() {
 			fmt.Println("App shutdown")
 			dbSQL, ok := db.DB()

@@ -11,7 +11,6 @@ import (
 type Config struct {
 	Env            string
 	Port           string
-	DbDriver       string
 	DbHost         string
 	DbUser         string
 	DbPassword     string
@@ -34,7 +33,6 @@ func Load() error {
 		Cfg = Config{
 			Env:            os.Getenv("ENV"),
 			Port:           os.Getenv("PORT"),
-			DbDriver:       os.Getenv("DB_DRIVER"),
 			DbHost:         os.Getenv("DB_HOST"),
 			DbUser:         os.Getenv("DB_USER"),
 			DbPassword:     os.Getenv("DB_PASSWORD"),
