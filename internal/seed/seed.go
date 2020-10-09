@@ -16,6 +16,7 @@ func migrate(db *gorm.DB) {
 	// Drop tables
 
 	db.Migrator().DropTable(&user.User{})
+	db.Migrator().DropTable(&task.Task{})
 
 	// Migrate
 	db.AutoMigrate(&user.User{})
