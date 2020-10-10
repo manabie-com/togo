@@ -1,7 +1,6 @@
 package task
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -61,7 +60,6 @@ func (controller *controller) AddTask(c echo.Context) error {
 			"error": "Limited create task for today",
 		})
 	}
-	fmt.Println(numTasksToday, int(numTasksToday), user.MaxTodo)
 
 	task, err := controller.taskService.AddTask(userID, addTaskDTO.Content)
 	if err != nil {
@@ -71,7 +69,7 @@ func (controller *controller) AddTask(c echo.Context) error {
 	}
 
 	remainTaskToday := user.MaxTodo - int(numTasksToday) - 1
-	return c.JSON(http.StatusOK, map[string]interface{}{
+	return c.JSON(http.StatusCreated, map[string]interface{}{
 		"data":            task,
 		"remainTaskToday": remainTaskToday,
 	})
@@ -122,7 +120,7 @@ func (controller *controller) AddManyTasks(c echo.Context) error {
 			"error": err.Error(),
 		})
 	}
-	fmt.Println(numTasksToday, len(addTasksDTO.Contents), user.MaxTodo)
+
 	if len(addTasksDTO.Contents)+int(numTasksToday) >= user.MaxTodo {
 		return c.JSON(http.StatusTooManyRequests, map[string]string{
 			"error": "Limited create task for today",
@@ -137,7 +135,7 @@ func (controller *controller) AddManyTasks(c echo.Context) error {
 	}
 	remainTaskToday := user.MaxTodo - int(numTasksToday) - len(addTasksDTO.Contents)
 
-	return c.JSON(http.StatusOK, map[string]interface{}{
+	return c.JSON(http.StatusCreated, map[string]interface{}{
 		"data":            tasks,
 		"remainTaskToday": remainTaskToday,
 	})

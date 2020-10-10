@@ -26,12 +26,28 @@ func migrate(db *gorm.DB) {
 func seed(db *gorm.DB) {
 	password := util.HashPassword("12345678")
 
-	var userData = &user.User{
+	var user = &user.User{
 		Email:    "test@mail.com",
 		Password: password,
 		MaxTodo:  5,
 	}
-	db.Save(userData)
+	db.Save(user)
+
+	fmt.Println(user)
+	var task1 = &task.Task{
+		Content: "content 01",
+		Status:  task.StatusActive,
+		UserID:  user.ID,
+	}
+	db.Save(task1)
+
+	var task2 = &task.Task{
+		Content: "content 02",
+		Status:  task.StatusActive,
+		UserID:  user.ID,
+	}
+	db.Save(task2)
+
 }
 
 func main() {

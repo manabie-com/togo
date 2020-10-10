@@ -63,7 +63,7 @@ func (repo *repository) NumTasksToday(userID uint64) (int64, error) {
 	currentTime := time.Now()
 
 	var count int64
-	err := repo.db.Raw("SELECT count(*) FROM tasks WHERE user_id = ? AND to_char(created_date,'YYYY-MM-DD') = ?", userID, currentTime.Format("2006-01-02")).Scan(&count).Error
+	err := repo.db.Raw("SELECT count(*) FROM tasks WHERE status = ? AND user_id = ? AND to_char(created_date,'YYYY-MM-DD') = ?", StatusActive, userID, currentTime.Format("2006-01-02")).Scan(&count).Error
 
 	if err != nil {
 		return 0, err

@@ -15,9 +15,8 @@ import (
 
 type Suite struct {
 	suite.Suite
-	DB   *gorm.DB
-	mock sqlmock.Sqlmock
-
+	DB         *gorm.DB
+	mock       sqlmock.Sqlmock
 	repository Repository
 }
 
@@ -44,8 +43,8 @@ func (s *Suite) SetupSuite() {
 
 }
 
-func (s *Suite) AfterTest(_, _ string) {
-	require.NoError(s.T(), s.mock.ExpectationsWereMet())
+func (s *Suite) TearDownSuite() {
+
 }
 
 func TestUserRepository(t *testing.T) {
@@ -86,5 +85,7 @@ func (s *Suite) TestUserRepository_GetAll() {
 
 	l, err := s.repository.GetAll()
 	require.NoError(s.T(), err)
-	require.Len(s.T(), l, 2)
+	if assert.NotNil(s.T(), l) {
+		require.Len(s.T(), l, 2)
+	}
 }

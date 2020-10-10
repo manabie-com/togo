@@ -3,3 +3,6 @@ startDB:
 
 seedDB:
 	go run ./internal/seed/seed.go
+
+test:
+	go test -v -cover -covermode=atomic ./internal/module/...

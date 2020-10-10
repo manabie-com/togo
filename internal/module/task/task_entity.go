@@ -13,6 +13,6 @@ type Task struct {
 	ID          uint64    `gorm:"primary_key;auto_increment" json:"id"`
 	Content     string    `gorm:"type:varchar(2048)" json:"content"`
 	Status      string    `gorm:"type:varchar(64)" json:"status"`
-	UserID      uint64    `gorm:"type:integer" json:"user_id"`
+	UserID      uint64    `gorm:"index;type:integer" json:"user_id"`
 	CreatedDate time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_date"`
 }
