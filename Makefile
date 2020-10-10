@@ -5,4 +5,9 @@ seedDB:
 	go run ./internal/seed/seed.go
 
 test:
-	go test -v -cover -covermode=atomic ./internal/module/...
+	go test -v -cover -covermode=atomic ./internal/module/
+	go test -v -cover -covermode=atomic ./internal/module/user
+	go test -v -cover -covermode=atomic ./internal/module/task
+
+stop:
+	docker-compose down

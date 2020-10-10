@@ -190,10 +190,46 @@ func (s *Suite) Test_04_AddTask() {
 			statusCode: http.StatusCreated,
 			data:       `{"content":"content 01"}`,
 		},
+		{
+			url:        `/tasks`,
+			statusCode: http.StatusBadRequest,
+			data:       ``,
+		},
 	}
 
 	for i, sample := range samples {
 		fmt.Printf("TestAddTask: %v/%v\n", i+1, len(samples))
+
+		req := httptest.NewRequest(http.MethodPost, sample.url, strings.NewReader(sample.data))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		req.Header.Add("Authorization", s.token)
+
+		rec := httptest.NewRecorder()
+		s.e.ServeHTTP(rec, req)
+
+		if assert.Equal(s.T(), sample.statusCode, rec.Code) == false {
+			fmt.Println("rec", rec)
+		}
+	}
+}
+
+func (s *Suite) Test_04_AddManyTasks() {
+	samples := []struct {
+		url        string
+		statusCode int
+		data       string
+	}{
+		{
+			url:        `/tasks/many`,
+			statusCode: http.StatusTooManyRequests,
+			data: `{
+				"contents": ["content 01","content 02","content 03","content 04","content 05"]
+			}`,
+		},
+	}
+
+	for i, sample := range samples {
+		fmt.Printf("AddManyTasks: %v/%v\n", i+1, len(samples))
 
 		req := httptest.NewRequest(http.MethodPost, sample.url, strings.NewReader(sample.data))
 		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)

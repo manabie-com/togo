@@ -23,7 +23,7 @@ func CreateConnectionDB(cfg config.Config) (*gorm.DB, error) {
 
 	logLevel := logger.Warn
 	if cfg.Env == "local" {
-		logLevel = logger.Info
+		logLevel = logger.Warn
 	}
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags),
