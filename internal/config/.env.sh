@@ -1,0 +1,6 @@
+export server_port="5050"
+export pg_host="localhost"
+export pg_port="5433"
+export pg_user="manabie"
+export pg_password="manabie"
+export pg_db_name="manabie_db"

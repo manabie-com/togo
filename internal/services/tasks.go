@@ -6,18 +6,19 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/storages"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	postgres "github.com/manabie-com/togo/internal/storages/postgres"
 )
 
 // ToDoService implement HTTP server
 type ToDoService struct {
 	JWTKey string
-	Store  *sqllite.LiteDB
+	Store  *postgres.PostgresDB
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
@@ -55,7 +56,8 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
 	id := value(req, "user_id")
-	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
+	pwd := value(req, "password")
+	if !s.Store.ValidateUser(req.Context(), id, pwd) {
 		resp.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": "incorrect user_id/pwd",
@@ -121,6 +123,14 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 
 	resp.Header().Set("Content-Type", "application/json")
 
+	if err = s.validateAddTask(req, t.UserID, t.CreatedDate); err != nil {
+		resp.WriteHeader(http.StatusNotAcceptable)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+
 	err = s.Store.AddTask(req.Context(), t)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
@@ -156,6 +166,7 @@ func (s *ToDoService) createToken(id string) (string, error) {
 
 func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
 	token := req.Header.Get("Authorization")
+	token = strings.Split(token, "Bearer ")[1]
 
 	claims := make(jwt.MapClaims)
 	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {

@@ -38,6 +38,29 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.Null
 	return tasks, nil
 }
 
+// CountTasks returns number of tasks if match userID AND createDate.
+func (l *LiteDB) CountTasks(ctx context.Context, userID, createdDate sql.NullString) (uint, error) {
+	stmt := `SELECT count(id) FROM tasks WHERE user_id = ? AND created_date = ?`
+	row, err := l.DB.QueryContext(ctx, stmt, userID, createdDate)
+	if err != nil {
+		return 0, err
+	}
+	defer row.Close()
+
+	var numOfTasks uint
+	row.Next()
+	err = row.Scan(&numOfTasks)
+	if err != nil {
+		return 0, err
+	}
+
+	if err := row.Err(); err != nil {
+		return 0, err
+	}
+
+	return numOfTasks, nil
+}
+
 // AddTask adds a new task to DB
 func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
 	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
@@ -60,4 +83,17 @@ func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) b
 	}
 
 	return true
+}
+
+// GetMaxToDo returns max to do task per day if match userID
+func (l *LiteDB) GetMaxToDo(ctx context.Context, userID sql.NullString) (uint, error) {
+	stmt := `SELECT max_todo FROM users WHERE id = ?`
+	row := l.DB.QueryRowContext(ctx, stmt, userID)
+	u := &storages.User{}
+	err := row.Scan(&u.MaxTodo)
+	if err != nil {
+		return 0, err
+	}
+
+	return u.MaxTodo, nil
 }
