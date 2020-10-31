@@ -39,7 +39,7 @@ func main() {
 
 	mux := mux.InitWithLogger(logging.Logger.Desugar())
 
-	transport.NewTogoHandler(mux, &todoUs, cfg.JWTKey)
+	transport.NewTogoHandler(mux, todoUs, cfg.JWTKey)
 	logging.Logger.Infof("Listening at %s", cfg.Address)
 	http.ListenAndServe(":5050", mux)
 }

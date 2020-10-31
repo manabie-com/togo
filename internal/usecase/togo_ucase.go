@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 
+	togo "github.com/manabie-com/togo/internal"
 	"github.com/manabie-com/togo/internal/entities"
 	"github.com/manabie-com/togo/internal/storages"
 )
@@ -13,15 +14,15 @@ type togoUsecase struct {
 }
 
 // NewTogoUsecase will create new a togoUsecase object representation of togo.Usecase interface
-func NewTogoUsecase(d storages.Storages) togoUsecase {
+func NewTogoUsecase(d storages.Storages) togo.Usecase {
 	return togoUsecase{togoStorages: d}
 }
-func (t *togoUsecase) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*entities.Task, error) {
+func (t togoUsecase) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]entities.Task, error) {
 	return t.togoStorages.RetrieveTasks(context.Background(), userID, createdDate)
 }
-func (t *togoUsecase) AddTask(ctx context.Context, task *entities.Task) error {
+func (t togoUsecase) AddTask(ctx context.Context, task entities.Task) error {
 	return t.togoStorages.AddTask(ctx, task)
 }
-func (t *togoUsecase) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
+func (t togoUsecase) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
 	return t.togoStorages.ValidateUser(ctx, userID, pwd)
 }

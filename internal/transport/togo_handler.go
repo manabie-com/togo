@@ -109,14 +109,14 @@ func (t *TogoHandler) listTasks(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string][]*entities.Task{
+	json.NewEncoder(resp).Encode(map[string][]entities.Task{
 		"data": tasks,
 	})
 }
 
 func (t *TogoHandler) addTask(resp http.ResponseWriter, req *http.Request) {
-	task := &entities.Task{}
-	err := json.NewDecoder(req.Body).Decode(t)
+	task := entities.Task{}
+	err := json.NewDecoder(req.Body).Decode(&task)
 	defer req.Body.Close()
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
@@ -140,7 +140,7 @@ func (t *TogoHandler) addTask(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string]*entities.Task{
+	json.NewEncoder(resp).Encode(map[string]entities.Task{
 		"data": task,
 	})
 }

@@ -15,6 +15,7 @@ Key | Example value | Description
 `LDB_PATH` | `./data.db` | the path of sqlite 
 
 #### 5. Added logging for this project with json format, for easily tracing log (error), using zap here (uber).
+#### 6. Remove unnecessary pointer variable (replaced by variable) to avoid memory allocate in the runtime to much.
 -----
 ### Overview
 This is a simple backend for a good old todo service, right now this service can handle login/list/create simple tasks.  
