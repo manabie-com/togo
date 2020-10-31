@@ -11,6 +11,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/cors"
 	"github.com/google/uuid"
 	togo "github.com/manabie-com/togo/internal"
 	"github.com/manabie-com/togo/internal/entities"
@@ -30,6 +31,12 @@ func NewTogoHandler(mux *chi.Mux, us togo.Usecase, JWTKey string) {
 	}
 	// StripSlashes remove redundant slash in endpoint, example /login/ -> /login
 	mux.Use(middleware.StripSlashes)
+	// Add CORS
+	mux.Use(cors.Handler(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{"GET", "POST", "OPTIONS"},
+		AllowedHeaders: []string{"Accept", "Authorization", "Content-Type"},
+	}))
 
 	mux.Get("/login", handler.getAuthToken)
 	mux.Group(func(r chi.Router) {
