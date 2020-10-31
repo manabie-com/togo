@@ -1,3 +1,10 @@
+## Cadidate: Danh Nguyen Hoang - nguyendanhtravel@gmail.com
+### I. My improvement
+#### 1. Split `services` layer to `use case` and `transport` layer
+#### 2. Change to use `chi-go router`. Why chi-go? Because it lightweight, idiomatic, and composable router for building Go HTTP services. Especially, chi's router is based on `Radix trie`, so it'll handle the request as fast as possible if we have a lot of handlers in the future.
+
+
+-----
 ### Overview
 This is a simple backend for a good old todo service, right now this service can handle login/list/create simple tasks.  
 To make it run:

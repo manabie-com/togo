@@ -5,8 +5,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/manabie-com/togo/internal/services"
+	"github.com/go-chi/chi"
 	"github.com/manabie-com/togo/internal/storages/sqlite"
+	"github.com/manabie-com/togo/internal/transport"
+	"github.com/manabie-com/togo/internal/usecase"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -15,11 +17,9 @@ func main() {
 	if err != nil {
 		log.Fatal("error opening db", err)
 	}
-
-	http.ListenAndServe(":5050", &services.ToDoService{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
-		DB: &sqlite.LiteDB{
-			DB: db,
-		},
-	})
+	newLiteDB := &sqlite.LiteDB{DB: db}
+	todoUs := usecase.NewTogoUsecase(newLiteDB)
+	mux := chi.NewRouter()
+	transport.NewTogoHandler(mux, &todoUs, "wqGyEBBfPK9w3Lxw")
+	http.ListenAndServe(":5050", mux)
 }
