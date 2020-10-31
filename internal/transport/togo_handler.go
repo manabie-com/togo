@@ -38,7 +38,7 @@ func NewTogoHandler(mux *chi.Mux, us togo.Usecase, JWTKey string) {
 		AllowedHeaders: []string{"Accept", "Authorization", "Content-Type"},
 	}))
 
-	mux.Get("/login", handler.getAuthToken)
+	mux.Post("/login", handler.getAuthToken)
 	mux.Group(func(r chi.Router) {
 		r.Use(handler.authMiddleware)
 		r.Get("/tasks", handler.listTasks)
@@ -97,8 +97,12 @@ type ToDoService struct {
 // }
 
 func (t *TogoHandler) getAuthToken(resp http.ResponseWriter, req *http.Request) {
-	id := value(req, "user_id")
-	if !t.togoUsecase.ValidateUser(req.Context(), id, value(req, "password")) {
+	user := entities.User{}
+	decode := json.NewDecoder(req.Body)
+	//ignore object keys which do not match any non-ignored, exported fields (in struct)
+	decode.DisallowUnknownFields()
+	decode.Decode(&user)
+	if !t.togoUsecase.ValidateUser(req.Context(), convertNullString(user.ID), convertNullString(user.Password)) {
 		resp.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": "incorrect user_id/pwd",
@@ -107,7 +111,7 @@ func (t *TogoHandler) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 	}
 	resp.Header().Set("Content-Type", "application/json")
 
-	token, err := t.createToken(id.String)
+	token, err := t.createToken(user.ID)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
@@ -184,7 +188,12 @@ func value(req *http.Request, p string) sql.NullString {
 		Valid:  true,
 	}
 }
-
+func convertNullString(s string) sql.NullString {
+	if s == "" {
+		return sql.NullString{}
+	}
+	return sql.NullString{String: s, Valid: true}
+}
 func (t *TogoHandler) createToken(id string) (string, error) {
 	atClaims := jwt.MapClaims{}
 	atClaims["user_id"] = id

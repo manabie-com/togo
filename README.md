@@ -2,6 +2,7 @@
 ### I. My improvement
 #### 1. Split `services` layer to `use case` and `transport` layer
 #### 2. Change to use `chi-go router`. Why chi-go? Because it lightweight, idiomatic, and composable router for building Go HTTP services. Especially, chi's router is based on `Radix trie`, so it'll handle the request as fast as possible if we have a lot of handlers in the future.
+#### 3. We shouldn't use `GET` method for login because it have some problem it will save the user's information url, another user can find id and password in the browser's history,..So I have changed to `POST` method for /login
 
 
 -----
