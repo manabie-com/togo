@@ -26,3 +26,6 @@ func (t togoUsecase) AddTask(ctx context.Context, task entities.Task) error {
 func (t togoUsecase) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
 	return t.togoStorages.ValidateUser(ctx, userID, pwd)
 }
+func (t togoUsecase) GetMaxTaskTodo(ctx context.Context, userID string) (int, error) {
+	return t.togoStorages.GetMaxTaskTodo(ctx, userID)
+}

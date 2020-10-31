@@ -61,3 +61,12 @@ func (l LiteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bo
 
 	return true
 }
+
+// GetMaxTaskTodo get the number of limit task accordinate with userID
+func (l LiteDB) GetMaxTaskTodo(ctx context.Context, userID string) (int, error) {
+	stmt := `SELECT max_todo FROM "users" WHERE id = ?`
+	row := l.DB.QueryRowContext(ctx, stmt, userID)
+	var maxTask int
+	err := row.Scan(&maxTask)
+	return maxTask, err
+}

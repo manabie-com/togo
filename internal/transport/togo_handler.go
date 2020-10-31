@@ -125,10 +125,32 @@ func (t *TogoHandler) addTask(resp http.ResponseWriter, req *http.Request) {
 
 	now := time.Now()
 	userID, _ := userIDFromCtx(req.Context())
+	maxTaskTodo, err := t.togoUsecase.GetMaxTaskTodo(req.Context(), userID)
+	if err != nil {
+		logger.Errorw("Can't get max task todo", "detail", err)
+		resp.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	tasks, err := t.togoUsecase.RetrieveTasks(
+		req.Context(),
+		sql.NullString{
+			String: userID,
+			Valid:  true,
+		},
+		sql.NullString{String: now.Format("2006-01-02"), Valid: true},
+	)
+	if len(tasks) >= maxTaskTodo {
+		resp.Header().Set("Content-Type", "application/json")
+		resp.WriteHeader(http.StatusForbidden)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"message": "You have exceeded the number of creating task per day.",
+		})
+		return
+	}
+
 	task.ID = uuid.New().String()
 	task.UserID = userID
 	task.CreatedDate = now.Format("2006-01-02")
-
 	resp.Header().Set("Content-Type", "application/json")
 
 	err = t.togoUsecase.AddTask(req.Context(), task)
