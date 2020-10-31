@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"log"
 	"net/http"
 	"time"
 
@@ -15,8 +14,10 @@ import (
 	"github.com/google/uuid"
 	togo "github.com/manabie-com/togo/internal"
 	"github.com/manabie-com/togo/internal/entities"
-	"github.com/manabie-com/togo/internal/storages"
+	"github.com/manabie-com/togo/logging"
 )
+
+var logger = logging.Logger.With("package", "transport")
 
 //TogoHandler represent the httphandler for togo
 type TogoHandler struct {
@@ -58,50 +59,12 @@ func (t *TogoHandler) authMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-type ToDoService struct {
-	JWTKey string
-	DB     storages.Storages
-}
-
-// func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
-// 	log.Println(req.Method, req.URL.Path)
-// 	resp.Header().Set("Access-Control-Allow-Origin", "*")
-// 	resp.Header().Set("Access-Control-Allow-Headers", "*")
-// 	resp.Header().Set("Access-Control-Allow-Methods", "*")
-
-// 	if req.Method == http.MethodOptions {
-// 		resp.WriteHeader(http.StatusOK)
-// 		return
-// 	}
-
-// 	switch req.URL.Path {
-// 	case "/login":
-// 		s.getAuthToken(resp, req)
-// 		return
-// 	case "/tasks":
-// 		var ok bool
-// 		req, ok = s.validToken(req)
-// 		if !ok {
-// 			resp.WriteHeader(http.StatusUnauthorized)
-// 			return
-// 		}
-
-// 		switch req.Method {
-// 		case http.MethodGet:
-// 			s.listTasks(resp, req)
-// 		case http.MethodPost:
-// 			s.addTask(resp, req)
-// 		}
-// 		return
-// 	}
-// }
-
 func (t *TogoHandler) getAuthToken(resp http.ResponseWriter, req *http.Request) {
 	user := entities.User{}
 	decode := json.NewDecoder(req.Body)
 	//ignore object keys which do not match any non-ignored, exported fields (in struct)
 	decode.DisallowUnknownFields()
-	decode.Decode(&user)
+	err := decode.Decode(&user)
 	if !t.togoUsecase.ValidateUser(req.Context(), convertNullString(user.ID), convertNullString(user.Password)) {
 		resp.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(resp).Encode(map[string]string{
@@ -206,19 +169,19 @@ func (t *TogoHandler) createToken(id string) (string, error) {
 	return token, nil
 }
 
-func (s *TogoHandler) validToken(req *http.Request) (*http.Request, bool) {
+func (t *TogoHandler) validToken(req *http.Request) (*http.Request, bool) {
 	token := req.Header.Get("Authorization")
 
 	claims := make(jwt.MapClaims)
-	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
-		return []byte(s.JWTKey), nil
+	parsedToken, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
+		return []byte(t.JWTKey), nil
 	})
 	if err != nil {
-		log.Println(err)
+		logger.Error(err)
 		return req, false
 	}
 
-	if !t.Valid {
+	if !parsedToken.Valid {
 		return req, false
 	}
 

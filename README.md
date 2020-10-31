@@ -14,6 +14,7 @@ Key | Example value | Description
 `ADDRESS` | `:5050` | the address or port when the app will deploy
 `LDB_PATH` | `./data.db` | the path of sqlite 
 
+#### 5. Added logging for this project with json format, for easily tracing log (error), using zap here (uber).
 -----
 ### Overview
 This is a simple backend for a good old todo service, right now this service can handle login/list/create simple tasks.  
