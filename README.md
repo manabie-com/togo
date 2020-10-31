@@ -3,7 +3,16 @@
 #### 1. Split `services` layer to `use case` and `transport` layer
 #### 2. Change to use `chi-go router`. Why chi-go? Because it lightweight, idiomatic, and composable router for building Go HTTP services. Especially, chi's router is based on `Radix trie`, so it'll handle the request as fast as possible if we have a lot of handlers in the future.
 #### 3. We shouldn't use `GET` method for login because it have some problem it will save the user's information url, another user can find id and password in the browser's history,..So I have changed to `POST` method for /login
-
+#### 4.1 Add config (with file - just easy for testing) - after load config file, it will overwrite the variable environment, so this project still abide by 12factor `https://12factor.net/` .P/s: Again the config file just save the infomation for quick run, when in production, use variable environment.
+#### 4.2 Variable Environment in this project:
+Key | Example value | Description
+--- | --- | ---
+`APP_ENV` | `dev` | represent the current app environment 
+`SERVICE` | `todo` | name of the current service 
+`JWT_KEY` | `wqGyEBBfPK9w3Lxw` | JWTKey 
+`LOG_LEVEL` | `info` | represent level out the log 
+`ADDRESS` | `:5050` | the address or port when the app will deploy
+`LDB_PATH` | `./data.db` | the path of sqlite 
 
 -----
 ### Overview

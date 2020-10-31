@@ -1,0 +1,8 @@
+appEnv: "dev"
+service: "todo"
+todoStore:
+    ldb:
+        ldb_path: "./data.db"
+JWTKey: "wqGyEBBfPK9w3Lxw"
+logLevel: info
+address: :5050
