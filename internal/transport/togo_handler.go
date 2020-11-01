@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -65,6 +66,7 @@ func (t *TogoHandler) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 	//ignore object keys which do not match any non-ignored, exported fields (in struct)
 	decode.DisallowUnknownFields()
 	err := decode.Decode(&user)
+	fmt.Println(user)
 	if !t.togoUsecase.ValidateUser(req.Context(), convertNullString(user.ID), convertNullString(user.Password)) {
 		resp.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(resp).Encode(map[string]string{

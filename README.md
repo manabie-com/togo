@@ -13,10 +13,17 @@ Key | Example value | Description
 `LOG_LEVEL` | `info` | represent level out the log 
 `ADDRESS` | `:5050` | the address or port when the app will deploy
 `LDB_PATH` | `./data.db` | the path of sqlite 
+`PDB_USERNAME` | `postgres` | the username in postgres
+`PDB_PASSWORD` | `secret` | the password with username in postgres
+`PDB_HOST` | `127.0.0.1` | the host of postgres
+`PDB_PORT` | `5432` | the port of postgres 
+`PDB_DBNAME` | `todo` | the dbname of postgres 
+
 
 #### 5. Added logging for this project with json format, for easily tracing log (error), using zap here (uber).
 #### 6. Remove unnecessary pointer variable (replaced by variable) to avoid memory allocate in the runtime to much.
 #### 7. Complete main requirement, limit N task per day each user.
+#### 8. Add postgres DB to project, add prepared statement for sqlite, use pgx as driver to work with postgres database (included prepared statement). In pq's github, they still encourage use pgx.
 -----
 ### Overview
 This is a simple backend for a good old todo service, right now this service can handle login/list/create simple tasks.  

@@ -14,8 +14,11 @@ type LiteDB struct {
 
 // RetrieveTasks returns tasks if match userID AND createDate.
 func (l LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]entities.Task, error) {
-	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`
-	rows, err := l.DB.QueryContext(ctx, stmt, userID, createdDate)
+	stmt, err := l.DB.PrepareContext(ctx, `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`)
+	if err != nil {
+		return nil, err
+	}
+	rows, err := stmt.QueryContext(ctx, userID, createdDate)
 	if err != nil {
 		return nil, err
 	}
@@ -40,8 +43,11 @@ func (l LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullS
 
 // AddTask adds a new task to DB
 func (l LiteDB) AddTask(ctx context.Context, t entities.Task) error {
-	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
-	_, err := l.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
+	stmt, err := l.DB.PrepareContext(ctx, `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`)
+	if err != nil {
+		return err
+	}
+	_, err = stmt.ExecContext(ctx, t.ID, t.Content, t.UserID, t.CreatedDate)
 	if err != nil {
 		return err
 	}
@@ -51,10 +57,13 @@ func (l LiteDB) AddTask(ctx context.Context, t entities.Task) error {
 
 // ValidateUser returns tasks if match userID AND password
 func (l LiteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
-	stmt := `SELECT id FROM users WHERE id = ? AND password = ?`
-	row := l.DB.QueryRowContext(ctx, stmt, userID, pwd)
+	stmt, err := l.DB.PrepareContext(ctx, `SELECT id FROM users WHERE id = ? AND password = ?`)
+	if err != nil {
+		return false
+	}
+	row := stmt.QueryRowContext(ctx, userID, pwd)
 	u := &entities.User{}
-	err := row.Scan(&u.ID)
+	err = row.Scan(&u.ID)
 	if err != nil {
 		return false
 	}
@@ -64,9 +73,12 @@ func (l LiteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bo
 
 // GetMaxTaskTodo get the number of limit task accordinate with userID
 func (l LiteDB) GetMaxTaskTodo(ctx context.Context, userID string) (int, error) {
-	stmt := `SELECT max_todo FROM "users" WHERE id = ?`
-	row := l.DB.QueryRowContext(ctx, stmt, userID)
 	var maxTask int
-	err := row.Scan(&maxTask)
+	stmt, err := l.DB.PrepareContext(ctx, `SELECT max_todo FROM "users" WHERE id = ?`)
+	if err != nil {
+		return maxTask, err
+	}
+	row := stmt.QueryRowContext(ctx, userID)
+	err = row.Scan(&maxTask)
 	return maxTask, err
 }
