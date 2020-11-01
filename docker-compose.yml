@@ -1,0 +1,23 @@
+version: "3.5"
+services: 
+    togo:
+        build: 
+            context: .
+            dockerfile: Dockerfile
+        restart: on-failure
+        env_file: 
+            - .env
+        depends_on: 
+            - postgres
+        ports: 
+            - ${ADDRESS}:${ADDRESS}
+        # container_name: container_todo
+    postgres:
+        build: 
+            context: .
+            dockerfile: Dockerfile-postgres
+        restart: always
+        ports: 
+            - 5432:5432
+        env_file: 
+            - .env_postgres

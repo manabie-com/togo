@@ -7,6 +7,7 @@ import (
 	"github.com/georgysavva/scany/pgxscan"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/manabie-com/togo/internal/entities"
+	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -49,6 +50,7 @@ func (pdb PDB) GetHashedPass(ctx context.Context, userID sql.NullString) (string
 	row := pdb.DB.QueryRow(ctx, stmt, userID)
 	err := row.Scan(&hashedPass)
 	if err != nil {
+		zap.S().Errorw("Cant query hashed pass", "detail", err)
 		return hashedPass, err
 	}
 	return hashedPass, nil
