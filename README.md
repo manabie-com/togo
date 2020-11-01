@@ -26,6 +26,7 @@ Key | Example value | Description
 #### 8. Add postgres DB to project, add prepared statement for sqlite, use pgx as driver to work with postgres database (included prepared statement). In pq's github, they still encourage use pgx.
 #### 9. Store password in database as hashed password (`bcrypt` algorithm), to protect the user:the developer shouldn't know the user's plain password, protect against rainbow table attacks and so on and so forth.
 #### 10. New schema for postgres, postgre have uuid type (16 bytes, because it save as binary) to save memory instead use text or varchar (36 bytes) save the uuid. Attention: litesql doesn't have uuid type, so still use text.
+#### 11. Added dockerfile, docker-compose with postgres for the app.
 ```sql
 -- users definition
 

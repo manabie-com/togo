@@ -11,4 +11,4 @@ todoStore:
         pdb_dbname: "todo"
 JWTKey: "wqGyEBBfPK9w3Lxw"
 logLevel: info
-address: :5050
+address: 5050
