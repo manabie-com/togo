@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	"github.com/manabie-com/togo/internal/entities"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // LiteDB for working with sqlite
@@ -55,20 +56,29 @@ func (l LiteDB) AddTask(ctx context.Context, t entities.Task) error {
 	return nil
 }
 
-// ValidateUser returns tasks if match userID AND password
+// ValidateUser returns boolean if match userID AND password
 func (l LiteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
-	stmt, err := l.DB.PrepareContext(ctx, `SELECT id FROM users WHERE id = ? AND password = ?`)
+	hashedPass, err := l.GetHashedPass(ctx, userID)
 	if err != nil {
 		return false
 	}
-	row := stmt.QueryRowContext(ctx, userID, pwd)
-	u := &entities.User{}
-	err = row.Scan(&u.ID)
-	if err != nil {
+	// using bcrypt to save hashpass and use to check the plain pass
+	if err := bcrypt.CompareHashAndPassword([]byte(hashedPass), []byte(pwd.String)); err != nil {
 		return false
 	}
-
 	return true
+}
+
+// GetHashedPass returns hashed password if match userID AND password
+func (l LiteDB) GetHashedPass(ctx context.Context, userID sql.NullString) (string, error) {
+	var hashedPwd string
+	stmt, err := l.DB.PrepareContext(ctx, `SELECT password FROM users WHERE id = ?`)
+	if err != nil {
+		return hashedPwd, err
+	}
+	row := stmt.QueryRowContext(ctx, userID)
+	err = row.Scan(&hashedPwd)
+	return hashedPwd, err
 }
 
 // GetMaxTaskTodo get the number of limit task accordinate with userID

@@ -24,6 +24,7 @@ Key | Example value | Description
 #### 6. Remove unnecessary pointer variable (replaced by variable) to avoid memory allocate in the runtime to much.
 #### 7. Complete main requirement, limit N task per day each user.
 #### 8. Add postgres DB to project, add prepared statement for sqlite, use pgx as driver to work with postgres database (included prepared statement). In pq's github, they still encourage use pgx.
+#### 9. Store password in database as hashed password (`bcrypt` algorithm), to protect the user:the developer shouldn't know the user's plain password, protect against rainbow table attacks and so on and so forth.
 -----
 ### Overview
 This is a simple backend for a good old todo service, right now this service can handle login/list/create simple tasks.  

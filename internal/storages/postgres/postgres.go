@@ -3,11 +3,11 @@ package postgres
 import (
 	"context"
 	"database/sql"
-	"fmt"
 
 	"github.com/georgysavva/scany/pgxscan"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/manabie-com/togo/internal/entities"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // PDB for working with postgres
@@ -30,17 +30,28 @@ func (pdb PDB) AddTask(ctx context.Context, t entities.Task) error {
 	return err // if err == nil -> return nil
 }
 
-// ValidateUser returns tasks if match userID AND password
+// ValidateUser returns boolean if match userID AND password
 func (pdb PDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
-	var isExist bool
-	stmt := `SELECT exists(SELECT * FROM "users" WHERE id = $1 AND password = $2)`
-	row := pdb.DB.QueryRow(ctx, stmt, userID, pwd)
-	err := row.Scan(&isExist)
+	hashedPass, err := pdb.GetHashedPass(ctx, userID)
 	if err != nil {
-		fmt.Println(err)
 		return false
 	}
-	return isExist
+	if err := bcrypt.CompareHashAndPassword([]byte(hashedPass), []byte(pwd.String)); err != nil {
+		return false
+	}
+	return true
+}
+
+// GetHashedPass returns hashed password if match userID AND password
+func (pdb PDB) GetHashedPass(ctx context.Context, userID sql.NullString) (string, error) {
+	var hashedPass string
+	stmt := `SELECT password FROM "users" WHERE id = $1`
+	row := pdb.DB.QueryRow(ctx, stmt, userID)
+	err := row.Scan(&hashedPass)
+	if err != nil {
+		return hashedPass, err
+	}
+	return hashedPass, nil
 }
 
 // GetMaxTaskTodo get the number of limit task accordinate with userID
