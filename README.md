@@ -13,10 +13,42 @@ Key | Example value | Description
 `LOG_LEVEL` | `info` | represent level out the log 
 `ADDRESS` | `:5050` | the address or port when the app will deploy
 `LDB_PATH` | `./data.db` | the path of sqlite 
+`PDB_USERNAME` | `postgres` | the username in postgres
+`PDB_PASSWORD` | `secret` | the password with username in postgres
+`PDB_HOST` | `127.0.0.1` | the host of postgres
+`PDB_PORT` | `5432` | the port of postgres 
+`PDB_DBNAME` | `todo` | the dbname of postgres 
+
 
 #### 5. Added logging for this project with json format, for easily tracing log (error), using zap here (uber).
 #### 6. Remove unnecessary pointer variable (replaced by variable) to avoid memory allocate in the runtime to much.
 #### 7. Complete main requirement, limit N task per day each user.
+#### 8. Add postgres DB to project, add prepared statement for sqlite, use pgx as driver to work with postgres database (included prepared statement). In pq's github, they still encourage use pgx.
+#### 9. Store password in database as hashed password (`bcrypt` algorithm), to protect the user:the developer shouldn't know the user's plain password, protect against rainbow table attacks and so on and so forth.
+#### 10. New schema for postgres, postgre have uuid type (16 bytes, because it save as binary) to save memory instead use text or varchar (36 bytes) save the uuid. Attention: litesql doesn't have uuid type, so still use text.
+```sql
+-- users definition
+
+CREATE TABLE users (
+	id varchar(50) NOT NULL,
+	password varchar(60) NOT NULL,
+	max_todo INTEGER DEFAULT 5 NOT NULL,
+	CONSTRAINT users_PK PRIMARY KEY (id)
+);
+
+INSERT INTO users (id, password, max_todo) VALUES('firstUser', '$2a$10$hBqrcwfOt/HBKLXKxa48tu1SMDn62pSU8iZYWIXTxTCXQ8PoXvvi2', 5);
+
+-- tasks definition
+
+CREATE TABLE tasks (
+	id uuid NOT NULL,
+	content TEXT NOT NULL,
+	user_id varchar(50) NOT NULL,
+    created_date TEXT NOT NULL,
+	CONSTRAINT tasks_PK PRIMARY KEY (id),
+	CONSTRAINT tasks_FK FOREIGN KEY (user_id) REFERENCES users(id)
+);
+```
 -----
 ### Overview
 This is a simple backend for a good old todo service, right now this service can handle login/list/create simple tasks.  
@@ -58,7 +90,7 @@ CREATE TABLE users (
 	CONSTRAINT users_PK PRIMARY KEY (id)
 );
 
-INSERT INTO users (id, password, max_todo) VALUES('firstUser', 'example', 5);
+INSERT INTO users (id, password, max_todo) VALUES('firstUser', '$2a$10$hBqrcwfOt/HBKLXKxa48tu1SMDn62pSU8iZYWIXTxTCXQ8PoXvvi2', 5);
 
 -- tasks definition
 

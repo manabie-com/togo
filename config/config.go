@@ -10,16 +10,24 @@ import (
 // Config structure
 type (
 	Config struct {
-		AppEnv    string     `yaml:"appEnv" envconfig:"APP_ENV"`
-		Service   string     `yaml:"service" envconfig:"SERVICE"`
-		TodoStore TodoConfig `yaml:"todoStore"`
-		JWTKey    string     `yaml:"JWTKey" envconfig:"JWT_KEY"`
-		LogLevel  string     `yaml:"logLevel" envconfig:"LOG_LEVEL"`
-		Address   string     `yaml:"address" envconfig:"ADDRESS"`
+		AppEnv    string          `yaml:"appEnv" envconfig:"APP_ENV"`
+		Service   string          `yaml:"service" envconfig:"SERVICE"`
+		TodoStore TodoStoreConfig `yaml:"todoStore"`
+		JWTKey    string          `yaml:"JWTKey" envconfig:"JWT_KEY"`
+		LogLevel  string          `yaml:"logLevel" envconfig:"LOG_LEVEL"`
+		Address   string          `yaml:"address" envconfig:"ADDRESS"`
 	}
 	// TodoConfig ...
-	TodoConfig struct {
+	TodoStoreConfig struct {
 		LDB TodoLDBConfig `yaml:"ldb"` // sqlite
+		PDB TodoPDBConfig `yaml:"pdb"`
+	}
+	TodoPDBConfig struct {
+		Username string `yaml:"pdb_username" envconfig:"PDB_USERNAME"`
+		Password string `yaml:"pdb_password" envconfig:"PDB_PASSWORD"`
+		Host     string `yaml:"pdb_host" envconfig:"PDB_HOST"`
+		Port     string `yaml:"pdb_port" envconfig:"PDB_PORT"`
+		DbName   string `yaml:"pdb_dbname" envconfig:"PDB_DBNAME"`
 	}
 	// TodoLDBConfig ...
 	TodoLDBConfig struct {

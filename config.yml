@@ -3,6 +3,12 @@ service: "todo"
 todoStore:
     ldb:
         ldb_path: "./data.db"
+    pdb:
+        pdb_username: "manabie"
+        pdb_password: "secret"
+        pdb_host: "localhost"
+        pdb_port: "5432"
+        pdb_dbname: "todo"
 JWTKey: "wqGyEBBfPK9w3Lxw"
 logLevel: info
 address: :5050
