@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -22,13 +21,14 @@ var logger = logging.Logger.With("package", "transport")
 
 //TogoHandler represent the httphandler for togo
 type TogoHandler struct {
-	togoUsecase togo.Usecase
+	TogoUsecase togo.Usecase
 	JWTKey      string
 }
 
+//NewTogoHandler constructor
 func NewTogoHandler(mux *chi.Mux, us togo.Usecase, JWTKey string) {
 	handler := &TogoHandler{
-		togoUsecase: us,
+		TogoUsecase: us,
 		JWTKey:      JWTKey,
 	}
 	// StripSlashes remove redundant slash in endpoint, example /login/ -> /login
@@ -40,18 +40,18 @@ func NewTogoHandler(mux *chi.Mux, us togo.Usecase, JWTKey string) {
 		AllowedHeaders: []string{"Accept", "Authorization", "Content-Type"},
 	}))
 
-	mux.Post("/login", handler.getAuthToken)
+	mux.Post("/login", handler.GetAuthToken)
 	mux.Group(func(r chi.Router) {
 		r.Use(handler.authMiddleware)
-		r.Get("/tasks", handler.listTasks)
-		r.Post("/tasks", handler.addTask)
+		r.Get("/tasks", handler.ListTasks)
+		r.Post("/tasks", handler.AddTask)
 
 	})
 }
 func (t *TogoHandler) authMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var ok bool
-		r, ok = t.validToken(r)
+		r, ok = t.ValidToken(r)
 		if !ok {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
@@ -60,13 +60,14 @@ func (t *TogoHandler) authMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func (t *TogoHandler) getAuthToken(resp http.ResponseWriter, req *http.Request) {
+// GetAuthToken handle login, check infomation if valid -> return a token for user
+func (t *TogoHandler) GetAuthToken(resp http.ResponseWriter, req *http.Request) {
 	user := entities.User{}
 	decode := json.NewDecoder(req.Body)
 	//ignore object keys which do not match any non-ignored, exported fields (in struct)
 	decode.DisallowUnknownFields()
 	err := decode.Decode(&user)
-	if !t.togoUsecase.ValidateUser(req.Context(), convertNullString(user.ID), convertNullString(user.Password)) {
+	if !t.TogoUsecase.ValidateUser(req.Context(), convertNullString(user.ID), convertNullString(user.Password)) {
 		resp.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": "incorrect user_id/pwd",
@@ -75,7 +76,7 @@ func (t *TogoHandler) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 	}
 	resp.Header().Set("Content-Type", "application/json")
 
-	token, err := t.createToken(user.ID)
+	token, err := t.CreateToken(user.ID)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
@@ -89,7 +90,8 @@ func (t *TogoHandler) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 	})
 }
 
-func (t *TogoHandler) listTasks(resp http.ResponseWriter, req *http.Request) {
+//ListTasks get all task with a input as a date accodinate with UserID from Authorization header
+func (t *TogoHandler) ListTasks(resp http.ResponseWriter, req *http.Request) {
 	id, _ := userIDFromCtx(req.Context())
 	createdDate := value(req, "created_date")
 	if len(createdDate.String) > 10 || len(createdDate.String) < 8 {
@@ -99,7 +101,7 @@ func (t *TogoHandler) listTasks(resp http.ResponseWriter, req *http.Request) {
 		})
 		return
 	}
-	tasks, err := t.togoUsecase.RetrieveTasks(
+	tasks, err := t.TogoUsecase.RetrieveTasks(
 		req.Context(),
 		sql.NullString{
 			String: id,
@@ -123,7 +125,8 @@ func (t *TogoHandler) listTasks(resp http.ResponseWriter, req *http.Request) {
 	})
 }
 
-func (t *TogoHandler) addTask(resp http.ResponseWriter, req *http.Request) {
+//AddTask add task to the db accodinate content and Authorization header
+func (t *TogoHandler) AddTask(resp http.ResponseWriter, req *http.Request) {
 	task := entities.Task{}
 	err := json.NewDecoder(req.Body).Decode(&task)
 	defer req.Body.Close()
@@ -134,13 +137,13 @@ func (t *TogoHandler) addTask(resp http.ResponseWriter, req *http.Request) {
 
 	now := time.Now()
 	userID, _ := userIDFromCtx(req.Context())
-	maxTaskTodo, err := t.togoUsecase.GetMaxTaskTodo(req.Context(), userID)
+	maxTaskTodo, err := t.TogoUsecase.GetMaxTaskTodo(req.Context(), userID)
 	if err != nil {
 		logger.Errorw("Can't get max task todo", "detail", err)
 		resp.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	tasks, err := t.togoUsecase.RetrieveTasks(
+	tasks, err := t.TogoUsecase.RetrieveTasks(
 		req.Context(),
 		sql.NullString{
 			String: userID,
@@ -148,7 +151,6 @@ func (t *TogoHandler) addTask(resp http.ResponseWriter, req *http.Request) {
 		},
 		sql.NullString{String: now.Format("2006-01-02"), Valid: true},
 	)
-	fmt.Println("so luong task", len(tasks))
 	if len(tasks) >= maxTaskTodo {
 		resp.Header().Set("Content-Type", "application/json")
 		resp.WriteHeader(http.StatusForbidden)
@@ -163,7 +165,7 @@ func (t *TogoHandler) addTask(resp http.ResponseWriter, req *http.Request) {
 	task.CreatedDate = now.Format("2006-01-02")
 	resp.Header().Set("Content-Type", "application/json")
 
-	err = t.togoUsecase.AddTask(req.Context(), task)
+	err = t.TogoUsecase.AddTask(req.Context(), task)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
@@ -189,7 +191,9 @@ func convertNullString(s string) sql.NullString {
 	}
 	return sql.NullString{String: s, Valid: true}
 }
-func (t *TogoHandler) createToken(id string) (string, error) {
+
+//CreateToken create a token jwt with id
+func (t *TogoHandler) CreateToken(id string) (string, error) {
 	atClaims := jwt.MapClaims{}
 	atClaims["user_id"] = id
 	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
@@ -201,7 +205,8 @@ func (t *TogoHandler) createToken(id string) (string, error) {
 	return token, nil
 }
 
-func (t *TogoHandler) validToken(req *http.Request) (*http.Request, bool) {
+//ValidToken check token is valid or not
+func (t *TogoHandler) ValidToken(req *http.Request) (*http.Request, bool) {
 	token := req.Header.Get("Authorization")
 
 	claims := make(jwt.MapClaims)
