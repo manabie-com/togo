@@ -136,8 +136,8 @@ func TestAddTask(t *testing.T) {
 			true,
 		},
 		{
-			entities.Task{ID: "e35e13f8-35f3-409f-8e2f-f3e0373f1ca3", Content: "content", CreatedDate: now, UserID: "firstUser1"},
-			false,
+			entities.Task{ID: "e35e13f8-25f3-409f-8e2f-f3e0373f1ca2", Content: "content", CreatedDate: now, UserID: "firstUser"},
+			true,
 		},
 	}
 	for _, tt := range tests {
