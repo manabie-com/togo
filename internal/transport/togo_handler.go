@@ -11,6 +11,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
+	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 	togo "github.com/manabie-com/togo/internal"
 	"github.com/manabie-com/togo/internal/entities"
@@ -66,7 +67,13 @@ func (t *TogoHandler) GetAuthToken(resp http.ResponseWriter, req *http.Request) 
 	decode := json.NewDecoder(req.Body)
 	//ignore object keys which do not match any non-ignored, exported fields (in struct)
 	decode.DisallowUnknownFields()
+
 	err := decode.Decode(&user)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	if !t.TogoUsecase.ValidateUser(req.Context(), convertNullString(user.ID), convertNullString(user.Password)) {
 		resp.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(resp).Encode(map[string]string{
@@ -94,7 +101,7 @@ func (t *TogoHandler) GetAuthToken(resp http.ResponseWriter, req *http.Request) 
 func (t *TogoHandler) ListTasks(resp http.ResponseWriter, req *http.Request) {
 	id, _ := userIDFromCtx(req.Context())
 	createdDate := value(req, "created_date")
-	if len(createdDate.String) > 10 || len(createdDate.String) < 8 {
+	if len(createdDate.String) != 10 {
 		resp.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(resp).Encode(map[string]string{
 			"message": "Invalid created_date",
@@ -132,6 +139,13 @@ func (t *TogoHandler) AddTask(resp http.ResponseWriter, req *http.Request) {
 	defer req.Body.Close()
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	validator := validator.New()
+	err = validator.Struct(task)
+	if err != nil {
+		resp.WriteHeader(http.StatusBadRequest)
 		return
 	}
 

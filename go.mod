@@ -7,6 +7,7 @@ require (
 	github.com/georgysavva/scany v0.2.7
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/cors v1.1.1
+	github.com/go-playground/validator/v10 v10.4.1
 	github.com/golang-migrate/migrate/v4 v4.13.0
 	github.com/google/uuid v1.1.1
 	github.com/jackc/pgx/v4 v4.9.1
