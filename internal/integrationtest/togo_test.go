@@ -23,7 +23,7 @@ import (
 	"github.com/manabie-com/togo/internal/transport"
 	"github.com/manabie-com/togo/internal/usecase"
 	"github.com/ory/dockertest/v3"
-	"gotest.tools/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 var (

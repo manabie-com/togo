@@ -14,8 +14,8 @@ import (
 
 	"github.com/manabie-com/togo/internal/entities"
 	"github.com/manabie-com/togo/internal/transport"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gotest.tools/assert"
 )
 
 const jwt_key = "wqGyEBBfPK9w3Lxw"

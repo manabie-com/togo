@@ -29,6 +29,7 @@ Key | Example value | Description
 #### 11. Added dockerfile, docker-compose with postgres for the app.
 #### 12. Add dockertest to working integration test with postgres. With dockertest, it'll create a new container to work with the test, after the end of the test, automatically purge this container. After run the test, I decide to make validator value for all field (will be implement later). (integrationtest/togo_test.go)
 #### 13. Add unit test for `service` (internal/transport/togo_handler_test.go) now is `transport` and `usecase` (but not cover `usecase`).
+#### 14. Unfortunately, with pgx, we can't use mocksql to test unittest, but we can use dockertest integration with the postgres container to test each function. (internal/storages/postgres/postgres_test.go)
 ```sql
 -- users definition
 
