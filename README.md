@@ -27,6 +27,7 @@ Key | Example value | Description
 #### 9. Store password in database as hashed password (`bcrypt` algorithm), to protect the user:the developer shouldn't know the user's plain password, protect against rainbow table attacks and so on and so forth.
 #### 10. New schema for postgres, postgre have uuid type (16 bytes, because it save as binary) to save memory instead use text or varchar (36 bytes) save the uuid. Attention: litesql doesn't have uuid type, so still use text.
 #### 11. Added dockerfile, docker-compose with postgres for the app.
+#### 12. Add dockertest to working integration test with postgres. With dockertest, it'll create a new container to work with the test, after the end of the test, automatically purge this container. After run the test, I decide to make validator value for all field (will be implement later).
 ```sql
 -- users definition
 

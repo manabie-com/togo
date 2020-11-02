@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -90,13 +91,21 @@ func (t *TogoHandler) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 
 func (t *TogoHandler) listTasks(resp http.ResponseWriter, req *http.Request) {
 	id, _ := userIDFromCtx(req.Context())
+	createdDate := value(req, "created_date")
+	if len(createdDate.String) > 10 || len(createdDate.String) < 8 {
+		resp.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"message": "Invalid created_date",
+		})
+		return
+	}
 	tasks, err := t.togoUsecase.RetrieveTasks(
 		req.Context(),
 		sql.NullString{
 			String: id,
 			Valid:  true,
 		},
-		value(req, "created_date"),
+		createdDate,
 	)
 
 	resp.Header().Set("Content-Type", "application/json")
@@ -139,6 +148,7 @@ func (t *TogoHandler) addTask(resp http.ResponseWriter, req *http.Request) {
 		},
 		sql.NullString{String: now.Format("2006-01-02"), Valid: true},
 	)
+	fmt.Println("so luong task", len(tasks))
 	if len(tasks) >= maxTaskTodo {
 		resp.Header().Set("Content-Type", "application/json")
 		resp.WriteHeader(http.StatusForbidden)
