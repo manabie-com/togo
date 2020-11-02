@@ -198,8 +198,8 @@ func TestAddTask(t *testing.T) {
 					t.Fatal("Can't get number of task", err)
 				}
 				for i := 0; i < maxTodo; i++ {
-					req := httptest.NewRequest(http.MethodPost, tests[0].url, bytes.NewBuffer([]byte(tests[0].jsonRequest)))
-					req.Header.Set("Authorization", tests[0].authorizationHeader)
+					req := httptest.NewRequest(http.MethodPost, tests[idx].url, bytes.NewBuffer([]byte(tests[idx].jsonRequest)))
+					req.Header.Set("Authorization", tests[idx].authorizationHeader)
 					rec := httptest.NewRecorder()
 					mux.ServeHTTP(rec, req)
 				}
@@ -255,7 +255,7 @@ func TestMain(m *testing.M) {
 			fmt.Sprintf("postgres://postgres:secret@localhost:%s/%s?sslmode=disable", resource.GetPort("5432/tcp"), dbName),
 		)
 		mux = chi.NewRouter()
-		Storages := postgres.PDB{DB: Pool}
+		Storages = postgres.PDB{DB: Pool}
 		todoUs := usecase.NewTogoUsecase(Storages)
 		transport.NewTogoHandler(mux, todoUs, jwt_key)
 		if err != nil {
