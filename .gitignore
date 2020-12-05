@@ -4,6 +4,7 @@
 *.dll
 *.so
 *.dylib
+app
 
 # Test binary, built with `go test -c`
 *.test
@@ -12,8 +13,18 @@
 *.out
 
 # Dependency directories (remove the comment below to include it)
-# vendor/
+vendor
+node_modules
 
 out/
 
+# ide
 .idea
+.vscode
+
+# air file
+tmp/
+
+
+
+

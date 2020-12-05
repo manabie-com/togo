@@ -1,0 +1,33 @@
+version: "3"
+services:
+  postgres: 
+    image: 'postgres:latest'
+    ports: 
+      - '5433:5432'
+  redis:
+    image: 'redis:alpine'
+    ports: 
+      - '6380:6379'
+  nginx:
+    restart: always
+    build: 
+      dockerfile: Dockerfile.dev 
+      context: ./nginx 
+    ports: 
+      - '8080:80'
+  manago:
+    build: 
+      dockerfile: Dockerfile.dev
+      context: ./server
+    volumes: 
+      - ./server:/app
+  manado:
+    build: 
+      dockerfile: Dockerfile.dev
+      context: ./client
+    volumes: 
+      - /app/node_modules
+      - ./client:/app
+
+  
+

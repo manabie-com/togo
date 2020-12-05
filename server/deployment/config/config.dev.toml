@@ -1,0 +1,9 @@
+[redis]
+  host = "redis"
+  post = "6379"
+
+[postgres]
+  user = "postgres"
+  password = "postgres_password"
+  database = "postgres"
+  port = "5432"

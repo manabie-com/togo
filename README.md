@@ -1,6 +1,6 @@
 # **Tasks to do**:
     - [x] Make plan.
-    - [ ] Setup Dev environment: Nginx, React App, Golang Server, Redis Cache, Postgres Database.
+    - [x] Setup Dev environment: Nginx, React App, Golang Server, Redis Cache, Postgres Database.
     - [ ] Write Integration Test.
     - [ ] Structure Server Code. 
     - [ ] Write Unit Test.
