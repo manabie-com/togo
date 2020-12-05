@@ -5,9 +5,9 @@ package task
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/manabie-com/togo/pkg/define"
-	"github.com/manabie-com/togo/pkg/dtos"
-	"github.com/manabie-com/togo/pkg/dtos/task"
+	"github.com/HoangVyDuong/togo/pkg/define"
+	"github.com/HoangVyDuong/togo/pkg/dtos"
+	"github.com/HoangVyDuong/togo/pkg/dtos/task"
 	"io/ioutil"
 	"net/http"
 	"reflect"

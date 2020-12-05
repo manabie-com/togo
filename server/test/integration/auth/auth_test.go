@@ -4,8 +4,8 @@ package auth
 
 import (
 	"encoding/json"
-	"github.com/manabie-com/togo/pkg/define"
-	"github.com/manabie-com/togo/pkg/dtos"
+	"github.com/HoangVyDuong/togo/pkg/define"
+	"github.com/HoangVyDuong/togo/pkg/dtos"
 	"net/http"
 	"reflect"
 	"testing"
