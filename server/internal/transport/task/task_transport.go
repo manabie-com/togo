@@ -4,46 +4,27 @@ import (
 	"context"
 	"encoding/json"
 	taskHandler "github.com/HoangVyDuong/togo/internal/handler/task"
-	"github.com/HoangVyDuong/togo/internal/kit"
+	"github.com/HoangVyDuong/togo/internal/transport/middleware"
 	"github.com/HoangVyDuong/togo/pkg/dtos"
 	taskDTO "github.com/HoangVyDuong/togo/pkg/dtos/task"
+	"github.com/HoangVyDuong/togo/pkg/kit"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
 
-type Endpoint interface {
-	GetTasks(ctx context.Context, request interface{}) (response interface{}, err error)
-	CreateTask(ctx context.Context, request interface{}) (response interface{}, err error)
-}
-
-type taskEndpoint struct {
-	taskHandler taskHandler.Handler
-}
-
-func WithEndpoint(taskHandler taskHandler.Handler) Endpoint{
-	return &taskEndpoint{taskHandler}
-}
-
-func (te *taskEndpoint) GetTasks(ctx context.Context, request interface{}) (response interface{}, err error) {
-	req := request.(dtos.EmptyRequest)
-	return te.taskHandler.GetTasks(ctx, req)
-}
-
-func (te *taskEndpoint) CreateTask(ctx context.Context, request interface{}) (response interface{}, err error) {
-	req := request.(taskDTO.CreateTaskRequest)
-	return te.taskHandler.CreateTask(ctx, req)
-}
-
-func WithHandler(router *httprouter.Router, taskHandler taskHandler.Handler) {
-	router.Handler("GET", "/tasks", kit.NewServer(
-		WithEndpoint(taskHandler).GetTasks,
+func MakeHandler(router *httprouter.Router, taskHandler taskHandler.Handler) {
+	router.Handler("GET", "/tasks", kit.WithCORS(kit.NewServer(
+		middleware.Authenticate(
+			Endpoint(taskHandler).GetTasks),
 		decodeGetTaskRequest,
-	))
+	)))
 
-	router.Handler("CREATE", "/tasks", kit.NewServer(
-		WithEndpoint(taskHandler).CreateTask,
+	router.Handler("CREATE", "/tasks", kit.WithCORS(kit.NewServer(
+		middleware.Authenticate(
+			middleware.LimitCreateTask(
+				Endpoint(taskHandler).CreateTask)),
 		decodeCreateTaskRequest,
-	))
+	)))
 
 }
 

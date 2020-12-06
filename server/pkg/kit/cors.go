@@ -1,4 +1,4 @@
-package middleware
+package kit
 
 import (
 	"log"

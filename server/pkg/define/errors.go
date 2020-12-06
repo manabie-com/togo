@@ -1,10 +1,12 @@
 package define
 
+import "errors"
+
 var (
-	Unauthenticated = "Unauthenticated"
-	FailedValidation = "Validate Request Failed"
-	DatabaseError = "Error From Database"
-	AccountNotAuthorized = "Account Not Authorized"
-	AccountNotExist = "Account Not Exist"
-	Unknown = "Unknown"
+	Unauthenticated = errors.New("request unauthenticated")
+	FailedValidation = errors.New("validate request failed")
+	DatabaseError = errors.New("error from database")
+	AccountNotAuthorized = errors.New("account not authorized")
+	AccountNotExist = errors.New("account not exist")
+	Unknown = errors.New("unknown")
 )
