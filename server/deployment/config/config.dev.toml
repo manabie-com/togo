@@ -7,3 +7,6 @@
   password = "postgres_password"
   database = "postgres"
   port = "5432"
+
+[server]
+    address = ":5050"

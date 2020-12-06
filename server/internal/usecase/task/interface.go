@@ -7,8 +7,8 @@ import (
 
 //Repository interface
 type Repository interface {
-	GetTasks(ctx context.Context, userId int64) (task.Task, error)
-	CreateTask(ctx context.Context, task task.Task) (string, error)
+	RetrieveTasks(ctx context.Context, userId int64) ([]task.Task, error)
+	AddTask(ctx context.Context, task task.Task) error
 }
 
 //UseCase interface

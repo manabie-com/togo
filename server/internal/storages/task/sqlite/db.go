@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/HoangVyDuong/togo/internal/storages"
+	"github.com/HoangVyDuong/togo/internal/storages/task"
 )
 
 // LiteDB for working with sqllite
@@ -13,17 +13,17 @@ type LiteDB struct {
 }
 
 // RetrieveTasks returns tasks if match userID AND createDate.
-func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*storages.Task, error) {
-	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`
-	rows, err := l.DB.QueryContext(ctx, stmt, userID, createdDate)
+func (l *LiteDB) RetrieveTasks(ctx context.Context, userID int64) ([]task.Task, error) {
+	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ?`
+	rows, err := l.DB.QueryContext(ctx, stmt, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var tasks []*storages.Task
+	var tasks []*task.Task
 	for rows.Next() {
-		t := &storages.Task{}
+		t := &task.Task{}
 		err := rows.Scan(&t.ID, &t.Content, &t.UserID, &t.CreatedDate)
 		if err != nil {
 			return nil, err
@@ -35,11 +35,11 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.Null
 		return nil, err
 	}
 
-	return tasks, nil
+	return []task.Task{}, nil
 }
 
 // AddTask adds a new task to DB
-func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
+func (l *LiteDB) AddTask(ctx context.Context, t task.Task) error {
 	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
 	_, err := l.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
 	if err != nil {

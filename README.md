@@ -2,7 +2,8 @@
     - [x] Make plan.
     - [x] Setup Dev environment: Nginx, React App, Golang Server, Redis Cache, Postgres Database.
     - [x] Write Integration Test.
-    - [ ] Structure Server Code. 
+    - [] Structure Server Code. 
+    - [ ] Create Log Service
     - [ ] Write Unit Test.
     - [ ] Write Logic Code for basic features
     - [ ] Write Logic Code for main requirements

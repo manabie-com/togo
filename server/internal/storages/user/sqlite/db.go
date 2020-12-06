@@ -3,7 +3,7 @@ package sqlite
 import (
 	"context"
 	"database/sql"
-	"github.com/HoangVyDuong/togo/internal/storages"
+	"github.com/HoangVyDuong/togo/internal/storages/user"
 )
 
 type LiteDB struct {
@@ -11,13 +11,13 @@ type LiteDB struct {
 }
 
 // GetUser returns User if match ID
-func (l *LiteDB) GetUser(ctx context.Context, userID int64) bool {
+func (l *LiteDB) GetUser(ctx context.Context, id int64) (user.User, error) {
 	stmt := `SELECT id FROM users WHERE id = ?`
-	row := l.DB.QueryRowContext(ctx, stmt, userID)
-	u := &storages.User{}
+	row := l.DB.QueryRowContext(ctx, stmt, id)
+	u := user.User{}
 	err := row.Scan(&u.ID)
 	if err != nil {
-		return false
+		return user.User{}, err
 	}
-	return true
+	return u, nil
 }
