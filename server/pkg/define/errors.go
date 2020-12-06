@@ -8,5 +8,6 @@ var (
 	DatabaseError = errors.New("error from database")
 	AccountNotAuthorized = errors.New("account not authorized")
 	AccountNotExist = errors.New("account not exist")
+	UserOverLimitTask = errors.New("user over limit task per day")
 	Unknown = errors.New("unknown")
 )

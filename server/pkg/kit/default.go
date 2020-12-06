@@ -39,6 +39,8 @@ func codeFrom(err error) int {
 		return http.StatusBadRequest
 	case define.Unknown:
 		return http.StatusInternalServerError
+	case define.UserOverLimitTask:
+		return http.StatusTooManyRequests
 	default:
 		return http.StatusInternalServerError
 	}

@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	taskHandler "github.com/HoangVyDuong/togo/internal/handler/task"
 	"github.com/HoangVyDuong/togo/internal/transport/middleware"
+	taskService "github.com/HoangVyDuong/togo/internal/usecase/task"
+	userService "github.com/HoangVyDuong/togo/internal/usecase/user"
 	"github.com/HoangVyDuong/togo/pkg/dtos"
 	taskDTO "github.com/HoangVyDuong/togo/pkg/dtos/task"
 	"github.com/HoangVyDuong/togo/pkg/kit"
@@ -12,7 +14,7 @@ import (
 	"net/http"
 )
 
-func MakeHandler(router *httprouter.Router, taskHandler taskHandler.Handler) {
+func MakeHandler(router *httprouter.Router, taskHandler taskHandler.Handler, userService userService.Service, taskService taskService.Service) {
 	router.Handler("GET", "/tasks", kit.WithCORS(kit.NewServer(
 		middleware.Authenticate(
 			Endpoint(taskHandler).GetTasks),
@@ -21,7 +23,7 @@ func MakeHandler(router *httprouter.Router, taskHandler taskHandler.Handler) {
 
 	router.Handler("CREATE", "/tasks", kit.WithCORS(kit.NewServer(
 		middleware.Authenticate(
-			middleware.LimitCreateTask(
+			middleware.LimitCreateTask(taskService, userService)(
 				Endpoint(taskHandler).CreateTask)),
 		decodeCreateTaskRequest,
 	)))

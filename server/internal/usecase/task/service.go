@@ -23,3 +23,7 @@ func (ts *taskService) GetTasks(ctx context.Context, userId string) ([]taskDB.Ta
 func (ts *taskService) CreateTask(ctx context.Context, task taskDB.Task) (string, error) {
 	return "", nil
 }
+
+func (ts *taskService) Delete(ctx context.Context, taskId string) bool {
+	return false
+}

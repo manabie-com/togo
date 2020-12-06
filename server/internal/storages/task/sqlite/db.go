@@ -3,18 +3,23 @@ package sqllite
 import (
 	"context"
 	"database/sql"
+	taskUsecase "github.com/HoangVyDuong/togo/internal/usecase/task"
 
 	"github.com/HoangVyDuong/togo/internal/storages/task"
 )
 
-// LiteDB for working with sqllite
-type LiteDB struct {
+
+type TaskRepository struct {
 	DB *sql.DB
 }
 
+func NewRepository(db *sql.DB) taskUsecase.Repository {
+	return &TaskRepository{db}
+}
+
 // RetrieveTasks returns tasks if match userID AND createDate.
-func (l *LiteDB) RetrieveTasks(ctx context.Context, userID int64) ([]task.Task, error) {
-	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ?`
+func (l *TaskRepository) RetrieveTasks(ctx context.Context, userID int64) ([]task.Task, error) {
+	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? `
 	rows, err := l.DB.QueryContext(ctx, stmt, userID)
 	if err != nil {
 		return nil, err
@@ -39,7 +44,7 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID int64) ([]task.Task, 
 }
 
 // AddTask adds a new task to DB
-func (l *LiteDB) AddTask(ctx context.Context, t task.Task) error {
+func (l *TaskRepository) AddTask(ctx context.Context, t task.Task) error {
 	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
 	_, err := l.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
 	if err != nil {
@@ -49,3 +54,7 @@ func (l *LiteDB) AddTask(ctx context.Context, t task.Task) error {
 	return nil
 }
 
+
+func (l *TaskRepository) Delete(ctx context.Context, taskId int64) bool {
+	return false
+}
