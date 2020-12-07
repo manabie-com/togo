@@ -2,8 +2,7 @@ package task
 
 // Task reflects tasks in DB
 type Task struct {
-	ID          string
+	ID          int64
 	Content     string
-	UserID      string
-	CreatedDate string
+	UserID      int64
 }

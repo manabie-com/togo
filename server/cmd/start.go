@@ -42,11 +42,11 @@ var startCmd = &cobra.Command{
 		taskRepository := taskRepository.NewRepository(db)
 		userRepository := userRepository.NewRepository(db)
 
-		userService := userUsecase.NewService(userRepository, cache)
+		userService := userUsecase.NewService(cache)
 		taskService := taskUsecase.NewService(taskRepository)
-		authService := authUsecase.NewService()
+		authService := authUsecase.NewService(userRepository)
 
-		authHandler := authHandler.NewHander(authService, userService)
+		authHandler := authHandler.NewHander(authService)
 		taskHandler := taskHandler.NewHander(taskService)
 
 		router := httprouter.New()

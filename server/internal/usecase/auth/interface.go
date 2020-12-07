@@ -5,8 +5,12 @@ import (
 	"github.com/HoangVyDuong/togo/internal/storages/user"
 )
 
-//Service interface
+// Repository interface
+type Repository interface {
+	GetUserByName(ctx context.Context, name string) (user.User, error)
+}
+
+// Service interface
 type Service interface {
-	Auth(ctx context.Context, user user.User, password string) error
-	CreateToken(ctx context.Context, user user.User) string
+	Auth(ctx context.Context, userName, password string) (userID int64, err error)
 }

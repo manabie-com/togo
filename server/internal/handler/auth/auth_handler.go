@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"github.com/HoangVyDuong/togo/internal/usecase/auth"
-	"github.com/HoangVyDuong/togo/internal/usecase/user"
 	authDTO "github.com/HoangVyDuong/togo/pkg/dtos/auth"
 )
 
@@ -13,14 +12,16 @@ type Handler interface {
 
 type authHandler struct {
 	authService auth.Service
-	userService user.Service
 }
 
-func NewHander(authService auth.Service, userService user.Service) Handler{
-	return &authHandler{authService, userService}
+func NewHander(authService auth.Service) Handler{
+	return &authHandler{authService}
 }
 
 func (ah *authHandler) Auth(ctx context.Context, request authDTO.AuthUserRequest) (response authDTO.AuthUserResponse, err error) {
+	// Auth Username, password
+	// Create Token
+	// Convert To DTO
 	return authDTO.AuthUserResponse{}, nil
 }
 

@@ -42,17 +42,17 @@ func logfWithLevel(level, format string, v ...interface{}) {
 }
 
 func Warnf(format string, v ...interface{}) {
-	logfWithLevel(WarningLevel, format, v)
+	logfWithLevel(WarningLevel, format, v...)
 }
 
 func Infof(format string, v ...interface{}) {
-	logfWithLevel(InfoLevel, format, v)
+	logfWithLevel(InfoLevel, format, v...)
 }
 
 func Debugf(format string, v ...interface{}) {
-	logfWithLevel(InfoLevel, format, v)
+	logfWithLevel(InfoLevel, format, v...)
 }
 
 func Errorf(format string, v ...interface{}) {
-	logfWithLevel(ErrorLevel, format, v)
+	logfWithLevel(ErrorLevel, format, v...)
 }

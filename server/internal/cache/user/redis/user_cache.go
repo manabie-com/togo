@@ -15,10 +15,10 @@ func NewCache(redisClient *redis.Client) userUsecase.Cache {
 	return &RedisClient{client: redisClient}
 }
 
-func (rdc *RedisClient) CheckLimit(ctx context.Context, userKey string, limitTime int) bool {
-	return false
+func (rdc *RedisClient) CheckLimit(ctx context.Context, userKey string, limitTime int) (bool, error) {
+	return false, nil
 }
 
-func (rdc *RedisClient) IncreaseTask(ctx context.Context, userId string, time time.Duration) (int, error) {
+func (rdc *RedisClient) IncreaseTask(ctx context.Context, userId string, duration time.Duration) (int, error) {
 	return 0, nil
 }

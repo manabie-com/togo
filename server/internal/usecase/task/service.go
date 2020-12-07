@@ -2,7 +2,7 @@ package task
 
 import (
 	"context"
-	taskDB "github.com/HoangVyDuong/togo/internal/storages/task"
+	taskEntity "github.com/HoangVyDuong/togo/internal/storages/task"
 )
 
 type taskService struct {
@@ -16,14 +16,15 @@ func NewService(r Repository) Service {
 	}
 }
 
-func (ts *taskService) GetTasks(ctx context.Context, userId string) ([]taskDB.Task, error) {
+
+func (ts *taskService) GetTasks(ctx context.Context, userId int64) ([]taskEntity.Task, error) {
 	return nil, nil
 }
 
-func (ts *taskService) CreateTask(ctx context.Context, task taskDB.Task) (string, error) {
-	return "", nil
+func (ts *taskService) CreateTask(ctx context.Context, taskEntity taskEntity.Task) (int64, error) {
+	return 0, nil
 }
 
-func (ts *taskService) Delete(ctx context.Context, taskId string) bool {
-	return false
+func (ts *taskService) DeleteTask(ctx context.Context, taskId int64) error {
+	return nil
 }

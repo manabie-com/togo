@@ -4,26 +4,21 @@ import (
 	"context"
 	"database/sql"
 	"github.com/HoangVyDuong/togo/internal/storages/user"
-	userUsecase "github.com/HoangVyDuong/togo/internal/usecase/user"
 )
 
 type userRepository struct {
 	DB *sql.DB
 }
 
-func NewRepository(db *sql.DB) userUsecase.Repository {
+func NewRepository(db *sql.DB) *userRepository {
 	return &userRepository{DB: db}
 }
 
+func (ur *userRepository) Close() error {
+	return ur.DB.Close()
+}
 
 // GetUser returns User if match ID
-func (l *userRepository) GetUser(ctx context.Context, id int64) (user.User, error) {
-	stmt := `SELECT id FROM users WHERE id = ?`
-	row := l.DB.QueryRowContext(ctx, stmt, id)
-	u := user.User{}
-	err := row.Scan(&u.ID)
-	if err != nil {
-		return user.User{}, err
-	}
-	return u, nil
+func (ur *userRepository) GetUserByName(ctx context.Context, name string) (user.User, error) {
+	return user.User{}, nil
 }

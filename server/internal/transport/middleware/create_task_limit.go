@@ -8,6 +8,7 @@ import (
 	taskDTO "github.com/HoangVyDuong/togo/pkg/dtos/task"
 	"github.com/HoangVyDuong/togo/pkg/kit"
 	"github.com/HoangVyDuong/togo/pkg/logger"
+	"strconv"
 )
 
 func LimitCreateTask(taskService taskService.Service, userService userService.Service) kit.Middleware{
@@ -20,7 +21,11 @@ func LimitCreateTask(taskService taskService.Service, userService userService.Se
 				return nil, define.FailedValidation
 			}
 
-			isOver := userService.IsOverLimitTask(ctx, userID)
+			isOver, err := userService.IsOverLimitTask(ctx, userID, define.RateLimitCreateTaskTimes())
+			if err != nil {
+				logger.Error("[RateLimit] Interact with cache failed")
+				return nil, define.Unknown
+			}
 			if isOver {
 				logger.Error("[RateLimit] User Over Limit Task")
 				return nil, define.UserOverLimitTask
@@ -28,7 +33,12 @@ func LimitCreateTask(taskService taskService.Service, userService userService.Se
 
 			resp, err := endpoint(ctx, request)
 			if err == nil {
-				respDTO, ok := resp.(taskDTO.CreateTaskResponse)
+				taskResponse, ok := resp.(taskDTO.CreateTaskResponse)
+				taskID, err := strconv.ParseInt(taskResponse.TaskID, 10, 64)
+				if err != nil {
+					logger.Error("[RateLimit] Response from CreateTask wrong format")
+					return nil, define.Unknown
+				}
 				if !ok {
 					logger.Debug("[RateLimit] Not Put On CreateTask")
 					return nil, define.Unknown
@@ -36,9 +46,9 @@ func LimitCreateTask(taskService taskService.Service, userService userService.Se
 
 				taskCreated, err := userService.IncreaseTaskTimesPerDuration(ctx, userID, define.RateLimitCreateTaskDuration())
 				if err != nil {
-					logger.Errorf("[RateLimit] IncreaseTaskTimePerDay In Cache Failed ", err.Error())
-					if ok = taskService.Delete(ctx, respDTO.TaskID); !ok {
-						logger.Errorf("[RateLimit] Rollback Delete Task In DB Failed ", err.Error())
+					logger.Errorf("[RateLimit] IncreaseTaskTimePerDay In Cache Failed %s", err.Error())
+					if err = taskService.DeleteTask(ctx, taskID); err != nil {
+						logger.Errorf("[RateLimit] Rollback Delete Task In DB Failed %s", err.Error())
 						return nil, define.Unknown
 					}
 					return nil, define.Unknown
@@ -46,8 +56,8 @@ func LimitCreateTask(taskService taskService.Service, userService userService.Se
 
 				if taskCreated > define.RateLimitCreateTaskTimes() {
 					logger.Error("[RateLimit] User Over Limit Task")
-					if ok = taskService.Delete(ctx, respDTO.TaskID); !ok {
-						logger.Errorf("[RateLimit] Rollback Delete Task In DB Failed ", err.Error())
+					if err = taskService.DeleteTask(ctx, taskID); err != nil{
+						logger.Errorf("[RateLimit] Rollback Delete Task In DB Failed %s", err.Error())
 						return nil, define.Unknown
 					}
 					return nil, define.UserOverLimitTask
