@@ -7,6 +7,7 @@ import (
 	"context"
 	"github.com/HoangVyDuong/togo/internal/storages/task"
 	"sync"
+	"time"
 )
 
 var (
@@ -25,13 +26,13 @@ var _ Repository = &RepositoryMock{}
 //
 //         // make and configure a mocked Repository
 //         mockedRepository := &RepositoryMock{
-//             AddTaskFunc: func(ctx context.Context, taskEntity task.Task) (int64, error) {
+//             AddTaskFunc: func(ctx context.Context, taskEntity task.Task, createdAt time.Time) error {
 // 	               panic("mock out the AddTask method")
 //             },
-//             RetrieveTasksFunc: func(ctx context.Context, userId int64) ([]task.Task, error) {
+//             RetrieveTasksFunc: func(ctx context.Context, userId uint64) ([]task.Task, error) {
 // 	               panic("mock out the RetrieveTasks method")
 //             },
-//             SoftDeleteTaskFunc: func(ctx context.Context, taskId int64) error {
+//             SoftDeleteTaskFunc: func(ctx context.Context, taskId uint64, deletedAt time.Time) error {
 // 	               panic("mock out the SoftDeleteTask method")
 //             },
 //         }
@@ -42,13 +43,13 @@ var _ Repository = &RepositoryMock{}
 //     }
 type RepositoryMock struct {
 	// AddTaskFunc mocks the AddTask method.
-	AddTaskFunc func(ctx context.Context, taskEntity task.Task) (int64, error)
+	AddTaskFunc func(ctx context.Context, taskEntity task.Task, createdAt time.Time) error
 
 	// RetrieveTasksFunc mocks the RetrieveTasks method.
-	RetrieveTasksFunc func(ctx context.Context, userId int64) ([]task.Task, error)
+	RetrieveTasksFunc func(ctx context.Context, userId uint64) ([]task.Task, error)
 
 	// SoftDeleteTaskFunc mocks the SoftDeleteTask method.
-	SoftDeleteTaskFunc func(ctx context.Context, taskId int64) error
+	SoftDeleteTaskFunc func(ctx context.Context, taskId uint64, deletedAt time.Time) error
 
 	// calls tracks calls to the methods.
 	calls struct {
@@ -58,40 +59,46 @@ type RepositoryMock struct {
 			Ctx context.Context
 			// TaskEntity is the taskEntity argument value.
 			TaskEntity task.Task
+			// CreatedAt is the createdAt argument value.
+			CreatedAt time.Time
 		}
 		// RetrieveTasks holds details about calls to the RetrieveTasks method.
 		RetrieveTasks []struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// UserId is the userId argument value.
-			UserId int64
+			UserId uint64
 		}
 		// SoftDeleteTask holds details about calls to the SoftDeleteTask method.
 		SoftDeleteTask []struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// TaskId is the taskId argument value.
-			TaskId int64
+			TaskId uint64
+			// DeletedAt is the deletedAt argument value.
+			DeletedAt time.Time
 		}
 	}
 }
 
 // AddTask calls AddTaskFunc.
-func (mock *RepositoryMock) AddTask(ctx context.Context, taskEntity task.Task) (int64, error) {
+func (mock *RepositoryMock) AddTask(ctx context.Context, taskEntity task.Task, createdAt time.Time) error {
 	if mock.AddTaskFunc == nil {
 		panic("RepositoryMock.AddTaskFunc: method is nil but Repository.AddTask was just called")
 	}
 	callInfo := struct {
 		Ctx        context.Context
 		TaskEntity task.Task
+		CreatedAt  time.Time
 	}{
 		Ctx:        ctx,
 		TaskEntity: taskEntity,
+		CreatedAt:  createdAt,
 	}
 	lockRepositoryMockAddTask.Lock()
 	mock.calls.AddTask = append(mock.calls.AddTask, callInfo)
 	lockRepositoryMockAddTask.Unlock()
-	return mock.AddTaskFunc(ctx, taskEntity)
+	return mock.AddTaskFunc(ctx, taskEntity, createdAt)
 }
 
 // AddTaskCalls gets all the calls that were made to AddTask.
@@ -100,10 +107,12 @@ func (mock *RepositoryMock) AddTask(ctx context.Context, taskEntity task.Task) (
 func (mock *RepositoryMock) AddTaskCalls() []struct {
 	Ctx        context.Context
 	TaskEntity task.Task
+	CreatedAt  time.Time
 } {
 	var calls []struct {
 		Ctx        context.Context
 		TaskEntity task.Task
+		CreatedAt  time.Time
 	}
 	lockRepositoryMockAddTask.RLock()
 	calls = mock.calls.AddTask
@@ -112,13 +121,13 @@ func (mock *RepositoryMock) AddTaskCalls() []struct {
 }
 
 // RetrieveTasks calls RetrieveTasksFunc.
-func (mock *RepositoryMock) RetrieveTasks(ctx context.Context, userId int64) ([]task.Task, error) {
+func (mock *RepositoryMock) RetrieveTasks(ctx context.Context, userId uint64) ([]task.Task, error) {
 	if mock.RetrieveTasksFunc == nil {
 		panic("RepositoryMock.RetrieveTasksFunc: method is nil but Repository.RetrieveTasks was just called")
 	}
 	callInfo := struct {
 		Ctx    context.Context
-		UserId int64
+		UserId uint64
 	}{
 		Ctx:    ctx,
 		UserId: userId,
@@ -134,11 +143,11 @@ func (mock *RepositoryMock) RetrieveTasks(ctx context.Context, userId int64) ([]
 //     len(mockedRepository.RetrieveTasksCalls())
 func (mock *RepositoryMock) RetrieveTasksCalls() []struct {
 	Ctx    context.Context
-	UserId int64
+	UserId uint64
 } {
 	var calls []struct {
 		Ctx    context.Context
-		UserId int64
+		UserId uint64
 	}
 	lockRepositoryMockRetrieveTasks.RLock()
 	calls = mock.calls.RetrieveTasks
@@ -147,33 +156,37 @@ func (mock *RepositoryMock) RetrieveTasksCalls() []struct {
 }
 
 // SoftDeleteTask calls SoftDeleteTaskFunc.
-func (mock *RepositoryMock) SoftDeleteTask(ctx context.Context, taskId int64) error {
+func (mock *RepositoryMock) SoftDeleteTask(ctx context.Context, taskId uint64, deletedAt time.Time) error {
 	if mock.SoftDeleteTaskFunc == nil {
 		panic("RepositoryMock.SoftDeleteTaskFunc: method is nil but Repository.SoftDeleteTask was just called")
 	}
 	callInfo := struct {
-		Ctx    context.Context
-		TaskId int64
+		Ctx       context.Context
+		TaskId    uint64
+		DeletedAt time.Time
 	}{
-		Ctx:    ctx,
-		TaskId: taskId,
+		Ctx:       ctx,
+		TaskId:    taskId,
+		DeletedAt: deletedAt,
 	}
 	lockRepositoryMockSoftDeleteTask.Lock()
 	mock.calls.SoftDeleteTask = append(mock.calls.SoftDeleteTask, callInfo)
 	lockRepositoryMockSoftDeleteTask.Unlock()
-	return mock.SoftDeleteTaskFunc(ctx, taskId)
+	return mock.SoftDeleteTaskFunc(ctx, taskId, deletedAt)
 }
 
 // SoftDeleteTaskCalls gets all the calls that were made to SoftDeleteTask.
 // Check the length with:
 //     len(mockedRepository.SoftDeleteTaskCalls())
 func (mock *RepositoryMock) SoftDeleteTaskCalls() []struct {
-	Ctx    context.Context
-	TaskId int64
+	Ctx       context.Context
+	TaskId    uint64
+	DeletedAt time.Time
 } {
 	var calls []struct {
-		Ctx    context.Context
-		TaskId int64
+		Ctx       context.Context
+		TaskId    uint64
+		DeletedAt time.Time
 	}
 	lockRepositoryMockSoftDeleteTask.RLock()
 	calls = mock.calls.SoftDeleteTask

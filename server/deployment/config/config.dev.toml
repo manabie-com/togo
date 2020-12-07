@@ -1,12 +1,20 @@
 [redis]
-  host = "redis"
-  post = "6379"
+  address = "redis:6379"
+  max_retries = 5
 
-[postgres]
-  user = "postgres"
-  password = "postgres_password"
-  database = "postgres"
-  port = "5432"
+[database]
+  max_lifetime = 30
+  max_idle_conns = 5
+  max_open_conns = 5
+  dialect = "postgres"
+  url = "postgres://postgres:postgres_password@postgres/postgres"
 
 [server]
     address = ":5050"
+
+[jwt]
+    key = "jwtkey"
+
+[ratelimit]
+    createtask_duration = 1
+    createtask_times = 2

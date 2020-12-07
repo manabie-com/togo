@@ -2,23 +2,39 @@ package redis
 
 import (
 	"context"
-	userUsecase "github.com/HoangVyDuong/togo/internal/usecase/user"
+	"github.com/HoangVyDuong/togo/pkg/define"
+	"github.com/HoangVyDuong/togo/pkg/logger"
 	"github.com/go-redis/redis"
 	"time"
 )
 
-type RedisClient struct {
+type redisClient struct {
 	client *redis.Client
 }
 
-func NewCache(redisClient *redis.Client) userUsecase.Cache {
-	return &RedisClient{client: redisClient}
+func NewCache(client *redis.Client) *redisClient {
+	return &redisClient{client: client}
 }
 
-func (rdc *RedisClient) CheckLimit(ctx context.Context, userKey string, limitTime int) (bool, error) {
+func (rdc *redisClient) IsOverLimit(ctx context.Context, userKey string, limitTime int) (bool, error) {
+	times, err := rdc.client.Get(userKey).Int()
+	if err != nil && err != redis.Nil {
+		logger.Errorf("[Cache][IsOverLimit] error: %s", err.Error())
+		return false, define.CacheError
+	}
+	if times >= limitTime {
+		return true, nil
+	}
 	return false, nil
 }
 
-func (rdc *RedisClient) IncreaseTask(ctx context.Context, userId string, duration time.Duration) (int, error) {
+func (rdc *redisClient) IncreaseTask(ctx context.Context, userKey string, duration time.Duration) (int, error) {
+	times, err := rdc.client.Incr(userKey).Result()
+	if err != nil {
+		return 0, define.CacheError
+	}
+	if times == 1 {
+		rdc.client.Expire(userKey, duration)
+	}
 	return 0, nil
 }

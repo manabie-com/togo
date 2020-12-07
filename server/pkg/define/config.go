@@ -6,9 +6,9 @@ import (
 )
 
 func RateLimitCreateTaskDuration() time.Duration {
-	return viper.GetDuration("ratelimit.createtask.duration")
+	return viper.GetDuration("ratelimit.createtask_duration") * time.Hour * 24
 }
 
 func RateLimitCreateTaskTimes() int {
-	return viper.GetInt("ratelimit.createtask.times")
+	return viper.GetInt("ratelimit.createtask_times")
 }

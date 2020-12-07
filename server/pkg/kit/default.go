@@ -31,6 +31,7 @@ func defaultEncodeError(_ context.Context, err error, w http.ResponseWriter) {
 func codeFrom(err error) int {
 	switch err {
 	case define.AccountNotAuthorized:
+		return http.StatusUnauthorized
 	case define.Unauthenticated:
 		return http.StatusUnauthorized
 	case define.AccountNotExist:

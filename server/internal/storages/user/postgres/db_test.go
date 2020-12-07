@@ -1,4 +1,4 @@
-package sqlite
+package postgres
 
 import (
 	"context"
@@ -32,7 +32,7 @@ func TestGetUserByName(t *testing.T) {
 		repo.Close()
 	}()
 
-	getUser := "SELECT id, name, password FROM users WHERE name = \\?"
+	getUser := "SELECT id, name, password FROM users WHERE name = \\$1"
 
 	rows := sqlmock.NewRows([]string{"id", "name", "password"}).
 		AddRow(mockUser.ID, mockUser.Name, mockUser.Password)
@@ -55,7 +55,7 @@ func TestGetUserByNameErr(t *testing.T) {
 		repo.Close()
 	}()
 
-	getUser := "SELECT id, name, password FROM users WHERE name = \\?"
+	getUser := "SELECT id, name, password FROM users WHERE name = \\$1"
 	mock.ExpectQuery(getUser).WithArgs(mockUser.Name).WillReturnError(errors.New("Database error"))
 
 	_, err := repo.GetUserByName(context.Background(), mockUser.Name)

@@ -6,12 +6,16 @@ import (
 	"encoding/json"
 	"github.com/HoangVyDuong/togo/pkg/define"
 	"github.com/HoangVyDuong/togo/pkg/dtos"
+	"github.com/HoangVyDuong/togo/pkg/dtos/task"
+	"github.com/HoangVyDuong/togo/pkg/logger"
 	"net/http"
 	"reflect"
 	"testing"
 )
 
 func Test_GetTasks(t *testing.T) {
+	TrueToken := GetTrueToken()
+	ErrorToken := "error token"
 	tests := []struct {
 		name string
 		authorization string
@@ -21,14 +25,14 @@ func Test_GetTasks(t *testing.T) {
 		{
 			name: "Get Tasks Success",
 			authorization: TrueToken,
-			statusCode: 200,
+			statusCode: http.StatusOK,
 		},
 		{
-			name: "Create Task Failed By Invalid UserID (not 0)",
+			name: "Get Task Failed By Invalid Token",
 			authorization: ErrorToken,
-			statusCode: 401,
+			statusCode: http.StatusUnauthorized,
 			errResponse: dtos.ErrorResponse{
-				Message: define.Unauthenticated,
+				Message: define.Unauthenticated.Error(),
 			},
 		},
 	}
@@ -62,7 +66,18 @@ func Test_GetTasks(t *testing.T) {
 					t.Errorf("Expected: %v, Actual: %v", tt.errResponse, errResponse)
 					return
 				}
+			} else {
+				getTaskResponse := task.Tasks{}
+				err = json.NewDecoder(resp.Body).Decode(&getTaskResponse)
+				if err != nil {
+					t.Errorf("Cannot convert to json: %v", err)
+				}
+				if len(getTaskResponse.Data) == 0 {
+					t.Errorf("TaskID can not be empty")
+				}
+				logger.Debugf("createTaskResponse: %v", getTaskResponse)
 			}
+
 		})
 	}
 

@@ -2,8 +2,12 @@ version: "3"
 services:
   postgres: 
     image: 'postgres:latest'
+    environment:
+      - POSTGRES_PASSWORD=postgres_password
     ports: 
       - '5433:5432'
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
   redis:
     image: 'redis:alpine'
     ports: 
@@ -15,12 +19,19 @@ services:
       context: ./nginx 
     ports: 
       - '8080:80'
+    depends_on:
+      - manado
+      - manago
   manago:
     build: 
       dockerfile: Dockerfile.dev
       context: ./server
     volumes: 
       - ./server:/app
+    depends_on: 
+      - postgres
+      - redis
+      
   manado:
     build: 
       dockerfile: Dockerfile.dev

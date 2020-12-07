@@ -7,6 +7,7 @@ import (
 	"github.com/HoangVyDuong/togo/internal/transport/middleware"
 	taskService "github.com/HoangVyDuong/togo/internal/usecase/task"
 	userService "github.com/HoangVyDuong/togo/internal/usecase/user"
+	"github.com/HoangVyDuong/togo/pkg/define"
 	"github.com/HoangVyDuong/togo/pkg/dtos"
 	taskDTO "github.com/HoangVyDuong/togo/pkg/dtos/task"
 	"github.com/HoangVyDuong/togo/pkg/kit"
@@ -15,17 +16,22 @@ import (
 )
 
 func MakeHandler(router *httprouter.Router, taskHandler taskHandler.Handler, userService userService.Service, taskService taskService.Service) {
+	convertAuthorization := func(ctx context.Context, req *http.Request) context.Context {
+		return context.WithValue(ctx, define.ContextKeyAuthorization, req.Header.Get("Authorization"))
+	}
 	router.Handler("GET", "/tasks", kit.WithCORS(kit.NewServer(
 		middleware.Authenticate(
 			Endpoint(taskHandler).GetTasks),
 		decodeGetTaskRequest,
+		kit.ServerBefore(convertAuthorization),
 	)))
 
-	router.Handler("CREATE", "/tasks", kit.WithCORS(kit.NewServer(
+	router.Handler("POST", "/tasks", kit.WithCORS(kit.NewServer(
 		middleware.Authenticate(
 			middleware.LimitCreateTask(taskService, userService)(
 				Endpoint(taskHandler).CreateTask)),
 		decodeCreateTaskRequest,
+		kit.ServerBefore(convertAuthorization),
 	)))
 
 }

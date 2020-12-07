@@ -12,5 +12,5 @@ type Repository interface {
 
 // Service interface
 type Service interface {
-	Auth(ctx context.Context, userName, password string) (userID int64, err error)
+	Auth(ctx context.Context, userName, password string) (userID uint64, err error)
 }

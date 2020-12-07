@@ -6,7 +6,6 @@ import (
 	taskEntity "github.com/HoangVyDuong/togo/internal/storages/task"
 	taskMock "github.com/HoangVyDuong/togo/internal/usecase/task"
 	"github.com/HoangVyDuong/togo/pkg/define"
-	"github.com/HoangVyDuong/togo/pkg/dtos"
 	taskDTO "github.com/HoangVyDuong/togo/pkg/dtos/task"
 	"reflect"
 	"testing"
@@ -15,21 +14,40 @@ import (
 func Test_taskHandler_CreateTask(t *testing.T) {
 	tests := []struct {
 		name         string
-		request dtos.EmptyRequest
-		createTasksResp int64
+		request taskDTO.CreateTaskRequest
+		userID uint64
 		createTasksError error
-		wantResponse taskDTO.CreateTaskResponse
 		wantErr      error
 	}{
 		{
 			name: "Success Case",
-			createTasksResp: 1,
-			wantResponse: taskDTO.CreateTaskResponse{
-				TaskID: "1",
+			request: taskDTO.CreateTaskRequest{
+				Content: "content",
 			},
+			userID: 111,
 		},
 		{
-			name: "Failed Case By Error",
+			name: "Empty Content",
+			request: taskDTO.CreateTaskRequest{
+				Content: "",
+			},
+			userID: 111,
+			wantErr: define.FailedValidation,
+		},
+		{
+			name: "Zero userID",
+			request: taskDTO.CreateTaskRequest{
+				Content: "",
+			},
+			userID: 0,
+			wantErr: define.FailedValidation,
+		},
+		{
+			name: "Failed Case By DB Error",
+			request: taskDTO.CreateTaskRequest{
+				Content: "content",
+			},
+			userID: 111,
 			createTasksError: errors.New("error"),
 			wantErr: define.Unknown,
 		},
@@ -37,21 +55,23 @@ func Test_taskHandler_CreateTask(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			taskServiceMock := &taskMock.ServiceMock{}
-			taskServiceMock.CreateTaskFunc = func(ctx context.Context, taskEntity taskEntity.Task) (int64, error) {
-				return tt.createTasksResp, tt.createTasksError
+			taskServiceMock.CreateTaskFunc = func(ctx context.Context, taskEntity taskEntity.Task) error {
+				return tt.createTasksError
 			}
 
 			handler := &taskHandler{
 				taskService: taskServiceMock,
 			}
 
-			gotResponse, err := handler.CreateTask(context.Background(), taskDTO.CreateTaskRequest{})
+			ctx := context.WithValue(context.Background(), define.ContextKeyUserID, tt.userID)
+			gotResponse, err := handler.CreateTask(ctx, tt.request)
 			if !reflect.DeepEqual(err, tt.wantErr) {
 				t.Errorf("Auth() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(gotResponse, tt.wantResponse) {
-				t.Errorf("Auth() gotResponse = %v, want %v", gotResponse, tt.wantResponse)
+
+			if err == nil && len(gotResponse.TaskID) == 0 {
+				t.Errorf("Auth() gotResponse is empty")
 			}
 		})
 	}

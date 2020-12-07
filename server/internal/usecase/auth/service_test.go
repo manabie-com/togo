@@ -17,7 +17,7 @@ func Test_authService_Auth(t *testing.T) {
 		password string
 		getUserByNameResp userEntity.User
 		getUserByNameErr error
-		want    int64
+		want    uint64
 		wantErr error
 	}{
 		{

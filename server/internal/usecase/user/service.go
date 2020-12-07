@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"github.com/HoangVyDuong/togo/pkg/define"
 	"time"
 )
 
@@ -14,10 +15,16 @@ func NewService(cache Cache) *userService {
 }
 
 func (s *userService) IsOverLimitTask(ctx context.Context, userId string, limit int) (bool, error) {
-	return false, nil
+	if userId == "" || limit == 0 {
+		return false, define.FailedValidation
+	}
+	return s.cache.IsOverLimit(ctx, userId, limit)
 }
 
 func (s *userService) IncreaseTaskTimesPerDuration(ctx context.Context, userId string, duration time.Duration) (int, error) {
-	return 0, nil
+	if userId == "" || duration == 0 {
+		return 0, define.FailedValidation
+	}
+	return s.cache.IncreaseTask(ctx, userId, duration)
 }
 

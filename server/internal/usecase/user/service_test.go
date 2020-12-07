@@ -41,6 +41,7 @@ func Test_userService_IncreaseTaskTimesPerDuration(t *testing.T) {
 			name: "Cache error",
 			args: args{
 				userId: "111",
+				duration: time.Second * 86400,
 			},
 			increaseTaskErr: define.CacheError,
 			wantErr: define.CacheError,
@@ -109,6 +110,7 @@ func Test_userService_IsOverLimitTask(t *testing.T) {
 			name: "Cache error",
 			args: args{
 				userId: "111",
+				limit: 5,
 			},
 			checkLimitErr: define.CacheError,
 			wantErr: define.CacheError,
@@ -117,7 +119,7 @@ func Test_userService_IsOverLimitTask(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			userCacheMock := &CacheMock{}
-			userCacheMock.CheckLimitFunc = func(ctx context.Context, userKey string, limit int) (bool, error) {
+			userCacheMock.IsOverLimitFunc = func(ctx context.Context, userKey string, limit int) (bool, error) {
 				return tt.checkLimitResp, tt.checkLimitErr
 			}
 			s := &userService{

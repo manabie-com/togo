@@ -1,4 +1,4 @@
-package sqllite
+package postgres
 
 import (
 	"context"
@@ -24,7 +24,7 @@ func (tr *taskRepository) Close() error {
 const retrieveTasks = `
 	SELECT id, content, user_id
 	FROM task
-	WHERE user_id = ? AND deleted_at IS NULL
+	WHERE user_id = $1 AND deleted_at IS NULL
 `
 // RetrieveTasks returns tasks if match userID AND createDate.
 func (tr *taskRepository) RetrieveTasks(ctx context.Context, userID uint64) ([]task.Task, error) {
@@ -55,7 +55,7 @@ func (tr *taskRepository) RetrieveTasks(ctx context.Context, userID uint64) ([]t
 
 const addTask = `
 	INSERT INTO task (id, content, user_id, created_at)
-	VALUES (?, ?, ?, ?)
+	VALUES ($1, $2, $3, $4)
 `
 // AddTask adds a new task to DB
 func (tr *taskRepository) AddTask(ctx context.Context, t task.Task, createdAt time.Time) error {
@@ -72,7 +72,7 @@ func (tr *taskRepository) AddTask(ctx context.Context, t task.Task, createdAt ti
 }
 
 const softDeleteTask = `
-UPDATE task SET deleted_at = ? WHERE id = ?
+UPDATE task SET deleted_at = $1 WHERE id = $2
 `
 // SoftDeleteTask
 func (tr *taskRepository) SoftDeleteTask(ctx context.Context, taskId uint64, deletedAt time.Time) error {

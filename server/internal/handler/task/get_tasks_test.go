@@ -5,6 +5,7 @@ import (
 	"errors"
 	taskEntity "github.com/HoangVyDuong/togo/internal/storages/task"
 	taskMock "github.com/HoangVyDuong/togo/internal/usecase/task"
+	"github.com/HoangVyDuong/togo/pkg/define"
 	"github.com/HoangVyDuong/togo/pkg/dtos"
 	taskDTO "github.com/HoangVyDuong/togo/pkg/dtos/task"
 	"reflect"
@@ -15,6 +16,7 @@ func Test_taskHandler_GetTasks(t *testing.T) {
 	tests := []struct {
 		name         string
 		request dtos.EmptyRequest
+		userID uint64
 		getTasksResp []taskEntity.Task
 		getTasksError error
 		wantResponse taskDTO.Tasks
@@ -29,6 +31,7 @@ func Test_taskHandler_GetTasks(t *testing.T) {
 					UserID: 1,
 				},
 			},
+			userID: 111,
 			wantResponse: taskDTO.Tasks{
 				Data: []taskDTO.Task{
 					{
@@ -39,16 +42,36 @@ func Test_taskHandler_GetTasks(t *testing.T) {
 			},
 		},
 		{
-			name: "Failed Case For Error",
+			name: "Empty UserID",
+			getTasksResp: []taskEntity.Task{
+				{
+					ID: 1,
+					Content: "content",
+					UserID: 1,
+				},
+			},
+			userID: 0,
+			wantErr: define.FailedValidation,
+		},
+		{
+			name: "Failed Case For DB Error",
+			getTasksResp: []taskEntity.Task{
+				{
+					ID: 1,
+					Content: "content",
+					UserID: 1,
+				},
+			},
+			userID: 111,
 			getTasksError: errors.New("error"),
-			wantResponse: taskDTO.Tasks{},
+			wantErr: define.Unknown,
 		},
 
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			taskServiceMock := &taskMock.ServiceMock{}
-			taskServiceMock.GetTasksFunc = func(ctx context.Context, userId int64) ([]taskEntity.Task, error) {
+			taskServiceMock.GetTasksFunc = func(ctx context.Context, userId uint64) ([]taskEntity.Task, error) {
 				return tt.getTasksResp, tt.getTasksError
 			}
 
@@ -56,7 +79,8 @@ func Test_taskHandler_GetTasks(t *testing.T) {
 				taskService: taskServiceMock,
 			}
 
-			gotResponse, err := handler.GetTasks(context.Background(), tt.request)
+			ctx := context.WithValue(context.Background(), define.ContextKeyUserID, tt.userID)
+			gotResponse, err := handler.GetTasks(ctx, tt.request)
 			if !reflect.DeepEqual(err, tt.wantErr) {
 				t.Errorf("Auth() error = %v, wantErr %v", err, tt.wantErr)
 				return

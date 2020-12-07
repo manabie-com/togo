@@ -1,9 +1,10 @@
-package sqlite
+package postgres
 
 import (
 	"context"
 	"database/sql"
 	userEntity "github.com/HoangVyDuong/togo/internal/storages/user"
+	"github.com/HoangVyDuong/togo/pkg/define"
 	"github.com/HoangVyDuong/togo/pkg/logger"
 )
 
@@ -20,7 +21,7 @@ func (ur *userRepository) Close() error {
 }
 
 const getUser = `
-	SELECT id, name, password FROM users WHERE name = ?
+	SELECT id, name, password FROM users WHERE name = $1;
 `
 
 func (ur *userRepository) GetUserByName(ctx context.Context, name string) (userEntity.User, error) {
@@ -29,6 +30,9 @@ func (ur *userRepository) GetUserByName(ctx context.Context, name string) (userE
 	err := row.Scan(&i.ID, &i.Name, &i.Password)
 	if err != nil {
 		logger.Errorf("[UserRepository][GetUserByName] error: %s", err.Error())
+		if err == sql.ErrNoRows {
+			err = define.AccountNotExist
+		}
 	}
 	return i, err
 }

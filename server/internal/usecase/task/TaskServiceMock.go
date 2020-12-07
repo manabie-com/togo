@@ -25,13 +25,13 @@ var _ Service = &ServiceMock{}
 //
 //         // make and configure a mocked Service
 //         mockedService := &ServiceMock{
-//             CreateTaskFunc: func(ctx context.Context, taskEntity task.Task) (int64, error) {
+//             CreateTaskFunc: func(ctx context.Context, taskEntity task.Task) error {
 // 	               panic("mock out the CreateTask method")
 //             },
-//             DeleteTaskFunc: func(ctx context.Context, taskId int64) error {
+//             DeleteTaskFunc: func(ctx context.Context, taskId uint64) error {
 // 	               panic("mock out the DeleteTask method")
 //             },
-//             GetTasksFunc: func(ctx context.Context, userId int64) ([]task.Task, error) {
+//             GetTasksFunc: func(ctx context.Context, userId uint64) ([]task.Task, error) {
 // 	               panic("mock out the GetTasks method")
 //             },
 //         }
@@ -42,13 +42,13 @@ var _ Service = &ServiceMock{}
 //     }
 type ServiceMock struct {
 	// CreateTaskFunc mocks the CreateTask method.
-	CreateTaskFunc func(ctx context.Context, taskEntity task.Task) (int64, error)
+	CreateTaskFunc func(ctx context.Context, taskEntity task.Task) error
 
 	// DeleteTaskFunc mocks the DeleteTask method.
-	DeleteTaskFunc func(ctx context.Context, taskId int64) error
+	DeleteTaskFunc func(ctx context.Context, taskId uint64) error
 
 	// GetTasksFunc mocks the GetTasks method.
-	GetTasksFunc func(ctx context.Context, userId int64) ([]task.Task, error)
+	GetTasksFunc func(ctx context.Context, userId uint64) ([]task.Task, error)
 
 	// calls tracks calls to the methods.
 	calls struct {
@@ -64,20 +64,20 @@ type ServiceMock struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// TaskId is the taskId argument value.
-			TaskId int64
+			TaskId uint64
 		}
 		// GetTasks holds details about calls to the GetTasks method.
 		GetTasks []struct {
 			// Ctx is the ctx argument value.
 			Ctx context.Context
 			// UserId is the userId argument value.
-			UserId int64
+			UserId uint64
 		}
 	}
 }
 
 // CreateTask calls CreateTaskFunc.
-func (mock *ServiceMock) CreateTask(ctx context.Context, taskEntity task.Task) (int64, error) {
+func (mock *ServiceMock) CreateTask(ctx context.Context, taskEntity task.Task) error {
 	if mock.CreateTaskFunc == nil {
 		panic("ServiceMock.CreateTaskFunc: method is nil but Service.CreateTask was just called")
 	}
@@ -112,13 +112,13 @@ func (mock *ServiceMock) CreateTaskCalls() []struct {
 }
 
 // DeleteTask calls DeleteTaskFunc.
-func (mock *ServiceMock) DeleteTask(ctx context.Context, taskId int64) error {
+func (mock *ServiceMock) DeleteTask(ctx context.Context, taskId uint64) error {
 	if mock.DeleteTaskFunc == nil {
 		panic("ServiceMock.DeleteTaskFunc: method is nil but Service.DeleteTask was just called")
 	}
 	callInfo := struct {
 		Ctx    context.Context
-		TaskId int64
+		TaskId uint64
 	}{
 		Ctx:    ctx,
 		TaskId: taskId,
@@ -134,11 +134,11 @@ func (mock *ServiceMock) DeleteTask(ctx context.Context, taskId int64) error {
 //     len(mockedService.DeleteTaskCalls())
 func (mock *ServiceMock) DeleteTaskCalls() []struct {
 	Ctx    context.Context
-	TaskId int64
+	TaskId uint64
 } {
 	var calls []struct {
 		Ctx    context.Context
-		TaskId int64
+		TaskId uint64
 	}
 	lockServiceMockDeleteTask.RLock()
 	calls = mock.calls.DeleteTask
@@ -147,13 +147,13 @@ func (mock *ServiceMock) DeleteTaskCalls() []struct {
 }
 
 // GetTasks calls GetTasksFunc.
-func (mock *ServiceMock) GetTasks(ctx context.Context, userId int64) ([]task.Task, error) {
+func (mock *ServiceMock) GetTasks(ctx context.Context, userId uint64) ([]task.Task, error) {
 	if mock.GetTasksFunc == nil {
 		panic("ServiceMock.GetTasksFunc: method is nil but Service.GetTasks was just called")
 	}
 	callInfo := struct {
 		Ctx    context.Context
-		UserId int64
+		UserId uint64
 	}{
 		Ctx:    ctx,
 		UserId: userId,
@@ -169,11 +169,11 @@ func (mock *ServiceMock) GetTasks(ctx context.Context, userId int64) ([]task.Tas
 //     len(mockedService.GetTasksCalls())
 func (mock *ServiceMock) GetTasksCalls() []struct {
 	Ctx    context.Context
-	UserId int64
+	UserId uint64
 } {
 	var calls []struct {
 		Ctx    context.Context
-		UserId int64
+		UserId uint64
 	}
 	lockServiceMockGetTasks.RLock()
 	calls = mock.calls.GetTasks

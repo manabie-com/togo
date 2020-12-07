@@ -19,7 +19,7 @@ func Test_authHandler_Auth(t *testing.T) {
 	tests := []struct {
 		name         string
 		request authDTO.AuthUserRequest
-		authResp int64
+		authResp uint64
 		authError error
 		wantResponse authDTO.AuthUserResponse
 		wantErr      error
@@ -53,16 +53,28 @@ func Test_authHandler_Auth(t *testing.T) {
 		},
 		{
 			name: "Auth Failed Not By Notfound or FailPassword",
+			request: authDTO.AuthUserRequest{
+				Username: "Hoang VY",
+				Password: "password",
+			},
 			authError: errors.New("any error"),
 			wantErr: define.Unknown,
 		},
 		{
 			name: "Auth Failed By Notfound",
+			request: authDTO.AuthUserRequest{
+				Username: "Hoang VY",
+				Password: "password",
+			},
 			authError: define.AccountNotExist,
 			wantErr: define.AccountNotExist,
 		},
 		{
 			name: "Auth Failed By FailPassword",
+			request: authDTO.AuthUserRequest{
+				Username: "Hoang VY",
+				Password: "password",
+			},
 			authError: define.AccountNotAuthorized,
 			wantErr: define.AccountNotAuthorized,
 		},
@@ -70,7 +82,7 @@ func Test_authHandler_Auth(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			authServiceMock := &authMock.ServiceMock{}
-			authServiceMock.AuthFunc = func(ctx context.Context, userName string, password string) (int64, error) {
+			authServiceMock.AuthFunc = func(ctx context.Context, userName string, password string) (uint64, error) {
 				return tt.authResp, tt.authError
 			}
 			handler := &authHandler{

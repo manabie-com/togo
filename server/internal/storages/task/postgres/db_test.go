@@ -1,4 +1,4 @@
-package sqllite
+package postgres
 
 import (
 	"context"
@@ -33,7 +33,7 @@ func TestRetrieveTasks(t *testing.T) {
 		repo.Close()
 	}()
 
-	retrieveTasks := "SELECT id, content, user_id FROM task WHERE user_id = \\? AND deleted_at IS NULL"
+	retrieveTasks := "SELECT id, content, user_id FROM task WHERE user_id = \\$1 AND deleted_at IS NULL"
 	rows := sqlmock.NewRows([]string{"id", "content", "user_id"}).
 		AddRow(mockTask.ID, mockTask.Content, mockTask.UserID)
 
@@ -55,7 +55,7 @@ func TestRetrieveTasksErr(t *testing.T) {
 		repo.Close()
 	}()
 
-	retrieveTasks := "SELECT id, content, user_id FROM task WHERE user_id = \\? AND deleted_at IS NULL"
+	retrieveTasks := "SELECT id, content, user_id FROM task WHERE user_id = \\$1 AND deleted_at IS NULL"
 	mock.ExpectQuery(retrieveTasks).WithArgs(mockTask.ID).WillReturnError(errors.New("DatabaseError"))
 
 	_, err := repo.RetrieveTasks(context.Background(), mockTask.ID)
@@ -66,15 +66,15 @@ func TestRetrieveTasksErr(t *testing.T) {
 
 func TestCreateTask(t *testing.T) {
 	db, mock := NewMock()
-
 	repo := &taskRepository{db}
 	defer func() {
 		repo.Close()
 	}()
 
-	addTask := "INSERT INTO task \\(id, content, user_id, created_at\\) VALUES \\(\\?, \\?, \\?, \\?\\)"
+	addTask := "INSERT INTO task \\(id, content, user_id, created_at\\) VALUES \\(\\$1, \\$2, \\$3, \\$4\\)"
 	now := time.Now().UTC()
-	mock.ExpectExec(addTask).WithArgs(mockTask.ID, mockTask.Content, mockTask.UserID, now).WillReturnResult(sqlmock.NewResult(0 ,1))
+	mock.ExpectExec(addTask).WithArgs(mockTask.ID, mockTask.Content, mockTask.UserID, now).WillReturnResult(sqlmock.NewResult(0, 1))
+
 
 	err := repo.AddTask(context.Background(), mockTask, now)
 	if err != nil {
@@ -89,13 +89,13 @@ func TestCreateTaskErr(t *testing.T) {
 		repo.Close()
 	}()
 
-	addTask := "INSERT INTO task \\(id, content, user_id, created_at\\) VALUES \\(\\?, \\?, \\?, \\?\\)"
+	addTask := "INSERT INTO task \\(id, content, user_id, created_at\\) VALUES \\(\\$1, \\$2, \\$3, \\$4\\)"
 	now := time.Now().UTC()
 	mock.ExpectExec(addTask).WithArgs(mockTask.ID, mockTask.Content, mockTask.UserID, now).WillReturnError(errors.New("error"))
 
 	err := repo.AddTask(context.Background(), mockTask, now)
 	if err == nil {
-		t.Errorf("Err Not Found As Expected")
+		t.Errorf("Data Error")
 	}
 }
 
@@ -107,7 +107,7 @@ func TestSoftDeleteTask(t *testing.T) {
 	}()
 
 	now := time.Now().UTC()
-	softDeleteTask := "UPDATE task SET deleted_at = \\? WHERE id = \\?"
+	softDeleteTask := "UPDATE task SET deleted_at = \\$1 WHERE id = \\$2"
 	mock.ExpectExec(softDeleteTask).WithArgs(now, mockTask.ID).WillReturnResult(sqlmock.NewResult(0, 1))
 
 	err := repo.SoftDeleteTask(context.Background(), mockTask.ID, now)
@@ -123,7 +123,7 @@ func TestSoftDeleteTaskErr(t *testing.T) {
 		repo.Close()
 	}()
 
-	softDeleteTask := "UPDATE task SET deleted_at = \\? WHERE id = \\?"
+	softDeleteTask := "UPDATE task SET deleted_at = \\$1 WHERE id = \\$2"
 	now := time.Now().UTC()
 	mock.ExpectExec(softDeleteTask).WithArgs(now, mockTask.ID).WillReturnError(errors.New("error"))
 

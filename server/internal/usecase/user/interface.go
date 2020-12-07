@@ -6,7 +6,7 @@ import (
 )
 
 type Cache interface {
-	CheckLimit(ctx context.Context, userKey string, limitTime int) (bool, error)
+	IsOverLimit(ctx context.Context, userKey string, limitTime int) (bool, error)
 	IncreaseTask(ctx context.Context, userId string, duration time.Duration) (int, error)
 }
 

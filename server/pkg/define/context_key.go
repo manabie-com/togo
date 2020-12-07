@@ -7,6 +7,6 @@ func (c contextKey) String() string {
 }
 
 var (
-	// ContextKeyDeleteCaller var
+	ContextKeyAuthorization = contextKey("Authorization")
 	ContextKeyUserID = contextKey("user_id")
 )

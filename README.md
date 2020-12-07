@@ -5,12 +5,11 @@
     - [x] Structure Server Code. 
     - [x] Create Log Service
     - [x] Write Unit Test.
-    - [ ] Write Logic Code for basic features
-    - [ ] Write Logic Code for main requirements
+    - [x] Write Logic Code for basic features
+    - [x] Write Logic Code for main requirements
     - [ ] Structure React Code with Redux
     - [ ] UI for List/Create todo feature
     - [ ] Write Unit Test for List/Create todo feature
-    - [ ] UI for List/Create todo feature
     - [ ] UI for Login feature
     - [ ] Write Unit Test for Login feature
     - [ ] UI for Logic feature

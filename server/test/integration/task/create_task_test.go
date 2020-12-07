@@ -8,6 +8,7 @@ import (
 	"github.com/HoangVyDuong/togo/pkg/define"
 	"github.com/HoangVyDuong/togo/pkg/dtos"
 	"github.com/HoangVyDuong/togo/pkg/dtos/task"
+	"github.com/HoangVyDuong/togo/pkg/logger"
 	"io/ioutil"
 	"net/http"
 	"reflect"
@@ -15,6 +16,8 @@ import (
 )
 
 func Test_CreateTask(t *testing.T) {
+	TrueToken := GetTrueToken()
+	ErrorToken := "error token"
 	tests := []struct {
 		name string
 		request  task.CreateTaskRequest
@@ -23,34 +26,34 @@ func Test_CreateTask(t *testing.T) {
 		errResponse dtos.ErrorResponse
 	}{
 		{
-			name: "Get Task Success",
+			name: "Create Task Success",
 			authorization: TrueToken,
 			request:  task.CreateTaskRequest{
-				Content: "First Content",
+				Content: "Third Content",
 			},
-			statusCode: 200,
+			statusCode: http.StatusOK,
 		},
 		{
-			name: "Create Task Failed By Invalid Token",
+			name: "Create Task Failed By Empty Content",
 			authorization: TrueToken,
 			request:  task.CreateTaskRequest{
 				Content: "",
 			},
 			errResponse: dtos.ErrorResponse{
-				Message: define.Unauthenticated,
+				Message: define.FailedValidation.Error(),
 			},
-			statusCode: 401,
+			statusCode: http.StatusBadRequest,
 		},
 		{
 			name: "Create Task Failed By Invalid Token",
 			authorization: ErrorToken,
 			request:  task.CreateTaskRequest{
-				Content: "First Content",
+				Content: "Second Content",
 			},
 			errResponse: dtos.ErrorResponse{
-				Message: define.Unauthenticated,
+				Message: define.Unauthenticated.Error(),
 			},
-			statusCode: 401,
+			statusCode: http.StatusUnauthorized,
 		},
 	}
 	for _, tt := range tests {
@@ -83,11 +86,11 @@ func Test_CreateTask(t *testing.T) {
 				err = json.NewDecoder(resp.Body).Decode(&errResponse)
 				if err != nil {
 					t.Errorf("Cannot convert to json: %v", err)
-					return
 				}
 				if !reflect.DeepEqual(errResponse, tt.errResponse) {
 					t.Errorf("Expected: %v, Actual: %v", tt.errResponse, errResponse)
 				}
+				logger.Debugf("ErrorResponse: %v", errResponse)
 			} else {
 				createTaskResponse := task.CreateTaskResponse{}
 				err = json.NewDecoder(resp.Body).Decode(&createTaskResponse)
@@ -97,6 +100,7 @@ func Test_CreateTask(t *testing.T) {
 				if createTaskResponse.TaskID == "" {
 					t.Errorf("TaskID can not be empty")
 				}
+				logger.Debugf("createTaskResponse: %v", createTaskResponse)
 			}
 		})
 	}

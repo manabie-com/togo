@@ -22,7 +22,7 @@ var _ Service = &ServiceMock{}
 //
 //         // make and configure a mocked Service
 //         mockedService := &ServiceMock{
-//             AuthFunc: func(ctx context.Context, userName string, password string) (int64, error) {
+//             AuthFunc: func(ctx context.Context, userName string, password string) (uint64, error) {
 // 	               panic("mock out the Auth method")
 //             },
 //         }
@@ -33,7 +33,7 @@ var _ Service = &ServiceMock{}
 //     }
 type ServiceMock struct {
 	// AuthFunc mocks the Auth method.
-	AuthFunc func(ctx context.Context, userName string, password string) (int64, error)
+	AuthFunc func(ctx context.Context, userName string, password string) (uint64, error)
 
 	// calls tracks calls to the methods.
 	calls struct {
@@ -50,7 +50,7 @@ type ServiceMock struct {
 }
 
 // Auth calls AuthFunc.
-func (mock *ServiceMock) Auth(ctx context.Context, userName string, password string) (int64, error) {
+func (mock *ServiceMock) Auth(ctx context.Context, userName string, password string) (uint64, error) {
 	if mock.AuthFunc == nil {
 		panic("ServiceMock.AuthFunc: method is nil but Service.Auth was just called")
 	}

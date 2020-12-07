@@ -14,27 +14,28 @@ import (
 func LimitCreateTask(taskService taskService.Service, userService userService.Service) kit.Middleware{
 	return func(endpoint kit.Endpoint) kit.Endpoint {
 		return func(ctx context.Context, request interface{}) (response interface{}, err error) {
-			logger.Debug("[RateLimit] Start")
-			userID, ok := ctx.Value(define.ContextKeyUserID).(string)
+			logger.Debug("[Middleware][RateLimit] Start")
+			userID, ok := ctx.Value(define.ContextKeyUserID).(uint64)
 			if !ok {
-				logger.Error("[RateLimit] Not found userID from context")
+				logger.Error("[Middleware][RateLimit] Not found userID from context")
 				return nil, define.FailedValidation
 			}
 
-			isOver, err := userService.IsOverLimitTask(ctx, userID, define.RateLimitCreateTaskTimes())
+			strUserID := strconv.FormatUint(userID, 10)
+			isOver, err := userService.IsOverLimitTask(ctx, strUserID, define.RateLimitCreateTaskTimes())
 			if err != nil {
-				logger.Error("[RateLimit] Interact with cache failed")
+				logger.Error("[Middleware][RateLimit] Interact with cache failed")
 				return nil, define.Unknown
 			}
 			if isOver {
-				logger.Error("[RateLimit] User Over Limit Task")
+				logger.Error("[Middleware][RateLimit] User Over Limit Task")
 				return nil, define.UserOverLimitTask
 			}
 
 			resp, err := endpoint(ctx, request)
 			if err == nil {
 				taskResponse, ok := resp.(taskDTO.CreateTaskResponse)
-				taskID, err := strconv.ParseInt(taskResponse.TaskID, 10, 64)
+				taskID, err := strconv.ParseUint(taskResponse.TaskID, 10, 64)
 				if err != nil {
 					logger.Error("[RateLimit] Response from CreateTask wrong format")
 					return nil, define.Unknown
@@ -44,7 +45,7 @@ func LimitCreateTask(taskService taskService.Service, userService userService.Se
 					return nil, define.Unknown
 				}
 
-				taskCreated, err := userService.IncreaseTaskTimesPerDuration(ctx, userID, define.RateLimitCreateTaskDuration())
+				taskCreated, err := userService.IncreaseTaskTimesPerDuration(ctx, strUserID, define.RateLimitCreateTaskDuration())
 				if err != nil {
 					logger.Errorf("[RateLimit] IncreaseTaskTimePerDay In Cache Failed %s", err.Error())
 					if err = taskService.DeleteTask(ctx, taskID); err != nil {

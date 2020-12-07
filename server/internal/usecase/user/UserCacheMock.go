@@ -10,8 +10,8 @@ import (
 )
 
 var (
-	lockCacheMockCheckLimit   sync.RWMutex
 	lockCacheMockIncreaseTask sync.RWMutex
+	lockCacheMockIsOverLimit  sync.RWMutex
 )
 
 // Ensure, that CacheMock does implement Cache.
@@ -24,11 +24,11 @@ var _ Cache = &CacheMock{}
 //
 //         // make and configure a mocked Cache
 //         mockedCache := &CacheMock{
-//             CheckLimitFunc: func(ctx context.Context, userKey string, limitTime int) (bool, error) {
-// 	               panic("mock out the CheckLimit method")
-//             },
 //             IncreaseTaskFunc: func(ctx context.Context, userId string, duration time.Duration) (int, error) {
 // 	               panic("mock out the IncreaseTask method")
+//             },
+//             IsOverLimitFunc: func(ctx context.Context, userKey string, limitTime int) (bool, error) {
+// 	               panic("mock out the IsOverLimit method")
 //             },
 //         }
 //
@@ -37,23 +37,14 @@ var _ Cache = &CacheMock{}
 //
 //     }
 type CacheMock struct {
-	// CheckLimitFunc mocks the CheckLimit method.
-	CheckLimitFunc func(ctx context.Context, userKey string, limitTime int) (bool, error)
-
 	// IncreaseTaskFunc mocks the IncreaseTask method.
 	IncreaseTaskFunc func(ctx context.Context, userId string, duration time.Duration) (int, error)
 
+	// IsOverLimitFunc mocks the IsOverLimit method.
+	IsOverLimitFunc func(ctx context.Context, userKey string, limitTime int) (bool, error)
+
 	// calls tracks calls to the methods.
 	calls struct {
-		// CheckLimit holds details about calls to the CheckLimit method.
-		CheckLimit []struct {
-			// Ctx is the ctx argument value.
-			Ctx context.Context
-			// UserKey is the userKey argument value.
-			UserKey string
-			// LimitTime is the limitTime argument value.
-			LimitTime int
-		}
 		// IncreaseTask holds details about calls to the IncreaseTask method.
 		IncreaseTask []struct {
 			// Ctx is the ctx argument value.
@@ -63,46 +54,16 @@ type CacheMock struct {
 			// Duration is the duration argument value.
 			Duration time.Duration
 		}
+		// IsOverLimit holds details about calls to the IsOverLimit method.
+		IsOverLimit []struct {
+			// Ctx is the ctx argument value.
+			Ctx context.Context
+			// UserKey is the userKey argument value.
+			UserKey string
+			// LimitTime is the limitTime argument value.
+			LimitTime int
+		}
 	}
-}
-
-// CheckLimit calls CheckLimitFunc.
-func (mock *CacheMock) CheckLimit(ctx context.Context, userKey string, limitTime int) (bool, error) {
-	if mock.CheckLimitFunc == nil {
-		panic("CacheMock.CheckLimitFunc: method is nil but Cache.CheckLimit was just called")
-	}
-	callInfo := struct {
-		Ctx       context.Context
-		UserKey   string
-		LimitTime int
-	}{
-		Ctx:       ctx,
-		UserKey:   userKey,
-		LimitTime: limitTime,
-	}
-	lockCacheMockCheckLimit.Lock()
-	mock.calls.CheckLimit = append(mock.calls.CheckLimit, callInfo)
-	lockCacheMockCheckLimit.Unlock()
-	return mock.CheckLimitFunc(ctx, userKey, limitTime)
-}
-
-// CheckLimitCalls gets all the calls that were made to CheckLimit.
-// Check the length with:
-//     len(mockedCache.CheckLimitCalls())
-func (mock *CacheMock) CheckLimitCalls() []struct {
-	Ctx       context.Context
-	UserKey   string
-	LimitTime int
-} {
-	var calls []struct {
-		Ctx       context.Context
-		UserKey   string
-		LimitTime int
-	}
-	lockCacheMockCheckLimit.RLock()
-	calls = mock.calls.CheckLimit
-	lockCacheMockCheckLimit.RUnlock()
-	return calls
 }
 
 // IncreaseTask calls IncreaseTaskFunc.
@@ -141,5 +102,44 @@ func (mock *CacheMock) IncreaseTaskCalls() []struct {
 	lockCacheMockIncreaseTask.RLock()
 	calls = mock.calls.IncreaseTask
 	lockCacheMockIncreaseTask.RUnlock()
+	return calls
+}
+
+// IsOverLimit calls IsOverLimitFunc.
+func (mock *CacheMock) IsOverLimit(ctx context.Context, userKey string, limitTime int) (bool, error) {
+	if mock.IsOverLimitFunc == nil {
+		panic("CacheMock.IsOverLimitFunc: method is nil but Cache.IsOverLimit was just called")
+	}
+	callInfo := struct {
+		Ctx       context.Context
+		UserKey   string
+		LimitTime int
+	}{
+		Ctx:       ctx,
+		UserKey:   userKey,
+		LimitTime: limitTime,
+	}
+	lockCacheMockIsOverLimit.Lock()
+	mock.calls.IsOverLimit = append(mock.calls.IsOverLimit, callInfo)
+	lockCacheMockIsOverLimit.Unlock()
+	return mock.IsOverLimitFunc(ctx, userKey, limitTime)
+}
+
+// IsOverLimitCalls gets all the calls that were made to IsOverLimit.
+// Check the length with:
+//     len(mockedCache.IsOverLimitCalls())
+func (mock *CacheMock) IsOverLimitCalls() []struct {
+	Ctx       context.Context
+	UserKey   string
+	LimitTime int
+} {
+	var calls []struct {
+		Ctx       context.Context
+		UserKey   string
+		LimitTime int
+	}
+	lockCacheMockIsOverLimit.RLock()
+	calls = mock.calls.IsOverLimit
+	lockCacheMockIsOverLimit.RUnlock()
 	return calls
 }

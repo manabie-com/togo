@@ -17,6 +17,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/HoangVyDuong/togo/pkg/logger"
 	"github.com/spf13/cobra"
 	"os"
 
@@ -56,7 +57,7 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.mana-server.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -73,7 +74,9 @@ func initConfig() {
 	viper.AutomaticEnv() // read in environment variables that match
 	viper.SetConfigType("toml")
 	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	err := viper.ReadInConfig();
+	if err != nil {
+		logger.Errorf("err: %s", err.Error())
 	}
+	fmt.Println("Using config file:", viper.ConfigFileUsed())
 }
