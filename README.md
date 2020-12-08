@@ -7,7 +7,7 @@
     - [x] Write Unit Test.
     - [x] Write Logic Code for basic features
     - [x] Write Logic Code for main requirements
-    - [ ] Structure React Code with Redux
+    - [x] Structure React Code with Redux
     - [ ] UI for List/Create todo feature
     - [ ] Write Unit Test for List/Create todo feature
     - [ ] UI for Login feature
