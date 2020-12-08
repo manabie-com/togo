@@ -50,7 +50,6 @@ var startCmd = &cobra.Command{
 		if err := http.ListenAndServe(viper.GetString("server.address"), router); err != nil {
 			logger.Errorf("Exit by %s", err.Error())
 		}
-
 	},
 }
 

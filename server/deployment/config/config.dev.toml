@@ -17,4 +17,4 @@
 
 [ratelimit]
     createtask_duration = 1
-    createtask_times = 2
+    createtask_times = 5

@@ -7,14 +7,14 @@ import (
 
 //NewRedisClient new Redis Client for interacting redis
 func NewRedisClient() *redis.Client {
-	RedisClient := redis.NewClient(&redis.Options{
+	redisClient := redis.NewClient(&redis.Options{
 		Addr:       viper.GetString("redis.address"),
 		MaxRetries: viper.GetInt("redis.max_retries"),
 	})
 
-	if RedisClient.Ping().Err() != nil {
+	if redisClient.Ping().Err() != nil {
 		panic(" Connection Redis Error")
 	}
 
-	return RedisClient
+	return redisClient
 }

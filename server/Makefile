@@ -6,4 +6,5 @@ genmock:
 	moq -pkg task -out internal/usecase/task/TaskServiceMock.go internal/usecase/task Service
 	moq -pkg task -out internal/usecase/task/TaskRepositoryMock.go internal/usecase/task Repository
 
-
+run:
+	docker-compose up --build 
