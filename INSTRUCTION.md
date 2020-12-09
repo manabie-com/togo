@@ -97,7 +97,7 @@ content | string | YES | Description of the task
 
 ## Missions
 
-- [ ] Create 5 task limit checker per day
+- [x] Create 5 task limit checker per day
 - [ ] Switch from SQLite to Postgres with Docker
 - [ ] DRY code
 - [ ] Unit testing for `service` layer

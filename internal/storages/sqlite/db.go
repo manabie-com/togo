@@ -3,6 +3,7 @@ package sqllite
 import (
 	"context"
 	"database/sql"
+	"fmt"
 
 	"github.com/manabie-com/togo/internal/storages"
 )
@@ -38,15 +39,32 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.Null
 	return tasks, nil
 }
 
-// AddTask adds a new task to DB
-func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
-	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
-	_, err := l.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
+// AddTask adds a new task to DB if the user's daily-limit has not been reached. It returns
+// the number of tasks added (0 or 1) and the error if exists. The isolation level of the underlying
+// transaction is set to SERIALIZABLE to ensure concurrency correctness.
+func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) (int64, error) {
+	tx, err := l.DB.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable})
 	if err != nil {
-		return err
+		return 0, err
+	}
+	stmt := `INSERT INTO tasks (id, content, user_id, created_date) ` +
+		`SELECT ?, ?, ?, ? ` +
+		`WHERE (SELECT COUNT(*) FROM tasks WHERE user_id = ? AND created_date = ?) ` +
+		`< (SELECT max_todo FROM users WHERE id = ?)`
+	result, err := tx.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate, &t.UserID, &t.CreatedDate, &t.UserID)
+	if err != nil {
+		if rbErr := tx.Rollback(); rbErr != nil {
+			fmt.Printf("Update failed: %v, unable to rollback: %v\n", err, rbErr)
+			return 0, rbErr
+		}
+		return 0, err
 	}
 
-	return nil
+	if err := tx.Commit(); err != nil {
+		return 0, err
+	}
+
+	return result.RowsAffected()
 }
 
 // ValidateUser returns tasks if match userID AND password
