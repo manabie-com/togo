@@ -15,7 +15,7 @@
     - [ ] UI for Logic feature
 
 # How to run 
-    - Please type `make run` and wait for the building process. The Server API will be available at localhost:8080/api. The Web App will be on localhost:8080.
+    - Please type `docker-compose up --build` and wait for the building process. The Server API will be available at localhost:8080/api. The Web App will be on localhost:8080.
 
 # What I Have Done:
     - Limit Create Task For 5 times per 24 hour, safe for concurrent access and not reduce latency per request so much.
