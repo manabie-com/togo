@@ -107,7 +107,7 @@ content | string | YES | Description of the task
 - [ ] Switch from SQLite to Postgres with Docker
 - [ ] DRY code
 - [ ] Unit testing for `service` layer
-- [ ] Unit testing for `storages` layer (low prio)
+- [x] Unit testing for `storages` layer (low prio)
 - [ ] Split `services` layer to `use_case` and `transport` layer
 
 ## Improvements
