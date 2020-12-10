@@ -6,6 +6,12 @@ Quick launch
 go run main.go
 ```
 
+Run tests
+
+```go
+go test ./...
+```
+
 ## API endpoints
 
 ### Login
