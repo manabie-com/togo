@@ -108,6 +108,7 @@ content | string | YES | Description of the task
 - [ ] DRY code
 - [ ] Unit testing for `service` layer
 - [x] Unit testing for `storages` layer (low prio)
+- [ ] Integration testing
 - [ ] Split `services` layer to `use_case` and `transport` layer
 
 ## Improvements
@@ -119,6 +120,7 @@ content | string | YES | Description of the task
 
 ## Observations and Thoughts
 
+- Login credentials can be put in query string (x-www-form-urlencoded), which may causes security problem on the front-end. Suggestion: enforce submitting credentials using form data (multipart/form-data) (thus switching to POST instead of GET).
 - Per-day limit ambiguity: check within a date or a rolling 24hrs? The `created_date` field in database is `DATE` instead of `DATETIME` so maybe it is the former?
 - What happens when you change the per-day limit (or can you change it at all)? Assuming it being unchanged right now is probably good enough.
 - No registration as of now
