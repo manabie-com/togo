@@ -8,6 +8,13 @@ import (
 	"github.com/manabie-com/togo/internal/storages"
 )
 
+// Databaser is responsible for talking with database
+type Databaser interface {
+	RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*storages.Task, error)
+	AddTask(ctx context.Context, t *storages.Task) (int64, error)
+	ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool
+}
+
 // LiteDB for working with sqllite
 type LiteDB struct {
 	DB *sql.DB
