@@ -106,7 +106,7 @@ content | string | YES | Description of the task
 - [x] Create 5 task limit checker per day
 - [ ] Switch from SQLite to Postgres with Docker
 - [ ] DRY code
-- [ ] Unit testing for `service` layer
+- [x] Unit testing for `service` layer
 - [x] Unit testing for `storages` layer (low prio)
 - [ ] Integration testing
 - [ ] Split `services` layer to `use_case` and `transport` layer
