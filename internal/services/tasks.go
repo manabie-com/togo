@@ -131,7 +131,7 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	if numRowAffected == 0 {
-		resp.WriteHeader(http.StatusForbidden)
+		resp.WriteHeader(http.StatusTooManyRequests)
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": "maximum tasks per day reached",
 		})
