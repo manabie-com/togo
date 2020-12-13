@@ -22,7 +22,7 @@ type LiteDB struct {
 
 // RetrieveTasks returns tasks if match userID AND createDate.
 func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*storages.Task, error) {
-	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`
+	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = $1 AND created_date = $2`
 	rows, err := l.DB.QueryContext(ctx, stmt, userID, createdDate)
 	if err != nil {
 		return nil, err
@@ -55,9 +55,9 @@ func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) (int64, error) {
 		return 0, err
 	}
 	stmt := `INSERT INTO tasks (id, content, user_id, created_date) ` +
-		`SELECT ?, ?, ?, ? ` +
-		`WHERE (SELECT COUNT(*) FROM tasks WHERE user_id = ? AND created_date = ?) ` +
-		`< (SELECT max_todo FROM users WHERE id = ?)`
+		`SELECT $1, $2, $3, $4 ` +
+		`WHERE (SELECT COUNT(*) FROM tasks WHERE user_id = $5 AND created_date = $6) ` +
+		`< (SELECT max_todo FROM users WHERE id = $7)`
 	result, err := tx.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate, &t.UserID, &t.CreatedDate, &t.UserID)
 	if err != nil {
 		if rbErr := tx.Rollback(); rbErr != nil {
@@ -76,7 +76,7 @@ func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) (int64, error) {
 
 // ValidateUser returns tasks if match userID AND password
 func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
-	stmt := `SELECT id FROM users WHERE id = ? AND password = ?`
+	stmt := `SELECT id FROM users WHERE id = $1 AND password = $2`
 	row := l.DB.QueryRowContext(ctx, stmt, userID, pwd)
 	u := &storages.User{}
 	err := row.Scan(&u.ID)
