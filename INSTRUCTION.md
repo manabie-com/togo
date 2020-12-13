@@ -6,11 +6,19 @@ Quick launch
 docker-compose up
 ```
 
+Shutdown application / test
+
+```shell
+docker-compose down
+```
+
 Run tests
 
-```go
-go test ./...
+```shell
+docker-compose -f docker-compose.test.yml up --build --abort-on-container-exit
 ```
+
+After testing, use `docker-compose down --volumes` to properly clean up test database.
 
 ## API endpoints
 
@@ -108,7 +116,7 @@ content | string | YES | Description of the task
 - [ ] DRY code
 - [x] Unit testing for `service` layer
 - [x] Unit testing for `storages` layer (low prio)
-- [ ] Integration testing
+- [x] Integration testing
 - [ ] Split `services` layer to `use_case` and `transport` layer
 
 ## Improvements

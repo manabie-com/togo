@@ -1,0 +1,38 @@
+version: '3'
+services:
+  app_test:
+    container_name: app_test
+    build:
+      context: .
+      dockerfile: ./Dockerfile.test
+    volumes:
+      - api_test:/app/src/app/
+    depends_on:
+      - postgres
+    networks:
+      - appnetwork_test
+
+  postgres:
+    image: postgres:latest
+    container_name: app_postgres_test
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=togo
+      - DATABASE_HOST=localhost
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./sql/1-schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      - ./sql/2-data.sql:/docker-entrypoint-initdb.d/2-data.sql
+      - postgres_test:/var/lib/postgresql/data
+    networks:
+      - appnetwork_test
+  
+volumes:
+  api_test:
+  postgres_test:
+
+networks:
+  appnetwork_test:
+    driver: bridge
