@@ -17,21 +17,6 @@ import (
 	"github.com/golang/mock/gomock"
 )
 
-type LoginJSONResponse struct {
-	Data  string `json:"data"`
-	Error string `json:"error"`
-}
-
-type ListTasksJSONResponse struct {
-	Data  []*storages.Task `json:"data"`
-	Error string           `json:"error"`
-}
-
-type AddTasksJSONResponse struct {
-	Data  *storages.Task `json:"data"`
-	Error string         `json:"error"`
-}
-
 var (
 	JWTKeyDummy     string = "1234567890abcdxyz"
 	testUser               = storages.User{ID: "userid", Password: "password"}
@@ -48,7 +33,7 @@ func TestGetAuthToken_Success(t *testing.T) {
 
 	require := require.New(t)
 	require.Equal(http.StatusOK, resp.StatusCode)
-	var jsonResp LoginJSONResponse
+	var jsonResp storages.LoginJSONResponse
 	require.NoError(json.NewDecoder(resp.Body).Decode(&jsonResp))
 	require.NotEmpty(jsonResp.Data)
 	require.Empty(jsonResp.Error)
@@ -60,7 +45,7 @@ func TestGetAuthToken_InvalidCredentials(t *testing.T) {
 
 	require := require.New(t)
 	require.Equal(http.StatusUnauthorized, resp.StatusCode)
-	var jsonResp LoginJSONResponse
+	var jsonResp storages.LoginJSONResponse
 	require.NoError(json.NewDecoder(resp.Body).Decode(&jsonResp))
 	require.Empty(jsonResp.Data)
 	require.NotEmpty(jsonResp.Error)
@@ -79,7 +64,7 @@ func TestListTasks_Success(t *testing.T) {
 		require := require.New(t)
 		require.Equal(http.StatusOK, resp.StatusCode)
 
-		var jsonResp ListTasksJSONResponse
+		var jsonResp storages.ListTasksJSONResponse
 		require.NoError(json.NewDecoder(resp.Body).Decode(&jsonResp))
 		require.Len(jsonResp.Data, len(taskData))
 		require.Empty(jsonResp.Error)
@@ -99,7 +84,7 @@ func TestListTasks_InternalError(t *testing.T) {
 	require := require.New(t)
 	require.Equal(http.StatusInternalServerError, resp.StatusCode)
 
-	var jsonResp ListTasksJSONResponse
+	var jsonResp storages.ListTasksJSONResponse
 	require.NoError(json.NewDecoder(resp.Body).Decode(&jsonResp))
 	require.Empty(jsonResp.Data)
 	require.NotEmpty(jsonResp.Error)
@@ -113,7 +98,7 @@ func TestAddTask_Success(t *testing.T) {
 	require := require.New(t)
 	require.Equal(http.StatusOK, resp.StatusCode)
 
-	var jsonResp AddTasksJSONResponse
+	var jsonResp storages.AddTasksJSONResponse
 	require.NoError(json.NewDecoder(resp.Body).Decode(&jsonResp))
 	require.Empty(jsonResp.Error)
 	require.Equal(taskData.UserID, jsonResp.Data.UserID)
@@ -128,7 +113,7 @@ func TestAddTask_DatabaseError(t *testing.T) {
 	require := require.New(t)
 	require.Equal(http.StatusInternalServerError, resp.StatusCode)
 
-	var jsonResp AddTasksJSONResponse
+	var jsonResp storages.AddTasksJSONResponse
 	require.NoError(json.NewDecoder(resp.Body).Decode(&jsonResp))
 	require.NotEmpty(jsonResp.Error)
 	require.Empty(jsonResp.Data)
@@ -142,7 +127,7 @@ func TestAddTask_UserQuotaExceeded(t *testing.T) {
 	require := require.New(t)
 	require.Equal(http.StatusTooManyRequests, resp.StatusCode)
 
-	var jsonResp AddTasksJSONResponse
+	var jsonResp storages.AddTasksJSONResponse
 	require.NoError(json.NewDecoder(resp.Body).Decode(&jsonResp))
 	require.NotEmpty(jsonResp.Error)
 	require.Empty(jsonResp.Data)
@@ -167,7 +152,6 @@ func newLoginRequest(userID, password string) *http.Request {
 func newListTasksRequest(userID, createdDate string) *http.Request {
 	req := httptest.NewRequest("GET", "localhost:5050/tasks", nil)
 	q := req.URL.Query()
-	q.Add("user_id", userID)
 	q.Add("created_date", createdDate)
 	req.URL.RawQuery = q.Encode()
 	return req
