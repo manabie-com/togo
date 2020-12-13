@@ -1,3 +1,9 @@
+### Note
+
+Refer to [INSTRUCTION.MD](INSTRUCTION.md) for information on running / testing / project progress.
+
+The following is the content of the original README.md.
+
 ### Overview
 This is a simple backend for a good old todo service, right now this service can handle login/list/create simple tasks.  
 To make it run:

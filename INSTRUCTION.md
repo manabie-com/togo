@@ -18,7 +18,30 @@ Run tests
 docker-compose -f docker-compose.test.yml up --build --abort-on-container-exit
 ```
 
-After testing, use `docker-compose down --volumes` to properly clean up test database.
+After testing, use `docker-compose -f docker-compose.test.yml down --volumes` to properly clean up test database.
+
+## What I have (and have not) accomplished
+
+- [x] Daily task limit functionality
+- [x] Switch from SQLite to Postgres with `docker-compose`
+- [x] Unit tests for `service` layer
+- [x] Integration tests
+- [ ] DRY code
+- [x] (Optional) Unit tests for `storages` layer
+- [ ] (Optional) Split `services` layer to `use_case` and `transport` layer
+
+## Potential improvements
+
+- Store password after hashing with salt for security reasons.
+- Use environment variables (e.g. `.env` file) to store application parameters to prevent secret key leakages and conveniences (e.g. separating `PROD` and `DEV` environments).
+- Give JWT refresh token in addition to access token so that user do not have to authenticate again.
+- Instead of using `UUID` as PK for table `tasks`, an auto-increment integer should work better both in terms of inserting and querying data. We can also index `created_date` column for faster querying.
+- Clean up the code base, for example:
+    1. [Here](internal/storages/sqlite/db.go#L87) we could write `return err == nil`
+    2. Rename folder and package away from `sqlite` and to a more generic form
+    3. Refactor `tasks_test.go` and `main_test.go`, both of which use some similar code (e.g. `newLoginRequest()` vs `makeLoginRequest()`)
+
+- Benchmarking
 
 ## API endpoints
 
@@ -59,7 +82,7 @@ GET /tasks
 **Arguments:**
 Name | Type | Mandatory | Description
 --- | --- | --- | ---
-created_date | string | NO | `yyyy-mm-dd` format
+created_date | string | YES | `yyyy-mm-dd` format
 
 **Response:**
 
@@ -108,32 +131,3 @@ content | string | YES | Description of the task
     }
 }
 ```
-
-## Missions
-
-- [x] Create 5 task limit checker per day
-- [x] Switch from SQLite to Postgres with Docker
-- [ ] DRY code
-- [x] Unit testing for `service` layer
-- [x] Unit testing for `storages` layer (low prio)
-- [x] Integration testing
-- [ ] Split `services` layer to `use_case` and `transport` layer
-
-## Improvements
-
-- [ ] Store pw NOT in plain text (need hash + salt)
-- [ ] Remove hard-coded JWT key (suggestion: store as ENV variable)
-- [ ] Remove hard-coded DB parameters
-- [ ] Muxer? (low prio)
-
-## Observations and Thoughts
-
-- Login credentials can be put in query string (x-www-form-urlencoded), which may causes security problem on the front-end. Suggestion: enforce submitting credentials using form data (multipart/form-data) (thus switching to POST instead of GET).
-- Per-day limit ambiguity: check within a date or a rolling 24hrs? The `created_date` field in database is `DATE` instead of `DATETIME` so maybe it is the former?
-- What happens when you change the per-day limit (or can you change it at all)? Assuming it being unchanged right now is probably good enough.
-- No registration as of now
-- Refresh token for JWT?
-- Database table `users` seems okay
-- Database table `tasks` has PK is a `UUID`? Seems suboptimal with lots of task creations, and we search by `user_id` (? double-check this) anyway so it does not seems to be a good indexing. Suggestion: `int` PK internal, `UUID` external.
-- `tasks:content` field seems to be cut off (13 chars)
-- Benchmarking
