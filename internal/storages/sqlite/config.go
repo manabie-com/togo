@@ -5,7 +5,7 @@ import "fmt"
 var (
 	pgPassword = "postgres"
 	pgDbName   = "togo"
-	pgHost     = "localhost"
+	pgHost     = "postgres" // equals to the db service name in docker-compose.yml
 	pgUser     = "postgres"
 	pgPort     = "5432"
 )
