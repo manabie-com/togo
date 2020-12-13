@@ -64,7 +64,7 @@ func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) b
 }
 
 // Get user limit task
-func (l *LiteDB) GetUserLimitTask(ctx context.Context, userID string) int {
+func (l *LiteDB) GetUserLimitTask(ctx context.Context, userID string) (int, error) {
 	stmt := `SELECT max_todo FROM users WHERE id = ?`
 	row := l.DB.QueryRowContext(ctx, stmt, userID)
 
@@ -72,13 +72,13 @@ func (l *LiteDB) GetUserLimitTask(ctx context.Context, userID string) int {
 	err := row.Scan(&maxTodo)
 
 	if err != nil {
-		return 0
+		return 0, err
 	}
-	return maxTodo
+	return maxTodo, nil
 }
 
 // Validate Limit task
-func (l *LiteDB) ValidateLimitTask(ctx context.Context, userID string) bool {
+func (l *LiteDB) GetUserTaskToday(ctx context.Context, userID string) (int, error) {
 
 	today := time.Now().Format("2006-01-02")
 	stmt := `SELECT count(*) FROM tasks WHERE user_id = ? AND created_date = ?`
@@ -87,10 +87,8 @@ func (l *LiteDB) ValidateLimitTask(ctx context.Context, userID string) bool {
 	var countTaskToday int
 	err := row.Scan(&countTaskToday)
 
-	userLimitTask := l.GetUserLimitTask(ctx, userID)
-
-	if err != nil || countTaskToday >= userLimitTask {
-		return false
+	if err != nil {
+		return 0, err
 	}
-	return true
+	return countTaskToday, nil
 }

@@ -121,7 +121,12 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 
 	resp.Header().Set("Content-Type", "application/json")
 
-	if !s.Store.ValidateLimitTask(req.Context(), userID) {
+	validAdd, err := s.validateAddTask(req.Context(), userID)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if !validAdd {
 		resp.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": "daily limit is reached!",
@@ -141,6 +146,21 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(map[string]*storages.Task{
 		"data": t,
 	})
+}
+
+func (s *ToDoService) validateAddTask(ctx context.Context, userID string) (bool, error) {
+	userLimitTask, err := s.Store.GetUserLimitTask(ctx, userID)
+	if err != nil {
+		return false, err
+	}
+	userTaskToday, err := s.Store.GetUserTaskToday(ctx, userID)
+	if err != nil {
+		return false, err
+	}
+	if userTaskToday >= userLimitTask {
+		return false, nil
+	}
+	return true, nil
 }
 
 func value(req *http.Request, p string) sql.NullString {
