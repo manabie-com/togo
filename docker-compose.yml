@@ -1,0 +1,38 @@
+version: '3'
+services:
+  app:
+    container_name: app
+    build: .
+    ports:
+      - 5050:5050
+    restart: on-failure
+    volumes:
+      - api:/usr/src/app/
+    depends_on: 
+      - postgres
+    networks:
+      - appnetwork
+    
+  postgres:
+    image: postgres:latest
+    container_name: app_postgres
+    environment: 
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=togo
+      - DATABASE_HOST=localhost
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - appnetwork
+
+volumes:
+  api:
+  postgres:
+
+networks:
+  appnetwork:
+    driver: bridge
+    

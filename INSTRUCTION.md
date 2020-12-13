@@ -2,8 +2,8 @@
 
 Quick launch
 
-```go
-go run main.go
+```shell
+docker-compose up
 ```
 
 Run tests
