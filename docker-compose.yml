@@ -24,6 +24,8 @@ services:
     ports:
       - 5432:5432
     volumes:
+      - ./sql/1-schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      - ./sql/2-data.sql:/docker-entrypoint-initdb.d/2-data.sql
       - postgres:/var/lib/postgresql/data
     networks:
       - appnetwork
