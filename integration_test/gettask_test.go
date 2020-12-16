@@ -28,9 +28,9 @@ func TestGetTask(t *testing.T) {
 	clearData(db)
 	ts := init_test_server(db)
 	defer ts.Close()
-	_, tk_1, tk_2, errInit := initDataGetTask(db, ts)
+	_, tk_1, tk_2, errInit := initDataGetTask(db, "postgres", ts)
 	if errInit != nil {
-		t.Skip("error init data")
+		t.Skipf("error init data: %s", errInit)
 		return
 	}
 
@@ -133,8 +133,16 @@ func TestGetTask(t *testing.T) {
 	}
 }
 
-func initDataGetTask(db *sql.DB, ts *httptest.Server) ([]DataTask, string, string, error) {
+func initDataGetTask(db *sql.DB, driveName string, ts *httptest.Server) ([]DataTask, string, string, error) {
+	tk_1, tk_2, err := initUserTest(db, ts)
+	if err != nil {
+		return nil, "", "", err
+	}
+
 	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
+	if driveName == "postgres" {
+		stmt = `INSERT INTO tasks (id, content, user_id, created_date) VALUES ($1, $2, $3, $4)`
+	}
 
 	dataSuite := []DataTask{
 		{
@@ -175,17 +183,12 @@ func initDataGetTask(db *sql.DB, ts *httptest.Server) ([]DataTask, string, strin
 		}
 	}
 
-	tk_1, tk_2, err := initUserTest(db, ts)
-	if err != nil {
-		return nil, "", "", err
-	}
-
 	return dataSuite, tk_1, tk_2, nil
 }
 
 func initUserTest(db *sql.DB, ts *httptest.Server) (string, string, error) {
-	initDataUser(db, "user_1", "123", 5)
-	initDataUser(db, "user_2", "123", 5)
+	initDataUser(db, "postgres", "user_1", "123", 5)
+	initDataUser(db, "postgres", "user_2", "123", 5)
 	tk_1, tk_2 := "", ""
 	code, rsl, er := getData(ts, "/login?user_id=user_1&password=123", nil)
 	if code != http.StatusOK || er != nil {

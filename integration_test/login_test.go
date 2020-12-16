@@ -10,8 +10,8 @@ import (
 
 func TestLogin(t *testing.T) {
 	//prepare condition
-	id := "user_1"
-	pass := "123"
+	id := "firstUser"
+	pass := "example"
 	wrongId := "abc"
 	wrongPass := "adsdf"
 	db, err := init_db_test()
@@ -20,7 +20,7 @@ func TestLogin(t *testing.T) {
 		return
 	}
 	clearData(db)
-	errInit := initDataUser(db, id, pass, 5)
+	errInit := initDataUser(db, "postgres", id, pass, 5)
 	if errInit != nil {
 		t.Skip("error init data")
 		return
@@ -100,8 +100,11 @@ func TestLogin(t *testing.T) {
 	}
 }
 
-func initDataUser(db *sql.DB, id, pass string, maxTodo int) error {
+func initDataUser(db *sql.DB, driveName string, id, pass string, maxTodo int) error {
 	stmt := `INSERT INTO users (id, password, max_todo) VALUES (?, ?, ?)`
+	if driveName == "postgres" {
+		stmt = `INSERT INTO users (id, password, max_todo) VALUES ($1, $2, $3)`
+	}
 	_, err := db.Exec(stmt, id, pass, maxTodo)
 	if err != nil {
 		return err

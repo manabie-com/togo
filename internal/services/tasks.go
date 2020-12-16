@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"log"
 	"net/http"
 	"time"
 
@@ -190,7 +189,7 @@ func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
 		return []byte(s.JWTKey), nil
 	})
 	if err != nil {
-		log.Println(err)
+		//log.Println(err)
 		return req, false
 	}
 

@@ -20,7 +20,8 @@ func main() {
 	http.ListenAndServe(":5050", &services.ToDoService{
 		JWTKey: "wqGyEBBfPK9w3Lxw",
 		Store: &sqllite.LiteDB{
-			DB: db,
+			DB:        db,
+			DriveName: "sqlite3",
 		},
 	})
 }

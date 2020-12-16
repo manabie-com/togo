@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
+	"fmt"
+	_ "github.com/lib/pq"
 	"github.com/manabie-com/togo/internal/services"
 	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 	"io/ioutil"
@@ -12,8 +14,21 @@ import (
 	"net/http/httptest"
 )
 
+const (
+	host = "host.docker.internal"
+	//host     = "localhost"
+	port     = 5432
+	user     = "togo"
+	password = "togo"
+	dbname   = "datatogo"
+)
+
 func init_db_test() (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", "./data_test.db")
+	//db, err := sql.Open("sqlite3", "./data_test.db")
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
 		log.Fatal("error opening db", err)
 		return nil, err
@@ -25,7 +40,8 @@ func init_test_server(db *sql.DB) *httptest.Server {
 	sv := &services.ToDoService{
 		JWTKey: "wqGyEBBfPK9w3Lxw",
 		Store: &sqllite.LiteDB{
-			DB: db,
+			DB:        db,
+			DriveName: "postgres",
 		}}
 	ts := httptest.NewServer(sv)
 	return ts

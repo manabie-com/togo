@@ -99,7 +99,7 @@ func TestAddFirstTask(t *testing.T) {
 					t.Errorf("case fail - wrong item return")
 					continue
 				} else {
-					if checkTaskExist(db, d) {
+					if checkTaskExist(db, "postgres", d) {
 						t.Logf("case pass - %s", c.caseId)
 						continue
 					} else {
@@ -122,9 +122,9 @@ func TestAddTask(t *testing.T) {
 	clearData(db)
 	ts := init_test_server(db)
 	defer ts.Close()
-	_, tk_1, tk_2, errInit := initDataAddTask(db, ts)
+	_, tk_1, tk_2, errInit := initDataAddTask(db, "postgres", ts)
 	if errInit != nil {
-		t.Skip("error init data")
+		t.Skipf("error init data: %s", errInit)
 		return
 	}
 
@@ -198,7 +198,7 @@ func TestAddTask(t *testing.T) {
 					t.Errorf("case fail - wrong item return")
 					continue
 				} else {
-					if checkTaskExist(db, d) {
+					if checkTaskExist(db, "postgres", d) {
 						t.Logf("case pass - %s", c.caseId)
 						continue
 					} else {
@@ -221,9 +221,9 @@ func TestAddTaskReachLimit(t *testing.T) {
 	clearData(db)
 	ts := init_test_server(db)
 	defer ts.Close()
-	_, tk_1, tk_2, errInit := initDataAddTaskLimit(db, ts)
+	_, tk_1, tk_2, errInit := initDataAddTaskLimit(db, "postgres", ts)
 	if errInit != nil {
-		t.Skip("error init data")
+		t.Skipf("error init data: %s", errInit)
 		return
 	}
 
@@ -287,7 +287,7 @@ func TestAddTaskReachLimit(t *testing.T) {
 					t.Errorf("case fail - wrong item return")
 					continue
 				} else {
-					if checkTaskExist(db, d) {
+					if checkTaskExist(db, "postgres", d) {
 						t.Logf("case pass - %s", c.caseId)
 						continue
 					} else {
@@ -300,8 +300,15 @@ func TestAddTaskReachLimit(t *testing.T) {
 	}
 }
 
-func initDataAddTask(db *sql.DB, ts *httptest.Server) ([]DataTask, string, string, error) {
+func initDataAddTask(db *sql.DB, driveName string, ts *httptest.Server) ([]DataTask, string, string, error) {
+	tk_1, tk_2, err := initUserTest(db, ts)
+	if err != nil {
+		return nil, "", "", err
+	}
 	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
+	if driveName == "postgres" {
+		stmt = `INSERT INTO tasks (id, content, user_id, created_date) VALUES ($1, $2, $3, $4)`
+	}
 	today := time.Now().Format("2006-01-02")
 	dataSuite := []DataTask{
 		{
@@ -337,16 +344,18 @@ func initDataAddTask(db *sql.DB, ts *httptest.Server) ([]DataTask, string, strin
 		}
 	}
 
+	return dataSuite, tk_1, tk_2, nil
+}
+
+func initDataAddTaskLimit(db *sql.DB, driveName string, ts *httptest.Server) ([]DataTask, string, string, error) {
 	tk_1, tk_2, err := initUserTest(db, ts)
 	if err != nil {
 		return nil, "", "", err
 	}
-
-	return dataSuite, tk_1, tk_2, nil
-}
-
-func initDataAddTaskLimit(db *sql.DB, ts *httptest.Server) ([]DataTask, string, string, error) {
 	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
+	if driveName == "postgres" {
+		stmt = `INSERT INTO tasks (id, content, user_id, created_date) VALUES ($1, $2, $3, $4)`
+	}
 	today := time.Now().Format("2006-01-02")
 	dataSuite := []DataTask{
 		{
@@ -407,16 +416,14 @@ func initDataAddTaskLimit(db *sql.DB, ts *httptest.Server) ([]DataTask, string, 
 		}
 	}
 
-	tk_1, tk_2, err := initUserTest(db, ts)
-	if err != nil {
-		return nil, "", "", err
-	}
-
 	return dataSuite, tk_1, tk_2, nil
 }
 
-func checkTaskExist(db *sql.DB, task storages.Task) bool {
+func checkTaskExist(db *sql.DB, driveName string, task storages.Task) bool {
 	stmt := `SELECT count(*) FROM tasks WHERE user_id = ? AND created_date = ? AND content = ? AND id= ?`
+	if driveName == "postgres" {
+		stmt = `SELECT count(*) FROM tasks WHERE user_id = $1 AND created_date = $2 AND content = $3 AND id= $4`
+	}
 	row := db.QueryRow(stmt, task.UserID, task.CreatedDate, task.Content, task.ID)
 
 	var countTask int
