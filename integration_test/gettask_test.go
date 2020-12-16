@@ -79,6 +79,15 @@ func TestGetTask(t *testing.T) {
 			date:   "2020-06-29",
 			rs:     3,
 		},
+		{
+			caseId: "get_task_5",
+			tk:     tk_2,
+			url:    "/tasks?created_date=2020-06-01",
+			code:   http.StatusOK,
+			user:   "user_2",
+			date:   "2020-06-29",
+			rs:     0,
+		},
 	}
 	for _, c := range cases {
 		header := map[string]string{
