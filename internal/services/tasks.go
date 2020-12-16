@@ -21,7 +21,7 @@ type ToDoService struct {
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
-	log.Println(req.Method, req.URL.Path)
+	//log.Println(req.Method, req.URL.Path)
 	resp.Header().Set("Access-Control-Allow-Origin", "*")
 	resp.Header().Set("Access-Control-Allow-Headers", "*")
 	resp.Header().Set("Access-Control-Allow-Methods", "*")
@@ -202,6 +202,8 @@ func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
 	if !ok {
 		return req, false
 	}
+
+	//TODO check exist user
 
 	req = req.WithContext(context.WithValue(req.Context(), userAuthKey(0), id))
 	return req, true

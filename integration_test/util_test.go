@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"github.com/manabie-com/togo/internal/services"
 	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 	"io/ioutil"
@@ -80,8 +79,8 @@ func postData(ts *httptest.Server, url string, body []byte, header map[string]st
 
 	var rs map[string]interface{}
 	json.Unmarshal([]byte(resBody), &rs)
-	fmt.Printf("%s\n-body: %s\n-h: %s\nRes>> code: %d > resBody: %s\n",
-		req.URL, string(body), req.Header, res.StatusCode, rs)
+	//fmt.Printf("%s\n-body: %s\n-h: %s\nRes>> code: %d > resBody: %s\n",
+	//	req.URL, string(body), req.Header, res.StatusCode, rs)
 
 	return res.StatusCode, rs, err
 }

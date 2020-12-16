@@ -2,7 +2,9 @@ package integration_test
 
 import (
 	"database/sql"
+	"encoding/json"
 	"github.com/google/uuid"
+	"github.com/manabie-com/togo/internal/storages"
 	_ "github.com/mattn/go-sqlite3"
 	"net/http"
 	"net/http/httptest"
@@ -38,6 +40,7 @@ func TestGetTask(t *testing.T) {
 		url    string
 		code   int
 		user   string
+		date   string
 		rs     int
 	}{
 		{
@@ -46,6 +49,7 @@ func TestGetTask(t *testing.T) {
 			url:    "/tasks?created_date=2020-06-29",
 			code:   http.StatusUnauthorized,
 			user:   "",
+			date:   "2020-06-29",
 			rs:     0,
 		},
 		{
@@ -54,6 +58,7 @@ func TestGetTask(t *testing.T) {
 			url:    "/tasks?created_date=2020-06-29",
 			code:   http.StatusOK,
 			user:   "user_1",
+			date:   "2020-06-29",
 			rs:     2,
 		},
 		{
@@ -62,6 +67,7 @@ func TestGetTask(t *testing.T) {
 			url:    "/tasks?created_date=2020-06-25",
 			code:   http.StatusOK,
 			user:   "user_1",
+			date:   "2020-06-25",
 			rs:     1,
 		},
 		{
@@ -70,62 +76,52 @@ func TestGetTask(t *testing.T) {
 			url:    "/tasks?created_date=2020-06-29",
 			code:   http.StatusOK,
 			user:   "user_2",
-			rs:     0,
+			date:   "2020-06-29",
+			rs:     3,
 		},
 	}
 	for _, c := range cases {
 		header := map[string]string{
 			"Authorization": c.tk,
 		}
-		code, _, err := getData(ts, c.url, header)
+		code, rs, err := getData(ts, c.url, header)
 		if err != nil {
 			t.Errorf("case fail - %s\nRequest fail: %s", c.caseId, err)
+			continue
 		}
 		if code != c.code {
-			//t.Logf("wrong status code %d - true result %d", code, c.code)
 			t.Errorf("case fail - %s\nwrong status code %d >< true result %d", c.caseId, code, c.code)
+			continue
 		} else {
 			if code != 200 {
 				t.Logf("case pass - %s", c.caseId)
+				continue
 			} else {
+				type ArrayTask []storages.Task
+				_, exist := rs["data"]
+				if !exist {
+					t.Errorf("case fail - %s\nwrong schema result", c.caseId)
+					continue
+				}
+				data, _ := json.Marshal(rs["data"])
+				ars := ArrayTask{}
+				json.Unmarshal(data, &ars)
 
+				if len(ars) != c.rs {
+					t.Errorf("case fail - %s\ngot %d item(s) >< true result %d item(s)", c.caseId, len(rs), c.rs)
+					continue
+				} else {
+					for _, d := range ars {
+						if d.UserID != c.user || d.CreatedDate != c.date {
+							t.Errorf("case fail - wrong item")
+							continue
+						}
+					}
+					t.Logf("case pass - %s", c.caseId)
+				}
 			}
 		}
 	}
-	//
-	//header = map[string]string{
-	//	"Authorization": tk_2,
-	//}
-	//_, _, err = getData(ts, "/tasks?created_date="+data[0].date, header)
-	//if err != nil {
-	//	t.Error(err)
-	//}
-}
-
-func TestaddTask(t *testing.T) {
-	//prepare
-	db, err := init_db_test()
-	if err != nil {
-		t.Skip("error init db")
-		return
-	}
-	clearData(db)
-	ts := init_test_server(db)
-	defer ts.Close()
-	//cases, tk_1, tk_2, errInit := initDataGetTask(db, ts)
-	//if errInit != nil {
-	//	t.Skip("error init data")
-	//	return
-	//}
-	//
-	//header := map[string]string{
-	//	"Authorization": token,
-	//}
-	//js := []byte(`{"content":"abcdfkjwe cj fkajr gk drg "}`)
-	//_, _, _ = postData(ts, "/tasks", js, header)
-	//if "a" != "want" {
-	//	t.Errorf("Hello() = %q, want %q", "a", "want")
-	//}
 }
 
 func initDataGetTask(db *sql.DB, ts *httptest.Server) ([]DataTask, string, string, error) {
@@ -170,22 +166,30 @@ func initDataGetTask(db *sql.DB, ts *httptest.Server) ([]DataTask, string, strin
 		}
 	}
 
+	tk_1, tk_2, err := initUserTest(db, ts)
+	if err != nil {
+		return nil, "", "", err
+	}
+
+	return dataSuite, tk_1, tk_2, nil
+}
+
+func initUserTest(db *sql.DB, ts *httptest.Server) (string, string, error) {
 	initDataUser(db, "user_1", "123", 5)
 	initDataUser(db, "user_2", "123", 5)
 	tk_1, tk_2 := "", ""
 	code, rsl, er := getData(ts, "/login?user_id=user_1&password=123", nil)
 	if code != http.StatusOK || er != nil {
-		return nil, "", "", er
+		return "", "", er
 	} else {
 		tk_1 = rsl["data"].(string)
 	}
 
 	code, rsl, er = getData(ts, "/login?user_id=user_2&password=123", nil)
 	if code != http.StatusOK || er != nil {
-		return nil, "", "", er
+		return "", "", er
 	} else {
 		tk_2 = rsl["data"].(string)
 	}
-
-	return dataSuite, tk_1, tk_2, nil
+	return tk_1, tk_2, nil
 }
