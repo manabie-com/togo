@@ -1,3 +1,19 @@
+### How to run
+- integration test: `docker-compose -f test.yaml up`
+- run app: `docker-compose -f run.yaml up`
+
+### Requirements
+Done:
+- limit N task per day
+- Write integration tests for this project
+- Change from using `SQLite` to `Postgres` with `docker-compose`
+
+Missing:
+- Write unit test for `services` layer
+- Write unit test for `storages` layer
+- Split services layer to use case and transport layer
+- Frontend requirements
+
 ### Overview
 This is a simple backend for a good old todo service, right now this service can handle login/list/create simple tasks.  
 To make it run:
