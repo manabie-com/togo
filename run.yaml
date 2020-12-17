@@ -1,0 +1,24 @@
+version: "3.5"
+
+services:
+  app:
+    image: golang:1.15.3
+    ports:
+      - "5050:5050"
+    volumes:
+      - .:/go/src/togo
+    working_dir: /go/src/togo
+    command: go run main.go
+    depends_on:
+      - db
+  db:
+    container_name: dockerdev-db
+    image: postgres:12.2-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: togo
+      POSTGRES_PASSWORD: togo
+      POSTGRES_DB: datatogo
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql

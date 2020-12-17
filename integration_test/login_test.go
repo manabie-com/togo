@@ -3,7 +3,6 @@ package integration_test
 import (
 	"database/sql"
 	"github.com/dgrijalva/jwt-go"
-	_ "github.com/mattn/go-sqlite3"
 	"net/http"
 	"testing"
 )

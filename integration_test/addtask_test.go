@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/storages"
-	_ "github.com/mattn/go-sqlite3"
 	"net/http"
 	"net/http/httptest"
 	"testing"
