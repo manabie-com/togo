@@ -52,10 +52,17 @@ func (s TaskStore) AddTask(ctx context.Context, userID string, t *model.Task) (*
 	return t, err
 }
 
-func (s TaskStore) CountTasksByUser(ctx context.Context, userID string) (int, error) {
+func (s TaskStore) CountTasksByUser(ctx context.Context, userID string, createdDate sql.NullString) (int, error) {
+	args := []interface{}{userID}
+	query := `select count(*) from tasks where tasks.user_id = ?`
+	if createdDate.Valid && len(createdDate.String) != 0 {
+		query = `select count(*) from tasks where tasks.user_id = ? and tasks.created_date = ?`
+		args = append(args, createdDate)
+	}
+
 	rows, err := s.db.Query(
-		`select count(*) from tasks where tasks.user_id = ?`,
-		userID,
+		query,
+		args...,
 	)
 	if err != nil {
 		return 0, model.NewError(model.ErrCountTasks, err.Error())

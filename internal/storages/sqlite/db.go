@@ -56,9 +56,14 @@ func (l TaskStore) AddTask(ctx context.Context, userID string, t *model.Task) (*
 	return t, nil
 }
 
-func (l TaskStore) CountTasksByUser(ctx context.Context, userID string) (int, error) {
+func (l TaskStore) CountTasksByUser(ctx context.Context, userID string, createdDate sql.NullString) (int, error) {
+	args := []interface{}{userID}
 	stmt := `SELECT count(*) FROM tasks WHERE user_id = ?`
-	row := l.DB.QueryRowContext(ctx, stmt, userID)
+	if createdDate.Valid && len(createdDate.String) != 0 {
+		stmt = `SELECT count(*) FROM tasks WHERE user_id = ? and tasks.created_date = ?`
+		args = append(args, createdDate)
+	}
+	row := l.DB.QueryRowContext(ctx, stmt, args...)
 	var count int
 	err := row.Scan(&count)
 	if err != nil {

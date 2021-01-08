@@ -82,7 +82,7 @@ func TestTasks(t *testing.T) {
 		}
 
 		// count total tasks
-		count, err := th.Store.Task().CountTasksByUser(context.Background(), u.ID)
+		count, err := th.Store.Task().CountTasksByUser(context.Background(), u.ID, sql.NullString{})
 		require.NoError(t, err)
 		assert.EqualValues(t, totalTasks, count)
 	})

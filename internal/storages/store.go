@@ -20,5 +20,5 @@ type User interface {
 type Task interface {
 	RetrieveTasks(ctx context.Context, userID string, createdDate sql.NullString) ([]*model.Task, error)
 	AddTask(ctx context.Context, userID string, t *model.Task) (*model.Task, error)
-	CountTasksByUser(ctx context.Context, userID string) (int, error)
+	CountTasksByUser(ctx context.Context, userID string, createdDate sql.NullString) (int, error)
 }

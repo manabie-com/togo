@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/model"
+	"time"
 )
 
 func (a Usecase) AddTask(ctx context.Context, userID string, t *model.Task) (*model.Task, error) {
@@ -19,7 +20,8 @@ func (a Usecase) AddTask(ctx context.Context, userID string, t *model.Task) (*mo
 	}
 
 	// count user's current tasks
-	num, err := a.Store.Task().CountTasksByUser(ctx, userID)
+	now := time.Now().UTC().Format("2006-01-02")
+	num, err := a.Store.Task().CountTasksByUser(ctx, userID, sql.NullString{now, true})
 	if err != nil {
 		return nil, err
 	}
