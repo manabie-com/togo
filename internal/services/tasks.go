@@ -4,13 +4,13 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"github.com/manabie-com/togo/internal/model"
 	"log"
 	"net/http"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
-	"github.com/manabie-com/togo/internal/storages"
 	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 )
 
@@ -99,13 +99,13 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
+	json.NewEncoder(resp).Encode(map[string][]*model.Task{
 		"data": tasks,
 	})
 }
 
 func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
-	t := &storages.Task{}
+	t := &model.Task{}
 	err := json.NewDecoder(req.Body).Decode(t)
 	defer req.Body.Close()
 	if err != nil {
@@ -130,7 +130,7 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string]*storages.Task{
+	json.NewEncoder(resp).Encode(map[string]*model.Task{
 		"data": t,
 	})
 }
