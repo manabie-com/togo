@@ -1,0 +1,14 @@
+{
+  "databaseSettings": {
+    "provider": "postgresql",
+    "postgresql": {
+      "connectionString": "user=user_name password=pwd dbname=togo host=localhost sslmode=disable",
+      "maxIdleConnections": 4,
+      "maxOpenConnections": 8
+    },
+    "sqlite": {
+      "driverName": "sqlite3",
+      "dataSourceName": "./data.db"
+    }
+  }
+}

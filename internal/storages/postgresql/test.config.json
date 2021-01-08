@@ -1,0 +1,9 @@
+{
+  "databaseSettings": {
+    "postgresql": {
+      "connectionString": "user=user_name password=pwd dbname=togo host=localhost sslmode=disable",
+      "maxIdleConnections": 4,
+      "maxOpenConnections": 8
+    }
+  }
+}
