@@ -1,26 +1,42 @@
 package main
 
 import (
-	"database/sql"
+	"github.com/manabie-com/togo/internal/model"
+	"github.com/manabie-com/togo/internal/transport"
+	"github.com/manabie-com/togo/internal/usecase"
+	"github.com/spf13/viper"
 	"log"
 	"net/http"
-
-	"github.com/manabie-com/togo/internal/services"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
-	db, err := sql.Open("sqlite3", "./data.db")
+	viper.SetConfigName("config")
+	viper.SetConfigType("json")
+	viper.AddConfigPath(".")
+
+	err := viper.ReadInConfig()
 	if err != nil {
-		log.Fatal("error opening db", err)
+		log.Fatal(err)
+		return
 	}
 
-	http.ListenAndServe(":5050", &services.ToDoService{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
-			DB: db,
-		},
+	conf := model.AppSettings{}
+	err = viper.Unmarshal(&conf)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	a, err := usecase.New(conf)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	http.ListenAndServe(":5050", &transport.ToDoService{
+		JWTKey:  conf.JWTSecretKey,
+		Usecase: a,
 	})
 }
