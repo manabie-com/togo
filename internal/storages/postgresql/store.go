@@ -15,7 +15,7 @@ type Store struct {
 }
 
 func NewStore(conf model.DatabaseSettings) (*Store, error) {
-	dbx, err := sql.Open("postgres", conf.ConnectionString)
+	dbx, err := sql.Open("postgres", conf.Postgresql.ConnectionString)
 	if err != nil {
 		return nil, err
 	}

@@ -2,7 +2,6 @@ package postgresql
 
 import (
 	"context"
-	"database/sql"
 	"github.com/manabie-com/togo/internal/model"
 	"upper.io/db.v3/lib/sqlbuilder"
 )
@@ -19,7 +18,7 @@ func NewUserStore(db sqlbuilder.Database) UserStore {
 	}
 }
 
-func (s UserStore) Get(ctx context.Context, userID sql.NullString) (*model.User, error) {
+func (s UserStore) Get(ctx context.Context, userID string) (*model.User, error) {
 	var u model.User
 	err := s.db.WithContext(ctx).SelectFrom(usersTable).Where("id = ?", userID).One(&u)
 	if err != nil {
@@ -30,6 +29,7 @@ func (s UserStore) Get(ctx context.Context, userID sql.NullString) (*model.User,
 }
 
 func (s UserStore) Create(ctx context.Context, u *model.User) (*model.User, error) {
+	u.PreInsert()
 	if err := u.IsValid(); err != nil{
 		return nil, err
 	}

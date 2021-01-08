@@ -11,5 +11,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.0
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.3.0
+	golang.org/x/crypto v0.0.0-20190605123033-f99c8df09eb5
+	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22 // indirect
 	upper.io/db.v3 v3.7.1+incompatible
 )

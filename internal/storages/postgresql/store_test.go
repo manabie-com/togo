@@ -13,6 +13,7 @@ type TestHelper struct {
 func Setup() (*TestHelper, error) {
 	viper.SetConfigName("test.config")
 	viper.SetConfigType("json")
+	viper.AddConfigPath(".")
 
 	err := viper.ReadInConfig()
 	if err != nil {

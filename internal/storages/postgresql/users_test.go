@@ -2,7 +2,6 @@ package postgresql_test
 
 import (
 	"context"
-	"database/sql"
 	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/model"
 	"github.com/stretchr/testify/assert"
@@ -24,11 +23,11 @@ func TestUsers(t *testing.T) {
 		_, err := th.Store.User().Create(context.Background(), &u)
 		require.NoError(t, err)
 
-		actual, err := th.Store.User().Get(context.Background(), sql.NullString{String: u.ID,  Valid: true})
+		actual, err := th.Store.User().Get(context.Background(), u.ID)
 		require.NoError(t, err)
-		assert.EqualValues(t, u, actual)
+		assert.EqualValues(t, u, *actual)
 
-		actual, err = th.Store.User().Get(context.Background(), sql.NullString{String:  uuid.New().String(),  Valid: true})
+		actual, err = th.Store.User().Get(context.Background(), uuid.New().String())
 		require.Error(t, err)
 	})
 }

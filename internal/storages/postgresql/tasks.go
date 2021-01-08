@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"github.com/manabie-com/togo/internal/model"
+	"time"
 	"upper.io/db.v3/lib/sqlbuilder"
 )
 
@@ -19,9 +20,13 @@ func NewTaskStore(db sqlbuilder.Database) TaskStore {
 	}
 }
 
-func (s TaskStore) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*model.Task, error) {
+func (s TaskStore) RetrieveTasks(ctx context.Context, userID string, createdDate sql.NullString) ([]*model.Task, error) {
 	var ts []*model.Task
-	err := s.db.WithContext(ctx).SelectFrom(tasksTable).Where("user_id = ? and createdDate = ?", userID, createdDate).All(&ts)
+	var err error
+	err = s.db.WithContext(ctx).SelectFrom(tasksTable).Where(`user_id = ?`, userID).All(&ts)
+	if createdDate.Valid && len(createdDate.String) != 0 {
+		err = s.db.WithContext(ctx).SelectFrom(tasksTable).Where(`user_id = ? and created_date = ?`, userID, createdDate).All(&ts)
+	}
 	if err != nil {
 		return nil, model.NewError(model.ErrListTasks, err.Error())
 	}
@@ -31,6 +36,7 @@ func (s TaskStore) RetrieveTasks(ctx context.Context, userID, createdDate sql.Nu
 
 func (s TaskStore) AddTask(ctx context.Context, userID string, t *model.Task) (*model.Task, error) {
 	t.UserID = userID
+	t.CreatedDate = time.Now().UTC().Format("2006-01-02")
 	if err := t.IsValid(); err != nil {
 		return nil, err
 	}
@@ -44,4 +50,23 @@ func (s TaskStore) AddTask(ctx context.Context, userID string, t *model.Task) (*
 	}
 
 	return t, err
+}
+
+func (s TaskStore) CountTasksByUser(ctx context.Context, userID string) (int, error) {
+	rows, err := s.db.Query(
+		`select count(*) from tasks where tasks.user_id = ?`,
+		userID,
+	)
+	if err != nil {
+		return 0, model.NewError(model.ErrCountTasks, err.Error())
+	}
+	defer rows.Close()
+
+	res := 0
+	err = sqlbuilder.NewIterator(rows).ScanOne(&res)
+	if err != nil {
+		return 0, model.NewError(model.ErrCountTasks, err.Error())
+	}
+
+	return res, nil
 }
