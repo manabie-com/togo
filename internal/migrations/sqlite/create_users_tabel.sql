@@ -7,4 +7,5 @@ CREATE TABLE users (
 	CONSTRAINT users_PK PRIMARY KEY (id)
 );
 
-INSERT INTO users (id, password, max_todo) VALUES('firstUser', '$2a$10$Px50y37hZA.W4h8t2hvDMeIyenU3kDNWx0NCZpBtUyHHJUbW3e1Uu', 5);
+--- pwd: 'example'
+INSERT INTO users (id, password, max_todo) VALUES('firstUser', '$2a$10$hA5N/hUvta0rhYi4/xBXP.Oi2laKCdOSaTfWm.6pBTmvq3D1CtvWO', 5);
