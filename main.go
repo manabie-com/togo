@@ -1,20 +1,26 @@
 package main
 
 import (
+	"github.com/manabie-com/togo/config"
+	"github.com/manabie-com/togo/internal/services"
+	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+
 	"database/sql"
 	"log"
 	"net/http"
 
-	"github.com/manabie-com/togo/internal/services"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
-
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/lib/pq"
 )
 
 func main() {
-	db, err := sql.Open("sqlite3", "./data.db")
+	config, err := config.LoadConfig(".")
 	if err != nil {
-		log.Fatal("error opening db", err)
+		log.Fatal("cannot load config:", err)
+	}
+
+	db, err := sql.Open(config.DBDriver, config.DBSource)
+	if err != nil {
+		log.Fatal("cannot connect to db:", err)
 	}
 
 	http.ListenAndServe(":5050", &services.ToDoService{

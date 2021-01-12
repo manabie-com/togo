@@ -1,17 +1,19 @@
 package services
 
 import (
+	"github.com/manabie-com/togo/internal/storages"
+	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+
 	"context"
 	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
+	"sync"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
-	"github.com/manabie-com/togo/internal/storages"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 )
 
 // ToDoService implement HTTP server
@@ -119,6 +121,17 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	t.UserID = userID
 	t.CreatedDate = now.Format("2006-01-02")
 
+	// Check max task/day
+	isMaxTask, err := s.checkMaxTaskPerDay(req, userID, t.CreatedDate)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if isMaxTask {
+		resp.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	resp.Header().Set("Content-Type", "application/json")
 
 	err = s.Store.AddTask(req.Context(), t)
@@ -138,6 +151,13 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 func value(req *http.Request, p string) sql.NullString {
 	return sql.NullString{
 		String: req.FormValue(p),
+		Valid:  true,
+	}
+}
+
+func nullString(s string) sql.NullString {
+	return sql.NullString{
+		String: s,
 		Valid:  true,
 	}
 }
@@ -185,4 +205,34 @@ func userIDFromCtx(ctx context.Context) (string, bool) {
 	v := ctx.Value(userAuthKey(0))
 	id, ok := v.(string)
 	return id, ok
+}
+
+func (s *ToDoService) checkMaxTaskPerDay(req *http.Request, userID, createdDate string) (bool, error) {
+	var err error
+	var authUser *storages.User
+	var totalTask int
+	var wg sync.WaitGroup
+
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		if req.Context().Err() != nil {
+			return
+		}
+		authUser, err = s.Store.GetUser(req.Context(), nullString(userID))
+	}()
+	go func() {
+		defer wg.Done()
+		if req.Context().Err() != nil {
+			return
+		}
+		totalTask, err = s.Store.CountTasks(req.Context(), nullString(userID), nullString(createdDate))
+	}()
+	wg.Wait()
+
+	if err != nil {
+		return false, err
+	}
+
+	return totalTask >= authUser.MaxTodo, nil
 }
