@@ -10,6 +10,9 @@ createdb-test:
 dropdb:
 	docker exec -it postgresql dropdb togo
 
+dropdb-test:
+	docker exec -it postgresql dropdb togo_test
+
 migrateup:
 	migrate -path internal/storages/migration -database "postgresql://postgres:password@localhost:5432/togo?sslmode=disable" -verbose up
 

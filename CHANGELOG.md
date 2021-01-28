@@ -16,8 +16,13 @@
 - `addTask` function: support max task per day
 
 ### Run
-- Create file config enviroment
-    - Follow command: `cp main.env.example main.env`
+- Create file config environment
+    - Follow command:
+    - `cp main.env.example main.env`
+    - `make postgresql`
+    - `make createdb`
+    - `make migrateup`
+
 - Run server:
     - `make server`
 - Using postman create API
