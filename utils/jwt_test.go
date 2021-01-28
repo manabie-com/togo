@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -37,7 +36,7 @@ func Test_JWT(t *testing.T) {
 
 	for _, q := range qs {
 		p := q.para
-		fmt.Printf("~~%v~~\n", p)
+
 		_, err := CreateToken(p.one, p.two)
 		ast.NoError(err)
 	}

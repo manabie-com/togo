@@ -2,7 +2,6 @@ package utils
 
 import (
 	"database/sql"
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -37,7 +36,6 @@ func TestNullString(t *testing.T) {
 	}
 	for _, q := range qs {
 		a, p := q.ans1, q.para1
-		fmt.Printf("~~%v~~\n", p)
 
 		ast.Equal(a.one, NullString(p.one), "input:%v", p)
 	}
