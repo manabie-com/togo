@@ -3,7 +3,6 @@ package sqllite
 import (
 	"context"
 	"database/sql"
-
 	"github.com/manabie-com/togo/internal/storages"
 )
 
@@ -45,7 +44,6 @@ func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -60,4 +58,30 @@ func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) b
 	}
 
 	return true
+}
+
+// GetUserInfo returns user info when existing userID or null if vice versa
+func (l *LiteDB) GetUserInfo(ctx context.Context, userID sql.NullString) *storages.User {
+	stmt := `SELECT id, max_todo FROM users WHERE id = ?`
+	row := l.DB.QueryRowContext(ctx, stmt, userID)
+	u := &storages.User{}
+	err := row.Scan(&u.ID, &u.MaxTodo)
+	if err != nil {
+		return nil
+	}
+
+	return u
+}
+
+// CountTasks returns the number of tasks that matched userID AND createDate.
+func (l *LiteDB) CountTasks(ctx context.Context, userID, createdDate sql.NullString) (int, error) {
+	stmt := `SELECT COUNT(id) as total FROM tasks WHERE user_id = ? AND created_date = ?`
+	row := l.DB.QueryRowContext(ctx, stmt, userID, createdDate)
+	var total int
+	err := row.Scan(&total)
+	if err != nil {
+		return -1, err
+	}
+
+	return total, nil
 }

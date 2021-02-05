@@ -1,0 +1,114 @@
+version: '3.7'
+services:
+  db:
+    image: postgres:13-alpine
+    environment:
+      TZ: UTC
+      PGTZ: UTC
+      POSTGRES_DB: togo_app
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345678
+    container_name: togo_postgres_nhantb
+    restart: always
+    volumes:
+      - togo-app-data:/var/lib/postgres/togo-app-data
+      - ./docker-entrypoint-initdb.d/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    ports:
+      - 5432:5432
+
+  app:
+    depends_on:
+      - db
+    links:
+      - db
+    image: golang:1.14-alpine
+    environment:
+      ENCRYPTION: wqGyEBBfPK9w3Lxw
+      TZ: UTC
+      DB_PORT: 5432
+      POSTGRES_DB: togo_app
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345678
+      SSL: disable
+    volumes:
+      - ./:/go-service
+    working_dir: /go-service
+    command: >
+      /bin/sh -c "
+        sleep 10
+        CGO_ENABLED=0 go run -mod=vendor main.go
+      "
+    container_name: togo_service_nhantb
+    ports:
+      - 5050:5050
+
+  integration:
+    depends_on:
+      - db
+      - app
+    links:
+      - db
+    image: golang:1.14-alpine
+    environment:
+      ENCRYPTION: wqGyEBBfPK9w3Lxw
+      TZ: UTC
+      DB_PORT: 5432
+      POSTGRES_DB: togo_app
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345678
+      SSL: disable
+    volumes:
+      - ./:/go-service
+    working_dir: /go-service
+    command: >
+      /bin/sh -c "
+        sleep 10
+        CGO_ENABLED=0 go test ./test/
+      "
+
+  storages:
+    depends_on:
+      - db
+      - app
+    links:
+      - db
+    image: golang:1.14-alpine
+    environment:
+      ENCRYPTION: wqGyEBBfPK9w3Lxw
+      TZ: UTC
+      DB_PORT: 5432
+      POSTGRES_DB: togo_app
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345678
+      SSL: disable
+    volumes:
+      - ./:/go-service
+    working_dir: /go-service
+    command: >
+      /bin/sh -c "
+        sleep 10
+        CGO_ENABLED=0 go test ./internal/storages/postgres/
+      "
+
+  services:
+    image: golang:1.14-alpine
+    environment:
+      ENCRYPTION: wqGyEBBfPK9w3Lxw
+      TZ: UTC
+      DB_PORT: 5432
+      POSTGRES_DB: togo_app
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345678
+      SSL: disable
+    volumes:
+      - ./:/go-service
+    working_dir: /go-service
+    command: >
+      /bin/sh -c "
+        sleep 10
+        CGO_ENABLED=0 go test ./internal/services/
+      "
+
+volumes:
+  togo-app-data:
+    driver: local
