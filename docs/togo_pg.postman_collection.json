@@ -1,0 +1,110 @@
+{
+	"info": {
+		"_postman_id": "914e8ca3-e622-4ea8-8370-1c548912a25f",
+		"name": "Test togo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Login pg",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5050/login-pg?user_id=firstUser&password=example",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"login-pg"
+					],
+					"query": [
+						{
+							"key": "user_id",
+							"value": "firstUser"
+						},
+						{
+							"key": "password",
+							"value": "example"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List content pg",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTIwMDQ4NjMsInVzZXJfaWQiOiJmaXJzdFVzZXIifQ.yIaDKI7s1KXBin3_gN60AC2s1u_vcERxljG50iniuj4",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:5050/tasks-pg?created_date=2020-06-29",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"tasks-pg"
+					],
+					"query": [
+						{
+							"key": "created_date",
+							"value": "2020-06-29"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create task pg",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTIwMDQ4NjMsInVzZXJfaWQiOiJmaXJzdFVzZXIifQ.yIaDKI7s1KXBin3_gN60AC2s1u_vcERxljG50iniuj4",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"content\": \"another content\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5050/tasks-pg",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"tasks-pg"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
