@@ -1,0 +1,116 @@
+version: '3.7'
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: togo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+    container_name: postgres
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+    ports:
+      - 5432:5432
+  db_test:
+    image: postgres
+    environment:
+      POSTGRES_DB: togo_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+    container_name: postgres_for_test
+    expose:
+      - 5433
+    ports:
+      - 5433:5433
+    command: -p 5433
+    volumes:
+      - ./scripts/init_db_test.sql:/docker-entrypoint-initdb.d/init_db_test.sql
+  app:
+    image: golang:1.14-alpine
+    environment:
+      DB_HOST: db
+      POSTGRES_DB: togo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_SSL: disable
+      POSTGRES_PORT: 5432
+      JWT_KEY: wqGyEBBfPK9w3Lxw
+    volumes:
+      - .:/go/src/togo-app
+    working_dir: /go/src/togo-app
+    command: >
+      /bin/sh -c "
+        CGO_ENABLED=0 go run main.go"
+    container_name: togo-app
+    ports:
+      - 5050:5050
+    depends_on:
+      - db
+    links:
+      - db
+  integration_tests:
+    image: golang:1.14-alpine
+    environment:
+      DB_HOST: db_test
+      POSTGRES_DB: togo_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_SSL: disable
+      POSTGRES_PORT: 5433
+      JWT_KEY: wqGyEBBfPK9w3Lxw
+    volumes:
+      - .:/go/src/togo-app
+    working_dir: /go/src/togo-app
+    command: >
+      /bin/sh -c "
+        CGO_ENABLED=0 go test ./internal/integration_tests"
+    container_name: togo-app-integration-tests
+    depends_on:
+      - db_test
+    links:
+      - db_test
+  unit_tests_services_layer:
+    image: golang:1.14-alpine
+    environment:
+      DB_HOST: db_test
+      POSTGRES_DB: togo_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_SSL: disable
+      POSTGRES_PORT: 5433
+      JWT_KEY: wqGyEBBfPK9w3Lxw
+    volumes:
+      - .:/go/src/togo-app
+    working_dir: /go/src/togo-app
+    command: >
+      /bin/sh -c "
+        CGO_ENABLED=0 go test ./internal/services"
+    container_name: togo-app-unit-tests-services-layer
+    depends_on:
+      - db_test
+    links:
+      - db_test
+  unit_tests_storage_layer:
+    image: golang:1.14-alpine
+    environment:
+      DB_HOST: db_test
+      POSTGRES_DB: togo_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_SSL: disable
+      POSTGRES_PORT: 5433
+      JWT_KEY: wqGyEBBfPK9w3Lxw
+    volumes:
+      - .:/go/src/togo-app
+    working_dir: /go/src/togo-app
+    command: >
+      /bin/sh -c "
+      CGO_ENABLED=0 go test ./internal/storages/test"
+      container_name: togo-app-unit-tests-storage-layer
+    depends_on:
+      - db_test
+    links:
+      - db_test
+volumes:
+  db_data:

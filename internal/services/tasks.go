@@ -4,6 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"github.com/manabie-com/togo/internal/config"
+	"github.com/manabie-com/togo/internal/model"
+	"github.com/manabie-com/togo/internal/storages/dbinterface"
+	"github.com/manabie-com/togo/internal/storages/pg"
+	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 	"log"
 	"net/http"
 	"time"
@@ -11,14 +16,15 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/storages"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 )
 
 // ToDoService implement HTTP server
 type ToDoService struct {
 	JWTKey string
-	Store  *sqllite.LiteDB
+	Store  dbinterface.DBInterface
 }
+
+var IncorrectUsernameAndPasswordMsg = "incorrect user_id/pwd"
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	log.Println(req.Method, req.URL.Path)
@@ -32,10 +38,10 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	switch req.URL.Path {
-	case "/login":
+	case config.PathConfig.PathLogin:
 		s.getAuthToken(resp, req)
 		return
-	case "/tasks":
+	case config.PathConfig.PathTasks:
 		var ok bool
 		req, ok = s.validToken(req)
 		if !ok {
@@ -55,26 +61,26 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
 	id := value(req, "user_id")
+	resp.Header().Set("Content-Type", "application/json")
 	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
 		resp.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "incorrect user_id/pwd",
+		json.NewEncoder(resp).Encode(model.ErrorResponse{
+			Error: &IncorrectUsernameAndPasswordMsg,
 		})
 		return
 	}
-	resp.Header().Set("Content-Type", "application/json")
-
 	token, err := s.createToken(id.String)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
+		errInfo := err.Error()
+		json.NewEncoder(resp).Encode(model.ErrorResponse{
+			Error: &errInfo,
 		})
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string]string{
-		"data": token,
+	json.NewEncoder(resp).Encode(model.LoginSuccessResponse{
+		Data: &token,
 	})
 }
 
@@ -92,16 +98,13 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-Type", "application/json")
 
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
+		resp.WriteHeader(err.StatusCode)
+		errStr := err.Error()
+		json.NewEncoder(resp).Encode(model.ErrorResponse{Error: &errStr})
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
-		"data": tasks,
-	})
+	json.NewEncoder(resp).Encode(model.GetTaskResponse{Data: tasks})
 }
 
 func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
@@ -121,18 +124,14 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 
 	resp.Header().Set("Content-Type", "application/json")
 
-	err = s.Store.AddTask(req.Context(), t)
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
+	errAddTask := s.Store.AddTask(req.Context(), t)
+	if errAddTask != nil {
+		resp.WriteHeader(errAddTask.StatusCode)
+		errStr := errAddTask.Error()
+		json.NewEncoder(resp).Encode(model.ErrorResponse{Error: &errStr})
 		return
 	}
-
-	json.NewEncoder(resp).Encode(map[string]*storages.Task{
-		"data": t,
-	})
+	json.NewEncoder(resp).Encode(model.AddTaskResponse{Data: t})
 }
 
 func value(req *http.Request, p string) sql.NullString {
@@ -185,4 +184,25 @@ func userIDFromCtx(ctx context.Context) (string, bool) {
 	v := ctx.Value(userAuthKey(0))
 	id, ok := v.(string)
 	return id, ok
+}
+
+func NewToDoServices(jwt string, driverName string, dbInfo string) (*ToDoService, error) {
+	db, err := dbinterface.NewDB(driverName, dbInfo)
+	if err != nil {
+		return nil, err
+	}
+	if driverName == config.DBType.Sqlite {
+		return &ToDoService{
+			JWTKey: jwt,
+			Store: &sqllite.LiteDB{
+				DB: db,
+			},
+		}, nil
+	}
+	return &ToDoService{
+		JWTKey: jwt,
+		Store: &pg.PostgresDB{
+			DB: db,
+		},
+	}, nil
 }

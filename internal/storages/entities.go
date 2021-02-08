@@ -1,5 +1,11 @@
 package storages
 
+import (
+	"bytes"
+	"encoding/json"
+	"io"
+)
+
 // Task reflects tasks in DB
 type Task struct {
 	ID          string `json:"id"`
@@ -12,4 +18,9 @@ type Task struct {
 type User struct {
 	ID       string
 	Password string
+}
+
+func (t *Task) ToIOReader() io.Reader {
+	byteArr, _ := json.Marshal(t)
+	return bytes.NewReader(byteArr)
 }
