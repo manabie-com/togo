@@ -1,0 +1,20 @@
+version: '3.5'
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:12
+    ports:
+      - 5432:5432
+    shm_size: 4GB
+    volumes:
+      - etop_postgres_data:/var/lib/postgresql/data
+      - $PROJECT_DIR/backend/db:/db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=manabie
+      - POSTGRES_DATA=/var/lib/postgresql/data/pgdata
+
+volumes:
+  etop_postgres_data:
+    external: false
