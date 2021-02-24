@@ -11,7 +11,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=manabie
+      - POSTGRES_MULTIPLE_DATABASES=manabie,test
       - POSTGRES_DATA=/var/lib/postgresql/data/pgdata
 
 volumes:
