@@ -3,6 +3,7 @@ package sqlstore
 import (
 	"database/sql"
 	"fmt"
+	"github.com/manabie-com/togo/pkg/common/crypto"
 	"log"
 
 	_ "github.com/lib/pq"
@@ -23,7 +24,12 @@ func setup() *Store {
 		log.Fatal("error creating users table", err)
 	}
 
-	_, err = db.Exec("INSERT INTO users (id, password, max_todo) VALUES('00001', 'example', 5);")
+	hashedPassword, err := crypto.HashPassword("example")
+	if err != nil {
+		log.Fatal("error hashing password", err)
+	}
+
+	_, err = db.Exec("INSERT INTO users (id, password, max_todo) VALUES($1, $2, $3)", "00001", hashedPassword, 5)
 	if err != nil {
 		log.Fatal("error generating data", err)
 	}

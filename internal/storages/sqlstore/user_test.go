@@ -1,10 +1,10 @@
 package sqlstore
 
 import (
-	"context"
 	"database/sql"
-	"testing"
 	. "github.com/smartystreets/goconvey/convey"
+	"testing"
+	"context"
 )
 
 func TestValidateUser(t *testing.T) {
