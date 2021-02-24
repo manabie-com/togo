@@ -43,7 +43,7 @@ func setup() *Store {
 		log.Fatal("error creating tasks table", err)
 	}
 
-	return &Store{DB: db}
+	return NewStore(db)
 }
 
 func teardown(store *Store) {

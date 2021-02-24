@@ -2,7 +2,8 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
+	"github.com/manabie-com/togo/cmd/togo-server/config"
+	cc "github.com/manabie-com/togo/pkg/common/config"
 	"log"
 	"net/http"
 
@@ -12,23 +13,22 @@ import (
 	_ "github.com/lib/pq"
 )
 
-const (
-	host     = "localhost"
-	port     = 5432
-	user     = "postgres"
-	password = "postgres"
-	dbname   = "manabie"
-)
-
 func main() {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-	db, err := sql.Open("postgres", psqlInfo)
+	cc.InitFlags()
+	cc.ParseFlags()
+
+	cfg, err := config.Load()
+	if err != nil {
+		log.Fatal("error loading config", err)
+	}
+
+	db, err := sql.Open(cfg.Postgres.ConnectionString())
 	if err != nil {
 		log.Fatal("error opening db", err)
 	}
 
 	http.ListenAndServe(":5050", &services.ToDoService{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
+		JWTKey: cfg.JWTSecret,
 		Store: &sqlstore.Store{
 			DB: db,
 		},
