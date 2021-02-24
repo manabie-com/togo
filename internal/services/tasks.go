@@ -10,14 +10,14 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
-	"github.com/manabie-com/togo/internal/storages"
-	"github.com/manabie-com/togo/internal/storages/postgres"
+	"github.com/manabie-com/togo/internal/storages/model"
+	"github.com/manabie-com/togo/internal/storages/sqlstore"
 )
 
 // ToDoService implement HTTP server
 type ToDoService struct {
 	JWTKey string
-	Store  *postgres.PostgresDB
+	Store  *sqlstore.Store
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
@@ -99,13 +99,13 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
+	json.NewEncoder(resp).Encode(map[string][]*model.Task{
 		"data": tasks,
 	})
 }
 
 func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
-	t := &storages.Task{}
+	t := &model.Task{}
 	err := json.NewDecoder(req.Body).Decode(t)
 	defer req.Body.Close()
 	if err != nil {
@@ -130,7 +130,7 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string]*storages.Task{
+	json.NewEncoder(resp).Encode(map[string]*model.Task{
 		"data": t,
 	})
 }
