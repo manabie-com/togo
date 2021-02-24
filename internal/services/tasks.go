@@ -33,7 +33,9 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 
 	switch req.URL.Path {
 	case "/login":
-		s.getAuthToken(resp, req)
+		s.createTokenHandler()(resp, req)
+		//s.getAuthToken(resp, req)
+
 		return
 	case "/tasks":
 		var ok bool
