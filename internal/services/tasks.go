@@ -33,7 +33,10 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 
 	switch req.URL.Path {
 	case "/login":
-		s.getAuthToken(resp, req)
+		if req.Method != http.MethodPost {
+			return
+		}
+		s.login(resp, req)
 		return
 	case "/tasks":
 		var ok bool
@@ -53,10 +56,25 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
-	id := value(req, "user_id")
-	pwd := value(req, "password")
-	if !s.Store.ValidateUser(req.Context(), id, pwd) {
+func (s *ToDoService) login(resp http.ResponseWriter, req *http.Request) {
+	u := &model.User{}
+	err := json.NewDecoder(req.Body).Decode(u)
+	defer req.Body.Close()
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	userID := sql.NullString{
+		String: u.ID,
+		Valid:  true,
+	}
+	password := sql.NullString{
+		String: u.Password,
+		Valid:  true,
+	}
+
+	if !s.Store.ValidateUser(req.Context(), userID, password) {
 		resp.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": "incorrect user_id/pwd",
@@ -65,7 +83,7 @@ func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 	}
 	resp.Header().Set("Content-Type", "application/json")
 
-	token, err := s.createToken(id.String)
+	token, err := s.createToken(u.ID)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
