@@ -1,7 +1,7 @@
 version: '3.5'
 services:
   postgres:
-    container_name: postgres
+    container_name: sqlstore
     image: postgres:12
     ports:
       - 5432:5432
@@ -10,8 +10,8 @@ services:
       - etop_postgres_data:/var/lib/postgresql/data
       - $PROJECT_DIR/backend/db:/db
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=sqlstore
+      - POSTGRES_PASSWORD=sqlstore
       - POSTGRES_DB=manabie
       - POSTGRES_DATA=/var/lib/postgresql/data/pgdata
 

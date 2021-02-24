@@ -7,18 +7,17 @@ import (
 	"net/http"
 
 	"github.com/manabie-com/togo/internal/services"
-	"github.com/manabie-com/togo/internal/storages/postgres"
+	"github.com/manabie-com/togo/internal/storages/sqlstore"
 
 	_ "github.com/lib/pq"
 )
 
 const (
-	host = "localhost"
-	port = 5432
-	user = "postgres"
+	host     = "localhost"
+	port     = 5432
+	user     = "postgres"
 	password = "postgres"
-	dbname = "manabie"
-
+	dbname   = "manabie"
 )
 
 func main() {
@@ -30,7 +29,7 @@ func main() {
 
 	http.ListenAndServe(":5050", &services.ToDoService{
 		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &postgres.PostgresDB{
+		Store: &sqlstore.Store{
 			DB: db,
 		},
 	})
