@@ -36,53 +36,53 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	switch req.URL.Path {
 	case "/login":
 		s.createTokenHandler()(resp, req)
-		//s.getAuthToken(resp, req)
-
 		return
 	case "/tasks":
-		req, err := s.validToken(req)
-		if err != nil {
-			resp.WriteHeader(http.StatusUnauthorized)
-			log.Println(err)
-			return
-		}
-
 		switch req.Method {
 		case http.MethodGet:
-			s.listTasks(resp, req)
+			s.authHandler(s.listTasksHandler())(resp, req)
 		case http.MethodPost:
-			s.addTask(resp, req)
+			s.authHandler(s.addTaskHandler())(resp, req)
 		}
 		return
 	}
 }
 
-/*func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
-	id := value(req, "user_id")
-	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
-		resp.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "incorrect user_id/pwd",
-		})
-		return
+func (s *ToDoService) listTasksHandler() http.HandlerFunc {
+	return func(resp http.ResponseWriter, req *http.Request) {
+		resp.Header().Set("Content-Type", "application/json")
+
+		id, _ := userIDFromCtx(req.Context())
+
+		tasks, err := s.Store.RetrieveTasks(
+			req.Context(),
+			sql.NullString{
+				String: id,
+				Valid:  true,
+			},
+			value(req, "created_date"),
+		)
+		if err != nil {
+			resp.WriteHeader(http.StatusInternalServerError)
+			respData := map[string]string{
+				"error": err.Error(),
+			}
+			if err = json.NewEncoder(resp).Encode(respData); err != nil {
+				log.Println(err)
+			}
+			return
+		}
+
+		respData := map[string][]*storages.Task{
+			"data": tasks,
+		}
+		if err = json.NewEncoder(resp).Encode(respData); err != nil {
+			log.Println(err)
+		}
 	}
-	resp.Header().Set("Content-Type", "application/json")
+}
 
-	token, err := s.createToken(id.String)
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	json.NewEncoder(resp).Encode(map[string]string{
-		"data": token,
-	})
-}*/
-
-func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
+/*func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	id, _ := userIDFromCtx(req.Context())
 	tasks, err := s.Store.RetrieveTasks(
 		req.Context(),
@@ -106,9 +106,52 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
 		"data": tasks,
 	})
+}*/
+
+func (s *ToDoService) addTaskHandler() http.HandlerFunc {
+	return func(resp http.ResponseWriter, req *http.Request) {
+		t := &storages.Task{}
+		err := json.NewDecoder(req.Body).Decode(t)
+		defer req.Body.Close()
+		if err != nil {
+			resp.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		userID, ok := userIDFromCtx(req.Context())
+		if !ok {
+			resp.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		t.ID = uuid.New().String()
+		t.UserID = userID
+		t.CreatedDate = time.Now().Format("2006-01-02")
+
+		resp.Header().Set("Content-Type", "application/json")
+
+		err = s.Store.AddTask(req.Context(), t)
+		if err != nil {
+			resp.WriteHeader(http.StatusInternalServerError)
+			respData := map[string]string{
+				"error": err.Error(),
+			}
+			if err := json.NewEncoder(resp).Encode(respData); err != nil {
+				log.Println(err)
+			}
+			return
+		}
+
+		respData := map[string]*storages.Task{
+			"data": t,
+		}
+		if err := json.NewEncoder(resp).Encode(respData); err != nil {
+			log.Println(err)
+		}
+	}
 }
 
-func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
+/*func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	t := &storages.Task{}
 	err := json.NewDecoder(req.Body).Decode(t)
 	defer req.Body.Close()
@@ -137,7 +180,7 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(map[string]*storages.Task{
 		"data": t,
 	})
-}
+}*/
 
 func value(req *http.Request, p string) sql.NullString {
 	return sql.NullString{

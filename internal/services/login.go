@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 )
 
@@ -68,6 +69,40 @@ func (s *ToDoService) createTokenHandler() http.HandlerFunc {
 	}
 }
 
-func (s *ToDoService) authHandler() {
+func (s *ToDoService) authHandler(nextHandler http.HandlerFunc) http.HandlerFunc {
+	return func(resp http.ResponseWriter, req *http.Request) {
+		req, err := s.validToken(req)
+		if err != nil {
+			resp.WriteHeader(http.StatusUnauthorized)
+			log.Println(err)
+			return
+		}
 
+		nextHandler(resp, req)
+	}
 }
+
+/*func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
+	id := value(req, "user_id")
+	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
+		resp.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": "incorrect user_id/pwd",
+		})
+		return
+	}
+	resp.Header().Set("Content-Type", "application/json")
+
+	token, err := s.createToken(id.String)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	json.NewEncoder(resp).Encode(map[string]string{
+		"data": token,
+	})
+}*/
