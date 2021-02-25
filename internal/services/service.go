@@ -30,12 +30,10 @@ type ToDoService struct {
 	Store  *sqllite.LiteDB
 }
 
-func NewToDoService(db *sql.DB) *ToDoService {
+func NewToDoService(db *sqllite.LiteDB) *ToDoService {
 	s := &ToDoService{
 		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
-			DB: db,
-		},
+		Store: db,
 		server: &http.Server{
 			Addr: ":5050",
 		},

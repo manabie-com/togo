@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"github.com/manabie-com/togo/internal/services"
+	"github.com/manabie-com/togo/internal/storages/postgres"
+	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	"github.com/manabie-com/togo/internal/util"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"os"
@@ -15,9 +17,24 @@ func main() {
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
 
-	db, err := sql.Open("sqlite3", "./data.db")
+	db, err := sqllite.NewSqliteDb()
 	if err != nil {
-		log.Fatal("error opening db", err)
+		log.Println("error opening db", err)
+		return
+	}
+
+	config := &postgres.Config{
+		Host: util.GetEnv("POSTGRES_HOST", "localhost"),
+		Port: util.GetEnv("POSTGRES_PORT", "5432"),
+		Usr:  util.GetEnv("POSTGRES_USER", "togo"),
+		Pwd:  util.GetEnv("POSTGRES_PASSWORD", "togo"),
+		Db:   util.GetEnv("POSTGRES_DB", "togo"),
+	}
+
+	_, err = postgres.NewPostgres(context.WithValue(context.Background(), "config", config))
+	if err != nil {
+		log.Println("error opening db", err)
+		return
 	}
 
 	s := services.NewToDoService(db)
@@ -30,14 +47,14 @@ func main() {
 		err := s.Shutdown(ctx)
 		cancel()
 		if err != nil {
-			log.Println(err.Error())
+			log.Println(err)
 			return
 		}
 		log.Println("|--http server was shut down")
 
 		// Close db
 		if err := db.Close(); err != nil {
-			log.Println(err.Error())
+			log.Println(err)
 		}
 		log.Println("|--db was shut down")
 
@@ -52,11 +69,6 @@ func main() {
 			return
 		}
 	}
-
-	/*http.ListenAndServe(":5050", &services.ToDoService{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
-			DB: db,
-		},
-	})*/
 }
+
+
