@@ -2,21 +2,7 @@ package storages
 
 import "time"
 
-// Task reflects tasks in DB
-type Task struct {
-	ID          string `json:"id"`
-	Content     string `json:"content"`
-	UserID      string `json:"user_id"`
-	CreatedDate string `json:"created_date"`
-}
-
-// User reflects users data from DB
-type User struct {
-	ID       string
-	Password string
-}
-
-// ------------
+// PgUser reflects tasks in DB
 type PgUser struct {
 	Id       int
 	Username string
@@ -24,6 +10,7 @@ type PgUser struct {
 	MaxTodo  int
 }
 
+// PgTask reflects tasks in DB
 type PgTask struct {
 	Id       int       `json:"id"`
 	UsrId    int       `json:"usr_id"`
@@ -31,3 +18,20 @@ type PgTask struct {
 	CreateAt time.Time `json:"create_at"`
 }
 
+
+
+// LEGACY CODE----------------------------
+
+// SqliteTask reflects tasks in DB
+type SqliteTask struct {
+	ID          string `json:"id"`
+	Content     string `json:"content"`
+	UserID      string `json:"user_id"`
+	CreatedDate string `json:"created_date"`
+}
+
+// SqliteUser reflects users data from DB
+type SqliteUser struct {
+	ID       string
+	Password string
+}
