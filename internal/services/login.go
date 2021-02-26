@@ -2,6 +2,7 @@ package services
 
 import (
 	"encoding/json"
+	"github.com/manabie-com/togo/internal/storages/postgres"
 	"io"
 	"log"
 	"net/http"
@@ -19,22 +20,26 @@ func (s *ToDoService) createTokenHandler(resp http.ResponseWriter, req *http.Req
 	defer func(){
 		_ = req.Body.Close()
 	}()
-	resp.Header().Set("Content-Type", "application/json")
-
-	decoder := json.NewDecoder(io.LimitReader(req.Body, maxJsonSize))
 
 	params := &loginParams{}
-	if err := decoder.Decode(params); err != nil {
+	err := json.NewDecoder(io.LimitReader(req.Body, maxJsonSize)).Decode(params)
+	if err != nil {
 		resp.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	usr, err := s.pg.ValidateUser(req.Context(), params.Id, params.Password)
-	if err != nil {
+	switch err {
+	case nil:
+		break
+	case postgres.ErrUsernameOrPasswordIsNotValid:
 		resp.WriteHeader(http.StatusBadRequest)
 		if err := json.NewEncoder(resp).Encode(newErrResp(err.Error())); err != nil {
 			log.Println(err.Error())
 		}
+		return
+	default:
+		resp.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 

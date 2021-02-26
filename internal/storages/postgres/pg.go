@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"context"
-	"fmt"
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/manabie-com/togo/internal/storages"
@@ -10,22 +9,17 @@ import (
 	"time"
 )
 
-type Config struct {
-	Host string
-	Port string
-	Usr  string
-	Pwd  string
-	Db   string
-}
+var (
+	ErrUsernameOrPasswordIsNotValid = errors.New("username or password is not correct")
+	ErrUserMaxTodoReached           = errors.New("user's daily-limit has been reached")
+)
 
-func (c *Config) toConnStr() string {
-	return fmt.Sprintf("postgresql://%s:%s@%s:%s/%s", c.Usr, c.Pwd, c.Host, c.Port, c.Db)
-}
-
+// Postgres represents a database instance for working with Postgres
 type Postgres struct {
 	pool *pgxpool.Pool
 }
 
+// NewPostgres create new Postgres instance
 func NewPostgres(ctx context.Context) (*Postgres, error) {
 	var connStr string
 	switch v := ctx.Value("config").(type) {
@@ -86,16 +80,16 @@ func (pg *Postgres) init(ctx context.Context) error {
 		) ON CONFLICT DO NOTHING ;
 
 		INSERT INTO task (
-		                	id,
-		                  usr_id, 
-		                  content, 
-		                  create_at) 
-		                  OVERRIDING SYSTEM VALUE VALUES  (
-		                        1,
-							   1,
-							   'test 1',
-							   '2020-06-29'::timestamptz
-		                  ) ON CONFLICT DO NOTHING ;
+			id,
+			usr_id, 
+			content, 
+			create_at) 
+		OVERRIDING SYSTEM VALUE VALUES  (
+			1,
+			1,
+			'test 1',
+			'2020-06-29'::timestamptz
+		) ON CONFLICT DO NOTHING ;
 		`
 
 	_, err := pg.pool.Exec(ctx, stmt)
@@ -128,7 +122,7 @@ func (pg *Postgres) ValidateUser(ctx context.Context, username, password string)
 	case nil:
 		return usr, nil
 	case pgx.ErrNoRows:
-		return nil, errors.New("username or password is not correct")
+		return nil, ErrUsernameOrPasswordIsNotValid
 	default:
 		return nil, errors.Wrap(err, "Scan()")
 	}
@@ -173,8 +167,6 @@ func (pg *Postgres) GetTasks(ctx context.Context, usrId int, createAt time.Time)
 
 	return tasks, nil
 }
-
-var ErrUserMaxTodoReached = errors.New("user's daily-limit has been reached")
 
 func (pg *Postgres) InsertTask(ctx context.Context, task *storages.PgTask) error {
 	stmt :=
