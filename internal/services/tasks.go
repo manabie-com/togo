@@ -2,6 +2,7 @@ package services
 
 import (
 	"encoding/json"
+	"github.com/manabie-com/togo/internal/storages/postgres"
 	"io"
 	"log"
 	"net/http"
@@ -68,7 +69,6 @@ func (s *ToDoService) listTasksHandler(resp http.ResponseWriter, req *http.Reque
 }
 
 func (s *ToDoService) addTaskHandler(resp http.ResponseWriter, req *http.Request) {
-	resp.Header().Set("Content-Type", "application/json")
 	defer func() {
 		_ = req.Body.Close()
 	}()
@@ -87,19 +87,19 @@ func (s *ToDoService) addTaskHandler(resp http.ResponseWriter, req *http.Request
 	}
 
 	task.UsrId = userID
-	err = s.pg.InsertTask(req.Context(), task)
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		respData := map[string]string{
-			"error": err.Error(),
-		}
-		if err := json.NewEncoder(resp).Encode(respData); err != nil {
+	task.CreateAt = time.Now()
+
+	switch err := s.pg.InsertTask(req.Context(), task); err {
+	case nil:
+		if err := json.NewEncoder(resp).Encode(newDataResp(task)); err != nil {
 			log.Println(err)
 		}
-		return
-	}
-
-	if err := json.NewEncoder(resp).Encode(newDataResp(task)); err != nil {
-		log.Println(err)
+	case postgres.ErrUserMaxTodoReached:
+		resp.WriteHeader(http.StatusTooManyRequests)
+		if err := json.NewEncoder(resp).Encode(newErrResp(err.Error())); err != nil {
+			log.Println(err)
+		}
+	default:
+		resp.WriteHeader(http.StatusInternalServerError)
 	}
 }

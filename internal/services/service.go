@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/manabie-com/togo/internal/storages/postgres"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 	"github.com/pkg/errors"
 	"net/http"
 	"time"
@@ -21,18 +20,16 @@ var (
 
 // ToDoService implement HTTP server
 type ToDoService struct {
+	jwtKey string
+	pg     *postgres.Postgres
+
 	server    *http.Server
 	serverErr chan error
-
-	JWTKey string
-	pg     *postgres.Postgres
-	Store  *sqllite.LiteDB
 }
 
-func NewToDoService(db *sqllite.LiteDB, pg *postgres.Postgres) *ToDoService {
+func NewToDoService(pg *postgres.Postgres) *ToDoService {
 	s := &ToDoService{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store:  db,
+		jwtKey: "wqGyEBBfPK9w3Lxw",
 		pg:     pg,
 		server: &http.Server{
 			Addr: ":5050",
@@ -69,7 +66,7 @@ func (s *ToDoService) createToken(id interface{}) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(s.JWTKey))
+	return token.SignedString([]byte(s.jwtKey))
 }
 
 func (s *ToDoService) validToken(req *http.Request) (*http.Request, error) {
@@ -77,7 +74,7 @@ func (s *ToDoService) validToken(req *http.Request) (*http.Request, error) {
 
 	claims := make(jwt.MapClaims)
 	parsedToken, err := jwt.ParseWithClaims(authToken, claims, func(*jwt.Token) (interface{}, error) {
-		return []byte(s.JWTKey), nil
+		return []byte(s.jwtKey), nil
 	})
 	if err != nil {
 		return req, err

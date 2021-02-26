@@ -174,23 +174,31 @@ func (pg *Postgres) GetTasks(ctx context.Context, usrId int, createAt time.Time)
 	return tasks, nil
 }
 
+var ErrUserMaxTodoReached = errors.New("user's daily-limit has been reached")
+
 func (pg *Postgres) InsertTask(ctx context.Context, task *storages.PgTask) error {
 	stmt :=
 		`
 		INSERT INTO 
 		    task (usr_id, content, create_at)
-		VALUES 
-			($1, $2, now())
-		;
+		SELECT 
+		   $1, $2, $3::timestamptz
+		WHERE 
+			(
+				SELECT count(*) FROM task
+				WHERE 
+					usr_id = $1
+					AND create_at::date = $3::date
+			) < (SELECT max_todo FROM usr WHERE id = $1)
 		`
 
-	cmd, err := pg.pool.Exec(ctx, stmt, task.UsrId, task.Content)
+	cmd, err := pg.pool.Exec(ctx, stmt, task.UsrId, task.Content, task.CreateAt)
 	if err != nil {
 		return errors.Wrap(err, "Exec()")
 	}
 
 	if cmd.RowsAffected() < 1 {
-		return errors.New("failed to insert, no rows affected")
+		return ErrUserMaxTodoReached
 	}
 
 	return nil
