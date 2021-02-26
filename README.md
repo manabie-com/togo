@@ -1,8 +1,13 @@
 ## Overview
 To make it run:
 Import Postman collection from docs to check example
+- `docker-compose up -d pg`
 - `go run main.go`
 - Import Postman collection (modified) from `docs` to check example
+
+Or
+- `docker-compose up -d pg`
+- `docker-compose up -d togo`
 
 ## What I have (and have not) accomplished
 - [x] Daily task limit functionality

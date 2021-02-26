@@ -8,3 +8,12 @@ services:
     - 5432:5432
     env_file:
       - ./.env
+
+  togo:
+    container_name: togo
+    build: .
+    ports:
+    - 5050:5050
+    env_file:
+      - ./.env
+

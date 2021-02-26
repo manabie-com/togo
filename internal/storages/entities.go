@@ -2,16 +2,16 @@ package storages
 
 import "time"
 
-// PgUser reflects tasks in DB
-type PgUser struct {
+// User reflects tasks in DB
+type User struct {
 	Id       int
 	Username string
 	PwdHash  string
 	MaxTodo  int
 }
 
-// PgTask reflects tasks in DB
-type PgTask struct {
+// Task reflects tasks in DB
+type Task struct {
 	Id       int       `json:"id"`
 	UsrId    int       `json:"usr_id"`
 	Content  string    `json:"content"`

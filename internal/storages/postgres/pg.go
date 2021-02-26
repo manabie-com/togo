@@ -15,9 +15,9 @@ var (
 )
 
 type Database interface {
-	ValidateUser(ctx context.Context, username, password string) (*storages.PgUser, error)
-	GetTasks(ctx context.Context, usrId int, createAt time.Time) ([]*storages.PgTask, error)
-	InsertTask(ctx context.Context, task *storages.PgTask) error
+	ValidateUser(ctx context.Context, username, password string) (*storages.User, error)
+	GetTasks(ctx context.Context, usrId int, createAt time.Time) ([]*storages.Task, error)
+	InsertTask(ctx context.Context, task *storages.Task) error
 }
 
 // Postgres represents a database instance for working with Postgres
@@ -56,6 +56,8 @@ func NewPostgres(ctx context.Context) (*Postgres, error) {
 func (pg *Postgres) init(ctx context.Context) error {
 	stmt :=
 		`
+		SET TIMEZONE = 'Asia/Ho_Chi_Minh';
+
 		CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 		CREATE TABLE IF NOT EXISTS usr (
@@ -108,7 +110,7 @@ func (pg *Postgres) init(ctx context.Context) error {
 }
 
 // ValidateUser
-func (pg *Postgres) ValidateUser(ctx context.Context, username, password string) (*storages.PgUser, error) {
+func (pg *Postgres) ValidateUser(ctx context.Context, username, password string) (*storages.User, error) {
 	stmt :=
 		`
 		SELECT 
@@ -124,7 +126,7 @@ func (pg *Postgres) ValidateUser(ctx context.Context, username, password string)
 		`
 	row := pg.pool.QueryRow(ctx, stmt, username, password)
 
-	usr := &storages.PgUser{}
+	usr := &storages.User{}
 	err := row.Scan(&usr.Id, &usr.Username, &usr.PwdHash, &usr.MaxTodo)
 
 	switch err {
@@ -137,7 +139,7 @@ func (pg *Postgres) ValidateUser(ctx context.Context, username, password string)
 	}
 }
 
-func (pg *Postgres) GetTasks(ctx context.Context, usrId int, createAt time.Time) ([]*storages.PgTask, error) {
+func (pg *Postgres) GetTasks(ctx context.Context, usrId int, createAt time.Time) ([]*storages.Task, error) {
 	stmt :=
 		`
 		SELECT 
@@ -159,9 +161,9 @@ func (pg *Postgres) GetTasks(ctx context.Context, usrId int, createAt time.Time)
 		return nil, err
 	}
 
-	tasks := make([]*storages.PgTask, 0)
+	tasks := make([]*storages.Task, 0)
 	for rows.Next() {
-		task := &storages.PgTask{}
+		task := &storages.Task{}
 		err := rows.Scan(
 			&task.Id,
 			&task.UsrId,
@@ -177,7 +179,7 @@ func (pg *Postgres) GetTasks(ctx context.Context, usrId int, createAt time.Time)
 	return tasks, nil
 }
 
-func (pg *Postgres) InsertTask(ctx context.Context, task *storages.PgTask) error {
+func (pg *Postgres) InsertTask(ctx context.Context, task *storages.Task) error {
 	stmt :=
 		`
 		INSERT INTO 

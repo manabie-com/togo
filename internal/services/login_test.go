@@ -25,7 +25,7 @@ func newLoginRequest(username, password string) *http.Request {
 func mockCreateToken(t *testing.T, user *loginParams, err error) *http.Response {
 	req := newLoginRequest(user.Username, user.Password)
 	db := new(postgres.DatabaseMock)
-	db.On("ValidateUser", req.Context(), user.Username, user.Password).Return(&storages.PgUser{}, err)
+	db.On("ValidateUser", req.Context(), user.Username, user.Password).Return(&storages.User{}, err)
 
 	s := NewToDoService(testJWTKey, ":6000", db)
 

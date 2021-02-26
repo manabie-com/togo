@@ -73,7 +73,7 @@ func (s *ToDoService) addTaskHandler(resp http.ResponseWriter, req *http.Request
 		_ = req.Body.Close()
 	}()
 
-	task := &storages.PgTask{}
+	task := &storages.Task{}
 	err := json.NewDecoder(io.LimitReader(req.Body, maxJsonSize)).Decode(task)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
