@@ -43,7 +43,7 @@ func (s *ToDoService) tasksHandler() http.HandlerFunc {
 }
 
 func (s *ToDoService) listTasksHandler(resp http.ResponseWriter, req *http.Request) {
-	id, _ := userIDFromCtx2(req.Context())
+	id, _ := userIDFromCtx(req.Context())
 
 	createdDate, err := time.Parse("2006-01-02", req.FormValue("created_date"))
 	if err != nil {
@@ -80,7 +80,7 @@ func (s *ToDoService) addTaskHandler(resp http.ResponseWriter, req *http.Request
 		return
 	}
 
-	userID, ok := userIDFromCtx2(req.Context())
+	userID, ok := userIDFromCtx(req.Context())
 	if !ok {
 		resp.WriteHeader(http.StatusBadRequest)
 		return

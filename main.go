@@ -33,7 +33,7 @@ func main() {
 	}
 
 	// New togo service instance
-	s := services.NewToDoService(pg)
+	s := services.NewToDoService("wqGyEBBfPK9w3Lxw", ":5050", pg)
 
 	// Release resources
 	defer func() {
@@ -58,8 +58,10 @@ func main() {
 	for {
 		select {
 		case <-interrupt:
+			log.Println("app interrupt")
 			return
-		case <-s.HttpServerErr():
+		case err := <-s.HttpServerErr():
+			log.Println("ERR:", err.Error())
 			return
 		}
 	}

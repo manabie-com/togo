@@ -21,18 +21,18 @@ var (
 // ToDoService implement HTTP server
 type ToDoService struct {
 	jwtKey string
-	pg     *postgres.Postgres
+	pg     postgres.Database
 
 	server    *http.Server
 	serverErr chan error
 }
 
-func NewToDoService(pg *postgres.Postgres) *ToDoService {
+func NewToDoService(jwtKey string, addr string, pg postgres.Database) *ToDoService {
 	s := &ToDoService{
-		jwtKey: "wqGyEBBfPK9w3Lxw",
+		jwtKey: jwtKey,
 		pg:     pg,
 		server: &http.Server{
-			Addr: ":5050",
+			Addr: addr,
 		},
 		serverErr: make(chan error, 1),
 	}
@@ -93,7 +93,7 @@ func (s *ToDoService) validToken(req *http.Request) (*http.Request, error) {
 	return req, nil
 }
 
-func userIDFromCtx2(ctx context.Context) (int, bool) {
+func userIDFromCtx(ctx context.Context) (int, bool) {
 	v := ctx.Value(authSubKey)
 	id, ok := v.(int)
 	return id, ok

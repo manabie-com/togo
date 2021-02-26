@@ -10,9 +10,15 @@ import (
 )
 
 var (
-	ErrUsernameOrPasswordIsNotValid = errors.New("username or password is not correct")
-	ErrUserMaxTodoReached           = errors.New("user's daily-limit has been reached")
+	ErrIncorrectUsernameOrPassword = errors.New("username or password is not correct")
+	ErrUserMaxTodoReached          = errors.New("user's daily-limit has been reached")
 )
+
+type Database interface {
+	ValidateUser(ctx context.Context, username, password string) (*storages.PgUser, error)
+	GetTasks(ctx context.Context, usrId int, createAt time.Time) ([]*storages.PgTask, error)
+	InsertTask(ctx context.Context, task *storages.PgTask) error
+}
 
 // Postgres represents a database instance for working with Postgres
 type Postgres struct {
@@ -45,6 +51,8 @@ func NewPostgres(ctx context.Context) (*Postgres, error) {
 	return pg, nil
 }
 
+// init initializes pgcrypto extension, tables, indexes, ... and
+// inserts default data
 func (pg *Postgres) init(ctx context.Context) error {
 	stmt :=
 		`
@@ -99,6 +107,7 @@ func (pg *Postgres) init(ctx context.Context) error {
 	return nil
 }
 
+// ValidateUser
 func (pg *Postgres) ValidateUser(ctx context.Context, username, password string) (*storages.PgUser, error) {
 	stmt :=
 		`
@@ -122,7 +131,7 @@ func (pg *Postgres) ValidateUser(ctx context.Context, username, password string)
 	case nil:
 		return usr, nil
 	case pgx.ErrNoRows:
-		return nil, ErrUsernameOrPasswordIsNotValid
+		return nil, ErrIncorrectUsernameOrPassword
 	default:
 		return nil, errors.Wrap(err, "Scan()")
 	}

@@ -11,8 +11,8 @@ import (
 const maxJsonSize = 1024	//1kb
 
 type loginParams struct {
-	Id       string	`json:"id"`
-	Password string	`json:"password"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 func (s *ToDoService) createTokenHandler(resp http.ResponseWriter, req *http.Request) {
@@ -21,6 +21,11 @@ func (s *ToDoService) createTokenHandler(resp http.ResponseWriter, req *http.Req
 		_ = req.Body.Close()
 	}()
 
+	if req.Method != http.MethodPost {
+		resp.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
 	params := &loginParams{}
 	err := json.NewDecoder(io.LimitReader(req.Body, maxJsonSize)).Decode(params)
 	if err != nil {
@@ -28,11 +33,11 @@ func (s *ToDoService) createTokenHandler(resp http.ResponseWriter, req *http.Req
 		return
 	}
 
-	usr, err := s.pg.ValidateUser(req.Context(), params.Id, params.Password)
+	usr, err := s.pg.ValidateUser(req.Context(), params.Username, params.Password)
 	switch err {
 	case nil:
 		break
-	case postgres.ErrUsernameOrPasswordIsNotValid:
+	case postgres.ErrIncorrectUsernameOrPassword:
 		resp.WriteHeader(http.StatusBadRequest)
 		if err := json.NewEncoder(resp).Encode(newErrResp(err.Error())); err != nil {
 			log.Println(err.Error())
