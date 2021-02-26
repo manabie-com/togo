@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/manabie-com/togo/internal/storages"
 	"github.com/pkg/errors"
+	"time"
 )
 
 type Config struct {
@@ -66,7 +68,9 @@ func (pg *Postgres) init(ctx context.Context) error {
 		  	create_at	timestamptz NOT NULL
 		);
 
-		CREATE INDEX IF NOT EXISTS usr_username_password_id ON usr(username, pwd_hash);
+		CREATE INDEX IF NOT EXISTS usr_username_pwd_hash_idx ON usr(username, pwd_hash);
+		CREATE INDEX IF NOT EXISTS task_usr_id_idx ON task(usr_id);
+		CREATE INDEX IF NOT EXISTS task_usr_id_create_at_idx ON task(usr_id);
 
 		INSERT INTO usr (
 			username, 
@@ -76,7 +80,7 @@ func (pg *Postgres) init(ctx context.Context) error {
 			'firstUser',
 		    crypt('example', gen_salt('bf')) ,
 			5
-		);
+		) ON CONFLICT DO NOTHING ;
 		`
 
 	_, err := pg.pool.Exec(ctx, stmt)
@@ -111,6 +115,64 @@ func (pg *Postgres) validateUser(ctx context.Context, username, password string)
 	} else {
 		return errors.New("username or password is not correct")
 	}
+}
+
+func (pg *Postgres) GetTasks(ctx context.Context, usrId int, createAt time.Time) ([]*storages.Task, error) {
+	stmt :=
+		`
+		SELECT 
+			id, usr_id, content, create_at
+		FROM 
+		     task
+		WHERE 
+		      usr_id = $1
+		      AND create_at::date = $2::date
+		`
+
+	rows, err := pg.pool.Query(ctx, stmt, usrId, createAt)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	tasks := make([]*storages.Task, 0)
+	for rows.Next() {
+		task := &storages.Task{}
+		err := rows.Scan(
+			task.ID,
+			task.UserID,
+			task.Content,
+			task.CreatedDate,
+		)
+		if err != nil {
+			return nil, errors.Wrap(err, "Scan()")
+		}
+		tasks = append(tasks, task)
+	}
+
+	return tasks, nil
+}
+
+func (pg *Postgres) InsertTask(ctx context.Context, task *storages.PgTask) error {
+	stmt :=
+		`
+		INSERT INTO 
+		    task (usr_id, content, create_at)
+		VALUES 
+			($1, $2, now())
+		;
+		`
+
+	cmd, err := pg.pool.Exec(ctx, stmt, task.UsrId, task.Content)
+	if err != nil {
+		return errors.Wrap(err, "Exec()")
+	}
+
+	if cmd.RowsAffected() < 1 {
+		return errors.New("failed to insert, no rows affected")
+	}
+
+	return nil
 }
 
 func (pg *Postgres) Close() {
