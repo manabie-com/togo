@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
+	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/manabie-com/togo/internal/storages"
 	"github.com/pkg/errors"
@@ -73,14 +74,28 @@ func (pg *Postgres) init(ctx context.Context) error {
 		CREATE INDEX IF NOT EXISTS task_usr_id_create_at_idx ON task(usr_id);
 
 		INSERT INTO usr (
+			id,
 			username, 
 			pwd_hash, 
 			max_todo
-		) VALUES (
+		) OVERRIDING SYSTEM VALUE VALUES (
+		    1,                              
 			'firstUser',
 		    crypt('example', gen_salt('bf')) ,
 			5
 		) ON CONFLICT DO NOTHING ;
+
+		INSERT INTO task (
+		                	id,
+		                  usr_id, 
+		                  content, 
+		                  create_at) 
+		                  OVERRIDING SYSTEM VALUE VALUES  (
+		                        1,
+							   1,
+							   'test 1',
+							   '2020-06-29'::timestamptz
+		                  ) ON CONFLICT DO NOTHING ;
 		`
 
 	_, err := pg.pool.Exec(ctx, stmt)
@@ -90,34 +105,36 @@ func (pg *Postgres) init(ctx context.Context) error {
 	return nil
 }
 
-func (pg *Postgres) validateUser(ctx context.Context, username, password string) error {
+func (pg *Postgres) ValidateUser(ctx context.Context, username, password string) (*storages.PgUser, error) {
 	stmt :=
 		`
-		SELECT exists (
-		    SELECT 
-				*
-			FROM 
-				usr
-			WHERE 
-				username = $1
-				AND pwd_hash = crypt($2, pwd_hash)
-		)
+		SELECT 
+			id,
+			username,
+			pwd_hash,
+			max_todo
+		FROM 
+			usr
+		WHERE 
+			username = $1
+			AND pwd_hash = crypt($2, pwd_hash)
 		`
 	row := pg.pool.QueryRow(ctx, stmt, username, password)
 
-	var valid bool
-	if err := row.Scan(valid); err != nil {
-		return errors.Wrap(err, "Scan()")
-	}
+	usr := &storages.PgUser{}
+	err := row.Scan(&usr.Id, &usr.Username, &usr.PwdHash, &usr.MaxTodo)
 
-	if valid {
-		return nil
-	} else {
-		return errors.New("username or password is not correct")
+	switch err {
+	case nil:
+		return usr, nil
+	case pgx.ErrNoRows:
+		return nil, errors.New("username or password is not correct")
+	default:
+		return nil, errors.Wrap(err, "Scan()")
 	}
 }
 
-func (pg *Postgres) GetTasks(ctx context.Context, usrId int, createAt time.Time) ([]*storages.Task, error) {
+func (pg *Postgres) GetTasks(ctx context.Context, usrId int, createAt time.Time) ([]*storages.PgTask, error) {
 	stmt :=
 		`
 		SELECT 
@@ -130,19 +147,23 @@ func (pg *Postgres) GetTasks(ctx context.Context, usrId int, createAt time.Time)
 		`
 
 	rows, err := pg.pool.Query(ctx, stmt, usrId, createAt)
-	if err != nil {
+	switch err {
+	case nil:
+		defer rows.Close()
+	case pgx.ErrNoRows:
+		return nil, nil
+	default:
 		return nil, err
 	}
-	defer rows.Close()
 
-	tasks := make([]*storages.Task, 0)
+	tasks := make([]*storages.PgTask, 0)
 	for rows.Next() {
-		task := &storages.Task{}
+		task := &storages.PgTask{}
 		err := rows.Scan(
-			task.ID,
-			task.UserID,
-			task.Content,
-			task.CreatedDate,
+			&task.Id,
+			&task.UsrId,
+			&task.Content,
+			&task.CreateAt,
 		)
 		if err != nil {
 			return nil, errors.Wrap(err, "Scan()")

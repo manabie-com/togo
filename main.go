@@ -31,13 +31,13 @@ func main() {
 		Db:   util.GetEnv("POSTGRES_DB", "togo"),
 	}
 
-	_, err = postgres.NewPostgres(context.WithValue(context.Background(), "config", config))
+	pg, err := postgres.NewPostgres(context.WithValue(context.Background(), "config", config))
 	if err != nil {
 		log.Println("error opening db", err)
 		return
 	}
 
-	s := services.NewToDoService(db)
+	s := services.NewToDoService(db, pg)
 
 	// Release resources
 	defer func() {

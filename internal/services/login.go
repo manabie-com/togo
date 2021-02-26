@@ -1,9 +1,7 @@
 package services
 
 import (
-	"database/sql"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -17,6 +15,7 @@ type loginParams struct {
 }
 
 func (s *ToDoService) createTokenHandler(resp http.ResponseWriter, req *http.Request) {
+	log.Println(req.Method, req.URL.Path)
 	defer func(){
 		_ = req.Body.Close()
 	}()
@@ -30,40 +29,26 @@ func (s *ToDoService) createTokenHandler(resp http.ResponseWriter, req *http.Req
 		return
 	}
 
-	id := sql.NullString{
-		String: params.Id,
-		Valid: true,
-	}
-	pwd := sql.NullString{
-		String: params.Password,
-		Valid: true,
-	}
-
-	if !s.Store.ValidateUser(req.Context(), id, pwd) {
-		resp.WriteHeader(http.StatusUnauthorized)
-		err := json.NewEncoder(resp).Encode(map[string]string{
-			"error": "incorrect user_id/pwd",
-		})
-		if err != nil {
-			fmt.Println(err.Error())
+	usr, err := s.pg.ValidateUser(req.Context(), params.Id, params.Password)
+	if err != nil {
+		resp.WriteHeader(http.StatusBadRequest)
+		if err := json.NewEncoder(resp).Encode(newErrResp(err.Error())); err != nil {
+			log.Println(err.Error())
 		}
 		return
 	}
 
-	token, err := s.createToken(id.String)
+	token, err := s.createToken(usr.Id)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
+		if err := json.NewEncoder(resp).Encode(newErrResp(err.Error())); err != nil {
+			log.Println(err.Error())
+		}
 		return
 	}
 
-	err = json.NewEncoder(resp).Encode(map[string]string{
-		"data": token,
-	})
-	if err != nil {
-		fmt.Println(err.Error())
+	if err = json.NewEncoder(resp).Encode(newDataResp(token)); err != nil {
+		log.Println(err.Error())
 	}
 }
 

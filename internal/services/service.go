@@ -2,9 +2,8 @@ package services
 
 import (
 	"context"
-	"database/sql"
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/manabie-com/togo/internal/storages/postgres"
 	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 	"github.com/pkg/errors"
 	"net/http"
@@ -12,13 +11,12 @@ import (
 )
 
 const (
-	authUserIdKey string = "user_id"
-	authExpKey           = "exp"
+	authSubKey string = "sub"
+	authExpKey        = "exp"
 )
 
 var (
-	authTokenIsNotValid  = errors.New("auth token is not valid")
-	authUserIdIsRequired = errors.New(fmt.Sprintf(`'%v' is required`, authUserIdKey))
+	authTokenIsNotValid = errors.New("auth token is not valid")
 )
 
 // ToDoService implement HTTP server
@@ -27,13 +25,15 @@ type ToDoService struct {
 	serverErr chan error
 
 	JWTKey string
+	pg     *postgres.Postgres
 	Store  *sqllite.LiteDB
 }
 
-func NewToDoService(db *sqllite.LiteDB) *ToDoService {
+func NewToDoService(db *sqllite.LiteDB, pg *postgres.Postgres) *ToDoService {
 	s := &ToDoService{
 		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: db,
+		Store:  db,
+		pg:     pg,
 		server: &http.Server{
 			Addr: ":5050",
 		},
@@ -62,10 +62,10 @@ func (s *ToDoService) Shutdown(ctx context.Context) error {
 	return s.server.Shutdown(ctx)
 }
 
-func (s *ToDoService) createToken(id string) (string, error) {
+func (s *ToDoService) createToken(id interface{}) (string, error) {
 	claims := jwt.MapClaims{
-		authUserIdKey: id,
-		authExpKey:     time.Now().Add(time.Minute * 15).Unix(),
+		authSubKey: id,
+		authExpKey: time.Now().Add(time.Minute * 15).Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -87,24 +87,17 @@ func (s *ToDoService) validToken(req *http.Request) (*http.Request, error) {
 		return req, authTokenIsNotValid
 	}
 
-	id, ok := claims[authUserIdKey].(string)
+	id, ok := claims[authSubKey].(float64)
 	if !ok {
-		return req, authUserIdIsRequired
+		return req, authTokenIsNotValid
 	}
 
-	req = req.WithContext(context.WithValue(req.Context(), authUserIdKey, id))
+	req = req.WithContext(context.WithValue(req.Context(), authSubKey, int(id)))
 	return req, nil
 }
 
-func userIDFromCtx(ctx context.Context) (string, bool) {
-	v := ctx.Value(authUserIdKey)
-	id, ok := v.(string)
+func userIDFromCtx2(ctx context.Context) (int, bool) {
+	v := ctx.Value(authSubKey)
+	id, ok := v.(int)
 	return id, ok
-}
-
-func value(req *http.Request, p string) sql.NullString {
-	return sql.NullString{
-		String: req.FormValue(p),
-		Valid:  true,
-	}
 }

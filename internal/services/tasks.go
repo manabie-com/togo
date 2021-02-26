@@ -1,13 +1,12 @@
 package services
 
 import (
-	"database/sql"
 	"encoding/json"
+	"io"
 	"log"
 	"net/http"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/storages"
 )
 
@@ -16,6 +15,8 @@ func (s *ToDoService) setHeaders(next http.HandlerFunc) http.HandlerFunc {
 		resp.Header().Set("Access-Control-Allow-Origin", "*")
 		resp.Header().Set("Access-Control-Allow-Headers", "*")
 		resp.Header().Set("Access-Control-Allow-Methods", "*")
+
+		resp.Header().Set("Content-Type", "application/json")
 
 		if req.Method == http.MethodOptions {
 			resp.WriteHeader(http.StatusOK)
@@ -41,18 +42,15 @@ func (s *ToDoService) tasksHandler() http.HandlerFunc {
 }
 
 func (s *ToDoService) listTasksHandler(resp http.ResponseWriter, req *http.Request) {
-	resp.Header().Set("Content-Type", "application/json")
+	id, _ := userIDFromCtx2(req.Context())
 
-	id, _ := userIDFromCtx(req.Context())
+	createdDate, err := time.Parse("2006-01-02", req.FormValue("created_date"))
+	if err != nil {
+		resp.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
-	tasks, err := s.Store.RetrieveTasks(
-		req.Context(),
-		sql.NullString{
-			String: id,
-			Valid:  true,
-		},
-		value(req, "created_date"),
-	)
+	tasks, err := s.pg.GetTasks(req.Context(), id, createdDate)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		respData := map[string]string{
@@ -64,36 +62,32 @@ func (s *ToDoService) listTasksHandler(resp http.ResponseWriter, req *http.Reque
 		return
 	}
 
-	respData := map[string][]*storages.Task{
-		"data": tasks,
-	}
-	if err = json.NewEncoder(resp).Encode(respData); err != nil {
+	if err = json.NewEncoder(resp).Encode(newDataResp(tasks)); err != nil {
 		log.Println(err)
 	}
 }
 
 func (s *ToDoService) addTaskHandler(resp http.ResponseWriter, req *http.Request) {
-	t := &storages.Task{}
-	err := json.NewDecoder(req.Body).Decode(t)
-	defer req.Body.Close()
+	resp.Header().Set("Content-Type", "application/json")
+	defer func() {
+		_ = req.Body.Close()
+	}()
+
+	task := &storages.PgTask{}
+	err := json.NewDecoder(io.LimitReader(req.Body, maxJsonSize)).Decode(task)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	userID, ok := userIDFromCtx(req.Context())
+	userID, ok := userIDFromCtx2(req.Context())
 	if !ok {
 		resp.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	t.ID = uuid.New().String()
-	t.UserID = userID
-	t.CreatedDate = time.Now().Format("2006-01-02")
-
-	resp.Header().Set("Content-Type", "application/json")
-
-	err = s.Store.AddTask(req.Context(), t)
+	task.UsrId = userID
+	err = s.pg.InsertTask(req.Context(), task)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		respData := map[string]string{
@@ -105,10 +99,7 @@ func (s *ToDoService) addTaskHandler(resp http.ResponseWriter, req *http.Request
 		return
 	}
 
-	respData := map[string]*storages.Task{
-		"data": t,
-	}
-	if err := json.NewEncoder(resp).Encode(respData); err != nil {
+	if err := json.NewEncoder(resp).Encode(newDataResp(task)); err != nil {
 		log.Println(err)
 	}
 }
