@@ -21,7 +21,7 @@ Or
 - [x] Change `create_date` column to `create_at` column with `timestamptz` type 
 - [x] Build middlewares
 - [x] Graceful shutdown
-- [x] Use environment variables (`.env` file) to store postgres parameters  
+- [x] Use environment variables (`.env` file) to store postgres parameters and use them in app  
 - [ ] (Optional) Unit tests for `storages` layer
 - [ ] (Optional) Split `services` layer to `use_case` and `transport` layer
 

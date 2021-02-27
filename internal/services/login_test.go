@@ -6,6 +6,7 @@ import (
 	"github.com/manabie-com/togo/internal/storages"
 	"github.com/manabie-com/togo/internal/storages/postgres"
 	"github.com/stretchr/testify/require"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -64,14 +65,66 @@ func TestLoginWrongUsernamePassword(t *testing.T) {
 
 	requireTest.Equal(http.StatusBadRequest, resp.StatusCode)
 
-	data := &struct {
-		Err string `json:"error"`
-	}{}
-	err := json.NewDecoder(resp.Body).Decode(data)
-	requireTest.NoError(err)
-	requireTest.NotEmpty(data.Err)
+	expectedErrResp := &ApiErrResp{Error: postgres.ErrIncorrectUsernameOrPassword.Error()}
+	assertErrResp(t, expectedErrResp, resp)
 }
 
-func TestAuth(t *testing.T) {
+func TestAuthSuccess(t *testing.T) {
+	resp := mockGetAuthToken(t, storages.User{Id: 1, Username: "abc"}, true)
+	defer resp.Body.Close()
 
+	requireTest := require.New(t)
+	requireTest.Equal(http.StatusOK, resp.StatusCode)
+}
+
+func TestAuthFailure(t *testing.T) {
+	resp := mockGetAuthToken(t, storages.User{Id: 1, Username: "abc"}, false)
+	defer resp.Body.Close()
+
+	requireTest := require.New(t)
+	requireTest.Equal(http.StatusUnauthorized, resp.StatusCode)
+}
+
+func mockGetAuthToken(t *testing.T, user storages.User, expectedValidToken bool) *http.Response {
+	requireTest := require.New(t)
+	req := httptest.NewRequest("GET", "localhost:5050/login", nil)
+
+	db := new(postgres.DatabaseMock)
+	s := NewToDoService(testJWTKey, ":6000", db)
+
+	if expectedValidToken {
+		token, err := s.createToken(user.Id)
+		requireTest.NoError(err)
+		req.Header.Set("Authorization", token)
+	} else {
+		req.Header.Set("Authorization", "invalid token")
+	}
+
+	recorder := httptest.NewRecorder()
+	s.authHandler(func(writer http.ResponseWriter, request *http.Request) {})(recorder, req)
+	return recorder.Result()
+}
+
+func assertDataResp(t *testing.T, expected *ApiDataResp, actualResp *http.Response) {
+	defer actualResp.Body.Close()
+	requireTest := require.New(t)
+
+	actualRespBytes, err := ioutil.ReadAll(actualResp.Body)
+	requireTest.NoError(err)
+
+	expectedBytes, err := json.Marshal(expected)
+	requireTest.NoError(err)
+	requireTest.Equal(expectedBytes, bytes.TrimSpace(actualRespBytes))
+}
+
+func assertErrResp(t *testing.T, expected *ApiErrResp, actualResp *http.Response) {
+	defer actualResp.Body.Close()
+	requireTest := require.New(t)
+
+	actualRespBytes, err := ioutil.ReadAll(actualResp.Body)
+	requireTest.NoError(err)
+
+	expectedBytes, err := json.Marshal(expected)
+	requireTest.NoError(err)
+	requireTest.Equal(expectedBytes, bytes.TrimSpace(actualRespBytes))
 }

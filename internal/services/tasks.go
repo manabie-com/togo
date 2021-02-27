@@ -54,10 +54,7 @@ func (s *ToDoService) listTasksHandler(resp http.ResponseWriter, req *http.Reque
 	tasks, err := s.pg.GetTasks(req.Context(), id, createdDate)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
-		respData := map[string]string{
-			"error": err.Error(),
-		}
-		if err = json.NewEncoder(resp).Encode(respData); err != nil {
+		if err = json.NewEncoder(resp).Encode(newErrResp(errInternal.Error())); err != nil {
 			log.Println(err)
 		}
 		return
@@ -87,7 +84,6 @@ func (s *ToDoService) addTaskHandler(resp http.ResponseWriter, req *http.Request
 	}
 
 	task.UsrId = userID
-	task.CreateAt = time.Now()
 
 	switch err := s.pg.InsertTask(req.Context(), task); err {
 	case nil:
@@ -101,5 +97,9 @@ func (s *ToDoService) addTaskHandler(resp http.ResponseWriter, req *http.Request
 		}
 	default:
 		resp.WriteHeader(http.StatusInternalServerError)
+		if err = json.NewEncoder(resp).Encode(newErrResp(errInternal.Error())); err != nil {
+			log.Println(err)
+		}
+		return
 	}
 }

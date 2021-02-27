@@ -180,6 +180,7 @@ func (pg *Postgres) GetTasks(ctx context.Context, usrId int, createAt time.Time)
 }
 
 func (pg *Postgres) InsertTask(ctx context.Context, task *storages.Task) error {
+	task.CreateAt = time.Now()
 	stmt :=
 		`
 		INSERT INTO 

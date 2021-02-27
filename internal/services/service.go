@@ -15,6 +15,7 @@ const (
 )
 
 var (
+	errInternal = errors.New("internal error")
 	authTokenIsNotValid = errors.New("auth token is not valid")
 )
 
@@ -59,7 +60,7 @@ func (s *ToDoService) Shutdown(ctx context.Context) error {
 	return s.server.Shutdown(ctx)
 }
 
-func (s *ToDoService) createToken(id interface{}) (string, error) {
+func (s *ToDoService) createToken(id int) (string, error) {
 	claims := jwt.MapClaims{
 		authSubKey: id,
 		authExpKey: time.Now().Add(time.Minute * 15).Unix(),
