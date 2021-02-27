@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-const maxJsonSize = 1024	//1kb
+const maxJsonSize = 1024 //1kb
 
 type loginParams struct {
 	Username string `json:"username"`
@@ -17,7 +17,7 @@ type loginParams struct {
 
 func (s *ToDoService) createTokenHandler(resp http.ResponseWriter, req *http.Request) {
 	log.Println(req.Method, req.URL.Path)
-	defer func(){
+	defer func() {
 		_ = req.Body.Close()
 	}()
 

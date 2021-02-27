@@ -15,7 +15,7 @@ const (
 )
 
 var (
-	errInternal = errors.New("internal error")
+	errInternal         = errors.New("internal error")
 	authTokenIsNotValid = errors.New("auth token is not valid")
 )
 

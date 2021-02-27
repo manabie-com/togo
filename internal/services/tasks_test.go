@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-var testTasks           = []*storages.Task{
+var testTasks = []*storages.Task{
 	{Id: 1, Content: "content 1", UsrId: 1, CreateAt: time.Now()},
 	{Id: 2, Content: "content 2", UsrId: 1, CreateAt: time.Now()},
 }
@@ -21,7 +21,7 @@ var testTasks           = []*storages.Task{
 func TestListTask(t *testing.T) {
 	testCases := [][]*storages.Task{
 		testTasks, // Case user has some tasks available on such date
-		{},           // Case user has no tasks avaiable on such date
+		{},        // Case user has no tasks avaiable on such date
 	}
 
 	for _, taskData := range testCases {

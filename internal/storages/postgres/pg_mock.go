@@ -21,7 +21,7 @@ func (m *DatabaseMock) GetTasks(ctx context.Context, usrId int, createAt time.Ti
 	return args.Get(0).([]*storages.Task), args.Error(1)
 }
 
-func (m *DatabaseMock) InsertTask(ctx context.Context, task *storages.Task) error  {
+func (m *DatabaseMock) InsertTask(ctx context.Context, task *storages.Task) error {
 	args := m.Called(ctx, task)
 	return args.Error(0)
 }

@@ -18,8 +18,6 @@ type Task struct {
 	CreateAt time.Time `json:"create_at"`
 }
 
-
-
 // LEGACY CODE----------------------------
 
 // SqliteTask reflects tasks in DB
