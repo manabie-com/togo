@@ -70,6 +70,18 @@ func TestAddTaskInternalErr(t *testing.T) {
 	assertErrResp(t, apiErrResp, resp)
 }
 
+func TestAddTaskQuotaExceed(t *testing.T) {
+	testTask := &storages.Task{Content: "test content", UsrId: 1}
+	resp := mockAddTasks(t, testTask, 1, postgres.ErrUserMaxTodoReached)
+	defer resp.Body.Close()
+
+	requireTest := require.New(t)
+	requireTest.Equal(http.StatusTooManyRequests, resp.StatusCode)
+
+	apiErrResp := &ApiErrResp{Error: postgres.ErrUserMaxTodoReached.Error()}
+	assertErrResp(t, apiErrResp, resp)
+}
+
 func newListTasksRequest(userID int, createdDate string) *http.Request {
 	req := httptest.NewRequest("GET", "localhost:5050/tasks", nil)
 	q := req.URL.Query()

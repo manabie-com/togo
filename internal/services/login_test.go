@@ -39,9 +39,7 @@ func mockCreateToken(t *testing.T, user *loginParams, err error) *http.Response 
 
 func TestLoginCorrectUsernamePassword(t *testing.T) {
 	resp := mockCreateToken(t, testUser, nil)
-	defer func() {
-		_ = resp.Close
-	}()
+	defer resp.Body.Close()
 
 	requireTest := require.New(t)
 
@@ -57,12 +55,9 @@ func TestLoginCorrectUsernamePassword(t *testing.T) {
 
 func TestLoginWrongUsernamePassword(t *testing.T) {
 	resp := mockCreateToken(t, testUser, postgres.ErrIncorrectUsernameOrPassword)
-	defer func() {
-		_ = resp.Close
-	}()
+	defer resp.Body.Close()
 
 	requireTest := require.New(t)
-
 	requireTest.Equal(http.StatusBadRequest, resp.StatusCode)
 
 	expectedErrResp := &ApiErrResp{Error: postgres.ErrIncorrectUsernameOrPassword.Error()}
