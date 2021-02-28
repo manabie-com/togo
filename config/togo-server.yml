@@ -9,3 +9,6 @@ postgres:
   timeout: 0
 jwt_secret: secret
 max_todo: 5
+http:
+  port: 5050
+  host: ""
