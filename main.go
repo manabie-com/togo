@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	"github.com/manabie-com/togo/internal/services"
-	"github.com/manabie-com/togo/internal/storages/sqlstore"
 
 	_ "github.com/lib/pq"
 )
@@ -27,10 +26,6 @@ func main() {
 		log.Fatal("error opening db", err)
 	}
 
-	http.ListenAndServe(":5050", &services.ToDoService{
-		JWTKey: cfg.JWTSecret,
-		Store: &sqlstore.Store{
-			DB: db,
-		},
-	})
+	todoService := services.NewToDoService(db, cfg.JWTSecret)
+	http.ListenAndServe(":5050", todoService)
 }
