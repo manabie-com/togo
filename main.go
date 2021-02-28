@@ -26,6 +26,6 @@ func main() {
 		log.Fatal("error opening db", err)
 	}
 
-	todoService := services.NewToDoService(db, cfg.JWTSecret)
+	todoService := services.NewToDoService(db, cfg.JWTSecret, cfg.MaxTodo)
 	http.ListenAndServe(":5050", todoService)
 }

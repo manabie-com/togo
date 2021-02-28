@@ -2,14 +2,12 @@ package services
 
 import (
 	"bytes"
-	"database/sql"
 	"encoding/json"
 	"github.com/DATA-DOG/go-sqlmock"
 	taskmodel "github.com/manabie-com/togo/internal/storages/task/model"
 	_ "github.com/manabie-com/togo/internal/storages/user/model"
 	cmsqlmock "github.com/manabie-com/togo/pkg/common/cmsql/mock"
 	"github.com/manabie-com/togo/pkg/common/crypto"
-	"github.com/manabie-com/togo/up"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"net/http"
@@ -18,29 +16,6 @@ import (
 
 	_ "github.com/lib/pq"
 )
-
-type IntegrationTest struct {
-	db *sql.DB
-	mock sqlmock.Sqlmock
-	hander *ToDoService
-}
-
-func NewIntegrationTest() *IntegrationTest {
-	db, mock := cmsqlmock.SetupMock()
-	return &IntegrationTest{
-		db:     db,
-		mock:   mock,
-		hander: NewToDoService(db, "secret"),
-	}
-}
-
-type ErrorResponse struct {
-	Error string `json:"error"`
-}
-
-type LoginResponse struct {
-	Data string `json:"data"`
-}
 
 type AddTaskResponse struct {
 	Data struct {
@@ -52,82 +27,6 @@ type ListTaskResponse struct {
 	Data []*taskmodel.Task `json:"data"`
 }
 
-type RegisterResponse struct {
-	Data *up.RegisterResponse `json:"data"`
-}
-
-var integrationTest *IntegrationTest
-
-func TestMain(m *testing.M) {
-	integrationTest = NewIntegrationTest()
-	defer integrationTest.db.Close()
-	m.Run()
-}
-
-func TestToDoService_Login(t *testing.T) {
-	mock := integrationTest.mock
-
-	t.Run("TestToDoService_Login", func(t *testing.T) {
-		passwordHashed, _ := crypto.HashPassword("example")
-		mock.ExpectQuery("SELECT id, password, max_todo FROM users WHERE id = $1").
-			WithArgs("000001").
-			WillReturnRows(sqlmock.NewRows([]string{"id", "password", "max_todo"}).
-				AddRow("000001", passwordHashed, 10))
-
-		loginBody, err := json.Marshal(map[string]string{
-			"user_id":  "000001",
-			"password": "example",
-		})
-		assert.Nil(t, err)
-
-		req := httptest.NewRequest("POST", "/login", bytes.NewReader(loginBody))
-		w := httptest.NewRecorder()
-		integrationTest.hander.ServeHTTP(w, req)
-
-		resp := w.Result()
-		assert.Equal(t, http.StatusOK, resp.StatusCode)
-	})
-
-	t.Run("TestToDoService_Login_WrongPassword", func(t *testing.T) {
-		mock.ExpectQuery("SELECT id, password, max_todo FROM users WHERE id = $1").
-			WithArgs("000001").
-			WillReturnRows(sqlmock.NewRows([]string{"id", "password", "max_todo"}).
-				AddRow("000001", "abc", 10))
-
-		loginBody, err := json.Marshal(map[string]string{
-			"user_id":  "000001",
-			"password": "password",
-		})
-		assert.Nil(t, err)
-
-		req := httptest.NewRequest("POST", "/login", bytes.NewReader(loginBody))
-		w := httptest.NewRecorder()
-		integrationTest.hander.ServeHTTP(w, req)
-
-		resp := w.Result()
-		assert.Equal(t, http.StatusUnauthorized, resp.StatusCode)
-	})
-
-	t.Run("TestToDoService_Login_WrongID", func(t *testing.T) {
-		mock.ExpectQuery("SELECT id, password, max_todo FROM users WHERE id = $1").
-			WithArgs("01234").
-			WillReturnRows(sqlmock.NewRows([]string{"id", "password", "max_todo"}))
-
-		loginBody, err := json.Marshal(map[string]string{
-			"user_id":  "01234",
-			"password": "password",
-		})
-		assert.Nil(t, err)
-
-		req := httptest.NewRequest("POST", "/login", bytes.NewReader(loginBody))
-		w := httptest.NewRecorder()
-		integrationTest.hander.ServeHTTP(w, req)
-
-		resp := w.Result()
-		assert.Equal(t, http.StatusUnauthorized, resp.StatusCode)
-	})
-}
-
 func TestToDoService_AddTask(t *testing.T) {
 	mock := integrationTest.mock
 
@@ -135,11 +34,7 @@ func TestToDoService_AddTask(t *testing.T) {
 	mock.ExpectQuery("SELECT id, password, max_todo FROM users WHERE id = $1").
 		WithArgs("000001").
 		WillReturnRows(sqlmock.NewRows([]string{"id", "password", "max_todo"}).
-			AddRow("000001", passwordHashed, 10))
-	
-	mock.ExpectExec("INSERT INTO tasks (id, content, user_id, created_date) VALUES ($1, $2, $3, $4)").
-		WithArgs(cmsqlmock.AnyString{}, "content task 1", "000001", cmsqlmock.AnyString{}).
-		WillReturnResult(sqlmock.NewResult(1, 1))
+			AddRow("000001", passwordHashed, 1))
 
 	t.Run("TestToDoService_AddTask_Login", func(t *testing.T) {
 		loginBody, err := json.Marshal(map[string]string{
@@ -153,7 +48,7 @@ func TestToDoService_AddTask(t *testing.T) {
 		integrationTest.hander.ServeHTTP(w, req)
 
 		resp := w.Result()
-		assert.Equal(t, resp.StatusCode, http.StatusOK)
+		assert.Equal(t, http.StatusOK, resp.StatusCode)
 
 		bodyStr, err := ioutil.ReadAll(resp.Body)
 		assert.Nil(t, err)
@@ -164,8 +59,21 @@ func TestToDoService_AddTask(t *testing.T) {
 		assert.Nil(t, err)
 
 		t.Run("TestToDoService_AddTask_AddTask", func(t *testing.T) {
+			mock.ExpectQuery("SELECT id, password, max_todo FROM users WHERE id = $1").
+				WithArgs("000001").
+				WillReturnRows(sqlmock.NewRows([]string{"id", "password", "max_todo"}).
+					AddRow("000001", passwordHashed, 1))
+
+			mock.ExpectQuery("SELECT count(id) as count FROM tasks WHERE user_id = $1 AND created_date = $2").
+				WithArgs("000001", cmsqlmock.AnyString{}).
+				WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(0))
+
+			mock.ExpectExec("INSERT INTO tasks (id, content, user_id, created_date) VALUES ($1, $2, $3, $4)").
+				WithArgs(cmsqlmock.AnyString{}, "content task 1", "000001", cmsqlmock.AnyString{}).
+				WillReturnResult(sqlmock.NewResult(1, 1))
+
 			addTaskBody, err := json.Marshal(map[string]string{
-				"content":  "content task 1",
+				"content": "content task 1",
 			})
 			assert.Nil(t, err)
 
@@ -175,7 +83,7 @@ func TestToDoService_AddTask(t *testing.T) {
 			integrationTest.hander.ServeHTTP(w, addTaskReq)
 
 			addTaskResponse := w.Result()
-			assert.Equal(t, resp.StatusCode, http.StatusOK)
+			assert.Equal(t, http.StatusOK, resp.StatusCode)
 
 			addTaskBodyStr, err := ioutil.ReadAll(addTaskResponse.Body)
 			assert.Nil(t, err)
@@ -185,7 +93,31 @@ func TestToDoService_AddTask(t *testing.T) {
 			assert.Nil(t, json.Unmarshal(addTaskBodyStr, &addTaskResp))
 
 			assert.NotNil(t, addTaskResp.Data)
-			assert.Equal(t, addTaskResp.Data.Content, "content task 1")
+			assert.Equal(t, "content task 1", addTaskResp.Data.Content)
+		})
+
+		t.Run("TestToDoService_AddTask_AddTask_TodosLimitIsReached", func(t *testing.T) {
+			addTaskBody, err := json.Marshal(map[string]string{
+				"content": "content task 1",
+			})
+			assert.Nil(t, err)
+
+			addTaskReq := httptest.NewRequest("POST", "/tasks", bytes.NewReader(addTaskBody))
+			addTaskReq.Header.Set("authorization", loginResp.Data)
+			w := httptest.NewRecorder()
+			integrationTest.hander.ServeHTTP(w, addTaskReq)
+
+			addTaskResponse := w.Result()
+			assert.Equal(t, http.StatusBadRequest, addTaskResponse.StatusCode)
+
+			addTaskBodyStr, err := ioutil.ReadAll(addTaskResponse.Body)
+			assert.Nil(t, err)
+
+			var errResponse ErrorResponse
+
+			assert.Nil(t, json.Unmarshal(addTaskBodyStr, &errResponse))
+
+			assert.Equal(t, "the number of todos daily limit is reached", errResponse.Error)
 		})
 	})
 }
@@ -220,7 +152,7 @@ func TestToDoService_ListTasks(t *testing.T) {
 
 		err = json.Unmarshal(bodyStr, &loginResp)
 		assert.Nil(t, err)
-		
+
 		t.Run("TestToDoService_ListTasks_ListTasks", func(t *testing.T) {
 			mock.ExpectQuery("SELECT id, content, user_id, created_date FROM tasks WHERE user_id = $1 AND created_date = $2").
 				WithArgs("000001", "2020-02-21").
@@ -284,72 +216,5 @@ func TestToDoService_ListTasks(t *testing.T) {
 
 			assert.Nil(t, listTasksBodyResp.Data)
 		})
-	})
-}
-
-func TestToDoService_Register(t *testing.T) {
-	mock := integrationTest.mock
-
-	t.Run("TestToDoService_Register", func(t *testing.T) {
-		mock.ExpectQuery("SELECT id, password, max_todo FROM users WHERE id = $1").
-			WithArgs("1").
-			WillReturnRows(sqlmock.NewRows([]string{"id", "password", "max_todo"}))
-
-		mock.ExpectExec("INSERT INTO users (id, password, max_todo) VALUES ($1, $2, $3)").
-			WithArgs("1", cmsqlmock.AnyString{}, 11).
-			WillReturnResult(sqlmock.NewResult(1, 1))
-
-		registerBody, err := json.Marshal(&up.RegisterRequest{
-			ID:       "1",
-			Password: "password",
-			MaxTodo:  11,
-		})
-
-		req := httptest.NewRequest("POST", "/register", bytes.NewReader(registerBody))
-		w := httptest.NewRecorder()
-		integrationTest.hander.ServeHTTP(w, req)
-
-		resp := w.Result()
-		assert.Equal(t, resp.StatusCode, http.StatusOK)
-
-		bodyStr, err := ioutil.ReadAll(resp.Body)
-		assert.Nil(t, err)
-
-		var registerResp RegisterResponse
-
-		err = json.Unmarshal(bodyStr, &registerResp)
-		assert.Nil(t, err)
-
-		assert.Equal(t, registerResp.Data.ID, "1")
-		assert.Equal(t, registerResp.Data.MaxTodo,  11)
-	})
-
-	t.Run("TestToDoService_Register_UserExists", func(t *testing.T) {
-		mock.ExpectQuery("SELECT id, password, max_todo FROM users WHERE id = $1").
-			WithArgs("2").
-			WillReturnRows(sqlmock.NewRows([]string{"id", "password", "max_todo"}).
-				AddRow("2", "password1", 5))
-
-		registerBody, err := json.Marshal(&up.RegisterRequest{
-			ID:       "2",
-			Password: "password2",
-		})
-
-		req := httptest.NewRequest("POST", "/register", bytes.NewReader(registerBody))
-		w := httptest.NewRecorder()
-		integrationTest.hander.ServeHTTP(w, req)
-
-		resp := w.Result()
-		assert.Equal(t, resp.StatusCode, http.StatusBadRequest)
-
-		bodyStr, err := ioutil.ReadAll(resp.Body)
-		assert.Nil(t, err)
-
-		var errResponse ErrorResponse
-
-		err = json.Unmarshal(bodyStr, &errResponse)
-		assert.Nil(t, err)
-
-		assert.Equal(t, errResponse.Error, "user exists with the given id")
 	})
 }
