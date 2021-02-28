@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	mock sqlmock.Sqlmock
+	mock      sqlmock.Sqlmock
 	userStore *UserStore
 )
 

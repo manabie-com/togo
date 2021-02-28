@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	mock sqlmock.Sqlmock
+	mock      sqlmock.Sqlmock
 	taskStore *TaskStore
 )
 
@@ -56,7 +56,7 @@ func TestTaskStore_RetrieveTasks(t *testing.T) {
 				AddRow("task_0002", "content_0002", "user_00001", "2021-02-22"))
 
 		tasksResult, err := taskStore.RetrieveTasks(context.Background(),
-			sql.NullString{String: "user_00001", Valid:  true},
+			sql.NullString{String: "user_00001", Valid: true},
 			sql.NullString{String: "2021-02-22", Valid: true})
 		assert.Nil(t, err)
 		assert.NotNil(t, tasksResult)
@@ -71,9 +71,24 @@ func TestTaskStore_RetrieveTasks(t *testing.T) {
 			WillReturnRows(sqlmock.NewRows([]string{"id", "content", "user_id", "created_date"}))
 
 		tasksResult, err := taskStore.RetrieveTasks(context.Background(),
-			sql.NullString{String: "user_0002", Valid:  true},
+			sql.NullString{String: "user_0002", Valid: true},
 			sql.NullString{String: "2021-02-22", Valid: true})
 		assert.Nil(t, err)
 		assert.Nil(t, tasksResult)
+	})
+}
+
+func TestTaskStore_CountByUserID(t *testing.T) {
+	t.Run("TestTaskStore_CountByUserID", func(t *testing.T) {
+		mock.ExpectQuery("SELECT count(id) as count FROM tasks WHERE user_id = $1 AND created_date = $2").
+			WithArgs("00001", "2020-21-02").
+			WillReturnRows(sqlmock.NewRows([]string{"count"}).
+				AddRow(20))
+
+		numOfTasks, err := taskStore.CountByUserID(context.Background(),
+			sql.NullString{String: "00001", Valid: true},
+			sql.NullString{String: "2020-21-02", Valid: true})
+		assert.Nil(t, err)
+		assert.Equal(t, 20, numOfTasks)
 	})
 }

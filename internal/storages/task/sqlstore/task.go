@@ -46,3 +46,15 @@ func (s *TaskStore) AddTask(ctx context.Context, t *model.Task) error {
 
 	return err
 }
+
+func (s *TaskStore) CountByUserID(ctx context.Context, userID, createdDate sql.NullString) (int, error) {
+	stmt := `SELECT count(id) as count FROM tasks WHERE user_id = $1 AND created_date = $2`
+	row := s.QueryRowContext(ctx, stmt, userID, createdDate)
+
+	var count int
+	if err := row.Scan(&count); err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}

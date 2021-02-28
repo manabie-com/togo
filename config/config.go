@@ -7,12 +7,14 @@ import (
 type Config struct {
 	cc.Postgres `yaml:"postgres"`
 	JWTSecret   string `yaml:"jwt_secret"`
+	MaxTodo     int    `yaml:"max_todo"`
 }
 
 func Default() Config {
 	return Config{
 		Postgres:  cc.DefaultPostgres(),
 		JWTSecret: "secret",
+		MaxTodo: 5,
 	}
 }
 
