@@ -48,7 +48,7 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		if req.Method != http.MethodPost {
 			return
 		}
-		s.login(resp, req)
+		s.Login(resp, req)
 		return
 	case "/tasks":
 		var ok bool
@@ -60,15 +60,15 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 
 		switch req.Method {
 		case http.MethodGet:
-			s.listTasks(resp, req)
+			s.ListTasks(resp, req)
 		case http.MethodPost:
-			s.addTask(resp, req)
+			s.AddTask(resp, req)
 		}
 		return
 	}
 }
 
-func (s *ToDoService) login(resp http.ResponseWriter, req *http.Request) {
+func (s *ToDoService) Login(resp http.ResponseWriter, req *http.Request) {
 	u := &usermodel.User{}
 	err := json.NewDecoder(req.Body).Decode(u)
 	defer req.Body.Close()
@@ -84,11 +84,18 @@ func (s *ToDoService) login(resp http.ResponseWriter, req *http.Request) {
 
 	user, err := s.userstore.FindByID(req.Context(), userID)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			resp.WriteHeader(http.StatusUnauthorized)
+			json.NewEncoder(resp).Encode(map[string]string{
+				"error": "incorrect user_id/pwd",
+			})
+			return
+		}
 		resp.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	if !crypto.CheckPasswordHash(u.Password, user.Password) {
+	if user == nil || !crypto.CheckPasswordHash(u.Password, user.Password) {
 		resp.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": "incorrect user_id/pwd",
@@ -111,7 +118,7 @@ func (s *ToDoService) login(resp http.ResponseWriter, req *http.Request) {
 	})
 }
 
-func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
+func (s *ToDoService) ListTasks(resp http.ResponseWriter, req *http.Request) {
 	id, _ := userIDFromCtx(req.Context())
 	tasks, err := s.taskstore.RetrieveTasks(
 		req.Context(),
@@ -137,7 +144,7 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	})
 }
 
-func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
+func (s *ToDoService) AddTask(resp http.ResponseWriter, req *http.Request) {
 	t := &taskmodel.Task{}
 	err := json.NewDecoder(req.Body).Decode(t)
 	defer req.Body.Close()

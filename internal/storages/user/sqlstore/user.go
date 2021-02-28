@@ -26,6 +26,5 @@ func (s *UserStore) FindByID(ctx context.Context, userID sql.NullString) (*model
 	if err != nil {
 		return nil, err
 	}
-	
 	return user, err
 }
