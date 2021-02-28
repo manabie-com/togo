@@ -26,8 +26,7 @@ func (s *TaskStore) RetrieveTasks(ctx context.Context, userID, createdDate sql.N
 	var tasks []*model.Task
 	for rows.Next() {
 		t := &model.Task{}
-		err := rows.Scan(&t.ID, &t.Content, &t.UserID, &t.CreatedDate)
-		if err != nil {
+		if err := rows.Scan(&t.ID, &t.Content, &t.UserID, &t.CreatedDate); err != nil {
 			return nil, err
 		}
 		tasks = append(tasks, t)
@@ -44,9 +43,6 @@ func (s *TaskStore) RetrieveTasks(ctx context.Context, userID, createdDate sql.N
 func (s *TaskStore) AddTask(ctx context.Context, t *model.Task) error {
 	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES ($1, $2, $3, $4)`
 	_, err := s.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
-	if err != nil {
-		return err
-	}
 
-	return nil
+	return err
 }

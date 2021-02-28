@@ -22,9 +22,16 @@ func (s *UserStore) FindByID(ctx context.Context, userID sql.NullString) (*model
 	row := s.QueryRowContext(ctx, stmt, userID)
 
 	user := new(model.User)
-	err := row.Scan(&user.ID, &user.Password, &user.MaxTodo)
-	if err != nil {
+	if err := row.Scan(&user.ID, &user.Password, &user.MaxTodo); err != nil {
 		return nil, err
 	}
-	return user, err
+
+	return user, nil
+}
+
+func (s *UserStore) Create(ctx context.Context, u *model.User) error {
+	stmt := `INSERT INTO users (id, password, max_todo) VALUES ($1, $2, $3)`
+	_, err := s.DB.ExecContext(ctx, stmt, &u.ID, &u.Password, &u.MaxTodo)
+
+	return err
 }
