@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"github.com/manabie-com/togo/pkg/common/crypto"
 	"log"
 	"net/http"
 	"time"
@@ -69,12 +70,14 @@ func (s *ToDoService) login(resp http.ResponseWriter, req *http.Request) {
 		String: u.ID,
 		Valid:  true,
 	}
-	password := sql.NullString{
-		String: u.Password,
-		Valid:  true,
+
+	user, err := s.Store.FindByID(req.Context(), userID)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
-	if !s.Store.ValidateUser(req.Context(), userID, password) {
+	if !crypto.CheckPasswordHash(u.Password, user.Password) {
 		resp.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": "incorrect user_id/pwd",
