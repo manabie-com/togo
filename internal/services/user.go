@@ -1,114 +1,101 @@
 package services
 
 import (
+	"context"
 	"database/sql"
-	"encoding/json"
+	"github.com/dgrijalva/jwt-go"
 	usermodel "github.com/manabie-com/togo/internal/storages/user/model"
+	usersqlstore "github.com/manabie-com/togo/internal/storages/user/sqlstore"
 	"github.com/manabie-com/togo/pkg/common/crypto"
+	"github.com/manabie-com/togo/pkg/common/xerrors"
 	"github.com/manabie-com/togo/up"
-	"net/http"
+	"time"
 )
 
-func (s *ToDoService) Register(resp http.ResponseWriter, req *http.Request) {
-	u := &up.RegisterRequest{}
-	err := json.NewDecoder(req.Body).Decode(u)
-	defer req.Body.Close()
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+var _ up.UserService = &UserService{}
 
-	if u.MaxTodo == 0 {
-		u.MaxTodo = s.maxTodo
+type UserService struct {
+	userstore *usersqlstore.UserStore
+	maxTodo   int
+	jwtKey    string
+}
+
+func NewUserService(db *sql.DB, maxTodo int, jwtKey string) *UserService {
+	return &UserService{
+		userstore: usersqlstore.NewUserStore(db),
+		maxTodo:   maxTodo,
+		jwtKey:    jwtKey,
+	}
+}
+
+func (s *UserService) Register(ctx context.Context, req *up.RegisterRequest) (*up.RegisterResponse, error) {
+	if req.MaxTodo == 0 {
+		req.MaxTodo = s.maxTodo
 	}
 
 	userID := sql.NullString{
-		String: u.ID,
+		String: req.ID,
 		Valid:  true,
 	}
-	user, err := s.userstore.FindByID(req.Context(), userID)
-	if err != nil {
-		if err != sql.ErrNoRows {
-			resp.WriteHeader(http.StatusInternalServerError)
-			return
-		}
+	user, err := s.userstore.FindByID(ctx, userID)
+	if err != nil && err != sql.ErrNoRows {
+		return nil, xerrors.Error(xerrors.Internal, err)
 	}
 
 	if user != nil {
-		resp.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "user exists with the given id",
-		})
-		return
+		return nil, xerrors.ErrorM(xerrors.InvalidArgument, nil, "user exists with the given id")
 	}
 
-	err = s.userstore.Create(req.Context(), &usermodel.User{
-		ID:       u.ID,
-		Password: u.Password,
-		MaxTodo:  u.MaxTodo,
+	err = s.userstore.Create(ctx, &usermodel.User{
+		ID:       req.ID,
+		Password: req.Password,
+		MaxTodo:  req.MaxTodo,
 	})
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		return
+		return nil, xerrors.Error(xerrors.Internal, nil)
 	}
 
-	resp.Header().Set("Content-Type", "application/json")
-	registerResponse := &up.RegisterResponse{
-		ID:      u.ID,
-		MaxTodo: u.MaxTodo,
-	}
-
-	json.NewEncoder(resp).Encode(map[string]interface{}{
-		"data": registerResponse,
-	})
+	return &up.RegisterResponse{
+		ID:      req.ID,
+		MaxTodo: req.MaxTodo,
+	}, nil
 }
 
-func (s *ToDoService) Login(resp http.ResponseWriter, req *http.Request) {
-	u := &usermodel.User{}
-	err := json.NewDecoder(req.Body).Decode(u)
-	defer req.Body.Close()
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
+func (s *UserService) Login(ctx context.Context, req *up.LoginRequest) (*up.LoginResponse, error) {
 	userID := sql.NullString{
-		String: u.ID,
+		String: req.UserID,
 		Valid:  true,
 	}
 
-	user, err := s.userstore.FindByID(req.Context(), userID)
+	user, err := s.userstore.FindByID(ctx, userID)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			resp.WriteHeader(http.StatusUnauthorized)
-			json.NewEncoder(resp).Encode(map[string]string{
-				"error": "incorrect user_id/pwd",
-			})
-			return
+		if err != sql.ErrNoRows {
+			return nil, xerrors.Error(xerrors.Internal, err)
 		}
-		resp.WriteHeader(http.StatusInternalServerError)
-		return
+		return nil, xerrors.ErrorM(xerrors.UnAuthorized, err, "incorrect user_id/pwd")
 	}
 
-	if user == nil || !crypto.CheckPasswordHash(u.Password, user.Password) {
-		resp.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "incorrect user_id/pwd",
-		})
-		return
+	if user == nil || !crypto.CheckPasswordHash(req.Password, user.Password) {
+		return nil, xerrors.ErrorM(xerrors.UnAuthorized, nil, "incorrect user_id/pwd")
 	}
-	resp.Header().Set("Content-Type", "application/json")
 
-	token, err := s.createToken(u.ID)
+	token, err := s.createToken(req.UserID)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
+		return nil, xerrors.Error(xerrors.Internal, err)
 	}
 
-	json.NewEncoder(resp).Encode(map[string]string{
-		"data": token,
-	})
+	resp := up.LoginResponse(token)
+	return &resp, nil
+}
+
+func (s *UserService) createToken(id string) (string, error) {
+	atClaims := jwt.MapClaims{}
+	atClaims["user_id"] = id
+	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
+	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
+	token, err := at.SignedString([]byte(s.jwtKey))
+	if err != nil {
+		return "", err
+	}
+	return token, nil
 }

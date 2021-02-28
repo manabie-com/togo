@@ -4,9 +4,9 @@ import (
 	"flag"
 	"fmt"
 	"github.com/manabie-com/togo/pkg/common/cmsql/cmsql"
+	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
-	"gopkg.in/yaml.v2"
 	"os"
 	"reflect"
 )
@@ -81,4 +81,18 @@ func DefaultPostgres() Postgres {
 		Database: "test",
 		SSLMode:  "",
 	}
+}
+
+// HTTP ...
+type HTTP struct {
+	Host string `yaml:"host"`
+	Port int    `yaml:"port"`
+}
+
+// Address ...
+func (c HTTP) Address() string {
+	if c.Port == 0 {
+		log.Panic("Missing HTTP port")
+	}
+	return fmt.Sprintf("%s:%d", c.Host, c.Port)
 }

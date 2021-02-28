@@ -18,14 +18,19 @@ func main() {
 
 	cfg, err := config.Load()
 	if err != nil {
-		log.Fatal("error loading config", err)
+		log.Panicf("error loading config %v", err)
 	}
 
 	db, err := sql.Open(cfg.Postgres.ConnectionString())
 	if err != nil {
-		log.Fatal("error opening db", err)
+		log.Panicf("error opening db %v", err)
 	}
 
 	todoService := services.NewToDoService(db, cfg.JWTSecret, cfg.MaxTodo)
-	http.ListenAndServe(":5050", todoService)
+
+	log.Printf("HTTP server listening at %v", cfg.HTTP.Address())
+	err = http.ListenAndServe(cfg.HTTP.Address(), todoService)
+	if err != nil {
+		log.Panicf("error when starting server %v", err)
+	}
 }

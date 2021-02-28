@@ -1,78 +1,85 @@
 package services
 
 import (
+	"context"
 	"database/sql"
-	"encoding/json"
 	"github.com/manabie-com/togo/internal/services/helper"
-	"net/http"
+	tasksqlstore "github.com/manabie-com/togo/internal/storages/task/sqlstore"
+	usersqlstore "github.com/manabie-com/togo/internal/storages/user/sqlstore"
+	"github.com/manabie-com/togo/pkg/common/xerrors"
+	"github.com/manabie-com/togo/up"
 	"time"
 
 	"github.com/google/uuid"
 	taskmodel "github.com/manabie-com/togo/internal/storages/task/model"
 )
 
-const (
-	keyTodosMax     = "user_%s_max_todo"
-	keyTodosCurrent = "user_%s_current"
-)
+var _ up.TaskService = &TaskService{}
 
-func (s *ToDoService) ListTasks(resp http.ResponseWriter, req *http.Request) {
-	id, _ := userIDFromCtx(req.Context())
-	tasks, err := s.taskstore.RetrieveTasks(
-		req.Context(),
-		sql.NullString{
-			String: id,
-			Valid:  true,
-		},
-		value(req, "created_date"),
-	)
+type TaskService struct {
+	userstore *usersqlstore.UserStore
+	taskstore *tasksqlstore.TaskStore
 
-	resp.Header().Set("Content-Type", "application/json")
-
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	json.NewEncoder(resp).Encode(map[string][]*taskmodel.Task{
-		"data": tasks,
-	})
+	mapUserAndTodos map[string]*helper.ToDos
 }
 
-func (s *ToDoService) AddTask(resp http.ResponseWriter, req *http.Request) {
-	t := &taskmodel.Task{}
-	err := json.NewDecoder(req.Body).Decode(t)
-	defer req.Body.Close()
+func NewTaskService(db *sql.DB) *TaskService {
+	return &TaskService{
+		userstore:       usersqlstore.NewUserStore(db),
+		taskstore:       tasksqlstore.NewTaskStore(db),
+		mapUserAndTodos: make(map[string]*helper.ToDos),
+	}
+}
+
+func (s *TaskService) ListTasks(ctx context.Context, req *up.ListTasksRequest) (resp *up.ListTasksResponse, _ error) {
+	id, _ := userIDFromCtx(ctx)
+	tasks, err := s.taskstore.RetrieveTasks(
+		ctx,
+		sql.NullString{String: id, Valid: true},
+		sql.NullString{String: req.CreatedDate, Valid: true},
+	)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		return
+		return nil, xerrors.Error(xerrors.Internal, err)
 	}
 
+	var tasksResp up.ListTasksResponse
+	for _, task := range tasks {
+		tasksResp = append(tasksResp, &up.Task{
+			ID:          task.ID,
+			Content:     task.Content,
+			UserID:      task.UserID,
+			CreatedDate: task.CreatedDate,
+		})
+	}
+
+	return &tasksResp, nil
+}
+
+func (s *TaskService) AddTask(ctx context.Context, req *up.AddTaskRequest) (resp *up.Task, _ error) {
+	userID, _ := userIDFromCtx(ctx)
 	now := time.Now()
-	userID, _ := userIDFromCtx(req.Context())
-	t.ID = uuid.New().String()
-	t.UserID = userID
-	t.CreatedDate = now.Format("2006-01-02")
+
+	task := &taskmodel.Task{
+		ID:          uuid.New().String(),
+		Content:     req.Content,
+		UserID:      userID,
+		CreatedDate: now.Format("2006-01-02"),
+	}
 
 	{
 		todos, ok := s.mapUserAndTodos[userID]
 		if !ok {
-			user, err := s.userstore.FindByID(req.Context(),
-				sql.NullString{String: userID, Valid: true})
+			user, err := s.userstore.FindByID(ctx, sql.NullString{String: userID, Valid: true})
 			if err != nil {
-				resp.WriteHeader(http.StatusInternalServerError)
-				return
+				return nil, xerrors.Error(xerrors.Internal, err)
 			}
 
-			numOfTasks, err := s.taskstore.CountByUserID(req.Context(),
+			numOfTasks, err := s.taskstore.CountByUserID(
+				ctx,
 				sql.NullString{String: userID, Valid: true},
-				sql.NullString{String: t.CreatedDate, Valid: true})
+				sql.NullString{String: task.CreatedDate, Valid: true})
 			if err != nil {
-				resp.WriteHeader(http.StatusInternalServerError)
-				return
+				return nil, xerrors.Error(xerrors.Internal, err)
 			}
 
 			todos = helper.NewToDos(user.MaxTodo, numOfTasks)
@@ -80,26 +87,19 @@ func (s *ToDoService) AddTask(resp http.ResponseWriter, req *http.Request) {
 		}
 
 		if !todos.CanAddNewTodo() {
-			resp.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(resp).Encode(map[string]string{
-				"error": "the number of todos daily limit is reached",
-			})
-			return
+			return nil, xerrors.ErrorM(xerrors.InvalidArgument, nil, "the number of todos daily limit is reached")
 		}
 	}
 
-	resp.Header().Set("Content-Type", "application/json")
-
-	err = s.taskstore.AddTask(req.Context(), t)
+	err := s.taskstore.AddTask(ctx, task)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
+		return nil, xerrors.Error(xerrors.Internal, err)
 	}
 
-	json.NewEncoder(resp).Encode(map[string]*taskmodel.Task{
-		"data": t,
-	})
+	return &up.Task{
+		ID:          task.ID,
+		Content:     task.Content,
+		UserID:      task.UserID,
+		CreatedDate: task.CreatedDate,
+	}, nil
 }
