@@ -1,0 +1,44 @@
+version: '3'
+
+networks:
+  togo-test:
+    driver: bridge
+
+services:
+  togo:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.test
+    volumes:
+      - $PWD:/src
+    depends_on:
+      - redis
+      - postgres
+    restart: on-failure
+    networks:
+      - togo-test
+
+  postgres:
+    image: postgres
+    ports:
+      - "5432:5432"
+    expose:
+      - "5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: testdb
+    restart: on-failure
+    networks:
+      - togo-test
+
+  redis:
+    image: "redis:alpine"
+    command: redis-server
+    ports:
+      - "6379:6379"
+    expose:
+      - "6379"
+    restart: on-failure
+    networks:
+      - togo-test
