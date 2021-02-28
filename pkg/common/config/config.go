@@ -3,7 +3,7 @@ package config
 import (
 	"flag"
 	"fmt"
-	"github.com/manabie-com/togo/pkg/common/cmsql"
+	"github.com/manabie-com/togo/pkg/common/cmsql/cmsql"
 	"io/ioutil"
 	"log"
 	"gopkg.in/yaml.v2"

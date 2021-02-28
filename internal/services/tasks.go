@@ -4,21 +4,32 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	usersqlstore"github.com/manabie-com/togo/internal/storages/user/sqlstore"
+	tasksqlstore"github.com/manabie-com/togo/internal/storages/task/sqlstore"
 	"github.com/manabie-com/togo/pkg/common/crypto"
 	"log"
 	"net/http"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
-	"github.com/manabie-com/togo/internal/storages/model"
-	"github.com/manabie-com/togo/internal/storages/sqlstore"
+	usermodel "github.com/manabie-com/togo/internal/storages/user/model"
+	taskmodel "github.com/manabie-com/togo/internal/storages/task/model"
 )
 
 // ToDoService implement HTTP server
 type ToDoService struct {
-	JWTKey string
-	Store  *sqlstore.Store
+	jwtKey string
+	userstore *usersqlstore.UserStore
+	taskstore *tasksqlstore.TaskStore
+}
+
+func NewToDoService(db *sql.DB, JWTKey string) *ToDoService {
+	return &ToDoService{
+		jwtKey:    JWTKey,
+		userstore: usersqlstore.NewUserStore(db),
+		taskstore: tasksqlstore.NewTaskStore(db),
+	}
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
@@ -58,7 +69,7 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (s *ToDoService) login(resp http.ResponseWriter, req *http.Request) {
-	u := &model.User{}
+	u := &usermodel.User{}
 	err := json.NewDecoder(req.Body).Decode(u)
 	defer req.Body.Close()
 	if err != nil {
@@ -71,7 +82,7 @@ func (s *ToDoService) login(resp http.ResponseWriter, req *http.Request) {
 		Valid:  true,
 	}
 
-	user, err := s.Store.FindByID(req.Context(), userID)
+	user, err := s.userstore.FindByID(req.Context(), userID)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		return
@@ -102,7 +113,7 @@ func (s *ToDoService) login(resp http.ResponseWriter, req *http.Request) {
 
 func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	id, _ := userIDFromCtx(req.Context())
-	tasks, err := s.Store.RetrieveTasks(
+	tasks, err := s.taskstore.RetrieveTasks(
 		req.Context(),
 		sql.NullString{
 			String: id,
@@ -121,13 +132,13 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string][]*model.Task{
+	json.NewEncoder(resp).Encode(map[string][]*taskmodel.Task{
 		"data": tasks,
 	})
 }
 
 func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
-	t := &model.Task{}
+	t := &taskmodel.Task{}
 	err := json.NewDecoder(req.Body).Decode(t)
 	defer req.Body.Close()
 	if err != nil {
@@ -143,7 +154,7 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 
 	resp.Header().Set("Content-Type", "application/json")
 
-	err = s.Store.AddTask(req.Context(), t)
+	err = s.taskstore.AddTask(req.Context(), t)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
@@ -152,7 +163,7 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string]*model.Task{
+	json.NewEncoder(resp).Encode(map[string]*taskmodel.Task{
 		"data": t,
 	})
 }
@@ -169,7 +180,7 @@ func (s *ToDoService) createToken(id string) (string, error) {
 	atClaims["user_id"] = id
 	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
-	token, err := at.SignedString([]byte(s.JWTKey))
+	token, err := at.SignedString([]byte(s.jwtKey))
 	if err != nil {
 		return "", err
 	}
@@ -181,7 +192,7 @@ func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
 
 	claims := make(jwt.MapClaims)
 	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
-		return []byte(s.JWTKey), nil
+		return []byte(s.jwtKey), nil
 	})
 	if err != nil {
 		log.Println(err)
