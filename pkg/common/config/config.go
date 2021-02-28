@@ -3,7 +3,7 @@ package config
 import (
 	"flag"
 	"fmt"
-	"github.com/manabie-com/togo/pkg/common/sql"
+	"github.com/manabie-com/togo/pkg/common/cmsql"
 	"io/ioutil"
 	"log"
 	"gopkg.in/yaml.v2"
@@ -69,7 +69,7 @@ func PrintExample(cfg interface{}) {
 	fmt.Println(string(data))
 }
 
-type Postgres = sql.ConfigPostgres
+type Postgres = cmsql.ConfigPostgres
 
 func DefaultPostgres() Postgres {
 	return Postgres{
