@@ -2,7 +2,7 @@ package main
 
 import (
 	"database/sql"
-	"github.com/manabie-com/togo/cmd/togo-server/config"
+	"github.com/manabie-com/togo/config"
 	cc "github.com/manabie-com/togo/pkg/common/config"
 	"log"
 	"net/http"
