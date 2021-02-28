@@ -7,6 +7,7 @@ import (
 	usersqlstore"github.com/manabie-com/togo/internal/storages/user/sqlstore"
 	tasksqlstore"github.com/manabie-com/togo/internal/storages/task/sqlstore"
 	"github.com/manabie-com/togo/pkg/common/crypto"
+	"github.com/manabie-com/togo/up"
 	"log"
 	"net/http"
 	"time"
@@ -44,6 +45,11 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	switch req.URL.Path {
+	case "/register":
+		if req.Method != http.MethodPost {
+			return
+		}
+		s.Register(resp, req)
 	case "/login":
 		if req.Method != http.MethodPost {
 			return
@@ -66,6 +72,62 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		}
 		return
 	}
+}
+
+func (s *ToDoService) Register(resp http.ResponseWriter, req *http.Request) {
+	u := &up.RegisterRequest{}
+	err := json.NewDecoder(req.Body).Decode(u)
+	defer req.Body.Close()
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if u.MaxTodo == 0 {
+		u.MaxTodo = 5
+	}
+
+
+	userID := sql.NullString{
+		String: u.ID,
+		Valid:  true,
+	}
+	user, err := s.userstore.FindByID(req.Context(), userID)
+	if err != nil {
+		if err != sql.ErrNoRows {
+			resp.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	}
+
+	if user != nil {
+		resp.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": "user exists with the given id",
+		})
+		return
+	}
+
+	err = s.userstore.Create(req.Context(), &usermodel.User{
+		ID:       u.ID,
+		Password: u.Password,
+		MaxTodo:  u.MaxTodo,
+	})
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+
+	resp.Header().Set("Content-Type", "application/json")
+	registerResponse := &up.RegisterResponse{
+		ID:      u.ID,
+		MaxTodo: u.MaxTodo,
+	}
+
+	json.NewEncoder(resp).Encode(map[string]interface{}{
+		"data": registerResponse,
+	})
 }
 
 func (s *ToDoService) Login(resp http.ResponseWriter, req *http.Request) {
