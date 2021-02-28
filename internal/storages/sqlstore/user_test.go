@@ -7,14 +7,13 @@ import (
 	"context"
 )
 
-func TestValidateUser(t *testing.T) {
-	Convey("Add task", t, func() {
+func TestStore_FindByID(t *testing.T) {
+	Convey("TestStore_FindByID_MatchID", t, func() {
 		store := setup()
 
-		validate := store.ValidateUser(context.Background(),
-			sql.NullString{String: "00001", Valid:  true},
-			sql.NullString{String: "example", Valid:  true})
-		So(validate, ShouldBeTrue)
+		user, err := store.FindByID(context.Background(), sql.NullString{String: "00001", Valid:  true})
+		So(err, ShouldNotBeNil)
+		So(user.ID, ShouldEqual, "00001")
 
 		teardown(store)
 	})

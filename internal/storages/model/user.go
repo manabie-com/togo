@@ -4,4 +4,5 @@ package model
 type User struct {
 	ID       string `json:"user_id"`
 	Password string `json:"password"`
+	MaxTodo  int64  `json:"max_todo"`
 }
