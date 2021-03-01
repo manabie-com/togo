@@ -1,4 +1,4 @@
-package sqllite
+package sqlite
 
 import (
 	"context"
@@ -42,6 +42,17 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.Null
 func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
 	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
 	_, err := l.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// DeleteTask adds a new task to DB
+func (l *LiteDB) DeleteTask(ctx context.Context, t *storages.Task) error {
+	stmt := `DELETE FROM main.tasks WHERE main.tasks.id = ?`
+	_, err := l.DB.ExecContext(ctx, stmt, &t.ID)
 	if err != nil {
 		return err
 	}

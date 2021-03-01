@@ -16,6 +16,7 @@ func main() {
 	if err != nil {
 		log.Fatal("error opening db", err)
 	}
+	defer db.Close()
 
 	http.ListenAndServe(":5050", &services.ToDoService{
 		JWTKey: "wqGyEBBfPK9w3Lxw",
