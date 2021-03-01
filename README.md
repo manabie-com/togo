@@ -17,12 +17,19 @@ This is a simple backend for a good old todo service, right now this service can
 #### Backend working progress
 |                                                            |     |
 | ---------------------------------------------------------- | --- |
+| Limit N daily tasks for each user                          | ✔   |
+| Dockerized this service                                    | ✔   |
 | Write integration tests                                    | ✔   |
 | Make this code DRY                                         | ✔   |
 | Write unit test for `services` layer                       | ✔   |
 | Change from using `SQLite` to `Postgres` with `docker-compose`  | ✔   |
 | Split `services` layer to `use case` and `transport` layer | ✔   |
 | Write unit test for `storages` layer                       |    |
+
+#### Potential improvements
+- Change request method for login from GET to POST
+- Hash user password
+- Using middleware for handling authentication
 
 ### DB Schema
 ```sql
