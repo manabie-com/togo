@@ -11,13 +11,12 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/storages"
-	"github.com/manabie-com/togo/internal/storages/sqlite"
 )
 
 // ToDoService implement HTTP server
 type ToDoService struct {
 	JWTKey string
-	Store  *sqlite.LiteDB
+	Store  storages.StorageDB
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
