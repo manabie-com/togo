@@ -35,6 +35,15 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	case "/login":
 		s.getAuthToken(resp, req)
 		return
+	case "/profile":
+		var ok bool
+		req, ok = s.validToken(req)
+		if !ok {
+			resp.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		s.getProfile(resp, req)
+		return
 	case "/tasks":
 		var ok bool
 		req, ok = s.validToken(req)
@@ -99,8 +108,8 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
-		"data": tasks,
+	json.NewEncoder(resp).Encode(TaskListResponse{
+		Data: tasks,
 	})
 }
 
@@ -132,6 +141,31 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 
 	json.NewEncoder(resp).Encode(map[string]*storages.Task{
 		"data": t,
+	})
+}
+
+func (s *ToDoService) getProfile(resp http.ResponseWriter, req *http.Request) {
+	userID, _ := userIDFromCtx(req.Context())
+
+	log.Print("userID ctrl")
+	log.Print(userID)
+
+	userProfile, err := s.Store.GetUserProfile(req.Context(), sql.NullString{
+		String: userID,
+		Valid:  true,
+	})
+
+	resp.Header().Set("Content-Type", "application/json")
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	json.NewEncoder(resp).Encode(map[string]interface{}{
+		"maximum_task_perday": userProfile.MaxTodo,
 	})
 }
 
