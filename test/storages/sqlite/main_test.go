@@ -75,6 +75,44 @@ func Test_Task(t *testing.T) {
 	require.Nil(t, err)
 }
 
+func Test_AddTask_MaxTodo(t *testing.T) {
+	ctx := context.Background()
+
+	maxTodo := 5
+	userID := "firstUser"
+	createdDate := "addTask_maxTodo"
+
+	random := rand.New(rand.NewSource(time.Now().UnixNano()))
+	for i:=0; i < maxTodo + 3; i++ {
+		rInt := random.Int()
+		taskID := fmt.Sprintf("unique_task_id_%d", rInt)
+		content := fmt.Sprintf("random_content_%d", rInt)
+		task := &storages.Task{
+			ID:          taskID,
+			Content:     content,
+			UserID:      userID,
+			CreatedDate: createdDate,
+		}
+
+		require.NotNil(t, store)
+		err := store.AddTask(ctx, task)
+		require.Nil(t, err)
+	}
+
+	tasks, err := store.RetrieveTasks(ctx,
+		sql.NullString{
+			String: userID,
+			Valid:  true,
+		},
+		sql.NullString{
+			String: createdDate,
+			Valid:  true,
+		})
+	require.Nil(t, err)
+	require.NotNil(t, tasks)
+	require.True(t, len(tasks) == maxTodo)
+}
+
 func Test_ValidateUser(t *testing.T) {
 	userID := "firstUser"
 	password := "example"

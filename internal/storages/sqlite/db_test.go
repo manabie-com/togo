@@ -18,10 +18,9 @@ import (
 )
 
 const (
-	UserId         = "user_id"
-	Password       = "password"
-	CreatedDate    = "2021-03-01"
-	CreatedDateNew = "2021-03-02"
+	UserId      = "user_id"
+	Password    = "password"
+	CreatedDate = "2021-03-01"
 )
 
 var (
@@ -73,6 +72,8 @@ INSERT INTO tasks (id, content, user_id, created_date) VALUES('task_id', 'exampl
 func Test_AddTask(t *testing.T) {
 	ctx := context.Background()
 
+	createdDate := "addTask"
+
 	random := rand.New(rand.NewSource(time.Now().UnixNano())).Int()
 	taskID := fmt.Sprintf("unique_task_id_%d", random)
 	content := fmt.Sprintf("random_content_%d", random)
@@ -80,7 +81,7 @@ func Test_AddTask(t *testing.T) {
 		ID:          taskID,
 		Content:     content,
 		UserID:      UserId,
-		CreatedDate: CreatedDateNew,
+		CreatedDate: createdDate,
 	}
 	t.Log(task)
 
@@ -94,13 +95,50 @@ func Test_AddTask(t *testing.T) {
 			Valid:  true,
 		},
 		sql.NullString{
-			String: CreatedDateNew,
+			String: createdDate,
 			Valid:  true,
 		})
 	require.Nil(t, err)
 	require.NotNil(t, tasks)
 	require.True(t, len(tasks) > 0)
 	require.Equal(t, taskID, tasks[len(tasks)-1].ID)
+}
+
+func Test_AddTask_MaxTodo(t *testing.T) {
+	ctx := context.Background()
+
+	maxTodo := 5
+	createdDate := "addTask_maxTodo"
+
+	random := rand.New(rand.NewSource(time.Now().UnixNano()))
+	for i:=0; i < maxTodo + 3; i++ {
+		rInt := random.Int()
+		taskID := fmt.Sprintf("unique_task_id_%d", rInt)
+		content := fmt.Sprintf("random_content_%d", rInt)
+		task := &storages.Task{
+			ID:          taskID,
+			Content:     content,
+			UserID:      UserId,
+			CreatedDate: createdDate,
+		}
+
+		require.NotNil(t, store)
+		err := store.AddTask(ctx, task)
+		require.Nil(t, err)
+	}
+
+	tasks, err := store.RetrieveTasks(ctx,
+		sql.NullString{
+			String: UserId,
+			Valid:  true,
+		},
+		sql.NullString{
+			String: createdDate,
+			Valid:  true,
+		})
+	require.Nil(t, err)
+	require.NotNil(t, tasks)
+	require.True(t, len(tasks) == maxTodo)
 }
 
 func Test_RetrieveTasks(t *testing.T) {

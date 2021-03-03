@@ -39,7 +39,9 @@ func (l *PostgreDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.N
 
 // AddTask adds a new task to DB
 func (l *PostgreDB) AddTask(ctx context.Context, t *storages.Task) error {
-	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES ($1, $2, $3, $4)`
+	stmt := `INSERT INTO tasks (id, content, user_id, created_date) SELECT $1, $2, $3, $4 ` +
+		`WHERE (select max_todo from users where id = $3) > ` +
+		`(select count(id) from tasks where user_id = $3 and created_date = $4);`
 	_, err := l.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
 	if err != nil {
 		return err
