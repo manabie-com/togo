@@ -19,6 +19,7 @@ type ToDoService struct {
 	Store  storages.StorageDB
 }
 
+// todo Deprecated
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	log.Println(req.Method, req.URL.Path)
 	resp.Header().Set("Access-Control-Allow-Origin", "*")
