@@ -7,6 +7,6 @@ import (
 
 type StorageDB interface {
 	RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*Task, error)
-	AddTask(ctx context.Context, t *Task) error
+	AddTask(ctx context.Context, t *Task) (int64, error)
 	ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool
 }

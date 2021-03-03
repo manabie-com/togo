@@ -124,7 +124,7 @@ func TestPostgreDB_AddTask_Happy(t *testing.T) {
 	ctx := context.Background()
 	postgreDB := &PostgreDB{DB: db}
 
-	err = postgreDB.AddTask(ctx,
+	_, err = postgreDB.AddTask(ctx,
 		&storages.Task{
 			ID:          id,
 			Content:     content,
@@ -152,7 +152,7 @@ func TestPostgreDB_AddTask_Edge(t *testing.T) {
 	ctx := context.Background()
 	postgreDB := &PostgreDB{DB: db}
 
-	err = postgreDB.AddTask(ctx,
+	_, err = postgreDB.AddTask(ctx,
 		&storages.Task{
 			ID:          id,
 			Content:     content,

@@ -54,7 +54,7 @@ func Test_AddTask(t *testing.T) {
 	t.Log(task)
 
 	require.NotNil(t, store)
-	err := store.AddTask(ctx, task)
+	_, err := store.AddTask(ctx, task)
 	require.Nil(t, err)
 
 	tasks, err := store.RetrieveTasks(ctx,
@@ -91,7 +91,7 @@ func Test_AddTask_MaxTodo(t *testing.T) {
 		}
 
 		require.NotNil(t, store)
-		err := store.AddTask(ctx, task)
+		_, err := store.AddTask(ctx, task)
 		require.Nil(t, err)
 	}
 

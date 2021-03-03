@@ -39,7 +39,7 @@ func TestMain(m *testing.M) {
 }
 
 func Test_Task(t *testing.T) {
-	userID := "user_id"
+	userID := "firstUser"
 	createDate := "new_date"
 
 	ctx := context.Background()
@@ -56,7 +56,7 @@ func Test_Task(t *testing.T) {
 	t.Log(task)
 
 	require.NotNil(t, store)
-	err := store.AddTask(ctx, task)
+	_, err := store.AddTask(ctx, task)
 	require.Nil(t, err)
 
 	tasks, err := store.RetrieveTasks(ctx,
@@ -69,7 +69,7 @@ func Test_Task(t *testing.T) {
 			Valid:  true,
 		})
 	require.Nil(t, err)
-	require.True(t, len(tasks) > 0)
+	require.Less(t, 0, len(tasks))
 
 	err = store.DeleteTask(ctx, task)
 	require.Nil(t, err)
@@ -95,7 +95,7 @@ func Test_AddTask_MaxTodo(t *testing.T) {
 		}
 
 		require.NotNil(t, store)
-		err := store.AddTask(ctx, task)
+		_, err := store.AddTask(ctx, task)
 		require.Nil(t, err)
 	}
 

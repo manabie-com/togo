@@ -39,19 +39,24 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.Null
 }
 
 // AddTask adds a new task to DB
-func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
+func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) (int64, error) {
 	stmt := `INSERT INTO tasks (id, content, user_id, created_date) SELECT ?, ?, ?, ? ` +
 		`WHERE (select max_todo from users where id = ?) > ` +
-		`(select count(id) from tasks where user_id = ? and created_date = ?);`
-	_, err := l.DB.ExecContext(ctx, stmt,
+		`(select count(id) from tasks where user_id = ? and created_date = ?); ` +
+		`SELECT last_insert_rowid();`
+	r, err := l.DB.ExecContext(ctx, stmt,
 		&t.ID, &t.Content, &t.UserID, &t.CreatedDate,
 		&t.UserID,
 		&t.UserID, &t.CreatedDate)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	affectedCount, err := r.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return affectedCount, nil
 }
 
 // DeleteTask adds a new task to DB
