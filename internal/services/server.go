@@ -19,7 +19,7 @@ func StartServer(db *sql.DB) {
 
 	r := mux.NewRouter()
 	r.Use(loggingMiddleware)
-	r.Use(corsMiddleware())
+	r.Use(corsMiddleware)
 	r.PathPrefix("/").Methods(http.MethodOptions).HandlerFunc(methodOptionsHandler)
 	r.HandleFunc("/login", s.loginHandler)
 

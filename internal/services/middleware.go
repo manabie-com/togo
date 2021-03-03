@@ -1,8 +1,6 @@
 package services
 
 import (
-	"github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 )
@@ -16,12 +14,13 @@ func loggingMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func corsMiddleware() mux.MiddlewareFunc {
-	return handlers.CORS(
-		handlers.AllowedOrigins([]string{"*"}),
-		handlers.AllowedHeaders([]string{"*"}),
-		handlers.AllowedMethods([]string{"*"}),
-	)
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
+		resp.Header().Set("Access-Control-Allow-Origin", "*")
+		resp.Header().Set("Access-Control-Allow-Headers", "*")
+		resp.Header().Set("Access-Control-Allow-Methods", "*")
+		next.ServeHTTP(resp, req)
+	})
 }
 
 func (s *ToDoService) authenticateMiddleware(next http.Handler) http.Handler {
