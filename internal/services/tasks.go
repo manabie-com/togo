@@ -108,8 +108,8 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	json.NewEncoder(resp).Encode(TaskListResponse{
-		Data: tasks,
+	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
+		"data": tasks,
 	})
 }
 
@@ -127,6 +127,33 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	t.ID = uuid.New().String()
 	t.UserID = userID
 	t.CreatedDate = now.Format("2006-01-02")
+
+	taskCount, err := s.Store.CountUserTasksByDate(req.Context(),
+		sql.NullString{
+			String: userID,
+			Valid:  true,
+		}, sql.NullString{
+			String: now.Format("2006-01-02"),
+			Valid:  true,
+		})
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	user, err := s.Store.GetUserProfile(req.Context(), sql.NullString{
+		String: userID,
+		Valid:  true,
+	})
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if taskCount >= int(user.MaxTodo) {
+		resp.WriteHeader(451)
+		return
+	}
 
 	resp.Header().Set("Content-Type", "application/json")
 

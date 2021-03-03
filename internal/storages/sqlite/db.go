@@ -61,6 +61,16 @@ func (l *LiteDB) GetUserProfile(ctx context.Context, userID sql.NullString) (*st
 	return u, err
 }
 
+// CountUserTasks count  user tasks by date
+func (l *LiteDB) CountUserTasksByDate(ctx context.Context, userID, created_date sql.NullString) (int, error) {
+	stmt := `SELECT COUNT(*) FROM tasks WHERE user_id = ? AND created_date >= ?`
+	row := l.DB.QueryRowContext(ctx, stmt, userID, created_date)
+	var count int
+	err := row.Scan(&count)
+
+	return count, err
+}
+
 // ValidateUser returns tasks if match userID AND password
 func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
 	stmt := `SELECT id FROM users WHERE id = ? AND password = ?`
