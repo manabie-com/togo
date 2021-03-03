@@ -147,9 +147,6 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 func (s *ToDoService) getProfile(resp http.ResponseWriter, req *http.Request) {
 	userID, _ := userIDFromCtx(req.Context())
 
-	log.Print("userID ctrl")
-	log.Print(userID)
-
 	userProfile, err := s.Store.GetUserProfile(req.Context(), sql.NullString{
 		String: userID,
 		Valid:  true,
