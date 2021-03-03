@@ -5,16 +5,13 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/manabie-com/togo/internal/storages"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"log"
 	"math/rand"
 	"os"
 	"testing"
 	"time"
-
-	_ "github.com/mattn/go-sqlite3"
-
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -28,7 +25,7 @@ var (
 )
 
 func TestMain(m *testing.M) {
-	db, err := sql.Open("sqlite3", ":memory:")
+	db, err := CreateUnitTestDB()
 	if err != nil {
 		log.Fatal("error opening db", err)
 	}
@@ -37,36 +34,7 @@ func TestMain(m *testing.M) {
 		DB: db,
 	}
 
-	createTables(db)
-
 	os.Exit(m.Run())
-}
-
-func createTables(db *sql.DB) {
-	_, _ = db.Exec(fmt.Sprintf(`
-
-CREATE TABLE users (
-	id TEXT NOT NULL,
-	password TEXT NOT NULL,
-	max_todo INTEGER DEFAULT 5 NOT NULL,
-	CONSTRAINT users_PK PRIMARY KEY (id)
-);
-
-INSERT INTO users (id, password) VALUES('%s', '%s');
-
-CREATE TABLE tasks (
-	id TEXT NOT NULL,
-	content TEXT NOT NULL,
-	user_id TEXT NOT NULL,
-    created_date TEXT NOT NULL,
-	CONSTRAINT tasks_PK PRIMARY KEY (id),
-	CONSTRAINT tasks_FK FOREIGN KEY (user_id) REFERENCES users(id)
-);
-
-INSERT INTO tasks (id, content, user_id, created_date) VALUES('task_id', 'example_content', '%s', '%s');
-	
-	`, UserId, Password,
-		UserId, CreatedDate))
 }
 
 func Test_AddTask(t *testing.T) {

@@ -19,40 +19,6 @@ type ToDoService struct {
 	Store  storages.StorageDB
 }
 
-// todo Deprecated
-func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
-	log.Println(req.Method, req.URL.Path)
-	resp.Header().Set("Access-Control-Allow-Origin", "*")
-	resp.Header().Set("Access-Control-Allow-Headers", "*")
-	resp.Header().Set("Access-Control-Allow-Methods", "*")
-
-	if req.Method == http.MethodOptions {
-		resp.WriteHeader(http.StatusOK)
-		return
-	}
-
-	switch req.URL.Path {
-	case "/login":
-		s.getAuthToken(resp, req)
-		return
-	case "/tasks":
-		var ok bool
-		req, ok = s.validToken(req)
-		if !ok {
-			resp.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-
-		switch req.Method {
-		case http.MethodGet:
-			s.listTasks(resp, req)
-		case http.MethodPost:
-			s.addTask(resp, req)
-		}
-		return
-	}
-}
-
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
 	id := value(req, "user_id")
 	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
