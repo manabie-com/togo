@@ -1,4 +1,4 @@
-package main_test
+package main
 
 import (
 	"bytes"
@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/gorilla/mux"
 	"github.com/manabie-com/togo/internal/services"
 	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 	. "github.com/onsi/ginkgo"
@@ -22,18 +23,26 @@ func dbSeed(db *sql.DB) error {
 var _ = Describe("Services", func() {
 	var db *sql.DB
 	var mock sqlmock.Sqlmock
-	var service *services.ToDoService
+	var todoService *services.ToDoService
+	var userService *services.UserService
+	var router *mux.Router
 
 	BeforeEach(func() {
 		var err error
 		db, mock, err = sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 		Expect(err).NotTo(HaveOccurred())
-		service = &services.ToDoService{
+		todoService = &services.ToDoService{
+			Store: &sqllite.LiteDB{
+				DB: db,
+			},
+		}
+		userService = &services.UserService{
 			JWTKey: "wqGyEBBfPK9w3Lxw",
 			Store: &sqllite.LiteDB{
 				DB: db,
 			},
 		}
+		router = NewRouter(todoService, userService)
 		mock.MatchExpectationsInOrder(false)
 		rows := sqlmock.NewRows([]string{"id"}).AddRow("firstUser")
 		mock.ExpectQuery(`
@@ -46,13 +55,13 @@ var _ = Describe("Services", func() {
 
 		Context("with right account", func() {
 			It("should return http code 200 and token in response body", func() {
-				req, err := http.NewRequest("GET", "http://localhost:5050/login?user_id=firstUser&password=example", nil)
+				req, err := http.NewRequest("POST", "http://localhost:5050/login?user_id=firstUser&password=example", nil)
 				Expect(err).NotTo(HaveOccurred())
 
 				rec := httptest.NewRecorder()
 				defer rec.Result().Body.Close()
 
-				service.ServeHTTP(rec, req)
+				router.ServeHTTP(rec, req)
 				body, err := ioutil.ReadAll(rec.Body)
 				var responseData struct {
 					Data string
@@ -68,13 +77,13 @@ var _ = Describe("Services", func() {
 
 		Context("with wrong account", func() {
 			It("should return http code 401", func() {
-				req, err := http.NewRequest("GET", "http://localhost:5050/login?user_id=wrongUser&password=wrongPassword", nil)
+				req, err := http.NewRequest("POST", "http://localhost:5050/login?user_id=wrongUser&password=wrongPassword", nil)
 				Expect(err).NotTo(HaveOccurred())
 
 				rec := httptest.NewRecorder()
 				defer rec.Result().Body.Close()
 
-				service.ServeHTTP(rec, req)
+				router.ServeHTTP(rec, req)
 				body, err := ioutil.ReadAll(rec.Body)
 				var responseData struct {
 					Error string
@@ -110,13 +119,13 @@ var _ = Describe("Services", func() {
 			})
 
 			It("should success if there is authorized token", func() {
-				req, err := http.NewRequest("GET", "http://localhost:5050/login?user_id=firstUser&password=example", nil)
+				req, err := http.NewRequest("POST", "http://localhost:5050/login?user_id=firstUser&password=example", nil)
 				Expect(err).NotTo(HaveOccurred())
 
 				rec := httptest.NewRecorder()
 				defer rec.Result().Body.Close()
 
-				service.ServeHTTP(rec, req)
+				router.ServeHTTP(rec, req)
 				body, err := ioutil.ReadAll(rec.Body)
 				var responseData struct {
 					Data string
@@ -139,7 +148,7 @@ var _ = Describe("Services", func() {
 				rec = httptest.NewRecorder()
 				defer rec.Result().Body.Close()
 
-				service.ServeHTTP(rec, req)
+				router.ServeHTTP(rec, req)
 				body, err = ioutil.ReadAll(rec.Body)
 				json.Unmarshal(body, &responseData)
 
@@ -172,7 +181,7 @@ var _ = Describe("Services", func() {
 				rec := httptest.NewRecorder()
 				defer rec.Result().Body.Close()
 
-				service.ServeHTTP(rec, req)
+				router.ServeHTTP(rec, req)
 				body, err := ioutil.ReadAll(rec.Body)
 				var responseData struct {
 					Data string
@@ -194,13 +203,13 @@ var _ = Describe("Services", func() {
 
 			It("should return status code 451", func() {
 
-				req, err := http.NewRequest("GET", "http://localhost:5050/login?user_id=firstUser&password=example", nil)
+				req, err := http.NewRequest("POST", "http://localhost:5050/login?user_id=firstUser&password=example", nil)
 				Expect(err).NotTo(HaveOccurred())
 
 				rec := httptest.NewRecorder()
 				defer rec.Result().Body.Close()
 
-				service.ServeHTTP(rec, req)
+				router.ServeHTTP(rec, req)
 				body, err := ioutil.ReadAll(rec.Body)
 				var responseData struct {
 					Data string
@@ -223,7 +232,7 @@ var _ = Describe("Services", func() {
 				rec = httptest.NewRecorder()
 				defer rec.Result().Body.Close()
 
-				service.ServeHTTP(rec, req)
+				router.ServeHTTP(rec, req)
 				Expect(rec.Code).To(Equal(451))
 			})
 		})
@@ -241,13 +250,13 @@ var _ = Describe("Services", func() {
 		})
 
 		It("should return http code 200 with todos list in response body if there is authorized token", func() {
-			req, err := http.NewRequest("GET", "http://localhost:5050/login?user_id=firstUser&password=example", nil)
+			req, err := http.NewRequest("POST", "http://localhost:5050/login?user_id=firstUser&password=example", nil)
 			Expect(err).NotTo(HaveOccurred())
 
 			rec := httptest.NewRecorder()
 			defer rec.Result().Body.Close()
 
-			service.ServeHTTP(rec, req)
+			router.ServeHTTP(rec, req)
 			body, err := ioutil.ReadAll(rec.Body)
 			var responseData struct {
 				Data string
@@ -267,7 +276,7 @@ var _ = Describe("Services", func() {
 			rec = httptest.NewRecorder()
 			defer rec.Result().Body.Close()
 
-			service.ServeHTTP(rec, req)
+			router.ServeHTTP(rec, req)
 			body, err = ioutil.ReadAll(rec.Body)
 			json.Unmarshal(body, &responseData)
 
@@ -300,7 +309,7 @@ var _ = Describe("Services", func() {
 			rec := httptest.NewRecorder()
 			defer rec.Result().Body.Close()
 
-			service.ServeHTTP(rec, req)
+			router.ServeHTTP(rec, req)
 
 			Expect(err).NotTo(HaveOccurred())
 			Expect(rec.Code).To(Equal(401))
