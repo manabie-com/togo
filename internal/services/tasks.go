@@ -25,6 +25,7 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Access-Control-Allow-Origin", "*")
 	resp.Header().Set("Access-Control-Allow-Headers", "*")
 	resp.Header().Set("Access-Control-Allow-Methods", "*")
+	resp.Header().Set("Content-Type", "application/json")
 
 	if req.Method == http.MethodOptions {
 		resp.WriteHeader(http.StatusOK)
@@ -62,7 +63,6 @@ func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 		})
 		return
 	}
-	resp.Header().Set("Content-Type", "application/json")
 
 	token, err := s.createToken(id.String)
 	if err != nil {
@@ -88,8 +88,6 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 		},
 		value(req, "created_date"),
 	)
-
-	resp.Header().Set("Content-Type", "application/json")
 
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
@@ -118,8 +116,6 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	t.ID = uuid.New().String()
 	t.UserID = userID
 	t.CreatedDate = now.Format("2006-01-02")
-
-	resp.Header().Set("Content-Type", "application/json")
 
 	err = s.Store.AddTask(req.Context(), t)
 	if err != nil {
