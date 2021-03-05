@@ -26,7 +26,7 @@ type ToDoHttpResponseWriter struct {
 }
 
 // Ideally this should be a method that mutates resp
-func response(resp *http.ResponseWriter, httpStatusCode int, body map[string]string) {
+func response(resp *http.ResponseWriter, httpStatusCode int, body interface{}) {
 	(*resp).Header().Set("Access-Control-Allow-Origin", "*")
 	(*resp).Header().Set("Access-Control-Allow-Headers", "*")
 	(*resp).Header().Set("Access-Control-Allow-Methods", "*")
@@ -61,10 +61,11 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		}
 		return
 	case "/tasks":
-		var ok bool
-		req, ok = s.validToken(req)
-		if !ok {
-			resp.WriteHeader(http.StatusUnauthorized)
+		// This should be a middleware to avoid repetition in other endpoints
+		var err error
+		req, err = s.parseUserIdToContext(req)
+		if err != nil {
+			response(&resp, http.StatusUnauthorized, map[string]string{"error": err.Error()})
 			return
 		}
 
@@ -76,6 +77,31 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		}
 		return
 	}
+}
+
+func (s *ToDoService) parseUserIdToContext(req *http.Request) (*http.Request, error) {
+	token := req.Header.Get("Authorization")
+
+	claims := make(jwt.MapClaims)
+	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
+		return []byte(s.JWTKey), nil
+	})
+	if err != nil {
+		log.Println(err)
+		return req, err
+	}
+
+	if !t.Valid {
+		return req, errors.New("Invalid token")
+	}
+
+	id, ok := claims["user_id"].(string)
+	if !ok {
+		return req, errors.New("Unable to fetch id")
+	}
+
+	req = req.WithContext(context.WithValue(req.Context(), USER_AUTH_KEY, id))
+	return req, nil
 }
 
 func (s *ToDoService) getAuthToken(ctx context.Context,
@@ -100,18 +126,14 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 		},
 		value(req, "created_date"),
 	)
-
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
+		body := map[string]string{"error": err.Error()}
+		response(&resp, http.StatusInternalServerError, body)
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
-		"data": tasks,
-	})
+	body := map[string][]*storages.Task{"data": tasks}
+	response(&resp, http.StatusOK, body)
 }
 
 func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
@@ -162,35 +184,10 @@ func (s *ToDoService) createToken(id string) (string, error) {
 	return token, nil
 }
 
-func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
-	token := req.Header.Get("Authorization")
-
-	claims := make(jwt.MapClaims)
-	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
-		return []byte(s.JWTKey), nil
-	})
-	if err != nil {
-		log.Println(err)
-		return req, false
-	}
-
-	if !t.Valid {
-		return req, false
-	}
-
-	id, ok := claims["user_id"].(string)
-	if !ok {
-		return req, false
-	}
-
-	req = req.WithContext(context.WithValue(req.Context(), userAuthKey(0), id))
-	return req, true
-}
-
-type userAuthKey int8
+const USER_AUTH_KEY = "USER_AUTH_KEY"
 
 func userIDFromCtx(ctx context.Context) (string, bool) {
-	v := ctx.Value(userAuthKey(0))
+	v := ctx.Value(USER_AUTH_KEY)
 	id, ok := v.(string)
 	return id, ok
 }
