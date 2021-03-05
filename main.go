@@ -17,10 +17,19 @@ func main() {
 		log.Fatal("error opening db", err)
 	}
 
-	http.ListenAndServe(":5050", &services.ToDoService{
+	todoService := &services.ToDoService{
+		Store: &sqllite.LiteDB{
+			DB: db,
+		},
+	}
+	userService := &services.UserService{
 		JWTKey: "wqGyEBBfPK9w3Lxw",
 		Store: &sqllite.LiteDB{
 			DB: db,
 		},
-	})
+	}
+
+	router := NewRouter(todoService, userService)
+
+	http.ListenAndServe(":5050", router)
 }
