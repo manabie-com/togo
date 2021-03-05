@@ -27,20 +27,23 @@ type ToDoHttpResponseWriter struct {
 
 // Ideally this should be a method that mutates resp
 func response(resp *http.ResponseWriter, httpStatusCode int, body interface{}) {
+	// We should limit these to the lowest privileges possible (e.g only allow our client's URI)
 	(*resp).Header().Set("Access-Control-Allow-Origin", "*")
 	(*resp).Header().Set("Access-Control-Allow-Headers", "*")
 	(*resp).Header().Set("Access-Control-Allow-Methods", "*")
 	(*resp).Header().Set("Content-Type", "application/json")
 
 	(*resp).WriteHeader(httpStatusCode)
-	json.NewEncoder((*resp)).Encode(body)
+	if body != nil {
+		json.NewEncoder((*resp)).Encode(body)
+	}
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	log.Println(req.Method, req.URL.Path)
 
 	if req.Method == http.MethodOptions {
-		resp.WriteHeader(http.StatusOK)
+		response(&resp, http.StatusOK, nil)
 		return
 	}
 
