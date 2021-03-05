@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"time"
@@ -20,12 +21,23 @@ type ToDoService struct {
 	Store  *sqllite.LiteDB
 }
 
+type ToDoHttpResponseWriter struct {
+	http.ResponseWriter
+}
+
+// Ideally this should be a method that mutates resp
+func response(resp *http.ResponseWriter, httpStatusCode int, body map[string]string) {
+	(*resp).Header().Set("Access-Control-Allow-Origin", "*")
+	(*resp).Header().Set("Access-Control-Allow-Headers", "*")
+	(*resp).Header().Set("Access-Control-Allow-Methods", "*")
+	(*resp).Header().Set("Content-Type", "application/json")
+
+	(*resp).WriteHeader(httpStatusCode)
+	json.NewEncoder((*resp)).Encode(body)
+}
+
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	log.Println(req.Method, req.URL.Path)
-	resp.Header().Set("Access-Control-Allow-Origin", "*")
-	resp.Header().Set("Access-Control-Allow-Headers", "*")
-	resp.Header().Set("Access-Control-Allow-Methods", "*")
-	resp.Header().Set("Content-Type", "application/json")
 
 	if req.Method == http.MethodOptions {
 		resp.WriteHeader(http.StatusOK)
@@ -34,7 +46,19 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 
 	switch req.URL.Path {
 	case "/login":
-		s.getAuthToken(resp, req)
+		ctx := req.Context()
+		id := value(req, "user_id")
+		pwd := value(req, "password")
+		token, err := s.getAuthToken(ctx, id, pwd)
+
+		body := make(map[string]string)
+		if err != nil {
+			body["error"] = err.Error()
+			response(&resp, http.StatusUnauthorized, body)
+		} else {
+			body["token"] = token
+			response(&resp, http.StatusOK, body)
+		}
 		return
 	case "/tasks":
 		var ok bool
@@ -54,28 +78,16 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
-	id := value(req, "user_id")
-	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
-		resp.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "incorrect user_id/pwd",
-		})
+func (s *ToDoService) getAuthToken(ctx context.Context,
+	userID sql.NullString,
+	password sql.NullString) (token string, err error) {
+	if !s.Store.ValidateUser(ctx, userID, password) {
+		err = errors.New("incorrect user_id/pwd") // Maybe we can use an enum here instead of hardcoded string
 		return
 	}
 
-	token, err := s.createToken(id.String)
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	json.NewEncoder(resp).Encode(map[string]string{
-		"data": token,
-	})
+	token, err = s.createToken(userID.String)
+	return
 }
 
 func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
