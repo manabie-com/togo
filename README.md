@@ -17,6 +17,6 @@ Currently there's only one test for the login flow. Regardless, start the server
 - Make authentication a separate module/ package.
 - Write more tests.
 - Database structure has many problems:
-    - Introduce autoincremental numeric primary keys instead of text-based. This reduces overhead when indexing & querying.
+    - Introduce auto-increment numeric primary keys instead of text-based. This reduces overhead when indexing & querying.
     - Constraint ids (i.e usernames) to be unique. 
     - Use hash and salt for passwords. Storing passwords in plaintext is a very bad idea.
