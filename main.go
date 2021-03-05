@@ -17,10 +17,16 @@ func main() {
 		log.Fatal("error opening db", err)
 	}
 
-	http.ListenAndServe(":5050", &services.ToDoService{
+	server := &services.ToDoService{
 		JWTKey: "wqGyEBBfPK9w3Lxw",
 		Store: &sqllite.LiteDB{
 			DB: db,
 		},
-	})
+	}
+
+	mux := http.NewServeMux()
+	mux.Handle("/", server)
+
+	log.Println("Listening on port 5050")
+	http.ListenAndServe(":5050", mux)
 }
