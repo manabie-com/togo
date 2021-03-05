@@ -141,7 +141,7 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	err := json.NewDecoder(req.Body).Decode(t)
 	defer req.Body.Close()
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
+		response(&resp, http.StatusInternalServerError, nil)
 		return
 	}
 
@@ -153,16 +153,11 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 
 	err = s.Store.AddTask(req.Context(), t)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
+		response(&resp, http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string]*storages.Task{
-		"data": t,
-	})
+	response(&resp, http.StatusOK, map[string]*storages.Task{"data": t})
 }
 
 func value(req *http.Request, p string) sql.NullString {
