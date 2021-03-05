@@ -21,20 +21,6 @@ type ToDoService struct {
 	Store  *sqllite.LiteDB
 }
 
-// Ideally this should be a method that mutates resp
-func response(resp *http.ResponseWriter, httpStatusCode int, body interface{}) {
-	// We should limit these to the lowest privileges possible (e.g only allow our client's URI)
-	(*resp).Header().Set("Access-Control-Allow-Origin", "*")
-	(*resp).Header().Set("Access-Control-Allow-Headers", "*")
-	(*resp).Header().Set("Access-Control-Allow-Methods", "*")
-	(*resp).Header().Set("Content-Type", "application/json")
-
-	(*resp).WriteHeader(httpStatusCode)
-	if body != nil {
-		json.NewEncoder((*resp)).Encode(body)
-	}
-}
-
 func (s *ToDoService) parseUserIdToContext(req *http.Request) (*http.Request, error) {
 	token := req.Header.Get("Authorization")
 
@@ -103,9 +89,15 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 
 	now := time.Now()
 	userID, _ := userIDFromCtx(req.Context())
-	t.ID = uuid.New().String()
 	t.UserID = userID
 	t.CreatedDate = now.Format("2006-01-02")
+	t.ID = uuid.New().String()
+
+	checkLimit := s.Store.CheckDailyLimit(req.Context(), t)
+	if checkLimit == false {
+		response(&resp, http.StatusBadRequest, map[string]string{"error": "Daily limit reached"})
+		return
+	}
 
 	err = s.Store.AddTask(req.Context(), t)
 	if err != nil {

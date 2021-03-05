@@ -38,6 +38,23 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.Null
 	return tasks, nil
 }
 
+// Check whether we can still add more task
+func (l *LiteDB) CheckDailyLimit(ctx context.Context, t *storages.Task) bool {
+	dailyCountStmt := `SELECT count(id) from tasks where user_id = ? AND created_date = ?`
+	dailyLimitStmt := `SELECT max_todo from users where id = ?`
+
+	dailyCountExec := l.DB.QueryRowContext(ctx, dailyCountStmt, &t.UserID, &t.CreatedDate)
+	dailyLimitExec := l.DB.QueryRowContext(ctx, dailyLimitStmt, &t.UserID)
+
+	var dailyCount, dailyLimit int
+	errC := dailyCountExec.Scan(&dailyCount)
+	errL := dailyLimitExec.Scan(&dailyLimit)
+	if errC == nil && errL == nil {
+		return dailyCount < dailyLimit
+	}
+	return false
+}
+
 // AddTask adds a new task to DB
 func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
 	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
