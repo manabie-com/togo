@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	db, err := sql.Open("sqlite3", "./data.db")
+	db, err := sql.Open("sqlite3", "file:data.db?cache=shared&mode=rwc")
 	if err != nil {
 		log.Fatal("error opening db", err)
 	}
