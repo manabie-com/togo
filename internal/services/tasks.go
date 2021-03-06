@@ -4,12 +4,12 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"github.com/google/uuid"
 	"log"
 	"net/http"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/storages"
 	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 )
@@ -105,6 +105,7 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
+
 	t := &storages.Task{}
 	err := json.NewDecoder(req.Body).Decode(t)
 	defer req.Body.Close()
@@ -112,27 +113,36 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 		resp.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	id, _ := userIDFromCtx(req.Context())
+	limit := s.Store.CheckLimit(id)
+	if limit {
+		now := time.Now()
+		userID, _ := userIDFromCtx(req.Context())
+		t.ID = uuid.New().String()
+		t.UserID = userID
+		t.CreatedDate = now.Format("2006-01-02")
 
-	now := time.Now()
-	userID, _ := userIDFromCtx(req.Context())
-	t.ID = uuid.New().String()
-	t.UserID = userID
-	t.CreatedDate = now.Format("2006-01-02")
+		resp.Header().Set("Content-Type", "application/json")
 
-	resp.Header().Set("Content-Type", "application/json")
+		err = s.Store.AddTask(req.Context(), t)
+		if err != nil {
+			resp.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(resp).Encode(map[string]string{
+				"error": err.Error(),
+			})
+			return
+		}
 
-	err = s.Store.AddTask(req.Context(), t)
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
+		json.NewEncoder(resp).Encode(map[string]*storages.Task{
+			"data": t,
 		})
-		return
+	} else {
+		resp.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": "Limited",
+		})
 	}
 
-	json.NewEncoder(resp).Encode(map[string]*storages.Task{
-		"data": t,
-	})
 }
 
 func value(req *http.Request, p string) sql.NullString {
@@ -145,7 +155,7 @@ func value(req *http.Request, p string) sql.NullString {
 func (s *ToDoService) createToken(id string) (string, error) {
 	atClaims := jwt.MapClaims{}
 	atClaims["user_id"] = id
-	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
+	atClaims["exp"] = time.Now().Add(time.Hour * 999999).Unix()
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	token, err := at.SignedString([]byte(s.JWTKey))
 	if err != nil {

@@ -3,7 +3,7 @@ package sqllite
 import (
 	"context"
 	"database/sql"
-
+	"fmt"
 	"github.com/manabie-com/togo/internal/storages"
 )
 
@@ -47,6 +47,26 @@ func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
 	}
 
 	return nil
+}
+
+
+
+// Check limit tasks per day
+func (l *LiteDB) CheckLimit(userID string) bool {
+	stmt := `select count(*)from tasks where created_date = current_date;`
+	stmt1 := `select max_todo from users where id =(?) `
+	var limit int
+	l.DB.QueryRow(stmt1, userID).Scan(&limit)
+	var counter int
+	l.DB.QueryRow(stmt).Scan(&counter)
+
+
+	fmt.Println(counter)
+	if limit == counter {
+		return false
+	}else {
+		return true
+	}
 }
 
 // ValidateUser returns tasks if match userID AND password
