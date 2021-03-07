@@ -1,26 +1,17 @@
 package main
 
 import (
-	"database/sql"
-	"log"
-	"net/http"
+	"togo/src"
+	"togo/src/api/http"
+	"togo/src/infra/service"
 
-	"github.com/manabie-com/togo/internal/services"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
-
-	_ "github.com/mattn/go-sqlite3"
+	"github.com/golobby/container"
 )
 
 func main() {
-	db, err := sql.Open("sqlite3", "./data.db")
-	if err != nil {
-		log.Fatal("error opening db", err)
-	}
-
-	http.ListenAndServe(":5050", &services.ToDoService{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
-			DB: db,
-		},
+	container.Singleton(func() src.IContextService {
+		return service.NewServiceContext()
 	})
+	webServer := http.NewWebServer()
+	webServer.LoadRouterV1().Start()
 }
