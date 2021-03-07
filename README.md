@@ -10,6 +10,6 @@ To make it run:
 - Write unit test for user in service and storage layer
 - Setup integration test
 
-### What  miss:I
+### What I miss
 - Write integration test
 - Change DB to PostgreSQL
