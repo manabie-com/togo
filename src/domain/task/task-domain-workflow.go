@@ -14,14 +14,14 @@ import (
 )
 
 type TaskWorkflow struct {
-	repository     task.ITaskRepository
-	userRepository user.IUserRepository
+	Repository     task.ITaskRepository
+	UserRepository user.IUserRepository
 }
 
 func (this *TaskWorkflow) AddTaskByOwner(context src.IContextService, data *schema.AddTaskRequest) (*schema.AddTaskResponse, error) {
 	tokenData := context.GetTokenData()
 
-	if _, err := this.userRepository.FindOne(user.User{ID: tokenData.UserId}); err != nil {
+	if _, err := this.UserRepository.FindOne(user.User{ID: tokenData.UserId}); err != nil {
 		return nil, err
 	}
 
@@ -32,7 +32,7 @@ func (this *TaskWorkflow) AddTaskByOwner(context src.IContextService, data *sche
 		CreatedDate: time.Now(),
 	}
 
-	createdTask, err := this.repository.Create(task)
+	createdTask, err := this.Repository.Create(task)
 	if err != nil {
 		return nil, err
 	}
