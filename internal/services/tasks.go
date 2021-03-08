@@ -114,6 +114,24 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 
 	now := time.Now()
 	userID, _ := userIDFromCtx(req.Context())
+
+	totalTaskInDay, err := s.Store.CountTasksInDay(userID)
+	if totalTaskInDay >= 5 {
+		resp.WriteHeader(http.StatusForbidden)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": "Number of task today exceed 5",
+		})
+		return
+	}
+
+	if err != nil {
+		resp.WriteHeader(http.StatusForbidden)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+
 	t.ID = uuid.New().String()
 	t.UserID = userID
 	t.CreatedDate = now.Format("2006-01-02")

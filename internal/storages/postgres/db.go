@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"github.com/manabie-com/togo/internal/storages"
 	"gorm.io/gorm"
+	"time"
 )
 
 type Storage struct {
@@ -41,4 +42,12 @@ func (l *Storage) ValidateUser(userID, pwd sql.NullString) bool {
 	}
 
 	return true
+}
+
+func (l *Storage) CountTasksInDay(userID string) (uint8, error) {
+	stmt := `SELECT COUNT(id) FROM tasks WHERE user_id = ? AND created_date = ?`
+	var totalInDay uint8
+	err := l.DB.Raw(stmt, userID, time.Now().Format("2006-01-02")).Scan(&totalInDay).Error
+
+	return totalInDay, err
 }
