@@ -1,0 +1,34 @@
+version: "3"
+services:
+  app:
+    image: dnthanh1298/togo
+    build: .
+    environment:
+      DATABASE_URL: postgres://user:pass@db:5432/togo?sslmode=disable
+      PORT: 8000
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    restart: on-failure
+    networks:
+      - backend
+  db:
+    networks:
+      - backend
+    image: dnthanh1298/togo-db
+    build:
+      context: .
+      dockerfile: postgres.Dockerfile
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: togo
+    ports:
+      - 35432:5432
+    restart: on-failure
+    volumes:
+      - /tmp/postgres/backup:/var/lib/postgresql/data
+
+networks:
+  backend:
