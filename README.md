@@ -1,56 +1,53 @@
-### Overview
-This is a simple backend for a good old todo service, right now this service can handle login/list/create simple tasks.  
-To make it run:
-- `go run main.go`
-- Import Postman collection from `docs` to check example
+# Technical Assignment for Backend Engineer
+!["golang"](https://miro.medium.com/max/3152/1*Ifpd_HtDiK9u6h68SZgNuA.png)
 
-Candidates are invited to implement below requirements but the point is not to resolve everything in a perfect way but selective what you can do best in a limited time.  
-Thus, there is no correct-or-perfect answer, your solutions are way for us to continue the discussion and collaboration.
- 
-### Requirements
-Right now a user can add many task as they want, we want ability to limit N task per day.
-
-Example: users are limited to create only 5 task only per day, if the daily limit is reached, return 4xx code to client and ignore the create request.
-#### Backend requirements
-- A nice README on how to run, what is missing, what else you want to improve but don't have enough time
-- Fork this repo and show us your development progess by a PR.
-- Write integration tests for this project
-- Make this code DRY
-- Write unit test for `services` layer
-- Change from using `SQLite` to `Postgres` with `docker-compose`
-- This project include many issues from code to DB strucutre, feel free to optimize them.
-#### Frontend requirements
-- A nice README on how to run, what is missing, what else you want to improve but don't have enough time
-- https://github.com/manabie-com/mana-do
-- Fork the above repo and show us your development progess by a PR.
-#### Optional requirements
-- Write unit test for `storages` layer
-- Split `services` layer to `use case` and `transport` layer
-
-### DB Schema
-```sql
--- users definition
-
-CREATE TABLE users (
-	id TEXT NOT NULL,
-	password TEXT NOT NULL,
-	max_todo INTEGER DEFAULT 5 NOT NULL,
-	CONSTRAINT users_PK PRIMARY KEY (id)
-);
-
-INSERT INTO users (id, password, max_todo) VALUES('firstUser', 'example', 5);
-
--- tasks definition
-
-CREATE TABLE tasks (
-	id TEXT NOT NULL,
-	content TEXT NOT NULL,
-	user_id TEXT NOT NULL,
-    created_date TEXT NOT NULL,
-	CONSTRAINT tasks_PK PRIMARY KEY (id),
-	CONSTRAINT tasks_FK FOREIGN KEY (user_id) REFERENCES users(id)
-);
+## How can I run the app ?
 ```
+sudo docker-compose up
+```
+- API port `:8000`
+- Database (PostgreSQL) port `:35432`
 
-### Sequence diagram
-![auth and create tasks request](https://github.com/manabie-com/togo/blob/master/docs/sequence.svg)
+For test
+```
+go test -v ./test/...
+```
+### What is missing ?
+- Integration tests: the time is really limited to me for adding this kind of test. I am currently having the seminar exams so that I cannot research and do my best in this testing.
+
+## Changes I believe that would useful
+### Software Architecture: 
+___
+I closely flow the `Clean Architecture` of Uncle Bob 
+1. The structure (in my view):
+```
+.
+├── api
+│   └── http
+│       ├── v1
+├── controller
+├── domain
+├── entity
+├── infra
+│   ├── repository
+├── schema
+```
+- `api` present for web server as a third party framework, ... My point to seperate this layer framework to the domain business code
+- `controller` as the routing. It's responsiblity would be like the transport layer that comunicate between web framework and our application
+- `domain` is our core business code, it just like a stand-alone module which isolate with every outer layer includes the database
+- `repository` is our data layer that comunicate between our application and the database
+- `enitty` is data structure for our model in database. It would only used in repository and called from domain
+- `schema` is reuqest-response structure presentation. It's useful for checking validate the request before go through the application depper
+
+Please feel free to check the source and improve the source code with feedbacks
+
+**Diagram about the architecture would be upload soon**
+
+## Things I want to improve
+1. Global Error handle for whole app. It will catch the errors and check them in only one place. It will avoid us from repeating code and we don't need to check the errors in ervery layer
+
+2. Research deeper about testing for both unit test and integration test in golang
+3. More clean-code and restructure some layers
+4. Dealing with scaling problems and benmarcking \
+...\
+and more other stuffs
