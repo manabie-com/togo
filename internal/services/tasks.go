@@ -11,13 +11,13 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/storages"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	"github.com/manabie-com/togo/internal/storages/postgres"
 )
 
 // ToDoService implement HTTP server
 type ToDoService struct {
 	JWTKey string
-	Store  *sqllite.LiteDB
+	Store  *postgres.Storage
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
@@ -55,7 +55,7 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
 	id := value(req, "user_id")
-	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
+	if !s.Store.ValidateUser(id, value(req, "password")) {
 		resp.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": "incorrect user_id/pwd",
@@ -81,7 +81,6 @@ func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	id, _ := userIDFromCtx(req.Context())
 	tasks, err := s.Store.RetrieveTasks(
-		req.Context(),
 		sql.NullString{
 			String: id,
 			Valid:  true,
@@ -121,7 +120,7 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 
 	resp.Header().Set("Content-Type", "application/json")
 
-	err = s.Store.AddTask(req.Context(), t)
+	err = s.Store.AddTask(t)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
