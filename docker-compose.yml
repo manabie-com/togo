@@ -1,0 +1,24 @@
+version: "3"
+services:
+  server:
+    container_name: togo
+    ports:
+      - 5050:5050
+    restart: always
+    build: .
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: "host=db port=5432 user=manabie password=s3CrEt dbname=togo sslmode=disable"
+      JWT_KEY: wqGyEBBfPK9w3Lxw
+
+  db:
+    ports:
+      - 5435:5432
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: manabie
+      POSTGRES_PASSWORD: s3CrEt
+      POSTGRES_DB: togo
+    image: postgres:13.1-alpine
