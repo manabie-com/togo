@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+  postgres-phuonghau:
+    image: postgres
+    environment:
+      POSTGRES_USER: 'phuonghau'
+      POSTGRES_PASSWORD: 'phuonghau' #For the sake of simplicity
+    ports:
+      - 8899:5432
+    volumes:
+      - ./postgresdata:/var/lib/postgresql/data
+    
+    
