@@ -1,56 +1,37 @@
 ### Overview
-This is a simple backend for a good old todo service, right now this service can handle login/list/create simple tasks.  
-To make it run:
-- `go run main.go`
-- Import Postman collection from `docs` to check example
 
-Candidates are invited to implement below requirements but the point is not to resolve everything in a perfect way but selective what you can do best in a limited time.  
-Thus, there is no correct-or-perfect answer, your solutions are way for us to continue the discussion and collaboration.
- 
-### Requirements
-Right now a user can add many task as they want, we want ability to limit N task per day.
+This is repository I am actively implementing to result the problems that I see from existing code forked from `master` branch 
 
-Example: users are limited to create only 5 task only per day, if the daily limit is reached, return 4xx code to client and ignore the create request.
-#### Backend requirements
-- A nice README on how to run, what is missing, what else you want to improve but don't have enough time
-- Fork this repo and show us your development progess by a PR.
-- Write integration tests for this project
-- Make this code DRY
-- Write unit test for `services` layer
-- Change from using `SQLite` to `Postgres` with `docker-compose`
-- This project include many issues from code to DB strucutre, feel free to optimize them.
-#### Frontend requirements
-- A nice README on how to run, what is missing, what else you want to improve but don't have enough time
-- https://github.com/manabie-com/mana-do
-- Fork the above repo and show us your development progess by a PR.
-#### Optional requirements
-- Write unit test for `storages` layer
-- Split `services` layer to `use case` and `transport` layer
+### What I have done
+1. I replaced the login method from get to post, because submiting sensitive information such as username, password, credit card on the url
+param exposes a huge thread to the user and the system. The network package can be easily sniffed by hackers as piece of cake.
+Using `POST` method resolves the problem as the network package with sensitive data will be encrypted at the `Application layer` by `HTTPS protocol`
+which later send down to other layer, so even the package sniffed by hackers, cracking the package without private key that signed the SSL Certificate
+will take them a while.
+2. The code from master branch combines all logics for handling transport protocol (http), business logic into functions in `services` package, It make the bussiness logics tightly coupled with transport layer. So I decide to seperate it into `services` and `rest` package which aims to have the clear concern of each individual layer, cares about bussiness logic stuffs and handling rest api respectively. It embraces the `Seperate of concerns` theory, which is pretty suitable
+for dependency injection.
+3. Added middlewares for handling REST stuff likes method, authentication, logging...
+4. I add mechanism to encrypt the password of user before saving into database (`bcrypt`).
+5. I tried to do my best to organizing every components in its correct package. At the main function, I initialize all the dependencies (db connection, service, mux handler,...), then I injected the dependencies around.
+6. I wrote unit-test with 70%+ test coverage for `service layer` (bussiness logic layer) (also improving)
+7. I write a docker-compose file to run postgres database engine
+8. I dumped the sqlite script and modified it to feed to postgres sql
+### What I am missing
+1. Integration test, I'm researching how to elegantly setup a integration test mechanism (mocking or database setup/teardown with docker and sql script)
+2. Organizing a collections of `Postman` example to test the rest server (almost done)
+3. Limiting task created by the `max_todo` field in database (5 is currently hard-coded, working on it)
+4. ...
+### Run the app
+1. Start postgres engine by docker-compose (the default username/password is `phuonghau`/`phuonghau`)
 
-### DB Schema
-```sql
--- users definition
-
-CREATE TABLE users (
-	id TEXT NOT NULL,
-	password TEXT NOT NULL,
-	max_todo INTEGER DEFAULT 5 NOT NULL,
-	CONSTRAINT users_PK PRIMARY KEY (id)
-);
-
-INSERT INTO users (id, password, max_todo) VALUES('firstUser', 'example', 5);
-
--- tasks definition
-
-CREATE TABLE tasks (
-	id TEXT NOT NULL,
-	content TEXT NOT NULL,
-	user_id TEXT NOT NULL,
-    created_date TEXT NOT NULL,
-	CONSTRAINT tasks_PK PRIMARY KEY (id),
-	CONSTRAINT tasks_FK FOREIGN KEY (user_id) REFERENCES users(id)
-);
+```sh
+docker-compose up
 ```
-
-### Sequence diagram
-![auth and create tasks request](https://github.com/manabie-com/togo/blob/master/docs/sequence.svg)
+2. Seed the sample database (the password is `phuonghau`)
+```
+psql -U phuonghau -p 8899 -h localhost -f data_seed.sql
+```
+3. Start the server
+```
+go run main.go
+```
