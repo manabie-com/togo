@@ -1,6 +1,11 @@
 ### Overview
 
-This is repository I am actively implementing to result the problems that I see from existing code forked from `master` branch 
+This is repository I am actively implementing to result the problems that I see from existing code forked from `master` branch
+
+## Note for code reviewer:
+```
+It would be great that you can leave your feedback or send me a notification after you have your decision.
+```
 
 ### What I have done
 1. I replaced the login method from get to post, because submiting sensitive information such as username, password, credit card on the url
@@ -34,4 +39,9 @@ psql -U phuonghau -p 8899 -h localhost -f data_seed.sql
 3. Start the server
 ```
 go run main.go
+```
+
+4. Clean up
+```
+docker-compose down
 ```
