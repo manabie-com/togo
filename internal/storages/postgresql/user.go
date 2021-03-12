@@ -3,6 +3,7 @@ package postgresql
 import (
 	"context"
 	"database/sql"
+	"log"
 
 	"github.com/manabie-com/togo/internal/entities"
 	"github.com/manabie-com/togo/internal/storages"
@@ -38,6 +39,18 @@ func (psql *PSQLUserRespsitory) GetUserByUserID(ctx context.Context, userID stri
 			Password: foundUser.Password,
 		}, nil
 	default:
+		log.Panicln(err)
 		return nil, storages.ErrInternalError
 	}
+}
+
+// GetUserTaskLimit ...
+func (psql *PSQLUserRespsitory) GetUserTaskLimit(ctx context.Context, userID string) (int, error) {
+	var limit int
+	err := psql.db.QueryRow("SELECT max_todo FROM users where id = $1", userID).Scan(&limit)
+	if err != nil {
+		log.Println(err)
+		return 0, storages.ErrInternalError
+	}
+	return limit, nil
 }

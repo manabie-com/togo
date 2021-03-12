@@ -50,7 +50,7 @@ func (th *TaskHandler) AddTask(w http.ResponseWriter, r *http.Request) {
 	task, err := th.taskSvc.AddTask(r.Context(), reqTask)
 	if err != nil {
 		switch err {
-		case services.ErrTaskLimitOfDayReached:
+		case services.ErrTaskLimitOfDayReached, entities.ErrTaskInvalidContent:
 			returnErrorJSONResponse(w, err.Error(), http.StatusBadRequest)
 			return
 		default:

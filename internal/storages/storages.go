@@ -20,6 +20,7 @@ type TaskRepository interface {
 // UserRepository ...
 type UserRepository interface {
 	GetUserByUserID(ctx context.Context, userID string) (*entities.User, error)
+	GetUserTaskLimit(ctx context.Context, userID string) (int, error)
 }
 
 // Common error
