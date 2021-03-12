@@ -50,6 +50,7 @@ func main() {
 
 	taskService := services.NewTaskService(services.TaskServiceConfiguration{
 		TaskRepo: taskRepo,
+		UserRepo: userRepo,
 	})
 	authService := services.NewAuthService(services.AuthServiceConfiguration{
 		UserRepo: userRepo,
