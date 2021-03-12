@@ -25,6 +25,10 @@ func (ur *MockedUserRepo) GetUserByUserID(ctx context.Context, userID string) (*
 	return nil, nil
 }
 
+func (m *MockedUserRepo) GetUserTaskLimit(ctx context.Context, userID string) (int, error) {
+	return 5, nil
+}
+
 func newDefaultAuthSvc(initalUsers []entities.User) *services.AuthSvc {
 	return services.NewAuthService(services.AuthServiceConfiguration{
 		UserRepo:     &MockedUserRepo{Users: initalUsers},

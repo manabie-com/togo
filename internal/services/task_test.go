@@ -35,6 +35,7 @@ func (m *MockedTaskRepo) SaveTask(ctx context.Context, task entities.Task) (*ent
 func newDefaultTaskSvc(tasks []*entities.Task) *services.TaskSvc {
 	return services.NewTaskService(services.TaskServiceConfiguration{
 		TaskRepo: &MockedTaskRepo{Tasks: tasks},
+		UserRepo: &MockedUserRepo{},
 	})
 }
 
