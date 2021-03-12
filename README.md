@@ -45,3 +45,6 @@ go run main.go
 ```
 make psql-down
 ```
+
+### Postman
+I have placed a set of Postman requests in `docs/TodoService(PhuongHau-hvphuong98@gmail.com).postman_collection.json`
