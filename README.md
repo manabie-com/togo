@@ -7,7 +7,7 @@ This is repository I am actively implementing to result the problems that I see 
 - Email: hvphuong98@gmail.com
 ## Note for code reviewer:
 ```
-It would be great that you can leave your feedback or send me a notification after you have your decision.
+It would be great that you can leave your feedback or send me a notification after you have your decision, please.
 ```
 
 ### What I have done
@@ -21,7 +21,7 @@ for dependency injection.
 3. Added middlewares for handling REST stuff likes method, authentication, logging...
 4. I add mechanism to encrypt the password of user before saving into database (`bcrypt`).
 5. I tried to do my best to organizing every components in its correct package. At the main function, I initialize all the dependencies (db connection, service, mux handler,...), then I injected the dependencies around.
-6. I wrote unit-test with 70%+ test coverage for `service layer` (bussiness logic layer) (also improving)
+6. I wrote unit-test for `service layer` (bussiness logic layer) (also improving)
 7. I write a docker-compose file to run postgres database engine.
 8. I dumped the sqlite script and modified it to feed to postgres sql.
 9. Organizing a collections of `Postman` example to test the rest server.
