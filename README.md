@@ -7,7 +7,7 @@ This is repository I am actively implementing to result the problems that I see 
 - Email: hvphuong98@gmail.com
 ## Note for code reviewer:
 ```
-It would be great that you can leave your feedback or send me a notification after you have your decision, please.
+It would be great that you can leave your feedback or send me a notification once you have your decision, please.
 ```
 
 ### What I have done
