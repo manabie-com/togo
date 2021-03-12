@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"log"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -79,7 +80,8 @@ func (as *AuthSvc) FindUserByIDNPwd(ctx context.Context, userID, password string
 	}
 	foundUser, err := as.userRepo.GetUserByUserID(ctx, userID)
 	if foundUser == nil && err != nil {
-		return nil, errors.New("Internal error")
+		log.Println(err)
+		return nil, ErrInternalError
 	}
 	if foundUser == nil && err == nil { // Not found
 		return nil, nil
