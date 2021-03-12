@@ -7,7 +7,5 @@ services:
       POSTGRES_PASSWORD: 'phuonghau' #For the sake of simplicity
     ports:
       - 8899:5432
-    volumes:
-      - ./postgresdata:/var/lib/postgresql/data
     
     
