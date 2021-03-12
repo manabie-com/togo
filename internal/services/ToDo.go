@@ -5,6 +5,7 @@ import (
 	"github.com/manabie-com/togo/internal/config"
 	"github.com/manabie-com/togo/internal/core"
 	"github.com/manabie-com/togo/internal/entities"
+	"github.com/manabie-com/togo/internal/utils"
 	"time"
 
 	"github.com/google/uuid"
@@ -39,7 +40,7 @@ func (s *ToDoService) AddTask(ctx context.Context, userID string, t *entities.Ta
 	now := time.Now()
 	t.ID = uuid.New().String()
 	t.UserID = userID
-	t.CreatedDate = now.Format("2006-01-02")
+	t.CreatedDate = utils.FormatTimeToString(now)
 
 	return s.TaskRepository.AddTask(ctx, t)
 }

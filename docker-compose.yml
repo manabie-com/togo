@@ -1,0 +1,31 @@
+version: "3"
+services:
+  server:
+    container_name: togo
+    ports:
+      - 5052:5050
+    restart: always
+    build: .
+    depends_on:
+      - postgres
+    environment:
+      DATA_SOURCE: "host=postgres port=5432 user=manabie password=manabie dbname=togo sslmode=disable"
+      JWT_KEY: wqGyEBBfPK9w3Lxw
+    networks:
+      - togo
+  postgres:
+    ports:
+      - 5440:5432
+    build:
+      context: .
+      dockerfile: postgres.Dockerfile
+    environment:
+      POSTGRES_USER: manabie
+      POSTGRES_PASSWORD: manabie
+      POSTGRES_DB: togo
+    image: postgres:13.1-alpine
+    networks:
+      - togo
+
+networks:
+  togo:
