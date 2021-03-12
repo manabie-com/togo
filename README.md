@@ -22,29 +22,26 @@ for dependency injection.
 4. I add mechanism to encrypt the password of user before saving into database (`bcrypt`).
 5. I tried to do my best to organizing every components in its correct package. At the main function, I initialize all the dependencies (db connection, service, mux handler,...), then I injected the dependencies around.
 6. I wrote unit-test with 70%+ test coverage for `service layer` (bussiness logic layer) (also improving)
-7. I write a docker-compose file to run postgres database engine
-8. I dumped the sqlite script and modified it to feed to postgres sql
+7. I write a docker-compose file to run postgres database engine.
+8. I dumped the sqlite script and modified it to feed to postgres sql.
+9. Organizing a collections of `Postman` example to test the rest server.
+10. Limiting task created by the `max_todo` field in database.
+11. Replacing task adding route from `POST` `/tasks` to `POST` `/task` because `/tasks` makes me feel like we are adding a batch of tasks, I think `/task` will address that we are adding a single task.
 ### What I am missing
 1. Integration test, I'm researching how to elegantly setup a integration test mechanism (mocking or database setup/teardown with docker and sql script)
-2. Organizing a collections of `Postman` example to test the rest server (almost done)
-3. Limiting task created by the `max_todo` field in database (5 is currently hard-coded, working on it)
-4. ...
+2. I think that I should rename the field `id` in `users table` to `user_id` for consistency, which then possibly facilitates table joins
 ### Run the app
-1. Start postgres engine by docker-compose (the default username/password is `phuonghau`/`phuonghau`)
+1. Start postgres engine by docker-compose (the default username/password is `phuonghau`/`phuonghau`), seed example database
 
 ```sh
-docker-compose up
+make psql-up
 ```
-2. Seed the sample database (the password is `phuonghau`)
-```
-psql -U phuonghau -p 8899 -h localhost -f data_seed.sql
-```
-3. Start the server
+2. Start the server
 ```
 go run main.go
 ```
 
-4. Clean up
+3. Teardown the database
 ```
-docker-compose down
+make psql-down
 ```
