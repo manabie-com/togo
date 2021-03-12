@@ -13,4 +13,5 @@ var (
 	// the error doesn't belong to the scope of the service package, but somehow
 	// the service face this issue
 	ErrServiceUnhandledException = ServiceCommonError("Service can't handle the exception")
+	ErrInternalError             = ServiceCommonError("Internal error")
 )
