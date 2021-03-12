@@ -70,6 +70,7 @@ func (psql *PSQLTaskRespsitory) CountTasksOfUserByDate(ctx context.Context, user
 
 	err := psql.db.QueryRow("SELECT COUNT(*) FROM tasks WHERE user_id = $1 AND created_date = $2;", userID, createdDate).Scan(&count)
 	if err != nil {
+		log.Println("CountTasksOfUserByDate: ", err)
 		return 0, storages.ErrInternalError
 	}
 	return count, nil
