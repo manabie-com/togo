@@ -13,7 +13,8 @@
 
 # Dependency directories (remove the comment below to include it)
 vendor/
-
+volumes/
 out/
 
 .idea
+.env
