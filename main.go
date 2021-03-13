@@ -16,7 +16,6 @@ func main() {
 	}
 	server := server2.NewToDoHttpServer("wqGyEBBfPK9w3Lxw",
 		services.NewToDoService(services.WithStore(&sqllite.LiteDB{DB: db})))
-	//fmt.Println("Listen service on port :5050")
 
 	if err := server.Listen(5050); err != nil {
 		panic(err)

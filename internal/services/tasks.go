@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/banhquocdanh/togo/internal/storages"
+	"github.com/dgrijalva/jwt-go"
+	"log"
 	"time"
 
 	"github.com/google/uuid"
@@ -59,10 +61,56 @@ func (s *ToDoService) AddTask(ctx context.Context, userID, content string) (*sto
 	return t, s.Store.AddTask(ctx, t)
 }
 
-func (s *ToDoService) ValidateUser(ctx context.Context, userID, pw string) bool {
+func (s *ToDoService) validateUser(ctx context.Context, userID, pw string) bool {
 	if userID == "" || pw == "" {
 		return false
 	}
 
 	return s.Store.ValidateUser(ctx, userID, pw)
+}
+
+func (s *ToDoService) Login(ctx context.Context, userID, pw string, jwtKey string) (string, error) {
+	if userID == "" || pw == "" {
+		return "", fmt.Errorf("invalid user/pw")
+	}
+
+	if !s.validateUser(ctx, userID, pw) {
+		return "", fmt.Errorf("user/pw is incorrect")
+	}
+
+	return s.createToken(userID, jwtKey)
+}
+
+func (s *ToDoService) createToken(id string, jwtKey string) (string, error) {
+	atClaims := jwt.MapClaims{}
+	atClaims["user_id"] = id
+	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
+	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
+	token, err := at.SignedString([]byte(jwtKey))
+	if err != nil {
+		return "", err
+	}
+	return token, nil
+}
+
+func (s *ToDoService) ValidToken(token, jwtKey string) (string, bool) {
+	claims := make(jwt.MapClaims)
+	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
+		return []byte(jwtKey), nil
+	})
+	if err != nil {
+		log.Println(err)
+		return "", false
+	}
+
+	if !t.Valid {
+		return "", false
+	}
+
+	id, ok := claims["user_id"].(string)
+	if !ok {
+		return "", false
+	}
+
+	return id, true
 }

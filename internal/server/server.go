@@ -5,11 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/banhquocdanh/togo/internal/services"
-	"github.com/banhquocdanh/togo/internal/storages"
-	"github.com/dgrijalva/jwt-go"
 	"log"
 	"net/http"
-	"time"
 )
 
 type ToDoHttpServer struct {
@@ -46,12 +43,13 @@ func (s *ToDoHttpServer) ServeHTTP(resp http.ResponseWriter, req *http.Request) 
 		s.login(resp, req)
 		return
 	case "/tasks":
-		var ok bool
-		req, ok = s.validToken(req)
+		token := req.Header.Get("Authorization")
+		userID, ok := s.srv.ValidToken(token, s.JWTKey)
 		if !ok {
-			resp.WriteHeader(http.StatusUnauthorized)
+			HttpUnauthorized(resp, "invalid token")
 			return
 		}
+		req = req.WithContext(context.WithValue(req.Context(), userAuthKey(0), userID))
 
 		switch req.Method {
 		case http.MethodGet:
@@ -63,30 +61,50 @@ func (s *ToDoHttpServer) ServeHTTP(resp http.ResponseWriter, req *http.Request) 
 	}
 }
 
+func WriteHttpResponse(resp http.ResponseWriter, code int, data Response) {
+	if resp.Header().Get("Content-Type") == "" {
+		resp.Header().Set("Content-Type", "application/json")
+	}
+	resp.WriteHeader(code)
+	_ = json.NewEncoder(resp).Encode(data)
+}
+
+type Response struct {
+	Error string      `json:"error,omitempty"`
+	Data  interface{} `json:"data,omitempty"`
+}
+
+func HttpResponseSuccess(resp http.ResponseWriter, data interface{}) {
+	WriteHttpResponse(resp, http.StatusOK, Response{Data: data})
+}
+
+func HttpResponseBadRequest(resp http.ResponseWriter, msg string) {
+	WriteHttpResponse(resp, http.StatusBadRequest, Response{Error: msg})
+}
+
+func HttpResponseInternalError(resp http.ResponseWriter, err error) {
+	WriteHttpResponse(resp, http.StatusInternalServerError, Response{Error: err.Error()})
+}
+
+func HttpUnauthorized(resp http.ResponseWriter, msg string) {
+	WriteHttpResponse(resp, http.StatusUnauthorized, Response{Error: msg})
+}
+
 func (s *ToDoHttpServer) listTasks(resp http.ResponseWriter, req *http.Request) {
 	userID, _ := userIDFromCtx(req.Context())
 	createDate := req.FormValue("created_date")
 	if createDate == "" {
-		resp.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "Invalid create_date",
-		})
+		HttpResponseBadRequest(resp, "Invalid create_date")
 		return
 	}
 	tasks, err := s.srv.ListTasks(req.Context(), userID, createDate)
-	resp.Header().Set("Content-Type", "application/json")
 
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
+		HttpResponseInternalError(resp, err)
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
-		"data": tasks,
-	})
+	HttpResponseSuccess(resp, tasks)
 }
 
 type AddTaskRequest struct {
@@ -98,96 +116,36 @@ func (s *ToDoHttpServer) addTask(resp http.ResponseWriter, req *http.Request) {
 	err := json.NewDecoder(req.Body).Decode(addTaskReq)
 	defer req.Body.Close()
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
+		HttpResponseInternalError(resp, err)
 		return
 	}
-	resp.Header().Set("Content-Type", "application/json")
 
 	if addTaskReq.Content == "" {
-		resp.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "invalid task's content",
-		})
+		HttpResponseBadRequest(resp, "invalid task's content")
 		return
 	}
 	userID, _ := userIDFromCtx(req.Context())
 
 	task, err := s.srv.AddTask(req.Context(), userID, addTaskReq.Content)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
+		HttpResponseInternalError(resp, err)
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string]*storages.Task{
-		"data": task,
-	})
+	HttpResponseSuccess(resp, task)
 }
 
 func (s *ToDoHttpServer) login(resp http.ResponseWriter, req *http.Request) {
 	id := req.FormValue("user_id")
 	pw := req.FormValue("password")
 
-	if !s.srv.ValidateUser(req.Context(), id, pw) {
-		resp.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "incorrect user_id/pwd",
-		})
-		return
-	}
-	resp.Header().Set("Content-Type", "application/json")
-
-	token, err := s.createToken(id)
+	token, err := s.srv.Login(req.Context(), id, pw, s.JWTKey)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
+		HttpUnauthorized(resp, "incorrect user_id/pwd")
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string]string{
-		"data": token,
-	})
-}
-
-func (s *ToDoHttpServer) createToken(id string) (string, error) {
-	atClaims := jwt.MapClaims{}
-	atClaims["user_id"] = id
-	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
-	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
-	token, err := at.SignedString([]byte(s.JWTKey))
-	if err != nil {
-		return "", err
-	}
-	return token, nil
-}
-
-func (s *ToDoHttpServer) validToken(req *http.Request) (*http.Request, bool) {
-	token := req.Header.Get("Authorization")
-
-	claims := make(jwt.MapClaims)
-	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
-		return []byte(s.JWTKey), nil
-	})
-	if err != nil {
-		log.Println(err)
-		return req, false
-	}
-
-	if !t.Valid {
-		return req, false
-	}
-
-	id, ok := claims["user_id"].(string)
-	if !ok {
-		return req, false
-	}
-
-	req = req.WithContext(context.WithValue(req.Context(), userAuthKey(0), id))
-	return req, true
+	HttpResponseSuccess(resp, token)
 }
 
 type userAuthKey int8
