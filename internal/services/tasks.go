@@ -17,7 +17,27 @@ import (
 // ToDoService implement HTTserver
 type ToDoService struct {
 	JWTKey string
-	Store  *sqllite.LiteDB
+	Store  storages.StoreInterface
+}
+
+type Option func(service *ToDoService)
+
+func NewToDoService(jwtKey string, opts ...Option) *ToDoService {
+	srv := &ToDoService{
+		JWTKey: jwtKey,
+	}
+	for _, opt := range opts {
+		opt(srv)
+	}
+
+	return srv
+
+}
+
+func WithSqlLiteStore(db *sql.DB) Option {
+	return func(srv *ToDoService) {
+		srv.Store = &sqllite.LiteDB{DB: db}
+	}
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {

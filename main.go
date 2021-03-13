@@ -2,12 +2,11 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/banhquocdanh/togo/internal/services"
-	sqllite "github.com/banhquocdanh/togo/internal/storages/sqlite"
-
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -17,10 +16,11 @@ func main() {
 		log.Fatal("error opening db", err)
 	}
 
-	http.ListenAndServe(":5050", &services.ToDoService{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
-			DB: db,
-		},
-	})
+	fmt.Println("Start service on port :5050")
+
+	http.ListenAndServe(":5050", services.NewToDoService(
+		"wqGyEBBfPK9w3Lxw",
+		services.WithSqlLiteStore(db)),
+	)
+
 }
