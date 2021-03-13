@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	sqllite "github.com/banhquocdanh/togo/internal/storages/sqlite"
 	"log"
 	"net/http"
 
@@ -20,7 +21,7 @@ func main() {
 
 	http.ListenAndServe(":5050", services.NewToDoService(
 		"wqGyEBBfPK9w3Lxw",
-		services.WithSqlLiteStore(db)),
+		services.WithStore(&sqllite.LiteDB{DB: db})),
 	)
 
 }

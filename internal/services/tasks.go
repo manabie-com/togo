@@ -2,10 +2,8 @@ package services
 
 import (
 	"context"
-	"database/sql"
 	"encoding/json"
 	"github.com/banhquocdanh/togo/internal/storages"
-	sqllite "github.com/banhquocdanh/togo/internal/storages/sqlite"
 	"log"
 	"net/http"
 	"time"
@@ -34,9 +32,9 @@ func NewToDoService(jwtKey string, opts ...Option) *ToDoService {
 
 }
 
-func WithSqlLiteStore(db *sql.DB) Option {
+func WithStore(db storages.StoreInterface) Option {
 	return func(srv *ToDoService) {
-		srv.Store = &sqllite.LiteDB{DB: db}
+		srv.Store = db
 	}
 }
 
@@ -74,8 +72,17 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
-	id := value(req, "user_id")
-	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
+	id := req.FormValue("user_id")
+	pw := req.FormValue("password")
+	if id == "" || pw == "" {
+		resp.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": "invalid user/password",
+		})
+		return
+	}
+
+	if !s.Store.ValidateUser(req.Context(), id, pw) {
 		resp.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": "incorrect user_id/pwd",
@@ -84,7 +91,7 @@ func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 	}
 	resp.Header().Set("Content-Type", "application/json")
 
-	token, err := s.createToken(id.String)
+	token, err := s.createToken(id)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
@@ -100,13 +107,18 @@ func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 
 func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	id, _ := userIDFromCtx(req.Context())
+	createDate := req.FormValue("created_date")
+	if createDate == "" {
+		resp.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": "Invalid create_date",
+		})
+		return
+	}
 	tasks, err := s.Store.RetrieveTasks(
 		req.Context(),
-		sql.NullString{
-			String: id,
-			Valid:  true,
-		},
-		value(req, "created_date"),
+		id,
+		createDate,
 	)
 
 	resp.Header().Set("Content-Type", "application/json")
@@ -153,13 +165,6 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(map[string]*storages.Task{
 		"data": t,
 	})
-}
-
-func value(req *http.Request, p string) sql.NullString {
-	return sql.NullString{
-		String: req.FormValue(p),
-		Valid:  true,
-	}
 }
 
 func (s *ToDoService) createToken(id string) (string, error) {
