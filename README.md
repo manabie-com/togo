@@ -53,4 +53,4 @@ CREATE TABLE tasks (
 ```
 
 ### Sequence diagram
-![auth and create tasks request](https://github.com/manabie-com/togo/blob/master/docs/sequence.svg)
+![auth and create tasks request](https://github.com/banhquocdanh/togo/blob/master/docs/sequence.svg)
