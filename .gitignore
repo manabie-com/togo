@@ -17,3 +17,9 @@
 out/
 
 .idea
+
+.vscode
+
+config/*.yml
+!config/*.example.yml
+!config/default.yml

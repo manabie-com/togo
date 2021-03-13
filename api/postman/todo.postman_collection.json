@@ -1,0 +1,130 @@
+{
+	"info": {
+		"_postman_id": "c58c4ad3-13f4-4e78-8cda-fc55ec94230c",
+		"name": "todo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Sign In",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"dong@gmail.com\",\n    \"password\": \"12345678\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/sign-in",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"sign-in"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sign Up",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"dong@gmail.com\",\n    \"password\": \"12345678\",\n    \"max_todo\": 2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/sign-up",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"sign-up"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Task",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTU0MjgxMDEsImlzcyI6InRvZG8tYXBwLXYwIiwidXNlcl9pZCI6IjY4ODhkMDM2LWYyMWQtNGM5OC1iMjA2LTg2NjVjM2ZlZDdiYSJ9.CzIUeH0dXe5rCvk5Xif-lGdzuZ97BXgv6I8hZSqYt6k",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"content\": \"content here\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/tasks",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"tasks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Tasks",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTU0MjgxMDEsImlzcyI6InRvZG8tYXBwLXYwIiwidXNlcl9pZCI6IjY4ODhkMDM2LWYyMWQtNGM5OC1iMjA2LTg2NjVjM2ZlZDdiYSJ9.CzIUeH0dXe5rCvk5Xif-lGdzuZ97BXgv6I8hZSqYt6k",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:3000/api/tasks?created_date=2021-03-11",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"tasks"
+					],
+					"query": [
+						{
+							"key": "created_date",
+							"value": "2021-03-11"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

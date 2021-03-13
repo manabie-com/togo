@@ -1,0 +1,25 @@
+server:
+  host: localhost
+  port: 3000
+
+datastore:
+  primary:
+    driverName: postgres
+    host: localhost
+    port: 5432
+    username: postgres
+    password: postgres
+    dbname: todo
+  cache:
+    host: localhost
+    port: 6379
+
+auth:
+  jwt:
+    secret: keep-me-safe
+    issuer: todo-app-v0
+    algorithm: HS256
+
+validation:
+  playground:
+    tagName: validate
