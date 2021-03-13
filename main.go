@@ -2,13 +2,11 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
-	sqllite "github.com/banhquocdanh/togo/internal/storages/sqlite"
-	"log"
-	"net/http"
-
+	server2 "github.com/banhquocdanh/togo/internal/server"
 	"github.com/banhquocdanh/togo/internal/services"
+	sqllite "github.com/banhquocdanh/togo/internal/storages/sqlite"
 	_ "github.com/mattn/go-sqlite3"
+	"log"
 )
 
 func main() {
@@ -16,12 +14,12 @@ func main() {
 	if err != nil {
 		log.Fatal("error opening db", err)
 	}
+	server := server2.NewToDoHttpServer("wqGyEBBfPK9w3Lxw",
+		services.NewToDoService(services.WithStore(&sqllite.LiteDB{DB: db})))
+	//fmt.Println("Listen service on port :5050")
 
-	fmt.Println("Start service on port :5050")
-
-	http.ListenAndServe(":5050", services.NewToDoService(
-		"wqGyEBBfPK9w3Lxw",
-		services.WithStore(&sqllite.LiteDB{DB: db})),
-	)
+	if err := server.Listen(5050); err != nil {
+		panic(err)
+	}
 
 }

@@ -2,28 +2,22 @@ package services
 
 import (
 	"context"
-	"encoding/json"
+	"fmt"
 	"github.com/banhquocdanh/togo/internal/storages"
-	"log"
-	"net/http"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 )
 
 // ToDoService implement HTTserver
 type ToDoService struct {
-	JWTKey string
-	Store  storages.StoreInterface
+	Store storages.StoreInterface
 }
 
 type Option func(service *ToDoService)
 
-func NewToDoService(jwtKey string, opts ...Option) *ToDoService {
-	srv := &ToDoService{
-		JWTKey: jwtKey,
-	}
+func NewToDoService(opts ...Option) *ToDoService {
+	srv := &ToDoService{}
 	for _, opt := range opts {
 		opt(srv)
 	}
@@ -38,176 +32,37 @@ func WithStore(db storages.StoreInterface) Option {
 	}
 }
 
-func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
-	log.Println(req.Method, req.URL.Path)
-	resp.Header().Set("Access-Control-Allow-Origin", "*")
-	resp.Header().Set("Access-Control-Allow-Headers", "*")
-	resp.Header().Set("Access-Control-Allow-Methods", "*")
-
-	if req.Method == http.MethodOptions {
-		resp.WriteHeader(http.StatusOK)
-		return
+func (s *ToDoService) ListTasks(ctx context.Context, userID, createDate string) ([]*storages.Task, error) {
+	if userID == "" {
+		return nil, fmt.Errorf("user id invalid")
 	}
-
-	switch req.URL.Path {
-	case "/login":
-		s.getAuthToken(resp, req)
-		return
-	case "/tasks":
-		var ok bool
-		req, ok = s.validToken(req)
-		if !ok {
-			resp.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-
-		switch req.Method {
-		case http.MethodGet:
-			s.listTasks(resp, req)
-		case http.MethodPost:
-			s.addTask(resp, req)
-		}
-		return
-	}
-}
-
-func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
-	id := req.FormValue("user_id")
-	pw := req.FormValue("password")
-	if id == "" || pw == "" {
-		resp.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "invalid user/password",
-		})
-		return
-	}
-
-	if !s.Store.ValidateUser(req.Context(), id, pw) {
-		resp.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "incorrect user_id/pwd",
-		})
-		return
-	}
-	resp.Header().Set("Content-Type", "application/json")
-
-	token, err := s.createToken(id)
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	json.NewEncoder(resp).Encode(map[string]string{
-		"data": token,
-	})
-}
-
-func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
-	id, _ := userIDFromCtx(req.Context())
-	createDate := req.FormValue("created_date")
 	if createDate == "" {
-		resp.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "Invalid create_date",
-		})
-		return
+		return nil, fmt.Errorf("created date invalid")
 	}
-	tasks, err := s.Store.RetrieveTasks(
-		req.Context(),
-		id,
+
+	return s.Store.RetrieveTasks(
+		ctx,
+		userID,
 		createDate,
 	)
-
-	resp.Header().Set("Content-Type", "application/json")
-
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
-		"data": tasks,
-	})
 }
 
-func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
-	t := &storages.Task{}
-	err := json.NewDecoder(req.Body).Decode(t)
-	defer req.Body.Close()
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
+func (s *ToDoService) AddTask(ctx context.Context, userID, content string) (*storages.Task, error) {
 	now := time.Now()
-	userID, _ := userIDFromCtx(req.Context())
-	t.ID = uuid.New().String()
-	t.UserID = userID
-	t.CreatedDate = now.Format("2006-01-02")
-
-	resp.Header().Set("Content-Type", "application/json")
-
-	err = s.Store.AddTask(req.Context(), t)
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
+	t := &storages.Task{
+		ID:          uuid.New().String(),
+		Content:     content,
+		UserID:      userID,
+		CreatedDate: now.Format("2006-01-02"),
 	}
 
-	json.NewEncoder(resp).Encode(map[string]*storages.Task{
-		"data": t,
-	})
+	return t, s.Store.AddTask(ctx, t)
 }
 
-func (s *ToDoService) createToken(id string) (string, error) {
-	atClaims := jwt.MapClaims{}
-	atClaims["user_id"] = id
-	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
-	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
-	token, err := at.SignedString([]byte(s.JWTKey))
-	if err != nil {
-		return "", err
-	}
-	return token, nil
-}
-
-func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
-	token := req.Header.Get("Authorization")
-
-	claims := make(jwt.MapClaims)
-	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
-		return []byte(s.JWTKey), nil
-	})
-	if err != nil {
-		log.Println(err)
-		return req, false
+func (s *ToDoService) ValidateUser(ctx context.Context, userID, pw string) bool {
+	if userID == "" || pw == "" {
+		return false
 	}
 
-	if !t.Valid {
-		return req, false
-	}
-
-	id, ok := claims["user_id"].(string)
-	if !ok {
-		return req, false
-	}
-
-	req = req.WithContext(context.WithValue(req.Context(), userAuthKey(0), id))
-	return req, true
-}
-
-type userAuthKey int8
-
-func userIDFromCtx(ctx context.Context) (string, bool) {
-	v := ctx.Value(userAuthKey(0))
-	id, ok := v.(string)
-	return id, ok
+	return s.Store.ValidateUser(ctx, userID, pw)
 }
