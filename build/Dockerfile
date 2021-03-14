@@ -1,6 +1,6 @@
 FROM golang:1.16-alpine
 
-RUN apk add --no-cache ca-certificates musl-dev gcc build-base && update-ca-certificates
+RUN apk add --no-cache ca-certificates musl-dev gcc build-base tzdata && update-ca-certificates
 
 RUN go get -u github.com/cosmtrek/air
 

@@ -1,4 +1,4 @@
-package projectpath
+package config
 
 import (
 	"os"

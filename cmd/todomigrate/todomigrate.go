@@ -8,13 +8,13 @@ import (
 	_ "time/tzdata"
 
 	"github.com/golang-migrate/migrate/v4"
+	"github.com/manabie-com/togo/internal/pkg/config"
 	p "github.com/manabie-com/togo/internal/pkg/db/postgres"
-	"github.com/manabie-com/togo/internal/pkg/projectpath"
 	log "github.com/sirupsen/logrus"
 )
 
 func main() {
-	migratePath := projectpath.RootPath() + "/db/migrations"
+	migratePath := config.RootPath() + "/db/migrations"
 	m, err := p.GetMigrateInstance(migratePath)
 	if err != nil {
 		log.Fatalln(err)

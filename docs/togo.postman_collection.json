@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "05327fec-8670-470b-8253-f27686acf809",
+		"_postman_id": "268d25bb-ed9f-4e3c-925c-4262f05d8a6a",
 		"name": "Test togo",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -8,10 +8,19 @@
 		{
 			"name": "Login",
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"linh\",\n    \"password\": \"linhdeptrai\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "localhost:5050/login?user_id=firstUser&password=example",
+					"raw": "localhost:5050/login",
 					"host": [
 						"localhost"
 					],
@@ -22,11 +31,13 @@
 					"query": [
 						{
 							"key": "user_id",
-							"value": "firstUser"
+							"value": "firstUser",
+							"disabled": true
 						},
 						{
 							"key": "password",
-							"value": "example"
+							"value": "example",
+							"disabled": true
 						}
 					]
 				}
@@ -34,7 +45,7 @@
 			"response": []
 		},
 		{
-			"name": "List content",
+			"name": "List Tasks",
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -50,12 +61,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTM0Mjc4MjEsInVzZXJfaWQiOiJmaXJzdFVzZXIifQ.zJdFGhDFwPcR1-VZyUGmYgNMEDHpNYsttYYvJPcI7h4",
+						"value": "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTU3NDcyOTgsInVzZXJJRCI6MX0.Y059c4F3nXlUuw5qlvVZHEpF6Xoc9aCc179mNbvxhJo",
 						"type": "text"
 					}
 				],
 				"url": {
-					"raw": "localhost:5050/tasks?created_date=2020-06-29",
+					"raw": "localhost:5050/tasks?created_date=2021-03-15",
 					"host": [
 						"localhost"
 					],
@@ -66,7 +77,7 @@
 					"query": [
 						{
 							"key": "created_date",
-							"value": "2020-06-29"
+							"value": "2021-03-15"
 						}
 					]
 				}
@@ -74,19 +85,19 @@
 			"response": []
 		},
 		{
-			"name": "Create task",
+			"name": "Create Task",
 			"request": {
 				"method": "POST",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTM0Mjc4MjEsInVzZXJfaWQiOiJmaXJzdFVzZXIifQ.zJdFGhDFwPcR1-VZyUGmYgNMEDHpNYsttYYvJPcI7h4",
+						"value": "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTU3NDYzNDIsInVzZXJJRCI6MX0.8B-JWFruwdbK7dS-Uc7BJWayGkiutkMC6EDvcQy8mOo",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"content\": \"another content\"\n}",
+					"raw": "{\n    \"content\": \"another content 2  43 3\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -106,6 +117,5 @@
 			},
 			"response": []
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }
