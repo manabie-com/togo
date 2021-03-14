@@ -107,13 +107,13 @@ func (s *ToDoService) Login(ctx context.Context, userID, pw string, jwtKey strin
 		return token, nil
 	}
 
-	return token, s.Cache.AddToken(ctx, token, time.Minute*s.config.TokenTIL)
+	return token, s.Cache.AddToken(ctx, token, time.Minute*s.config.TokenTIL())
 }
 
 func (s *ToDoService) createToken(id string, jwtKey string) (string, error) {
 	atClaims := jwt.MapClaims{}
 	atClaims["user_id"] = id
-	atClaims["exp"] = Now().Add(time.Minute * time.Duration(s.config.TokenTIL)).Unix()
+	atClaims["exp"] = Now().Add(time.Minute * time.Duration(s.config.TokenTIL())).Unix()
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	token, err := at.SignedString([]byte(jwtKey))
 	if err != nil {

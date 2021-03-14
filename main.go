@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/banhquocdanh/togo/internal/cache"
 	"github.com/banhquocdanh/togo/internal/config"
 	server2 "github.com/banhquocdanh/togo/internal/server"
@@ -14,22 +15,12 @@ import (
 )
 
 func main() {
-	var cfg = config.Config{
-		JwtKey: "wqGyEBBfPK9w3Lxw",
-		Redis: config.RedisConfig{
-			Addr:     "127.0.0.1:6379",
-			Password: "",
-			DB:       0,
-		},
-		Database: config.DatabaseConfig{
-			Addr:     "127.0.0.1:5432",
-			User:     "bandan",
-			Password: "bandan",
-			Database: "todo",
-		},
-		TokenTIL: 15,
+	var cfg = config.Config{}
+	err := config.LoadConfigFromEnv(&cfg)
+	if err != nil {
+		panic(err)
 	}
-	//TODO: read config from env
+	fmt.Printf("Cfg: %+v\n", cfg)
 
 	//db, err := sql.Open("sqlite3", "./data.db")
 	//if err != nil {
