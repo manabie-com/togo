@@ -7,6 +7,7 @@ require (
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/go-pg/pg/v10 v10.8.0
 	github.com/go-redis/redis/v8 v8.7.1
+	github.com/go-redsync/redsync/v4 v4.1.0
 	github.com/google/uuid v1.1.1
 	github.com/magiconair/properties v1.8.4 // indirect
 	github.com/mattn/go-sqlite3 v1.14.0

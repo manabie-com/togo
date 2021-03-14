@@ -8,6 +8,8 @@ import (
 	"github.com/banhquocdanh/togo/internal/storages/postgresql"
 	"github.com/go-pg/pg/v10"
 	"github.com/go-redis/redis/v8"
+	"github.com/go-redsync/redsync/v4"
+	"github.com/go-redsync/redsync/v4/redis/goredis/v8"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -39,12 +41,17 @@ func main() {
 		DB:       cfg.Redis.DB,
 	})
 
-	pgStore := postgresql.NewPostgreSQL(pg.Connect(&pg.Options{
-		Addr:     cfg.Database.Addr,
-		User:     cfg.Database.User,
-		Password: cfg.Database.Password,
-		Database: cfg.Database.Database,
-	}))
+	redSyncClient := redsync.New(goredis.NewPool(redisClient))
+
+	pgStore := postgresql.NewPostgreSQL(
+		pg.Connect(&pg.Options{
+			Addr:     cfg.Database.Addr,
+			User:     cfg.Database.User,
+			Password: cfg.Database.Password,
+			Database: cfg.Database.Database,
+		}),
+		postgresql.WithRedSync(redSyncClient),
+	)
 
 	server := server2.NewToDoHttpServer(
 		cfg.JwtKey,
