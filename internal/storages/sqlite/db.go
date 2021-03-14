@@ -30,7 +30,11 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate string) 
 	}
 	defer rows.Close()
 
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
 	var tasks []*storages.Task
+
 	for rows.Next() {
 		t := &storages.Task{}
 		err := rows.Scan(&t.ID, &t.Content, &t.UserID, &t.CreatedDate)
@@ -38,10 +42,6 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate string) 
 			return nil, err
 		}
 		tasks = append(tasks, t)
-	}
-
-	if err := rows.Err(); err != nil {
-		return nil, err
 	}
 
 	return tasks, nil

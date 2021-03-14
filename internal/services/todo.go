@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"github.com/banhquocdanh/togo/internal/storages"
 	"github.com/dgrijalva/jwt-go"
-	"log"
 	"time"
 
 	"github.com/google/uuid"
 )
+
+var Now = time.Now
 
 // ToDoService implement HTTserver
 type ToDoService struct {
@@ -50,7 +51,14 @@ func (s *ToDoService) ListTasks(ctx context.Context, userID, createDate string) 
 }
 
 func (s *ToDoService) AddTask(ctx context.Context, userID, content string) (*storages.Task, error) {
-	now := time.Now()
+	if userID == "" {
+		return nil, fmt.Errorf("invalid userID")
+	}
+	if content == "" {
+		return nil, fmt.Errorf("invalid task's content")
+	}
+
+	now := Now()
 	t := &storages.Task{
 		ID:          uuid.New().String(),
 		Content:     content,
@@ -84,7 +92,7 @@ func (s *ToDoService) Login(ctx context.Context, userID, pw string, jwtKey strin
 func (s *ToDoService) createToken(id string, jwtKey string) (string, error) {
 	atClaims := jwt.MapClaims{}
 	atClaims["user_id"] = id
-	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
+	atClaims["exp"] = Now().Add(time.Minute * 15).Unix()
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	token, err := at.SignedString([]byte(jwtKey))
 	if err != nil {
@@ -93,24 +101,35 @@ func (s *ToDoService) createToken(id string, jwtKey string) (string, error) {
 	return token, nil
 }
 
-func (s *ToDoService) ValidToken(token, jwtKey string) (string, bool) {
+func (s *ToDoService) ValidToken(token, jwtKey string) (string, error) {
+	if token == "" {
+		return "", fmt.Errorf("token is empty")
+	}
 	claims := make(jwt.MapClaims)
 	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
 		return []byte(jwtKey), nil
 	})
 	if err != nil {
-		log.Println(err)
-		return "", false
+		return "", err
 	}
 
 	if !t.Valid {
-		return "", false
+		return "", fmt.Errorf("invalid token")
 	}
 
 	id, ok := claims["user_id"].(string)
 	if !ok {
-		return "", false
+		return "", fmt.Errorf("not found userID")
 	}
 
-	return id, true
+	exp, ok := claims["exp"].(int64)
+	if !ok {
+		return "", fmt.Errorf("not found expired time")
+	}
+
+	if Now().Unix() > exp {
+		return "", fmt.Errorf("token is expired")
+	}
+
+	return id, nil
 }

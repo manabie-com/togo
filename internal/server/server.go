@@ -44,8 +44,8 @@ func (s *ToDoHttpServer) ServeHTTP(resp http.ResponseWriter, req *http.Request) 
 		return
 	case "/tasks":
 		token := req.Header.Get("Authorization")
-		userID, ok := s.srv.ValidToken(token, s.JWTKey)
-		if !ok {
+		userID, err := s.srv.ValidToken(token, s.JWTKey)
+		if err != nil {
 			HttpUnauthorized(resp, "invalid token")
 			return
 		}
@@ -120,10 +120,6 @@ func (s *ToDoHttpServer) addTask(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if addTaskReq.Content == "" {
-		HttpResponseBadRequest(resp, "invalid task's content")
-		return
-	}
 	userID, _ := userIDFromCtx(req.Context())
 
 	task, err := s.srv.AddTask(req.Context(), userID, addTaskReq.Content)
