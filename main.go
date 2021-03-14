@@ -1,15 +1,14 @@
 package main
 
 import (
-	"database/sql"
 	"github.com/banhquocdanh/togo/internal/cache"
 	"github.com/banhquocdanh/togo/internal/config"
 	server2 "github.com/banhquocdanh/togo/internal/server"
 	"github.com/banhquocdanh/togo/internal/services"
-	sqllite "github.com/banhquocdanh/togo/internal/storages/sqlite"
+	"github.com/banhquocdanh/togo/internal/storages/postgresql"
+	"github.com/go-pg/pg/v10"
 	"github.com/go-redis/redis/v8"
 	_ "github.com/mattn/go-sqlite3"
-	"log"
 )
 
 func main() {
@@ -21,28 +20,37 @@ func main() {
 			DB:       0,
 		},
 		Database: config.DatabaseConfig{
-			DriverName:     "sqlite3",
-			DataSourceName: "./data.db",
+			Addr:     "127.0.0.1:5432",
+			User:     "bandan",
+			Password: "bandan",
+			Database: "todo",
 		},
 		TokenTIL: 15,
 	}
 	//TODO: read config from env
 
-	db, err := sql.Open(cfg.Database.DriverName, cfg.Database.DataSourceName)
-	if err != nil {
-		log.Fatal("error opening db", err)
-	}
+	//db, err := sql.Open("sqlite3", "./data.db")
+	//if err != nil {
+	//	log.Fatal("error opening db", err)
+	//}
 	redisClient := redis.NewClient(&redis.Options{
 		Addr:     cfg.Redis.Addr,
 		Password: cfg.Redis.Password,
 		DB:       cfg.Redis.DB,
 	})
 
+	pgStore := postgresql.NewPostgreSQL(pg.Connect(&pg.Options{
+		Addr:     cfg.Database.Addr,
+		User:     cfg.Database.User,
+		Password: cfg.Database.Password,
+		Database: cfg.Database.Database,
+	}))
+
 	server := server2.NewToDoHttpServer(
 		cfg.JwtKey,
 		services.NewToDoService(
 			services.WithConfig(&cfg),
-			services.WithStore(&sqllite.LiteDB{DB: db}),
+			services.WithStore(pgStore),
 			services.WithCache(cache.NewRedisCache(redisClient)),
 		),
 	)
