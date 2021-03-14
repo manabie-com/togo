@@ -12,6 +12,10 @@ type LiteDB struct {
 	DB *sql.DB
 }
 
+func NewSqlLite(DB *sql.DB) *LiteDB{
+	return &LiteDB{DB: DB}
+}
+
 // RetrieveTasks returns tasks if match userID AND createDate.
 func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate string) ([]*storages.Task, error) {
 	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`
