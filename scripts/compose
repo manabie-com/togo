@@ -1,0 +1,6 @@
+#!/bin/sh
+
+cd `dirname $0`/../
+projectName=$(basename `pwd` | sed s/-//g)
+compose="docker-compose --file deploy/dev/docker-compose.yml -p $projectName"
+$compose "$@"

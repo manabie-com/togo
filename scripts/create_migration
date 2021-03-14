@@ -1,0 +1,14 @@
+#!/bin/sh
+
+cd `dirname $0`/../
+projectRoot=$(pwd)
+
+# Show prompt
+clear >/dev/tty
+echo "Give Me Migrations File Name (create_user_table): " >/dev/tty
+tput cnorm >/dev/tty 2>/dev/null || tput vs >/dev/tty 2>/dev/null
+read input </dev/tty
+
+docker run -v $projectRoot/db/migrations:/migrations \
+  --user "$(id -u):$(id -g)" \
+  migrate/migrate create -dir /migrations -ext sql -seq $input
