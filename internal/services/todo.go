@@ -3,6 +3,8 @@ package services
 import (
 	"context"
 	"fmt"
+	"github.com/banhquocdanh/togo/internal/cache"
+	"github.com/banhquocdanh/togo/internal/config"
 	"github.com/banhquocdanh/togo/internal/storages"
 	"github.com/dgrijalva/jwt-go"
 	"time"
@@ -14,7 +16,9 @@ var Now = time.Now
 
 // ToDoService implement HTTserver
 type ToDoService struct {
-	Store storages.StoreInterface
+	config *config.Config
+	Store  storages.StoreInterface
+	Cache  cache.Cache
 }
 
 type Option func(service *ToDoService)
@@ -29,9 +33,21 @@ func NewToDoService(opts ...Option) *ToDoService {
 
 }
 
+func WithConfig(cfg *config.Config) Option {
+	return func(srv *ToDoService) {
+		srv.config = cfg
+	}
+}
+
 func WithStore(db storages.StoreInterface) Option {
 	return func(srv *ToDoService) {
 		srv.Store = db
+	}
+}
+
+func WithCache(cache cache.Cache) Option {
+	return func(srv *ToDoService) {
+		srv.Cache = cache
 	}
 }
 
@@ -86,13 +102,18 @@ func (s *ToDoService) Login(ctx context.Context, userID, pw string, jwtKey strin
 		return "", fmt.Errorf("user/pw is incorrect")
 	}
 
-	return s.createToken(userID, jwtKey)
+	token, err := s.createToken(userID, jwtKey)
+	if err != nil {
+		return token, nil
+	}
+
+	return token, s.Cache.AddToken(ctx, token, time.Minute*s.config.TokenTIL)
 }
 
 func (s *ToDoService) createToken(id string, jwtKey string) (string, error) {
 	atClaims := jwt.MapClaims{}
 	atClaims["user_id"] = id
-	atClaims["exp"] = Now().Add(time.Minute * 15).Unix()
+	atClaims["exp"] = Now().Add(time.Minute * time.Duration(s.config.TokenTIL)).Unix()
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	token, err := at.SignedString([]byte(jwtKey))
 	if err != nil {
@@ -126,5 +147,6 @@ func (s *ToDoService) ValidToken(token, jwtKey string) (string, error) {
 	if !ok {
 		return "", fmt.Errorf("not found expired time")
 	}
-	return id, nil
+
+	return id, s.Cache.ValidateToken(context.Background(), token)
 }

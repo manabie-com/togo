@@ -46,7 +46,7 @@ func (s *ToDoHttpServer) ServeHTTP(resp http.ResponseWriter, req *http.Request) 
 		token := req.Header.Get("Authorization")
 		userID, err := s.srv.ValidToken(token, s.JWTKey)
 		if err != nil {
-			HttpUnauthorized(resp, "invalid token")
+			HttpUnauthorized(resp, err.Error())
 			return
 		}
 		req = req.WithContext(context.WithValue(req.Context(), userAuthKey(0), userID))
@@ -137,7 +137,7 @@ func (s *ToDoHttpServer) login(resp http.ResponseWriter, req *http.Request) {
 
 	token, err := s.srv.Login(req.Context(), id, pw, s.JWTKey)
 	if err != nil {
-		HttpUnauthorized(resp, "incorrect user_id/pwd")
+		HttpUnauthorized(resp, err.Error())
 		return
 	}
 
