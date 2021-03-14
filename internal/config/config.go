@@ -26,11 +26,11 @@ type Config struct {
 	JwtKey   string         `json:"jwt_key"`
 	Redis    RedisConfig    `json:"redis"`
 	Database DatabaseConfig `json:"database"`
-	tokenTIL uint           `json:"token_til"` // Minutes
+	TokenTimeDuration uint `json:"token_time_duration"`  // Minutes
 }
 
 func(c*Config) TokenTIL() time.Duration{
-	return time.Duration(c.tokenTIL) * time.Minute
+	return time.Duration(c.TokenTimeDuration) * time.Minute
 }
 
 // Load config from env
