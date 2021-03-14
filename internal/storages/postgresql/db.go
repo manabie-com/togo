@@ -101,7 +101,7 @@ func (p *PostgreSql) addTaskWithLock(ctx context.Context, t *storages.Task) erro
 		return fmt.Errorf("max todo task")
 	}
 
-	mutex := p.rs.NewMutex(generateMutexKey(t.UserID), redsync.WithExpiry(8*time.Minute))
+	mutex := p.rs.NewMutex(generateMutexKey(t.UserID), redsync.WithExpiry(8*time.Second))
 	if err := mutex.Lock(); err != nil {
 		return err
 	}
