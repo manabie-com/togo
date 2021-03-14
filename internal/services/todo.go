@@ -122,14 +122,9 @@ func (s *ToDoService) ValidToken(token, jwtKey string) (string, error) {
 		return "", fmt.Errorf("not found userID")
 	}
 
-	exp, ok := claims["exp"].(int64)
+	_, ok = claims["exp"]
 	if !ok {
 		return "", fmt.Errorf("not found expired time")
 	}
-
-	if Now().Unix() > exp {
-		return "", fmt.Errorf("token is expired")
-	}
-
 	return id, nil
 }
