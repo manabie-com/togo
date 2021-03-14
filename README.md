@@ -43,4 +43,7 @@ The key point missing:
 - improve API's response
 - add log to issue tracing
 - improve code coverage
+- detect sql injection
+- graceful shutdown
+- CI/CD
 
