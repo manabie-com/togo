@@ -54,3 +54,37 @@ CREATE TABLE tasks (
 
 ### Sequence diagram
 ![auth and create tasks request](https://github.com/manabie-com/togo/blob/master/docs/sequence.svg)
+
+
+### Structure
+__database
+|  |__database.go              
+|__migrations
+|  |__sql file to migration
+|__src
+|  |__modules
+|     |__*{module}
+|        |__router
+|        |__controller
+|        |__model
+|
+|__main.go
+
+### How to run
+1. make sure your computer was installed docker and docker-compose 
+2. run command: `docker-compose up --build -d`
+3. create table `users` and `tasks` for posgre database (missing handle migrations by commandline) so please use some tool (dbeaver,.....) to run sql create table
+4. test api:
+   - [POST][http://localhost:8080/users][{"username": "", "password": ""}] register user
+   - [POST][http://localhost:8080/auth/login][{"username": "", "password": ""}] user login
+   - [POST][http://localhost:8080/tasks][{"content": ""}] user create task (don't forget     pass header `Authorization` with `Bearer {token}` after login)
+
+### what is missing or want to improve but don't have enough time
+1. Don't have unitest and integration
+2. Don't add index optimize DB
+3. Missing write commadline migration database
+
+### Reason
+1. I don't want to make excuses but I have been sick for 3 out of 7 days
+2. This is the first time i write Golang so i spend so much time to learn syntax and some basic in Golang
+3. Spend so much time to structure source code.
