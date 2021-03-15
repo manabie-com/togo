@@ -11,13 +11,20 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/storages"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	postgres "github.com/manabie-com/togo/internal/storages/postgres"
 )
 
 // ToDoService implement HTTP server
 type ToDoService struct {
-	JWTKey string
-	Store  *sqllite.LiteDB
+	JWTKey         string
+	Store          *postgres.PostgresDB
+	MaxTasksConfig int16
+}
+
+// TestP for test
+type TestP struct {
+	Name string
+	Age  int16
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
@@ -50,12 +57,22 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 			s.addTask(resp, req)
 		}
 		return
+	case "/test":
+		if http.MethodGet != "" {
+			resp.Header().Set("Content-Type", "application/json")
+			var p = TestP{
+				Age:  19,
+				Name: "Hi",
+			}
+			json.NewEncoder(resp).Encode(p)
+			return
+		}
 	}
 }
 
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
 	id := value(req, "user_id")
-	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
+	if !s.Store.ValidateUser(id, value(req, "password")) {
 		resp.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": "incorrect user_id/pwd",
@@ -81,7 +98,6 @@ func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	id, _ := userIDFromCtx(req.Context())
 	tasks, err := s.Store.RetrieveTasks(
-		req.Context(),
 		sql.NullString{
 			String: id,
 			Valid:  true,
@@ -115,13 +131,25 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 
 	now := time.Now()
 	userID, _ := userIDFromCtx(req.Context())
+
+	// Check number of task user can add per day
+	isMaxTask, curNumTask := s.Store.CheckMaxTasksPerDay(userID, s.MaxTasksConfig)
+	if isMaxTask == true {
+		resp.WriteHeader(http.StatusNotAcceptable)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": "User tasks are limited, cant add more, comeback tomorrow",
+		})
+		return
+	}
+
+	//
 	t.ID = uuid.New().String()
 	t.UserID = userID
 	t.CreatedDate = now.Format("2006-01-02")
 
 	resp.Header().Set("Content-Type", "application/json")
 
-	err = s.Store.AddTask(req.Context(), t)
+	err = s.Store.AddTask(t)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
@@ -129,6 +157,8 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 		})
 		return
 	}
+	// Increase number of CurrentNumberTask of user
+	s.Store.IncreaseCurrentNumberTask(userID, curNumTask)
 
 	json.NewEncoder(resp).Encode(map[string]*storages.Task{
 		"data": t,
