@@ -1,8 +1,0 @@
-#!/bin/sh
-
-cd `dirname $0`/../
-projectName=$(basename `pwd` | sed s/-//g)
-serviceName=todo
-
-compose="docker-compose --file deploy/dev/docker-compose.yml -p $projectName"
-$compose exec $serviceName go run cmd/todoseed/todoseed.go

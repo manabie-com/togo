@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"time"
 
 	"github.com/go-chi/jwtauth/v5"
@@ -16,8 +17,8 @@ func NewAuthService(userRepo d.UserRepository) *AuthService {
 	return &AuthService{userRepo}
 }
 
-func (s *AuthService) ValidateUser(tokenAuth *jwtauth.JWTAuth, cred d.UserAuthParam) (string, error) {
-	user, err := s.UserRepo.GetByCredentials(cred.Username, cred.Password)
+func (s *AuthService) ValidateUser(ctx context.Context, tokenAuth *jwtauth.JWTAuth, cred d.UserAuthParam) (string, error) {
+	user, err := s.UserRepo.GetByCredentials(ctx, cred.Username, cred.Password)
 	if err != nil {
 		return "", err
 	}

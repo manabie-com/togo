@@ -14,6 +14,21 @@ import (
 )
 
 func main() {
+	args := os.Args[1:]
+	if len(args) == 0 {
+		log.Fatalln("Migration command either 'up' or 'down' or 'force' is required")
+	}
+	if len(args) == 3 {
+		if args[2] == "-t" {
+			os.Setenv("DB_NAME", os.Getenv("DB_NAME")+"_test")
+		} else {
+			log.Fatalln("Invalid command arguments")
+		}
+	}
+	if len(args) > 3 {
+		log.Fatalln("Invalid command arguments")
+	}
+
 	migratePath := config.RootPath() + "/db/migrations"
 	m, err := p.GetMigrateInstance(migratePath)
 	if err != nil {
@@ -21,14 +36,6 @@ func main() {
 	}
 
 	defer m.Close()
-
-	args := os.Args[1:]
-	if len(args) == 0 {
-		log.Fatalln("Migration command either 'up' or 'down' or 'force' is required")
-	}
-	if len(args) > 2 {
-		log.Fatalln("Invalid command arguments")
-	}
 
 	switch args[0] {
 	case "up":

@@ -1,0 +1,7 @@
+#!/bin/sh
+
+cd `dirname $0`/../
+projectRoot=$(pwd)
+
+docker run -v "$projectRoot":/src \
+  -w /src vektra/mockery --all  --output "./internal/todo/mocks" --dir "./internal/todo/"

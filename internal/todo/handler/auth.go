@@ -35,7 +35,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := h.authService.ValidateUser(tokenAuth, authParam)
+	token, err := h.authService.ValidateUser(r.Context(), tokenAuth, authParam)
 	if err != nil {
 		rLog.WithField("err", err).Errorln()
 		h.responseError(w, http.StatusInternalServerError, "Internal Server Error")

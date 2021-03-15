@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"context"
 	"errors"
 	"time"
 )
@@ -18,9 +19,9 @@ type TaskCreateParam struct {
 }
 
 type TaskRepository interface {
-	CreateTaskForUser(int, TaskCreateParam) (*Task, error)
-	GetTasksForUser(int, string) ([]*Task, error)
-	GetTaskCount(int, string) (int, error)
+	CreateTaskForUser(context.Context, int, TaskCreateParam) (*Task, error)
+	GetTasksForUser(context.Context, int, string) ([]*Task, error)
+	GetTaskCount(context.Context, int, string) (int, error)
 }
 
 var ErrTaskLimitReached = errors.New("Task Limit Reached")

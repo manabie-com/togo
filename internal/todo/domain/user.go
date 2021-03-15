@@ -1,6 +1,9 @@
 package domain
 
-import "time"
+import (
+	"context"
+	"time"
+)
 
 // User reflects users data from DB
 type User struct {
@@ -16,6 +19,5 @@ type UserAuthParam struct {
 }
 
 type UserRepository interface {
-	GetByID(id int) (*User, error)
-	GetByCredentials(username string, password string) (*User, error)
+	GetByCredentials(context.Context, string, string) (*User, error)
 }

@@ -1,16 +1,21 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/jwtauth/v5"
+	mm "github.com/manabie-com/togo/internal/pkg/middleware"
 	"github.com/manabie-com/togo/internal/todo/domain"
 	s "github.com/manabie-com/togo/internal/todo/service"
+	log "github.com/sirupsen/logrus"
 )
 
 var tokenAuth *jwtauth.JWTAuth
@@ -27,6 +32,18 @@ func init() {
 func NewTodoHandler(todoRepo TodoRepositoryList) http.Handler {
 	r := chi.NewRouter()
 
+	// Http log
+	logger := log.New()
+	logger.Formatter = &log.JSONFormatter{
+		DisableTimestamp: true,
+	}
+	r.Use(middleware.RequestID)
+	r.Use(middleware.RealIP)
+	r.Use(mm.NewStructuredLogger(logger))
+	r.Use(middleware.Recoverer)
+	r.Use(middleware.Compress(5))
+	r.Use(middleware.Timeout(60 * time.Second))
+	r.Use(middleware.Heartbeat("/ping"))
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
@@ -60,8 +77,8 @@ func NewTodoHandler(todoRepo TodoRepositoryList) http.Handler {
 
 type AppHandler struct{}
 
-func (h *AppHandler) getUserIDFromCtx(r *http.Request) (int, error) {
-	_, claims, err := jwtauth.FromContext(r.Context())
+func (h *AppHandler) getUserIDFromCtx(ctx context.Context) (int, error) {
+	_, claims, err := jwtauth.FromContext(ctx)
 	if err != nil {
 		return 0, err
 	}

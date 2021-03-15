@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"time"
 
 	"github.com/manabie-com/togo/internal/pkg/config"
@@ -15,9 +16,12 @@ func NewTaskService(taskRepo d.TaskRepository) *TaskService {
 	return &TaskService{taskRepo}
 }
 
-func (s *TaskService) ListTaskForUser(userID int, dateStr string) ([]*d.Task, error) {
-	tasks, err := s.TaskRepo.GetTasksForUser(userID, dateStr)
+func (s *TaskService) ListTaskForUser(ctx context.Context, userID int, dateStr string) ([]*d.Task, error) {
+	if _, err := time.Parse("2006-01-02", dateStr); err != nil {
+		dateStr = time.Now().Format("2006-01-02")
+	}
 
+	tasks, err := s.TaskRepo.GetTasksForUser(ctx, userID, dateStr)
 	if err != nil {
 		return nil, err
 	}
@@ -25,8 +29,8 @@ func (s *TaskService) ListTaskForUser(userID int, dateStr string) ([]*d.Task, er
 	return tasks, nil
 }
 
-func (s *TaskService) CreateTaskForUser(userID int, param d.TaskCreateParam) (*d.Task, error) {
-	numTaskToday, err := s.TaskRepo.GetTaskCount(userID, time.Now().Format("2006-01-02"))
+func (s *TaskService) CreateTaskForUser(ctx context.Context, userID int, param d.TaskCreateParam) (*d.Task, error) {
+	numTaskToday, err := s.TaskRepo.GetTaskCount(ctx, userID, time.Now().Format("2006-01-02"))
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +39,7 @@ func (s *TaskService) CreateTaskForUser(userID int, param d.TaskCreateParam) (*d
 		return nil, d.ErrTaskLimitReached
 	}
 
-	task, err := s.TaskRepo.CreateTaskForUser(userID, param)
+	task, err := s.TaskRepo.CreateTaskForUser(ctx, userID, param)
 	if err != nil {
 		return nil, err
 	}

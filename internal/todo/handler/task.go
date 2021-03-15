@@ -3,7 +3,6 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
-	"time"
 
 	mm "github.com/manabie-com/togo/internal/pkg/middleware"
 	d "github.com/manabie-com/togo/internal/todo/domain"
@@ -25,7 +24,7 @@ func (h *TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 
-	currentUserID, err := h.getUserIDFromCtx(r)
+	currentUserID, err := h.getUserIDFromCtx(r.Context())
 	if err != nil {
 		rLog.WithField("err", err).Errorln()
 		h.responseError(w, http.StatusInternalServerError, "Internal Server Error")
@@ -39,7 +38,12 @@ func (h *TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	task, err := h.taskService.CreateTaskForUser(currentUserID, taskCreateParam)
+	if taskCreateParam.Content == "" {
+		h.responseError(w, http.StatusBadRequest, "Invalid content")
+		return
+	}
+
+	task, err := h.taskService.CreateTaskForUser(r.Context(), currentUserID, taskCreateParam)
 	if err == d.ErrTaskLimitReached {
 		h.responseError(w, http.StatusBadRequest, err.Error())
 		return
@@ -66,7 +70,7 @@ func (h *TaskHandler) ListTask(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 
-	currentUserID, err := h.getUserIDFromCtx(r)
+	currentUserID, err := h.getUserIDFromCtx(r.Context())
 	if err != nil {
 		rLog.WithField("err", err).Errorln()
 		h.responseError(w, http.StatusInternalServerError, "Internal Server Error")
@@ -74,11 +78,7 @@ func (h *TaskHandler) ListTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	dateParam := r.URL.Query().Get("created_date")
-	if _, err := time.Parse("2006-01-02", dateParam); err != nil {
-		dateParam = time.Now().Format("2006-01-02")
-	}
-
-	tasks, err := h.taskService.ListTaskForUser(currentUserID, dateParam)
+	tasks, err := h.taskService.ListTaskForUser(r.Context(), currentUserID, dateParam)
 	if err != nil {
 		rLog.WithField("err", err).Errorln()
 		h.responseError(w, http.StatusInternalServerError, "Internal Server Error")
