@@ -1,0 +1,43 @@
+version: '3'
+services:
+  postgres:
+    image: "postgres:13"
+    restart: always
+    env_file: ./.env
+    environment:
+      POSTGRES_PASSWORD: linhdeptrai
+    ports:
+      - '5432:5432'
+    volumes:
+      - vol_postgres:/var/lib/postgresql/data
+      - ./postgres/init.sh:/docker-entrypoint-initdb.d/init.sh
+
+  pgadmin:
+    image: dpage/pgadmin4:5
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: linh@dep.trai
+      PGADMIN_DEFAULT_PASSWORD: linhdeptrai
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+    - "5080:80"
+    volumes:
+    - vol_pgadmin_data:/var/lib/pgadmin
+    depends_on:
+    - postgres
+
+  todo:
+    build: ../../build
+    restart: always
+    env_file: ./.env
+    volumes:
+      - ../../:/app
+    entrypoint: sh -c './scripts/wait-for postgres:5432 -t 120 -- air -c .air.toml'
+    ports:
+      - '5050:5050'
+    depends_on:
+      - postgres
+
+volumes:
+  vol_postgres:
+  vol_pgadmin_data:

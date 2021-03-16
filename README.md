@@ -1,56 +1,66 @@
 ### Overview
-This is a simple backend for a good old todo service, right now this service can handle login/list/create simple tasks.  
-To make it run:
-- `go run main.go`
-- Import Postman collection from `docs` to check example
 
-Candidates are invited to implement below requirements but the point is not to resolve everything in a perfect way but selective what you can do best in a limited time.  
-Thus, there is no correct-or-perfect answer, your solutions are way for us to continue the discussion and collaboration.
- 
-### Requirements
-Right now a user can add many task as they want, we want ability to limit N task per day.
+Just another To-do API refactored.
 
-Example: users are limited to create only 5 task only per day, if the daily limit is reached, return 4xx code to client and ignore the create request.
-#### Backend requirements
-- A nice README on how to run, what is missing, what else you want to improve but don't have enough time
-- Fork this repo and show us your development progess by a PR.
-- Write integration tests for this project
-- Make this code DRY
-- Write unit test for `services` layer
-- Change from using `SQLite` to `Postgres` with `docker-compose`
-- This project include many issues from code to DB strucutre, feel free to optimize them.
-#### Frontend requirements
-- A nice README on how to run, what is missing, what else you want to improve but don't have enough time
-- https://github.com/manabie-com/mana-do
-- Fork the above repo and show us your development progess by a PR.
-#### Optional requirements
-- Write unit test for `storages` layer
-- Split `services` layer to `use case` and `transport` layer
+### Setting up development environment
 
-### DB Schema
-```sql
--- users definition
+- Prequisites: Must have `docker` and `docker-compose` installed in the system
+- Run the following commands to have the system running:
 
-CREATE TABLE users (
-	id TEXT NOT NULL,
-	password TEXT NOT NULL,
-	max_todo INTEGER DEFAULT 5 NOT NULL,
-	CONSTRAINT users_PK PRIMARY KEY (id)
-);
+  ```sh
+  $ make run # Run the system with docker-compose
+  $ make migrate # Migrate database
+  $ make migrate_test # Migrate database for integration test
+  $ make seed # Seed default data
+  ```
 
-INSERT INTO users (id, password, max_todo) VALUES('firstUser', 'example', 5);
+- To-do API can be accessed at `http://localhost:5050` and PgAdmin can be accessed at `http://localhost:5080`.
+- Test can be run using `make test` command. But it requires the system already running with docker.
+- Default credentials seeded is `linh / linhdeptrai`. The exported Postman collection contains the latest changes.
 
--- tasks definition
+### Refactored Project Structure
 
-CREATE TABLE tasks (
-	id TEXT NOT NULL,
-	content TEXT NOT NULL,
-	user_id TEXT NOT NULL,
-    created_date TEXT NOT NULL,
-	CONSTRAINT tasks_PK PRIMARY KEY (id),
-	CONSTRAINT tasks_FK FOREIGN KEY (user_id) REFERENCES users(id)
-);
+```sh
+- build # Dockerfile
+- cmd # Entrypoint to build app
+  - todo # Main app the API
+  - todomigrate # Migration 
+  - todoseed # Seed
+- db # Migrations and seeds sql
+- deploy # docker-compose file and config needed to deploy the system
+- internal
+  - pkg # Packages that will be used across apps
+  - todo # Main todo app codes
+    - domain # Hold domain objects, interfaces
+    - handler # HTTP handler, main app entry
+    - service # Business logic
+    - repository # DB access layer
+    - mocks # Mockery generated mocks
+    - tests # Integration tests
+- scripts # Scripts for easier development
 ```
 
-### Sequence diagram
-![auth and create tasks request](https://github.com/manabie-com/togo/blob/master/docs/sequence.svg)
+### What's done
+
+- Easier local development setup:
+  - Only docker and docker-compose needed.
+  - Live reload configured.
+  - Using Postgres with PgAdmin included.
+  - Migrate and seed command included.
+- Refactor code to have a clearer structure and better DRY.
+- Fix database's structures
+- Unit test for `service` and `repository` layer.
+- Integration tests with real database.
+- Makefile with necessary commands.
+- Using Postgresql to handle concurrent inserting tasks based on count condition
+
+### What to improve
+
+- More thorough integration test cases.
+- Better error handling and tracing.
+- Define request body and response structure for each entity
+- Better validation mechanism (validator object?)
+- Instead of using Postgresql to handle concurrent inserting tasks based on count condition, use Redis or other key-value DB with some kind of key locking mechanism for better performance.
+- Using Redis or other key-value DB for saving and invalidating jwtToken, so we can have Logout feature.
+- Implement refresh token feature.
+- Better timezone handling (currently can only handle 1 timezone)

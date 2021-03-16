@@ -61,24 +61,18 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTU3NDcyOTgsInVzZXJJRCI6MX0.Y059c4F3nXlUuw5qlvVZHEpF6Xoc9aCc179mNbvxhJo",
+						"value": "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTU5MTMwNjksInVzZXJJRCI6MX0.27Re56DbuoxYdMCA6GcO0sLPpcg1WwMKndUXtOAjPoo",
 						"type": "text"
 					}
 				],
 				"url": {
-					"raw": "localhost:5050/tasks?created_date=2021-03-15",
+					"raw": "localhost:5050/tasks",
 					"host": [
 						"localhost"
 					],
 					"port": "5050",
 					"path": [
 						"tasks"
-					],
-					"query": [
-						{
-							"key": "created_date",
-							"value": "2021-03-15"
-						}
 					]
 				}
 			},
@@ -91,7 +85,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTU3NDYzNDIsInVzZXJJRCI6MX0.8B-JWFruwdbK7dS-Uc7BJWayGkiutkMC6EDvcQy8mOo",
+						"value": "BEARER eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTU5MTMwNjksInVzZXJJRCI6MX0.27Re56DbuoxYdMCA6GcO0sLPpcg1WwMKndUXtOAjPoo",
 						"type": "text"
 					}
 				],
