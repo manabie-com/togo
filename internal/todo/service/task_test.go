@@ -125,23 +125,9 @@ func TestTaskService_CreateTaskForUser(t *testing.T) {
 		err      error
 	}{
 		{
-			"System Error count",
-			func() d.TaskRepository {
-				repo := &mocks.TaskRepository{}
-				repo.On("GetTaskCount", mock.Anything, 1, time.Now().Format("2006-01-02")).
-					Return(0, errors.New("System Error"))
-				return repo
-			}(),
-			args{userID: 1, param: d.TaskCreateParam{Content: "test"}},
-			nil,
-			errors.New("System Error"),
-		},
-		{
 			"System Error create",
 			func() d.TaskRepository {
 				repo := &mocks.TaskRepository{}
-				repo.On("GetTaskCount", mock.Anything, 1, time.Now().Format("2006-01-02")).
-					Return(2, nil)
 				repo.On("CreateTaskForUser", mock.Anything, 1, d.TaskCreateParam{Content: "test"}).
 					Return(nil, errors.New("System Error"))
 				return repo
@@ -154,8 +140,8 @@ func TestTaskService_CreateTaskForUser(t *testing.T) {
 			"Max tasks daily reached",
 			func() d.TaskRepository {
 				repo := &mocks.TaskRepository{}
-				repo.On("GetTaskCount", mock.Anything, 1, time.Now().Format("2006-01-02")).
-					Return(5, nil)
+				repo.On("CreateTaskForUser", mock.Anything, 1, d.TaskCreateParam{Content: "test"}).
+					Return(nil, nil)
 				return repo
 			}(),
 			args{userID: 1, param: d.TaskCreateParam{Content: "test"}},
@@ -166,8 +152,6 @@ func TestTaskService_CreateTaskForUser(t *testing.T) {
 			"Tasks created",
 			func() d.TaskRepository {
 				repo := &mocks.TaskRepository{}
-				repo.On("GetTaskCount", mock.Anything, 1, time.Now().Format("2006-01-02")).
-					Return(2, nil)
 				repo.On("CreateTaskForUser", mock.Anything, 1, d.TaskCreateParam{Content: "test"}).
 					Return(&d.Task{UserID: 1, Content: "test"}, nil)
 				return repo

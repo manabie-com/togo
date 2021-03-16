@@ -17,9 +17,9 @@ func NewPGUserRepository(dbConn *sqlx.DB) *PGUserRepository {
 	return &PGUserRepository{PGRepository{dbConn}}
 }
 
-func (t *PGUserRepository) GetByCredentials(ctx context.Context, username, password string) (*d.User, error) {
+func (r *PGUserRepository) GetByCredentials(ctx context.Context, username, password string) (*d.User, error) {
 	user := d.User{}
-	err := t.DBConn.GetContext(
+	err := r.DBConn.GetContext(
 		ctx, &user,
 		"SELECT * FROM users WHERE username = $1 AND password = crypt($2, password)",
 		username, password)

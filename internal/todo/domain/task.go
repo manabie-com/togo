@@ -21,7 +21,6 @@ type TaskCreateParam struct {
 type TaskRepository interface {
 	CreateTaskForUser(context.Context, int, TaskCreateParam) (*Task, error)
 	GetTasksForUser(context.Context, int, string) ([]*Task, error)
-	GetTaskCount(context.Context, int, string) (int, error)
 }
 
 var ErrTaskLimitReached = errors.New("Task Limit Reached")
