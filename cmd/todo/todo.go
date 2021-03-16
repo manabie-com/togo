@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+	_ "time/tzdata"
 
 	"github.com/manabie-com/togo/internal/pkg/db/postgres"
 	"github.com/manabie-com/togo/internal/todo/handler"

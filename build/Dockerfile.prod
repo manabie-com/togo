@@ -3,7 +3,7 @@ FROM golang:1.16-alpine as go_builder
 
 RUN apk update \ 
   && apk upgrade \
-  && apk add --no-cache ca-certificates tzdata zip \
+  && apk add --no-cache ca-certificates \
   && update-ca-certificates
 
 RUN mkdir -p /app
@@ -19,19 +19,11 @@ COPY . .
 RUN mkdir -p bin
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build --ldflags '-extldflags "-static"' -o bin/todo cmd/todo/todo.go
 
-WORKDIR /usr/share/zoneinfo
-# -0 means no compression.  Needed because go's
-# tz loader doesn't handle compressed data.
-RUN zip -q -r -0 /zoneinfo.zip .
-
 # Final image
 FROM scratch
 
 # CA certificate
 COPY --from=go_builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-# Timezone
-COPY --from=go_builder /zoneinfo.zip /
-ENV ZONEINFO /zoneinfo.zip
 
 COPY --from=go_builder /app/bin/ /app
 COPY --from=go_builder /app/db /app/db
