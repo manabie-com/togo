@@ -1,25 +1,24 @@
 package main
 
 import (
-	"database/sql"
+	"github.com/manabie-com/togo/internal/services"
+	"github.com/manabie-com/togo/internal/storages"
+	//_ "github.com/mattn/go-sqlite3"
+	_ "github.com/lib/pq"
 	"log"
 	"net/http"
-
-	"github.com/manabie-com/togo/internal/services"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
-
-	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
-	db, err := sql.Open("sqlite3", "./data.db")
+	//db, err := sql.Open("sqlite3", "./data.db")
+	db, err := storages.GetConnection("postgres", "localhost", 5432, "postgres", "postgres", "todo")
 	if err != nil {
 		log.Fatal("error opening db", err)
 	}
 
 	http.ListenAndServe(":5050", &services.ToDoService{
 		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
+		Store: &storages.LiteDB{
 			DB: db,
 		},
 	})
