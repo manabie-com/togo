@@ -1,0 +1,23 @@
+version: "3.7"
+
+services:
+  db:
+    container_name: db
+    image: postgres
+    restart: always
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    volumes:
+      - pg_data:/var/lib/postgresql/data/
+    env_file:
+      - testing.env
+    networks:
+      - pg_net
+
+
+networks:
+  pg_net:
+    driver: bridge
+
+volumes:
+  pg_data:
