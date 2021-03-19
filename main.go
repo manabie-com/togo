@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -12,6 +13,8 @@ import (
 )
 
 func main() {
+	fmt.Printf("hello")
+
 	db, err := sql.Open("sqlite3", "./data.db")
 	if err != nil {
 		log.Fatal("error opening db", err)
@@ -23,4 +26,5 @@ func main() {
 			DB: db,
 		},
 	})
+
 }
