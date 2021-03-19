@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/manabie-com/togo/config"
 	"github.com/manabie-com/togo/routes"
 	"log"
 	"net/http"
@@ -9,14 +10,18 @@ import (
 )
 
 func main() {
+	var config *config.Config = config.LoadConfig("")
+
 	srv := http.Server{
-		Addr:    "0.0.0.0:8080",
+		Addr:    "0.0.0.0:" + config.ServerPort,
 		Handler: ApplicationRecovery(routes.Router),
 		//ReadTimeout:  15 * time.Second,
 		//WriteTimeout: 15 * time.Second,
 	}
 
+	log.Println("Server is listening on port: " + config.ServerPort)
 	log.Fatal(srv.ListenAndServe())
+	log.Println("Shutting down...")
 }
 
 func ApplicationRecovery(next http.Handler) http.Handler {

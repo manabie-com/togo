@@ -19,16 +19,24 @@ type Routes []Route
 
 var routes = Routes{
 	Route{
-		Name:        "Docs",
+		Name:        "API LOGIN",
 		Method:      "GET",
-		Pattern:     "/v2/docs",
+		Pattern:     "/auth/login",
 		HandlerFunc: controllers.AA,
 	},
 
 	Route{
-		Name:        "GetUserByName",
+		Name:        "API GET ALL TASKS",
 		Method:      "GET",
-		Pattern:     "/v2/user/{username}",
+		Pattern:     "/tasks",
+		HandlerFunc: controllers.AA,
+		Secure:      true,
+	},
+
+	Route{
+		Name:        "API CREATE A TASK",
+		Method:      "POST",
+		Pattern:     "/tasks",
 		HandlerFunc: controllers.AA,
 		Secure:      true,
 	},
