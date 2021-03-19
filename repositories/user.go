@@ -1,12 +1,13 @@
 package repositories
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/manabie-com/togo/models"
+	"gorm.io/gorm"
 )
 
 type IUserRepository interface {
 	GetUserByUserName(username string) (*models.User, error)
+	AddUser(user *models.User) (*models.User, error)
 }
 
 type UserRepository struct {
@@ -17,4 +18,9 @@ func (userRepository *UserRepository) GetUserByUserName(username string) (*model
 	var user models.User
 	result := userRepository.DB.First(&user, username)
 	return &user, result.Error
+}
+
+func (userRepository *UserRepository) AddUser(user *models.User) (*models.User, error) {
+	result := userRepository.DB.Create(user)
+	return user, result.Error
 }

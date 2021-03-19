@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/manabie-com/togo/models"
+	"gorm.io/gorm"
 )
 
 type ITaskRepository interface {

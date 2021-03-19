@@ -9,25 +9,11 @@ services:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
     volumes:
       - pg_data:/var/lib/postgresql/data/
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
     env_file:
       - .env
     networks:
       - pg_net
-
-  pgadmin:
-    container_name: pgadmin
-    image: dpage/pgadmin4
-    restart: always
-    ports:
-      - "${PGADMIN_EXPOSE_PORT}:${PGADMIN_LISTEN_PORT}"
-    volumes:
-      - pg_admin_data:/var/lib/pgadmin
-    env_file:
-      - .env
-    networks:
-      - pg_net
-    depends_on:
-      - db
 
 networks:
   pg_net:
@@ -35,4 +21,3 @@ networks:
 
 volumes:
   pg_data:
-  pg_admin_data:

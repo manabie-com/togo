@@ -10,16 +10,19 @@ import (
 )
 
 func main() {
-	var config *config.Config = config.LoadConfig("")
+	config.LoadEnv("")
+	env := config.NewEnv
+
+	config.ConnectDB()
 
 	srv := http.Server{
-		Addr:    "0.0.0.0:" + config.ServerPort,
+		Addr:    "0.0.0.0:" + env.ServerPort,
 		Handler: ApplicationRecovery(routes.Router),
 		//ReadTimeout:  15 * time.Second,
 		//WriteTimeout: 15 * time.Second,
 	}
 
-	log.Println("Server is listening on port: " + config.ServerPort)
+	log.Println("Server is listening on port: " + env.ServerPort)
 	log.Fatal(srv.ListenAndServe())
 	log.Println("Shutting down...")
 }

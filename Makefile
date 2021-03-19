@@ -4,5 +4,8 @@ check_env:
 setup:
 	docker-compose up -d
 
+migrate:
+	go run cmd/db/main.go
+
 start:
 	go run cmd/server/main.go
