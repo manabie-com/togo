@@ -1,4 +1,5 @@
 version: "3.7"
+
 services:
   db:
     container_name: db
@@ -11,5 +12,17 @@ services:
     env_file:
       - .env
 
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    restart: always
+    ports:
+      - ${PGADMIN_LISTEN_PORT}:${PGADMIN_LISTEN_PORT}
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    env_file:
+      - .env
+
 volumes:
   postgres_data:
+  pgadmin_data:

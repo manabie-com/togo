@@ -1,5 +1,5 @@
 setup:
-	docker-compose -f docker/docker-compose.yml --env-file config/envs/.env up
+	docker-compose -f config/docker-compose.yaml up -d
 
 check_env:
-	docker-compose -f docker/docker-compose.yml --env-file config/envs/.env config
+	docker-compose -f config/docker-compose.yaml config
