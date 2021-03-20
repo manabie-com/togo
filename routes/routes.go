@@ -7,18 +7,9 @@ import (
 	"github.com/manabie-com/togo/middlewares"
 	"github.com/manabie-com/togo/repositories"
 	"github.com/manabie-com/togo/services"
+	"gorm.io/gorm"
 	"net/http"
 )
-
-var userRepo = repositories.NewUserRepository(db.DB)
-var userService = services.NewUserService(&userRepo)
-
-var taskRepo = repositories.NewTaskRepository(db.DB)
-var taskService = services.NewTaskService(&taskRepo)
-
-var authController = controllers.NewAuthController(&userService)
-
-var taskController = controllers.NewTaskController(&userService, &taskService)
 
 type Route struct {
 	Name        string
@@ -30,41 +21,55 @@ type Route struct {
 
 type Routes []Route
 
-var routes = Routes{
-	Route{
-		Name:        "API LOGIN",
-		Method:      "POST",
-		Pattern:     "/api/auth/login",
-		HandlerFunc: authController.Login,
-		Middlewares: []middlewares.Middleware{
-			middlewares.LoggingMiddleware,
-		},
-	},
+func getRoutes(db *gorm.DB) Routes {
+	var userRepo = repositories.NewUserRepository(db)
+	var userService = services.NewUserService(&userRepo)
 
-	Route{
-		Name:        "API GET ALL TASKS",
-		Method:      "GET",
-		Pattern:     "/api/tasks",
-		HandlerFunc: taskController.AA,
-		Middlewares: []middlewares.Middleware{
-			middlewares.AuthMiddleware,
-			middlewares.LoggingMiddleware,
-		},
-	},
+	var taskRepo = repositories.NewTaskRepository(db)
+	var taskService = services.NewTaskService(&taskRepo)
 
-	Route{
-		Name:        "API CREATE A TASK",
-		Method:      "POST",
-		Pattern:     "/api/tasks",
-		HandlerFunc: taskController.AA,
-		Middlewares: []middlewares.Middleware{
-			middlewares.AuthMiddleware,
-			middlewares.LoggingMiddleware,
+	var authController = controllers.NewAuthController(&userService)
+
+	var taskController = controllers.NewTaskController(&userService, &taskService)
+
+	return Routes{
+		Route{
+			Name:        "API LOGIN",
+			Method:      "POST",
+			Pattern:     "/api/auth/login",
+			HandlerFunc: authController.Login,
+			Middlewares: []middlewares.Middleware{
+				middlewares.LoggingMiddleware,
+			},
 		},
-	},
+
+		Route{
+			Name:        "API GET ALL TASKS",
+			Method:      "GET",
+			Pattern:     "/api/tasks",
+			HandlerFunc: taskController.GetTasks,
+			Middlewares: []middlewares.Middleware{
+				middlewares.LoggingMiddleware,
+				middlewares.AuthMiddleware,
+			},
+		},
+
+		Route{
+			Name:        "API CREATE A TASK",
+			Method:      "POST",
+			Pattern:     "/api/tasks",
+			HandlerFunc: taskController.AddTask,
+			Middlewares: []middlewares.Middleware{
+				middlewares.LoggingMiddleware,
+				middlewares.AuthMiddleware,
+			},
+		},
+	}
 }
 
 func NewRouter() *mux.Router {
+	routes := getRoutes(db.DB)
+
 	router := mux.NewRouter().StrictSlash(true)
 
 	router.NotFoundHandler = http.HandlerFunc(controllers.NotFound)

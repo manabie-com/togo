@@ -1,7 +1,7 @@
 package utils
 
 type AddTaskRequest struct {
-	Content string `json:"content" validate:"required"`
+	Content string `validate:"required,min=1,max=200" json:"content"`
 }
 
 type LoginRequest struct {

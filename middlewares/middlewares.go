@@ -1,6 +1,8 @@
 package middlewares
 
 import (
+	"context"
+	"github.com/manabie-com/togo/utils"
 	"log"
 	"net/http"
 	"time"
@@ -18,9 +20,18 @@ func LoggingMiddleware(next http.HandlerFunc) http.HandlerFunc {
 
 func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		//TODO: Add authentication
-		log.Println("Authentication required")
-		next.ServeHTTP(w, r)
+		token, err := utils.VerifyToken(r)
+
+		if err != nil {
+			utils.JSON(w, http.StatusUnauthorized, map[string]string{"message": "Invalid Token"})
+			return
+		}
+
+		username := utils.ExtractTokenMetadata(token)
+
+		ctx := context.WithValue(r.Context(), "username", username)
+
+		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 }
 

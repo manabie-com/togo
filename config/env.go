@@ -4,6 +4,7 @@ import (
 	"github.com/joho/godotenv"
 	"log"
 	"os"
+	"strconv"
 )
 
 type Env struct {
@@ -13,6 +14,8 @@ type Env struct {
 	DbNameTesting string
 	DbPort        string
 	ServerPort    string
+	JwtSecret     string
+	JwtExpires    int64
 }
 
 var NewEnv *Env
@@ -28,6 +31,12 @@ func LoadEnv(name string) *Env {
 		log.Fatal("Error loading .env file")
 	}
 
+	expires, _ := strconv.ParseInt(os.Getenv("JWT_EXPIRES"), 10, 64)
+
+	if err != nil {
+		log.Fatal("Invalid JWT_EXPIRES in .env file")
+	}
+
 	var envMap = Env{
 		DbUser:        os.Getenv("POSTGRES_USER"),
 		DbPass:        os.Getenv("POSTGRES_PASSWORD"),
@@ -35,6 +44,8 @@ func LoadEnv(name string) *Env {
 		DbNameTesting: os.Getenv("POSTGRES_DB_TESTING"),
 		DbPort:        os.Getenv("POSTGRES_PORT"),
 		ServerPort:    os.Getenv("SERVER_PORT"),
+		JwtSecret:     os.Getenv("JWT_SECRET"),
+		JwtExpires:    expires,
 	}
 
 	NewEnv = &envMap
