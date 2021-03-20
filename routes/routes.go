@@ -3,16 +3,29 @@ package routes
 import (
 	"github.com/gorilla/mux"
 	"github.com/manabie-com/togo/controllers"
+	"github.com/manabie-com/togo/db"
 	"github.com/manabie-com/togo/middlewares"
+	"github.com/manabie-com/togo/repositories"
+	"github.com/manabie-com/togo/services"
 	"net/http"
 )
+
+var userRepo = repositories.NewUserRepository(db.DB)
+var userService = services.NewUserService(&userRepo)
+
+var taskRepo = repositories.NewTaskRepository(db.DB)
+var taskService = services.NewTaskService(&taskRepo)
+
+var authController = controllers.NewAuthController(&userService)
+
+var taskController = controllers.NewTaskController(&userService, &taskService)
 
 type Route struct {
 	Name        string
 	Method      string
 	Pattern     string
-	Secure      bool
 	HandlerFunc http.HandlerFunc
+	Middlewares []middlewares.Middleware
 }
 
 type Routes []Route
@@ -20,29 +33,38 @@ type Routes []Route
 var routes = Routes{
 	Route{
 		Name:        "API LOGIN",
-		Method:      "GET",
-		Pattern:     "/auth/login",
-		HandlerFunc: controllers.AA,
+		Method:      "POST",
+		Pattern:     "/api/auth/login",
+		HandlerFunc: authController.Login,
+		Middlewares: []middlewares.Middleware{
+			middlewares.LoggingMiddleware,
+		},
 	},
 
 	Route{
 		Name:        "API GET ALL TASKS",
 		Method:      "GET",
-		Pattern:     "/tasks",
-		HandlerFunc: controllers.AA,
-		Secure:      true,
+		Pattern:     "/api/tasks",
+		HandlerFunc: taskController.AA,
+		Middlewares: []middlewares.Middleware{
+			middlewares.AuthMiddleware,
+			middlewares.LoggingMiddleware,
+		},
 	},
 
 	Route{
 		Name:        "API CREATE A TASK",
 		Method:      "POST",
-		Pattern:     "/tasks",
-		HandlerFunc: controllers.AA,
-		Secure:      true,
+		Pattern:     "/api/tasks",
+		HandlerFunc: taskController.AA,
+		Middlewares: []middlewares.Middleware{
+			middlewares.AuthMiddleware,
+			middlewares.LoggingMiddleware,
+		},
 	},
 }
 
-func newRouter() *mux.Router {
+func NewRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 
 	router.NotFoundHandler = http.HandlerFunc(controllers.NotFound)
@@ -50,13 +72,7 @@ func newRouter() *mux.Router {
 	router.MethodNotAllowedHandler = http.HandlerFunc(controllers.NotAllowed)
 
 	for _, route := range routes {
-		var handler http.Handler
-
-		if route.Secure {
-			handler = middlewares.AuthMiddleware(middlewares.LoggingMiddleware(route.HandlerFunc))
-		} else {
-			handler = middlewares.LoggingMiddleware(route.HandlerFunc)
-		}
+		var handler http.Handler = middlewares.Middlewares(route.HandlerFunc, route.Middlewares...)
 
 		router.
 			Methods(route.Method).
@@ -67,5 +83,3 @@ func newRouter() *mux.Router {
 
 	return router
 }
-
-var Router = middlewares.Middleware(newRouter())

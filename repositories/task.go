@@ -6,8 +6,8 @@ import (
 )
 
 type ITaskRepository interface {
-	GetTaskById(id int) (*models.Task, error)
-	GetAllTasks() (*[]models.Task, error)
+	GetTaskById(id uint64) (*models.Task, error)
+	GetTasks() (*[]models.Task, error)
 	CreateTask(task *models.Task) (*models.Task, error)
 }
 
@@ -15,19 +15,23 @@ type TaskRepository struct {
 	DB *gorm.DB
 }
 
-func (taskRepository *TaskRepository) GetTaskById(id uint64) (*models.Task, error) {
+func NewTaskRepository(db *gorm.DB) ITaskRepository {
+	return &TaskRepository{DB: db}
+}
+
+func (taskRepo *TaskRepository) GetTaskById(id uint64) (*models.Task, error) {
 	var task models.Task
-	result := taskRepository.DB.First(&task, id)
+	result := taskRepo.DB.First(&task, id)
 	return &task, result.Error
 }
 
-func (taskRepository *TaskRepository) GetAllTasks() (*[]models.Task, error) {
+func (taskRepo *TaskRepository) GetTasks() (*[]models.Task, error) {
 	var tasks []models.Task
-	result := taskRepository.DB.Find(&tasks)
+	result := taskRepo.DB.Find(&tasks)
 	return &tasks, result.Error
 }
 
-func (taskRepository *TaskRepository) CreateTask(task *models.Task) (*models.Task, error) {
-	result := taskRepository.DB.Create(task)
+func (taskRepo *TaskRepository) CreateTask(task *models.Task) (*models.Task, error) {
+	result := taskRepo.DB.Create(task)
 	return task, result.Error
 }

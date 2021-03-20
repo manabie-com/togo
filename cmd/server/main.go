@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/manabie-com/togo/config"
+	"github.com/manabie-com/togo/db"
 	"github.com/manabie-com/togo/routes"
 	"log"
 	"net/http"
@@ -13,11 +14,11 @@ func main() {
 	config.LoadEnv("")
 	env := config.NewEnv
 
-	config.ConnectDB()
+	db.ConnectDB()
 
 	srv := http.Server{
 		Addr:    "0.0.0.0:" + env.ServerPort,
-		Handler: ApplicationRecovery(routes.Router),
+		Handler: ApplicationRecovery(routes.NewRouter()),
 		//ReadTimeout:  15 * time.Second,
 		//WriteTimeout: 15 * time.Second,
 	}

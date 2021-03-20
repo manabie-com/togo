@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"github.com/manabie-com/togo/models"
+	"github.com/manabie-com/togo/utils"
 	"gorm.io/gorm"
 )
 
@@ -14,13 +15,25 @@ type UserRepository struct {
 	DB *gorm.DB
 }
 
-func (userRepository *UserRepository) GetUserByUserName(username string) (*models.User, error) {
+func NewUserRepository(db *gorm.DB) IUserRepository {
+	return &UserRepository{DB: db}
+}
+
+func (userRepo *UserRepository) GetUserByUserName(username string) (*models.User, error) {
 	var user models.User
-	result := userRepository.DB.First(&user, username)
+	result := userRepo.DB.First(&user, "username = ?", username)
 	return &user, result.Error
 }
 
-func (userRepository *UserRepository) AddUser(user *models.User) (*models.User, error) {
-	result := userRepository.DB.Create(user)
+func (userRepo *UserRepository) AddUser(user *models.User) (*models.User, error) {
+	hashedPass, err := utils.Hash(user.Password)
+
+	if err != nil {
+		return user, err
+	}
+
+	user.Password = hashedPass
+
+	result := userRepo.DB.Create(user)
 	return user, result.Error
 }

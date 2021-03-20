@@ -1,7 +1,8 @@
-package config
+package db
 
 import (
 	"fmt"
+	"github.com/manabie-com/togo/config"
 	"github.com/manabie-com/togo/models"
 	"github.com/manabie-com/togo/repositories"
 	"gorm.io/driver/postgres"
@@ -14,7 +15,7 @@ var DB *gorm.DB //database
 
 func ConnectDB() {
 	DSN := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=%s",
-		"localhost", NewEnv.DbUser, NewEnv.DbPass, NewEnv.DbName, NewEnv.DbPort, "Asia/Ho_Chi_Minh")
+		"localhost", config.NewEnv.DbUser, config.NewEnv.DbPass, config.NewEnv.DbName, config.NewEnv.DbPort, "Asia/Ho_Chi_Minh")
 
 	conn, err := gorm.Open(postgres.New(postgres.Config{
 		DSN:                  DSN,
@@ -27,7 +28,7 @@ func ConnectDB() {
 		log.Fatal("Failed to connect to database")
 	}
 
-	log.Println(fmt.Sprintf("Succeed to connect to database: %s", NewEnv.DbName))
+	log.Println(fmt.Sprintf("Succeed to connect to database: %s", config.NewEnv.DbName))
 
 	DB = conn
 
@@ -43,8 +44,17 @@ func Migrate() {
 }
 
 func Seed() {
-	UserRepo := repositories.UserRepository{
-		DB: DB,
+	userRepo := repositories.NewUserRepository(DB)
+	//UserRepo.AddUser(&models.User{Username: "huyha", Password: "123456", MaxTodo: 3})
+	aa, err := userRepo.GetUserByUserName("huyha")
+	if err != nil {
+		print("err", err)
 	}
-	UserRepo.AddUser(&models.User{Username: "huyha", Password: "123456", MaxTodo: 3})
+	print(aa.Password)
+	//err = utils.VerifyPassword(aa.Password, "123456")
+	//if err != nil {
+	//	print("no no no")
+	//}
+	////log.Printf(err)
+	////log.Printf(aa)
 }
