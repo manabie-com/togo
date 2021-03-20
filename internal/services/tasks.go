@@ -4,14 +4,20 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
+	"github.com/manabie-com/togo/internal/ratelimiters"
 	"github.com/manabie-com/togo/internal/storages"
 	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+)
+
+var (
+	limitTaskPerDay = 5
 )
 
 // ToDoService implement HTTP server
@@ -120,6 +126,22 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	t.CreatedDate = now.Format("2006-01-02")
 
 	resp.Header().Set("Content-Type", "application/json")
+
+	// Check taskRatelimiter
+	target := ratelimiters.GenTaskTarget(t.UserID)
+	totalTask := ratelimiters.Increase(target)
+	defer func() {
+		if err != nil {
+			ratelimiters.Decrease(target)
+		}
+	}()
+	if totalTask > limitTaskPerDay {
+		resp.WriteHeader(http.StatusTooManyRequests)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": fmt.Sprintf("Reach limit %d task per day", limitTaskPerDay),
+		})
+		return
+	}
 
 	err = s.Store.AddTask(req.Context(), t)
 	if err != nil {

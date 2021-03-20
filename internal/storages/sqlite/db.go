@@ -3,6 +3,7 @@ package sqllite
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/manabie-com/togo/internal/storages"
 )
@@ -10,6 +11,32 @@ import (
 // LiteDB for working with sqllite
 type LiteDB struct {
 	DB *sql.DB
+}
+
+func (l *LiteDB) GetTotalTaskToDayByAllUser() map[string]int {
+	result := map[string]int{}
+	stmt := `SELECT user_id, sum(CASE WHEN created_date >= ? THEN 1 ELSE 0 END) FROM tasks GROUP BY user_id`
+	rows, err := l.DB.QueryContext(context.Background(), stmt, time.Now().Round(24*time.Hour))
+	if err != nil {
+		return result
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			userId string
+			count  int
+		)
+		err := rows.Scan(&userId, &count)
+		if err != nil {
+			return result
+		}
+		result[userId] = count
+	}
+	if err := rows.Err(); err != nil {
+		return result
+	}
+	return result
 }
 
 // RetrieveTasks returns tasks if match userID AND createDate.
