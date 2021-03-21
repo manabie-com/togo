@@ -184,7 +184,6 @@ func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
 		return []byte(s.JWTKey), nil
 	})
 	if err != nil {
-		log.Println(err)
 		return req, false
 	}
 
