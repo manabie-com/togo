@@ -1,23 +1,26 @@
 ### Overview
-This is a simple backend for good old todo service, right now this service can handle login/list/create simple tasks.  
+This is a simple backend for a good old todo service, right now this service can handle login/list/create simple tasks.  
 To make it run:
 - `go run main.go`
 - Import Postman collection from `docs` to check example
 
 Candidates are invited to implement below requirements but the point is not to resolve everything in a perfect way but selective what you can do best in a limited time.  
-Thus, there is no correct-or-perfect answer, your solutions are way for us to continue the discussion and collaborating.
+Thus, there is no correct-or-perfect answer, your solutions are way for us to continue the discussion and collaboration.
  
 ### Requirements
 Right now a user can add many task as they want, we want ability to limit N task per day.
 
-Example: users are limited to create only 5 task only per day, if imit reached, return 4xx code to client and ignore the create request.
+Example: users are limited to create only 5 task only per day, if the daily limit is reached, return 4xx code to client and ignore the create request.
 #### Backend requirements
+- A nice README on how to run, what is missing, what else you want to improve but don't have enough time
 - Fork this repo and show us your development progess by a PR.
 - Write integration tests for this project
 - Make this code DRY
 - Write unit test for `services` layer
 - Change from using `SQLite` to `Postgres` with `docker-compose`
+- This project include many issues from code to DB strucutre, feel free to optimize them.
 #### Frontend requirements
+- A nice README on how to run, what is missing, what else you want to improve but don't have enough time
 - https://github.com/manabie-com/mana-do
 - Fork the above repo and show us your development progess by a PR.
 #### Optional requirements
