@@ -12,10 +12,10 @@ import (
 )
 
 func main() {
-	config.LoadEnv("")
+	config.LoadEnv()
 	env := config.NewEnv
 
-	conn := db.ConnectDB()
+	conn := db.ConnectDB(false)
 
 	defer db.DisconnectDB(conn)
 

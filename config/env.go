@@ -20,12 +20,8 @@ type Env struct {
 
 var NewEnv *Env
 
-func LoadEnv(name string) *Env {
-	if name == "" {
-		name = ".env"
-	}
-
-	err := godotenv.Load(name)
+func LoadEnv() *Env {
+	err := godotenv.Load()
 
 	if err != nil {
 		log.Fatal("Error loading .env file")

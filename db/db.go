@@ -11,9 +11,15 @@ import (
 	"log"
 )
 
-func ConnectDB() *gorm.DB {
+func ConnectDB(testing bool) *gorm.DB {
+	dbName := config.NewEnv.DbName
+
+	if testing {
+		dbName = config.NewEnv.DbNameTesting
+	}
+
 	DSN := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=%s",
-		"localhost", config.NewEnv.DbUser, config.NewEnv.DbPass, config.NewEnv.DbName, config.NewEnv.DbPort, "Asia/Ho_Chi_Minh")
+		"localhost", config.NewEnv.DbUser, config.NewEnv.DbPass, dbName, config.NewEnv.DbPort, "Asia/Ho_Chi_Minh")
 
 	conn, err := gorm.Open(postgres.New(postgres.Config{
 		DSN:                  DSN,
