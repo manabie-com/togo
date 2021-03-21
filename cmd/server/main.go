@@ -8,19 +8,23 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 func main() {
 	config.LoadEnv("")
 	env := config.NewEnv
 
-	db.ConnectDB()
+	conn := db.ConnectDB()
+
+	defer db.DisconnectDB(conn)
 
 	srv := http.Server{
-		Addr:    "0.0.0.0:" + env.ServerPort,
-		Handler: ApplicationRecovery(routes.NewRouter()),
-		//ReadTimeout:  15 * time.Second,
-		//WriteTimeout: 15 * time.Second,
+		Addr:           "0.0.0.0:" + env.ServerPort,
+		Handler:        ApplicationRecovery(routes.NewRouter(conn)),
+		ReadTimeout:    15 * time.Second,
+		WriteTimeout:   15 * time.Second,
+		MaxHeaderBytes: 1 << 20,
 	}
 
 	log.Println("Server is listening on port: " + env.ServerPort)

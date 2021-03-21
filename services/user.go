@@ -6,7 +6,7 @@ import (
 )
 
 type IUserService interface {
-	GetUserService(username string) (*models.User, error)
+	GetUserByUserName(username string) (*models.User, error)
 }
 
 type UserService struct {
@@ -17,6 +17,6 @@ func NewUserService(userRepository *repositories.IUserRepository) IUserService {
 	return &UserService{UserRepo: *userRepository}
 }
 
-func (userService *UserService) GetUserService(username string) (*models.User, error) {
+func (userService *UserService) GetUserByUserName(username string) (*models.User, error) {
 	return userService.UserRepo.GetUserByUserName(username)
 }

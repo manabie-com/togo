@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "05327fec-8670-470b-8253-f27686acf809",
+		"_postman_id": "744c796e-e652-456b-98c5-fc1f5bfd8382",
 		"name": "Test togo",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -8,26 +8,27 @@
 		{
 			"name": "Login",
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"huyha\",\n    \"password\": \"123456\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "localhost:5050/login?user_id=firstUser&password=example",
+					"raw": "localhost:5050/api/auth/login",
 					"host": [
 						"localhost"
 					],
 					"port": "5050",
 					"path": [
+						"api",
+						"auth",
 						"login"
-					],
-					"query": [
-						{
-							"key": "user_id",
-							"value": "firstUser"
-						},
-						{
-							"key": "password",
-							"value": "example"
-						}
 					]
 				}
 			},
@@ -50,23 +51,24 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTM0Mjc4MjEsInVzZXJfaWQiOiJmaXJzdFVzZXIifQ.zJdFGhDFwPcR1-VZyUGmYgNMEDHpNYsttYYvJPcI7h4",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2MTYzMTM5NTIsInVzZXJuYW1lIjoiaHV5aGEifQ._JG-J40mW1R9FDhXBZCKOIppwW7HDu-8NYStiGKTjSk",
 						"type": "text"
 					}
 				],
 				"url": {
-					"raw": "localhost:5050/tasks?created_date=2020-06-29",
+					"raw": "localhost:5050/api/tasks?created_at=2021-03-19",
 					"host": [
 						"localhost"
 					],
 					"port": "5050",
 					"path": [
+						"api",
 						"tasks"
 					],
 					"query": [
 						{
-							"key": "created_date",
-							"value": "2020-06-29"
+							"key": "created_at",
+							"value": "2021-03-19"
 						}
 					]
 				}
@@ -80,13 +82,13 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTM0Mjc4MjEsInVzZXJfaWQiOiJmaXJzdFVzZXIifQ.zJdFGhDFwPcR1-VZyUGmYgNMEDHpNYsttYYvJPcI7h4",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2MTYzMTE5NDUsInVzZXJuYW1lIjoiaHV5aGEifQ.BB8H_w4H-ebKSHz59_Sed7pVU4GKiYKJyAR2ABuVgFU",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"content\": \"another content\"\n}",
+					"raw": "{\n    \"content\": \"another content 2\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -94,18 +96,18 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5050/tasks",
+					"raw": "localhost:5050/api/tasks",
 					"host": [
 						"localhost"
 					],
 					"port": "5050",
 					"path": [
+						"api",
 						"tasks"
 					]
 				}
 			},
 			"response": []
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }

@@ -7,7 +7,6 @@ import (
 )
 
 type ITaskRepository interface {
-	GetTaskById(id uint64) (*models.Task, error)
 	GetTasksByUserName(username string, createdAt string) (*[]models.Task, error)
 	CreateTask(task *models.Task) (*models.Task, error)
 	Count(username string) (int64, error)
@@ -19,12 +18,6 @@ type TaskRepository struct {
 
 func NewTaskRepository(db *gorm.DB) ITaskRepository {
 	return &TaskRepository{DB: db}
-}
-
-func (taskRepo *TaskRepository) GetTaskById(id uint64) (*models.Task, error) {
-	var task models.Task
-	result := taskRepo.DB.First(&task, id)
-	return &task, result.Error
 }
 
 func (taskRepo *TaskRepository) GetTasksByUserName(username string, createdAt string) (*[]models.Task, error) {

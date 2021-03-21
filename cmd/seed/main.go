@@ -7,7 +7,10 @@ import (
 
 func main() {
 	config.LoadEnv("")
-	db.ConnectDB()
-	db.Migrate()
-	db.Seed()
+
+	conn := db.ConnectDB()
+
+	defer db.DisconnectDB(conn)
+
+	db.Seed(conn)
 }

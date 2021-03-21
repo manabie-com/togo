@@ -49,7 +49,7 @@ func (controller *AuthController) Login(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	user, err := controller.UserService.GetUserService(data.Username)
+	user, err := controller.UserService.GetUserByUserName(data.Username)
 
 	if err != nil {
 		utils.JSON(w, http.StatusUnauthorized, map[string]string{"message": "Username/Password is invalid"})
@@ -79,7 +79,7 @@ func (controller *TaskController) GetTasks(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	if _, err := controller.UserService.GetUserService(username); err != nil {
+	if _, err := controller.UserService.GetUserByUserName(username); err != nil {
 		utils.JSON(w, http.StatusUnprocessableEntity, map[string]string{"message": "Access denied"})
 		return
 	}
@@ -118,7 +118,7 @@ func (controller *TaskController) AddTask(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	user, err := controller.UserService.GetUserService(username)
+	user, err := controller.UserService.GetUserByUserName(username)
 
 	if err != nil {
 		utils.JSON(w, http.StatusUnprocessableEntity, map[string]string{"message": "Access denied"})

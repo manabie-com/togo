@@ -3,7 +3,6 @@ package routes
 import (
 	"github.com/gorilla/mux"
 	"github.com/manabie-com/togo/controllers"
-	"github.com/manabie-com/togo/db"
 	"github.com/manabie-com/togo/middlewares"
 	"github.com/manabie-com/togo/repositories"
 	"github.com/manabie-com/togo/services"
@@ -29,7 +28,6 @@ func getRoutes(db *gorm.DB) Routes {
 	var taskService = services.NewTaskService(&taskRepo)
 
 	var authController = controllers.NewAuthController(&userService)
-
 	var taskController = controllers.NewTaskController(&userService, &taskService)
 
 	return Routes{
@@ -67,8 +65,8 @@ func getRoutes(db *gorm.DB) Routes {
 	}
 }
 
-func NewRouter() *mux.Router {
-	routes := getRoutes(db.DB)
+func NewRouter(db *gorm.DB) *mux.Router {
+	routes := getRoutes(db)
 
 	router := mux.NewRouter().StrictSlash(true)
 

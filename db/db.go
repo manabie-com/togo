@@ -11,9 +11,7 @@ import (
 	"log"
 )
 
-var DB *gorm.DB //database
-
-func ConnectDB() {
+func ConnectDB() *gorm.DB {
 	DSN := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=%s",
 		"localhost", config.NewEnv.DbUser, config.NewEnv.DbPass, config.NewEnv.DbName, config.NewEnv.DbPort, "Asia/Ho_Chi_Minh")
 
@@ -30,12 +28,21 @@ func ConnectDB() {
 
 	log.Println(fmt.Sprintf("Succeed to connect to database: %s", config.NewEnv.DbName))
 
-	DB = conn
-
+	return conn
 }
 
-func Migrate() {
-	err := DB.AutoMigrate(&models.User{}, &models.Task{})
+func DisconnectDB(db *gorm.DB) {
+	conn, err := db.DB()
+
+	if err != nil {
+		panic("Failed to close connection from database")
+	}
+
+	conn.Close()
+}
+
+func Migrate(db *gorm.DB) {
+	err := db.AutoMigrate(&models.User{}, &models.Task{})
 
 	if err != nil {
 		log.Println(err)
@@ -43,18 +50,7 @@ func Migrate() {
 	}
 }
 
-func Seed() {
-	userRepo := repositories.NewUserRepository(DB)
-	//UserRepo.AddUser(&models.User{Username: "huyha", Password: "123456", MaxTodo: 3})
-	aa, err := userRepo.GetUserByUserName("huyha")
-	if err != nil {
-		print("err", err)
-	}
-	print(aa.Password)
-	//err = utils.VerifyPassword(aa.Password, "123456")
-	//if err != nil {
-	//	print("no no no")
-	//}
-	////log.Printf(err)
-	////log.Printf(aa)
+func Seed(db *gorm.DB) {
+	userRepo := repositories.NewUserRepository(db)
+	userRepo.AddUser(&models.User{Username: "huyha", Password: "123456", MaxTodo: 3})
 }
