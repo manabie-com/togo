@@ -1,4 +1,4 @@
-package sqllite
+package postgres
 
 import (
 	"database/sql"
@@ -6,12 +6,11 @@ import (
 	"log"
 )
 
-// LiteDB for working with sqllite
+// PostgreDB for working with postgre
 var db *sql.DB
 
-
-func InitSqlLiteRepository(dataSource string) {
-	sqlDB, err := sql.Open("sqlite3", dataSource)
+func InitPostgreDBRepository(dataSource string) {
+	sqlDB, err := sql.Open("postgres", dataSource)
 	if err != nil {
 		log.Fatal("error opening db", err)
 	}

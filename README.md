@@ -1,33 +1,35 @@
-### Overview
-This is a simple backend for a good old todo service, right now this service can handle login/list/create simple tasks.  
-To make it run:
-- `go run main.go`
+# Todo Backend Service
+
+## Overview
+- Todo Backend Service is a simple backend for a good old todo service, right now this service can handle login/list/create simple tasks.  
+
+## Install
+### Backend
+#### With Docker
+
+_this is the recommended way to run todo backend service_
+
+* copy provided `docker-compose.yml` and customize for your needs
+* make sure you add `ADMIN_PASSWD=something...` for any SQL Connection
+* pull prepared images from the DockerHub and start - `docker-compose pull && docker-compose up -d`
+* alternatively compile from the sources - `docker-compose build && docker-compose up -d`
+
+#### Without Docker
+
+* download archive Go [stable release](https://golang.org/dl/) for your OS
+* go run ./cmd/server.go 
+
+
+## API Spec:
+- We use Postman for write API Spec 
 - Import Postman collection from `docs` to check example
 
-Candidates are invited to implement below requirements but the point is not to resolve everything in a perfect way but selective what you can do best in a limited time.  
-Thus, there is no correct-or-perfect answer, your solutions are way for us to continue the discussion and collaboration.
- 
-### Requirements
-Right now a user can add many task as they want, we want ability to limit N task per day.
 
-Example: users are limited to create only 5 task only per day, if the daily limit is reached, return 4xx code to client and ignore the create request.
-#### Backend requirements
-- A nice README on how to run, what is missing, what else you want to improve but don't have enough time
-- Fork this repo and show us your development progess by a PR.
-- Write integration tests for this project
-- Make this code DRY
-- Write unit test for `services` layer
-- Change from using `SQLite` to `Postgres` with `docker-compose`
-- This project include many issues from code to DB strucutre, feel free to optimize them.
-#### Frontend requirements
-- A nice README on how to run, what is missing, what else you want to improve but don't have enough time
-- https://github.com/manabie-com/mana-do
-- Fork the above repo and show us your development progess by a PR.
-#### Optional requirements
-- Write unit test for `storages` layer
-- Split `services` layer to `use case` and `transport` layer
 
-### DB Schema
+
+## DB Schema
+// TODO REPLACE SQL DB SCHEMA TO USE MIND MAP OR CLASS ENTITY DIAGRAM FOR READABILITY
+
 ```sql
 -- users definition
 
@@ -51,6 +53,16 @@ CREATE TABLE tasks (
 	CONSTRAINT tasks_FK FOREIGN KEY (user_id) REFERENCES users(id)
 );
 ```
+
+## What I have done
+* Write integration tests for this project
+* Make this code DRY
+* Write unit test for services layer
+* Split services layer to use case and transport layer follow clean arch
+* Change from using SQLite to Postgres with docker-compose
+## What I need to improve for not having enough time for complete 
+* Write integration tests
+* Write more document and API docs use swagger or something instead of postman collection
 
 ### Sequence diagram
 ![auth and create tasks request](https://github.com/manabie-com/togo/blob/master/docs/sequence.svg)

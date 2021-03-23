@@ -1,4 +1,4 @@
-package storages
+package entities
 
 // Task reflects tasks in DB
 type Task struct {
