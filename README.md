@@ -50,7 +50,30 @@ CREATE TABLE tasks (
 	CONSTRAINT tasks_PK PRIMARY KEY (id),
 	CONSTRAINT tasks_FK FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+INSERT INTO tasks (id, content, user_id, created_date) VALUES('1', 'task 1', 'firstUser', '2020-06-29'),
+('2', 'task 2', 'firstUser', '2020-06-29'),
+;
+
 ```
 
 ### Sequence diagram
 ![auth and create tasks request](https://github.com/manabie-com/togo/blob/master/docs/sequence.svg)
+
+
+# Build and run
+
+### Very first, setting, run docker compose and prepare environment
+* Create custom_network by below command:
+  ```
+  docker network create custom_network --driver=bridge   --subnet=172.28.0.0/16   --ip-range=172.28.5.0/24   --gateway=172.28.5.254
+  ```
+
+* Docker compose up to set up db
+  ```
+  docker-compose -f <root_project>/docker-compose.yml up -d
+  ```
+* Secondly, access to mysql container server and run sql script to create database schema and init data
+  [database schema](resources/sql/schema.sql)
+  and
+  [database script](resources/sql/query.sql)

@@ -1,0 +1,51 @@
+version: '3.0'
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      PGDATA: /data/postgres
+    volumes:
+       - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    # networks:
+    #   - postgres
+    networks:
+      custom_network:
+        ipv4_address: 172.28.5.11
+    #restart: unless-stopped
+  
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@tvv.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+       - pgadmin:/root/.pgadmin
+
+    ports:
+      - "${PGADMIN_PORT:-5051}:80"
+    # networks:
+    #   - postgres
+    networks:
+      custom_network:
+        ipv4_address: 172.28.5.12
+    #restart: unless-stopped
+
+# networks:
+#   postgres:
+#     driver: bridge
+
+networks:
+  custom_network:
+    external: true
+
+volumes:
+    postgres:
+    pgadmin:
