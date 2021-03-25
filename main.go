@@ -5,22 +5,28 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/manabie-com/togo/internal/configurations"
 	"github.com/manabie-com/togo/internal/services"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	postgres "github.com/manabie-com/togo/internal/storages/postgres"
+
+	// sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 
 	_ "github.com/mattn/go-sqlite3"
+
+	_ "github.com/lib/pq"
 )
 
 func main() {
-	db, err := sql.Open("sqlite3", "./data.db")
+	config, err := configurations.LoadConfig("./resources")
+
 	if err != nil {
-		log.Fatal("error opening db", err)
+		log.Fatal("cannot load config: ", err)
 	}
 
-	http.ListenAndServe(":5050", &services.ToDoService{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
-			DB: db,
-		},
-	})
+	conn, err := sql.Open(config.DBDriver, config.DBSource)
+	if err != nil {
+		log.Fatal("cannot connect to db: ", err)
+	}
+
+	http.ListenAndServe(":5050", &services.ServiceController{Config: config, Store: postgres.NewStore(conn)})
 }
