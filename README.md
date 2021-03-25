@@ -1,6 +1,4 @@
 ### Overview
-Edited by me
-
 This is a simple backend for a good old todo service, right now this service can handle login/list/create simple tasks.  
 To make it run:
 - `go run main.go`
