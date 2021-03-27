@@ -1,38 +1,10 @@
 {
 	"info": {
-		"_postman_id": "05327fec-8670-470b-8253-f27686acf809",
+		"_postman_id": "fb8996bb-1694-42ed-88a5-71cf79cea04b",
 		"name": "Test togo",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
-		{
-			"name": "Login",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:5050/login?user_id=firstUser&password=example",
-					"host": [
-						"localhost"
-					],
-					"port": "5050",
-					"path": [
-						"login"
-					],
-					"query": [
-						{
-							"key": "user_id",
-							"value": "firstUser"
-						},
-						{
-							"key": "password",
-							"value": "example"
-						}
-					]
-				}
-			},
-			"response": []
-		},
 		{
 			"name": "List content",
 			"request": {
@@ -50,12 +22,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTM0Mjc4MjEsInVzZXJfaWQiOiJmaXJzdFVzZXIifQ.zJdFGhDFwPcR1-VZyUGmYgNMEDHpNYsttYYvJPcI7h4",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTY5MDE0NjgsInN1YiI6MX0.nmrBmQOfPS0Jca2qS1QJhzN0tj0GWYrdHPBjAZx_mAQ",
 						"type": "text"
 					}
 				],
 				"url": {
-					"raw": "localhost:5050/tasks?created_date=2020-06-29",
+					"raw": "localhost:5050/tasks",
 					"host": [
 						"localhost"
 					],
@@ -66,7 +38,8 @@
 					"query": [
 						{
 							"key": "created_date",
-							"value": "2020-06-29"
+							"value": "2021-03-27",
+							"disabled": true
 						}
 					]
 				}
@@ -80,7 +53,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTM0Mjc4MjEsInVzZXJfaWQiOiJmaXJzdFVzZXIifQ.zJdFGhDFwPcR1-VZyUGmYgNMEDHpNYsttYYvJPcI7h4",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTY5MDE0NjgsInN1YiI6MX0.nmrBmQOfPS0Jca2qS1QJhzN0tj0GWYrdHPBjAZx_mAQ",
 						"type": "text"
 					}
 				],
@@ -105,7 +78,33 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"firstUser\",\n    \"password\": \"example\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5050/login",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }

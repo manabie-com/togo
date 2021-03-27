@@ -1,0 +1,38 @@
+version: "3.0"
+
+services:
+  webapp:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      args:
+        - APP_PORT=5050
+        - APP_NAME=togo-api
+        - APP_PATH=./
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - backend
+    depends_on:
+      - postgres
+    ports:
+      - 5050:5050
+
+  postgres:
+    image: postgres:12-alpine
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+    restart: always
+    networks:
+      - backend
+    environment:
+      POSTGRES_DB: manabie_db
+      POSTGRES_USER: demo
+      POSTGRES_PASSWORD: demo
+    ports:
+      - 5432:5432
+
+networks:
+  backend:
+    driver: bridge
