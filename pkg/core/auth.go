@@ -42,7 +42,7 @@ type AppAuthenticate struct {
 func (a AppAuthenticate) CreateToken(userId int64) (string, error) {
 	claims := jwt.MapClaims{
 		authSubKey: userId,
-		authExpKey: time.Now().Add( 24 * 1000 * time.Hour).Unix(),
+		authExpKey: time.Now().Add(24 * time.Hour).Unix(),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
