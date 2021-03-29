@@ -15,7 +15,7 @@ func TestAppAuthenticate_CreateToken(t *testing.T) {
 }
 
 func TestAppAuthenticate_ValidateToken(t *testing.T) {
-	token := `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTY5MDA2ODcsInN1YiI6MTExMTF9.PEFk_EYX13NJAQTVzyhs99tw91VzFmeV4hRvk96gRm0`
+	token := `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDMzODcxMDMsInN1YiI6MTExMTF9.0zMbkrg3rXZbVUEUYkOJBATZpwwnn7dCmfM9nDHUKRo`
 	os.Setenv("JWT_TOKEN",  "A JWT TOKEN")
 
 	auth, _ := NewAppAuthenticator()

@@ -7,6 +7,9 @@ Or:
  - Run `make init-local`.
  - Run `make run`.
 
+To run tests:
+ - Run `make test`
+
 ### System requirement
  - Installed `docker` and `docker-compose`
  - Installed Golang ~v1.14
