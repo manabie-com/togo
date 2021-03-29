@@ -23,6 +23,7 @@ Or:
  - Move `storages` to `data` layer.
  - Implement clean architecture.
  - Write tests.
+ - Update postman apis doc
 
 ### Potential improvements
  - Write auth middleware

@@ -33,7 +33,6 @@ func TestLoginUseCaseErrorInvalidUsernameOrPassword(t *testing.T) {
 	mockRepo := new(DBMock)
 	mockRepo.On("VerifyUser", ctx, &domains.LoginRequest{}).Return(nil, domains.ErrorNotFound)
 	mockAuth := new(AuthMock)
-	mockAuth.On("CreateToken", int64(0)).Return(expected, nil)
 
 	uc := NewLoginUseCase(mockRepo, mockAuth)
 	tokenResult, err := uc.Execute(ctx, &LoginInput{})
