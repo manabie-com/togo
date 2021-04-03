@@ -13,9 +13,10 @@ type LiteDB struct {
 }
 
 // RetrieveTasks returns tasks if match userID AND createDate.
-func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*entities.Task, error) {
-	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`
-	rows, err := l.DB.QueryContext(ctx, stmt, userID, createdDate)
+func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString, limit, offset sql.NullInt32) ([]*entities.Task, error) {
+	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ? LIMIT ? OFFSET ?`
+	offset.Int32 = limit.Int32 * (offset.Int32 - 1)
+	rows, err := l.DB.QueryContext(ctx, stmt, userID, createdDate, limit, offset)
 	if err != nil {
 		return nil, err
 	}

@@ -8,12 +8,26 @@
             "name": "Launch test function",
             "type": "go",
             "request": "launch",
-           
+            "mode": "debug",
             "program": "${workspaceFolder}",
             "env":{
-            "ENVIRONMENT":"dev",
+            "ENVIRONMENT":"stg",
             "CONNECTIONSTRING":"postgresql://root:secret@localhost:5432/todo_app?sslmode=disable"
-        }
-    }
+        },
+        
+    },
+
+    {
+        "name": "Launch test function",
+        "type": "go",
+        "request": "launch",
+        "mode": "test",
+        "program": "${file}",
+        "env":{
+        "ENVIRONMENT":"stg",
+        "CONNECTIONSTRING":"postgresql://root:secret@localhost:5432/todo_app?sslmode=disable"
+    },
+    
+}
     ]
 }

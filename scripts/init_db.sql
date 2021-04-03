@@ -26,6 +26,6 @@ CREATE INDEX ON "tasks" ("created_date", "user_id");
 CREATE INDEX ON "tasks" ("user_id");
 
 INSERT INTO users (id, password, max_todo) VALUES
-('firstUser', 'example', 5),
-('secondUser', 'example', 10),
-('thirdUser', 'example', 7);
+('firstUser', '50d858e0985ecc7f60418aaf0cc5ab587f42c2570a884095a9e8ccacd0f6545c', 5),
+('secondUser', '50d858e0985ecc7f60418aaf0cc5ab587f42c2570a884095a9e8ccacd0f6545c', 10),
+('thirdUser', '50d858e0985ecc7f60418aaf0cc5ab587f42c2570a884095a9e8ccacd0f6545c', 7);

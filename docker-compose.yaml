@@ -1,7 +1,7 @@
 version: '3.7'
 
 volumes:
-    db_data:
+    postgres_data:
         driver: local
 
 networks:
@@ -20,10 +20,27 @@ services:
             - my_network
         restart: always
         volumes:
-            - db_data:/var/lib/postgresql/data
+            - postgres_data:/var/lib/postgresql/postgres_data
             - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
         ports:
             - ${POSTGRES_PORT}:${POSTGRES_PORT}
+        command: -p ${POSTGRES_PORT}
+
+    db_test: 
+        image: postgres:13-alpine
+        environment:
+            POSTGRES_DB: ${POSTGRES_DB}
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        container_name: todo_postgres_test
+        networks: 
+            - my_network
+        restart: always
+        volumes:
+            - ./scripts/init_db_test.sql:/docker-entrypoint-initdb.d/init_db_test.sql
+        ports:
+            - ${POSTGRES_PORT}:${POSTGRES_PORT}
+        command: -p ${POSTGRES_PORT}
 
     app:
         image: golang:1.14-alpine
@@ -40,8 +57,24 @@ services:
                 CGO_ENABLED=0 go run main.go"
         container_name: todo_app
         ports:
-        - 5050:5050
+            - 5050:5050
         depends_on:
-        - db
-        links:
-        - db
+            - db
+
+    storages_test:
+        image: golang:1.14-alpine
+        environment:
+            ENVIRONMENT: test
+            CONNECTIONSTRING: ${POSTGRES_HOST}://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_IP}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=${POSTGRES_SLLMODE}
+        networks: 
+            - my_network
+        volumes:
+            - .:/app
+        working_dir: /app
+        command: >
+            /bin/sh -c "
+                CGO_ENABLED=0 go test ./internal/storages/postgres"
+        container_name: todo_app_test
+        depends_on:
+            - db_test
+        

@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -54,8 +55,8 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
-	id := value(req, "user_id")
-	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
+	id := valueString(req, "user_id")
+	if !s.Store.ValidateUser(req.Context(), id, valueString(req, "password")) {
 		resp.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": "incorrect user_id/pwd",
@@ -86,7 +87,9 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 			String: id,
 			Valid:  true,
 		},
-		value(req, "created_date"),
+		valueString(req, "created_date"),
+		valueInt(req, "total"),
+		valueInt(req, "page"),
 	)
 
 	resp.Header().Set("Content-Type", "application/json")
@@ -135,10 +138,28 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	})
 }
 
-func value(req *http.Request, p string) sql.NullString {
+func valueString(req *http.Request, p string) sql.NullString {
 	return sql.NullString{
 		String: req.FormValue(p),
 		Valid:  true,
+	}
+}
+
+func valueInt(req *http.Request, p string) sql.NullInt32 {
+	var num int32
+	i, err := strconv.Atoi(req.FormValue(p))
+	if err != nil {
+		num = 1
+		if p == "total" {
+			num = 5
+		}
+	} else {
+		num = int32(i)
+	}
+
+	return sql.NullInt32{
+		Int32: num,
+		Valid: true,
 	}
 }
 
