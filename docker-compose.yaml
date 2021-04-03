@@ -1,0 +1,47 @@
+version: '3.7'
+
+volumes:
+    db_data:
+        driver: local
+
+networks:
+    my_network:
+        driver: bridge
+
+services:
+    db: 
+        image: postgres:13-alpine
+        environment:
+            POSTGRES_DB: ${POSTGRES_DB}
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        container_name: todo_postgres
+        networks: 
+            - my_network
+        restart: always
+        volumes:
+            - db_data:/var/lib/postgresql/data
+            - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+        ports:
+            - ${POSTGRES_PORT}:${POSTGRES_PORT}
+
+    app:
+        image: golang:1.14-alpine
+        environment:
+            ENVIRONMENT: dev
+            CONNECTIONSTRING: ${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_IP}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=${POSTGRES_SLLMODE}
+        networks: 
+            - my_network
+        volumes:
+            - .:/app
+        working_dir: /app
+        command: >
+            /bin/sh -c "
+                CGO_ENABLED=0 go run main.go"
+        container_name: todo_app
+        ports:
+        - 5050:5050
+        depends_on:
+        - db
+        links:
+        - db

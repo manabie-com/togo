@@ -1,0 +1,83 @@
+{"level":"info","datetime":"2021-04-03T02:37:01.018Z","logger":"main","caller":"app/main.go:29","msg":"Server is running"}
+{"level":"info","datetime":"2021-04-03T02:37:01.020Z","logger":"Postgres","caller":"postgres/db.go:24","msg":"postgres://root:secret@localhost:5432/todo_app?sslmode=disable"}
+{"level":"error","datetime":"2021-04-03T02:37:01.021Z","logger":"Postgres","caller":"postgres/db.go:31","msg":"Cannot ping postgres","error":"dial tcp 127.0.0.1:5432: connect: connection refused","stacktrace":"github.com/manabie-com/togo/internal/storages/postgres.NewPostgres\n\t/app/internal/storages/postgres/db.go:31\nmain.main\n\t/app/main.go:31\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:203"}
+{"level":"info","datetime":"2021-04-03T02:37:01.022Z","logger":"Postgres","caller":"postgres/db.go:33","msg":"Connection Postgres successful"}
+{"level":"info","datetime":"2021-04-03T02:52:07.476Z","logger":"main","caller":"app/main.go:29","msg":"Server is running"}
+{"level":"info","datetime":"2021-04-03T02:52:07.477Z","logger":"Postgres","caller":"postgres/db.go:24","msg":"postgres://root:secret@localhost:5432/todo_app?sslmode=disable"}
+{"level":"error","datetime":"2021-04-03T02:52:07.478Z","logger":"Postgres","caller":"postgres/db.go:31","msg":"Cannot ping postgres","error":"dial tcp 127.0.0.1:5432: connect: connection refused","stacktrace":"github.com/manabie-com/togo/internal/storages/postgres.NewPostgres\n\t/app/internal/storages/postgres/db.go:31\nmain.main\n\t/app/main.go:31\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:203"}
+{"level":"info","datetime":"2021-04-03T02:52:07.478Z","logger":"Postgres","caller":"postgres/db.go:33","msg":"Connection Postgres successful"}
+{"level":"info","datetime":"2021-04-03T03:00:27.012Z","logger":"main","caller":"app/main.go:29","msg":"Server is running"}
+{"level":"info","datetime":"2021-04-03T03:00:27.012Z","logger":"Postgres","caller":"postgres/db.go:24","msg":"host=db port=5432 user=root password=secret dbname=todo_app sslmode=disable"}
+{"level":"info","datetime":"2021-04-03T03:00:27.092Z","logger":"Postgres","caller":"postgres/db.go:33","msg":"Connection Postgres successful"}
+{"level":"info","datetime":"2021-04-03T03:00:49.491Z","logger":"Postgres","caller":"postgres/db.go:55","msg":"firstUser"}
+{"level":"info","datetime":"2021-04-03T03:00:49.502Z","logger":"Postgres","caller":"postgres/db.go:56","msg":"example"}
+{"level":"info","datetime":"2021-04-03T03:00:50.472Z","logger":"Postgres","caller":"postgres/db.go:55","msg":"firstUser"}
+{"level":"info","datetime":"2021-04-03T03:00:50.474Z","logger":"Postgres","caller":"postgres/db.go:56","msg":"example"}
+{"level":"info","datetime":"2021-04-03T03:00:51.246Z","logger":"Postgres","caller":"postgres/db.go:55","msg":"firstUser"}
+{"level":"info","datetime":"2021-04-03T03:00:51.250Z","logger":"Postgres","caller":"postgres/db.go:56","msg":"example"}
+{"level":"info","datetime":"2021-04-03T03:01:35.720Z","logger":"main","caller":"app/main.go:29","msg":"Server is running"}
+{"level":"info","datetime":"2021-04-03T03:01:35.720Z","logger":"Postgres","caller":"postgres/db.go:24","msg":"host=db port=5432 user=root password=secret dbname=todo_app sslmode=disable"}
+{"level":"info","datetime":"2021-04-03T03:01:35.723Z","logger":"Postgres","caller":"postgres/db.go:33","msg":"Connection Postgres successful"}
+{"level":"info","datetime":"2021-04-03T03:02:33.377Z","logger":"main","caller":"app/main.go:29","msg":"Server is running"}
+{"level":"info","datetime":"2021-04-03T03:02:33.378Z","logger":"Postgres","caller":"postgres/db.go:26","msg":"db://root:secret@localhost:5432/todo_app?sslmode=disable"}
+{"level":"error","datetime":"2021-04-03T03:02:33.379Z","logger":"Postgres","caller":"postgres/db.go:33","msg":"Cannot ping postgres","error":"dial tcp 127.0.0.1:5432: connect: connection refused","stacktrace":"github.com/manabie-com/togo/internal/storages/postgres.NewPostgres\n\t/app/internal/storages/postgres/db.go:33\nmain.main\n\t/app/main.go:31\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:203"}
+{"level":"info","datetime":"2021-04-03T03:02:33.380Z","logger":"Postgres","caller":"postgres/db.go:35","msg":"Connection Postgres successful"}
+{"level":"info","datetime":"2021-04-03T03:04:31.670Z","logger":"main","caller":"app/main.go:29","msg":"Server is running"}
+{"level":"info","datetime":"2021-04-03T03:04:31.670Z","logger":"Postgres","caller":"postgres/db.go:26","msg":"db://root:secret@localhost:5432/todo_app?sslmode=disable"}
+{"level":"error","datetime":"2021-04-03T03:04:31.671Z","logger":"Postgres","caller":"postgres/db.go:33","msg":"Cannot ping postgres","error":"dial tcp 127.0.0.1:5432: connect: connection refused","stacktrace":"github.com/manabie-com/togo/internal/storages/postgres.NewPostgres\n\t/app/internal/storages/postgres/db.go:33\nmain.main\n\t/app/main.go:31\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:203"}
+{"level":"info","datetime":"2021-04-03T03:04:31.672Z","logger":"Postgres","caller":"postgres/db.go:35","msg":"Connection Postgres successful"}
+{"level":"info","datetime":"2021-04-03T03:04:43.847Z","logger":"main","caller":"app/main.go:29","msg":"Server is running"}
+{"level":"info","datetime":"2021-04-03T03:04:43.847Z","logger":"Postgres","caller":"postgres/db.go:25","msg":"host=postgresql port=5432 user=root password=secret dbname=todo_app sslmode=disable"}
+{"level":"error","datetime":"2021-04-03T03:04:43.913Z","logger":"Postgres","caller":"postgres/db.go:32","msg":"Cannot ping postgres","error":"dial tcp: lookup postgresql on 127.0.0.11:53: no such host","stacktrace":"github.com/manabie-com/togo/internal/storages/postgres.NewPostgres\n\t/app/internal/storages/postgres/db.go:32\nmain.main\n\t/app/main.go:31\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:203"}
+{"level":"info","datetime":"2021-04-03T03:04:43.914Z","logger":"Postgres","caller":"postgres/db.go:34","msg":"Connection Postgres successful"}
+{"level":"info","datetime":"2021-04-03T03:06:06.932Z","logger":"main","caller":"app/main.go:29","msg":"Server is running"}
+{"level":"info","datetime":"2021-04-03T03:06:06.933Z","logger":"Postgres","caller":"postgres/db.go:26","msg":"root:secret@localhost:5432/todo_app?sslmode=disable"}
+{"level":"error","datetime":"2021-04-03T03:06:06.935Z","logger":"Postgres","caller":"postgres/db.go:33","msg":"Cannot ping postgres","error":"dial tcp 127.0.0.1:5432: connect: connection refused","stacktrace":"github.com/manabie-com/togo/internal/storages/postgres.NewPostgres\n\t/app/internal/storages/postgres/db.go:33\nmain.main\n\t/app/main.go:31\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:203"}
+{"level":"info","datetime":"2021-04-03T03:06:06.936Z","logger":"Postgres","caller":"postgres/db.go:35","msg":"Connection Postgres successful"}
+{"level":"info","datetime":"2021-04-03T03:08:59.102Z","logger":"main","caller":"app/main.go:29","msg":"Server is running"}
+{"level":"info","datetime":"2021-04-03T03:08:59.103Z","logger":"Postgres","caller":"postgres/db.go:26","msg":"host=postgresql port=5432 user=root password=secret dbname=todo_app sslmode=disable"}
+{"level":"error","datetime":"2021-04-03T03:08:59.108Z","logger":"Postgres","caller":"postgres/db.go:33","msg":"Cannot ping postgres","error":"dial tcp: lookup postgresql on 127.0.0.11:53: no such host","stacktrace":"github.com/manabie-com/togo/internal/storages/postgres.NewPostgres\n\t/app/internal/storages/postgres/db.go:33\nmain.main\n\t/app/main.go:31\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:203"}
+{"level":"info","datetime":"2021-04-03T03:08:59.109Z","logger":"Postgres","caller":"postgres/db.go:36","msg":"Connection Postgres successful"}
+{"level":"error","datetime":"2021-04-03T03:08:59.113Z","logger":"Postgres","caller":"postgres/db.go:42","msg":"Cannot ping postgres","error":"dial tcp: lookup postgresql on 127.0.0.11:53: no such host","stacktrace":"github.com/manabie-com/togo/internal/storages/postgres.NewPostgres.func1.1\n\t/app/internal/storages/postgres/db.go:42"}
+{"level":"error","datetime":"2021-04-03T03:09:09.110Z","logger":"Postgres","caller":"postgres/db.go:42","msg":"Cannot ping postgres","error":"dial tcp: lookup postgresql on 127.0.0.11:53: no such host","stacktrace":"github.com/manabie-com/togo/internal/storages/postgres.NewPostgres.func1.1\n\t/app/internal/storages/postgres/db.go:42"}
+{"level":"info","datetime":"2021-04-03T03:09:39.753Z","logger":"main","caller":"app/main.go:29","msg":"Server is running"}
+{"level":"info","datetime":"2021-04-03T03:09:39.753Z","logger":"Postgres","caller":"postgres/db.go:26","msg":"host=db port=5432 user=root password=secret dbname=todo_app sslmode=disable"}
+{"level":"info","datetime":"2021-04-03T03:09:39.756Z","logger":"Postgres","caller":"postgres/db.go:36","msg":"Connection Postgres successful"}
+{"level":"info","datetime":"2021-04-03T03:09:48.976Z","logger":"Postgres","caller":"postgres/db.go:71","msg":"firstUser"}
+{"level":"info","datetime":"2021-04-03T03:09:48.978Z","logger":"Postgres","caller":"postgres/db.go:72","msg":"example"}
+{"level":"info","datetime":"2021-04-03T03:09:49.733Z","logger":"Postgres","caller":"postgres/db.go:71","msg":"firstUser"}
+{"level":"info","datetime":"2021-04-03T03:09:49.734Z","logger":"Postgres","caller":"postgres/db.go:72","msg":"example"}
+{"level":"info","datetime":"2021-04-03T03:10:17.274Z","logger":"Postgres","caller":"postgres/db.go:71","msg":"firstUser"}
+{"level":"info","datetime":"2021-04-03T03:10:17.276Z","logger":"Postgres","caller":"postgres/db.go:72","msg":"example"}
+{"level":"info","datetime":"2021-04-03T03:10:17.472Z","logger":"Postgres","caller":"postgres/db.go:79","msg":"dial tcp: lookup db on 127.0.0.11:53: no such host"}
+{"level":"error","datetime":"2021-04-03T03:10:19.778Z","logger":"Postgres","caller":"postgres/db.go:42","msg":"Cannot ping postgres","error":"dial tcp: lookup db on 127.0.0.11:53: no such host","stacktrace":"github.com/manabie-com/togo/internal/storages/postgres.NewPostgres.func1.1\n\t/app/internal/storages/postgres/db.go:42"}
+{"level":"error","datetime":"2021-04-03T03:10:29.787Z","logger":"Postgres","caller":"postgres/db.go:42","msg":"Cannot ping postgres","error":"dial tcp: lookup db on 127.0.0.11:53: no such host","stacktrace":"github.com/manabie-com/togo/internal/storages/postgres.NewPostgres.func1.1\n\t/app/internal/storages/postgres/db.go:42"}
+{"level":"error","datetime":"2021-04-03T03:10:39.795Z","logger":"Postgres","caller":"postgres/db.go:42","msg":"Cannot ping postgres","error":"dial tcp: lookup db on 127.0.0.11:53: no such host","stacktrace":"github.com/manabie-com/togo/internal/storages/postgres.NewPostgres.func1.1\n\t/app/internal/storages/postgres/db.go:42"}
+{"level":"error","datetime":"2021-04-03T03:10:49.801Z","logger":"Postgres","caller":"postgres/db.go:42","msg":"Cannot ping postgres","error":"dial tcp: lookup db on 127.0.0.11:53: no such host","stacktrace":"github.com/manabie-com/togo/internal/storages/postgres.NewPostgres.func1.1\n\t/app/internal/storages/postgres/db.go:42"}
+{"level":"info","datetime":"2021-04-03T03:11:17.622Z","logger":"Postgres","caller":"postgres/db.go:71","msg":"firstUser"}
+{"level":"info","datetime":"2021-04-03T03:11:17.624Z","logger":"Postgres","caller":"postgres/db.go:72","msg":"example"}
+{"level":"info","datetime":"2021-04-03T03:11:19.883Z","logger":"Postgres","caller":"postgres/db.go:71","msg":"firstUser"}
+{"level":"info","datetime":"2021-04-03T03:11:19.884Z","logger":"Postgres","caller":"postgres/db.go:72","msg":"example"}
+{"level":"info","datetime":"2021-04-03T03:12:25.877Z","logger":"main","caller":"app/main.go:29","msg":"Server is running"}
+{"level":"info","datetime":"2021-04-03T03:12:25.877Z","logger":"Postgres","caller":"postgres/db.go:25","msg":"host=db port=5432 user=root password=secret dbname=todo_app sslmode=disable"}
+{"level":"info","datetime":"2021-04-03T03:12:25.881Z","logger":"Postgres","caller":"postgres/db.go:35","msg":"Connection Postgres successful"}
+{"level":"info","datetime":"2021-04-03T03:12:30.401Z","logger":"Postgres","caller":"postgres/db.go:70","msg":"firstUser"}
+{"level":"info","datetime":"2021-04-03T03:12:30.404Z","logger":"Postgres","caller":"postgres/db.go:71","msg":"example"}
+{"level":"info","datetime":"2021-04-03T03:12:31.078Z","logger":"Postgres","caller":"postgres/db.go:70","msg":"firstUser"}
+{"level":"info","datetime":"2021-04-03T03:12:31.079Z","logger":"Postgres","caller":"postgres/db.go:71","msg":"example"}
+{"level":"info","datetime":"2021-04-03T03:12:31.630Z","logger":"Postgres","caller":"postgres/db.go:70","msg":"firstUser"}
+{"level":"info","datetime":"2021-04-03T03:12:31.632Z","logger":"Postgres","caller":"postgres/db.go:71","msg":"example"}
+{"level":"info","datetime":"2021-04-03T03:12:40.285Z","logger":"Postgres","caller":"postgres/db.go:70","msg":"firstUser"}
+{"level":"info","datetime":"2021-04-03T03:12:40.288Z","logger":"Postgres","caller":"postgres/db.go:71","msg":"example"}
+{"level":"info","datetime":"2021-04-03T03:12:40.299Z","logger":"Postgres","caller":"postgres/db.go:78","msg":"dial tcp: lookup db on 127.0.0.11:53: no such host"}
+{"level":"info","datetime":"2021-04-03T03:12:41.040Z","logger":"Postgres","caller":"postgres/db.go:70","msg":"firstUser"}
+{"level":"info","datetime":"2021-04-03T03:12:41.041Z","logger":"Postgres","caller":"postgres/db.go:71","msg":"example"}
+{"level":"info","datetime":"2021-04-03T03:12:41.048Z","logger":"Postgres","caller":"postgres/db.go:78","msg":"dial tcp: lookup db on 127.0.0.11:53: no such host"}
+{"level":"info","datetime":"2021-04-03T03:12:56.057Z","logger":"Postgres","caller":"postgres/db.go:70","msg":"firstUser"}
+{"level":"info","datetime":"2021-04-03T03:12:56.058Z","logger":"Postgres","caller":"postgres/db.go:71","msg":"example"}
+{"level":"info","datetime":"2021-04-03T03:12:56.839Z","logger":"Postgres","caller":"postgres/db.go:70","msg":"firstUser"}
+{"level":"info","datetime":"2021-04-03T03:12:56.841Z","logger":"Postgres","caller":"postgres/db.go:71","msg":"example"}
+{"level":"info","datetime":"2021-04-03T03:12:57.410Z","logger":"Postgres","caller":"postgres/db.go:70","msg":"firstUser"}
+{"level":"info","datetime":"2021-04-03T03:12:57.411Z","logger":"Postgres","caller":"postgres/db.go:71","msg":"example"}
+{"level":"info","datetime":"2021-04-03T03:12:58.000Z","logger":"Postgres","caller":"postgres/db.go:70","msg":"firstUser"}
+{"level":"info","datetime":"2021-04-03T03:12:58.003Z","logger":"Postgres","caller":"postgres/db.go:71","msg":"example"}
