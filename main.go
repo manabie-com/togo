@@ -3,11 +3,8 @@ package main
 import (
 	"database/sql"
 
-	"net/http"
-
 	"github.com/manabie-com/togo/internal/logs"
-	"github.com/manabie-com/togo/internal/services"
-	"github.com/manabie-com/togo/internal/storages/postgres"
+	"github.com/manabie-com/togo/internal/transport"
 	"github.com/manabie-com/togo/internal/util"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -27,10 +24,11 @@ func main() {
 
 	logger.Info("Server is running", "process", nil)
 	// serving and return error
-	postgres := postgres.NewPostgres()
+	//postgres := postgres.NewPostgres()
 
-	http.ListenAndServe(":5050", &services.ToDoService{
-		JWTKey: util.Conf.SecretKey,
-		Store:  postgres,
-	})
+	server := transport.NewServer()
+	if err := server.Start("0.0.0.0:5050"); err != nil {
+		logger.Error("Cannot start server", "process", err)
+		return
+	}
 }

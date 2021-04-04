@@ -2,13 +2,12 @@ package storages
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/manabie-com/togo/internal/storages/entities"
 )
 
 type Store interface {
-	RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString, limit, offset sql.NullInt32) ([]*entities.Task, error)
+	RetrieveTasks(ctx context.Context, userID, createdDate string, limit, offset int) ([]*entities.Task, error)
 	AddTask(ctx context.Context, t *entities.Task) error
-	ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool
+	ValidateUser(ctx context.Context, userID, pwd string) bool
 }

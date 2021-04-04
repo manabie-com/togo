@@ -1,2 +1,0 @@
-{"level":"info","datetime":"2021-04-03T16:40:25.550Z","logger":"Test Postgres.Postgres","caller":"logs/log.go:39","msg":"Connection Postgres successful","type":"process","error":null}
-{"level":"info","datetime":"2021-04-03T16:40:25.557Z","logger":"Test Postgres.Postgres","caller":"logs/log.go:39","msg":"Invalid User","type":"process","error":"sql: no rows in result set"}

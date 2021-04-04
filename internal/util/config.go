@@ -17,8 +17,9 @@ type Config struct {
 	PostgresPassword string `mapstructure:"POSTGRES_PASSWORD"`
 	PostgresSLLMode  string `mapstructure:"POSTGRES_SLLMODE"`
 
-	SecretKey string        `mapstructure:"SECRET_KEY"`
-	Timeout   time.Duration `mapstructure:"TIMEOUT"`
+	SecretKey  string        `mapstructure:"SECRET_KEY"`
+	Timeout    time.Duration `mapstructure:"TIMEOUT"`
+	FormatDate string        `mapstructure:"FORMAT_DATE"`
 }
 
 func LoadConfig(path string) error {

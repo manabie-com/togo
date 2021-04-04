@@ -83,14 +83,14 @@ func (p *Postgres) pingDB() (err error) {
 
 func GetConnString(c util.Config) string {
 	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
-		"db_test", c.PostgresPort, "root", "secret", c.PostgresDB, "disable")
+		"db", c.PostgresPort, "root", "secret", c.PostgresDB, "disable")
 }
 
 // RetrieveTasks is function get list task with condition user_id, created_date and limit and offset
-func (p *Postgres) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString, limit, offset sql.NullInt32) ([]*entities.Task, error) {
+func (p *Postgres) RetrieveTasks(ctx context.Context, userID, createdDate string, limit, offset int) ([]*entities.Task, error) {
 	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = $1 AND created_date = $2
 				LIMIT $3 OFFSET $4`
-	offset.Int32 = limit.Int32 * (offset.Int32 - 1)
+	offset = limit * (offset - 1)
 	rows, err := p.db.QueryContext(ctx, stmt, userID, createdDate, limit, offset)
 	if err != nil {
 		return nil, err
@@ -184,11 +184,11 @@ func (p *Postgres) execTx(ctx context.Context, fn func() error) error {
 }
 
 // ValidateUser is function validate username and password of users
-func (p *Postgres) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
+func (p *Postgres) ValidateUser(ctx context.Context, userID, pwd string) bool {
 	stmt := `SELECT id FROM users WHERE id = $1 AND password = $2`
-	hashPwd := hashPassword(pwd.String)
+	hashPwd := hashPassword(pwd)
 
-	row := p.db.QueryRowContext(ctx, stmt, userID.String, hashPwd)
+	row := p.db.QueryRowContext(ctx, stmt, userID, hashPwd)
 	u := &entities.User{}
 	err := row.Scan(&u.ID)
 	if err != nil {

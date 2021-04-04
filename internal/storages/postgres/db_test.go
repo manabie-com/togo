@@ -55,8 +55,8 @@ func TestRetrieveTasks(t *testing.T) {
 		tc := testCases[i]
 
 		t.Run(tc.name, func(t *testing.T) {
-			tasks, err := testPostgres.RetrieveTasks(context.Background(), valueString(tc.userId),
-				valueString(tc.createDate), valueInt(100), valueInt(1))
+			tasks, err := testPostgres.RetrieveTasks(context.Background(), tc.userId,
+				tc.createDate, 100, 1)
 
 			tc.check(t, tasks, err)
 		})
@@ -93,10 +93,7 @@ func TestValidateUser(t *testing.T) {
 		tc := tesCases[i]
 		t.Run(tc.name, func(t *testing.T) {
 
-			id := valueString(tc.id)
-			password := valueString(tc.password)
-
-			isValid := testPostgres.ValidateUser(context.Background(), id, password)
+			isValid := testPostgres.ValidateUser(context.Background(), tc.id, tc.password)
 
 			tc.check(t, isValid)
 		})
