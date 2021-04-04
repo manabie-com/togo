@@ -32,4 +32,4 @@ INSERT INTO users (id, password, max_todo) VALUES
 ('fourthUser', '50d858e0985ecc7f60418aaf0cc5ab587f42c2570a884095a9e8ccacd0f6545c', 1);
 
 INSERT INTO tasks (id, content, user_id, created_date) VALUES
-('fa258101-173d-412b-b39f-074cfd74710b', 'content', 'fourthUser', '2021-04-03');
+('fa258101-173d-412b-b39f-074cfd74710b', 'content', 'fourthUser', (SELECT CURRENT_DATE));

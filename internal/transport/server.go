@@ -3,16 +3,14 @@ package transport
 import (
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/manabie-com/togo/internal/logs"
-	"github.com/manabie-com/togo/internal/storages/postgres"
+	"github.com/manabie-com/togo/internal/storages"
+
 	"github.com/manabie-com/togo/internal/usecase"
-	"github.com/manabie-com/togo/internal/util"
 )
 
 const (
@@ -27,9 +25,8 @@ type Server struct {
 	todo   *usecase.ToDoUsecase
 }
 
-func NewServer() *Server {
+func NewServer(postgres storages.Store) *Server {
 	logger := logs.WithPrefix("Server")
-	postgres := postgres.NewPostgres()
 	todo := usecase.NewToDoUsecase(postgres)
 
 	server := &Server{
@@ -46,7 +43,7 @@ func (s *Server) setupRouter() {
 
 	router.POST("/login", s.login)
 
-	authGroups := router.Group("/").Use(authMiddleware())
+	authGroups := router.Group("/").Use(s.authMiddleware())
 	authGroups.POST("/tasks", s.addTask)
 	authGroups.GET("/tasks/:created_date/:total/:page", s.listTasks)
 
@@ -57,7 +54,7 @@ func (s *Server) Start(address string) error {
 	return s.router.Run(address)
 }
 
-func authMiddleware() gin.HandlerFunc {
+func (s *Server) authMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		authorizationHeader := ctx.GetHeader(authorizationHeaderKey)
 
@@ -79,7 +76,7 @@ func authMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		id, status := validToken(fields[1])
+		id, status := s.todo.ValidToken(fields[1])
 		if !status {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse(errors.New("token is invalid")))
 			return
@@ -88,28 +85,6 @@ func authMiddleware() gin.HandlerFunc {
 		ctx.Set(authorizationPayloadKey, id)
 		ctx.Next()
 	}
-}
-
-func validToken(token string) (string, bool) {
-	claims := make(jwt.MapClaims)
-	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
-		return []byte(util.Conf.SecretKey), nil
-	})
-	if err != nil {
-		log.Println(err)
-		return "", false
-	}
-
-	if !t.Valid {
-		return "", false
-	}
-
-	id, ok := claims["user_id"].(string)
-	if !ok {
-		return "", false
-	}
-
-	return id, true
 }
 
 func successResponse(value interface{}) gin.H {

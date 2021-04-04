@@ -4,6 +4,9 @@ import (
 	"math/rand"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/manabie-com/togo/internal/storages/entities"
 )
 
 const alphabet = "abcdefghijklmnopqrstuvwxyz"
@@ -32,4 +35,20 @@ func RandomString(n int) string {
 
 func RandomStringArray(arr []string) string {
 	return arr[RandomInt(0, int64(len(arr)-1))]
+}
+
+func RandomTask() entities.Task {
+	user := []string{
+		"firstUser",
+		"secondUser",
+		"thirdUser",
+	}
+	task := entities.Task{
+		ID:          uuid.New().String(),
+		Content:     RandomString(8),
+		CreatedDate: time.Now().Format("2006-01-02"),
+		UserID:      RandomStringArray(user),
+	}
+
+	return task
 }

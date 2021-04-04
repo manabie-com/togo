@@ -42,7 +42,7 @@ services:
             - ${POSTGRES_PORT}:${POSTGRES_PORT}
         command: -p ${POSTGRES_PORT}
 
-    app:
+    dev:
         image: golang:1.14-alpine
         environment:
             ENVIRONMENT: dev
@@ -73,8 +73,42 @@ services:
         working_dir: /app
         command: >
             /bin/sh -c "
-                CGO_ENABLED=0 go test ./internal/storages/postgres"
-        container_name: todo_app_test
+                CGO_ENABLED=0 go test -v -count=1 -cover ./internal/storages/postgres"
+        container_name: todo_app_test_postgres
+        depends_on:
+            - db_test
+
+    usecase_test:
+        image: golang:1.14-alpine
+        environment:
+            ENVIRONMENT: test
+            CONNECTIONSTRING: ${POSTGRES_HOST}://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_IP}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=${POSTGRES_SLLMODE}
+        networks: 
+            - my_network
+        volumes:
+            - .:/app
+        working_dir: /app
+        command: >
+            /bin/sh -c "
+                CGO_ENABLED=0 go test -v -count=1 -cover ./internal/usecase"
+        container_name: todo_app_test_usecase
+        depends_on:
+            - db_test
+        
+    integration_test:
+        image: golang:1.14-alpine
+        environment:
+            ENVIRONMENT: test
+            CONNECTIONSTRING: ${POSTGRES_HOST}://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_IP}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=${POSTGRES_SLLMODE}
+        networks: 
+            - my_network
+        volumes:
+            - .:/app
+        working_dir: /app
+        command: >
+            /bin/sh -c "
+                CGO_ENABLED=0 go test -v -count=1 -cover ./internal/transport"
+        container_name: integration_test
         depends_on:
             - db_test
         

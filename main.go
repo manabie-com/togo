@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/manabie-com/togo/internal/logs"
+	"github.com/manabie-com/togo/internal/storages/postgres"
 	"github.com/manabie-com/togo/internal/transport"
 	"github.com/manabie-com/togo/internal/util"
 
@@ -24,9 +25,8 @@ func main() {
 
 	logger.Info("Server is running", "process", nil)
 	// serving and return error
-	//postgres := postgres.NewPostgres()
-
-	server := transport.NewServer()
+	postgres := postgres.NewPostgres()
+	server := transport.NewServer(postgres)
 	if err := server.Start("0.0.0.0:5050"); err != nil {
 		logger.Error("Cannot start server", "process", err)
 		return

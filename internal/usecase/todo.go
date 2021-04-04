@@ -49,7 +49,28 @@ func (s *ToDoUsecase) createToken(id string) (string, error) {
 	return token, nil
 }
 
-// AddTask
+func (s *ToDoUsecase) ValidToken(token string) (string, bool) {
+	claims := make(jwt.MapClaims)
+	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
+		return []byte(util.Conf.SecretKey), nil
+	})
+	if err != nil {
+		return "", false
+	}
+
+	if !t.Valid {
+		return "", false
+	}
+
+	id, ok := claims["user_id"].(string)
+	if !ok {
+		return "", false
+	}
+
+	return id, true
+}
+
+// AddTask ...
 func (s *ToDoUsecase) AddTask(content, userId string) error {
 	now := time.Now()
 	createdDate := now.Format(util.Conf.FormatDate)

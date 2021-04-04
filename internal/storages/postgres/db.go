@@ -83,7 +83,7 @@ func (p *Postgres) pingDB() (err error) {
 
 func GetConnString(c util.Config) string {
 	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
-		"db", c.PostgresPort, "root", "secret", c.PostgresDB, "disable")
+		"db_test", c.PostgresPort, "root", "secret", c.PostgresDB, "disable")
 }
 
 // RetrieveTasks is function get list task with condition user_id, created_date and limit and offset

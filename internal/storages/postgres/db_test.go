@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/storages/entities"
 	"github.com/manabie-com/togo/internal/util"
 	"github.com/stretchr/testify/require"
@@ -22,7 +21,7 @@ func TestRetrieveTasks(t *testing.T) {
 		{
 			name:       "Success",
 			userId:     "fourthUser",
-			createDate: "2021-04-03",
+			createDate: time.Now().Format(util.Conf.FormatDate),
 			check: func(t *testing.T, tasks []*entities.Task, err error) {
 				require.NoError(t, err)
 				require.NotEmpty(t, tasks)
@@ -110,17 +109,16 @@ func TestAddTask(t *testing.T) {
 		{
 			name: "Success",
 			getTask: func() entities.Task {
-				return randomTask()
+				return util.RandomTask()
 			},
 			check: func(t *testing.T, err error) {
 				require.NoError(t, err)
 			},
 		},
-
 		{
 			name: "Fail due to invalid user",
 			getTask: func() entities.Task {
-				task := randomTask()
+				task := util.RandomTask()
 				task.UserID = "123"
 				return task
 			},
@@ -132,9 +130,9 @@ func TestAddTask(t *testing.T) {
 		{
 			name: "Fail due to maxtodo",
 			getTask: func() entities.Task {
-				task := randomTask()
+				task := util.RandomTask()
 				task.UserID = "fourthUser"
-				task.CreatedDate = "2021-04-03"
+				task.CreatedDate = time.Now().Format(util.Conf.FormatDate)
 				return task
 			},
 			check: func(t *testing.T, err error) {
@@ -152,22 +150,6 @@ func TestAddTask(t *testing.T) {
 			tc.check(t, err)
 		})
 	}
-}
-
-func randomTask() entities.Task {
-	user := []string{
-		"firstUser",
-		"secondUser",
-		"thirdUser",
-	}
-	task := entities.Task{
-		ID:          uuid.New().String(),
-		Content:     util.RandomString(8),
-		CreatedDate: time.Now().Format("2006-01-02"),
-		UserID:      util.RandomStringArray(user),
-	}
-
-	return task
 }
 
 func valueString(value string) sql.NullString {
