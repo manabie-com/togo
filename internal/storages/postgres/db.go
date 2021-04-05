@@ -6,7 +6,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"os"
 
 	"time"
 
@@ -34,19 +33,17 @@ func NewPostgres() *Postgres {
 		logger: logger,
 	}
 
-	// conn := GetConnString(*util.Conf)
-	conn := os.Getenv("CONNECTIONSTRING")
-	fmt.Println(conn)
+	conn := util.Conf.ConnectionString()
 	db, err := sql.Open(util.Conf.PostgresDriver, conn)
 	if err != nil {
-		logger.Panic("Connection Postgres occur error", "process", err.Error())
+		logger.Panic("Connection Postgres occur error", err.Error())
 
 	}
 	p.db = db
 	if err = p.pingDB(); err != nil {
-		logger.Panic("Cannot ping Postgres", "process", err.Error())
+		logger.Panic("Cannot ping Postgres", err.Error())
 	}
-	logger.Info("Connection Postgres successful", "process", nil)
+	logger.Info("Connection Postgres successful", nil)
 
 	p.db.SetConnMaxLifetime(MaxLifetime)
 	p.db.SetMaxIdleConns(MaxIdleConns)
@@ -56,7 +53,7 @@ func NewPostgres() *Postgres {
 		go func() {
 			for {
 				if err := db.Ping(); err != nil {
-					logger.Error("Cannot ping postgres", "process", err.Error())
+					logger.Error("Cannot ping postgres", err.Error())
 				}
 
 				time.Sleep(util.Conf.Timeout)
@@ -75,16 +72,11 @@ func (p *Postgres) pingDB() (err error) {
 			return
 		}
 
-		p.logger.Error("Try to ping postgres", "process", err.Error())
+		p.logger.Error("Try to ping postgres", err.Error())
 		time.Sleep(util.Conf.Timeout)
 	}
 
 	return err
-}
-
-func GetConnString(c util.Config) string {
-	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
-		"db_test", c.PostgresPort, "root", "secret", c.PostgresDB, "disable")
 }
 
 // RetrieveTasks is function get list task with condition user_id, created_date and limit and offset
@@ -194,7 +186,7 @@ func (p *Postgres) ValidateUser(ctx context.Context, userID, pwd string) bool {
 	err := row.Scan(&u.ID)
 	if err != nil {
 
-		p.logger.Info("Invalid User", "process", err.Error())
+		p.logger.Error("Invalid User", err.Error())
 		return false
 	}
 

@@ -2,7 +2,6 @@ package transport
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,7 +21,7 @@ func (s *Server) login(ctx *gin.Context) {
 
 	token, err := s.todo.GetToken(params.Id, params.Password)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
@@ -58,7 +57,6 @@ type listTaskParams struct {
 }
 
 func (s *Server) listTasks(ctx *gin.Context) {
-	time.Sleep(5 * time.Second)
 	var params listTaskParams
 	err := ctx.ShouldBindUri(&params)
 	if err != nil {

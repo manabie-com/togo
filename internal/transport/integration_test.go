@@ -14,6 +14,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+var (
+	server = getServer()
+)
+
 func TestLogin(t *testing.T) {
 	testCases := []struct {
 		name     string
@@ -43,7 +47,7 @@ func TestLogin(t *testing.T) {
 			userId:   "firstUser",
 			password: "example123",
 			check: func(t *testing.T, recorder *httptest.ResponseRecorder) {
-				require.Equal(t, http.StatusBadRequest, recorder.Code)
+				require.Equal(t, http.StatusInternalServerError, recorder.Code)
 			},
 		},
 	}
@@ -52,7 +56,6 @@ func TestLogin(t *testing.T) {
 		tc := testCases[i]
 
 		t.Run(tc.name, func(t *testing.T) {
-			server := getServer(t)
 
 			// make request
 			path := fmt.Sprintf("/login")
@@ -80,23 +83,13 @@ func TestAddTask(t *testing.T) {
 	}{
 		{
 			name:     "Ok",
-			userId:   "firstUser",
+			userId:   "secondUser",
 			password: "example",
 			content:  "test add success",
 			check: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
 			},
 		},
-		// {
-		// 	name:     "BadRequest: Content is empty",
-		// 	userId:   "firstUser",
-		// 	password: "example",
-		// 	content:  "",
-		// 	check: func(t *testing.T, recorder *httptest.ResponseRecorder) {
-		// 		require.Equal(t, http.StatusBadRequest, recorder.Code)
-		// 	},
-		// },
-
 		{
 			name:     "BadRequest: maxtodo",
 			userId:   "fourthUser",
@@ -107,12 +100,10 @@ func TestAddTask(t *testing.T) {
 			},
 		},
 	}
-
 	for i := range testCases {
 		tc := testCases[i]
 
 		t.Run(tc.name, func(t *testing.T) {
-			server := getServer(t)
 
 			token := login(t, tc.userId, tc.password, server)
 
@@ -128,25 +119,95 @@ func TestAddTask(t *testing.T) {
 
 }
 
-// func TestRatelimit(t *testing.T) {
-// 	server := getServer(t)
+func TestListTask(t *testing.T) {
 
-// 	req, err := http.NewRequest(http.MethodGet, "/", nil)
-// 	req.Header.Add("X-Forwarded-For", "100.100.100.100")
-// 	require.NoError(t, err)
-// 	require.NotEmpty(t, req)
-// 	code := http.StatusOK
-// 	for i := 0; i < 10; i++ {
-// 		recorder := httptest.NewRecorder()
-// 		server.httpServer.Handler.ServeHTTP(recorder, req)
-// 		if i == 9 {
-// 			code = recorder.Code
-// 		}
-// 	}
+	testCases := []struct {
+		name        string
+		userId      string
+		password    string
+		createdDate string
+		total       int
+		page        int
+		check       func(t *testing.T, recorder *httptest.ResponseRecorder)
+	}{
+		{
+			name:        "Ok",
+			userId:      "secondUser",
+			password:    "example",
+			createdDate: util.GetDate(),
+			total:       10,
+			page:        1,
+			check: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusOK, recorder.Code)
+			},
+		},
+		{
+			name:        "BadRequest: createdDate is invalid",
+			userId:      "secondUser",
+			password:    "example",
+			createdDate: "",
+			total:       10,
+			page:        1,
+			check: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusBadRequest, recorder.Code)
+			},
+		},
+		{
+			name:        "BadRequest: total is negative",
+			userId:      "secondUser",
+			password:    "example",
+			createdDate: util.GetDate(),
+			total:       -1,
+			page:        1,
+			check: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusBadRequest, recorder.Code)
 
-// 	fmt.Println(code)
-// 	require.Equal(t, http.StatusTooManyRequests, code)
-// }
+			},
+		},
+		{
+			name:        "BadRequest: page is negative",
+			userId:      "secondUser",
+			password:    "example",
+			createdDate: util.GetDate(),
+			total:       10,
+			page:        -1,
+			check: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusBadRequest, recorder.Code)
+
+			},
+		},
+	}
+	for i := range testCases {
+		tc := testCases[i]
+
+		t.Run(tc.name, func(t *testing.T) {
+			token := login(t, tc.userId, tc.password, server)
+
+			path := fmt.Sprintf("/tasks/%v/%v/%v", tc.createdDate, tc.total, tc.page)
+			fmt.Println("path: ", path)
+			recorder := makeRequest(t, server, http.MethodGet, path, token, nil)
+
+			tc.check(t, recorder)
+		})
+	}
+}
+
+func TestRatelimit(t *testing.T) {
+	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("/login"), nil)
+	req.Header.Add("X-Forwarded-For", "100.100.100.100")
+	require.NoError(t, err)
+	require.NotEmpty(t, req)
+	code := http.StatusOK
+	for i := 0; i < 10; i++ {
+		recorder := httptest.NewRecorder()
+		server.httpServer.Handler.ServeHTTP(recorder, req)
+		if i == 9 {
+			code = recorder.Code
+		}
+	}
+
+	require.Equal(t, http.StatusTooManyRequests, code)
+}
 
 func login(t *testing.T, userId, password string, s *Server) string {
 	path := fmt.Sprintf("/login")
@@ -172,10 +233,8 @@ func login(t *testing.T, userId, password string, s *Server) string {
 	return token.(string)
 }
 
-func getServer(t *testing.T) *Server {
-	err := util.LoadConfig("../../configs")
-	require.NoError(t, err)
-
+func getServer() *Server {
+	util.LoadConfig("../../configs")
 	testStore := postgres.NewPostgres()
 	server := NewServer(testStore)
 
@@ -185,7 +244,7 @@ func getServer(t *testing.T) *Server {
 func makeRequest(t *testing.T, s *Server, method, path, token string, body interface{}) *httptest.ResponseRecorder {
 	bodyBytes, err := json.Marshal(body)
 	require.NoError(t, err)
-	require.NotEmpty(t, body)
+
 	recorder := httptest.NewRecorder()
 	req, err := http.NewRequest(method, path, bytes.NewBuffer([]byte(bodyBytes)))
 	req.Header.Add(authorizationHeaderKey, "bearer "+token)

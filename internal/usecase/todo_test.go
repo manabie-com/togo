@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"testing"
-	"time"
 
 	"github.com/manabie-com/togo/internal/storages/entities"
 	"github.com/manabie-com/togo/internal/storages/postgres"
@@ -25,17 +24,13 @@ func TestCreateToken(t *testing.T) {
 			},
 		},
 	}
+	todo := getToDoUsecase(t)
 
 	for i := range testCases {
 		tc := testCases[i]
 
 		t.Run(tc.name, func(t *testing.T) {
-			err := util.LoadConfig("../../configs")
-			require.NoError(t, err)
 
-			testStore := postgres.NewPostgres()
-			require.NotNil(t, testStore)
-			todo := NewToDoUsecase(testStore)
 			require.NotNil(t, todo)
 			token, err := todo.createToken(tc.userId)
 
@@ -69,18 +64,13 @@ func TestValidToken(t *testing.T) {
 			},
 		},
 	}
+	todo := getToDoUsecase(t)
 
 	for i := range testCases {
 		tc := testCases[i]
 
 		t.Run(tc.name, func(t *testing.T) {
-			err := util.LoadConfig("../../configs")
-			require.NoError(t, err)
 
-			testStore := postgres.NewPostgres()
-			require.NotNil(t, testStore)
-			todo := NewToDoUsecase(testStore)
-			require.NotNil(t, todo)
 			token, err := todo.createToken(tc.userId)
 			require.NotEmpty(t, token)
 			require.NoError(t, err)
@@ -117,18 +107,12 @@ func TestGetToken(t *testing.T) {
 			},
 		},
 	}
+	todo := getToDoUsecase(t)
 
 	for i := range testCases {
 		tc := testCases[i]
 
 		t.Run(tc.name, func(t *testing.T) {
-			err := util.LoadConfig("../../configs")
-			require.NoError(t, err)
-
-			testStore := postgres.NewPostgres()
-			require.NotNil(t, testStore)
-			todo := NewToDoUsecase(testStore)
-			require.NotNil(t, todo)
 
 			token, err := todo.GetToken(tc.userId, tc.password)
 			tc.check(t, token, err)
@@ -168,20 +152,12 @@ func TestAddTask(t *testing.T) {
 			},
 		},
 	}
-
+	todo := getToDoUsecase(t)
 	for i := range testCases {
 		tc := testCases[i]
 
 		t.Run(tc.name, func(t *testing.T) {
-			err := util.LoadConfig("../../configs")
-			require.NoError(t, err)
-
-			testStore := postgres.NewPostgres()
-			require.NotNil(t, testStore)
-			todo := NewToDoUsecase(testStore)
-			require.NotNil(t, todo)
-
-			err = todo.AddTask(tc.content, tc.userId)
+			err := todo.AddTask(tc.content, tc.userId)
 			tc.check(t, err)
 		})
 	}
@@ -197,7 +173,7 @@ func TestListTask(t *testing.T) {
 		{
 			name:       "Success",
 			userId:     "fourthUser",
-			createDate: time.Now().Format(util.Conf.FormatDate),
+			createDate: util.GetDate(),
 			check: func(t *testing.T, tasks []*entities.Task, err error) {
 				require.NoError(t, err)
 				require.NotEmpty(t, tasks)
@@ -226,20 +202,25 @@ func TestListTask(t *testing.T) {
 		},
 	}
 
+	todo := getToDoUsecase(t)
+
 	for i := range testCases {
 		tc := testCases[i]
 
 		t.Run(tc.name, func(t *testing.T) {
-			err := util.LoadConfig("../../configs")
-			require.NoError(t, err)
-
-			testStore := postgres.NewPostgres()
-			require.NotNil(t, testStore)
-			todo := NewToDoUsecase(testStore)
-			require.NotNil(t, todo)
-
 			tasks, err := todo.ListTask(tc.createDate, tc.userId, 100, 1)
 			tc.check(t, tasks, err)
 		})
 	}
+}
+
+func getToDoUsecase(t *testing.T) *ToDoUsecase {
+	err := util.LoadConfig("../../configs")
+	require.NoError(t, err)
+
+	testStore := postgres.NewPostgres()
+	require.NotNil(t, testStore)
+	todo := NewToDoUsecase(testStore)
+	require.NotNil(t, todo)
+	return todo
 }

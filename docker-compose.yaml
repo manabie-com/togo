@@ -5,7 +5,7 @@ volumes:
         driver: local
 
 networks:
-    my_network:
+    todo_network:
         driver: bridge
 
 services:
@@ -17,7 +17,7 @@ services:
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
         container_name: todo_postgres
         networks: 
-            - my_network
+            - todo_network
         restart: always
         volumes:
             - postgres_data:/var/lib/postgresql/postgres_data
@@ -34,7 +34,7 @@ services:
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
         container_name: todo_postgres_test
         networks: 
-            - my_network
+            - todo_network
         restart: always
         volumes:
             - ./scripts/init_db_test.sql:/docker-entrypoint-initdb.d/init_db_test.sql
@@ -46,9 +46,9 @@ services:
         image: golang:1.14-alpine
         environment:
             ENVIRONMENT: dev
-            CONNECTIONSTRING: ${POSTGRES_HOST}://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db/${POSTGRES_DB}?sslmode=${POSTGRES_SLLMODE}
         networks: 
-            - my_network
+            - todo_network
+        restart: always
         volumes:
             - .:/app
         working_dir: /app
@@ -65,9 +65,8 @@ services:
         image: golang:1.14-alpine
         environment:
             ENVIRONMENT: test
-            CONNECTIONSTRING: ${POSTGRES_HOST}://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db_test/${POSTGRES_DB}?sslmode=${POSTGRES_SLLMODE}
         networks: 
-            - my_network
+            - todo_network
         volumes:
             - .:/app
         working_dir: /app
@@ -77,14 +76,15 @@ services:
         container_name: todo_app_test_postgres
         depends_on:
             - db_test
+        links:
+            - db_test
 
     usecase_test:
         image: golang:1.14-alpine
         environment:
             ENVIRONMENT: test
-            CONNECTIONSTRING: ${POSTGRES_HOST}://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db_test/${POSTGRES_DB}?sslmode=${POSTGRES_SLLMODE}
         networks: 
-            - my_network
+            - todo_network
         volumes:
             - .:/app
         working_dir: /app
@@ -99,9 +99,8 @@ services:
         image: golang:1.14-alpine
         environment:
             ENVIRONMENT: test
-            CONNECTIONSTRING: ${POSTGRES_HOST}://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db_test/${POSTGRES_DB}?sslmode=${POSTGRES_SLLMODE}
         networks: 
-            - my_network
+            - todo_network
         volumes:
             - .:/app
         working_dir: /app

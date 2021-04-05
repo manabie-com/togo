@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"log"
 	"os"
@@ -11,7 +10,9 @@ import (
 	"time"
 
 	"github.com/manabie-com/togo/internal/logs"
+	"github.com/manabie-com/togo/internal/storages"
 	"github.com/manabie-com/togo/internal/storages/postgres"
+	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 	"github.com/manabie-com/togo/internal/transport"
 	"github.com/manabie-com/togo/internal/util"
 
@@ -20,37 +21,26 @@ import (
 
 func main() {
 	logger := logs.WithPrefix("main")
-	_, err := sql.Open("sqlite3", "./data.db")
+	err := util.LoadConfig("./configs")
 	if err != nil {
-		logger.Panic("error opening db", "process", err.Error())
+		logger.Panic("error loading config", err.Error())
 	}
 
-	err = util.LoadConfig("./configs")
-	if err != nil {
-		logger.Panic("error loading config", "process", err.Error())
-	}
-
-	// serving and return error
-	postgres := postgres.NewPostgres()
-	server := transport.NewServer(postgres)
+	// serving
+	store := initStore()
+	server := transport.NewServer(store)
 	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, os.Interrupt)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	go func() {
 		if err := server.Start(util.Conf.Address); err != nil {
-			logger.Info("Cannot start server", "process", err)
+			logger.Error("Cannot start server", err.Error())
 			return
 		}
 	}()
 
-	logger.Info("Server is running at", "process", nil)
+	logger.Info(fmt.Sprintf("Server is running at %v", util.Conf.Address), nil)
 
-	fmt.Println(quit)
-	a := <-quit
-	fmt.Println(a)
-	defer func() {
-		fmt.Println("2")
-
-	}()
+	<-quit
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
@@ -59,4 +49,12 @@ func main() {
 	}
 
 	fmt.Println("server is stop")
+}
+
+func initStore() storages.Store {
+	if util.Conf.DBType == util.Conf.SqlLiteDriver {
+		return sqllite.NewLitDB()
+	}
+
+	return postgres.NewPostgres()
 }

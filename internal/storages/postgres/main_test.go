@@ -14,7 +14,7 @@ func TestMain(m *testing.M) {
 	logger := logs.WithPrefix("Test Postgres")
 	err := util.LoadConfig("../../../configs")
 	if err != nil {
-		logger.Error("error loading config", "process", err.Error())
+		logger.Error("error loading config", err.Error())
 	}
 	testPostgres = NewPostgres()
 

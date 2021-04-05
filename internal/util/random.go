@@ -46,9 +46,13 @@ func RandomTask() entities.Task {
 	task := entities.Task{
 		ID:          uuid.New().String(),
 		Content:     RandomString(8),
-		CreatedDate: time.Now().Format("2006-01-02"),
+		CreatedDate: GetDate(),
 		UserID:      RandomStringArray(user),
 	}
 
 	return task
+}
+
+func GetDate() string {
+	return time.Now().Format(Conf.FormatDate)
 }

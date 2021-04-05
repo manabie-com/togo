@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"testing"
-	"time"
 
 	"github.com/manabie-com/togo/internal/storages/entities"
 	"github.com/manabie-com/togo/internal/util"
@@ -21,7 +20,7 @@ func TestRetrieveTasks(t *testing.T) {
 		{
 			name:       "Success",
 			userId:     "fourthUser",
-			createDate: time.Now().Format(util.Conf.FormatDate),
+			createDate: util.GetDate(),
 			check: func(t *testing.T, tasks []*entities.Task, err error) {
 				require.NoError(t, err)
 				require.NotEmpty(t, tasks)
@@ -132,7 +131,7 @@ func TestAddTask(t *testing.T) {
 			getTask: func() entities.Task {
 				task := util.RandomTask()
 				task.UserID = "fourthUser"
-				task.CreatedDate = time.Now().Format(util.Conf.FormatDate)
+				task.CreatedDate = util.GetDate()
 				return task
 			},
 			check: func(t *testing.T, err error) {

@@ -72,8 +72,7 @@ func (s *ToDoUsecase) ValidToken(token string) (string, bool) {
 
 // AddTask ...
 func (s *ToDoUsecase) AddTask(content, userId string) error {
-	now := time.Now()
-	createdDate := now.Format(util.Conf.FormatDate)
+	createdDate := util.GetDate()
 	task := &entities.Task{
 		ID:          uuid.New().String(),
 		Content:     content,
