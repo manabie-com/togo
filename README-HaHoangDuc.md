@@ -47,3 +47,8 @@
 ### What is I want to improve?
 * I want to use Kong gateway for ratelimit.
 * Use another framework to interact with postgres, such as: sqlx, gorm.
+
+
+### Result when run integration test
+
+![image](https://user-images.githubusercontent.com/36435846/113615622-49045b00-967e-11eb-8d2e-bcca6ddcba1d.png)
