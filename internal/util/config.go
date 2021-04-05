@@ -20,6 +20,7 @@ type Config struct {
 	SecretKey  string        `mapstructure:"SECRET_KEY"`
 	Timeout    time.Duration `mapstructure:"TIMEOUT"`
 	FormatDate string        `mapstructure:"FORMAT_DATE"`
+	Address    string        `mapstructure:"Address"`
 }
 
 func LoadConfig(path string) error {

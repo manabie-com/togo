@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"os"
 
 	"time"
 
@@ -33,8 +34,8 @@ func NewPostgres() *Postgres {
 		logger: logger,
 	}
 
-	conn := GetConnString(*util.Conf)
-	// conn := os.Getenv("CONNECTIONSTRING")
+	// conn := GetConnString(*util.Conf)
+	conn := os.Getenv("CONNECTIONSTRING")
 	fmt.Println(conn)
 	db, err := sql.Open(util.Conf.PostgresDriver, conn)
 	if err != nil {

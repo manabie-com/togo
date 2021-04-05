@@ -2,6 +2,7 @@ package transport
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -57,6 +58,7 @@ type listTaskParams struct {
 }
 
 func (s *Server) listTasks(ctx *gin.Context) {
+	time.Sleep(5 * time.Second)
 	var params listTaskParams
 	err := ctx.ShouldBindUri(&params)
 	if err != nil {

@@ -46,7 +46,7 @@ services:
         image: golang:1.14-alpine
         environment:
             ENVIRONMENT: dev
-            CONNECTIONSTRING: ${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_IP}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=${POSTGRES_SLLMODE}
+            CONNECTIONSTRING: ${POSTGRES_HOST}://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db/${POSTGRES_DB}?sslmode=${POSTGRES_SLLMODE}
         networks: 
             - my_network
         volumes:
@@ -65,7 +65,7 @@ services:
         image: golang:1.14-alpine
         environment:
             ENVIRONMENT: test
-            CONNECTIONSTRING: ${POSTGRES_HOST}://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_IP}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=${POSTGRES_SLLMODE}
+            CONNECTIONSTRING: ${POSTGRES_HOST}://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db_test/${POSTGRES_DB}?sslmode=${POSTGRES_SLLMODE}
         networks: 
             - my_network
         volumes:
@@ -82,7 +82,7 @@ services:
         image: golang:1.14-alpine
         environment:
             ENVIRONMENT: test
-            CONNECTIONSTRING: ${POSTGRES_HOST}://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_IP}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=${POSTGRES_SLLMODE}
+            CONNECTIONSTRING: ${POSTGRES_HOST}://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db_test/${POSTGRES_DB}?sslmode=${POSTGRES_SLLMODE}
         networks: 
             - my_network
         volumes:
@@ -99,7 +99,7 @@ services:
         image: golang:1.14-alpine
         environment:
             ENVIRONMENT: test
-            CONNECTIONSTRING: ${POSTGRES_HOST}://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_IP}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=${POSTGRES_SLLMODE}
+            CONNECTIONSTRING: ${POSTGRES_HOST}://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db_test/${POSTGRES_DB}?sslmode=${POSTGRES_SLLMODE}
         networks: 
             - my_network
         volumes:

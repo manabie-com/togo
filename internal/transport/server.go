@@ -1,10 +1,12 @@
 package transport
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/manabie-com/togo/internal/logs"
@@ -20,38 +22,46 @@ const (
 )
 
 type Server struct {
-	logger *logs.Logger
-	router *gin.Engine
-	todo   *usecase.ToDoUsecase
+	logger     *logs.Logger
+	httpServer *http.Server
+	todo       *usecase.ToDoUsecase
 }
 
 func NewServer(postgres storages.Store) *Server {
 	logger := logs.WithPrefix("Server")
 	todo := usecase.NewToDoUsecase(postgres)
+	httpServer := &http.Server{}
 
 	server := &Server{
-		logger: logger,
-		todo:   todo,
+		logger:     logger,
+		todo:       todo,
+		httpServer: httpServer,
 	}
 
 	server.setupRouter()
+
 	return server
 }
 
 func (s *Server) setupRouter() {
 	router := gin.Default()
+	rateLimitGroups := router.Group("/").Use(s.rateLimitMiddleware())
+	rateLimitGroups.POST("/login", s.login)
 
-	router.POST("/login", s.login)
-
-	authGroups := router.Group("/").Use(s.authMiddleware())
+	authGroups := router.Group("/").Use(s.rateLimitMiddleware()).Use(s.authMiddleware())
 	authGroups.POST("/tasks", s.addTask)
 	authGroups.GET("/tasks/:created_date/:total/:page", s.listTasks)
 
-	s.router = router
+	s.httpServer.Handler = router
 }
 
 func (s *Server) Start(address string) error {
-	return s.router.Run(address)
+	s.httpServer.Addr = address
+	return s.httpServer.ListenAndServe()
+}
+
+func (s *Server) Shutdown(ctx context.Context) error {
+	return s.httpServer.Shutdown(ctx)
 }
 
 func (s *Server) authMiddleware() gin.HandlerFunc {
@@ -84,6 +94,41 @@ func (s *Server) authMiddleware() gin.HandlerFunc {
 
 		ctx.Set(authorizationPayloadKey, id)
 		ctx.Next()
+	}
+}
+
+func (s *Server) rateLimitMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if cip := c.ClientIP(); cip != "" {
+			now := time.Now()
+			limit := limiter.GetIP(cip)
+			if limit.Count == 0 {
+				limit := Limit{
+					Count:    1,
+					Interval: now,
+				}
+				limiter.AddIP(cip, limit)
+				return
+			} else {
+				interval := now.Sub(limit.Interval).Seconds()
+				if interval >= limiter.intervalSecond {
+					limit.Count = 1
+					limit.Interval = now
+					limiter.AddIP(cip, limit)
+					return
+				}
+
+				limit.Count = limit.Count + 1
+				limit.Interval = now
+				limiter.AddIP(cip, limit)
+				if limit.Count >= limiter.maxRequest {
+					c.AbortWithStatusJSON(http.StatusTooManyRequests, errorResponse(errors.New("too many request")))
+					return
+				}
+			}
+		}
+
+		c.Next()
 	}
 }
 

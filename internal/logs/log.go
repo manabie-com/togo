@@ -38,7 +38,7 @@ func WithPrefix(name string) *Logger {
 func (l *Logger) Info(content, typeL string, errorL interface{}) {
 	l.zLog.Info(content,
 		zap.String("type", typeL),
-		zap.Any("error", errorL))
+		zap.Any("model", errorL))
 }
 func (l *Logger) Error(content, typeL string, errorL interface{}) {
 	l.zLog.Error(content,

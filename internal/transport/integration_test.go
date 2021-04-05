@@ -70,6 +70,7 @@ func TestLogin(t *testing.T) {
 // TestAddTask is function integration test
 // We have to login success then we can create a task
 func TestAddTask(t *testing.T) {
+
 	testCases := []struct {
 		name     string
 		userId   string
@@ -86,15 +87,15 @@ func TestAddTask(t *testing.T) {
 				require.Equal(t, http.StatusOK, recorder.Code)
 			},
 		},
-		{
-			name:     "BadRequest: Content is empty",
-			userId:   "firstUser",
-			password: "example",
-			content:  "",
-			check: func(t *testing.T, recorder *httptest.ResponseRecorder) {
-				require.Equal(t, http.StatusBadRequest, recorder.Code)
-			},
-		},
+		// {
+		// 	name:     "BadRequest: Content is empty",
+		// 	userId:   "firstUser",
+		// 	password: "example",
+		// 	content:  "",
+		// 	check: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+		// 		require.Equal(t, http.StatusBadRequest, recorder.Code)
+		// 	},
+		// },
 
 		{
 			name:     "BadRequest: maxtodo",
@@ -119,15 +120,33 @@ func TestAddTask(t *testing.T) {
 			params := createTaskParams{
 				Content: tc.content,
 			}
-			fmt.Println("params: ", params)
 			recorder := makeRequest(t, server, http.MethodPost, path, token, &params)
-			fmt.Println("recorder: ", recorder)
 
 			tc.check(t, recorder)
 		})
 	}
 
 }
+
+// func TestRatelimit(t *testing.T) {
+// 	server := getServer(t)
+
+// 	req, err := http.NewRequest(http.MethodGet, "/", nil)
+// 	req.Header.Add("X-Forwarded-For", "100.100.100.100")
+// 	require.NoError(t, err)
+// 	require.NotEmpty(t, req)
+// 	code := http.StatusOK
+// 	for i := 0; i < 10; i++ {
+// 		recorder := httptest.NewRecorder()
+// 		server.httpServer.Handler.ServeHTTP(recorder, req)
+// 		if i == 9 {
+// 			code = recorder.Code
+// 		}
+// 	}
+
+// 	fmt.Println(code)
+// 	require.Equal(t, http.StatusTooManyRequests, code)
+// }
 
 func login(t *testing.T, userId, password string, s *Server) string {
 	path := fmt.Sprintf("/login")
@@ -171,7 +190,7 @@ func makeRequest(t *testing.T, s *Server, method, path, token string, body inter
 	req, err := http.NewRequest(method, path, bytes.NewBuffer([]byte(bodyBytes)))
 	req.Header.Add(authorizationHeaderKey, "bearer "+token)
 	require.NoError(t, err)
-	s.router.ServeHTTP(recorder, req)
+	s.httpServer.Handler.ServeHTTP(recorder, req)
 
 	return recorder
 }
