@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"time"
@@ -91,6 +92,14 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-Type", "application/json")
 
 	if err != nil {
+		if errors.Is(err, storages.DailyLimitExceededError) {
+			resp.WriteHeader(http.StatusTooManyRequests)
+			json.NewEncoder(resp).Encode(map[string]string{
+				"error": err.Error(),
+			})
+			return
+		}
+
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": err.Error(),
