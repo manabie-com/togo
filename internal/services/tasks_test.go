@@ -36,19 +36,34 @@ func (db *mockDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) 
 	return db.mockValidateUser(ctx, userID, pwd)
 }
 
-// TestLoginOK call testLoginOK with a mock DB
+// TestLoginOK calls testLoginOK with a mock DB
 func TestLoginOK(t *testing.T) {
+	var (
+		user = "alpha"
+		pass = "bravo"
+	)
+
 	db := &mockDB{
-		mockValidateUser: func(_ context.Context, _, _ sql.NullString) bool {
+		mockValidateUser: func(_ context.Context, userID, pwd sql.NullString) bool {
+			if userID.String != user {
+				t.Errorf("unexpected user ID (want %s  have %s)", user, userID.String)
+				return false
+			}
+
+			if pwd.String != pass {
+				t.Errorf("unexpected password (want %s  have %s)", pass, pwd.String)
+				return false
+			}
+
 			return true
 		},
 	}
 
-	testLoginOK(t, db)
+	testLoginOK(t, db, user, pass)
 }
 
 // testLoginOK tests /login with a valid user
-func testLoginOK(t *testing.T, db storages.DB) {
+func testLoginOK(t *testing.T, db storages.DB, user, pass string) {
 	svc := &ToDoService{
 		JWTKey: testJWTKey,
 		Store:  db,
@@ -60,6 +75,11 @@ func testLoginOK(t *testing.T, db storages.DB) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	q := r.URL.Query()
+	q.Add("user_id", user)
+	q.Add("password", pass)
+	r.URL.RawQuery = q.Encode()
 
 	svc.ServeHTTP(w, r)
 
