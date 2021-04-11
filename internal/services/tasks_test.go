@@ -58,3 +58,30 @@ func TestLoginOK(t *testing.T) {
 		t.Errorf("unexpected status code (want %d  have %d)", http.StatusOK, resp.StatusCode)
 	}
 }
+
+// TestLoginUnauthorized tests /login with a invalid user
+func TestLoginUnauthorized(t *testing.T) {
+	db := &mockDB{
+		mockValidateUser: func(_ context.Context, _, _ sql.NullString) bool {
+			return false
+		},
+	}
+
+	svc := &ToDoService{
+		JWTKey: "wqGyEBBfPK9w3Lxw",
+		Store:  db,
+	}
+
+	w := httptest.NewRecorder()
+
+	r, err := http.NewRequest("GET", "/login", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	svc.ServeHTTP(w, r)
+
+	if resp := w.Result(); resp.StatusCode != http.StatusUnauthorized {
+		t.Errorf("unexpected status code (want %d  have %d)", http.StatusUnauthorized, resp.StatusCode)
+	}
+}
