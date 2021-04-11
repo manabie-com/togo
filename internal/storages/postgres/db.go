@@ -44,6 +44,12 @@ func (pg *PostgresDB) RetrieveTasks(ctx context.Context, userID, createdDate sql
 
 // AddTask adds a new task to DB
 func (pg *PostgresDB) AddTask(ctx context.Context, t *storages.Task) error {
+	const query = "INSERT INTO tasks (id, content, user_id, created_date) VALUES ($1, $2, $3, $4)"
+
+	if _, err := pg.DB.Exec(ctx, query, t.ID, t.Content, t.UserID, t.CreatedDate); err != nil {
+		return err
+	}
+
 	return nil
 }
 
