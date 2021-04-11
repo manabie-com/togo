@@ -3,8 +3,8 @@
 package services
 
 import (
-	"testing"
 	"context"
+	"testing"
 
 	"github.com/manabie-com/togo/internal/storages/postgres"
 
@@ -31,4 +31,19 @@ func TestLoginOKPostgres(t *testing.T) {
 	)
 
 	testLoginOK(t, pg, user, pass)
+}
+
+// TestLoginUnauthorizedPostgres calls testLoginUnauthorized with PostgresDB
+func TestLoginUnauthorizedPostgres(t *testing.T) {
+	db, err := pgx.Connect(context.TODO(), postgresURL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close(context.TODO())
+
+	pg := &postgres.PostgresDB{
+		DB: db,
+	}
+
+	testLoginUnauthorized(t, pg)
 }
