@@ -3,15 +3,12 @@ package postgres
 import (
 	"context"
 	"database/sql"
-	"errors"
 
 	"github.com/manabie-com/togo/internal/storages"
 
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v4"
 )
-
-var DailyLimitExceededError = errors.New("Daily tasks limit exceeded")
 
 // PostgresDB for working with PostgreSQL
 type PostgresDB struct {
@@ -76,7 +73,7 @@ func (pg *PostgresDB) AddTask(ctx context.Context, t *storages.Task) error {
 		}
 
 		if cntToDo >= maxToDo {
-			return DailyLimitExceededError
+			return storages.DailyLimitExceededError
 		}
 
 		if _, err := tx.Exec(ctx, insQuery, t.ID, t.Content, t.UserID, t.CreatedDate); err != nil {
