@@ -15,6 +15,7 @@ import (
 const (
 	testJWTKey = "wqGyEBBfPK9w3Lxw"
 	testUser   = "firstUser"
+	spamUser   = "spamUser"
 	testPass   = "example"
 	testDate   = "2006-01-02"
 )
