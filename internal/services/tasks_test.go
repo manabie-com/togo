@@ -229,7 +229,7 @@ func testAddTasksInvalidToken(t *testing.T, db storages.DB) {
 	}
 }
 
-// TestAddTasksOK tests /tasks with a valid token
+// TestAddTasksOK calls testAddTasksOK with a mock DB
 func TestAddTasksOK(t *testing.T) {
 	user := "alpha"
 
@@ -246,6 +246,11 @@ func TestAddTasksOK(t *testing.T) {
 		},
 	}
 
+	testAddTasksOK(t, db, user)
+}
+
+// testAddTasksOK tests /tasks with a valid token
+func testAddTasksOK(t *testing.T, db storages.DB, user string) {
 	svc := &ToDoService{
 		JWTKey: testJWTKey,
 		Store:  db,
