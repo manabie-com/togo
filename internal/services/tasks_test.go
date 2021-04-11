@@ -10,6 +10,8 @@ import (
 	"github.com/manabie-com/togo/internal/storages"
 )
 
+const testJWTKey = "wqGyEBBfPK9w3Lxw"
+
 // mockDB implements DB interface for testing purpose
 type mockDB struct {
 	mockRetrieveTasks func(ctx context.Context, userID, createdDate sql.NullString) ([]*storages.Task, error)
@@ -41,7 +43,7 @@ func TestLoginOK(t *testing.T) {
 	}
 
 	svc := &ToDoService{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
+		JWTKey: testJWTKey,
 		Store:  db,
 	}
 
@@ -68,7 +70,7 @@ func TestLoginUnauthorized(t *testing.T) {
 	}
 
 	svc := &ToDoService{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
+		JWTKey: testJWTKey,
 		Store:  db,
 	}
 
@@ -91,7 +93,7 @@ func TestListTasksInvalidToken(t *testing.T) {
 	db := &mockDB{}
 
 	svc := &ToDoService{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
+		JWTKey: testJWTKey,
 		Store:  db,
 	}
 
