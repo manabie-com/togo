@@ -128,7 +128,7 @@ func testListTasksInvalidToken(t *testing.T, db storages.DB) {
 	}
 }
 
-// TestListTasksOK tests /tasks with a valid token
+// TestListTasksOK calls testListTasksOK with a mock DB
 func TestListTasksOK(t *testing.T) {
 	var (
 		user = "alpha"
@@ -152,6 +152,11 @@ func TestListTasksOK(t *testing.T) {
 		},
 	}
 
+	testListTasksOK(t, db, user, date)
+}
+
+// testListTasksOK tests /tasks with a valid token
+func testListTasksOK(t *testing.T, db storages.DB, user, date string) {
 	svc := &ToDoService{
 		JWTKey: testJWTKey,
 		Store:  db,
