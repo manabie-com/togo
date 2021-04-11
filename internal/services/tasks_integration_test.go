@@ -62,3 +62,24 @@ func TestListTasksInvalidTokenPostgres(t *testing.T) {
 
 	testListTasksInvalidToken(t, pg)
 }
+
+// TestListTasksOKPostgres calls testListTasksOK with a mock DB
+func TestListTasksOKPostgres(t *testing.T) {
+	var (
+		user = "firstUser"
+		pass = "example"
+		date = "2006-01-02"
+	)
+
+	db, err := pgx.Connect(context.TODO(), postgresURL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close(context.TODO())
+
+	pg := &postgres.PostgresDB{
+		DB: db,
+	}
+
+	testListTasksOK(t, pg, user, pass, date)
+}
