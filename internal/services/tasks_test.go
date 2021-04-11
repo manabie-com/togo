@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -108,5 +109,73 @@ func TestListTasksInvalidToken(t *testing.T) {
 
 	if resp := w.Result(); resp.StatusCode != http.StatusUnauthorized {
 		t.Errorf("unexpected status code (want %d  have %d)", http.StatusUnauthorized, resp.StatusCode)
+	}
+}
+
+// TestListTasksOK tests /tasks with a valid token
+func TestListTasksOK(t *testing.T) {
+	var (
+		user = "alpha"
+		date = "2006-01-02"
+	)
+
+	db := &mockDB{
+		mockRetrieveTasks: func(_ context.Context, userID, createdDate sql.NullString) ([]*storages.Task, error) {
+			if userID.String != user {
+				t.Errorf("unexpedted user ID (want %s have %s)", user, userID.String)
+			}
+
+			if createdDate.String != date {
+				t.Errorf("unexpedted date (want %s have %s)", date, createdDate.String)
+			}
+
+			return nil, nil
+		},
+		mockValidateUser: func(_ context.Context, _, _ sql.NullString) bool {
+			return true
+		},
+	}
+
+	svc := &ToDoService{
+		JWTKey: testJWTKey,
+		Store:  db,
+	}
+
+	// Login to get token
+	w := httptest.NewRecorder()
+
+	r, err := http.NewRequest("GET", "/login", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	q := r.URL.Query()
+	q.Add("user_id", user)
+	r.URL.RawQuery = q.Encode()
+
+	svc.ServeHTTP(w, r)
+
+	var body map[string]string
+
+	if err := json.NewDecoder(w.Result().Body).Decode(&body); err != nil {
+		t.Fatal(err)
+	}
+
+	// List tasks with token
+	w = httptest.NewRecorder()
+
+	r, err = http.NewRequest("GET", "/tasks", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	q = r.URL.Query()
+	q.Add("created_date", date)
+	r.URL.RawQuery = q.Encode()
+	r.Header.Add("Authorization", body["data"])
+
+	svc.ServeHTTP(w, r)
+
+	if resp := w.Result(); resp.StatusCode != http.StatusOK {
+		t.Errorf("unexpected status code (want %d  have %d)", http.StatusOK, resp.StatusCode)
 	}
 }
