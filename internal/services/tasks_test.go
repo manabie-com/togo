@@ -68,7 +68,7 @@ func testLoginOK(t *testing.T, db storages.DB) {
 	}
 }
 
-// TestLoginUnauthorized tests /login with an invalid user
+// TestLoginUnauthorized calls testLoginUnauthorized with a mock DB
 func TestLoginUnauthorized(t *testing.T) {
 	db := &mockDB{
 		mockValidateUser: func(_ context.Context, _, _ sql.NullString) bool {
@@ -76,6 +76,11 @@ func TestLoginUnauthorized(t *testing.T) {
 		},
 	}
 
+	testLoginUnauthorized(t, db)
+}
+
+// testLoginUnauthorized tests /login with an invalid user
+func testLoginUnauthorized(t *testing.T, db storages.DB) {
 	svc := &ToDoService{
 		JWTKey: testJWTKey,
 		Store:  db,
