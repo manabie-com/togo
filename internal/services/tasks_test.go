@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/manabie-com/togo/internal/storages"
@@ -200,5 +201,63 @@ func TestAddTasksInvalidToken(t *testing.T) {
 
 	if resp := w.Result(); resp.StatusCode != http.StatusUnauthorized {
 		t.Errorf("unexpected status code (want %d  have %d)", http.StatusUnauthorized, resp.StatusCode)
+	}
+}
+
+// TestAddTasksOK tests /tasks with a valid token
+func TestAddTasksOK(t *testing.T) {
+	user := "alpha"
+
+	db := &mockDB{
+		mockAddTask: func(ctx context.Context, task *storages.Task) error {
+			if task.UserID != user {
+				t.Errorf("unexpedted user ID (want %s have %s)", user, task.UserID)
+			}
+
+			return nil
+		},
+		mockValidateUser: func(_ context.Context, _, _ sql.NullString) bool {
+			return true
+		},
+	}
+
+	svc := &ToDoService{
+		JWTKey: testJWTKey,
+		Store:  db,
+	}
+
+	// Login to get token
+	w := httptest.NewRecorder()
+
+	r, err := http.NewRequest("GET", "/login", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	q := r.URL.Query()
+	q.Add("user_id", user)
+	r.URL.RawQuery = q.Encode()
+
+	svc.ServeHTTP(w, r)
+
+	var body map[string]string
+
+	if err := json.NewDecoder(w.Result().Body).Decode(&body); err != nil {
+		t.Fatal(err)
+	}
+
+	// Add task with token
+	w = httptest.NewRecorder()
+
+	r, err = http.NewRequest("POST", "/tasks", strings.NewReader(`{"content":"Lorem ipsum"}`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	r.Header.Add("Authorization", body["data"])
+
+	svc.ServeHTTP(w, r)
+
+	if resp := w.Result(); resp.StatusCode != http.StatusOK {
+		t.Errorf("unexpected status code (want %d  have %d)", http.StatusOK, resp.StatusCode)
 	}
 }
