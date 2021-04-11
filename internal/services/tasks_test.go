@@ -59,7 +59,7 @@ func TestLoginOK(t *testing.T) {
 	}
 }
 
-// TestLoginUnauthorized tests /login with a invalid user
+// TestLoginUnauthorized tests /login with an invalid user
 func TestLoginUnauthorized(t *testing.T) {
 	db := &mockDB{
 		mockValidateUser: func(_ context.Context, _, _ sql.NullString) bool {
