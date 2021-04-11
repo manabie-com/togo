@@ -16,7 +16,30 @@ type PostgresDB struct {
 
 // RetrieveTasks returns tasks if match userID AND createDate.
 func (pg *PostgresDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*storages.Task, error) {
-	return nil, nil
+	const query = "SELECT id, content, user_id, created_date FROM tasks WHERE user_id = $1 AND created_date = $2"
+
+	rows, err := pg.DB.Query(ctx, query, userID, createdDate)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var tasks []*storages.Task
+	for rows.Next() {
+		var t storages.Task
+
+		if err := rows.Scan(&t.ID, &t.Content, &t.UserID, &t.CreatedDate); err != nil {
+			return nil, err
+		}
+
+		tasks = append(tasks, &t)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return tasks, nil
 }
 
 // AddTask adds a new task to DB
