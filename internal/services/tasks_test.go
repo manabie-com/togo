@@ -36,7 +36,7 @@ func (db *mockDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) 
 	return db.mockValidateUser(ctx, userID, pwd)
 }
 
-// TestLoginOK tests /login with a valid user
+// TestLoginOK call testLoginOK with a mock DB
 func TestLoginOK(t *testing.T) {
 	db := &mockDB{
 		mockValidateUser: func(_ context.Context, _, _ sql.NullString) bool {
@@ -44,6 +44,11 @@ func TestLoginOK(t *testing.T) {
 		},
 	}
 
+	testLoginOK(t, db)
+}
+
+// testLoginOK tests /login with a valid user
+func testLoginOK(t *testing.T, db storages.DB) {
 	svc := &ToDoService{
 		JWTKey: testJWTKey,
 		Store:  db,
