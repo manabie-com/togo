@@ -12,7 +12,12 @@ import (
 	"github.com/manabie-com/togo/internal/storages"
 )
 
-const testJWTKey = "wqGyEBBfPK9w3Lxw"
+const (
+	testJWTKey = "wqGyEBBfPK9w3Lxw"
+	testUser   = "firstUser"
+	testPass   = "example"
+	testDate   = "2006-01-02"
+)
 
 // mockDB implements DB interface for testing purpose
 type mockDB struct {
@@ -38,20 +43,15 @@ func (db *mockDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) 
 
 // TestLoginOK calls testLoginOK with a mock DB
 func TestLoginOK(t *testing.T) {
-	var (
-		user = "alpha"
-		pass = "bravo"
-	)
-
 	db := &mockDB{
 		mockValidateUser: func(_ context.Context, userID, pwd sql.NullString) bool {
-			if userID.String != user {
-				t.Errorf("unexpected user ID (want %s  have %s)", user, userID.String)
+			if userID.String != testUser {
+				t.Errorf("unexpected user ID (want %s  have %s)", testUser, userID.String)
 				return false
 			}
 
-			if pwd.String != pass {
-				t.Errorf("unexpected password (want %s  have %s)", pass, pwd.String)
+			if pwd.String != testPass {
+				t.Errorf("unexpected password (want %s  have %s)", testPass, pwd.String)
 				return false
 			}
 
@@ -59,7 +59,7 @@ func TestLoginOK(t *testing.T) {
 		},
 	}
 
-	testLoginOK(t, db, user, pass)
+	testLoginOK(t, db, testUser, testPass)
 }
 
 // testLoginOK tests /login with a valid user
@@ -150,32 +150,26 @@ func testListTasksInvalidToken(t *testing.T, db storages.DB) {
 
 // TestListTasksOK calls testListTasksOK with a mock DB
 func TestListTasksOK(t *testing.T) {
-	var (
-		user = "alpha"
-		pass = "bravo"
-		date = "2006-01-02"
-	)
-
 	db := &mockDB{
 		mockRetrieveTasks: func(_ context.Context, userID, createdDate sql.NullString) ([]*storages.Task, error) {
-			if userID.String != user {
-				t.Errorf("unexpedted user ID (want %s have %s)", user, userID.String)
+			if userID.String != testUser {
+				t.Errorf("unexpedted user ID (want %s have %s)", testUser, userID.String)
 			}
 
-			if createdDate.String != date {
-				t.Errorf("unexpedted date (want %s have %s)", date, createdDate.String)
+			if createdDate.String != testDate {
+				t.Errorf("unexpedted date (want %s have %s)", testDate, createdDate.String)
 			}
 
 			return nil, nil
 		},
 		mockValidateUser: func(_ context.Context, userID, pwd sql.NullString) bool {
-			if userID.String != user {
-				t.Errorf("unexpected user ID (want %s  have %s)", user, userID.String)
+			if userID.String != testUser {
+				t.Errorf("unexpected user ID (want %s  have %s)", testUser, userID.String)
 				return false
 			}
 
-			if pwd.String != pass {
-				t.Errorf("unexpected password (want %s  have %s)", pass, pwd.String)
+			if pwd.String != testPass {
+				t.Errorf("unexpected password (want %s  have %s)", testPass, pwd.String)
 				return false
 			}
 
@@ -183,7 +177,7 @@ func TestListTasksOK(t *testing.T) {
 		},
 	}
 
-	testListTasksOK(t, db, user, pass, date)
+	testListTasksOK(t, db, testUser, testPass, testDate)
 }
 
 // testListTasksOK tests /tasks with a valid token
@@ -263,27 +257,22 @@ func testAddTasksInvalidToken(t *testing.T, db storages.DB) {
 
 // TestAddTasksOK calls testAddTasksOK with a mock DB
 func TestAddTasksOK(t *testing.T) {
-	var (
-		user = "alpha"
-		pass = "bravo"
-	)
-
 	db := &mockDB{
 		mockAddTask: func(ctx context.Context, task *storages.Task) error {
-			if task.UserID != user {
-				t.Errorf("unexpedted user ID (want %s have %s)", user, task.UserID)
+			if task.UserID != testUser {
+				t.Errorf("unexpedted user ID (want %s have %s)", testUser, task.UserID)
 			}
 
 			return nil
 		},
 		mockValidateUser: func(_ context.Context, userID, pwd sql.NullString) bool {
-			if userID.String != user {
-				t.Errorf("unexpected user ID (want %s  have %s)", user, userID.String)
+			if userID.String != testUser {
+				t.Errorf("unexpected user ID (want %s  have %s)", testUser, userID.String)
 				return false
 			}
 
-			if pwd.String != pass {
-				t.Errorf("unexpected password (want %s  have %s)", pass, pwd.String)
+			if pwd.String != testPass {
+				t.Errorf("unexpected password (want %s  have %s)", testPass, pwd.String)
 				return false
 			}
 
@@ -291,7 +280,7 @@ func TestAddTasksOK(t *testing.T) {
 		},
 	}
 
-	testAddTasksOK(t, db, user, pass)
+	testAddTasksOK(t, db, testUser, testPass)
 }
 
 // testAddTasksOK tests /tasks with a valid token

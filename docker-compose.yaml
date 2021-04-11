@@ -1,0 +1,12 @@
+version: "3"
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_USER: test
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db.sql:/docker-entrypoint-initdb.d/db.sql
