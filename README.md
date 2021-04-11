@@ -20,7 +20,7 @@ Test endpoints with a mock DB: `go test -v ./...`
 
 Basically just unit tests with PostgreSQL up and running: `go test -v ./... --tags=integration`
 
-> I did not handle setup and teardown in integration tests. Later attempt to should be cached, but in case it's not, you one should call `docker-compose down` and up it again every time a testing process is done.
+> I did not handle setup and teardown in integration tests. Later attempts should be cached, but in case it's not, you one should call `docker-compose down` and up it again every time a testing process is done.
 
 ### Checklist
 
