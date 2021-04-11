@@ -263,7 +263,10 @@ func testAddTasksInvalidToken(t *testing.T, db storages.DB) {
 
 // TestAddTasksOK calls testAddTasksOK with a mock DB
 func TestAddTasksOK(t *testing.T) {
-	user := "alpha"
+	var (
+		user = "alpha"
+		pass = "bravo"
+	)
 
 	db := &mockDB{
 		mockAddTask: func(ctx context.Context, task *storages.Task) error {
@@ -273,16 +276,26 @@ func TestAddTasksOK(t *testing.T) {
 
 			return nil
 		},
-		mockValidateUser: func(_ context.Context, _, _ sql.NullString) bool {
+		mockValidateUser: func(_ context.Context, userID, pwd sql.NullString) bool {
+			if userID.String != user {
+				t.Errorf("unexpected user ID (want %s  have %s)", user, userID.String)
+				return false
+			}
+
+			if pwd.String != pass {
+				t.Errorf("unexpected password (want %s  have %s)", pass, pwd.String)
+				return false
+			}
+
 			return true
 		},
 	}
 
-	testAddTasksOK(t, db, user)
+	testAddTasksOK(t, db, user, pass)
 }
 
 // testAddTasksOK tests /tasks with a valid token
-func testAddTasksOK(t *testing.T, db storages.DB, user string) {
+func testAddTasksOK(t *testing.T, db storages.DB, user, pass string) {
 	svc := &ToDoService{
 		JWTKey: testJWTKey,
 		Store:  db,
@@ -298,6 +311,7 @@ func testAddTasksOK(t *testing.T, db storages.DB, user string) {
 
 	q := r.URL.Query()
 	q.Add("user_id", user)
+	q.Add("password", pass)
 	r.URL.RawQuery = q.Encode()
 
 	svc.ServeHTTP(w, r)
