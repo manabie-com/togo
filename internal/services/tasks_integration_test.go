@@ -43,7 +43,7 @@ func TestLoginUnauthorizedPostgres(t *testing.T) {
 	testLoginUnauthorized(t, pg)
 }
 
-// TestListTasksInvalidTokenPostgres calls testListTasksInvalidToken with a mock DB
+// TestListTasksInvalidTokenPostgres calls testListTasksInvalidToken with PostgreSQL
 func TestListTasksInvalidTokenPostgres(t *testing.T) {
 	db, err := pgx.Connect(context.TODO(), postgresURL)
 	if err != nil {
@@ -58,7 +58,7 @@ func TestListTasksInvalidTokenPostgres(t *testing.T) {
 	testListTasksInvalidToken(t, pg)
 }
 
-// TestListTasksOKPostgres calls testListTasksOK with a mock DB
+// TestListTasksOKPostgres calls testListTasksOK with PostgreSQL
 func TestListTasksOKPostgres(t *testing.T) {
 	db, err := pgx.Connect(context.TODO(), postgresURL)
 	if err != nil {
