@@ -3,6 +3,9 @@ package services
 import (
 	"context"
 	"database/sql"
+	"net/http"
+	"net/http/httptest"
+	"testing"
 
 	"github.com/manabie-com/togo/internal/storages"
 )
@@ -27,4 +30,31 @@ func (db *mockDB) AddTask(ctx context.Context, t *storages.Task) error {
 // ValidateUser delegates the call to mockValidateUser
 func (db *mockDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
 	return db.mockValidateUser(ctx, userID, pwd)
+}
+
+// TestLoginOK tests /login with a valid user
+func TestLoginOK(t *testing.T) {
+	db := &mockDB{
+		mockValidateUser: func(_ context.Context, _, _ sql.NullString) bool {
+			return true
+		},
+	}
+
+	svc := &ToDoService{
+		JWTKey: "wqGyEBBfPK9w3Lxw",
+		Store:  db,
+	}
+
+	w := httptest.NewRecorder()
+
+	r, err := http.NewRequest("GET", "/login", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	svc.ServeHTTP(w, r)
+
+	if resp := w.Result(); resp.StatusCode != http.StatusOK {
+		t.Errorf("unexpected status code (want %d  have %d)", http.StatusOK, resp.StatusCode)
+	}
 }
