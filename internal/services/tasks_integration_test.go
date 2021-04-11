@@ -47,3 +47,18 @@ func TestLoginUnauthorizedPostgres(t *testing.T) {
 
 	testLoginUnauthorized(t, pg)
 }
+
+// TestListTasksInvalidTokenPostgres calls testListTasksInvalidToken with a mock DB
+func TestListTasksInvalidTokenPostgres(t *testing.T) {
+	db, err := pgx.Connect(context.TODO(), postgresURL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close(context.TODO())
+
+	pg := &postgres.PostgresDB{
+		DB: db,
+	}
+
+	testListTasksInvalidToken(t, pg)
+}
