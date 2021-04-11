@@ -179,3 +179,26 @@ func TestListTasksOK(t *testing.T) {
 		t.Errorf("unexpected status code (want %d  have %d)", http.StatusOK, resp.StatusCode)
 	}
 }
+
+// TestAddTasksInvalidToken tests /tasks with an invalid token
+func TestAddTasksInvalidToken(t *testing.T) {
+	db := &mockDB{}
+
+	svc := &ToDoService{
+		JWTKey: testJWTKey,
+		Store:  db,
+	}
+
+	w := httptest.NewRecorder()
+
+	r, err := http.NewRequest("POST", "/tasks", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	svc.ServeHTTP(w, r)
+
+	if resp := w.Result(); resp.StatusCode != http.StatusUnauthorized {
+		t.Errorf("unexpected status code (want %d  have %d)", http.StatusUnauthorized, resp.StatusCode)
+	}
+}
