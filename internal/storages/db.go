@@ -3,7 +3,10 @@ package storages
 import (
 	"context"
 	"database/sql"
+	"errors"
 )
+
+var DailyLimitExceededError = errors.New("Daily tasks limit exceeded")
 
 // DB stores tasks and credentials of users
 type DB interface {

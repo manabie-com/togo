@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"time"
@@ -122,6 +123,14 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 
 	err = s.Store.AddTask(req.Context(), t)
 	if err != nil {
+		if errors.Is(err, storages.DailyLimitExceededError) {
+			resp.WriteHeader(http.StatusTooManyRequests)
+			json.NewEncoder(resp).Encode(map[string]string{
+				"error": err.Error(),
+			})
+			return
+		}
+
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": err.Error(),

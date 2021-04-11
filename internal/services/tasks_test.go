@@ -15,6 +15,7 @@ import (
 const (
 	testJWTKey = "wqGyEBBfPK9w3Lxw"
 	testUser   = "firstUser"
+	spamUser   = "spamUser"
 	testPass   = "example"
 	testDate   = "2006-01-02"
 )
@@ -324,5 +325,77 @@ func testAddTasksOK(t *testing.T, db storages.DB, user, pass string) {
 
 	if resp := w.Result(); resp.StatusCode != http.StatusOK {
 		t.Errorf("unexpected status code (want %d  have %d)", http.StatusOK, resp.StatusCode)
+	}
+}
+
+// TestAddTasksLimit calls testAddTasksLimit with a mock DB
+func TestAddTasksLimit(t *testing.T) {
+	db := &mockDB{
+		mockAddTask: func(ctx context.Context, task *storages.Task) error {
+			if task.UserID != testUser {
+				t.Errorf("unexpedted user ID (want %s have %s)", testUser, task.UserID)
+			}
+
+			return storages.DailyLimitExceededError
+		},
+		mockValidateUser: func(_ context.Context, userID, pwd sql.NullString) bool {
+			if userID.String != testUser {
+				t.Errorf("unexpected user ID (want %s  have %s)", testUser, userID.String)
+				return false
+			}
+
+			if pwd.String != testPass {
+				t.Errorf("unexpected password (want %s  have %s)", testPass, pwd.String)
+				return false
+			}
+
+			return true
+		},
+	}
+
+	testAddTasksLimit(t, db, testUser, testPass)
+}
+
+// testAddTasksLimit tests /tasks when tasks limit reached
+func testAddTasksLimit(t *testing.T, db storages.DB, user, pass string) {
+	svc := &ToDoService{
+		JWTKey: testJWTKey,
+		Store:  db,
+	}
+
+	// Login to get token
+	w := httptest.NewRecorder()
+
+	r, err := http.NewRequest("GET", "/login", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	q := r.URL.Query()
+	q.Add("user_id", user)
+	q.Add("password", pass)
+	r.URL.RawQuery = q.Encode()
+
+	svc.ServeHTTP(w, r)
+
+	var body map[string]string
+
+	if err := json.NewDecoder(w.Result().Body).Decode(&body); err != nil {
+		t.Fatal(err)
+	}
+
+	// Add task with token
+	w = httptest.NewRecorder()
+
+	r, err = http.NewRequest("POST", "/tasks", strings.NewReader(`{"content":"Lorem ipsum"}`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	r.Header.Add("Authorization", body["data"])
+
+	svc.ServeHTTP(w, r)
+
+	if resp := w.Result(); resp.StatusCode != http.StatusTooManyRequests {
+		t.Errorf("unexpected status code (want %d  have %d)", http.StatusTooManyRequests, resp.StatusCode)
 	}
 }

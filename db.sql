@@ -5,6 +5,7 @@ CREATE TABLE users (
 );
 
 INSERT INTO users (id, password, max_todo) VALUES ('firstUser', 'example', 5);
+INSERT INTO users (id, password, max_todo) VALUES ('spamUser', 'example', 0);
 
 CREATE TABLE tasks (
     id            TEXT PRIMARY KEY,

@@ -102,3 +102,18 @@ func TestAddTasksOKPostgres(t *testing.T) {
 
 	testAddTasksOK(t, pg, testUser, testPass)
 }
+
+// TestAddTasksLimitPostgres calls testAddTasksLimit with PostgreSQL
+func TestAddTasksLimitPostgres(t *testing.T) {
+	db, err := pgx.Connect(context.TODO(), postgresURL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close(context.TODO())
+
+	pg := &postgres.PostgresDB{
+		DB: db,
+	}
+
+	testAddTasksLimit(t, pg, spamUser, testPass)
+}
