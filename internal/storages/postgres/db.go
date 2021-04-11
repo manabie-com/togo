@@ -26,5 +26,13 @@ func (pg *PostgresDB) AddTask(ctx context.Context, t *storages.Task) error {
 
 // ValidateUser returns tasks if match userID AND password
 func (pg *PostgresDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
-	return false
+	const query = "SELECT id FROM users WHERE id = $1 AND password = $2"
+
+	var u storages.User
+
+	if err := pg.DB.QueryRow(ctx, query, userID, pwd).Scan(&u.ID); err != nil {
+		return false
+	}
+
+	return true
 }
