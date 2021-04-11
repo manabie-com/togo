@@ -100,10 +100,15 @@ func testLoginUnauthorized(t *testing.T, db storages.DB) {
 	}
 }
 
-// TestListTasksInvalidToken tests /tasks with an invalid token
+// TestListTasksInvalidToken calls testListTasksInvalidToken with a mock DB
 func TestListTasksInvalidToken(t *testing.T) {
 	db := &mockDB{}
 
+	testListTasksInvalidToken(t, db)
+}
+
+// testListTasksInvalidToken tests /tasks with an invalid token
+func testListTasksInvalidToken(t *testing.T, db storages.DB) {
 	svc := &ToDoService{
 		JWTKey: testJWTKey,
 		Store:  db,
