@@ -83,3 +83,18 @@ func TestListTasksOKPostgres(t *testing.T) {
 
 	testListTasksOK(t, pg, user, pass, date)
 }
+
+// TestAddTasksInvalidTokenPostgres calls testAddTasksInvalidToken with PostgreSQL
+func TestAddTasksInvalidTokenPostgres(t *testing.T) {
+	db, err := pgx.Connect(context.TODO(), postgresURL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close(context.TODO())
+
+	pg := &postgres.PostgresDB{
+		DB: db,
+	}
+
+	testAddTasksInvalidToken(t, pg)
+}
