@@ -280,7 +280,7 @@ func TestAddTasksOK(t *testing.T) {
 		},
 	}
 
-	testAddTasksOK(t, db, user, pass)
+	testAddTasksOK(t, db, testUser, testPass)
 }
 
 // testAddTasksOK tests /tasks with a valid token
