@@ -3,9 +3,11 @@ package postgres
 import (
 	"context"
 	"database/sql"
-
 	"github.com/manabie-com/togo/internal/storages"
+	"time"
 )
+
+const MaxTodo = 5
 
 type PostgresDB struct {
 	DB *sql.DB
@@ -47,9 +49,60 @@ func (l *PostgresDB) AddTask(ctx context.Context, t *storages.Task) error {
 
 	return nil
 }
+func (l *PostgresDB) CheckUserLimit(ctx context.Context, userID string) (error, bool) {
+	err, user := l.GetUser(ctx, userID)
+	if err != nil {
+		return err, false
+	}
 
-// ValidateUser returns tasks if match userID AND password
-func (l *PostgresDB) ValidateUser(ctx context.Context, userID, pwd string) bool {
+	nowString := time.Now().Format("2006-01-02")
+
+	if user.CurrentDay != nowString {
+		err = l.ResetUserLimit(ctx, userID, nowString)
+		return err, true
+	} else {
+		if user.MaxTodo > 0 {
+			return nil, true
+		}
+		return nil, false
+	}
+
+}
+
+func (l *PostgresDB) ResetUserLimit(ctx context.Context, userID, currentDay string) error {
+	stmt := `UPDATE users SET max_todo = $1, current_day = $2 where id = $3`
+	_, err := l.DB.ExecContext(ctx, stmt, MaxTodo, currentDay, userID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (l *PostgresDB) ChangeUserLimit(ctx context.Context, userId string) error {
+	stmt := `UPDATE users SET max_todo = max_todo - 1 where id = $1 and max_todo > 0`
+	_, err := l.DB.ExecContext(ctx, stmt, userId)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (l *PostgresDB) GetUser(ctx context.Context, userID string) (error, storages.User) {
+	stmt := "select id, max_todo, current_day from users where id = $1"
+	row := l.DB.QueryRowContext(ctx, stmt, userID)
+
+	u := storages.User{}
+	err := row.Scan(&u.ID, &u.MaxTodo, &u.CurrentDay)
+	if err != nil {
+		return err, u
+	}
+
+	return nil, u
+}
+
+func (l *PostgresDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
 	stmt := "select id from users where id = $1 and password = $2"
 	row := l.DB.QueryRowContext(ctx, stmt, userID, pwd)
 

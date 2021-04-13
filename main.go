@@ -14,7 +14,7 @@ import (
 const (
 	host     = "localhost"
 	port     = 5432
-	user     = "my_postgres"
+	user     = "my_user"
 	password = "my_password"
 	dbname   = "manabie"
 )

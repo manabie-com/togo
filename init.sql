@@ -12,8 +12,9 @@
  Target Server Version : 130002
  File Encoding         : 65001
 
- Date: 13/04/2021 14:28:15
+ Date: 13/04/2021 20:17:43
 */
+
 
 -- ----------------------------
 -- Table structure for tasks
@@ -37,7 +38,6 @@ INSERT INTO "public"."tasks" VALUES ('055261ab-8ba8-49e1-a9e8-e9f725ba9104', 'se
 INSERT INTO "public"."tasks" VALUES ('2bf3d510-c0fb-41e9-ad12-4b9a60b37e7a', 'another content', 'firstUser', '2020-06-29');
 INSERT INTO "public"."tasks" VALUES ('e35e13f8-35f3-409f-8e2f-f3e0173fcca3', 'sadsa', 'firstUser', '2020-08-10');
 INSERT INTO "public"."tasks" VALUES ('2a73a4d5-dd05-4c77-bcbd-f5e51a6d6809', 'sadsad', 'firstUser', '2020-08-11');
-INSERT INTO "public"."tasks" VALUES ('201f7fee-b512-4785-adef-5f639c887348', 'another content123', 'firstUser', '2021-04-13');
 COMMIT;
 
 -- ----------------------------
@@ -47,7 +47,8 @@ DROP TABLE IF EXISTS "public"."users";
 CREATE TABLE "public"."users" (
   "id" text COLLATE "pg_catalog"."default" NOT NULL,
   "password" text COLLATE "pg_catalog"."default" NOT NULL,
-  "max_todo" int4 NOT NULL
+  "max_todo" int4 NOT NULL,
+  "current_day" varchar(15) COLLATE "pg_catalog"."default"
 )
 ;
 ALTER TABLE "public"."users" OWNER TO "my_user";
@@ -56,7 +57,7 @@ ALTER TABLE "public"."users" OWNER TO "my_user";
 -- Records of users
 -- ----------------------------
 BEGIN;
-INSERT INTO "public"."users" VALUES ('firstUser', 'example', 5);
+INSERT INTO "public"."users" VALUES ('firstUser', 'example', 0, '2021-04-13');
 COMMIT;
 
 -- ----------------------------

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	logger "github.com/sirupsen/logrus"
 	"log"
 	"net/http"
 	"time"
@@ -54,7 +55,8 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
-	if !s.Store.ValidateUser(req.Context(), req.FormValue("user_id"), req.FormValue("password")) {
+	id := value(req, "user_id")
+	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
 		resp.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": "incorrect user_id/pwd",
@@ -63,7 +65,7 @@ func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 	}
 	resp.Header().Set("Content-Type", "application/json")
 
-	token, err := s.createToken(req.FormValue("user_id"))
+	token, err := s.createToken(id.String)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
@@ -113,7 +115,19 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	now := time.Now()
-	userID, _ := userIDFromCtx(req.Context())
+	ctx := req.Context()
+	userID, _ := userIDFromCtx(ctx)
+	logger.Info(userID)
+
+	//check limit 5 task a day
+	err, ok := s.Store.CheckUserLimit(ctx, userID)
+	if err != nil {
+		logger.Error(err)
+	}
+	if !ok {
+		resp.WriteHeader(http.StatusForbidden)
+	}
+
 	t.ID = uuid.New().String()
 	t.UserID = userID
 	t.CreatedDate = now.Format("2006-01-02")
@@ -127,6 +141,11 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 			"error": err.Error(),
 		})
 		return
+	}
+
+	err = s.Store.ChangeUserLimit(ctx, userID)
+	if err != nil {
+		logger.Error(err)
 	}
 
 	json.NewEncoder(resp).Encode(map[string]*storages.Task{
