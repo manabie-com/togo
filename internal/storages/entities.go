@@ -10,6 +10,8 @@ type Task struct {
 
 // User reflects users data from DB
 type User struct {
-	ID       string
-	Password string
+	ID         string
+	Password   string
+	MaxTodo    int    `json:"max_todo" bson:"max_todo"`
+	CurrentDay string `json:"current_day" bson:"current_day"`
 }

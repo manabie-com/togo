@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	logger "github.com/sirupsen/logrus"
 	"log"
 	"net/http"
 	"time"
@@ -11,13 +12,13 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/storages"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	postgres "github.com/manabie-com/togo/internal/storages/postgres"
 )
 
 // ToDoService implement HTTP server
 type ToDoService struct {
 	JWTKey string
-	Store  *sqllite.LiteDB
+	Store  *postgres.PostgresDB
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
@@ -114,7 +115,19 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	now := time.Now()
-	userID, _ := userIDFromCtx(req.Context())
+	ctx := req.Context()
+	userID, _ := userIDFromCtx(ctx)
+	logger.Info(userID)
+
+	//check limit 5 task a day
+	err, ok := s.Store.CheckUserLimit(ctx, userID)
+	if err != nil {
+		logger.Error(err)
+	}
+	if !ok {
+		resp.WriteHeader(http.StatusForbidden)
+	}
+
 	t.ID = uuid.New().String()
 	t.UserID = userID
 	t.CreatedDate = now.Format("2006-01-02")
@@ -128,6 +141,11 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 			"error": err.Error(),
 		})
 		return
+	}
+
+	err = s.Store.ChangeUserLimit(ctx, userID)
+	if err != nil {
+		logger.Error(err)
 	}
 
 	json.NewEncoder(resp).Encode(map[string]*storages.Task{
