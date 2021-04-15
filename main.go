@@ -1,26 +1,61 @@
 package main
 
 import (
+	"context"
 	"database/sql"
-	"log"
+	"github.com/manabie-com/togo/internal/config"
+	"github.com/manabie-com/togo/internal/router"
+	"github.com/manabie-com/togo/internal/util"
+	"github.com/rs/zerolog/log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
-	"github.com/manabie-com/togo/internal/services"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
-
+	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
-	db, err := sql.Open("sqlite3", "./data.db")
-	if err != nil {
-		log.Fatal("error opening db", err)
+	configPath := os.Getenv("TOGO_CONFIG_PATH")
+	if configPath == "" {
+		configPath = "./"
 	}
 
-	http.ListenAndServe(":5050", &services.ToDoService{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
-			DB: db,
-		},
-	})
+	conf, err := config.InitializeConfig(configPath)
+	if err != nil {
+		log.Fatal().Err(err).Msg("unable to read configuration file")
+		return
+	}
+	db, err := sql.Open(conf.DB.DriverName, util.GetConnectionString(conf.DB))
+	if err != nil {
+		log.Fatal().Err(err).Msg("unable to open DB")
+		return
+	}
+	defer db.Close()
+
+	handler := router.NewRouter(db, conf.DB.DriverName, conf.JWTKey)
+	server := &http.Server{
+		Addr:         ":5050",
+		Handler:      handler,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
+
+	log.Info().Msg("Togo is ready")
+	go func() {
+		if err := server.ListenAndServe(); err != nil {
+			log.Fatal().Err(err).Msg("unable to start the service")
+		}
+	}()
+	signals := make(chan os.Signal, 1)
+	signal.Notify(signals, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
+	<-signals
+
+	ctx, cancelFn := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancelFn()
+	if err := server.Shutdown(ctx); err != nil {
+		log.Error().Err(err).Msg("unable to shutdown the service")
+	}
 }

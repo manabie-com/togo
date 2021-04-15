@@ -1,0 +1,15 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:13.2
+    restart: always
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=password
+      - APP_DB_USER=togo_user
+      - APP_DB_PASS=password
+      - APP_DB_NAME=togo
+    ports:
+      - 5432:5432
+    volumes:
+      - ./db/postgres:/docker-entrypoint-initdb.d/
