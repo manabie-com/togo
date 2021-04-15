@@ -1,4 +1,4 @@
-package storages
+package entities
 
 // Task reflects tasks in DB
 type Task struct {
@@ -12,4 +12,10 @@ type Task struct {
 type User struct {
 	ID       string
 	Password string
+}
+
+type RateLimit struct {
+	Count  uint
+	UserID string
+	Date   string
 }
