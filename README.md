@@ -4,8 +4,8 @@ This is a simple backend for a good old todo service, right now this service can
 To make it run: 
 - `go run main.go`
 - Import Postman collection from `docs` to check example \
-To run testcase:
- `go test -v .\test\...`
+\
+To run testcase: `go test -v .\test\...`
 ### What I do ?
 - Separate the layer according to the follow structure: Router -> Delivery -> Usecase (Service) -> Respository (Storage) -> Model
 ```
@@ -25,4 +25,4 @@ To run testcase:
 - More clean code with Clean Architecture of Uncle Bob
 - Research more about testing for unit test and integration test in golang
 - Handle error \
-...\
+...
