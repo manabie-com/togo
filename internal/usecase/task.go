@@ -2,113 +2,45 @@ package usecase
 
 import (
 	"context"
-	"encoding/json"
-	"log"
-	"net/http"
-	"time"
 
-	"github.com/dgrijalva/jwt-go"
-	"github.com/google/uuid"
-	"github.com/manabie-com/togo/internal/delivery"
 	"github.com/manabie-com/togo/internal/model"
-	"github.com/manabie-com/togo/internal/utils"
 )
 
-type TaskUsecase interface {
-	ListTasks(resp http.ResponseWriter, req *http.Request)
-	AddTasks(resp http.ResponseWriter, req *http.Request)
-}
-type taskUsecase struct {
-	taskService delivery.TaskService
+type TaskService interface {
+	ListTasks(ctx context.Context, userId string, createdDate string) (res []*model.Task, err error)
+	AddTask(ctx context.Context, t *model.Task) error
+	IsAllowedToAddTask(ctx context.Context, userId string) bool
 }
 
-func NewTaskUsecase(ts delivery.TaskService) TaskUsecase {
-	return &taskUsecase{
-		taskService: ts,
+type taskService struct {
+	taskRespository model.TaskRespository
+}
+
+func NewTaskService(tr model.TaskRespository) TaskService {
+	return &taskService{
+		taskRespository: tr,
 	}
 }
 
-func (tu *taskUsecase) ListTasks(resp http.ResponseWriter, req *http.Request) {
-
-	ctx := req.Context()
-	userId, _ := userIDFromCtx(ctx)
-	createDate := req.FormValue("created_date")
-	res, err := tu.taskService.ListTasks(ctx, userId, createDate)
-
+func (ts *taskService) ListTasks(ctx context.Context, userId string, createdDate string) (res []*model.Task, err error) {
+	tasks, err := ts.taskRespository.RetrieveTasks(
+		ctx, userId, createdDate,
+	)
 	if err != nil {
-		utils.HttpResponseInternalServerError(resp, err.Error())
-		return
+		return nil, err
 	}
-
-	json.NewEncoder(resp).Encode(map[string][]*model.Task{
-		"data": res,
-	})
+	return tasks, err
 }
 
-func (tu *taskUsecase) AddTasks(resp http.ResponseWriter, req *http.Request) {
+func (ts *taskService) AddTask(ctx context.Context, t *model.Task) error {
 
-	ctx := req.Context()
-	userID, _ := userIDFromCtx(ctx)
-
-	if !tu.taskService.IsAllowedToAddTask(ctx, userID) {
-		utils.HttpResponseBadRequest(resp, "You have added more than the number of tasks allowed per day!")
-		return
-	}
-
-	t := &model.Task{}
-	err := json.NewDecoder(req.Body).Decode(t)
-	defer req.Body.Close()
+	err := ts.taskRespository.AddTask(ctx, t)
 	if err != nil {
-		utils.HttpResponseInternalServerError(resp, err.Error())
-		return
+		return err
 	}
-
-	now := time.Now()
-	t.ID = uuid.New().String()
-	t.UserID = userID
-	t.CreatedDate = now.Format("2006-01-02")
-	err = tu.taskService.AddTask(ctx, t)
-
-	if err != nil {
-		utils.HttpResponseInternalServerError(resp, err.Error())
-		return
-	}
-
-	json.NewEncoder(resp).Encode(map[string]*model.Task{
-		"data": t,
-	})
+	return nil
 }
 
-func userIDFromCtx(ctx context.Context) (string, bool) {
-	v := ctx.Value("userId")
-	id, ok := v.(string)
-	return id, ok
-}
-
-func ValidToken(req *http.Request) (*http.Request, bool) {
-	token := req.Header.Get("Authorization")
-
-	claims := make(jwt.MapClaims)
-
-	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
-		return []byte("wqGyEBBfPK9w3Lxw"), nil
-	})
-
-	if err != nil {
-		log.Println(err)
-		return req, false
-	}
-
-	if !t.Valid {
-		return req, false
-	}
-
-	id, ok := claims["user_id"].(string)
-
-	if !ok {
-		return req, false
-	}
-
-	req = req.WithContext(context.WithValue(req.Context(), "userId", id))
-	return req, true
+func (ts *taskService) IsAllowedToAddTask(ctx context.Context, userId string) bool {
+	return ts.taskRespository.IsAllowedToAddTask(ctx, userId)
 }

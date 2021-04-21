@@ -9,7 +9,7 @@ import (
 	"github.com/manabie-com/togo/internal/respository"
 )
 
-func TestRespository(t *testing.T) {
+func TestUserRespository(t *testing.T) {
 
 	db, mock, err := sqlmock.New()
 	if err != nil {

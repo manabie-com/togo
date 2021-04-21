@@ -30,7 +30,7 @@ func authMiddleware(next http.Handler) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var ok bool
-		r, ok = usecase.ValidToken(r)
+		r, ok = delivery.ValidToken(r)
 		if !ok {
 			utils.HttpResponseUnauthorized(w, "User is not valid!")
 			return
@@ -49,18 +49,18 @@ func main() {
 	defer db.Close()
 
 	taskRespository := respository.NewTaskLiteDBRespository(db)
-	taskService := delivery.NewTaskService(taskRespository)
-	taskUsecase := usecase.NewTaskUsecase(taskService)
+	taskService := usecase.NewTaskService(taskRespository)
+	taskDelivery := delivery.NewTaskDelivery(taskService)
 
 	userRespository := respository.NewUserLiteDBRespository(db)
-	userService := delivery.NewUserService(userRespository)
-	userUsecase := usecase.NewUserUsecase(userService)
+	userService := usecase.NewUserService(userRespository)
+	userDelivery := delivery.NewUserDelivery(userService)
 
-	router.HandleFunc("/login", userUsecase.Login)
+	router.HandleFunc("/login", userDelivery.Login)
 	taskAPI := router.PathPrefix("/tasks").Subrouter()
 	taskAPI.Use(authMiddleware)
-	taskAPI.HandleFunc("", taskUsecase.ListTasks).Methods("GET")
-	taskAPI.HandleFunc("", taskUsecase.AddTasks).Methods("POST")
+	taskAPI.HandleFunc("", taskDelivery.ListTasks).Methods("GET")
+	taskAPI.HandleFunc("", taskDelivery.AddTasks).Methods("POST")
 
 	http.ListenAndServe(":5050", router)
 

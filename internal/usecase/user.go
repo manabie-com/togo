@@ -1,58 +1,26 @@
 package usecase
 
 import (
-	"encoding/json"
-	"net/http"
-	"time"
+	"context"
 
-	"github.com/dgrijalva/jwt-go"
-	"github.com/manabie-com/togo/internal/delivery"
-	"github.com/manabie-com/togo/internal/utils"
+	"github.com/manabie-com/togo/internal/model"
 )
 
-type UserUsecase interface {
-	Login(resp http.ResponseWriter, req *http.Request)
-}
-type userUsecase struct {
-	userService delivery.UserService
+type UserService interface {
+	GetAuthToken(ctx context.Context, id, password string) (bool, error)
 }
 
-func NewUserUsecase(us delivery.UserService) UserUsecase {
-	return &userUsecase{
-		userService: us,
+type userService struct {
+	userRespository model.UserRespository
+}
+
+func NewUserService(ur model.UserRespository) UserService {
+	return &userService{
+		userRespository: ur,
 	}
 }
 
-func (uu *userUsecase) Login(resp http.ResponseWriter, req *http.Request) {
-	ctx := req.Context()
-	userId := req.FormValue("user_id")
-	password := req.FormValue("password")
-	isValidUser, err := uu.userService.GetAuthToken(ctx, userId, password)
-
-	if !isValidUser {
-		utils.HttpResponseUnauthorized(resp, err.Error())
-		return
-	}
-
-	token, err := createToken(userId)
-	if err != nil {
-		utils.HttpResponseInternalServerError(resp, err.Error())
-		return
-	}
-
-	json.NewEncoder(resp).Encode(map[string]string{
-		"data": token,
-	})
-}
-
-func createToken(id string) (string, error) {
-	atClaims := jwt.MapClaims{}
-	atClaims["user_id"] = id
-	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
-	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
-	token, err := at.SignedString([]byte("wqGyEBBfPK9w3Lxw"))
-	if err != nil {
-		return "", err
-	}
-	return token, nil
+func (us *userService) GetAuthToken(ctx context.Context, id, password string) (bool, error) {
+	isValidUser, err := us.userRespository.ValidateUser(ctx, id, password)
+	return isValidUser, err
 }
