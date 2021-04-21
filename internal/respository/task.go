@@ -45,6 +45,18 @@ func (l *TaskLiteDB) RetrieveTasks(ctx context.Context, userID, createdDate stri
 
 	return tasks, nil
 }
+
+// AddTask adds a new task to DB
+func (l *TaskLiteDB) AddTask(ctx context.Context, t *model.Task) error {
+	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?) ư`
+	_, err := l.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (l *TaskLiteDB) IsAllowedToAddTask(ctx context.Context, userId string) bool {
 	createdDate := time.Now().Format("2006-01-02")
 	stmtGetCurrentTasksInDay := ` SELECT COALESCE((SELECT COUNT(*) FROM tasks WHERE user_id = ? and created_date = ? GROUP BY user_id), 0)`
@@ -55,22 +67,14 @@ func (l *TaskLiteDB) IsAllowedToAddTask(ctx context.Context, userId string) bool
 	var maxToDo, tasksLengthInDay int
 
 	err := rowTask.Scan(&tasksLengthInDay)
+	if err != nil {
+		return false
+	}
 	err = rowUser.Scan(&maxToDo)
 	if maxToDo == tasksLengthInDay || err != nil {
 		return false
 	}
 	return true
-}
-
-// AddTask adds a new task to DB
-func (l *TaskLiteDB) AddTask(ctx context.Context, t *model.Task) error {
-	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
-	_, err := l.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func convertToNullString(value string) sql.NullString {
