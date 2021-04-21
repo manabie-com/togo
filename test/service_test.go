@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/manabie-com/togo/internal/delivery"
+	"github.com/manabie-com/togo/internal/usecase"
 	"github.com/manabie-com/togo/internal/utils"
 	"github.com/stretchr/testify/assert"
 )
@@ -13,7 +13,7 @@ type getRespositoryMock struct{}
 
 var (
 	isValidate func(ctx context.Context, id, password string) (bool, error)
-	s          delivery.UserService
+	s          usecase.UserService
 )
 
 func (s *getRespositoryMock) ValidateUser(ctx context.Context, id, password string) (bool, error) {
@@ -22,7 +22,7 @@ func (s *getRespositoryMock) ValidateUser(ctx context.Context, id, password stri
 
 func initUserService() {
 	respository := &getRespositoryMock{}
-	s = delivery.NewUserService(respository)
+	s = usecase.NewUserService(respository)
 }
 
 func TestGetAuthToken_Valid(t *testing.T) {
