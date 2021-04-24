@@ -22,6 +22,6 @@ func (u taskUseCase) AddTask(task domain.Task) error {
 	return u.taskStore.AddTaskWithLimitPerDay(task, limit)
 }
 
-func (u taskUseCase) GetTasksByUserID(userID string) ([]domain.Task, error) {
-	return u.taskStore.GetTasksByUserID(userID)
+func (u taskUseCase) GetTasksByUserIDAndDate(userID string, date string) ([]domain.Task, error) {
+	return u.taskStore.GetTasksByUserIDAndDate(userID, date)
 }

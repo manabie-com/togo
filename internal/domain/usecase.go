@@ -2,7 +2,7 @@ package domain
 
 type TaskUseCase interface {
 	AddTask(Task) error
-	GetTasksByUserID(userID string) ([]Task, error)
+	GetTasksByUserIDAndDate(userID string, date string) ([]Task, error)
 }
 
 type AuthUseCase interface {

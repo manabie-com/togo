@@ -48,19 +48,19 @@ func (mr *MockTaskStoreMockRecorder) AddTaskWithLimitPerDay(task, limit interfac
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddTaskWithLimitPerDay", reflect.TypeOf((*MockTaskStore)(nil).AddTaskWithLimitPerDay), task, limit)
 }
 
-// GetTasksByUserID mocks base method.
-func (m *MockTaskStore) GetTasksByUserID(userID string) ([]domain.Task, error) {
+// GetTasksByUserIDAndDate mocks base method.
+func (m *MockTaskStore) GetTasksByUserIDAndDate(userID, date string) ([]domain.Task, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetTasksByUserID", userID)
+	ret := m.ctrl.Call(m, "GetTasksByUserIDAndDate", userID, date)
 	ret0, _ := ret[0].([]domain.Task)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetTasksByUserID indicates an expected call of GetTasksByUserID.
-func (mr *MockTaskStoreMockRecorder) GetTasksByUserID(userID interface{}) *gomock.Call {
+// GetTasksByUserIDAndDate indicates an expected call of GetTasksByUserIDAndDate.
+func (mr *MockTaskStoreMockRecorder) GetTasksByUserIDAndDate(userID, date interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTasksByUserID", reflect.TypeOf((*MockTaskStore)(nil).GetTasksByUserID), userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTasksByUserIDAndDate", reflect.TypeOf((*MockTaskStore)(nil).GetTasksByUserIDAndDate), userID, date)
 }
 
 // MockUserStore is a mock of UserStore interface.

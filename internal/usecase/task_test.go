@@ -25,18 +25,24 @@ func taskTestSetupMockTaskStore(t *testing.T, s *mocks.MockTaskStore) *mocks.Moc
 			}
 		}
 		if len(tasks) >= defaultTaskPerDay {
-			return domain.TaskLimitReached{}
+			return domain.TaskLimitReached
 		}
 		tasks = append(tasks, t)
 		local[t.UserID] = tasks
 		return nil
 	})
-	s.EXPECT().GetTasksByUserID(gomock.Any()).AnyTimes().DoAndReturn(func(uid string) ([]domain.Task, error) {
+	s.EXPECT().GetTasksByUserIDAndDate(gomock.Any(), gomock.Any()).AnyTimes().DoAndReturn(func(uid string, date string) ([]domain.Task, error) {
 		ts, exist := local[uid]
 		if !exist {
 			return nil, nil
 		}
-		return ts, nil
+		result := []domain.Task{}
+		for _, item := range ts {
+			if item.CreatedDate == date {
+				result = append(result, item)
+			}
+		}
+		return result, nil
 	})
 	return s
 }
@@ -82,14 +88,15 @@ func TestTaskUC(t *testing.T) {
 		MaxTasksPerDay: defaultTaskPerDay,
 	}))
 	uc := usecase.NewTaskUseCase(mockTaskStore, mockUserStore)
+	todate := time.Now().Format(domain.DateFormat)
 	for i := 0; i < defaultTaskPerDay; i++ {
 		task := templateTask
 		task.ID = uuid.New().String()
-		task.CreatedDate = time.Now().Format(domain.DateFormat)
+		task.CreatedDate = todate
 		err := uc.AddTask(task)
 		assert.NoError(t, err)
 	}
-	tasks, err := uc.GetTasksByUserID("admin")
+	tasks, err := uc.GetTasksByUserIDAndDate("admin", todate)
 	assert.NoError(t, err)
 	assert.Equal(t, defaultTaskPerDay, len(tasks))
 	for _, item := range tasks {
@@ -100,6 +107,6 @@ func TestTaskUC(t *testing.T) {
 	task.ID = uuid.New().String()
 	task.CreatedDate = time.Now().Format(domain.DateFormat)
 	err = uc.AddTask(task)
-	assert.ErrorIs(t, err, domain.TaskLimitReached{})
+	assert.ErrorIs(t, err, domain.TaskLimitReached)
 
 }

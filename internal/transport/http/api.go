@@ -1,30 +1,136 @@
 package http
 
 import (
+	"errors"
+	"fmt"
+	"net/http"
+	"time"
+
+	"github.com/dgrijalva/jwt-go"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/manabie-com/togo/internal/domain"
 )
 
+type APIConf struct {
+	JWTSecret string
+	TokenExp  time.Duration
+}
+
 type HttpAPI struct {
+	conf        APIConf
 	taskUseCase domain.TaskUseCase
 	userUseCase domain.AuthUseCase
 }
 
-func NewTaskHttpServer(e echo.Echo) HttpAPI {
-	return HttpAPI{}
+func BindAPI(conf APIConf, e *echo.Echo, taskUseCase domain.TaskUseCase, userUseCase domain.AuthUseCase) *HttpAPI {
+	result := &HttpAPI{
+		conf:        conf,
+		taskUseCase: taskUseCase,
+		userUseCase: userUseCase,
+	}
+	e.GET("/login", result.Login)
+	jwtmw := jwtAuthMiddleware([]byte(conf.JWTSecret))
+	e.GET("/tasks", result.ListTasks, jwtmw)
+	e.POST("/tasks", result.AddTask, jwtmw)
+	return result
 }
 
-func (h HttpAPI) Login(ctx echo.Context) error {
-	return nil
-
+type LoginInput struct {
+	UserID   string `json:"user_id"`
+	Password string `json:"password"`
 }
 
-func (h HttpAPI) AddTask(ctx echo.Context) error {
-	return nil
-
+func (h *HttpAPI) Login(ctx echo.Context) error {
+	var input LoginInput
+	err := ctx.Bind(&input)
+	if err != nil {
+		return fmt.Errorf("error binding value: %s", err)
+	}
+	u, err := h.userUseCase.FindUserByID(input.UserID)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, nil)
+	}
+	ok := h.userUseCase.ValidateUserPassword(input.Password, u.Password)
+	if !ok {
+		return ctx.JSON(http.StatusUnauthorized, map[string]interface{}{
+			"error": "incorrect user_id/pwd",
+		})
+	}
+	token, err := h.createToken(u.ID)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, nil)
+	}
+	return ctx.JSON(http.StatusOK, map[string]string{
+		"data": token,
+	})
 }
 
-func (h HttpAPI) ListTasks(ctx echo.Context) error {
-	return nil
+func (h *HttpAPI) createToken(id string) (string, error) {
+	atClaims := jwt.MapClaims{}
+	atClaims["user_id"] = id
+	atClaims["exp"] = time.Now().Add(h.conf.TokenExp).Unix()
+	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
+	token, err := at.SignedString([]byte(h.conf.JWTSecret))
+	if err != nil {
+		return "", err
+	}
+	return token, nil
+}
 
+type AddTaskInput struct {
+	Content string `json:"content"`
+}
+
+func (h *HttpAPI) AddTask(ctx echo.Context) error {
+	content := ctx.QueryParam("content")
+
+	userID, ok := userIDFromCtx(ctx)
+	if !ok {
+		return ctx.JSON(http.StatusInternalServerError, nil)
+	}
+	t := domain.Task{
+		ID:          uuid.New().String(),
+		UserID:      userID,
+		Content:     content,
+		CreatedDate: time.Now().Format(domain.DateFormat),
+	}
+	err := h.taskUseCase.AddTask(t)
+	if err != nil {
+		if errors.Is(err, domain.TaskLimitReached) {
+			return ctx.JSON(http.StatusConflict, map[string]string{
+				"error": err.Error(),
+			})
+		}
+		return ctx.JSON(http.StatusInternalServerError, nil)
+	}
+	return ctx.JSON(http.StatusOK, map[string]interface{}{
+		"data": t,
+	})
+}
+
+var userAuthKey = "user_id"
+
+func userIDFromCtx(ctx echo.Context) (string, bool) {
+	userID, ok := ctx.Get(userAuthKey).(string)
+	return userID, ok
+}
+
+func (h *HttpAPI) ListTasks(ctx echo.Context) error {
+	createdDate := ctx.QueryParam("created_date")
+	_, err := time.Parse(domain.DateFormat, createdDate)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, nil)
+	}
+	userID, ok := userIDFromCtx(ctx)
+	if !ok {
+		return ctx.JSON(http.StatusInternalServerError, nil)
+	}
+	tasks, err := h.taskUseCase.GetTasksByUserIDAndDate(userID, createdDate)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, nil)
+	}
+	return ctx.JSON(http.StatusOK, map[string]interface{}{
+		"data": tasks,
+	})
 }

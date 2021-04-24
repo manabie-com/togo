@@ -54,9 +54,19 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/manabie-com/togo/internal/usecase/auth.go (84.2%)</option>
+				<option value="file0">github.com/manabie-com/togo/internal/domain/storage.go (0.0%)</option>
 				
-				<option value="file1">github.com/manabie-com/togo/internal/usecase/task.go (83.3%)</option>
+				<option value="file1">github.com/manabie-com/togo/internal/storages/psql/lock.go (100.0%)</option>
+				
+				<option value="file2">github.com/manabie-com/togo/internal/storages/psql/storage.go (75.8%)</option>
+				
+				<option value="file3">github.com/manabie-com/togo/internal/storages/sqlite/db.go (0.0%)</option>
+				
+				<option value="file4">github.com/manabie-com/togo/internal/transport/http/api.go (0.0%)</option>
+				
+				<option value="file5">github.com/manabie-com/togo/internal/usecase/auth.go (84.2%)</option>
+				
+				<option value="file6">github.com/manabie-com/togo/internal/usecase/task.go (83.3%)</option>
 				
 				</select>
 			</div>
@@ -70,7 +80,317 @@
 		</div>
 		<div id="content">
 		
-		<pre class="file" id="file0" style="display: none">package usecase
+		<pre class="file" id="file0" style="display: none">package domain
+
+import "fmt"
+
+type TaskStore interface {
+        AddTaskWithLimitPerDay(task Task, limit int) error
+        GetTasksByUserID(userID string) ([]Task, error)
+}
+
+type UserStore interface {
+        FindUserByID(string) (User, error)
+        CreateUser(User) error
+        GetUserTasksPerDay(userID string) (int, error)
+}
+
+type UserExist string
+
+func (u UserExist) Error() string <span class="cov0" title="0">{
+        return fmt.Sprintf("user with ID %s exists already", string(u))
+}</span>
+
+type UserNotFound string
+
+func (u UserNotFound) Error() string <span class="cov0" title="0">{
+        return fmt.Sprintf("user with ID %s not found", string(u))
+}</span>
+
+type TaskLimitReached struct{}
+
+func (u TaskLimitReached) Error() string <span class="cov0" title="0">{
+        return "task limit reached"
+}</span>
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package psql
+
+import "sync"
+
+type simpleLock struct {
+        internal *sync.Mutex
+}
+
+func (s simpleLock) NewMutex(string) Mutex <span class="cov8" title="1">{
+        return simpleMutex{internal: s.internal}
+}</span>
+
+type simpleMutex struct {
+        internal *sync.Mutex
+}
+
+func (s simpleMutex) Lock() error <span class="cov8" title="1">{
+        s.internal.Lock()
+        return nil
+}</span>
+
+func (s simpleMutex) Unlock() error <span class="cov8" title="1">{
+        s.internal.Unlock()
+        return nil
+}</span>
+
+type Lock interface {
+        NewMutex(session string) Mutex
+}
+
+type Mutex interface {
+        Lock() error
+        Unlock() error
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">//Package psql
+package psql
+
+import (
+        "database/sql"
+        "fmt"
+        "sync"
+
+        _ "github.com/lib/pq"
+        "github.com/manabie-com/togo/internal/domain"
+)
+
+type Storage struct {
+        db   *sql.DB
+        lock Lock
+        //TODO
+        //consider followings for distributed lock:
+        //- https://pkg.go.dev/go.etcd.io/etcd/clientv3/concurrency
+        //- https://github.com/go-redsync/redsync
+}
+
+type Config struct {
+        ConnString string
+}
+
+//NewStorage return new psql storage
+func NewStorage(c Config) (*Storage, error) <span class="cov8" title="1">{
+        db, err := sql.Open("postgres", c.ConnString)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return &amp;Storage{
+                db:   db,
+                lock: simpleLock{internal: &amp;sync.Mutex{}},
+        }, nil</span>
+}
+
+//WithLock Allow user to specify custom lock like etcd, redis
+func (s *Storage) WithLock(l Lock) <span class="cov0" title="0">{
+        s.lock = l
+}</span>
+
+//CleanupDB Used to cleanup test env only
+func (s *Storage) CleanupDB() error <span class="cov8" title="1">{
+        _, err := s.db.Exec("DELETE from tasks")
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">_, err = s.db.Exec("DELETE from users")
+        return err</span>
+}
+
+func (s *Storage) AddTaskWithLimitPerDay(task domain.Task, limit int) error <span class="cov8" title="1">{
+        mutex := s.lock.NewMutex(task.UserID)
+        err := mutex.Lock()
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">defer mutex.Unlock()
+        rows, err := s.db.Query("SELECT count(id) FROM tasks where tasks.user_id =$1 and date(tasks.created_date)=current_date", task.UserID)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">result := 0
+        if !rows.Next() </span><span class="cov0" title="0">{
+                return fmt.Errorf("count query received unexpected no row")
+        }</span>
+        <span class="cov8" title="1">err = rows.Scan(&amp;result)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("unexpected error scanning count tasks: %s", err)
+        }</span>
+
+        <span class="cov8" title="1">if result &gt;= limit </span><span class="cov8" title="1">{
+                return domain.TaskLimitReached{}
+        }</span>
+        <span class="cov8" title="1">ex := `INSERT INTO tasks(id, content, user_id, created_date) VALUES($1,$2,$3,$4)`
+        _, err = s.db.Exec(ex, task.ID, task.Content, task.UserID, task.CreatedDate)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+func (s *Storage) GetTasksByUserID(userID string, offset, limit int) ([]domain.Task, error) <span class="cov8" title="1">{
+        rows, err := s.db.Query("SELECT id,content,user_id,created_date FROM tasks where tasks.user_id =$1 limit $2 offset $3", userID, limit, offset)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">result := []domain.Task{}
+
+        for rows.Next() </span><span class="cov8" title="1">{
+                var t domain.Task
+                err := rows.Scan(&amp;t.ID, &amp;t.Content, &amp;t.UserID, &amp;t.CreatedDate)
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+                <span class="cov8" title="1">result = append(result, t)</span>
+        }
+        <span class="cov8" title="1">return result, nil</span>
+}
+
+func (s *Storage) FindUserByID(userID string) (domain.User, error) <span class="cov8" title="1">{
+        rows, err := s.db.Query("SELECT id,password,max_todo FROM users where id =$1", userID)
+        empty := domain.User{}
+        if err != nil </span><span class="cov0" title="0">{
+                return empty, err
+        }</span>
+        <span class="cov8" title="1">if !rows.Next() </span><span class="cov0" title="0">{
+                return empty, domain.UserNotFound(userID)
+        }</span>
+        <span class="cov8" title="1">err = rows.Scan(&amp;empty.ID, &amp;empty.Password, &amp;empty.MaxTasksPerDay)
+        if err != nil </span><span class="cov0" title="0">{
+                return empty, err
+        }</span>
+        <span class="cov8" title="1">return empty, nil</span>
+}
+
+func (s *Storage) CreateUser(user domain.User) error <span class="cov8" title="1">{
+        _, err := s.db.Exec("INSERT INTO users(id, password, max_todo) VALUES ($1,$2,$3)", user.ID, user.Password, user.MaxTasksPerDay)
+        if err != nil </span><span class="cov8" title="1">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+func (s *Storage) GetUserTasksPerDay(userID string) (int, error) <span class="cov8" title="1">{
+        rows, err := s.db.Query("SELECT max_todo FROM users where users.id =$1", userID)
+        if err != nil </span><span class="cov0" title="0">{
+                return 0, err
+        }</span>
+        <span class="cov8" title="1">if !rows.Next() </span><span class="cov0" title="0">{
+                return 0, domain.UserNotFound(userID)
+        }</span>
+        <span class="cov8" title="1">var result int
+        err = rows.Scan(&amp;result)
+        if err != nil </span><span class="cov0" title="0">{
+                return 0, err
+        }</span>
+        <span class="cov8" title="1">return result, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package sqllite
+
+import (
+        "context"
+        "database/sql"
+
+        "github.com/manabie-com/togo/internal/storages"
+)
+
+// LiteDB for working with sqllite
+type LiteDB struct {
+        DB *sql.DB
+}
+
+// RetrieveTasks returns tasks if match userID AND createDate.
+func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*storages.Task, error) <span class="cov0" title="0">{
+        stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`
+        rows, err := l.DB.QueryContext(ctx, stmt, userID, createdDate)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">defer rows.Close()
+
+        var tasks []*storages.Task
+        for rows.Next() </span><span class="cov0" title="0">{
+                t := &amp;storages.Task{}
+                err := rows.Scan(&amp;t.ID, &amp;t.Content, &amp;t.UserID, &amp;t.CreatedDate)
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+                <span class="cov0" title="0">tasks = append(tasks, t)</span>
+        }
+
+        <span class="cov0" title="0">if err := rows.Err(); err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+
+        <span class="cov0" title="0">return tasks, nil</span>
+}
+
+// AddTask adds a new task to DB
+func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error <span class="cov0" title="0">{
+        stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
+        _, err := l.DB.ExecContext(ctx, stmt, &amp;t.ID, &amp;t.Content, &amp;t.UserID, &amp;t.CreatedDate)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov0" title="0">return nil</span>
+}
+
+// ValidateUser returns tasks if match userID AND password
+func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool <span class="cov0" title="0">{
+        stmt := `SELECT id FROM users WHERE id = ? AND password = ?`
+        row := l.DB.QueryRowContext(ctx, stmt, userID, pwd)
+        u := &amp;storages.User{}
+        err := row.Scan(&amp;u.ID)
+        if err != nil </span><span class="cov0" title="0">{
+                return false
+        }</span>
+
+        <span class="cov0" title="0">return true</span>
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package http
+
+import (
+        "github.com/labstack/echo/v4"
+        "github.com/manabie-com/togo/internal/domain"
+)
+
+type HttpAPI struct {
+        taskUseCase domain.TaskUseCase
+        userUseCase domain.AuthUseCase
+}
+
+func NewTaskHttpServer(e echo.Echo) HttpAPI <span class="cov0" title="0">{
+        return HttpAPI{}
+}</span>
+
+func (h HttpAPI) Login(ctx echo.Context) error <span class="cov0" title="0">{
+        return nil
+
+}</span>
+
+func (h HttpAPI) AddTask(ctx echo.Context) error <span class="cov0" title="0">{
+        return nil
+
+}</span>
+
+func (h HttpAPI) ListTasks(ctx echo.Context) error <span class="cov0" title="0">{
+        return nil
+
+}</span>
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package usecase
 
 import (
         "fmt"
@@ -151,7 +471,7 @@ func bcryptPasswordGenerator(cost int) func([]byte) ([]byte, error) <span class=
 }
 </pre>
 		
-		<pre class="file" id="file1" style="display: none">package usecase
+		<pre class="file" id="file6" style="display: none">package usecase
 
 import "github.com/manabie-com/togo/internal/domain"
 

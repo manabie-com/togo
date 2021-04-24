@@ -1,10 +1,13 @@
 package domain
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 type TaskStore interface {
 	AddTaskWithLimitPerDay(task Task, limit int) error
-	GetTasksByUserID(userID string) ([]Task, error)
+	GetTasksByUserIDAndDate(userID string, date string) ([]Task, error)
 }
 
 type UserStore interface {
@@ -25,8 +28,4 @@ func (u UserNotFound) Error() string {
 	return fmt.Sprintf("user with ID %s not found", string(u))
 }
 
-type TaskLimitReached struct{}
-
-func (u TaskLimitReached) Error() string {
-	return "task limit reached"
-}
+var TaskLimitReached = errors.New("task limit reached")
