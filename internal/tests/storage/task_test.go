@@ -15,8 +15,6 @@ import (
 func setupStorage(t *testing.T) *psql.Storage {
 	var conf psql.Config
 	panicIfErr(envconfig.Process("test", &conf))
-	// user=pqgotest dbname=pqgotest sslmode=verify-full
-	conf.ConnString = "user=admin password=password port=5433 dbname=admin sslmode=disable"
 	s, err := psql.NewStorage(conf)
 	panicIfErr(err)
 	return s
@@ -31,7 +29,7 @@ func TestPostgresql(t *testing.T) {
 		CreatedDate: time.Now().Format("2006-01-02"),
 	}, 5)
 	assert.NoError(t, err)
-	fmt.Println(s.GetTasksByUserID("admin", 1, -1))
+	fmt.Println(s.GetTasksByUserID("admin", 1, 1))
 }
 
 func panicIfErr(err error) {

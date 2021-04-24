@@ -1,0 +1,33 @@
+version: "3.4"
+services:
+  db_test:
+    image: postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U admin"]
+      timeout: 40s
+      interval: 10s
+      retries: 10
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./postgres/script_test/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+  app_test:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.test
+    ports:
+      - 8000:8000
+    env_file:
+      - ./tests/env/app.env
+    depends_on:
+      - db_test
+    volumes:
+      - ./tests/report:/src/go/tests/report
+      # - db_test:
+      #   condition: service_healthy
+
+
+
