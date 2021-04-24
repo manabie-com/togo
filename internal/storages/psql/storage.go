@@ -17,6 +17,7 @@ type Config struct {
 	ConnString string
 }
 
+//NewStorage return new psql storage
 func NewStorage(c Config) (*Storage, error) {
 	db, err := sql.Open("postgres", c.ConnString)
 	if err != nil {
@@ -70,8 +71,42 @@ func (s *Storage) GetTasksByUserID(userID string, offset, limit int) ([]domain.T
 	return result, nil
 }
 
-func (s *Storage) FindUserByID(string) (domain.User, error) {
-	return domain.User{}, nil
+func (s *Storage) FindUserByID(userID string) (domain.User, error) {
+	rows, err := s.db.Query("SELECT id,password,max_todo FROM tasks where tasks.user_id =$1", userID)
+	empty := domain.User{}
+	if err != nil {
+		return empty, err
+	}
+	if !rows.Next() {
+		return empty, domain.UserNotFound(userID)
+	}
+	err = rows.Scan(&empty.ID, &empty.Password, &empty.MaxTasksPerDay)
+	if err != nil {
+		return empty, err
+	}
+	return empty, nil
 }
-func (s *Storage) CreateUser(Id string, Password string) error   { return nil }
-func (s *Storage) GetUserTasksPerDay(userID string) (int, error) { return 0, nil }
+
+func (s *Storage) CreateUser(user domain.User) error {
+	_, err := s.db.Exec("INSERT INTO users(id, password, max_todo) VALUES ($1,$2,$3)", user.ID, user.Password, user.MaxTasksPerDay)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *Storage) GetUserTasksPerDay(userID string) (int, error) {
+	rows, err := s.db.Query("SELECT max_todo FROM tasks where tasks.user_id =$1", userID)
+	if err != nil {
+		return 0, err
+	}
+	if !rows.Next() {
+		return 0, domain.UserNotFound(userID)
+	}
+	var result int
+	err = rows.Scan(&result)
+	if err != nil {
+		return 0, err
+	}
+	return result, nil
+}

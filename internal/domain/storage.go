@@ -9,16 +9,20 @@ type TaskStore interface {
 
 type UserStore interface {
 	FindUserByID(string) (User, error)
-	CreateUser(Id string, Password string) error
+	CreateUser(User) error
 	GetUserTasksPerDay(userID string) (int, error)
 }
 
-type UserNotFound struct {
-	ID string
+type UserExist string
+
+func (u UserExist) Error() string {
+	return fmt.Sprintf("user with ID %s exists already", string(u))
 }
 
+type UserNotFound string
+
 func (u UserNotFound) Error() string {
-	return fmt.Sprintf("user with ID %s not found", u.ID)
+	return fmt.Sprintf("user with ID %s not found", string(u))
 }
 
 type TaskLimitReached struct{}

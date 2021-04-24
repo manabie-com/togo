@@ -10,7 +10,7 @@ import (
 type AuthUCConf struct {
 	Hash    HashConf
 	Default struct {
-		MaxTasksPerDay int
+		MaxTaskPerDay int
 	}
 }
 
@@ -51,12 +51,16 @@ func (u userUseCase) ValidateAuthPassword(given, hashed []byte) bool {
 	return u.passwordValidator(given, hashed)
 }
 
-func (u userUseCase) CreateAuth(id, pswd string) error {
+func (u userUseCase) CreateUser(id, pswd string) error {
 	hashed, err := u.passwordGenerator([]byte(pswd))
 	if err != nil {
 		return err
 	}
-	return u.userStore.CreateUser(id, string(hashed))
+	return u.userStore.CreateUser(domain.User{
+		ID:             id,
+		Password:       string(hashed),
+		MaxTasksPerDay: u.config.Default.MaxTaskPerDay,
+	})
 }
 
 func bcryptValidator(given, hashed []byte) bool {

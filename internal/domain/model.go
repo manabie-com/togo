@@ -10,6 +10,7 @@ type Task struct {
 
 // User reflects users data from DB
 type User struct {
-	ID       string
-	Password string
+	ID             string
+	Password       string
+	MaxTasksPerDay int
 }
