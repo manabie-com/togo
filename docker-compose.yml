@@ -1,0 +1,54 @@
+
+version: '3'
+services:
+  app:
+    container_name: togo
+    build:
+      context: .
+      dockerfile: .
+    ports: 
+      - 5050:5050 
+    restart: on-failure
+    volumes:              
+      - api:/usr/src/app/
+    depends_on:
+      - togo-postgres
+    networks:
+      - togo_backend
+
+  togo-postgres:
+    image: postgres:latest
+    container_name: togo_db_postgres
+    environment:
+      - POSTGRES_USER=${DB_USER}  
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - '5432:5432'
+    volumes:
+      - database_postgres:/var/lib/postgresql/data
+    networks:
+      - togo_backend
+    
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_container
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ngohuuphong.1994@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: example
+    depends_on:
+      - togo-postgres
+    ports:
+      - "8888:80"
+    networks:
+      - togo_backend
+    restart: unless-stopped
+
+volumes:
+  api:
+  database_postgres:  
+
+# Networks to be created to facilitate communication between containers
+networks:
+  togo_backend:
+    driver: bridge
