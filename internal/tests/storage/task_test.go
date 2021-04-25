@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"errors"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -79,21 +80,35 @@ func TestPostgresql(t *testing.T) {
 		totalRequest := u.MaxTasksPerDay * 2
 		wg.Add(totalRequest)
 		todate := time.Now().Format(domain.DateFormat)
-		var totalErr = int32(0)
+
+		var totalLimitReached = int32(0)
+
 		for i := 0; i < totalRequest; i++ {
 			go func() {
 				defer wg.Done()
 				err := s.AddTaskWithLimitPerDay(makeFakeTask(u.ID, todate), u.MaxTasksPerDay)
 				if err != nil {
-					atomic.AddInt32(&totalErr, 1)
+					// ignore these cases
+					if errors.Is(err, psql.ErrTooManySerializableConflict) {
+						return
+					}
+					//count total tasks denied
+					if errors.Is(err, domain.TaskLimitReached) {
+						atomic.AddInt32(&totalLimitReached, 1)
+						return
+					}
+					assert.FailNowf(t, "Unexpected error on adding tasks", "error: %s", err)
 				}
 			}()
 		}
 		wg.Wait()
-		assert.Equal(t, totalRequest-u.MaxTasksPerDay, int(totalErr))
 		ts, err := s.GetTasksByUserIDAndDate(u.ID, todate)
 		assert.NoError(t, err)
-		assert.Equal(t, u.MaxTasksPerDay, len(ts))
+		if totalLimitReached > 0 {
+			assert.Equal(t, u.MaxTasksPerDay, len(ts), "Task created (actual) equal limitation (expected)")
+		} else {
+			assert.LessOrEqual(t, len(ts), u.MaxTasksPerDay)
+		}
 
 	})
 }

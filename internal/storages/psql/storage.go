@@ -2,17 +2,22 @@
 package psql
 
 import (
+	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"sync"
+	"time"
 
-	_ "github.com/lib/pq"
+	"github.com/lib/pq"
 	"github.com/manabie-com/togo/internal/domain"
 )
 
 type Storage struct {
-	db   *sql.DB
-	lock Lock
+	db          *sql.DB
+	lock        Lock
+	addTaskFunc func(domain.Task, int) error
+	conf        Config
 	//TODO
 	//consider followings for distributed lock:
 	//- https://pkg.go.dev/go.etcd.io/etcd/clientv3/concurrency
@@ -20,24 +25,34 @@ type Storage struct {
 }
 
 type Config struct {
-	ConnString string
+	ConnString      string
+	SleepOnConflict time.Duration
+	RetryOnConflict int
 }
 
 //NewStorage return new psql storage
 func NewStorage(c Config) (*Storage, error) {
+	if c.RetryOnConflict < 1 {
+		return nil, fmt.Errorf("total retry must be > 0")
+	}
 	db, err := sql.Open("postgres", c.ConnString)
 	if err != nil {
 		return nil, err
 	}
-	return &Storage{
+	s := &Storage{
 		db:   db,
 		lock: simpleLock{internal: &sync.Mutex{}},
-	}, nil
+		conf: c,
+	}
+	s.addTaskFunc = s.addTaskWithTransaction
+
+	return s, nil
 }
 
 //WithLock Allow user to specify custom lock like etcd, redis
 func (s *Storage) WithLock(l Lock) {
 	s.lock = l
+	s.addTaskFunc = s.addTaskWithLock
 }
 
 //CleanupDB Used to cleanup test env only
@@ -51,7 +66,63 @@ func (s *Storage) CleanupDB() error {
 	return err
 }
 
-func (s *Storage) AddTaskWithLimitPerDay(task domain.Task, limit int) error {
+func (s *Storage) addTaskWithTransaction(task domain.Task, limit int) error {
+	for try := 0; try < s.conf.RetryOnConflict; try++ {
+		tx, err := s.db.BeginTx(context.Background(), &sql.TxOptions{
+			Isolation: sql.LevelSerializable,
+		})
+		if err != nil {
+			return err
+		}
+
+		rows := tx.QueryRow("SELECT COUNT(id) FROM tasks where tasks.user_id =$1 and tasks.created_date=$2", task.UserID, task.CreatedDate)
+
+		var result int
+		err = rows.Scan(&result)
+		if err != nil {
+			pgerr, ok := err.(*pq.Error)
+			//serializable read conflict
+			if ok && pgerr.Code == "40001" {
+				time.Sleep(s.conf.SleepOnConflict)
+				tx.Rollback()
+				continue
+			}
+
+			tx.Rollback()
+			return err
+		}
+
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+		if result >= limit {
+			tx.Rollback()
+			return domain.TaskLimitReached
+		}
+		ex := `INSERT INTO tasks(id, content, user_id, created_date) VALUES($1,$2,$3,$4)`
+		_, err = tx.Exec(ex, task.ID, task.Content, task.UserID, task.CreatedDate)
+		if err != nil {
+			pgerr, ok := err.(*pq.Error)
+			//serializable read conflict
+			if ok && pgerr.Code == "40001" {
+				tx.Rollback()
+				time.Sleep(s.conf.SleepOnConflict)
+				continue
+			}
+
+			tx.Rollback()
+			return err
+		}
+		tx.Commit()
+		return nil
+	}
+	return ErrTooManySerializableConflict
+}
+
+var ErrTooManySerializableConflict = errors.New("max effort resolving concurrent conflict reached")
+
+func (s *Storage) addTaskWithLock(task domain.Task, limit int) error {
 	mutex := s.lock.NewMutex(task.UserID)
 	err := mutex.Lock()
 	if err != nil {
@@ -80,6 +151,10 @@ func (s *Storage) AddTaskWithLimitPerDay(task domain.Task, limit int) error {
 		return err
 	}
 	return nil
+}
+
+func (s *Storage) AddTaskWithLimitPerDay(task domain.Task, limit int) error {
+	return s.addTaskFunc(task, limit)
 }
 
 func (s *Storage) GetTasksByUserIDAndDate(userID string, date string) ([]domain.Task, error) {

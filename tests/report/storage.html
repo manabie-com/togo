@@ -54,9 +54,9 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/manabie-com/togo/internal/storages/psql/lock.go (100.0%)</option>
+				<option value="file0">github.com/manabie-com/togo/internal/storages/psql/lock.go (0.0%)</option>
 				
-				<option value="file1">github.com/manabie-com/togo/internal/storages/psql/storage.go (75.8%)</option>
+				<option value="file1">github.com/manabie-com/togo/internal/storages/psql/storage.go (55.7%)</option>
 				
 				</select>
 			</div>
@@ -78,7 +78,7 @@ type simpleLock struct {
         internal *sync.Mutex
 }
 
-func (s simpleLock) NewMutex(string) Mutex <span class="cov8" title="1">{
+func (s simpleLock) NewMutex(string) Mutex <span class="cov0" title="0">{
         return simpleMutex{internal: s.internal}
 }</span>
 
@@ -86,12 +86,12 @@ type simpleMutex struct {
         internal *sync.Mutex
 }
 
-func (s simpleMutex) Lock() error <span class="cov8" title="1">{
+func (s simpleMutex) Lock() error <span class="cov0" title="0">{
         s.internal.Lock()
         return nil
 }</span>
 
-func (s simpleMutex) Unlock() error <span class="cov8" title="1">{
+func (s simpleMutex) Unlock() error <span class="cov0" title="0">{
         s.internal.Unlock()
         return nil
 }</span>
@@ -110,17 +110,22 @@ type Mutex interface {
 package psql
 
 import (
+        "context"
         "database/sql"
+        "errors"
         "fmt"
         "sync"
+        "time"
 
-        _ "github.com/lib/pq"
+        "github.com/lib/pq"
         "github.com/manabie-com/togo/internal/domain"
 )
 
 type Storage struct {
-        db   *sql.DB
-        lock Lock
+        db          *sql.DB
+        lock        Lock
+        addTaskFunc func(domain.Task, int) error
+        conf        Config
         //TODO
         //consider followings for distributed lock:
         //- https://pkg.go.dev/go.etcd.io/etcd/clientv3/concurrency
@@ -128,24 +133,34 @@ type Storage struct {
 }
 
 type Config struct {
-        ConnString string
+        ConnString      string
+        SleepOnConflict time.Duration
+        RetryOnConflict int
 }
 
 //NewStorage return new psql storage
 func NewStorage(c Config) (*Storage, error) <span class="cov8" title="1">{
-        db, err := sql.Open("postgres", c.ConnString)
+        if c.RetryOnConflict &lt; 1 </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("total retry must be &gt; 0")
+        }</span>
+        <span class="cov8" title="1">db, err := sql.Open("postgres", c.ConnString)
         if err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
-        <span class="cov8" title="1">return &amp;Storage{
+        <span class="cov8" title="1">s := &amp;Storage{
                 db:   db,
                 lock: simpleLock{internal: &amp;sync.Mutex{}},
-        }, nil</span>
+                conf: c,
+        }
+        s.addTaskFunc = s.addTaskWithTransaction
+
+        return s, nil</span>
 }
 
 //WithLock Allow user to specify custom lock like etcd, redis
 func (s *Storage) WithLock(l Lock) <span class="cov0" title="0">{
         s.lock = l
+        s.addTaskFunc = s.addTaskWithLock
 }</span>
 
 //CleanupDB Used to cleanup test env only
@@ -159,36 +174,94 @@ func (s *Storage) CleanupDB() error <span class="cov8" title="1">{
         return err</span>
 }
 
-func (s *Storage) AddTaskWithLimitPerDay(task domain.Task, limit int) error <span class="cov8" title="1">{
+func (s *Storage) addTaskWithTransaction(task domain.Task, limit int) error <span class="cov8" title="1">{
+        for try := 0; try &lt; s.conf.RetryOnConflict; try++ </span><span class="cov8" title="1">{
+                tx, err := s.db.BeginTx(context.Background(), &amp;sql.TxOptions{
+                        Isolation: sql.LevelSerializable,
+                })
+                if err != nil </span><span class="cov0" title="0">{
+                        return err
+                }</span>
+
+                <span class="cov8" title="1">rows := tx.QueryRow("SELECT COUNT(id) FROM tasks where tasks.user_id =$1 and tasks.created_date=$2", task.UserID, task.CreatedDate)
+
+                var result int
+                err = rows.Scan(&amp;result)
+                if err != nil </span><span class="cov0" title="0">{
+                        pgerr, ok := err.(*pq.Error)
+                        if ok &amp;&amp; pgerr.Code == "40001" </span><span class="cov0" title="0">{
+                                time.Sleep(s.conf.SleepOnConflict)
+                                tx.Rollback()
+                                continue</span>
+                        }
+
+                        <span class="cov0" title="0">tx.Rollback()
+                        return err</span>
+                }
+
+                <span class="cov8" title="1">if err != nil </span><span class="cov0" title="0">{
+                        tx.Rollback()
+                        return err
+                }</span>
+                <span class="cov8" title="1">if result &gt;= limit </span><span class="cov8" title="1">{
+                        tx.Rollback()
+                        return domain.TaskLimitReached
+                }</span>
+                <span class="cov8" title="1">ex := `INSERT INTO tasks(id, content, user_id, created_date) VALUES($1,$2,$3,$4)`
+                _, err = tx.Exec(ex, task.ID, task.Content, task.UserID, task.CreatedDate)
+                if err != nil </span><span class="cov8" title="1">{
+                        pgerr, ok := err.(*pq.Error)
+                        if ok &amp;&amp; pgerr.Code == "40001" </span><span class="cov8" title="1">{
+                                tx.Rollback()
+                                time.Sleep(s.conf.SleepOnConflict)
+                                continue</span>
+                        }
+
+                        <span class="cov0" title="0">tx.Rollback()
+                        return err</span>
+                }
+                <span class="cov8" title="1">tx.Commit()
+                return nil</span>
+        }
+        <span class="cov0" title="0">return ErrTooManySerializableConflict</span>
+}
+
+var ErrTooManySerializableConflict = errors.New("max effort resolving concurrent conflict reached")
+
+func (s *Storage) addTaskWithLock(task domain.Task, limit int) error <span class="cov0" title="0">{
         mutex := s.lock.NewMutex(task.UserID)
         err := mutex.Lock()
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
-        <span class="cov8" title="1">defer mutex.Unlock()
+        <span class="cov0" title="0">defer mutex.Unlock()
         rows, err := s.db.Query("SELECT count(id) FROM tasks where tasks.user_id =$1 and date(tasks.created_date)=current_date", task.UserID)
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
-        <span class="cov8" title="1">result := 0
+        <span class="cov0" title="0">result := 0
         if !rows.Next() </span><span class="cov0" title="0">{
                 return fmt.Errorf("count query received unexpected no row")
         }</span>
-        <span class="cov8" title="1">err = rows.Scan(&amp;result)
+        <span class="cov0" title="0">err = rows.Scan(&amp;result)
         if err != nil </span><span class="cov0" title="0">{
                 return fmt.Errorf("unexpected error scanning count tasks: %s", err)
         }</span>
 
-        <span class="cov8" title="1">if result &gt;= limit </span><span class="cov8" title="1">{
+        <span class="cov0" title="0">if result &gt;= limit </span><span class="cov0" title="0">{
                 return domain.TaskLimitReached
         }</span>
-        <span class="cov8" title="1">ex := `INSERT INTO tasks(id, content, user_id, created_date) VALUES($1,$2,$3,$4)`
+        <span class="cov0" title="0">ex := `INSERT INTO tasks(id, content, user_id, created_date) VALUES($1,$2,$3,$4)`
         _, err = s.db.Exec(ex, task.ID, task.Content, task.UserID, task.CreatedDate)
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
-        <span class="cov8" title="1">return nil</span>
+        <span class="cov0" title="0">return nil</span>
 }
+
+func (s *Storage) AddTaskWithLimitPerDay(task domain.Task, limit int) error <span class="cov8" title="1">{
+        return s.addTaskFunc(task, limit)
+}</span>
 
 func (s *Storage) GetTasksByUserIDAndDate(userID string, date string) ([]domain.Task, error) <span class="cov8" title="1">{
         rows, err := s.db.Query(
