@@ -1,5 +1,5 @@
 ### Test
-- You need docker and docker-compose installed on your machien
+- You need docker and docker-compose installed on your machine
 - Run `./test.sh`
 - If success, the test reports will be put in tests/report folder. You can check html files for code coverage
 
