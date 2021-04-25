@@ -179,7 +179,6 @@ func TestHttpTransport(t *testing.T) {
 			assert.Equal(t, res.StatusCode, nethttp.StatusConflict)
 		})
 	})
-	// t.Run("list tasks")
 }
 
 func panicIfErr(err error) {

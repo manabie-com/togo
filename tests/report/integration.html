@@ -62,7 +62,7 @@
 				
 				<option value="file3">github.com/manabie-com/togo/internal/transport/http/middleware.go (77.8%)</option>
 				
-				<option value="file4">github.com/manabie-com/togo/internal/usecase/auth.go (73.9%)</option>
+				<option value="file4">github.com/manabie-com/togo/internal/usecase/auth.go (75.0%)</option>
 				
 				<option value="file5">github.com/manabie-com/togo/internal/usecase/task.go (83.3%)</option>
 				
@@ -517,6 +517,7 @@ func (u userUseCase) CreateUser(id, pswd string) error <span class="cov8" title=
 
 func bcryptValidator(given, hashed []byte) bool <span class="cov8" title="1">{
         err := bcrypt.CompareHashAndPassword(hashed, given)
+        fmt.Println(err)
         return err == nil
 }</span>
 
