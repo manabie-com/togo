@@ -6,7 +6,7 @@ type TaskUseCase interface {
 }
 
 type AuthUseCase interface {
-	FindUserByID(ID string) (User, error)
-	ValidateUserPassword(given string, hashed string) bool
+	ValidateUser(userID, rawPassword string) (bool, error)
+	// ValidateUserPassword(given string, hashed string) bool
 	CreateUser(ID string, Password string) error
 }

@@ -15,7 +15,7 @@ import (
 
 func setupStorage(t *testing.T) *psql.Storage {
 	var conf psql.Config
-	panicIfErr(envconfig.Process("test", &conf))
+	panicIfErr(envconfig.Process("storage", &conf))
 	s, err := psql.NewStorage(conf)
 	panicIfErr(err)
 	return s

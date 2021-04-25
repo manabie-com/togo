@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/manabie-com/togo/internal/domain"
@@ -43,12 +44,15 @@ func NewAuthUseCase(c AuthUCConf, userStore domain.UserStore) (userUseCase, erro
 	return result, nil
 }
 
-func (u userUseCase) FindAuthByID(userID string) (domain.User, error) {
-	return u.userStore.FindUserByID(userID)
-}
-
-func (u userUseCase) ValidateAuthPassword(given, hashed []byte) bool {
-	return u.passwordValidator(given, hashed)
+func (u userUseCase) ValidateUser(userID, rawPassword string) (bool, error) {
+	usr, err := u.userStore.FindUserByID(userID)
+	if err != nil {
+		if errors.Is(err, domain.UserNotFound(userID)) {
+			return false, nil
+		}
+		return false, err
+	}
+	return u.passwordValidator([]byte(rawPassword), []byte(usr.Password)), nil
 }
 
 func (u userUseCase) CreateUser(id, pswd string) error {

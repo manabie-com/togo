@@ -29,7 +29,7 @@ func BindAPI(conf APIConf, e *echo.Echo, taskUseCase domain.TaskUseCase, userUse
 		taskUseCase: taskUseCase,
 		userUseCase: userUseCase,
 	}
-	e.GET("/login", result.Login)
+	e.POST("/login", result.Login)
 	jwtmw := jwtAuthMiddleware([]byte(conf.JWTSecret))
 	e.GET("/tasks", result.ListTasks, jwtmw)
 	e.POST("/tasks", result.AddTask, jwtmw)
@@ -47,17 +47,18 @@ func (h *HttpAPI) Login(ctx echo.Context) error {
 	if err != nil {
 		return fmt.Errorf("error binding value: %s", err)
 	}
-	u, err := h.userUseCase.FindUserByID(input.UserID)
+
+	ok, err := h.userUseCase.ValidateUser(input.UserID, input.Password)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, nil)
 	}
-	ok := h.userUseCase.ValidateUserPassword(input.Password, u.Password)
 	if !ok {
 		return ctx.JSON(http.StatusUnauthorized, map[string]interface{}{
 			"error": "incorrect user_id/pwd",
 		})
 	}
-	token, err := h.createToken(u.ID)
+	token, err := h.createToken(input.UserID)
+
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, nil)
 	}
@@ -83,7 +84,11 @@ type AddTaskInput struct {
 }
 
 func (h *HttpAPI) AddTask(ctx echo.Context) error {
-	content := ctx.QueryParam("content")
+	input := AddTaskInput{}
+	err := ctx.Bind(&input)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, nil)
+	}
 
 	userID, ok := userIDFromCtx(ctx)
 	if !ok {
@@ -92,10 +97,10 @@ func (h *HttpAPI) AddTask(ctx echo.Context) error {
 	t := domain.Task{
 		ID:          uuid.New().String(),
 		UserID:      userID,
-		Content:     content,
+		Content:     input.Content,
 		CreatedDate: time.Now().Format(domain.DateFormat),
 	}
-	err := h.taskUseCase.AddTask(t)
+	err = h.taskUseCase.AddTask(t)
 	if err != nil {
 		if errors.Is(err, domain.TaskLimitReached) {
 			return ctx.JSON(http.StatusConflict, map[string]string{

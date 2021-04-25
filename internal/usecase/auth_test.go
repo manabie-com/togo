@@ -51,9 +51,7 @@ func TestAuthUC(t *testing.T) {
 	err = uc.CreateUser("admin", "admin")
 	assert.NoError(t, err)
 
-	user, err := uc.FindAuthByID("admin")
+	ok, err := uc.ValidateUser("admin", "admin")
 	assert.NoError(t, err)
-	assert.Equal(t, "admin", user.ID)
-	assert.True(t, uc.ValidateAuthPassword([]byte("admin"), []byte(user.Password)))
-	assert.Equal(t, 5, user.MaxTasksPerDay)
+	assert.True(t, ok)
 }

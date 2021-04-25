@@ -1,0 +1,592 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/manabie-com/togo/internal/storages/psql/lock.go (100.0%)</option>
+				
+				<option value="file1">github.com/manabie-com/togo/internal/storages/psql/storage.go (74.2%)</option>
+				
+				<option value="file2">github.com/manabie-com/togo/internal/transport/http/api.go (79.6%)</option>
+				
+				<option value="file3">github.com/manabie-com/togo/internal/transport/http/middleware.go (77.8%)</option>
+				
+				<option value="file4">github.com/manabie-com/togo/internal/usecase/auth.go (73.9%)</option>
+				
+				<option value="file5">github.com/manabie-com/togo/internal/usecase/task.go (83.3%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package psql
+
+import "sync"
+
+type simpleLock struct {
+        internal *sync.Mutex
+}
+
+func (s simpleLock) NewMutex(string) Mutex <span class="cov8" title="1">{
+        return simpleMutex{internal: s.internal}
+}</span>
+
+type simpleMutex struct {
+        internal *sync.Mutex
+}
+
+func (s simpleMutex) Lock() error <span class="cov8" title="1">{
+        s.internal.Lock()
+        return nil
+}</span>
+
+func (s simpleMutex) Unlock() error <span class="cov8" title="1">{
+        s.internal.Unlock()
+        return nil
+}</span>
+
+type Lock interface {
+        NewMutex(session string) Mutex
+}
+
+type Mutex interface {
+        Lock() error
+        Unlock() error
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">//Package psql
+package psql
+
+import (
+        "database/sql"
+        "fmt"
+        "sync"
+
+        _ "github.com/lib/pq"
+        "github.com/manabie-com/togo/internal/domain"
+)
+
+type Storage struct {
+        db   *sql.DB
+        lock Lock
+        //TODO
+        //consider followings for distributed lock:
+        //- https://pkg.go.dev/go.etcd.io/etcd/clientv3/concurrency
+        //- https://github.com/go-redsync/redsync
+}
+
+type Config struct {
+        ConnString string
+}
+
+//NewStorage return new psql storage
+func NewStorage(c Config) (*Storage, error) <span class="cov8" title="1">{
+        db, err := sql.Open("postgres", c.ConnString)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return &amp;Storage{
+                db:   db,
+                lock: simpleLock{internal: &amp;sync.Mutex{}},
+        }, nil</span>
+}
+
+//WithLock Allow user to specify custom lock like etcd, redis
+func (s *Storage) WithLock(l Lock) <span class="cov0" title="0">{
+        s.lock = l
+}</span>
+
+//CleanupDB Used to cleanup test env only
+func (s *Storage) CleanupDB() error <span class="cov8" title="1">{
+        _, err := s.db.Exec("DELETE from tasks")
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+
+        <span class="cov8" title="1">_, err = s.db.Exec("DELETE from users")
+        return err</span>
+}
+
+func (s *Storage) AddTaskWithLimitPerDay(task domain.Task, limit int) error <span class="cov8" title="1">{
+        mutex := s.lock.NewMutex(task.UserID)
+        err := mutex.Lock()
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">defer mutex.Unlock()
+        rows, err := s.db.Query("SELECT count(id) FROM tasks where tasks.user_id =$1 and date(tasks.created_date)=current_date", task.UserID)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">result := 0
+        if !rows.Next() </span><span class="cov0" title="0">{
+                return fmt.Errorf("count query received unexpected no row")
+        }</span>
+        <span class="cov8" title="1">err = rows.Scan(&amp;result)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("unexpected error scanning count tasks: %s", err)
+        }</span>
+
+        <span class="cov8" title="1">if result &gt;= limit </span><span class="cov8" title="1">{
+                return domain.TaskLimitReached
+        }</span>
+        <span class="cov8" title="1">ex := `INSERT INTO tasks(id, content, user_id, created_date) VALUES($1,$2,$3,$4)`
+        _, err = s.db.Exec(ex, task.ID, task.Content, task.UserID, task.CreatedDate)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+func (s *Storage) GetTasksByUserIDAndDate(userID string, date string) ([]domain.Task, error) <span class="cov8" title="1">{
+        rows, err := s.db.Query(
+                "SELECT id,content,user_id,created_date FROM tasks where tasks.user_id =$1 and tasks.created_date=$2",
+                userID, date)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">result := []domain.Task{}
+
+        for rows.Next() </span><span class="cov8" title="1">{
+                var t domain.Task
+                err := rows.Scan(&amp;t.ID, &amp;t.Content, &amp;t.UserID, &amp;t.CreatedDate)
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+                <span class="cov8" title="1">result = append(result, t)</span>
+        }
+        <span class="cov8" title="1">return result, nil</span>
+}
+
+func (s *Storage) FindUserByID(userID string) (domain.User, error) <span class="cov8" title="1">{
+        rows, err := s.db.Query("SELECT id,password,max_todo FROM users where id =$1", userID)
+        empty := domain.User{}
+        if err != nil </span><span class="cov0" title="0">{
+                return empty, err
+        }</span>
+        <span class="cov8" title="1">if !rows.Next() </span><span class="cov0" title="0">{
+                return empty, domain.UserNotFound(userID)
+        }</span>
+        <span class="cov8" title="1">err = rows.Scan(&amp;empty.ID, &amp;empty.Password, &amp;empty.MaxTasksPerDay)
+        if err != nil </span><span class="cov0" title="0">{
+                return empty, err
+        }</span>
+        <span class="cov8" title="1">return empty, nil</span>
+}
+
+func (s *Storage) CreateUser(user domain.User) error <span class="cov8" title="1">{
+        _, err := s.db.Exec("INSERT INTO users(id, password, max_todo) VALUES ($1,$2,$3)", user.ID, user.Password, user.MaxTasksPerDay)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+func (s *Storage) GetUserTasksPerDay(userID string) (int, error) <span class="cov8" title="1">{
+        rows, err := s.db.Query("SELECT max_todo FROM users where users.id =$1", userID)
+        if err != nil </span><span class="cov0" title="0">{
+                return 0, err
+        }</span>
+        <span class="cov8" title="1">if !rows.Next() </span><span class="cov0" title="0">{
+                return 0, domain.UserNotFound(userID)
+        }</span>
+        <span class="cov8" title="1">var result int
+        err = rows.Scan(&amp;result)
+        if err != nil </span><span class="cov0" title="0">{
+                return 0, err
+        }</span>
+        <span class="cov8" title="1">return result, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package http
+
+import (
+        "errors"
+        "fmt"
+        "net/http"
+        "time"
+
+        "github.com/dgrijalva/jwt-go"
+        "github.com/google/uuid"
+        "github.com/labstack/echo/v4"
+        "github.com/manabie-com/togo/internal/domain"
+)
+
+type APIConf struct {
+        JWTSecret string
+        TokenExp  time.Duration
+}
+
+type HttpAPI struct {
+        conf        APIConf
+        taskUseCase domain.TaskUseCase
+        userUseCase domain.AuthUseCase
+}
+
+func BindAPI(conf APIConf, e *echo.Echo, taskUseCase domain.TaskUseCase, userUseCase domain.AuthUseCase) *HttpAPI <span class="cov8" title="1">{
+        result := &amp;HttpAPI{
+                conf:        conf,
+                taskUseCase: taskUseCase,
+                userUseCase: userUseCase,
+        }
+        e.POST("/login", result.Login)
+        jwtmw := jwtAuthMiddleware([]byte(conf.JWTSecret))
+        e.GET("/tasks", result.ListTasks, jwtmw)
+        e.POST("/tasks", result.AddTask, jwtmw)
+        return result
+}</span>
+
+type LoginInput struct {
+        UserID   string `json:"user_id"`
+        Password string `json:"password"`
+}
+
+func (h *HttpAPI) Login(ctx echo.Context) error <span class="cov8" title="1">{
+        var input LoginInput
+        err := ctx.Bind(&amp;input)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("error binding value: %s", err)
+        }</span>
+
+        <span class="cov8" title="1">ok, err := h.userUseCase.ValidateUser(input.UserID, input.Password)
+        if err != nil </span><span class="cov0" title="0">{
+                return ctx.JSON(http.StatusInternalServerError, nil)
+        }</span>
+        <span class="cov8" title="1">if !ok </span><span class="cov0" title="0">{
+                return ctx.JSON(http.StatusUnauthorized, map[string]interface{}{
+                        "error": "incorrect user_id/pwd",
+                })
+        }</span>
+        <span class="cov8" title="1">token, err := h.createToken(input.UserID)
+
+        if err != nil </span><span class="cov0" title="0">{
+                return ctx.JSON(http.StatusInternalServerError, nil)
+        }</span>
+        <span class="cov8" title="1">return ctx.JSON(http.StatusOK, map[string]string{
+                "data": token,
+        })</span>
+}
+
+func (h *HttpAPI) createToken(id string) (string, error) <span class="cov8" title="1">{
+        atClaims := jwt.MapClaims{}
+        atClaims["user_id"] = id
+        atClaims["exp"] = time.Now().Add(h.conf.TokenExp).Unix()
+        at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
+        token, err := at.SignedString([]byte(h.conf.JWTSecret))
+        if err != nil </span><span class="cov0" title="0">{
+                return "", err
+        }</span>
+        <span class="cov8" title="1">return token, nil</span>
+}
+
+type AddTaskInput struct {
+        Content string `json:"content"`
+}
+
+func (h *HttpAPI) AddTask(ctx echo.Context) error <span class="cov8" title="1">{
+        input := AddTaskInput{}
+        err := ctx.Bind(&amp;input)
+        if err != nil </span><span class="cov0" title="0">{
+                return ctx.JSON(http.StatusBadRequest, nil)
+        }</span>
+
+        <span class="cov8" title="1">userID, ok := userIDFromCtx(ctx)
+        if !ok </span><span class="cov0" title="0">{
+                return ctx.JSON(http.StatusInternalServerError, nil)
+        }</span>
+        <span class="cov8" title="1">t := domain.Task{
+                ID:          uuid.New().String(),
+                UserID:      userID,
+                Content:     input.Content,
+                CreatedDate: time.Now().Format(domain.DateFormat),
+        }
+        err = h.taskUseCase.AddTask(t)
+        if err != nil </span><span class="cov8" title="1">{
+                if errors.Is(err, domain.TaskLimitReached) </span><span class="cov8" title="1">{
+                        return ctx.JSON(http.StatusConflict, map[string]string{
+                                "error": err.Error(),
+                        })
+                }</span>
+                <span class="cov0" title="0">return ctx.JSON(http.StatusInternalServerError, nil)</span>
+        }
+        <span class="cov8" title="1">return ctx.JSON(http.StatusOK, map[string]interface{}{
+                "data": t,
+        })</span>
+}
+
+var userAuthKey = "user_id"
+
+func userIDFromCtx(ctx echo.Context) (string, bool) <span class="cov8" title="1">{
+        userID, ok := ctx.Get(userAuthKey).(string)
+        return userID, ok
+}</span>
+
+func (h *HttpAPI) ListTasks(ctx echo.Context) error <span class="cov8" title="1">{
+        createdDate := ctx.QueryParam("created_date")
+        _, err := time.Parse(domain.DateFormat, createdDate)
+        if err != nil </span><span class="cov0" title="0">{
+                return ctx.JSON(http.StatusBadRequest, nil)
+        }</span>
+        <span class="cov8" title="1">userID, ok := userIDFromCtx(ctx)
+        if !ok </span><span class="cov0" title="0">{
+                return ctx.JSON(http.StatusInternalServerError, nil)
+        }</span>
+        <span class="cov8" title="1">tasks, err := h.taskUseCase.GetTasksByUserIDAndDate(userID, createdDate)
+        if err != nil </span><span class="cov0" title="0">{
+                return ctx.JSON(http.StatusInternalServerError, nil)
+        }</span>
+        <span class="cov8" title="1">return ctx.JSON(http.StatusOK, map[string]interface{}{
+                "data": tasks,
+        })</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package http
+
+import (
+        "net/http"
+
+        "github.com/dgrijalva/jwt-go"
+        "github.com/labstack/echo/v4"
+)
+
+var (
+        scheme = "Bearer"
+)
+
+func jwtAuthMiddleware(secret []byte) func(echo.HandlerFunc) echo.HandlerFunc <span class="cov8" title="1">{
+        return func(h echo.HandlerFunc) echo.HandlerFunc </span><span class="cov8" title="1">{
+                return func(ctx echo.Context) error </span><span class="cov8" title="1">{
+                        tokenWithScheme := ctx.Request().Header.Get("Authorization")
+                        if len(tokenWithScheme) &lt;= len(scheme)+1 </span><span class="cov0" title="0">{
+                                return ctx.JSON(http.StatusUnauthorized, nil)
+                        }</span>
+                        <span class="cov8" title="1">token := tokenWithScheme[len(scheme)+1:]
+                        claims := make(jwt.MapClaims)
+                        t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) </span><span class="cov8" title="1">{
+                                return secret, nil
+                        }</span>)
+                        <span class="cov8" title="1">if err != nil </span><span class="cov0" title="0">{
+                                return ctx.JSON(http.StatusUnauthorized, nil)
+                        }</span>
+                        <span class="cov8" title="1">if !t.Valid </span><span class="cov0" title="0">{
+                                return ctx.JSON(http.StatusUnauthorized, nil)
+                        }</span>
+                        <span class="cov8" title="1">id, ok := claims["user_id"].(string)
+                        if !ok </span><span class="cov0" title="0">{
+                                return ctx.JSON(http.StatusUnauthorized, nil)
+                        }</span>
+                        //TODO: check token exp
+
+                        <span class="cov8" title="1">ctx.Set(userAuthKey, id)
+                        return h(ctx)</span>
+                }
+        }
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package usecase
+
+import (
+        "errors"
+        "fmt"
+
+        "github.com/manabie-com/togo/internal/domain"
+        "golang.org/x/crypto/bcrypt"
+)
+
+type AuthUCConf struct {
+        Hash    HashConf
+        Default struct {
+                MaxTaskPerDay int
+        }
+}
+
+type HashConf struct {
+        Secret string
+        Algo   string
+        Cost   int
+}
+
+type userUseCase struct {
+        userStore         domain.UserStore
+        config            AuthUCConf
+        passwordValidator func([]byte, []byte) bool
+        passwordGenerator func([]byte) ([]byte, error)
+}
+
+func NewAuthUseCase(c AuthUCConf, userStore domain.UserStore) (userUseCase, error) <span class="cov8" title="1">{
+        result := userUseCase{
+                config:    c,
+                userStore: userStore,
+        }
+        switch c.Hash.Algo </span>{
+        case "bcrypt":<span class="cov8" title="1">
+                result.passwordValidator = bcryptValidator
+                result.passwordGenerator = bcryptPasswordGenerator(c.Hash.Cost)</span>
+        //TODO: more algorithm supported
+        default:<span class="cov0" title="0">
+                return userUseCase{}, fmt.Errorf("unsupported password hashing alorithm: %s", c.Hash.Algo)</span>
+        }
+        <span class="cov8" title="1">return result, nil</span>
+}
+
+func (u userUseCase) ValidateUser(userID, rawPassword string) (bool, error) <span class="cov8" title="1">{
+        usr, err := u.userStore.FindUserByID(userID)
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, domain.UserNotFound(userID)) </span><span class="cov0" title="0">{
+                        return false, nil
+                }</span>
+                <span class="cov0" title="0">return false, err</span>
+        }
+        <span class="cov8" title="1">return u.passwordValidator([]byte(rawPassword), []byte(usr.Password)), nil</span>
+}
+
+func (u userUseCase) CreateUser(id, pswd string) error <span class="cov8" title="1">{
+        hashed, err := u.passwordGenerator([]byte(pswd))
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return u.userStore.CreateUser(domain.User{
+                ID:             id,
+                Password:       string(hashed),
+                MaxTasksPerDay: u.config.Default.MaxTaskPerDay,
+        })</span>
+}
+
+func bcryptValidator(given, hashed []byte) bool <span class="cov8" title="1">{
+        err := bcrypt.CompareHashAndPassword(hashed, given)
+        return err == nil
+}</span>
+
+func bcryptPasswordGenerator(cost int) func([]byte) ([]byte, error) <span class="cov8" title="1">{
+        return func(raw []byte) ([]byte, error) </span><span class="cov8" title="1">{
+                bs, err := bcrypt.GenerateFromPassword(raw, cost)
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("failed to generate password: %s", err)
+                }</span>
+                <span class="cov8" title="1">return bs, nil</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package usecase
+
+import "github.com/manabie-com/togo/internal/domain"
+
+type taskUseCase struct {
+        taskStore domain.TaskStore
+        userStore domain.UserStore
+}
+
+func NewTaskUseCase(taskStore domain.TaskStore, userStore domain.UserStore) taskUseCase <span class="cov8" title="1">{
+        return taskUseCase{
+                taskStore: taskStore,
+                userStore: userStore,
+        }
+}</span>
+
+func (u taskUseCase) AddTask(task domain.Task) error <span class="cov8" title="1">{
+        limit, err := u.userStore.GetUserTasksPerDay(task.UserID)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">return u.taskStore.AddTaskWithLimitPerDay(task, limit)</span>
+}
+
+func (u taskUseCase) GetTasksByUserIDAndDate(userID string, date string) ([]domain.Task, error) <span class="cov8" title="1">{
+        return u.taskStore.GetTasksByUserIDAndDate(userID, date)
+}</span>
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
