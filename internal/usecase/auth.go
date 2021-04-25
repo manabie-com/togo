@@ -69,6 +69,7 @@ func (u userUseCase) CreateUser(id, pswd string) error {
 
 func bcryptValidator(given, hashed []byte) bool {
 	err := bcrypt.CompareHashAndPassword(hashed, given)
+	fmt.Println(err)
 	return err == nil
 }
 

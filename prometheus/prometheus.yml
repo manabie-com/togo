@@ -27,18 +27,11 @@ scrape_configs:
 
   #   static_configs:
   #   - targets: ['localhost:9090']
-  - job_name: 'testclient'
+  - job_name: 'todoserver'
 
     # metrics_path defaults to '/metrics'
     # scheme defaults to 'http'.
 
     static_configs:
-    - targets: ['testclient:4001']
+    - targets: ['app:4000']
 
-  - job_name: 'testserver'
-
-    # metrics_path defaults to '/metrics'
-    # scheme defaults to 'http'.
-
-    static_configs:
-    - targets: ['testserver:4000']

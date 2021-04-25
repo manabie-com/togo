@@ -7,7 +7,6 @@ CREATE TABLE users (
 	CONSTRAINT users_PK PRIMARY KEY (id)
 );
 
-INSERT INTO users (id, password, max_todo) VALUES('admin', 'admin', 5);
 
 -- tasks definition
 
