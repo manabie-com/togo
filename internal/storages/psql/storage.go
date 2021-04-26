@@ -6,8 +6,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"sync"
 	"time"
+
+	"github.com/manabie-com/togo/internal/lock"
 
 	"github.com/lib/pq"
 	"github.com/manabie-com/togo/internal/domain"
@@ -15,7 +16,7 @@ import (
 
 type Storage struct {
 	db          *sql.DB
-	lock        Lock
+	lock        lock.Lock
 	addTaskFunc func(domain.Task, int) error
 	conf        Config
 	//TODO
@@ -41,7 +42,6 @@ func NewStorage(c Config) (*Storage, error) {
 	}
 	s := &Storage{
 		db:   db,
-		lock: simpleLock{internal: &sync.Mutex{}},
 		conf: c,
 	}
 	s.addTaskFunc = s.addTaskWithTransaction
@@ -50,7 +50,7 @@ func NewStorage(c Config) (*Storage, error) {
 }
 
 //WithLock Allow user to specify custom lock like etcd, redis
-func (s *Storage) WithLock(l Lock) {
+func (s *Storage) WithLock(l lock.Lock) {
 	s.lock = l
 	s.addTaskFunc = s.addTaskWithLock
 }
@@ -123,8 +123,11 @@ func (s *Storage) addTaskWithTransaction(task domain.Task, limit int) error {
 var ErrTooManySerializableConflict = errors.New("max effort resolving concurrent conflict reached")
 
 func (s *Storage) addTaskWithLock(task domain.Task, limit int) error {
-	mutex := s.lock.NewMutex(task.UserID)
-	err := mutex.Lock()
+	mutex, err := s.lock.NewMutex(task.UserID)
+	if err != nil {
+		return err
+	}
+	err = mutex.Lock()
 	if err != nil {
 		return err
 	}

@@ -7,6 +7,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/manabie-com/togo/internal/lock/etcd"
+
 	"github.com/google/uuid"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/manabie-com/togo/internal/domain"
@@ -15,10 +17,16 @@ import (
 )
 
 func setupStorage(t *testing.T) *psql.Storage {
-	var conf psql.Config
+	var conf struct {
+		Psql psql.Config
+		Etcd etcd.Config
+	}
 	panicIfErr(envconfig.Process("storage", &conf))
-	s, err := psql.NewStorage(conf)
+	s, err := psql.NewStorage(conf.Psql)
 	panicIfErr(err)
+	etcd, err := etcd.NewLock(conf.Etcd)
+	panicIfErr(err)
+	s.WithLock(etcd)
 	return s
 }
 

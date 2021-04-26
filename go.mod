@@ -3,6 +3,7 @@ module github.com/manabie-com/togo
 go 1.14
 
 require (
+	github.com/coreos/go-etcd v2.0.0+incompatible // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/golang/mock v1.5.0
@@ -15,5 +16,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.0
 	github.com/prometheus/client_golang v1.10.0
 	github.com/stretchr/testify v1.7.0
+	github.com/xordataexchange/crypt v0.0.2
+	go.etcd.io/etcd v0.0.0-20191023171146-3cf2f69b5738
 	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a
 )

@@ -54,17 +54,15 @@
 			<div id="nav">
 				<select id="files">
 				
-				<option value="file0">github.com/manabie-com/togo/internal/storages/psql/lock.go (0.0%)</option>
+				<option value="file0">github.com/manabie-com/togo/internal/storages/psql/storage.go (49.1%)</option>
 				
-				<option value="file1">github.com/manabie-com/togo/internal/storages/psql/storage.go (50.0%)</option>
+				<option value="file1">github.com/manabie-com/togo/internal/transport/http/api.go (79.6%)</option>
 				
-				<option value="file2">github.com/manabie-com/togo/internal/transport/http/api.go (79.6%)</option>
+				<option value="file2">github.com/manabie-com/togo/internal/transport/http/middleware.go (77.8%)</option>
 				
-				<option value="file3">github.com/manabie-com/togo/internal/transport/http/middleware.go (77.8%)</option>
+				<option value="file3">github.com/manabie-com/togo/internal/usecase/auth.go (73.9%)</option>
 				
-				<option value="file4">github.com/manabie-com/togo/internal/usecase/auth.go (73.9%)</option>
-				
-				<option value="file5">github.com/manabie-com/togo/internal/usecase/task.go (83.3%)</option>
+				<option value="file4">github.com/manabie-com/togo/internal/usecase/task.go (83.3%)</option>
 				
 				</select>
 			</div>
@@ -78,43 +76,7 @@
 		</div>
 		<div id="content">
 		
-		<pre class="file" id="file0" style="display: none">package psql
-
-import "sync"
-
-type simpleLock struct {
-        internal *sync.Mutex
-}
-
-func (s simpleLock) NewMutex(string) Mutex <span class="cov0" title="0">{
-        return simpleMutex{internal: s.internal}
-}</span>
-
-type simpleMutex struct {
-        internal *sync.Mutex
-}
-
-func (s simpleMutex) Lock() error <span class="cov0" title="0">{
-        s.internal.Lock()
-        return nil
-}</span>
-
-func (s simpleMutex) Unlock() error <span class="cov0" title="0">{
-        s.internal.Unlock()
-        return nil
-}</span>
-
-type Lock interface {
-        NewMutex(session string) Mutex
-}
-
-type Mutex interface {
-        Lock() error
-        Unlock() error
-}
-</pre>
-		
-		<pre class="file" id="file1" style="display: none">//Package psql
+		<pre class="file" id="file0" style="display: none">//Package psql
 package psql
 
 import (
@@ -122,8 +84,9 @@ import (
         "database/sql"
         "errors"
         "fmt"
-        "sync"
         "time"
+
+        "github.com/manabie-com/togo/internal/lock"
 
         "github.com/lib/pq"
         "github.com/manabie-com/togo/internal/domain"
@@ -131,7 +94,7 @@ import (
 
 type Storage struct {
         db          *sql.DB
-        lock        Lock
+        lock        lock.Lock
         addTaskFunc func(domain.Task, int) error
         conf        Config
         //TODO
@@ -157,7 +120,6 @@ func NewStorage(c Config) (*Storage, error) <span class="cov8" title="1">{
         }</span>
         <span class="cov8" title="1">s := &amp;Storage{
                 db:   db,
-                lock: simpleLock{internal: &amp;sync.Mutex{}},
                 conf: c,
         }
         s.addTaskFunc = s.addTaskWithTransaction
@@ -166,7 +128,7 @@ func NewStorage(c Config) (*Storage, error) <span class="cov8" title="1">{
 }
 
 //WithLock Allow user to specify custom lock like etcd, redis
-func (s *Storage) WithLock(l Lock) <span class="cov0" title="0">{
+func (s *Storage) WithLock(l lock.Lock) <span class="cov0" title="0">{
         s.lock = l
         s.addTaskFunc = s.addTaskWithLock
 }</span>
@@ -197,6 +159,7 @@ func (s *Storage) addTaskWithTransaction(task domain.Task, limit int) error <spa
                 err = rows.Scan(&amp;result)
                 if err != nil </span><span class="cov0" title="0">{
                         pgerr, ok := err.(*pq.Error)
+                        //serializable read conflict
                         if ok &amp;&amp; pgerr.Code == "40001" </span><span class="cov0" title="0">{
                                 time.Sleep(s.conf.SleepOnConflict)
                                 tx.Rollback()
@@ -219,6 +182,7 @@ func (s *Storage) addTaskWithTransaction(task domain.Task, limit int) error <spa
                 _, err = tx.Exec(ex, task.ID, task.Content, task.UserID, task.CreatedDate)
                 if err != nil </span><span class="cov0" title="0">{
                         pgerr, ok := err.(*pq.Error)
+                        //serializable read conflict
                         if ok &amp;&amp; pgerr.Code == "40001" </span><span class="cov0" title="0">{
                                 tx.Rollback()
                                 time.Sleep(s.conf.SleepOnConflict)
@@ -237,8 +201,11 @@ func (s *Storage) addTaskWithTransaction(task domain.Task, limit int) error <spa
 var ErrTooManySerializableConflict = errors.New("max effort resolving concurrent conflict reached")
 
 func (s *Storage) addTaskWithLock(task domain.Task, limit int) error <span class="cov0" title="0">{
-        mutex := s.lock.NewMutex(task.UserID)
-        err := mutex.Lock()
+        mutex, err := s.lock.NewMutex(task.UserID)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov0" title="0">err = mutex.Lock()
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
@@ -332,7 +299,7 @@ func (s *Storage) GetUserTasksPerDay(userID string) (int, error) <span class="co
 }
 </pre>
 		
-		<pre class="file" id="file2" style="display: none">package http
+		<pre class="file" id="file1" style="display: none">package http
 
 import (
         "errors"
@@ -475,7 +442,7 @@ func (h *HttpAPI) ListTasks(ctx echo.Context) error <span class="cov8" title="1"
 }
 </pre>
 		
-		<pre class="file" id="file3" style="display: none">package http
+		<pre class="file" id="file2" style="display: none">package http
 
 import (
         "net/http"
@@ -519,7 +486,7 @@ func jwtAuthMiddleware(secret []byte) func(echo.HandlerFunc) echo.HandlerFunc <s
 }
 </pre>
 		
-		<pre class="file" id="file4" style="display: none">package usecase
+		<pre class="file" id="file3" style="display: none">package usecase
 
 import (
         "errors"
@@ -604,7 +571,7 @@ func bcryptPasswordGenerator(cost int) func([]byte) ([]byte, error) <span class=
 }
 </pre>
 		
-		<pre class="file" id="file5" style="display: none">package usecase
+		<pre class="file" id="file4" style="display: none">package usecase
 
 import "github.com/manabie-com/togo/internal/domain"
 
