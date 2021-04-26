@@ -1,0 +1,47 @@
+version: "3.4"
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 8080:8080
+      - 4000:4000
+    env_file:
+      - ./cmd/app/env/app.env
+    depends_on:
+      - db
+    volumes:
+      - ./tests/report:/src/go/tests/report
+  prometheus:
+    image: prom/prometheus:v2.9.2
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - 3000:3000
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=secret
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U admin"]
+      timeout: 40s
+      interval: 10s
+      retries: 10
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./postgres/script/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+
+
+

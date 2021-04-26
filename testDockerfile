@@ -1,0 +1,12 @@
+FROM golang:1.14-alpine as builder
+WORKDIR /src/go
+
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
+
+COPY ./internal ./internal
+COPY ./deploy/testscript.sh ./testscript.sh
+
+
+CMD ./testscript.sh
