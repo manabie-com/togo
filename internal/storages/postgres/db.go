@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"errors"
 
 	"github.com/manabie-com/togo/internal/app/models"
 )
@@ -18,10 +19,10 @@ func NewPosgresql(DB *sql.DB) *PGsqlImpl {
 
 // ValidateUser returns tasks if match userID AND password
 func (pg *PGsqlImpl) ValidateUser(ctx context.Context, username string, pwd string) (*models.User, error) {
-	stmt := `SELECT id FROM users WHERE username = $1 AND password = $2`
+	stmt := `SELECT id, username, password FROM users WHERE username = $1 AND password = $2`
 	row := pg.DB.QueryRowContext(ctx, stmt, username, pwd)
 	u := &models.User{}
-	err := row.Scan(&u.ID)
+	err := row.Scan(&u.ID, &u.Username, &u.Password)
 
 	if err != nil {
 		return nil, err
@@ -58,10 +59,29 @@ func (pg *PGsqlImpl) RetrieveTasks(ctx context.Context, userID uint64, createdDa
 
 // AddTask adds a new task to DB
 func (pg *PGsqlImpl) AddTask(ctx context.Context, t *models.Task) error {
-	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
-	_, err := pg.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
+	query := `INSERT INTO tasks (id, content, user_id, created_date) 
+			SELECT $1, $2, $3, $4::date 
+			FROM users u 
+			WHERE u.id = $3 
+				AND (SELECT COUNT(id) 
+				FROM tasks 
+				WHERE user_id = $3 
+				AND created_date::date = $4::date) < u.max_todo RETURNING id`
+
+	stmt, err := pg.DB.PrepareContext(ctx, query)
 	if err != nil {
 		return err
+	}
+	defer stmt.Close()
+	res, err := stmt.ExecContext(ctx, t.ID, t.Content, t.UserID, t.CreatedDate)
+	if err != nil {
+		return err
+	}
+
+	rsAfted, _ := res.RowsAffected()
+
+	if rsAfted < 1 {
+		return errors.New("the task daily limit is reached")
 	}
 
 	return nil
