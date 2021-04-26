@@ -17,7 +17,7 @@ services:
   app_test:
     build:
       context: .
-      dockerfile: ./Dockerfile.test
+      dockerfile: ./testDockerfile
     ports:
       - 8000:8000
     env_file:
