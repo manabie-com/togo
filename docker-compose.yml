@@ -20,9 +20,9 @@ services:
     image: postgres:latest
     container_name: togo_db_postgres
     environment:
-      - POSTGRES_USER=${DB_USER}  
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=postgres  
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_DB=togo
     ports:
       - '5432:5432'
     volumes:
@@ -35,7 +35,7 @@ services:
     container_name: pgadmin_container
     environment:
       PGADMIN_DEFAULT_EMAIL: ngohuuphong.1994@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: example
+      PGADMIN_DEFAULT_PASSWORD: 123
     depends_on:
       - togo-postgres
     ports:

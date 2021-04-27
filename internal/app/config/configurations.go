@@ -14,25 +14,30 @@ type Database struct {
 	Pass string
 	Name string
 }
-type Jwt struct {
-	SecretKey []byte
+type App struct {
+	Port      string
+	SecretKey string
 }
-
 type Config struct {
 	Database Database
-	Jwt      Jwt
+	App      App
 }
 
 func LoadConfigs() Config {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return Config{
-		Database{os.Getenv("DB_HOST"),
+		Database{
+			os.Getenv("DB_HOST"),
 			os.Getenv("DB_PORT"),
 			os.Getenv("DB_USER"),
 			os.Getenv("DB_PASSWORD"),
 			os.Getenv("DB_NAME"),
-		}, Jwt{[]byte(os.Getenv("SECRET_KEY"))}}
+		}, App{
+			Port:      os.Getenv("API_PORT"),
+			SecretKey: os.Getenv("SECRET_KEY"),
+		},
+	}
 }

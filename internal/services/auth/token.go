@@ -2,7 +2,6 @@ package auth
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -12,12 +11,11 @@ import (
 	"github.com/manabie-com/togo/internal/utils"
 )
 
-var secretkey = config.LoadConfigs().Jwt.SecretKey
+var secretkey = config.LoadConfigs().App.SecretKey
 
 func CreateToken(id int) (string, error) {
 	atClaims := jwt.MapClaims{}
 	atClaims["user_id"] = id
-	fmt.Println(id)
 	atClaims["exp"] = time.Now().Add(time.Minute * 150).Unix()
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	token, err := at.SignedString([]byte(secretkey))
