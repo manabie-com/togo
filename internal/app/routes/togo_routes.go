@@ -3,6 +3,7 @@ package routes
 import (
 	"net/http"
 
+	"github.com/manabie-com/togo/internal/app/models"
 	"github.com/manabie-com/togo/internal/services/transport"
 )
 
@@ -37,6 +38,13 @@ func (r *togoRoutesImpl) Routes() []*Route {
 			Method:       http.MethodPost,
 			Handler:      r.transport.AddTask,
 			AuthRequired: true,
+		},
+		// for test
+		{
+			Path:         "/refresh-table",
+			Method:       http.MethodGet,
+			Handler:      models.RefreshTable,
+			AuthRequired: false,
 		},
 	}
 }

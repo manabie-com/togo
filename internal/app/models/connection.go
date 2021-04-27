@@ -4,10 +4,12 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"net/http"
 	"strings"
 
 	_ "github.com/lib/pq"
 	"github.com/manabie-com/togo/internal/app/config"
+	"github.com/manabie-com/togo/internal/utils"
 )
 
 var configs = config.LoadConfigs()
@@ -83,4 +85,17 @@ func TestConnection() {
 		log.Fatal(err)
 	}
 	fmt.Println("Database connected!")
+}
+
+func RefreshTable(resp http.ResponseWriter, req *http.Request) {
+	con := Connect()
+	defer con.Close()
+
+	sqlStr := "TRUNCATE tasks CASCADE;"
+	_, err := con.Exec(sqlStr)
+	if err != nil {
+		utils.JSON(resp, http.StatusInternalServerError, nil)
+	}
+
+	utils.JSON(resp, http.StatusOK, nil)
 }
