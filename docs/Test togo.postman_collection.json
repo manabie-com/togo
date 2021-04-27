@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "05327fec-8670-470b-8253-f27686acf809",
+		"_postman_id": "9d5a9825-bff1-4319-b90b-2e69af4105ce",
 		"name": "Test togo",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -8,26 +8,25 @@
 		{
 			"name": "Login",
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"firstUser\",\r\n    \"password\": \"example\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "localhost:5050/login?user_id=firstUser&password=example",
+					"raw": "localhost:5050/login",
 					"host": [
 						"localhost"
 					],
 					"port": "5050",
 					"path": [
 						"login"
-					],
-					"query": [
-						{
-							"key": "user_id",
-							"value": "firstUser"
-						},
-						{
-							"key": "password",
-							"value": "example"
-						}
 					]
 				}
 			},
@@ -106,6 +105,5 @@
 			},
 			"response": []
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }
