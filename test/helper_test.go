@@ -14,7 +14,7 @@ func auth(user string) (*http.Request, error) {
 	}
 	return req, nil
 }
-func gererateToken(user string) (string, int, error) {
+func CreateToken(user string) (string, int, error) {
 	req, err := auth(user)
 	if err != nil {
 		return "", http.StatusInternalServerError, err

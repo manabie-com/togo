@@ -25,11 +25,24 @@ func (s *e2eTestSuite) Test_EndToEnd_Login() {
 	}
 	userStr, err := json.Marshal(user)
 	s.NoError(err)
-	token, status, err := gererateToken(string(userStr))
+	token, status, err := CreateToken(string(userStr))
 
 	s.NoError(err)
 	s.NotEmpty(token)
 	s.Equal(http.StatusOK, status)
+}
+
+func (s *e2eTestSuite) Test_EndToEnd_Login_Failed_WrongUsernameOrPassword() {
+	user := models.User{
+		Username: "secondUser",
+		Password: "11111",
+	}
+	userStr, err := json.Marshal(user)
+	s.NoError(err)
+	_, status, err := CreateToken(string(userStr))
+
+	s.Error(err)
+	s.Equal(http.StatusInternalServerError, status)
 }
 
 func (s *e2eTestSuite) Test_EndToEnd_GetAllTask() {
@@ -40,7 +53,7 @@ func (s *e2eTestSuite) Test_EndToEnd_GetAllTask() {
 	userStr, err := json.Marshal(user)
 	s.NoError(err)
 
-	token, status, err := gererateToken(string(userStr))
+	token, status, err := CreateToken(string(userStr))
 	s.NoError(err)
 	s.NotEmpty(token)
 	s.Equal(http.StatusOK, status)
@@ -61,6 +74,46 @@ func (s *e2eTestSuite) Test_EndToEnd_GetAllTask() {
 	defer response.Body.Close()
 }
 
+func (s *e2eTestSuite) Test_EndToEnd_GetAllTask_Failed_UnAuthorization() {
+	req, err := http.NewRequest(http.MethodGet, "http://localhost:5050/tasks", nil)
+	s.NoError(err)
+
+	q := req.URL.Query()
+	q.Add("created_date", time.Now().Format("2006-01-02"))
+	req.URL.RawQuery = q.Encode()
+
+	client := http.Client{}
+	response, err := client.Do(req)
+	s.NoError(err)
+	s.Equal(http.StatusUnauthorized, response.StatusCode)
+	defer response.Body.Close()
+}
+
+func (s *e2eTestSuite) Test_EndToEnd_GetAllTask_MissingCreateDate() {
+	user := models.User{
+		Username: "secondUser",
+		Password: "example",
+	}
+	userStr, err := json.Marshal(user)
+	s.NoError(err)
+
+	token, status, err := CreateToken(string(userStr))
+	s.NoError(err)
+	s.NotEmpty(token)
+	s.Equal(http.StatusOK, status)
+
+	req, err := http.NewRequest(http.MethodGet, "http://localhost:5050/tasks", nil)
+	s.NoError(err)
+
+	req.Header.Set("Authorization", token)
+
+	client := http.Client{}
+	response, err := client.Do(req)
+	s.NoError(err)
+	s.Equal(http.StatusUnprocessableEntity, response.StatusCode)
+	defer response.Body.Close()
+}
+
 func (s *e2eTestSuite) Test_EndToEnd_AddTask() {
 	user := models.User{
 		Username: "secondUser",
@@ -69,7 +122,7 @@ func (s *e2eTestSuite) Test_EndToEnd_AddTask() {
 	userStr, err := json.Marshal(user)
 	s.NoError(err)
 
-	token, status, err := gererateToken(string(userStr))
+	token, status, err := CreateToken(string(userStr))
 	s.NoError(err)
 	s.NotEmpty(token)
 	s.Equal(http.StatusOK, status)
@@ -119,7 +172,7 @@ func (s *e2eTestSuite) Test_EndToEnd_AddTask_Limit_Reached() {
 	userStr, err := json.Marshal(user)
 	s.NoError(err)
 
-	token, status, err := gererateToken(string(userStr))
+	token, status, err := CreateToken(string(userStr))
 	s.NoError(err)
 	s.NotEmpty(token)
 	s.Equal(http.StatusOK, status)
