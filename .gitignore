@@ -17,3 +17,11 @@
 out/
 
 .idea
+
+scripts/*
+!scripts/docker-entrypoint.sh
+!scripts/install_postgres.sh
+!scripts/start_services.sh
+!scripts/startup.sh
+!scripts/todo_db.sh
+!scripts/todo.sql

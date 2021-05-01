@@ -2,187 +2,103 @@ package services
 
 import (
 	"context"
-	"database/sql"
 	"encoding/json"
-	"log"
-	"net/http"
+	"errors"
+	"sync"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/storages"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 )
 
-// ToDoService implement HTTP server
-type ToDoService struct {
-	JWTKey string
-	Store  *sqllite.LiteDB
+// ErrUserReachDailyRequestLimit returns if a user has reached daily request limit
+var ErrUserReachDailyRequestLimit = errors.New("User has reached daily request limit")
+
+// ToDoService contains methods to handle users' todos related requests
+type ToDoService interface {
+	// ValidateUser checks if a user existed
+	ValidateUser(ctx context.Context, userID, password string) bool
+	// ListTasks returns tasks from storage
+	ListTasks(ctx context.Context, userID, createdDate string) ([]*storages.Task, error)
+	// AddTask adds a task to storage
+	AddTask(ctx context.Context, userID string, reqBody []byte) (*storages.Task, error)
 }
 
-func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
-	log.Println(req.Method, req.URL.Path)
-	resp.Header().Set("Access-Control-Allow-Origin", "*")
-	resp.Header().Set("Access-Control-Allow-Headers", "*")
-	resp.Header().Set("Access-Control-Allow-Methods", "*")
+// todoService implement ToDoService
+type todoService struct {
+	Store                  storages.Repository
+	mux                    sync.RWMutex
+	lastUsersCreatedDate   map[string]string
+	usersDailyRequestCount map[string]int
+}
 
-	if req.Method == http.MethodOptions {
-		resp.WriteHeader(http.StatusOK)
-		return
-	}
-
-	switch req.URL.Path {
-	case "/login":
-		s.getAuthToken(resp, req)
-		return
-	case "/tasks":
-		var ok bool
-		req, ok = s.validToken(req)
-		if !ok {
-			resp.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-
-		switch req.Method {
-		case http.MethodGet:
-			s.listTasks(resp, req)
-		case http.MethodPost:
-			s.addTask(resp, req)
-		}
-		return
+// NewToDoService returns a ToDoService
+func NewToDoService(store storages.Repository) ToDoService {
+	return &todoService{
+		Store:                  store,
+		lastUsersCreatedDate:   make(map[string]string),
+		usersDailyRequestCount: make(map[string]int),
 	}
 }
 
-func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
-	id := value(req, "user_id")
-	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
-		resp.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "incorrect user_id/pwd",
-		})
-		return
-	}
-	resp.Header().Set("Content-Type", "application/json")
-
-	token, err := s.createToken(id.String)
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	json.NewEncoder(resp).Encode(map[string]string{
-		"data": token,
-	})
+func (s *todoService) ValidateUser(ctx context.Context, userID, password string) bool {
+	ok := s.Store.ValidateUser(ctx, userID, password)
+	return ok
 }
 
-func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
-	id, _ := userIDFromCtx(req.Context())
-	tasks, err := s.Store.RetrieveTasks(
-		req.Context(),
-		sql.NullString{
-			String: id,
-			Valid:  true,
-		},
-		value(req, "created_date"),
-	)
-
-	resp.Header().Set("Content-Type", "application/json")
-
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
-		"data": tasks,
-	})
+func (s *todoService) ListTasks(ctx context.Context, userID, createdDate string) ([]*storages.Task, error) {
+	tasks, err := s.Store.RetrieveTasks(ctx, userID, createdDate)
+	return tasks, err
 }
 
-func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
+func (s *todoService) AddTask(ctx context.Context, userID string, reqBody []byte) (*storages.Task, error) {
+	s.mux.Lock()
+	defer s.mux.Unlock()
 	t := &storages.Task{}
-	err := json.NewDecoder(req.Body).Decode(t)
-	defer req.Body.Close()
+	err := json.Unmarshal(reqBody, &t)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		return
+		return nil, err
 	}
 
-	now := time.Now()
-	userID, _ := userIDFromCtx(req.Context())
+	today := time.Now().Format("2006-01-02")
+	if _, ok := s.lastUsersCreatedDate[userID]; !ok {
+		s.lastUsersCreatedDate[userID] = today
+	}
+	if _, ok := s.usersDailyRequestCount[userID]; !ok || today != s.lastUsersCreatedDate[userID] {
+		if ok {
+			s.usersDailyRequestCount[userID], err = s.Store.MaxTodo(ctx, userID)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			// In case of failure and the service needs to be restarted, subtract the user's today
+			// requests already made (in db) from the user's today total request limit
+			todayRequestCountFromDB, err := s.Store.LoadTasksCount(ctx, userID, today)
+			if err != nil {
+				return nil, err
+			}
+			userDailyMaxTodo, err := s.Store.MaxTodo(ctx, userID)
+			if err != nil {
+				return nil, err
+			}
+			s.usersDailyRequestCount[userID] = userDailyMaxTodo - todayRequestCountFromDB
+		}
+
+	}
+	if s.usersDailyRequestCount[userID] <= 0 {
+		return nil, ErrUserReachDailyRequestLimit
+	}
 	t.ID = uuid.New().String()
 	t.UserID = userID
-	t.CreatedDate = now.Format("2006-01-02")
+	t.CreatedDate = today
 
-	resp.Header().Set("Content-Type", "application/json")
-
-	err = s.Store.AddTask(req.Context(), t)
+	err = s.Store.AddTask(ctx, t)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
+		return nil, err
 	}
 
-	json.NewEncoder(resp).Encode(map[string]*storages.Task{
-		"data": t,
-	})
-}
+	s.usersDailyRequestCount[userID]--
+	s.lastUsersCreatedDate[userID] = today
 
-func value(req *http.Request, p string) sql.NullString {
-	return sql.NullString{
-		String: req.FormValue(p),
-		Valid:  true,
-	}
-}
-
-func (s *ToDoService) createToken(id string) (string, error) {
-	atClaims := jwt.MapClaims{}
-	atClaims["user_id"] = id
-	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
-	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
-	token, err := at.SignedString([]byte(s.JWTKey))
-	if err != nil {
-		return "", err
-	}
-	return token, nil
-}
-
-func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
-	token := req.Header.Get("Authorization")
-
-	claims := make(jwt.MapClaims)
-	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
-		return []byte(s.JWTKey), nil
-	})
-	if err != nil {
-		log.Println(err)
-		return req, false
-	}
-
-	if !t.Valid {
-		return req, false
-	}
-
-	id, ok := claims["user_id"].(string)
-	if !ok {
-		return req, false
-	}
-
-	req = req.WithContext(context.WithValue(req.Context(), userAuthKey(0), id))
-	return req, true
-}
-
-type userAuthKey int8
-
-func userIDFromCtx(ctx context.Context) (string, bool) {
-	v := ctx.Value(userAuthKey(0))
-	id, ok := v.(string)
-	return id, ok
+	return t, nil
 }
