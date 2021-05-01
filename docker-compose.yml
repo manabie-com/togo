@@ -1,0 +1,19 @@
+version: "3"
+services:
+  postgres:
+    image: ubuntu/todosrv:latest
+    container_name: todo-postgres
+    hostname: todo-postgres
+    ports:
+     - "5432:5432"
+    volumes:    
+     - ./scripts:/root
+     - ./pgconfigs/postgresql.conf:/etc/postgresql/11/main/postgresql.conf
+     - ./pgconfigs/pg_hba.conf:/etc/postgresql/11/main/pg_hba.conf
+    tty: yes
+    privileged: true
+
+    command: >
+      bash -c "chmod +x startup.sh &&
+             ./startup.sh &&
+             /bin/bash"

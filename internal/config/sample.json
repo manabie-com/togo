@@ -1,0 +1,12 @@
+{
+    "sample_config": {
+        "config_type_int": 3,
+        "config_type_string": "some string",
+        "config_type_bool": true,
+        "nested_config": {
+            "config_nested_type_int": 33,
+            "config_nested_type_string": "some string some string",
+            "config_nested_type_bool": true
+        }
+    }
+}
