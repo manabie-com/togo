@@ -1,26 +1,39 @@
 package main
 
 import (
-	"database/sql"
-	"log"
-	"net/http"
-
+	"fmt"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	"github.com/manabie-com/togo/internal/controllers"
+	"github.com/manabie-com/togo/internal/pkg/middleware"
+	"github.com/manabie-com/togo/internal/repositories"
+	"github.com/manabie-com/togo/internal/server"
 	"github.com/manabie-com/togo/internal/services"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
-
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func main() {
-	db, err := sql.Open("sqlite3", "./data.db")
-	if err != nil {
-		log.Fatal("error opening db", err)
-	}
+func init() {
+	server.InitServerConfig("")
+	server.Database.InitDatabase()
+}
 
-	http.ListenAndServe(":5050", &services.ToDoService{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
-			DB: db,
-		},
-	})
+func main() {
+	r := gin.New()
+	taskRepo := repositories.NewTaskRepo(server.Database)
+
+	toDoService := services.NewToDoService(taskRepo)
+	c := controllers.New(toDoService)
+	// cors
+	r.Use(cors.New(cors.Config{
+		AllowAllOrigins:  true,
+		AllowMethods:     []string{"GET, PUT, POST, DELETE"},
+		AllowHeaders:     []string{"Origin ,Cookie ,Authorization, Content-Type"},
+		ExposeHeaders:    []string{""},
+		AllowCredentials: true,
+	}))
+	r.Use(middleware.GinTokenMiddleware())
+	r.POST("/login", c.Login)
+	r.GET("/tasks", c.ListTask)
+	r.POST("/tasks", c.AddTask)
+	r.Run(fmt.Sprintf(":%d", server.Config.Port))
 }
