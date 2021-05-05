@@ -68,7 +68,7 @@ func TestRetrieveTasks(t *testing.T) {
 		now := time.Now()
 
 		task.ID = uuid.New().String()
-		task.UserID = "1234"
+		task.UserID = utils.USERID
 		task.CreatedDate = now.Format("2006-01-02")
 
 		err := serv.Store.AddTask(ctx, task)
@@ -125,11 +125,11 @@ func TestValidateTask(t *testing.T) {
 		serv.Store.DB.Close()
 	}(httpServer, serv)
 	task := &storages.Task{}
-	for i := 0; i < 5; i++ {
+	for i := 0; i < 4; i++ {
 		now := time.Now()
 
 		task.ID = uuid.New().String()
-		task.UserID = "1234"
+		task.UserID = utils.USERID
 		task.CreatedDate = now.Format("2006-01-02")
 
 		err := serv.Store.AddTask(ctx, task)
@@ -139,9 +139,22 @@ func TestValidateTask(t *testing.T) {
 		}
 	}
 
-	countTask := serv.Store.ValidateTask(ctx, time.Now())
+	isLimitTask, _ := serv.Store.ValidateTask(ctx, task.UserID, time.Now())
 
-	if 5 != countTask {
-		t.Error("Task is must be 5")
+	if isLimitTask {
+		t.Error("Task is maximum")
+	}
+
+	task.ID = uuid.New().String()
+	err := serv.Store.AddTask(ctx, task)
+
+	if nil != err {
+		t.Error(err.Error())
+	}
+
+	isLimitTask, _ = serv.Store.ValidateTask(ctx, task.UserID, time.Now())
+
+	if !isLimitTask {
+		t.Error("Task is not maximum")
 	}
 }

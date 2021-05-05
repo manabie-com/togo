@@ -94,15 +94,22 @@ func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) b
 	return true
 }
 
-// ValidateTask returns int if match date
-func (l *LiteDB) ValidateTask(ctx context.Context, now time.Time) int {
-	stmt := `SELECT count(id) FROM tasks WHERE created_date = $1`
-	row := l.DB.QueryRowContext(ctx, stmt, now.Format("2006-01-02"))
-	countTask := 0
-	err := row.Scan(&countTask)
+// ValidateTask returns boolend And max_todo if match userId AND date
+func (l *LiteDB) ValidateTask(ctx context.Context, userID string, now time.Time) (bool, int) {
+	stmt := `SELECT count(id) FROM tasks WHERE user_id = $1 AND created_date = $2`
+	row := l.DB.QueryRowContext(ctx, stmt, userID, now.Format("2006-01-02"))
+	limitTask := 0
+	err := row.Scan(&limitTask)
 	if err != nil {
-		return countTask
+		return true, 0
 	}
 
-	return countTask
+	maxToDo := 0
+	stmt = `SELECT max_todo FROM users WHERE users.id = $1`
+	row = l.DB.QueryRowContext(ctx, stmt, userID)
+	err = row.Scan(&maxToDo)
+	if err != nil {
+		return true, 0
+	}
+	return limitTask == maxToDo, maxToDo
 }

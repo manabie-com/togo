@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -114,21 +115,21 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	now := time.Now()
-	countTask := s.Store.ValidateTask(req.Context(), now)
-	if countTask >= 5 {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "Users are limited to create only 5 task only per day ",
-		})
-		return
-	}
-
 	userID, _ := userIDFromCtx(req.Context())
 	t.ID = uuid.New().String()
 	t.UserID = userID
 	t.CreatedDate = now.Format("2006-01-02")
 
 	resp.Header().Set("Content-Type", "application/json")
+
+	isLimitTask, maxToDo := s.Store.ValidateTask(req.Context(), userID, now)
+	if isLimitTask {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": "Users are limited to create only " + strconv.Itoa(maxToDo) + " task only per day ",
+		})
+		return
+	}
 
 	err = s.Store.AddTask(req.Context(), t)
 	if err != nil {
