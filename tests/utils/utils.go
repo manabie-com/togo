@@ -10,6 +10,7 @@ import (
 
 	"github.com/manabie-com/togo/internal/services"
 	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 const (
@@ -21,9 +22,11 @@ const (
 	OLD_JWT    = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjAyMDE2MTcsInVzZXJfaWQiOiJmaXJzdFVzZXIifQ.BYER5lzX8FEKaga98ph2i0kWnV-UuIOQB8mzMF_Jz3Y"
 )
 
+const USERID = "firstUser"
+const PASSWORD = "example"
+
 func Install() (*httptest.Server, *services.ToDoService, error) {
 	db, err := sql.Open("sqlite3", ":memory:")
-	// db, err := sql.Open("sqlite3", "./../../data.db")
 	if err != nil {
 		log.Fatal("error opening db", err)
 	}

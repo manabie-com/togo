@@ -13,8 +13,8 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-const USERID = "firstUser"
-const PASSWORD = "example"
+// const USERID = "firstUser"
+// const PASSWORD = "example"
 
 func GetToken(userId string, password string) (*httptest.Server, *services.ToDoService, int, string, error) {
 	httpServer, serv, err := utils.Install()
@@ -52,7 +52,7 @@ func GetTask(url string, token string) (int, map[string]interface{}, error) {
 }
 
 func TestLogin(t *testing.T) {
-	httpServer, serv, status, token, err := GetToken(USERID, PASSWORD)
+	httpServer, serv, status, token, err := GetToken(utils.USERID, utils.PASSWORD)
 	defer func(httpServer *httptest.Server, serv *services.ToDoService) {
 		httpServer.Close()
 		serv.Store.DB.Close()
@@ -69,7 +69,7 @@ func TestLogin(t *testing.T) {
 }
 
 func TestPostTask(t *testing.T) {
-	httpServer, serv, status, token, err := GetToken(USERID, PASSWORD)
+	httpServer, serv, status, token, err := GetToken(utils.USERID, utils.PASSWORD)
 	if 200 != status {
 		t.Error("Request failed")
 	}
@@ -90,7 +90,7 @@ func TestPostTask(t *testing.T) {
 	if 200 != status {
 		t.Error("Request failed")
 	}
-	if USERID != task.UserID {
+	if utils.USERID != task.UserID {
 		t.Error("UserID is not correctly")
 	}
 
@@ -103,7 +103,7 @@ func TestPostTask(t *testing.T) {
 }
 
 func TestPostTaskLimit(t *testing.T) {
-	httpServer, serv, status, token, err := GetToken(USERID, PASSWORD)
+	httpServer, serv, status, token, err := GetToken(utils.USERID, utils.PASSWORD)
 	if 200 != status {
 		t.Error("Request failed")
 	}
@@ -123,7 +123,7 @@ func TestPostTaskLimit(t *testing.T) {
 		if 200 != status {
 			t.Error("Request failed")
 		}
-		if USERID != task.UserID {
+		if utils.USERID != task.UserID {
 			t.Error("UserID is not correctly")
 		}
 
@@ -141,7 +141,7 @@ func TestPostTaskLimit(t *testing.T) {
 }
 
 func TestPostTaskWithExpireToken(t *testing.T) {
-	httpServer, serv, status, token, err := GetToken(USERID, PASSWORD)
+	httpServer, serv, status, token, err := GetToken(utils.USERID, utils.PASSWORD)
 	if 200 != status {
 		t.Error("Request failed")
 	}
@@ -168,7 +168,7 @@ func TestPostTaskWithExpireToken(t *testing.T) {
 }
 
 func TestGetTask(t *testing.T) {
-	httpServer, serv, status, token, err := GetToken(USERID, PASSWORD)
+	httpServer, serv, status, token, err := GetToken(utils.USERID, utils.PASSWORD)
 	if 200 != status {
 		t.Error("Request failed")
 	}
@@ -192,7 +192,7 @@ func TestGetTask(t *testing.T) {
 }
 
 func TestGetTaskWithExpireToken(t *testing.T) {
-	httpServer, serv, status, token, err := GetToken(USERID, PASSWORD)
+	httpServer, serv, status, token, err := GetToken(utils.USERID, utils.PASSWORD)
 	if 200 != status {
 		t.Error("Request failed")
 	}

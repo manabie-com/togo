@@ -61,4 +61,4 @@ CREATE TABLE tasks (
 - Run command `docker-compose up -d`
 
 ### Testing
-- `go test ./tests/*/*_test.go`
+- `go test ./tests/...`
