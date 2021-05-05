@@ -10,6 +10,6 @@ type Task struct {
 
 // User reflects users data from DB
 type User struct {
-	ID       string
-	Password string
+	ID       string	`json:"user_id"`
+	Password string	`json:"password"`
 }

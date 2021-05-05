@@ -3,13 +3,28 @@ package sqllite
 import (
 	"context"
 	"database/sql"
-
 	"github.com/manabie-com/togo/internal/storages"
 )
 
 // LiteDB for working with sqllite
 type LiteDB struct {
 	DB *sql.DB
+}
+
+func (l *LiteDB) IsTaskReachLimit(ctx context.Context, userID, date sql.NullString) (result bool, err error) {
+	var (
+		numOfTask, maxTodo int
+	)
+	// count number of task an id created in a specific day
+	stmt := `SELECT u.max_todo, COUNT(t.id) FROM users u LEFT JOIN tasks t ON u.id = t.user_id WHERE u.id = ? AND t.created_date = ?`
+	row := l.DB.QueryRowContext(ctx, stmt, userID, date)
+	if row.Err() != nil {
+		err = row.Err()
+		return
+	}
+	err = row.Scan(&maxTodo, &numOfTask)
+	result = maxTodo <= numOfTask
+	return
 }
 
 // RetrieveTasks returns tasks if match userID AND createDate.

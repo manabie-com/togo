@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"time"
@@ -25,7 +26,7 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Access-Control-Allow-Origin", "*")
 	resp.Header().Set("Access-Control-Allow-Headers", "*")
 	resp.Header().Set("Access-Control-Allow-Methods", "*")
-
+	resp.Header().Set("Content-Type", "application/json")
 	if req.Method == http.MethodOptions {
 		resp.WriteHeader(http.StatusOK)
 		return
@@ -54,52 +55,47 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
-	id := value(req, "user_id")
-	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
-		resp.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "incorrect user_id/pwd",
-		})
-		return
-	}
-	resp.Header().Set("Content-Type", "application/json")
-
-	token, err := s.createToken(id.String)
+	var (
+		err error
+		token string
+		statusCode int
+	)
+	user := &storages.User{}
+	err = json.NewDecoder(req.Body).Decode(user)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
+		log.Printf("error while decoding body - %s", err.Error())
+		goto ERROR
 	}
-
-	json.NewEncoder(resp).Encode(map[string]string{
+	if !s.Store.ValidateUser(req.Context(),
+		NullString(user.ID), NullString(user.Password)) {
+		err = errors.New("incorrect user_id/pwd")
+		statusCode = http.StatusUnauthorized
+		goto ERROR
+	}
+	token, err = s.createToken(user.ID)
+	if err != nil {
+		goto ERROR
+	}
+	response(resp, 0, map[string]interface{}{
 		"data": token,
 	})
+	return
+ERROR:
+	errorResp(resp, err, statusCode)
 }
 
 func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	id, _ := userIDFromCtx(req.Context())
 	tasks, err := s.Store.RetrieveTasks(
 		req.Context(),
-		sql.NullString{
-			String: id,
-			Valid:  true,
-		},
-		value(req, "created_date"),
+		NullString(id),
+		NullString(req.FormValue("created_date")),
 	)
-
-	resp.Header().Set("Content-Type", "application/json")
-
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
+		errorResp(resp, err, 0)
 		return
 	}
-
-	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
+	response(resp, 0, map[string][]*storages.Task{
 		"data": tasks,
 	})
 }
@@ -107,7 +103,11 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	t := &storages.Task{}
 	err := json.NewDecoder(req.Body).Decode(t)
-	defer req.Body.Close()
+	defer func() {
+		if err := req.Body.Close(); err != nil {
+			log.Printf("error while closing body - %s", err.Error())
+		}
+	} ()
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		return
@@ -119,27 +119,27 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	t.UserID = userID
 	t.CreatedDate = now.Format("2006-01-02")
 
-	resp.Header().Set("Content-Type", "application/json")
-
-	err = s.Store.AddTask(req.Context(), t)
+	isReachLimit, err := s.Store.IsTaskReachLimit(req.Context(), NullString(t.UserID), NullString(t.CreatedDate))
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
+		errorResp(resp, err, 0)
+		return
+	}
+
+	if isReachLimit {
+		response(resp, http.StatusUnauthorized, map[string]string{
+			"message": "max limit tasks reached",
 		})
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string]*storages.Task{
+	err = s.Store.AddTask(req.Context(), t)
+	if err != nil {
+		errorResp(resp, err, 0)
+		return
+	}
+	response(resp, 0, map[string]*storages.Task{
 		"data": t,
 	})
-}
-
-func value(req *http.Request, p string) sql.NullString {
-	return sql.NullString{
-		String: req.FormValue(p),
-		Valid:  true,
-	}
 }
 
 func (s *ToDoService) createToken(id string) (string, error) {
@@ -185,4 +185,33 @@ func userIDFromCtx(ctx context.Context) (string, bool) {
 	v := ctx.Value(userAuthKey(0))
 	id, ok := v.(string)
 	return id, ok
+}
+
+func errorResp(resp http.ResponseWriter, err error, code int) {
+	statusCode := http.StatusInternalServerError
+	if http.StatusText(code) != "" {
+		statusCode = code
+	}
+	response(resp, statusCode, map[string]interface{}{
+		"error": err.Error(),
+	})
+	return
+}
+
+func response(resp http.ResponseWriter, code int, message interface{}) {
+	if code == 0 {
+		code = http.StatusOK
+	}
+	resp.WriteHeader(code)
+	err := json.NewEncoder(resp).Encode(message)
+	if err != nil {
+		log.Printf("error while encoding response's message - %s", err.Error())
+	}
+}
+
+func NullString(value string) sql.NullString {
+	return sql.NullString{
+		String: value,
+		Valid:  true,
+	}
 }
