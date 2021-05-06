@@ -25,7 +25,7 @@ func TestAddTask(t *testing.T) {
 	now := time.Now()
 
 	task.ID = uuid.New().String()
-	task.UserID = "1234"
+	task.UserID = utils.USERID
 	task.CreatedDate = now.Format("2006-01-02")
 
 	err := serv.Store.AddTask(ctx, task)

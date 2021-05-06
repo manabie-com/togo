@@ -43,6 +43,7 @@ func GetDBInfo() string {
 func main() {
 	dbInfo := GetDBInfo()
 	db, err := sql.Open("postgres", dbInfo)
+	db.SetMaxOpenConns(10)
 	if err != nil {
 		log.Fatal("error opening db", err)
 	}
