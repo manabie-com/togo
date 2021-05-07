@@ -1,0 +1,66 @@
+version: '3'
+services:
+  interview:
+    container_name: interview_app
+    build: .
+    ports:
+      - 9005:9005
+    restart: on-failure
+    volumes:
+      - api:/root
+    depends_on:
+      - postgres_db
+    networks:
+      - manabie
+
+
+  redis_db:
+    image: redis:latest
+    container_name: redis_db
+    environment:
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    ports:
+      - "6380:6379"
+    networks:
+      - manabie
+    restart: unless-stopped
+
+  postgres_db:
+    image: postgres:latest
+    container_name: interview_db
+    environment:
+      - POSTGRES_USER=${DATABASE_USERNAME}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DATABASE_NAME}
+      - DATABASE_HOST=${DATABASE_HOST}
+    ports:
+      - '5400:5432'
+    volumes:
+      - database_postgres:/var/lib/postgresql/data
+    networks:
+      - manabie
+
+  manabie_pgadmin:
+    image: dpage/pgadmin4
+    container_name: manabie_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    depends_on:
+      - postgres_db
+    ports:
+      - "5050:80"
+    networks:
+      - manabie
+    restart: unless-stopped
+
+volumes:
+  api:
+  database_postgres:
+
+# Networks to be created to facilitate communication between containers
+networks:
+  manabie:
+    driver: bridge

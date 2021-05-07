@@ -1,56 +1,50 @@
-### Overview
-This is a simple backend for a good old todo service, right now this service can handle login/list/create simple tasks.  
-To make it run:
-- `go run main.go`
-- Import Postman collection from `docs` to check example
-
-Candidates are invited to implement below requirements but the point is not to resolve everything in a perfect way but selective what you can do best in a limited time.  
-Thus, there is no correct-or-perfect answer, your solutions are way for us to continue the discussion and collaboration.
- 
-### Requirements
-Right now a user can add many task as they want, we want ability to limit N task per day.
-
-Example: users are limited to create only 5 task only per day, if the daily limit is reached, return 4xx code to client and ignore the create request.
-#### Backend requirements
-- A nice README on how to run, what is missing, what else you want to improve but don't have enough time
-- Fork this repo and show us your development progess by a PR.
-- Write integration tests for this project
-- Make this code DRY
-- Write unit test for `services` layer
-- Change from using `SQLite` to `Postgres` with `docker-compose`
-- This project include many issues from code to DB strucutre, feel free to optimize them.
-#### Frontend requirements
-- A nice README on how to run, what is missing, what else you want to improve but don't have enough time
-- https://github.com/manabie-com/mana-do
-- Fork the above repo and show us your development progess by a PR.
-#### Optional requirements
-- Write unit test for `storages` layer
-- Split `services` layer to `use case` and `transport` layer
-
-### DB Schema
-```sql
--- users definition
-
-CREATE TABLE users (
-	id TEXT NOT NULL,
-	password TEXT NOT NULL,
-	max_todo INTEGER DEFAULT 5 NOT NULL,
-	CONSTRAINT users_PK PRIMARY KEY (id)
-);
-
-INSERT INTO users (id, password, max_todo) VALUES('firstUser', 'example', 5);
-
--- tasks definition
-
-CREATE TABLE tasks (
-	id TEXT NOT NULL,
-	content TEXT NOT NULL,
-	user_id TEXT NOT NULL,
-    created_date TEXT NOT NULL,
-	CONSTRAINT tasks_PK PRIMARY KEY (id),
-	CONSTRAINT tasks_FK FOREIGN KEY (user_id) REFERENCES users(id)
-);
-```
-
-### Sequence diagram
-![auth and create tasks request](https://github.com/manabie-com/togo/blob/master/docs/sequence.svg)
+# Interview Restful API 
+This is an application built with gin-gonic, jwt, gorm, logrus, postgresql, redis, docker, docker-compose. 
+As Backend requirements: "This project include many issues from code to DB strucutre, feel free to optimize them". 
+I have changed a lot of things. My structure base on awesome project lists using Gin web framework: https://github.com/photoprism/photoprism
+##### New changed
+ - I have chosen new structure source code and used Gin-gonic framework.
+ - Changed SQLite to PostgreSQL and Gorm.
+ - Improved testing by Postman with Swagger UI and UnitTest
+ - Support to run source code with docker and docker-compose and wrote some script for starting, clean up docker images.
+ - Improved JWT algorithm: HS256 -> RS256. Then, add 1 more step for hashing token(I chose AES encrypted and decrypted). Thus, the hacker can't decrypt and try to read the body of JWT. 
+ - Provided Redis for caching. If the daily limit is reached, we can reject quickly and reduce query records from DB. 
+ - Provided Logrus. Log anything into log file, separate by day.  
+ - I am aware that we can use Interfaces and mock database calls, but I decided to be replicate the exact same process that happens in real life for testing.
+   We can define a test database in our .env so, everyone can create a new database for the tests alone.
+##### Improvement later
+ - Try to support CICD and deploy source code with no downtime: kubernetes, docker swarm,CircleCI,...
+ - Hide swagger UI (run as production mode)
+##### Run project
+ - With docker:
+   + [Docker](https://www.docker.com/)  installed (**version 17.12.0+ is required**)
+   + [Docker compose](https://docs.docker.com/compose/install/) installed (**version 1.21.0+ is required**)
+   + Please see docker-compose.yml and change .env file. 
+   + For your convenience, you can copy all environment variables from .env.example.docker and place it into your .env
+   + Start app by command: ./dockerDeployLocal.sh
+   + The swagger UI will be show at: http://127.0.0.1:9005/swagger/index.html . However, you need to migrate the database before you can test APIs 
+   + Log in into pgadmin http://127.0.0.1:5050/ and create a new server connect to our db( see info at your .env) -> copy contents **migrations/1.0.0_migration_init.sql** and execute it. 
+   + Try check healthy, server information, register a new user, log in, add a task.
+ - Without docker:
+   + Install Go: go version go1.15.5 linux/amd64(**version 1.15+ is required**)
+   + Set up your GOPATH
+   + In your $GOPATH, run command: mkdir -p go/{bin,src,pkg}
+   + Run command: cd go/src
+   + Run command: mkdir manabie-com
+   + Clone satoshi-game source code into **manabie-com** (**Required: Don’t change this name. It’s should be manabie-com**)
+   + Change environment variables of **.env** file
+   + Build and run main.go
+   + Then, migrate your database and testing.
+##### Run tests
+   + Create a new test db and change your **.env** file:
+      <pre>
+        TEST_DATABASE_HOST=
+        TEST_DATABASE_PORT=
+        TEST_DATABASE_USERNAME=
+        TEST_DATABASE_PASSWORD=
+        TEST_DATABASE_NAME=
+        TEST_DATABASE_SSL_MODE=
+        TEST_DATABASE_TIME_ZONE=
+        TEST_DATABASE_QUERY_MAX_LIMIT=
+      </pre>
+   + Run test.
