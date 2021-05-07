@@ -1,0 +1,33 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: togo
+    ports:
+      - "5432:5432"
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+      - ./create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+  togo:
+    build: .
+    ports:
+      - "5050:5050"
+    environment:
+      WAIT_HOSTS: db:5432, redis:6379
+      ENVIRONMENT: P
+      POSTGRES__HOST: db
+      REDIS__ADDRESS: redis:6379
+    depends_on:
+      - db
+      - redis

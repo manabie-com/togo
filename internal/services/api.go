@@ -38,7 +38,7 @@ func NewAPI(cfg *config.Config) (*API, error) {
 	api.Router.Use(api.ValidToken)
 
 	// add task
-	todo := NewTodoService(db, cfg.JWTKey)
+	todo := NewTodoService(db, cfg.JWTKey, api.redisPool)
 	todo.AddHandler(api)
 	return api, nil
 }
