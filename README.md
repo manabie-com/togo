@@ -1,31 +1,108 @@
 ### Overview
-This is a simple backend for a good old todo service, right now this service can handle login/list/create simple tasks.  
-To make it run:
-- `go run main.go`
-- Import Postman collection from `docs` to check example
+This is a simple backend for a good old todo service, right now this service can handle signup/login/list/create simple tasks.  
 
-Candidates are invited to implement below requirements but the point is not to resolve everything in a perfect way but selective what you can do best in a limited time.  
-Thus, there is no correct-or-perfect answer, your solutions are way for us to continue the discussion and collaboration.
- 
 ### Requirements
-Right now a user can add many task as they want, we want ability to limit N task per day.
 
-Example: users are limited to create only 5 task only per day, if the daily limit is reached, return 4xx code to client and ignore the create request.
-#### Backend requirements
-- A nice README on how to run, what is missing, what else you want to improve but don't have enough time
-- Fork this repo and show us your development progess by a PR.
-- Write integration tests for this project
-- Make this code DRY
-- Write unit test for `services` layer
-- Change from using `SQLite` to `Postgres` with `docker-compose`
-- This project include many issues from code to DB strucutre, feel free to optimize them.
-#### Frontend requirements
-- A nice README on how to run, what is missing, what else you want to improve but don't have enough time
-- https://github.com/manabie-com/mana-do
-- Fork the above repo and show us your development progess by a PR.
-#### Optional requirements
-- Write unit test for `storages` layer
-- Split `services` layer to `use case` and `transport` layer
+- golang 1.14 or above
+- [Docker](https://docs.docker.com/engine/install/) and [docker-compose](https://docs.docker.com/compose/install/) has been installed. 
+
+### Run
+
+#### 1. Manual
+
+```
+go mod download && go run main.go
+```
+
+- The above script will create a backend server that uses sqlite as database
+
+#### 2. Docker
+
+Use docker-compose to build Docker image and run the server 
+
+```
+docker-compose
+```
+
+### API
+
+#### 1. Signup
+
+```
+POST /signup
+BODY
+{
+    "id": "firstUser"
+    "password": "example"
+}
+Response: 200
+{
+    "data": "jwt token"
+}
+```
+
+#### 2. Login
+
+```
+POST /signup
+BODY
+{
+    "id": "firstUser",
+    "password": "example"
+}
+Response: 200 
+{
+    "data": "jwt token"
+} 
+```
+
+#### 3. Add Task
+```
+POST /tasks
+HEADER 'Authorization': 'JWT Token generated from login/signup'
+BODY
+{
+    "user_id": "firstUser",
+    "content": "testContent"
+}
+Response: 200
+{
+    "data": {
+        "id": "123",
+        "user_id": "a123",
+        "content": "task 1"
+    }
+}
+```
+- Each user only has a limit `max_todo` per date. If number of tasks reaches the max_todo it will throw the following message:
+
+```
+Response: 400
+{
+    "data": "max limit tasks reached"
+}
+```
+
+#### 4. List Tasks
+```
+GET /tasks
+HEADER 'Authorization': 'JWT Token generated from login/signup'
+Response: 200
+{
+    "data": [
+        {
+            "id": "123",
+            "user_id": "a123",
+            "content": "task 1"
+        },
+        {
+            "id": "124",
+            "user_id": "a124",
+            "content": "task 2"
+        }
+    ]
+}
+```
 
 ### DB Schema
 ```sql
