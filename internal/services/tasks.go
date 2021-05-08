@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/gomodule/redigo/redis"
 	"github.com/google/martian/log"
+	"io"
 	"net/http"
 	"time"
 
@@ -19,13 +20,15 @@ type ToDoService struct {
 	JWTKey string
 	Store  storages.IDatabase
 	cache  ICache
+	maxTodo int32
 }
 
-func NewTodoService(db storages.IDatabase, jwtToken string, pool *redis.Pool) *ToDoService {
+func NewTodoService(db storages.IDatabase, jwtToken string, pool *redis.Pool, maxTodo int32) *ToDoService {
 	return &ToDoService{
 		JWTKey: jwtToken,
 		Store:  db,
 		cache: &RedisCache{redisPool: pool},
+		maxTodo: maxTodo,
 	}
 }
 
@@ -33,6 +36,38 @@ func (s *ToDoService) AddHandler(api *API) {
 	api.Router.HandleFunc("/login", s.getAuthToken).Methods(http.MethodPost)
 	api.Router.HandleFunc("/tasks", s.addTask).Methods(http.MethodPost)
 	api.Router.HandleFunc("/tasks", s.listTasks).Methods(http.MethodGet)
+	api.Router.HandleFunc("/signup", s.signUp).Methods(http.MethodPost)
+}
+
+func (s *ToDoService) getUser(body io.Reader) (*storages.User, error) {
+	user := &storages.User{}
+	err := json.NewDecoder(body).Decode(user)
+	return user, err
+}
+
+func (s *ToDoService) signUp(resp http.ResponseWriter, req *http.Request) {
+	var token string
+	user, err := s.getUser(req.Body)
+	if err != nil {
+		log.Errorf("error while getting body from request - %s", err.Error())
+		goto ERROR
+	}
+	// TODO: do validate userId and password
+	// store user to database
+	if err = s.Store.AddUser(user.ID, user.Password, s.maxTodo); err != nil {
+		goto ERROR
+	}
+	token, err = s.createToken(user.ID)
+	if err != nil {
+		goto ERROR
+	}
+	response(resp, 0, map[string]interface{}{
+		"data": token,
+	})
+	return
+	ERROR:
+	errorResp(resp, err, 0)
+	return
 }
 
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
@@ -40,15 +75,14 @@ func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 		err error
 		token string
 		statusCode int
+		user *storages.User
 	)
-	user := &storages.User{}
-	err = json.NewDecoder(req.Body).Decode(user)
+	user, err = s.getUser(req.Body)
 	if err != nil {
-		log.Errorf("error while decoding body - %s", err.Error())
+		log.Errorf("error while getting body from request - %s", err.Error())
 		goto ERROR
 	}
-	if !s.Store.ValidateUser(req.Context(),
-		user.ID, user.Password) {
+	if !s.Store.ValidateUser(user.ID, user.Password) {
 		err = errors.New("incorrect user_id/pwd")
 		statusCode = http.StatusUnauthorized
 		goto ERROR
@@ -67,9 +101,7 @@ ERROR:
 
 func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	id, _ := userIDFromCtx(req.Context())
-	tasks, err := s.Store.RetrieveTasks(
-		req.Context(), id, req.FormValue("created_date"),
-	)
+	tasks, err := s.Store.RetrieveTasks(id, req.FormValue("created_date"))
 	if err != nil {
 		errorResp(resp, err, 0)
 		return
@@ -99,7 +131,7 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	t.CreatedDate = now.Format("2006-01-02")
 
 	// get maxtodo
-	maxTodo, err := s.getMaxTodo(req.Context(), t.UserID)
+	maxTodo, err := s.getMaxTodo(t.UserID)
 	if err != nil {
 		log.Errorf("error while getting maxtodo from userId:%s - %s", t.UserID, err.Error())
 		errorResp(resp, err, 0)
@@ -107,7 +139,7 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	// get numberOfTask from redis
-	numberOfTask, err := s.getNumberOfTasks(req.Context(), t.UserID, t.CreatedDate)
+	numberOfTask, err := s.getNumberOfTasks(t.UserID, t.CreatedDate)
 	if err != nil {
 		errorResp(resp, err, 0)
 		return
@@ -121,7 +153,7 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	// add task with callback increase number of task in cache
-	err = s.Store.AddTask(req.Context(), t, s.cache.IncTask)
+	err = s.Store.AddTask(t, s.cache.IncTask)
 	if err != nil {
 		errorResp(resp, err, 0)
 		return
@@ -133,7 +165,7 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 
 func (s *ToDoService) createToken(id string) (string, error) {
 	atClaims := jwt.MapClaims{}
-	atClaims["user_id"] = id
+	atClaims["id"] = id
 	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	token, err := at.SignedString([]byte(s.JWTKey))
@@ -143,32 +175,33 @@ func (s *ToDoService) createToken(id string) (string, error) {
 	return token, nil
 }
 
-func (s *ToDoService) getNumberOfTasks(ctx context.Context, userId, createdDate string) (int32, error) {
+func (s *ToDoService) getNumberOfTasks(userId, createdDate string) (int32, error) {
 	result, err := s.cache.GetNumberOfTasks(userId, createdDate)
 	if err != nil {
 		goto ERROR
 	}
 	if result == -1 {
 		// get numberOfTasks from database
-		result, err = s.Store.CountTasks(ctx, userId, createdDate)
+		result, err = s.Store.CountTasks(userId, createdDate)
 		if err != nil {
 			goto ERROR
 		}
 		// store to cache
 		err = s.cache.SetNumberOfTasks(userId, createdDate, result)
 	}
+	return result, nil
 	ERROR:
 	return -1, err
 }
 
-func (s *ToDoService) getMaxTodo(ctx context.Context, userId string) (int32, error) {
+func (s *ToDoService) getMaxTodo(userId string) (int32, error) {
 	result, err := s.cache.GetMaxTodo(userId)
 	if err != nil {
 		return -1, err
 	}
 	if result == -1 {
 		// getMaxTodo from database
-		result, err = s.Store.GetMaxTodo(ctx, userId)
+		result, err = s.Store.GetMaxTodo(userId)
 		if err != nil {
 			return -1, err
 		}

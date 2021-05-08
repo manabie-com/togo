@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"github.com/google/martian/log"
+	"strconv"
 )
 
 type ICache interface {
@@ -14,6 +15,11 @@ type ICache interface {
 	SetNumberOfTasks(userId string, createdDate string, count int32) error
 	IncTask(userId string, createdDate string) error
 }
+
+var (
+	ErrCastValue = errors.New("cannot cast interface{} value from redis")
+
+)
 
 type RedisCache struct {
 	redisPool *redis.Pool
@@ -33,16 +39,28 @@ func (r *RedisCache) GetNumberOfTasks(userId string, createdDate string) (int32,
 		log.Errorf("error while getting number of task from cache - %s", err.Error())
 		return -1, err
 	}
+	return r.getNumberFromRedis(data)
+}
+
+func (r *RedisCache) getNumberFromRedis(data interface{}) (int32, error) {
 	if data == nil {
 		return -1, nil
 	}
-	result, ok := data.(int32)
+	// cast to string
+	result, ok := data.([]byte)
 	if !ok {
-		err := errors.New("cannot cast interface{} into int32")
-		log.Errorf("cannot cast interface{} into int32")
+		log.Errorf(ErrCastValue.Error())
+		return -1, ErrCastValue
+	}
+	if string(result) == "" {
+		return -1, nil
+	}
+	value, err := strconv.Atoi(string(result))
+	if err != nil {
+		log.Errorf(err.Error())
 		return -1, err
 	}
-	return result, nil
+	return int32(value), nil
 }
 
 func (r *RedisCache) IncTask(userId string, createdDate string) error {
@@ -75,10 +93,5 @@ func (r *RedisCache) GetMaxTodo(userId string) (int32, error) {
 		log.Errorf("error while getting maxTodo from userId:%s - %s", userId, err.Error())
 		return -1, err
 	}
-	result, ok := data.(int32)
-	if !ok {
-		log.Errorf("cannot cast from interface{} to int32")
-		return -1, nil
-	}
-	return result, nil
+	return r.getNumberFromRedis(data)
 }

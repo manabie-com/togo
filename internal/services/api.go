@@ -38,7 +38,7 @@ func NewAPI(cfg *config.Config) (*API, error) {
 	api.Router.Use(api.ValidToken)
 
 	// add task
-	todo := NewTodoService(db, cfg.JWTKey, api.redisPool)
+	todo := NewTodoService(db, cfg.JWTKey, api.redisPool, cfg.MaxTodo)
 	todo.AddHandler(api)
 	return api, nil
 }
@@ -49,14 +49,14 @@ func (api *API) Start() {
 }
 
 func (api *API) close() {
-	api.db.Close()
 	api.redisPool.Close()
 }
 
 func (api *API) ValidToken(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
 		resp.Header().Set("Content-Type", "application/json")
-		if req.URL.Path != "/login" {
+		path := req.URL.Path
+		if path != "/login" && path != "/signup" {
 			var ok bool
 			req, ok = api.validToken(req)
 			if !ok {
@@ -84,7 +84,7 @@ func (api *API) validToken(req *http.Request) (*http.Request, bool) {
 		return req, false
 	}
 
-	id, ok := claims["user_id"].(string)
+	id, ok := claims["id"].(string)
 	if !ok {
 		return req, false
 	}
@@ -101,9 +101,11 @@ func newRedisPool(cfg *config.Config) *redis.Pool {
 			if err != nil {
 				return nil, err
 			}
-			if _, err := c.Do("AUTH", cfg.Redis.Password); err != nil {
-				c.Close()
-				return nil, err
+			if cfg.Redis.Password != "" {
+				if _, err := c.Do("AUTH", cfg.Redis.Password); err != nil {
+					c.Close()
+					return nil, err
+				}
 			}
 			if _, err := c.Do("SELECT", cfg.Redis.DatabaseNum); err != nil {
 				c.Close()

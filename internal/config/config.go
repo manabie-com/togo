@@ -3,6 +3,7 @@ package config
 import (
 	"bytes"
 	"github.com/spf13/viper"
+	"gopkg.in/yaml.v2"
 	"log"
 	"strings"
 )
@@ -12,6 +13,7 @@ environment: D
 port: 5050
 jwt_key: wqGyEBBfPK9w3Lxw
 sqlite: ./data.db
+max_todo: 5
 postgres:
   host: localhost
   port: 5432
@@ -34,12 +36,13 @@ redis:
 
 type (
 	Config struct {
-		Environment string   `yaml:"environment" mapstructure:"environment"`
-		Port        int      `yaml:"port" mapstructure:"port"`
-		JWTKey      string   `yaml:"jwt_key" mapstructure:"jwt_key"`
-		SQLite      string   `yaml:"sqlite" mapstructure:"sqlite"`
+		MaxTodo     int32     `yaml:"max_todo" mapstructure:"max_todo"`
+		Environment string    `yaml:"environment" mapstructure:"environment"`
+		Port        int       `yaml:"port" mapstructure:"port"`
+		JWTKey      string    `yaml:"jwt_key" mapstructure:"jwt_key"`
+		SQLite      string    `yaml:"sqlite" mapstructure:"sqlite"`
 		Postgres    *Postgres `yaml:"postgres" mapstructure:"postgres"`
-		Redis 		*Redis		`yaml:"redis" mapstructure:"redis"`
+		Redis       *Redis    `yaml:"redis" mapstructure:"redis"`
 	}
 
 	Postgres struct {
@@ -66,6 +69,11 @@ type (
 		DelayedTasksPollPeriod int    `yaml:"delayed_tasks_poll_period" mapstructure:"delayed_tasks_poll_period"`
 	}
 )
+
+func (c *Config) String() string {
+	data, _ := yaml.Marshal(c)
+	return string(data)
+}
 
 func Load() *Config {
 	var cfg = &Config{}

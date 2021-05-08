@@ -1,101 +1,83 @@
 package storages
 
 import (
-	"context"
-	"database/sql"
 	"github.com/google/martian/log"
+	"gorm.io/gorm"
 )
 
 // LiteDB for working with sqllite
-type LiteDB struct {
-	DB *sql.DB
+type Store struct {
+	*gorm.DB
 }
 
-func (l *LiteDB) CountTasks(ctx context.Context, userID, date string) (int32, error) {
-	var (
-		numOfTask sql.NullInt32
-	)
+func NewStore(db *gorm.DB) *Store {
+	db = db.Debug()
+	s := &Store{DB: db}
+	m := []interface{}{
+		&User{},
+		&Task{},
+	}
+	if err := s.AutoMigrate(m...); err != nil {
+		panic(err)
+	}
+	return s
+}
+
+func (s *Store) AddUser(userID, password string, maxTodo int32) error {
+	return s.Model(&User{}).Create(&User{ID: userID, Password: password, MaxTodo: maxTodo}).Error
+}
+
+func (s *Store) CountTasks(userID, date string) (int32, error) {
+	var numOfTask int32
 	stmt := `SELECT COUNT(t.id) FROM tasks t WHERE t.id = ? AND t.created_date = ?`
-	row := l.DB.QueryRowContext(ctx, stmt, userID, date)
-	if row.Err() != nil {
-		return 0, row.Err()
+	err := s.DB.Raw(stmt, userID, date).Scan(&numOfTask).Error
+	if err != nil {
+		return -1, err
 	}
-	err := row.Scan(&numOfTask)
-	return numOfTask.Int32, err
+	return numOfTask, nil
 }
 
-func (l *LiteDB) GetMaxTodo(ctx context.Context, userID string) (int32, error) {
-	var maxTodo sql.NullInt32
-	stmt := `SELECT max_todo FROM users WHERE id = ?`
-	row := l.DB.QueryRowContext(ctx, stmt, userID)
-	if row.Err() != nil {
-		return 0, row.Err()
+func (s *Store) GetMaxTodo(userID string) (int32, error) {
+	user := &User{}
+	err := s.Model(user).Select("max_todo").Where("id = ?", userID).First(user).Error
+	if err != nil {
+		return -1, err
 	}
-	err := row.Scan(&maxTodo)
-	return maxTodo.Int32, err
+	return user.MaxTodo, err
 }
 
 // RetrieveTasks returns tasks if match userID AND createDate.
-func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate string) ([]*Task, error) {
-	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`
-	rows, err := l.DB.QueryContext(ctx, stmt, userID, createdDate)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var tasks []*Task
-	for rows.Next() {
-		t := &Task{}
-		err := rows.Scan(&t.ID, &t.Content, &t.UserID, &t.CreatedDate)
-		if err != nil {
-			return nil, err
-		}
-		tasks = append(tasks, t)
-	}
-
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return tasks, nil
+func (s *Store) RetrieveTasks(userID, createdDate string) ([]*Task, error) {
+	tasks := make([]*Task, 0)
+	err := s.Where(&Task{UserID: userID, CreatedDate: createdDate}).Find(&tasks).Error
+	return tasks, err
 }
 
 // AddTask adds a new task to DB
-func (l *LiteDB) AddTask(ctx context.Context, t *Task, callback func(string, string) error) error {
-	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
-	// new transaction
-	tx, err := l.DB.BeginTx(ctx, nil)
-	if err != nil {
-		return err
-	}
-	if _, err = tx.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate); err != nil {
-		tx.Rollback()
-		return err
-	}
-	// call callback function if err occurs then rollback
-	if err = callback(t.UserID, t.CreatedDate); err != nil {
-		tx.Rollback()
-		return err
-	}
-	return nil
+func (s *Store) AddTask(t *Task, callback func(string, string) error) error {
+	return s.Transaction(func(tx *gorm.DB) error {
+		err := tx.Create(t).Error
+		if err != nil {
+			return err
+		}
+		err = callback(t.UserID, t.CreatedDate)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 }
 
 // ValidateUser returns tasks if match userID AND password
-func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd string) bool {
-	stmt := `SELECT id FROM users WHERE id = ? AND password = ?`
-	row := l.DB.QueryRowContext(ctx, stmt, userID, pwd)
-	u := &User{}
-	err := row.Scan(&u.ID)
+func (s *Store) ValidateUser(userID, pwd string) bool {
+	user := &User{
+		ID: userID,
+		Password: pwd,
+	}
+	err := s.DB.Model(&User{}).Select("id").Where(user).First(user).Error
 	if err != nil {
+		log.Errorf("error while getting user from id and password - %s", err.Error())
 		return false
 	}
-
 	return true
-}
-
-func (l *LiteDB) Close() {
-	if err := l.DB.Close(); err != nil {
-		log.Errorf("error while closing db - %s", err.Error())
-	}
 }
