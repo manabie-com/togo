@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/PuerkitoBio/goquery v1.5.1 // indirect
+	github.com/alicebob/miniredis/v2 v2.14.3 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gomodule/redigo v1.8.4
 	github.com/google/martian v2.1.0+incompatible
@@ -12,6 +13,7 @@ require (
 	github.com/jackc/pgproto3/v2 v2.0.7 // indirect
 	github.com/lib/pq v1.10.1
 	github.com/mattn/go-sqlite3 v1.14.7
+	github.com/mitchellh/mapstructure v1.4.1 // indirect
 	github.com/rs/cors v1.7.0
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/objx v0.3.0 // indirect

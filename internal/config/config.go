@@ -30,8 +30,6 @@ redis:
   read_timeout: 15
   write_timeout: 15
   connect_timeout: 15
-  normal_tasks_poll_period: 1000
-  delayed_tasks_poll_period: 500
 `)
 
 type (
@@ -65,8 +63,6 @@ type (
 		ReadTimeout            int    `yaml:"read_timeout" mapstructure:"read_timeout"`
 		WriteTimeout           int    `yaml:"write_timeout" mapstructure:"write_timeout"`
 		ConnectTimeout         int    `yaml:"connect_timeout" mapstructure:"connect_timeout"`
-		NormalTasksPollPeriod  int    `yaml:"normal_tasks_poll_period" mapstructure:"normal_tasks_poll_period"`
-		DelayedTasksPollPeriod int    `yaml:"delayed_tasks_poll_period" mapstructure:"delayed_tasks_poll_period"`
 	}
 )
 

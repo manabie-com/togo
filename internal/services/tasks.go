@@ -15,6 +15,12 @@ import (
 	"github.com/manabie-com/togo/internal/storages"
 )
 
+var MaxLimitReach = errors.New("max limit tasks reached")
+
+type ResponseData struct {
+	Data interface{} `json:"data"`
+}
+
 // ToDoService implement HTTP server
 type ToDoService struct {
 	JWTKey string
@@ -61,9 +67,7 @@ func (s *ToDoService) signUp(resp http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		goto ERROR
 	}
-	response(resp, 0, map[string]interface{}{
-		"data": token,
-	})
+	response(resp, 0, token)
 	return
 	ERROR:
 	errorResp(resp, err, 0)
@@ -91,9 +95,7 @@ func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 	if err != nil {
 		goto ERROR
 	}
-	response(resp, 0, map[string]interface{}{
-		"data": token,
-	})
+	response(resp, 0, token)
 	return
 ERROR:
 	errorResp(resp, err, statusCode)
@@ -106,9 +108,7 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 		errorResp(resp, err, 0)
 		return
 	}
-	response(resp, 0, map[string][]*storages.Task{
-		"data": tasks,
-	})
+	response(resp, 0, tasks)
 }
 
 func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
@@ -146,9 +146,7 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	if maxTodo <= numberOfTask {
-		response(resp, http.StatusUnauthorized, map[string]string{
-			"message": "max limit tasks reached",
-		})
+		response(resp, http.StatusUnauthorized, MaxLimitReach.Error())
 		return
 	}
 
@@ -158,9 +156,7 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 		errorResp(resp, err, 0)
 		return
 	}
-	response(resp, 0, map[string]*storages.Task{
-		"data": t,
-	})
+	response(resp, 0, t)
 }
 
 func (s *ToDoService) createToken(id string) (string, error) {
@@ -224,9 +220,7 @@ func errorResp(resp http.ResponseWriter, err error, code int) {
 	if http.StatusText(code) != "" {
 		statusCode = code
 	}
-	response(resp, statusCode, map[string]interface{}{
-		"error": err.Error(),
-	})
+	response(resp, statusCode, err.Error())
 	return
 }
 
@@ -235,7 +229,7 @@ func response(resp http.ResponseWriter, code int, message interface{}) {
 		code = http.StatusOK
 	}
 	resp.WriteHeader(code)
-	err := json.NewEncoder(resp).Encode(message)
+	err := json.NewEncoder(resp).Encode(&ResponseData{Data: message})
 	if err != nil {
 		log.Errorf("error while encoding response's message - %s", err.Error())
 	}

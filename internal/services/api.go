@@ -60,7 +60,7 @@ func (api *API) ValidToken(next http.Handler) http.Handler {
 			var ok bool
 			req, ok = api.validToken(req)
 			if !ok {
-				resp.WriteHeader(http.StatusUnauthorized)
+				response(resp, http.StatusUnauthorized, "Unauthorized")
 				return
 			}
 		}
