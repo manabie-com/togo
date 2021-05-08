@@ -92,6 +92,6 @@ func Load() *Config {
 		log.Fatalf("Failed to unmarshal config - %s", err)
 	}
 
-	log.Printf("config loaded - %v", cfg)
+	log.Printf("config loaded - %s", cfg.String())
 	return cfg
 }
