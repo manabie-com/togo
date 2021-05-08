@@ -14,7 +14,6 @@ services:
         max-file: "3"
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
-      - ./create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
   redis:
     image: redis
     ports:
