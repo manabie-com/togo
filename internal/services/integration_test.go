@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/alicebob/miniredis/v2"
 	"github.com/manabie-com/togo/internal/config"
-	"github.com/manabie-com/togo/internal/storages"
+	"github.com/manabie-com/togo/internal/models"
 	"github.com/mitchellh/mapstructure"
 	"github.com/stretchr/testify/suite"
 	"net/http"
@@ -61,14 +61,14 @@ func (s *IntegrationTestSuite) SetupSuite() {
 }
 
 func (s *IntegrationTestSuite) Test_1_Signup() {
-	user := &storages.User{
+	user := &models.User{
 		ID: "firstUser",
 		Password: "example",
 	}
 	bData, err := json.Marshal(user)
 	s.NoError(err)
 
-	req, err := http.NewRequest("POST", "/signup", bytes.NewBuffer(bData))
+	req, err := http.NewRequest(http.MethodPost, SIGNUP, bytes.NewBuffer(bData))
 	s.NoError(err)
 
 	resp := httptest.NewRecorder()
@@ -85,14 +85,14 @@ func (s *IntegrationTestSuite) Test_1_Signup() {
 }
 
 func (s *IntegrationTestSuite) Test_2_Login() {
-	user := &storages.User{
+	user := &models.User{
 		ID: "firstUser",
 		Password: "example",
 	}
 	bData, err := json.Marshal(user)
 	s.NoError(err)
 
-	req, err := http.NewRequest("POST", "/login", bytes.NewBuffer(bData))
+	req, err := http.NewRequest(http.MethodPost, LOGIN, bytes.NewBuffer(bData))
 	s.NoError(err)
 
 	resp := httptest.NewRecorder()
@@ -111,19 +111,19 @@ func (s *IntegrationTestSuite) Test_2_Login() {
 
 func addTask(s *IntegrationTestSuite, count int, hasToken, success bool, failedMsg string) {
 	content := fmt.Sprintf("task %d", count)
-	task := &storages.Task{
+	task := &models.Task{
 		Content:     content,
 		UserID:      "firstUser",
 	}
 	bData, err := json.Marshal(task)
 	s.NoError(err)
 
-	req, err := http.NewRequest("POST", "/tasks", bytes.NewBuffer(bData))
+	req, err := http.NewRequest(http.MethodPost, TASKS, bytes.NewBuffer(bData))
 	s.NoError(err)
 
 	// set authorization
 	if hasToken {
-		req.Header.Set("Authorization", s.token)
+		req.Header.Set(AuthorizationKey, s.token)
 	}
 
 	resp := httptest.NewRecorder()
@@ -136,7 +136,7 @@ func addTask(s *IntegrationTestSuite, count int, hasToken, success bool, failedM
 	if success {
 		s.Equal(http.StatusOK, result.StatusCode)
 
-		responseTask := &storages.Task{}
+		responseTask := &models.Task{}
 		err := mapstructure.Decode(responseData.Data, responseTask)
 		s.NoError(err)
 
@@ -153,7 +153,7 @@ func addTask(s *IntegrationTestSuite, count int, hasToken, success bool, failedM
 }
 
 func (s *IntegrationTestSuite) Test_3_AccessWithoutAuth() {
-	addTask(s, 1, false, false, "Unauthorized")
+	addTask(s, 1, false, false, UnauthorizedMessage)
 }
 
 func (s *IntegrationTestSuite) Test_4_AddTask() {
@@ -172,7 +172,7 @@ func (s *IntegrationTestSuite) Test_5_AddTask_ReachLimit() {
 }
 
 func (s *IntegrationTestSuite) Test_6_ListTask() {
-	req, err := http.NewRequest("GET", "/tasks", nil)
+	req, err := http.NewRequest(http.MethodGet, TASKS, nil)
 	s.NoError(err)
 
 	// set authorization
@@ -186,7 +186,7 @@ func (s *IntegrationTestSuite) Test_6_ListTask() {
 	s.NoError(err)
 
 	s.Equal(http.StatusOK, result.StatusCode)
-	var tasks []*storages.Task
+	var tasks []*models.Task
 	err = mapstructure.Decode(responseData.Data, &tasks)
 	s.NoError(err)
 	s.Len(tasks, int(s.cfg.MaxTodo))

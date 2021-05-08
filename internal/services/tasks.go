@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/gomodule/redigo/redis"
 	"github.com/google/martian/log"
+	"github.com/manabie-com/togo/internal/models"
 	"io"
 	"net/http"
 	"time"
@@ -15,7 +16,10 @@ import (
 	"github.com/manabie-com/togo/internal/storages"
 )
 
-var MaxLimitReach = errors.New("max limit tasks reached")
+var (
+	MaxLimitReach = errors.New("max limit tasks reached")
+	InvalidUserPwd = errors.New("invalid username/pwd")
+)
 
 type ResponseData struct {
 	Data interface{} `json:"data"`
@@ -39,19 +43,19 @@ func NewTodoService(db storages.IDatabase, jwtToken string, pool *redis.Pool, ma
 }
 
 func (s *ToDoService) AddHandler(api *API) {
-	api.Router.HandleFunc("/login", s.getAuthToken).Methods(http.MethodPost)
-	api.Router.HandleFunc("/tasks", s.addTask).Methods(http.MethodPost)
-	api.Router.HandleFunc("/tasks", s.listTasks).Methods(http.MethodGet)
-	api.Router.HandleFunc("/signup", s.signUp).Methods(http.MethodPost)
+	api.Router.HandleFunc(LOGIN, s.GetAuthToken).Methods(http.MethodPost)
+	api.Router.HandleFunc(TASKS, s.AddTask).Methods(http.MethodPost)
+	api.Router.HandleFunc(TASKS, s.ListTasks).Methods(http.MethodGet)
+	api.Router.HandleFunc(SIGNUP, s.SignUp).Methods(http.MethodPost)
 }
 
-func (s *ToDoService) getUser(body io.Reader) (*storages.User, error) {
-	user := &storages.User{}
+func (s *ToDoService) getUser(body io.Reader) (*models.User, error) {
+	user := &models.User{}
 	err := json.NewDecoder(body).Decode(user)
 	return user, err
 }
 
-func (s *ToDoService) signUp(resp http.ResponseWriter, req *http.Request) {
+func (s *ToDoService) SignUp(resp http.ResponseWriter, req *http.Request) {
 	var token string
 	user, err := s.getUser(req.Body)
 	if err != nil {
@@ -74,12 +78,12 @@ func (s *ToDoService) signUp(resp http.ResponseWriter, req *http.Request) {
 	return
 }
 
-func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
+func (s *ToDoService) GetAuthToken(resp http.ResponseWriter, req *http.Request) {
 	var (
 		err error
 		token string
 		statusCode int
-		user *storages.User
+		user *models.User
 	)
 	user, err = s.getUser(req.Body)
 	if err != nil {
@@ -87,8 +91,8 @@ func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 		goto ERROR
 	}
 	if !s.Store.ValidateUser(user.ID, user.Password) {
-		err = errors.New("incorrect user_id/pwd")
-		statusCode = http.StatusUnauthorized
+		err = InvalidUserPwd
+		statusCode = http.StatusBadRequest
 		goto ERROR
 	}
 	token, err = s.createToken(user.ID)
@@ -101,7 +105,7 @@ ERROR:
 	errorResp(resp, err, statusCode)
 }
 
-func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
+func (s *ToDoService) ListTasks(resp http.ResponseWriter, req *http.Request) {
 	id, _ := userIDFromCtx(req.Context())
 	tasks, err := s.Store.RetrieveTasks(id, req.FormValue("created_date"))
 	if err != nil {
@@ -111,8 +115,8 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	response(resp, 0, tasks)
 }
 
-func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
-	t := &storages.Task{}
+func (s *ToDoService) AddTask(resp http.ResponseWriter, req *http.Request) {
+	t := &models.Task{}
 	err := json.NewDecoder(req.Body).Decode(t)
 	defer func() {
 		if err := req.Body.Close(); err != nil {
@@ -146,7 +150,7 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	if maxTodo <= numberOfTask {
-		response(resp, http.StatusUnauthorized, MaxLimitReach.Error())
+		response(resp, http.StatusBadRequest, MaxLimitReach.Error())
 		return
 	}
 

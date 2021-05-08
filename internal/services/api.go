@@ -14,6 +14,15 @@ import (
 	"time"
 )
 
+const (
+	SIGNUP = "/signup"
+	LOGIN = "/login"
+	TASKS = "/tasks"
+
+	UnauthorizedMessage = "Unauthorized"
+	AuthorizationKey = "Authorization"
+)
+
 type API struct {
 	Router *mux.Router
 	Port int
@@ -56,11 +65,11 @@ func (api *API) ValidToken(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
 		resp.Header().Set("Content-Type", "application/json")
 		path := req.URL.Path
-		if path != "/login" && path != "/signup" {
+		if path != LOGIN && path != SIGNUP {
 			var ok bool
 			req, ok = api.validToken(req)
 			if !ok {
-				response(resp, http.StatusUnauthorized, "Unauthorized")
+				response(resp, http.StatusUnauthorized, UnauthorizedMessage)
 				return
 			}
 		}
@@ -69,7 +78,7 @@ func (api *API) ValidToken(next http.Handler) http.Handler {
 }
 
 func (api *API) validToken(req *http.Request) (*http.Request, bool) {
-	token := req.Header.Get("Authorization")
+	token := req.Header.Get(AuthorizationKey)
 
 	claims := make(jwt.MapClaims)
 	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {

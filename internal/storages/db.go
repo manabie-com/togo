@@ -2,6 +2,7 @@ package storages
 
 import (
 	"github.com/google/martian/log"
+	"github.com/manabie-com/togo/internal/models"
 	"gorm.io/gorm"
 )
 
@@ -14,8 +15,8 @@ func NewStore(db *gorm.DB) *Store {
 	db = db.Debug()
 	s := &Store{DB: db}
 	m := []interface{}{
-		&User{},
-		&Task{},
+		&models.User{},
+		&models.Task{},
 	}
 	if err := s.AutoMigrate(m...); err != nil {
 		panic(err)
@@ -24,7 +25,7 @@ func NewStore(db *gorm.DB) *Store {
 }
 
 func (s *Store) AddUser(userID, password string, maxTodo int32) error {
-	return s.Model(&User{}).Create(&User{ID: userID, Password: password, MaxTodo: maxTodo}).Error
+	return s.Model(&models.User{}).Create(&models.User{ID: userID, Password: password, MaxTodo: maxTodo}).Error
 }
 
 func (s *Store) CountTasks(userID, date string) (int32, error) {
@@ -38,7 +39,7 @@ func (s *Store) CountTasks(userID, date string) (int32, error) {
 }
 
 func (s *Store) GetMaxTodo(userID string) (int32, error) {
-	user := &User{}
+	user := &models.User{}
 	err := s.Model(user).Select("max_todo").Where("id = ?", userID).First(user).Error
 	if err != nil {
 		return -1, err
@@ -47,14 +48,14 @@ func (s *Store) GetMaxTodo(userID string) (int32, error) {
 }
 
 // RetrieveTasks returns tasks if match userID AND createDate.
-func (s *Store) RetrieveTasks(userID, createdDate string) ([]*Task, error) {
-	tasks := make([]*Task, 0)
-	err := s.Where(&Task{UserID: userID, CreatedDate: createdDate}).Find(&tasks).Error
+func (s *Store) RetrieveTasks(userID, createdDate string) ([]*models.Task, error) {
+	tasks := make([]*models.Task, 0)
+	err := s.Where(&models.Task{UserID: userID, CreatedDate: createdDate}).Find(&tasks).Error
 	return tasks, err
 }
 
 // AddTask adds a new task to DB
-func (s *Store) AddTask(t *Task, callback func(string, string) error) error {
+func (s *Store) AddTask(t *models.Task, callback func(string, string) error) error {
 	return s.Transaction(func(tx *gorm.DB) error {
 		err := tx.Create(t).Error
 		if err != nil {
@@ -70,11 +71,11 @@ func (s *Store) AddTask(t *Task, callback func(string, string) error) error {
 
 // ValidateUser returns tasks if match userID AND password
 func (s *Store) ValidateUser(userID, pwd string) bool {
-	user := &User{
+	user := &models.User{
 		ID: userID,
 		Password: pwd,
 	}
-	err := s.DB.Model(&User{}).Select("id").Where(user).First(user).Error
+	err := s.DB.Model(&models.User{}).Select("id").Where(user).First(user).Error
 	if err != nil {
 		log.Errorf("error while getting user from id and password - %s", err.Error())
 		return false

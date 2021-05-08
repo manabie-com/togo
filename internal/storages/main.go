@@ -3,6 +3,7 @@ package storages
 import (
 	"fmt"
 	"github.com/manabie-com/togo/internal/config"
+	"github.com/manabie-com/togo/internal/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -12,8 +13,8 @@ type IDatabase interface {
 	AddUser(userID, password string, maxTodo int32) error
 	GetMaxTodo(userID string) (int32, error)
 	CountTasks(string, string) (int32, error)
-	RetrieveTasks(string, string) ([]*Task, error)
-	AddTask(*Task, func(string, string) error) error
+	RetrieveTasks(string, string) ([]*models.Task, error)
+	AddTask(*models.Task, func(string, string) error) error
 	ValidateUser(string, string) bool
 }
 
