@@ -26,7 +26,13 @@ docker-compose
 
 ### API
 
+`Host: http://localhost:5050`
+
 #### 1. Signup
+
+- Sign up new user
+- After sign up successfully, a token will be returned.
+- User can add this token to header at "Authorization" key to continue working with listing/adding new tasks
 
 ```
 POST /signup
@@ -43,6 +49,9 @@ Response: 200
 
 #### 2. Login
 
+- After login, a token will be returned.
+- User can add this token to header at "Authorization" key to continue working with listing/adding new tasks
+
 ```
 POST /signup
 BODY
@@ -57,6 +66,10 @@ Response: 200
 ```
 
 #### 3. Add Task
+
+- In order to use this API, user must login and has returned token
+- Add this token to Header at "Authorization" key
+
 ```
 POST /tasks
 HEADER 'Authorization': 'JWT Token generated from login/signup'
@@ -84,6 +97,11 @@ Response: 400
 ```
 
 #### 4. List Tasks
+
+- List all tasks belong to a user and their created date.
+- In order to use this API, user must login and has returned token
+- Add this token to Header at "Authorization" key
+
 ```
 GET /tasks
 HEADER 'Authorization': 'JWT Token generated from login/signup'
