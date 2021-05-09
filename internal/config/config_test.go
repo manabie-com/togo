@@ -7,6 +7,6 @@ import (
 
 func TestLoad(t *testing.T) {
 	cfg := Load()
-	require.Equal(t, "D", cfg.Environment)
+	require.Equal(t, "T", cfg.Environment)
 	require.Equal(t, "wqGyEBBfPK9w3Lxw", cfg.JWTKey)
 }

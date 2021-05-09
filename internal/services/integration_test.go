@@ -39,7 +39,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	// new config
 	s.cfg = &config.Config{
 		MaxTodo:     5,
-		Environment: "D",
+		Environment: "T",
 		Port:        5050,
 		JWTKey:      "testKey",
 		SQLite:      "data.test.db",
@@ -143,7 +143,13 @@ func addTask(s *IntegrationTestSuite, count int, hasToken, success bool, failedM
 		s.Equal(task.Content, responseTask.Content)
 		s.Equal(task.UserID, responseTask.UserID)
 	} else {
-		s.Equal(http.StatusUnauthorized, result.StatusCode)
+
+		if hasToken { // this is used for reach limit case
+			s.Equal(http.StatusBadRequest, result.StatusCode)
+		} else { // this is used for unauthorized due to lack of authorization key in header
+			s.Equal(http.StatusUnauthorized, result.StatusCode)
+		}
+
 		if failedMsg == "" {
 			s.Equal(MaxLimitReach.Error(), responseData.Data.(string))
 		} else {
