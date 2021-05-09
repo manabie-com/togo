@@ -1,26 +1,17 @@
 package main
 
 import (
-	"database/sql"
-	"log"
-	"net/http"
-
+	"github.com/google/martian/log"
+	"github.com/manabie-com/togo/internal/config"
 	"github.com/manabie-com/togo/internal/services"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
-
-	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
-	db, err := sql.Open("sqlite3", "./data.db")
+	cfg := config.Load()
+	log.Infof("ToGo is running as environment %s", cfg.Environment)
+	api, err := services.NewAPI(cfg)
 	if err != nil {
-		log.Fatal("error opening db", err)
+		panic(err)
 	}
-
-	http.ListenAndServe(":5050", &services.ToDoService{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
-			DB: db,
-		},
-	})
+	api.Start()
 }
