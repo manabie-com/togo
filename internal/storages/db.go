@@ -12,7 +12,6 @@ type Store struct {
 }
 
 func NewStore(db *gorm.DB) *Store {
-	db = db.Debug()
 	s := &Store{DB: db}
 	m := []interface{}{
 		&models.User{},

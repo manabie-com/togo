@@ -60,7 +60,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	s.NoError(err)
 }
 
-func (s *IntegrationTestSuite) Test_1_Signup() {
+func (s *IntegrationTestSuite) Test_1_SignUp() {
 	user := &models.User{
 		ID: "firstUser",
 		Password: "example",

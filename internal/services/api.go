@@ -11,7 +11,6 @@ import (
 	"github.com/rs/cors"
 	"log"
 	"net/http"
-	"time"
 )
 
 const (
@@ -100,32 +99,4 @@ func (api *API) validToken(req *http.Request) (*http.Request, bool) {
 
 	req = req.WithContext(context.WithValue(req.Context(), userAuthKey(0), id))
 	return req, true
-}
-
-func newRedisPool(cfg *config.Config) *redis.Pool {
-	return &redis.Pool{
-		// Other pool configuration not shown in this example.
-		Dial: func() (redis.Conn, error) {
-			c, err := redis.Dial("tcp", cfg.Redis.Address)
-			if err != nil {
-				return nil, err
-			}
-			if cfg.Redis.Password != "" {
-				if _, err := c.Do("AUTH", cfg.Redis.Password); err != nil {
-					c.Close()
-					return nil, err
-				}
-			}
-			if _, err := c.Do("SELECT", cfg.Redis.DatabaseNum); err != nil {
-				c.Close()
-				return nil, err
-			}
-			return c, nil
-		},
-		MaxIdle:         cfg.Redis.MaxIdle,
-		MaxActive:       cfg.Redis.MaxActive,
-		IdleTimeout:     time.Duration(cfg.Redis.MaxIdleTimeout) * time.Second,
-		Wait:            cfg.Redis.Wait,
-		MaxConnLifetime: time.Duration(cfg.Redis.ConnectTimeout) * time.Second,
-	}
 }

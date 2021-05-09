@@ -19,8 +19,8 @@ type IDatabase interface {
 }
 
 func NewDatabase(cfg *config.Config) (IDatabase, error) {
-	// if environment is D (development/testing) then sqlite will be database
-	// otherwise postgres will be database
+	// if environment is D (development/testing) then sqlite will be chosen
+	// otherwise postgres will be chosen
 	var (
 		db *gorm.DB
 		err error

@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"github.com/google/martian/log"
+	"github.com/manabie-com/togo/internal/config"
 	"strconv"
+	"time"
 )
 
 type ICache interface {
@@ -39,10 +41,10 @@ func (r *RedisCache) GetNumberOfTasks(userId string, createdDate string) (int32,
 		log.Errorf("error while getting number of task from cache - %s", err.Error())
 		return -1, err
 	}
-	return r.getNumberFromRedis(data)
+	return getNumberFromRedis(data)
 }
 
-func (r *RedisCache) getNumberFromRedis(data interface{}) (int32, error) {
+func getNumberFromRedis(data interface{}) (int32, error) {
 	if data == nil {
 		return -1, nil
 	}
@@ -93,5 +95,33 @@ func (r *RedisCache) GetMaxTodo(userId string) (int32, error) {
 		log.Errorf("error while getting maxTodo from userId:%s - %s", userId, err.Error())
 		return -1, err
 	}
-	return r.getNumberFromRedis(data)
+	return getNumberFromRedis(data)
+}
+
+func newRedisPool(cfg *config.Config) *redis.Pool {
+	return &redis.Pool{
+		// Other pool configuration not shown in this example.
+		Dial: func() (redis.Conn, error) {
+			c, err := redis.Dial("tcp", cfg.Redis.Address)
+			if err != nil {
+				return nil, err
+			}
+			if cfg.Redis.Password != "" {
+				if _, err := c.Do("AUTH", cfg.Redis.Password); err != nil {
+					c.Close()
+					return nil, err
+				}
+			}
+			if _, err := c.Do("SELECT", cfg.Redis.DatabaseNum); err != nil {
+				c.Close()
+				return nil, err
+			}
+			return c, nil
+		},
+		MaxIdle:         cfg.Redis.MaxIdle,
+		MaxActive:       cfg.Redis.MaxActive,
+		IdleTimeout:     time.Duration(cfg.Redis.MaxIdleTimeout) * time.Second,
+		Wait:            cfg.Redis.Wait,
+		MaxConnLifetime: time.Duration(cfg.Redis.ConnectTimeout) * time.Second,
+	}
 }
