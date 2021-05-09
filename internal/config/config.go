@@ -9,7 +9,7 @@ import (
 )
 
 var defaultConfig = []byte(`
-environment: D
+environment: T
 port: 5050
 jwt_key: wqGyEBBfPK9w3Lxw
 sqlite: ./data.db

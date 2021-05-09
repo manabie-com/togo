@@ -12,9 +12,7 @@ require (
 	github.com/google/uuid v1.1.1
 	github.com/gorilla/mux v1.8.0
 	github.com/jackc/pgproto3/v2 v2.0.7 // indirect
-	github.com/lib/pq v1.10.1
 	github.com/magiconair/properties v1.8.5 // indirect
-	github.com/mattn/go-sqlite3 v1.14.7
 	github.com/mitchellh/mapstructure v1.4.1 // indirect
 	github.com/pelletier/go-toml v1.9.0 // indirect
 	github.com/rs/cors v1.7.0

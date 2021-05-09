@@ -24,7 +24,7 @@ services:
       - "5050:5050"
     environment:
       WAIT_HOSTS: db:5432, redis:6379
-      ENVIRONMENT: P
+      ENVIRONMENT: D
       POSTGRES__HOST: db
       REDIS__ADDRESS: redis:6379
     depends_on:

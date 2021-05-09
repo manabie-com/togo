@@ -1,9 +1,27 @@
 package storages
 
 import (
+	"fmt"
 	"github.com/google/martian/log"
+	"github.com/manabie-com/togo/internal/config"
 	"github.com/manabie-com/togo/internal/models"
+	"gorm.io/driver/postgres"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+)
+
+type IDatabase interface {
+	AddUser(userID, password string, maxTodo int32) error
+	GetMaxTodo(userID string) (int32, error)
+	CountTasks(string, string) (int32, error)
+	RetrieveTasks(string, string) ([]*models.Task, error)
+	AddTask(*models.Task, func(string, string) error) error
+	ValidateUser(string, string) bool
+}
+
+const (
+	Docker = "D"
+	Test = "T"
 )
 
 // LiteDB for working with sqllite
@@ -11,7 +29,11 @@ type Store struct {
 	*gorm.DB
 }
 
-func NewStore(db *gorm.DB) *Store {
+func NewDatabase(cfg *config.Config) (IDatabase, error){
+	db, err := initDB(cfg)
+	if err != nil {
+		return nil, err
+	}
 	s := &Store{DB: db}
 	m := []interface{}{
 		&models.User{},
@@ -20,7 +42,26 @@ func NewStore(db *gorm.DB) *Store {
 	if err := s.AutoMigrate(m...); err != nil {
 		panic(err)
 	}
-	return s
+	return s, nil
+}
+
+func initDB(cfg *config.Config) (db *gorm.DB, err error) {
+	if cfg.Environment == Test {
+		db, err = gorm.Open(sqlite.Open(cfg.SQLite), &gorm.Config{})
+	} else if cfg.Environment == Docker {
+		pg := cfg.Postgres
+		dns := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
+			pg.Host, pg.Port, pg.User, pg.Password, pg.DBName, pg.SSL)
+		db, err = gorm.Open(postgres.Open(dns), &gorm.Config{})
+	} else {
+		panic("invalid environment")
+	}
+	if err != nil {
+		return nil, err
+	}
+	// enable debug mode
+	db = db.Debug()
+	return
 }
 
 func (s *Store) AddUser(userID, password string, maxTodo int32) error {
@@ -29,7 +70,7 @@ func (s *Store) AddUser(userID, password string, maxTodo int32) error {
 
 func (s *Store) CountTasks(userID, date string) (int32, error) {
 	var numOfTask int32
-	stmt := `SELECT COUNT(t.id) FROM tasks t WHERE t.id = ? AND t.created_date = ?`
+	stmt := `SELECT COUNT(t.id) FROM tasks t WHERE t.user_id = ? AND t.created_date = ?`
 	err := s.DB.Raw(stmt, userID, date).Scan(&numOfTask).Error
 	if err != nil {
 		return -1, err
