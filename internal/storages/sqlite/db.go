@@ -60,7 +60,7 @@ func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
 	}
 
 	if max_todo <= current_count {
-		return fmt.Errorf("Exceed todo requests' maximum number")
+		return fmt.Errorf("Exceed")
 	}
 
 	//Every is good and a new record will be inserted into database

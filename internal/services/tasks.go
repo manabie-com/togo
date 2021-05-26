@@ -123,9 +123,16 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 
 	err = s.Store.AddTask(req.Context(), t)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
+		if err.Error() != "Exceed" {
+			resp.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(resp).Encode(map[string]string{
+				"error": err.Error(),
+			})
+			return
+		}
+		resp.WriteHeader(http.StatusTooManyRequests)
 		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
+			"error": `Too many requests`,
 		})
 		return
 	}
