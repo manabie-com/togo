@@ -3,6 +3,8 @@ package sqllite
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"log"
 
 	"github.com/manabie-com/togo/internal/storages"
 )
@@ -40,8 +42,30 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.Null
 
 // AddTask adds a new task to DB
 func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
-	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
-	_, err := l.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
+	var max_todo int
+	var current_count int
+	// Get max_todo
+	max_todo_stmt := `SELECT max_todo FROM users WHERE id = ?`
+	max_todo_row := l.DB.QueryRowContext(ctx, max_todo_stmt, &t.UserID)
+	err := max_todo_row.Scan(&max_todo)
+	if err != nil {
+		return err
+	}
+	//Get current count for this created date
+	stmt := `SELECT count(created_date) FROM Tasks WHERE created_date = ?`
+	row := l.DB.QueryRowContext(ctx, stmt, &t.CreatedDate)
+	err = row.Scan(&current_count)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if max_todo <= current_count {
+		return fmt.Errorf("Exceed todo requests' maximum number")
+	}
+
+	//Every is good and a new record will be inserted into database
+	stmt = `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
+	_, err = l.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
 	if err != nil {
 		return err
 	}
