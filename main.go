@@ -1,25 +1,29 @@
 package main
 
 import (
-	"database/sql"
+	"github.com/manabie-com/togo/internal/repositories"
+	"github.com/manabie-com/togo/internal/services"
 	"log"
 	"net/http"
 
-	"github.com/manabie-com/togo/internal/services"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
-
-	_ "github.com/mattn/go-sqlite3"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 func main() {
-	db, err := sql.Open("sqlite3", "./data.db")
+	dsn := "host=localhost user=user password=MyPassword1 dbname=togo port=5432 sslmode=disable"
+	db, err := gorm.Open(postgres.New(postgres.Config{
+		DSN: dsn,
+		PreferSimpleProtocol: true, // disables implicit prepared statement usage
+	}), &gorm.Config{})
+
 	if err != nil {
 		log.Fatal("error opening db", err)
 	}
 
 	http.ListenAndServe(":5050", &services.ToDoService{
 		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
+		Store: &repositories.LiteDB{
 			DB: db,
 		},
 	})
