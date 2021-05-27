@@ -54,3 +54,16 @@ CREATE TABLE tasks (
 
 ### Sequence diagram
 ![auth and create tasks request](https://github.com/manabie-com/togo/blob/master/docs/sequence.svg)
+
+
+
+#### What I achieved
+Basic requirement with limiting number of addTask requests in one day
+Add docker, docker-compose deployment and postgres adaption
+- How to start: 
+    . run `docker-compose build`
+    . After that , run sql over the new instance of postgresql
+	. run `docker-compose up -d`
+### Not achieved
+No testing already
+No backward compability with sqlite3 (for the limit of sql lib in golang with ? and $ place holders)
