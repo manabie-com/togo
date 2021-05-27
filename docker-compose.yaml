@@ -1,0 +1,26 @@
+version: '3.7'
+services:
+    db:
+        container_name: db
+        image: postgres:13.3-alpine
+        restart: always
+        ports:
+        - "5432:5432"
+        environment:
+            POSTGRES_DB: 'todo'
+            POSTGRES_USER: 'todo'
+            POSTGRES_PASSWORD: 'todo'
+            PGPASSWORD: 'todo'
+        volumes:
+        - ~/todo/data:/var/lib/postgresql/data
+
+    backend:
+        ports:
+        - "5050:5050"
+        build: 
+            context: ./
+            dockerfile: Dockerfile
+        environment: 
+            DB_TYPE: "postgres"
+        image: todo:latest
+        container_name: backend
