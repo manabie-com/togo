@@ -3,7 +3,6 @@ package sqllite
 import (
 	"context"
 	"database/sql"
-
 	"github.com/manabie-com/togo/internal/storages"
 )
 
@@ -60,4 +59,21 @@ func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) b
 	}
 
 	return true
+}
+
+// RetrieveUser returns user (without the password) if match userID
+func (l *LiteDB) RetrieveUser(ctx context.Context, userID string) (*storages.User, error) {
+	stmt := `SELECT id, max_todo FROM users WHERE id = ?`
+	row := l.DB.QueryRowContext(ctx, stmt, userID)
+	u := &storages.User{}
+	err := row.Scan(&u.ID, &u.MaxTodo)
+	return u, err
+}
+
+// CountTasks counts tasks that match userID and createdDate
+func (l *LiteDB) CountTasks(ctx context.Context, userID, createdDate string) (count sql.NullInt32, err error) {
+	stmt := `SELECT count(*) FROM tasks WHERE user_id = ? AND created_date = ?`
+	rows := l.DB.QueryRowContext(ctx, stmt, userID, createdDate)
+	err = rows.Scan(&count)
+	return count, err
 }

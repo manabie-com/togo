@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -11,13 +12,12 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/storages"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 )
 
 // ToDoService implement HTTP server
 type ToDoService struct {
 	JWTKey string
-	Store  *sqllite.LiteDB
+	Store  storages.DB
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
@@ -78,8 +78,6 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 		value(req, "created_date"),
 	)
 
-	resp.Header().Set("Content-Type", "application/json")
-
 	if err != nil {
 		responseError(resp, http.StatusInternalServerError, err.Error())
 		return
@@ -89,19 +87,38 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
-	t := &storages.Task{}
-	err := json.NewDecoder(req.Body).Decode(t)
-	defer req.Body.Close()
+	userID, _ := userIDFromCtx(req.Context())
+	user, err := s.Store.RetrieveUser(req.Context(), userID)
 	if err != nil {
 		responseError(resp, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	now := time.Now()
-	userID, _ := userIDFromCtx(req.Context())
+	formattedNow := now.Format("2006-01-02")
+
+	count, err := s.Store.CountTasks(req.Context(), userID, formattedNow)
+	if err != nil {
+		responseError(resp, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if int(count.Int32) >= user.MaxTodo {
+		responseError(resp, http.StatusBadRequest, fmt.Sprintf("Limited to %d tasks per day", user.MaxTodo))
+		return
+	}
+
+	t := &storages.Task{}
+	err = json.NewDecoder(req.Body).Decode(t)
+	defer req.Body.Close()
+	if err != nil {
+		responseError(resp, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	t.ID = uuid.New().String()
 	t.UserID = userID
-	t.CreatedDate = now.Format("2006-01-02")
+	t.CreatedDate = formattedNow
 
 	err = s.Store.AddTask(req.Context(), t)
 	if err != nil {
@@ -152,7 +169,7 @@ func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
 		return req, false
 	}
 
-	req = req.WithContext(context.WithValue(req.Context(), userAuthKey(0), id))
+	req = req.Clone(context.WithValue(req.Context(), userAuthKey(0), id))
 	return req, true
 }
 
