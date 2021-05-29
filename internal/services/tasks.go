@@ -56,26 +56,15 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
 	id := value(req, "user_id")
 	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
-		resp.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "incorrect user_id/pwd",
-		})
+		responseError(resp, http.StatusUnauthorized, "incorrect user_id/pwd")
 		return
 	}
-	resp.Header().Set("Content-Type", "application/json")
-
 	token, err := s.createToken(id.String)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
+		responseError(resp, http.StatusInternalServerError, err.Error())
 		return
 	}
-
-	json.NewEncoder(resp).Encode(map[string]string{
-		"data": token,
-	})
+	responseOK(resp, token)
 }
 
 func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
@@ -92,16 +81,11 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-Type", "application/json")
 
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
+		responseError(resp, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
-		"data": tasks,
-	})
+	responseOK(resp, tasks)
 }
 
 func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
@@ -109,7 +93,7 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	err := json.NewDecoder(req.Body).Decode(t)
 	defer req.Body.Close()
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
+		responseError(resp, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -119,20 +103,13 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	t.UserID = userID
 	t.CreatedDate = now.Format("2006-01-02")
 
-	resp.Header().Set("Content-Type", "application/json")
-
 	err = s.Store.AddTask(req.Context(), t)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
+		responseError(resp, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string]*storages.Task{
-		"data": t,
-	})
+	responseOK(resp, t)
 }
 
 func value(req *http.Request, p string) sql.NullString {
