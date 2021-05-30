@@ -1,31 +1,40 @@
 ### Overview
+
 This is a simple backend for a good old todo service, right now this service can handle login/list/create simple tasks.  
-To make it run:
+
+#### To make it run
+
 - `go run main.go`
 - Import Postman collection from `docs` to check example
 
-Candidates are invited to implement below requirements but the point is not to resolve everything in a perfect way but selective what you can do best in a limited time.  
-Thus, there is no correct-or-perfect answer, your solutions are way for us to continue the discussion and collaboration.
- 
-### Requirements
-Right now a user can add many task as they want, we want ability to limit N task per day.
+#### To check unit test coverage 
 
-Example: users are limited to create only 5 task only per day, if the daily limit is reached, return 4xx code to client and ignore the create request.
-#### Backend requirements
-- A nice README on how to run, what is missing, what else you want to improve but don't have enough time
-- Fork this repo and show us your development progess by a PR.
-- Write integration tests for this project
-- Make this code DRY
-- Write unit test for `services` layer
+`go test ./... --coverprofile cover.out && go tool cover -html=cover.out -o cover.html && open cover.html`
+#### What have been done
+
+- Implement daily limit for creating tasks ( base requirement)
+- Write some integration tests for the project
+- Write complete unit test for addTask function
+- Refactor
+    - extract `responseOK()` and `responseError()` to reduce duplication
+    - extract interface for storages.LiteDB to loosen coupling and easy to write UT
+    - some other small refactors
+
+#### What missing
+
 - Change from using `SQLite` to `Postgres` with `docker-compose`
-- This project include many issues from code to DB strucutre, feel free to optimize them.
-#### Frontend requirements
-- A nice README on how to run, what is missing, what else you want to improve but don't have enough time
-- https://github.com/manabie-com/mana-do
-- Fork the above repo and show us your development progess by a PR.
-#### Optional requirements
-- Write unit test for `storages` layer
-- Split `services` layer to `use case` and `transport` layer
+- Unit test for db layer
+
+#### What to improve if having enough time
+
+- Add `controller` layer, responsible for routing and parsing body, `service` layer should only care about business logics
+- Make authenticate into a separate middleware ( or filter), applied to all endpoints except `/login`
+- Separate `ServeHTTP()` from `TodoService` to a standalone struct (maybe named `MainServer`), there are too many responsibilities for `TodoService`
+- Get JWT key from a separated config file
+- Separate `users` table to `users` and `accounts` table. `account` is for authentication and authorization (if any), and `users` is for basic information of
+  user. There must be something wrong when we put `password` next to `max_todo` lol
+- Write more tests to make it 100% test coverage
+- Of course, make `created_date` type to `datetime`, if we plan to use any DB other than Sqlite 
 
 ### DB Schema
 ```sql
@@ -53,4 +62,5 @@ CREATE TABLE tasks (
 ```
 
 ### Sequence diagram
+
 ![auth and create tasks request](https://github.com/manabie-com/togo/blob/master/docs/sequence.svg)
