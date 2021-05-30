@@ -1,0 +1,17 @@
+version: '3.6'
+services: 
+    postgres:
+        image: postgres
+        container_name: postgres_nampham
+        restart: unless-stopped
+        environment: 
+            - DATABASE_HOST=127.0.0.1
+            - POSTGRES_USER=root
+            - POSTGRES_PASSWORD=root
+            - POSTGRES_DB=db_togo  
+
+        ports: 
+            - "5432:5432"
+        volumes: 
+            - ./docker/docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
+            - ./docker/postgres_db:/var/lib/postgresql/data:delegated
