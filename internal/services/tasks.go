@@ -28,6 +28,15 @@ type ToDoService struct {
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	log.Println(req.Method, req.URL.Path)
+	resp.Header().Set("Access-Control-Allow-Origin", "*")
+	resp.Header().Set("Access-Control-Allow-Headers", "*")
+	resp.Header().Set("Access-Control-Allow-Methods", "*")
+
+	if req.Method == http.MethodOptions {
+		resp.WriteHeader(http.StatusOK)
+		return
+	}
+
 	switch req.URL.Path {
 	case "/register":
 		s.register(resp, req)
@@ -270,6 +279,7 @@ func (s *ToDoService) createToken(id string) (string, error) {
 
 func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
 	token := req.Header.Get("Authorization")
+
 	claims := make(jwt.MapClaims)
 	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
 		return []byte(s.JWTKey), nil
