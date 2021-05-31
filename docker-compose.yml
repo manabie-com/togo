@@ -1,0 +1,27 @@
+version: "3"
+services:
+    app:
+        image: golang:1.14
+        container_name: togo
+        working_dir: /app
+        restart: always
+        volumes:
+            - .:/app
+        ports:
+            - "5050:5050"
+        links:
+            - db
+        depends_on:
+            - db
+        command: ["go", "run", "main.go"]
+    db:
+        image: postgres:12.7
+        container_name: postgres
+        restart: always
+        environment:
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: todo
+        volumes:
+            - ./db:/docker-entrypoint-initdb.d/
+        ports:
+            - 5432:5432

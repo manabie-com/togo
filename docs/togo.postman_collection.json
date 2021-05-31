@@ -1,17 +1,55 @@
 {
 	"info": {
-		"_postman_id": "05327fec-8670-470b-8253-f27686acf809",
-		"name": "Test togo",
+		"_postman_id": "e712dbe8-f57d-4f2e-80d3-8b5ed2d8b009",
+		"name": "ToDoService",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "user_id",
+							"value": "testuser",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "testpassword",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5050/register",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
 		{
 			"name": "Login",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:5050/login?user_id=firstUser&password=example",
+					"raw": "localhost:5050/login?user_id=testuser&password=testpassword",
 					"host": [
 						"localhost"
 					],
@@ -22,11 +60,11 @@
 					"query": [
 						{
 							"key": "user_id",
-							"value": "firstUser"
+							"value": "testuser"
 						},
 						{
 							"key": "password",
-							"value": "example"
+							"value": "testpassword"
 						}
 					]
 				}
@@ -34,59 +72,19 @@
 			"response": []
 		},
 		{
-			"name": "List content",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTM0Mjc4MjEsInVzZXJfaWQiOiJmaXJzdFVzZXIifQ.zJdFGhDFwPcR1-VZyUGmYgNMEDHpNYsttYYvJPcI7h4",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "localhost:5050/tasks?created_date=2020-06-29",
-					"host": [
-						"localhost"
-					],
-					"port": "5050",
-					"path": [
-						"tasks"
-					],
-					"query": [
-						{
-							"key": "created_date",
-							"value": "2020-06-29"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Create task",
+			"name": "Add task",
 			"request": {
 				"method": "POST",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTM0Mjc4MjEsInVzZXJfaWQiOiJmaXJzdFVzZXIifQ.zJdFGhDFwPcR1-VZyUGmYgNMEDHpNYsttYYvJPcI7h4",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjIzOTAwNDYsInVzZXJfaWQiOiJ0ZXN0dXNlciJ9.VD6J_aY-PMXEM74-H5cjcdwobWxyVFJGdnVl7hyyOds",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"content\": \"another content\"\n}",
+					"raw": "{\n    \"content\": \"Task 1\",\n    \"status\": \"open\",\n    \"target_date\": \"2021-06-20\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -105,7 +103,64 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Update task",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjIzOTIzNTksInVzZXJfaWQiOiJ0ZXN0dXNlciJ9.MwdgJ6nzF9o8cdacwT3lKtymyvDf14zh-K8XR1YMa3o",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"323cf8a7-862e-4b6b-8271-9e0e36af7191\",\n    \"content\": \"Task 1\",\n    \"status\": \"done\",\n    \"target_date\": \"2021-06-20\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5050/tasks/update",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"tasks",
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get tasks",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjIzOTIzNTksInVzZXJfaWQiOiJ0ZXN0dXNlciJ9.MwdgJ6nzF9o8cdacwT3lKtymyvDf14zh-K8XR1YMa3o",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:5050/tasks",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"tasks"
+					]
+				}
+			},
+			"response": []
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }
