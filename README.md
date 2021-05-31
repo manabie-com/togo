@@ -1,7 +1,7 @@
 ### Overview
-This is a simple backend for good old todo service, right now this service can handle login/list/create simple tasks.  
+This is a simple backend for good old todo service, right now this service can handle register/login/list/create/update simple tasks.  
 To make it run:
-- `go run main.go`
+- `docker-compose up`
 - Import Postman collection from `docs` to check example
 
 Candidates are invited to implement below requirements but the point is not to resolve everything in a perfect way but selective what you can do best in a limited time.  
@@ -32,11 +32,10 @@ Example: users are limited to create only 5 task only per day, if imit reached, 
 CREATE TABLE users (
 	id TEXT NOT NULL,
 	password TEXT NOT NULL,
-	max_todo INTEGER DEFAULT 5 NOT NULL,
 	CONSTRAINT users_PK PRIMARY KEY (id)
 );
 
-INSERT INTO users (id, password, max_todo) VALUES('firstUser', 'example', 5);
+INSERT INTO users (id, password, max_todo) VALUES('firstUser', 'example');
 
 -- tasks definition
 
@@ -44,7 +43,9 @@ CREATE TABLE tasks (
 	id TEXT NOT NULL,
 	content TEXT NOT NULL,
 	user_id TEXT NOT NULL,
+	status TEXT NOT NULL,
     created_date TEXT NOT NULL,
+	target_date TEXT NOT NULL,
 	CONSTRAINT tasks_PK PRIMARY KEY (id),
 	CONSTRAINT tasks_FK FOREIGN KEY (user_id) REFERENCES users(id)
 );
