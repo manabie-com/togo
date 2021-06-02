@@ -2,6 +2,7 @@ package server
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -9,16 +10,16 @@ import (
 	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 )
 
-func NewServer(driverName, dataSourceName string) *http.Server {
+func NewServer(driverName, dataSourceName, port, jwtSecret string) *http.Server {
 	db, err := sql.Open(driverName, dataSourceName)
 	if err != nil {
 		log.Fatal("error opening db", err)
 	}
 
 	s := &http.Server{
-		Addr: ":5050",
+		Addr: fmt.Sprintf(":%s", port),
 		Handler: &services.ToDoService{
-			JWTKey: "wqGyEBBfPK9w3Lxw",
+			JWTKey: jwtSecret,
 			Store: &sqllite.LiteDB{
 				DB: db,
 			},

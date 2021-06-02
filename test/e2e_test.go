@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"path/filepath"
+	"os"
 	"testing"
 
 	"github.com/dgrijalva/jwt-go"
@@ -27,8 +27,12 @@ type E2ETestSuite struct {
 }
 
 func (suite *E2ETestSuite) SetupSuite() {
-	dataSourceName, _ := filepath.Abs("../data.db")
-	suite.Server = internal.NewServer("sqlite3", dataSourceName)
+	suite.Server = internal.NewServer(
+		os.Getenv("DATABASE_DRIVER"),
+		os.Getenv("DATABASE_SOURCE"),
+		os.Getenv("PORT"),
+		os.Getenv("JWT_SECRET"),
+	)
 	go suite.Server.ListenAndServe()
 }
 

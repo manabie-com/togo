@@ -1,14 +1,18 @@
 package main
 
 import (
-	"path/filepath"
+	"os"
 
 	internal "github.com/manabie-com/togo/internal"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
-	dataSourceName, _ := filepath.Abs("./data.db")
-	s := internal.NewServer("sqlite3", dataSourceName)
+	s := internal.NewServer(
+		os.Getenv("DATABASE_DRIVER"),
+		os.Getenv("DATABASE_SOURCE"),
+		os.Getenv("PORT"),
+		os.Getenv("JWT_SECRET"),
+	)
 	s.ListenAndServe()
 }
