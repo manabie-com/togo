@@ -3,20 +3,16 @@ package e2e_test
 // Basic imports
 import (
 	"bytes"
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"path/filepath"
-	"syscall"
 	"testing"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/manabie-com/togo/internal/services"
+	internal "github.com/manabie-com/togo/internal"
 	"github.com/manabie-com/togo/internal/storages"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/suite"
 )
@@ -26,35 +22,18 @@ import (
 // returns the current testing context
 type E2ETestSuite struct {
 	suite.Suite
-	DriverName     string
-	DataSourceName string
-	DB             *sql.DB
-	Port           string
-	JWTKey         string
+	Server         *http.Server
 	CurrentUserJWT string
 }
 
 func (suite *E2ETestSuite) SetupSuite() {
-	suite.DriverName = "sqlite3"
-	suite.DataSourceName, _ = filepath.Abs("../data.db")
-	suite.Port = "8050"
-	suite.JWTKey = "wqGyEBBfPK9w3Lxw"
-
-	var err error
-	suite.DB, err = sql.Open(suite.DriverName, suite.DataSourceName)
-	suite.Require().NoError(err)
-
-	go http.ListenAndServe(fmt.Sprintf(":%s", suite.Port), &services.ToDoService{
-		JWTKey: suite.JWTKey,
-		Store: &sqllite.LiteDB{
-			DB: suite.DB,
-		},
-	})
+	dataSourceName, _ := filepath.Abs("../data.db")
+	suite.Server = internal.NewServer("sqlite3", dataSourceName)
+	go suite.Server.ListenAndServe()
 }
 
 func (suite *E2ETestSuite) TearDownSuite() {
-	p, _ := os.FindProcess(syscall.Getpid())
-	p.Signal(syscall.SIGINT)
+	suite.Server.Close()
 }
 
 type AuthenticationResponse struct {
@@ -62,7 +41,11 @@ type AuthenticationResponse struct {
 }
 
 func (suite *E2ETestSuite) Test_Authentication_Request() {
-	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("http://localhost:%s/login?user_id=firstUser&password=example", suite.Port), nil)
+	req, err := http.NewRequest(
+		http.MethodGet,
+		fmt.Sprintf("http://localhost%s/login?user_id=firstUser&password=example", suite.Server.Addr),
+		nil,
+	)
 	suite.NoError(err)
 	client := http.Client{}
 	resp, err := client.Do(req)
@@ -89,7 +72,11 @@ type CreateNewTaskResponse struct {
 func (suite *E2ETestSuite) Test_Create_New_Task_Request() {
 	suite.Test_Authentication_Request()
 	var tasks = []byte(`{"contents": "example"}`)
-	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("http://localhost:%s/tasks", suite.Port), bytes.NewBuffer(tasks))
+	req, err := http.NewRequest(
+		http.MethodPost,
+		fmt.Sprintf("http://localhost%s/tasks", suite.Server.Addr),
+		bytes.NewBuffer(tasks),
+	)
 	suite.NoError(err)
 
 	req.Header.Set("Authorization", suite.CurrentUserJWT)
