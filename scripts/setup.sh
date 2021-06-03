@@ -75,4 +75,6 @@ if [[ -z $CI ]]; then
     GO111MODULE=off go get github.com/volatiletech/sqlboiler/drivers/sqlboiler-psql
   fi
 fi
+cp $PROJECT_DIR/.example.conf $PROJECT_DIR/.conf
+cp $PROJECT_DIR/.example.env $PROJECT_DIR/.env
 
