@@ -1,0 +1,26 @@
+version: "3.5"
+
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: togo
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+  
+  to-go:
+    image: togo
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 5050:5050
+    depends_on:
+      - postgres
+    environment:
+      TZ: "Asia/Saigon"
