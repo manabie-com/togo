@@ -7,6 +7,7 @@ import (
 	"log"
 
 	"github.com/manabie-com/togo/internal/models"
+	timeUtils "github.com/manabie-com/togo/internal/utils/time"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 )
 
@@ -38,6 +39,7 @@ func (t TaskService) CreateNew(ctx context.Context, task *models.Task) error {
 func (t TaskService) TaskCountByUser(ctx context.Context, userId string) (int64, error) {
 	return models.Tasks(
 		models.TaskWhere.UserID.EQ(userId),
+		models.TaskWhere.CreateDate.EQ(timeUtils.CurrentDate()),
 	).Count(ctx, t.DB)
 
 }
