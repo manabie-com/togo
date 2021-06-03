@@ -5,9 +5,9 @@
 
 
 ## Quick start
-- Step 1: Start database with docker 
+- Step 1: Setup dependencies and tools
 ```
-make docker/up
+make setup
 ```
 
 - Step 2: Start database with docker 
