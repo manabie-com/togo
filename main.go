@@ -5,22 +5,24 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/manabie-com/togo/internal/services"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
-
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/lib/pq"
+	"github.com/manabie-com/togo/internal/handlers"
 )
 
 func main() {
-	db, err := sql.Open("sqlite3", "./data.db")
+	// DB URL was supposed to be configured as environment variable
+	// or console param/flag
+	database, err := sql.Open("postgres", "postgres://postgres:postgres@localhost:5433/manabie?sslmode=disable")
 	if err != nil {
 		log.Fatal("error opening db", err)
 	}
 
-	http.ListenAndServe(":5050", &services.ToDoService{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
-			DB: db,
-		},
-	})
+	serveHandlers := &handlers.Handlers{
+		JWTSecret: "test",
+		DB:        database,
+	}
+	serveHandlers.LoadHandlers()
+	if err := http.ListenAndServe(":5050", serveHandlers); err != nil {
+		log.Println(err)
+	}
 }
