@@ -1,3 +1,69 @@
+## Apply exercises for Manabie Backend Engineer
+
+- Name: Le Su Truong Giang
+- Applying position: Backend Engineer
+
+
+## Quick start
+- Step 1: Start database with docker 
+```
+make docker/up
+```
+
+- Step 2: Start database with docker 
+```
+make docker/up
+```
+
+- Step 3: Migrate database to newly created docker container
+```
+make db/up
+```
+
+- Step 4: Run the server
+```
+make run
+```
+or traditionally
+```
+go run main.go
+```
+
+- Step 5: Open postman, import the previously provided postman collection and
+test the API
+
+- Step 6 (Optional): Run unit test
+```
+make test
+```
+
+- Step 7 (Optional): Run linting
+```
+make lint
+```
+
+
+## What I have done
+- Refactor single services layer into handlers layer (business/application layer) and services layers
+- Additionally, added DTO and DAO as transport layer
+- Refactor server into clearer structured server object with middlewares, injection, handler types (custom auth handler and RESTful handler)
+- Implement fully testable code that can be mocked with interface
+- Implement mock object which can be generated with code
+- Provide database-first transport layer, generate from postgres database schema with customizable templates and generated unit test code, and with super fast access
+instead of popular ORM plugins
+- Implemented integration test for login handler, with enough case so far
+- Implemented unit test for some utilities, services and handlers
+- Added linting also, implement everything following lint rules
+- Easy to run bash scripts which help to setup everything
+
+## What I have not yet done 
+- I have not yet implemented unit tests for every packages, but the implementation of unit tests of 
+other packages shall be quite similar to implemented one 
+- I have not yet implemented integration test for all handlers, but the implementation of other integration tests shall be quite similar to implemented one
+- Integrate easyjson or json efficient marshalling package that help to increase performance of json marshalling and unmarshalling speed
+- Implement better solution for max_todo validation on create new task
+
+## Old README
 ### Overview
 This is a simple backend for a good old todo service, right now this service can handle login/list/create simple tasks.  
 To make it run:
