@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  database:
+    build:
+      context: ../
+      dockerfile: docker/db.dockerfile
+    image: manabie-db
+    container_name: manabie-db
+    volumes:
+      - manabie:/var/lib/postgresql-static/data
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - ${DB_HOST_PORT}:5432
+
+volumes:
+  manabie:
