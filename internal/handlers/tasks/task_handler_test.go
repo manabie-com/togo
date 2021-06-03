@@ -20,7 +20,6 @@ type TaskHandlerPostTestCase struct {
 	mockTaskService   taskService.ITaskService
 	mockCreateRequest ICreateRequest
 	requestUserId     string
-	expectedRespJson  interface{}
 	expectedRespCode  int
 	expectedErr       error
 }
@@ -47,8 +46,13 @@ func TaskHandlerPostTestCases(t *testing.T) map[string]TaskHandlerPostTestCase {
 				ShouldToModelCalled:  true,
 				BindResponse:         nil,
 				ValidateResponse:     nil,
+				ToModelResponse: &models.Task{
+					UserID:     "test_user_id",
+					Content:    "content",
+					CreateDate: "date",
+				},
 			},
-			requestUserId:    random.RandString(10),
+			requestUserId:    "test_user_id",
 			expectedRespCode: http.StatusOK,
 			expectedErr:      nil,
 		},
