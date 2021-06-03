@@ -1,0 +1,14 @@
+output   = "internal/models/"
+pkgname = "models"
+wipe     = true
+no-tests = false
+
+[psql]
+  dbname = "manabie"
+  host   = "localhost"
+  port   = 5433
+  user   = "postgres"
+  pass   = "postgres"
+  schema = "manabie"
+  blacklist = ["migrations", "other"]
+  sslmode = "disable"
