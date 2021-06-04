@@ -107,6 +107,41 @@ func (suite *E2ETestSuite) TestCreateNewTaskRequest() {
 	resp.Body.Close()
 }
 
+type ListTasksResponse struct {
+	Task []storages.Task `json:"data"`
+}
+
+func (suite *E2ETestSuite) TestListTasksRequest() {
+	suite.TestAuthenticationRequest()
+	req, err := http.NewRequest(
+		http.MethodGet,
+		fmt.Sprintf("http://localhost%s/tasks?created_date=2020-06-29", suite.Server.Addr),
+		nil,
+	)
+	suite.NoError(err)
+
+	req.Header.Set("Authorization", suite.CurrentUserJWT)
+
+	client := http.Client{}
+	resp, err := client.Do(req)
+	suite.NoError(err)
+
+	if suite.Equal(http.StatusOK, resp.StatusCode) {
+		byte, err := ioutil.ReadAll(resp.Body)
+		suite.NoError(err)
+
+		var jsonResp ListTasksResponse
+		err = json.Unmarshal(byte, &jsonResp)
+		suite.NoError(err)
+		resp.Body.Close()
+	} else {
+		byte, err := ioutil.ReadAll(resp.Body)
+		suite.NoError(err)
+		suite.T().Logf("Error response: %s\n", string(byte))
+		resp.Body.Close()
+	}
+}
+
 func TestE2ETestSuite(t *testing.T) {
 	suite.Run(t, new(E2ETestSuite))
 }
