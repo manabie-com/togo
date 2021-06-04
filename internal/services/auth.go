@@ -8,12 +8,12 @@ import (
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	"github.com/manabie-com/togo/internal/storages"
 )
 
 type AuthService struct {
 	JWTSecret string
-	Store     *sqllite.LiteDB
+	Store     storages.UserReadRepository
 }
 
 func (as *AuthService) IssueJWTToken(resp http.ResponseWriter, req *http.Request) {

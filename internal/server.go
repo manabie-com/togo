@@ -8,7 +8,7 @@ import (
 
 	"github.com/gorilla/mux"
 	services "github.com/manabie-com/togo/internal/services"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	"github.com/manabie-com/togo/internal/storages"
 )
 
 func NewServer(driverName, dataSourceName, port, jwtSecret string) *http.Server {
@@ -21,16 +21,17 @@ func NewServer(driverName, dataSourceName, port, jwtSecret string) *http.Server 
 
 	as := &services.AuthService{
 		JWTSecret: jwtSecret,
-		Store: &sqllite.LiteDB{
+		Store: &storages.LiteDBAdapter{
 			DB: db,
 		},
 	}
 
 	tds := &services.ToDoService{
 		JWTKey: jwtSecret,
-		Store: &sqllite.LiteDB{
+		Store: &storages.LiteDBAdapter{
 			DB: db,
 		},
+		Auth: as,
 	}
 
 	r.HandleFunc("/login", as.IssueJWTToken)

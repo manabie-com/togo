@@ -10,13 +10,13 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/storages"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 )
 
 // ToDoService implement HTTP server
 type ToDoService struct {
 	JWTKey string
-	Store  *sqllite.LiteDB
+	Store  storages.TaskWriteListRepository
+	Auth   *AuthService
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
@@ -30,15 +30,10 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	as := &AuthService{
-		JWTSecret: s.JWTKey,
-		Store:     s.Store,
-	}
-
 	switch req.URL.Path {
 	case "/tasks":
 		var ok bool
-		req, ok = as.ValidateToken(req)
+		req, ok = s.Auth.ValidateToken(req)
 		if !ok {
 			resp.WriteHeader(http.StatusUnauthorized)
 			return
