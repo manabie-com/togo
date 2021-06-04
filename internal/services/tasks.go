@@ -14,9 +14,8 @@ import (
 
 // ToDoService implement HTTP server
 type ToDoService struct {
-	JWTKey string
-	Store  storages.TaskWriteListRepository
-	Auth   *AuthService
+	Store storages.TaskWriteListRepository
+	Auth  *AuthService
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {

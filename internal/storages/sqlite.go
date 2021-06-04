@@ -52,9 +52,6 @@ func (l *LiteDBAdapter) ValidateUser(ctx context.Context, userID, pwd sql.NullSt
 	row := l.DB.QueryRowContext(ctx, stmt, userID, pwd)
 	u := &User{}
 	err := row.Scan(&u.ID)
-	if err != nil {
-		return false
-	}
 
-	return true
+	return err == nil
 }

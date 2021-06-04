@@ -11,27 +11,34 @@ import (
 	"github.com/manabie-com/togo/internal/storages"
 )
 
-func NewServer(driverName, dataSourceName, port, jwtSecret string) *http.Server {
+func NewSQLDataBaseFromDriver(driverName, dataSourceName string) *storages.LiteDBAdapter {
 	db, err := sql.Open(driverName, dataSourceName)
 	if err != nil {
 		log.Fatal("error opening db", err)
 	}
 
+	switch driverName {
+	case "sqlite3":
+		return &storages.LiteDBAdapter{DB: db}
+	default:
+		log.Fatalf("Not supported SQL Driver:%s", driverName)
+		return &storages.LiteDBAdapter{}
+	}
+}
+
+func NewServer(driverName, dataSourceName, port, jwtSecret string) *http.Server {
+	st := NewSQLDataBaseFromDriver(driverName, dataSourceName)
+
 	r := mux.NewRouter()
 
 	as := &services.AuthService{
 		JWTSecret: jwtSecret,
-		Store: &storages.LiteDBAdapter{
-			DB: db,
-		},
+		Store:     st,
 	}
 
 	tds := &services.ToDoService{
-		JWTKey: jwtSecret,
-		Store: &storages.LiteDBAdapter{
-			DB: db,
-		},
-		Auth: as,
+		Store: st,
+		Auth:  as,
 	}
 
 	r.HandleFunc("/login", as.IssueJWTToken)
