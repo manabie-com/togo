@@ -44,7 +44,7 @@ type AuthenticationResponse struct {
 	JWTToken string `json:"data"`
 }
 
-func (suite *E2ETestSuite) Test_Authentication_Request() {
+func (suite *E2ETestSuite) TestAuthenticationRequest() {
 	req, err := http.NewRequest(
 		http.MethodGet,
 		fmt.Sprintf("http://localhost%s/login?user_id=firstUser&password=example", suite.Server.Addr),
@@ -73,8 +73,8 @@ type CreateNewTaskResponse struct {
 	Task storages.Task `json:"data"`
 }
 
-func (suite *E2ETestSuite) Test_Create_New_Task_Request() {
-	suite.Test_Authentication_Request()
+func (suite *E2ETestSuite) TestCreateNewTaskRequest() {
+	suite.TestAuthenticationRequest()
 	var tasks = []byte(`{"contents": "example"}`)
 	req, err := http.NewRequest(
 		http.MethodPost,
