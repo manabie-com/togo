@@ -20,3 +20,5 @@ out/
 
 *.db
 .env
+
+.vscode/

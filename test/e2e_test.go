@@ -55,18 +55,24 @@ func (suite *E2ETestSuite) TestAuthenticationRequest() {
 	resp, err := client.Do(req)
 	suite.NoError(err)
 
-	suite.Equal(http.StatusOK, resp.StatusCode)
-	byte, err := ioutil.ReadAll(resp.Body)
-	suite.NoError(err)
+	if suite.Equal(http.StatusOK, resp.StatusCode) {
+		byte, err := ioutil.ReadAll(resp.Body)
+		suite.NoError(err)
 
-	var jsonResp AuthenticationResponse
-	err = json.Unmarshal(byte, &jsonResp)
-	suite.NoError(err)
-	token, _ := jwt.Parse(jsonResp.JWTToken, nil)
-	// TODO exp is later than now
-	suite.Equal(jsonResp.JWTToken, token.Raw)
-	suite.CurrentUserJWT = jsonResp.JWTToken
-	resp.Body.Close()
+		var jsonResp AuthenticationResponse
+		err = json.Unmarshal(byte, &jsonResp)
+		suite.NoError(err)
+		token, _ := jwt.Parse(jsonResp.JWTToken, nil)
+		// TODO exp is later than now
+		suite.Equal(jsonResp.JWTToken, token.Raw)
+		suite.CurrentUserJWT = jsonResp.JWTToken
+		resp.Body.Close()
+	} else {
+		byte, err := ioutil.ReadAll(resp.Body)
+		suite.NoError(err)
+		suite.T().Logf("Error response: %s\n", string(byte))
+		resp.Body.Close()
+	}
 }
 
 type CreateNewTaskResponse struct {

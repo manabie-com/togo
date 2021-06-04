@@ -4,7 +4,6 @@ import (
 	"os"
 
 	internal "github.com/manabie-com/togo/internal"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {

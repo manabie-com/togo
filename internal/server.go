@@ -7,39 +7,31 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
 	services "github.com/manabie-com/togo/internal/services"
 	"github.com/manabie-com/togo/internal/storages"
+	_ "github.com/mattn/go-sqlite3"
 )
 
-func NewSQLDataBaseFromDriver(driverName, dataSourceName string) *storages.LiteDBAdapter {
+func NewServer(driverName, dataSourceName, port, jwtSecret string) *http.Server {
 	db, err := sql.Open(driverName, dataSourceName)
 	if err != nil {
 		log.Fatal("error opening db", err)
 	}
 
+	as := &services.AuthService{JWTSecret: jwtSecret}
+	tds := &services.ToDoService{Auth: as}
+
 	switch driverName {
 	case "sqlite3":
-		return &storages.LiteDBAdapter{DB: db}
-	default:
-		log.Fatalf("Not supported SQL Driver:%s", driverName)
-		return &storages.LiteDBAdapter{}
+		as.Store = &storages.LiteDBAdapter{DB: db}
+		tds.Store = &storages.LiteDBAdapter{DB: db}
+	case "postgres":
+		as.Store = &storages.PGDBAdapter{DB: db}
+		tds.Store = &storages.PGDBAdapter{DB: db}
 	}
-}
-
-func NewServer(driverName, dataSourceName, port, jwtSecret string) *http.Server {
-	st := NewSQLDataBaseFromDriver(driverName, dataSourceName)
 
 	r := mux.NewRouter()
-
-	as := &services.AuthService{
-		JWTSecret: jwtSecret,
-		Store:     st,
-	}
-
-	tds := &services.ToDoService{
-		Store: st,
-		Auth:  as,
-	}
 
 	r.HandleFunc("/login", as.IssueJWTToken)
 	r.HandleFunc("/tasks", tds.ServeHTTP)
