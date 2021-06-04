@@ -20,8 +20,10 @@ type ToDoService struct {
 	Store  *sqllite.LiteDB
 }
 
+//ServeHTTP manage request from client
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	log.Println(req.Method, req.URL.Path)
+
 	resp.Header().Set("Access-Control-Allow-Origin", "*")
 	resp.Header().Set("Access-Control-Allow-Headers", "*")
 	resp.Header().Set("Access-Control-Allow-Methods", "*")
@@ -38,6 +40,7 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	case "/tasks":
 		var ok bool
 		req, ok = s.validToken(req)
+		//token does not exist or expired
 		if !ok {
 			resp.WriteHeader(http.StatusUnauthorized)
 			return
@@ -53,9 +56,12 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	}
 }
 
+//getAuthToken validate logging in user and create new token
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
 	id := value(req, "user_id")
-	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
+	pwd := value(req, "password")
+	//user does not exist
+	if !s.Store.ValidateUser(req.Context(), id, pwd) {
 		resp.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": "incorrect user_id/pwd",
@@ -64,20 +70,16 @@ func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 	}
 	resp.Header().Set("Content-Type", "application/json")
 
+	//get new token
 	token, err := s.createToken(id.String)
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
-	}
 
-	json.NewEncoder(resp).Encode(map[string]string{
+	jsonStr := map[string]interface{}{
 		"data": token,
-	})
+	}
+	handleResult(err, resp, jsonStr)
 }
 
+//listTasks list all logging in user's tasks
 func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	id, _ := userIDFromCtx(req.Context())
 	tasks, err := s.Store.RetrieveTasks(
@@ -91,23 +93,20 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 
 	resp.Header().Set("Content-Type", "application/json")
 
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
+	jsonStr := map[string]interface{}{
 		"data": tasks,
-	})
+	}
+	handleResult(err, resp, jsonStr)
 }
 
+//addTask assign new task to logging in user
 func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	t := &storages.Task{}
-	err := json.NewDecoder(req.Body).Decode(t)
+
 	defer req.Body.Close()
+
+	err := json.NewDecoder(req.Body).Decode(t)
+
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		return
@@ -122,19 +121,14 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-Type", "application/json")
 
 	err = s.Store.AddTask(req.Context(), t)
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
-	}
 
-	json.NewEncoder(resp).Encode(map[string]*storages.Task{
+	jsonStr := map[string]interface{}{
 		"data": t,
-	})
+	}
+	handleResult(err, resp, jsonStr)
 }
 
+//value get value value of specific key from request body
 func value(req *http.Request, p string) sql.NullString {
 	return sql.NullString{
 		String: req.FormValue(p),
@@ -142,6 +136,7 @@ func value(req *http.Request, p string) sql.NullString {
 	}
 }
 
+//createToken create new token
 func (s *ToDoService) createToken(id string) (string, error) {
 	atClaims := jwt.MapClaims{}
 	atClaims["user_id"] = id
@@ -185,4 +180,16 @@ func userIDFromCtx(ctx context.Context) (string, bool) {
 	v := ctx.Value(userAuthKey(0))
 	id, ok := v.(string)
 	return id, ok
+}
+
+func handleResult(err error, resp http.ResponseWriter, jsonStr map[string]interface{}) {
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	json.NewEncoder(resp).Encode(jsonStr)
 }
