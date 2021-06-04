@@ -36,9 +36,6 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	switch req.URL.Path {
-	case "/login":
-		as.IssueJWTToken(resp, req)
-		return
 	case "/tasks":
 		var ok bool
 		req, ok = as.ValidateToken(req)
