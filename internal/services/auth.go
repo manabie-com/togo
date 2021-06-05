@@ -29,10 +29,7 @@ func (as *AuthService) IssueJWTToken(resp http.ResponseWriter, req *http.Request
 
 	token, err := as.createToken(id.String)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
+		createErrorResponse(resp, err)
 		return
 	}
 
