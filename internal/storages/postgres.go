@@ -1,29 +1,26 @@
-package sqllite
+package storages
 
 import (
 	"context"
 	"database/sql"
-
-	"github.com/manabie-com/togo/internal/storages"
 )
 
-// LiteDB for working with sqllite
-type LiteDB struct {
+type PGDBAdapter struct {
 	DB *sql.DB
 }
 
 // RetrieveTasks returns tasks if match userID AND createDate.
-func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*storages.Task, error) {
+func (p *PGDBAdapter) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*Task, error) {
 	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`
-	rows, err := l.DB.QueryContext(ctx, stmt, userID, createdDate)
+	rows, err := p.DB.QueryContext(ctx, stmt, userID, createdDate)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var tasks []*storages.Task
+	var tasks []*Task
 	for rows.Next() {
-		t := &storages.Task{}
+		t := &Task{}
 		err := rows.Scan(&t.ID, &t.Content, &t.UserID, &t.CreatedDate)
 		if err != nil {
 			return nil, err
@@ -39,9 +36,9 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.Null
 }
 
 // AddTask adds a new task to DB
-func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
+func (p *PGDBAdapter) AddTask(ctx context.Context, t *Task) error {
 	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
-	_, err := l.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
+	_, err := p.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
 	if err != nil {
 		return err
 	}
@@ -50,14 +47,11 @@ func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
 }
 
 // ValidateUser returns tasks if match userID AND password
-func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
+func (p *PGDBAdapter) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
 	stmt := `SELECT id FROM users WHERE id = ? AND password = ?`
-	row := l.DB.QueryRowContext(ctx, stmt, userID, pwd)
-	u := &storages.User{}
+	row := p.DB.QueryRowContext(ctx, stmt, userID, pwd)
+	u := &User{}
 	err := row.Scan(&u.ID)
-	if err != nil {
-		return false
-	}
 
-	return true
+	return err == nil
 }
