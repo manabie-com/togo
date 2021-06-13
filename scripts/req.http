@@ -1,0 +1,29 @@
+POST http://localhost:5050/login
+Accept: application/json
+Content-Type: application/json
+
+{
+  "username": "firstUser",
+  "password": "example"
+}
+
+> {%
+ client.global.set("auth_token", response.body.access_token);
+%}
+
+###
+GET http://localhost:5050/tasks?created_date=2021-06-12
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+###
+
+POST http://localhost:5050/tasks
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "content" : "another content"
+}
+
+###
