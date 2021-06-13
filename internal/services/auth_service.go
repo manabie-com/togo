@@ -3,11 +3,9 @@ package services
 import (
 	"context"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/model"
+	"github.com/manabie-com/togo/internal/storages"
 	"github.com/manabie-com/togo/internal/storages/ent"
-	"github.com/manabie-com/togo/internal/storages/ent/user"
-	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 )
@@ -19,19 +17,18 @@ type AuthService interface {
 }
 
 type authServiceImpl struct {
-	jwtKey string
-	client *ent.Client
+	jwtKey         string
+	userRepository storages.UserRepository
 }
 
-func NewAuthService(jwtKey string, client *ent.Client) AuthService {
+func NewAuthService(jwtKey string, taskRepository storages.UserRepository) AuthService {
 
-	auth := &authServiceImpl{jwtKey: jwtKey, client: client}
-	auth.initDb()
+	auth := &authServiceImpl{jwtKey: jwtKey, userRepository: taskRepository}
 	return auth
 }
 
 func (a *authServiceImpl) Login(ctx context.Context, credential model.LoginCredential) (*model.AccessToken, error) {
-	foundUser, err := a.client.User.Query().Where(user.UsernameEQ(credential.UserName)).Only(ctx)
+	foundUser, err := a.userRepository.FindByUsername(ctx, credential.UserName)
 	if err != nil {
 		return nil, err
 	}
@@ -56,29 +53,9 @@ func (a *authServiceImpl) Login(ctx context.Context, credential model.LoginCrede
 
 func (a *authServiceImpl) CreateUser(ctx context.Context, username string, pwd string) (*ent.User, error) {
 	cipherPwd, err := bcrypt.GenerateFromPassword([]byte(pwd), bcrypt.DefaultCost)
-
-	u, err := a.client.User.
-		Create().
-		SetUserID(uuid.NewString()).
-		SetUsername(username).
-		SetPassword(string(cipherPwd)).
-		Save(ctx)
-	return u, err
-}
-
-func (a *authServiceImpl) initDb() {
-	ctx := context.Background()
-	if err := a.client.Schema.Create(ctx); err != nil {
-		log.Fatalf("failed creating schema resources: %v", err)
+	if err != nil {
+		return nil, err
 	}
 
-	_, err := a.CreateUser(ctx, "firstUser", "example")
-	if err == nil {
-		log.Info("created default user")
-	} else {
-		//TODO: check user already existed
-		log.WithFields(log.Fields{
-			"error": err,
-		}).Info("could not create default user")
-	}
+	return a.userRepository.CreateUser(ctx, username, string(cipherPwd))
 }

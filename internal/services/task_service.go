@@ -2,11 +2,8 @@ package services
 
 import (
 	"context"
-	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/model"
-	"github.com/manabie-com/togo/internal/storages/ent"
-	"github.com/manabie-com/togo/internal/storages/ent/task"
-	"github.com/manabie-com/togo/internal/storages/ent/user"
+	"github.com/manabie-com/togo/internal/storages"
 	"time"
 )
 
@@ -17,32 +14,30 @@ type TaskService interface {
 }
 
 type taskServiceImpl struct {
-	client *ent.Client
+	taskRepository storages.TaskRepository
+	userRepository storages.UserRepository
 }
 
-func NewTaskService(client *ent.Client) TaskService {
-	return &taskServiceImpl{client: client}
+func NewTaskService(taskRepository storages.TaskRepository, userRepository storages.UserRepository) *taskServiceImpl {
+	return &taskServiceImpl{taskRepository: taskRepository, userRepository: userRepository}
 }
 
 func (t *taskServiceImpl) CreateTask(ctx context.Context, req model.TaskCreationRequest) (*model.Task, error) {
 	userId := ctx.Value("userId").(string)
 
-	owner, err := t.client.User.Query().Where(user.UserIDEQ(userId)).Only(ctx)
+	owner, err := t.userRepository.FindByUserId(ctx, userId)
 	if err != nil {
 		return nil, err
 	}
-
-	foundTask, err := t.client.Task.Create().
-		SetTaskID(uuid.NewString()).
-		SetContent(req.Content).SetOwner(owner).Save(ctx)
+	newTask, err := t.taskRepository.CreateTask(ctx, req.Content, owner)
 	if err != nil {
 		return nil, err
 	}
 
 	return &model.Task{
-		TaskID:      foundTask.TaskID,
-		Content:     foundTask.Content,
-		CreatedDate: foundTask.CreatedDate,
+		TaskID:      newTask.TaskID,
+		Content:     newTask.Content,
+		CreatedDate: newTask.CreatedDate,
 		UserID:      userId,
 	}, nil
 }
@@ -51,7 +46,7 @@ func (t *taskServiceImpl) GetTaskByDate(ctx context.Context, queryDate time.Time
 	userId := ctx.Value("userId").(string)
 	nextDate := queryDate.Add(time.Hour * 24)
 
-	tasks, err := t.client.Task.Query().Where(task.HasOwnerWith(user.UserIDEQ(userId)), task.CreatedDateGTE(queryDate), task.CreatedDateLT(nextDate)).All(ctx)
+	tasks, err := t.taskRepository.GetTaskByDate(ctx, userId, queryDate, nextDate)
 	if err != nil {
 		return nil, err
 	}

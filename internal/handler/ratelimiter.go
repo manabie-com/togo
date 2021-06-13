@@ -27,7 +27,8 @@ func NewRateLimiter(pool *redis.Pool) func(next http.Handler) http.Handler {
 				_, _ = conn.Do("EXPIRE", userId, 24*60*60) //1 days
 				w.Header().Set(XRateLimit, "1")
 			} else {
-				if val > maxTodo {
+				limit := val + 1
+				if limit > maxTodo {
 					log.WithFields(log.Fields{
 						"userId": userId,
 					}).Info("max rate limiting Reached,")
@@ -35,7 +36,6 @@ func NewRateLimiter(pool *redis.Pool) func(next http.Handler) http.Handler {
 					writeJsonRes(w, 429, errors.New("max rate limiting reached, please try after some time"))
 					return
 				}
-				limit := val + 1
 				_, _ = conn.Do("SET", userId, limit)
 				w.Header().Set(XRateLimit, strconv.Itoa(limit))
 

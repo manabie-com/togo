@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/manabie-com/togo/internal/model"
 	"github.com/manabie-com/togo/internal/services"
+	"github.com/manabie-com/togo/internal/storages"
 	"github.com/manabie-com/togo/internal/storages/ent"
 	log "github.com/sirupsen/logrus"
 	"net/http"
@@ -28,10 +29,15 @@ type apiHandlerImpl struct {
 }
 
 func NewApiHandler(jwtKey string, client *ent.Client) ApiHandler {
+	taskRepository := storages.NewTaskRepository(client)
+	userRepository := storages.NewUserRepository(client)
+
+	userRepository.InitDb()
+
 	return &apiHandlerImpl{
 		jwtKey:      jwtKey,
-		authService: services.NewAuthService(jwtKey, client),
-		todoService: services.NewTaskService(client),
+		authService: services.NewAuthService(jwtKey, userRepository),
+		todoService: services.NewTaskService(taskRepository, userRepository),
 	}
 }
 
