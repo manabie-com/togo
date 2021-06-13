@@ -128,7 +128,7 @@ Hope you enjoy!!!
 * Write simple test case for `service` layer
 * Refine header authorization, error header
 * Encrypt password
-* Change from using SQLite to Postgres with docker-compose. I also refactor table `user`, `task` and use ORM with `ent`
+* Change from using `SQLite` to `Postgres` with `docker-compose`. I also refactor table `user`, `task` and use ORM with `ent`
 * Refactor API `/login`
 * Use `chi` for http server and use authentication interceptor
 * Add tracing with jaeger
@@ -143,4 +143,4 @@ Hope you enjoy!!!
 * Support health check, graceful shutdown
 * We will encode/decode request/response base on http header (`Content-Type`, `Accept`)
 * Make configurable configuration. We will move config parameter (jwt key...) to file config or env depend on which environment we will deploy this app.
-* Make Database provider configurable, so we can `postgresql` to `mysql` or `sqlite` without difficulty or effort.
+* Make Database provider configurable, so we can replace `postgresql` to `mysql` or `sqlite` without difficulty or effort.
