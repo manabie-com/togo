@@ -10,21 +10,21 @@ import (
 	"time"
 )
 
-type ToDoService interface {
+type TaskService interface {
 	CreateTask(ctx context.Context, req model.TaskCreationRequest) (*model.Task, error)
 
 	GetTaskByDate(ctx context.Context, queryDate time.Time) (*[]model.Task, error)
 }
 
-type toDoServiceImpl struct {
+type taskServiceImpl struct {
 	client *ent.Client
 }
 
-func NewToDoService(client *ent.Client) ToDoService {
-	return &toDoServiceImpl{client: client}
+func NewTaskService(client *ent.Client) TaskService {
+	return &taskServiceImpl{client: client}
 }
 
-func (t *toDoServiceImpl) CreateTask(ctx context.Context, req model.TaskCreationRequest) (*model.Task, error) {
+func (t *taskServiceImpl) CreateTask(ctx context.Context, req model.TaskCreationRequest) (*model.Task, error) {
 	userId := ctx.Value("userId").(string)
 
 	owner, err := t.client.User.Query().Where(user.UserIDEQ(userId)).Only(ctx)
@@ -47,7 +47,7 @@ func (t *toDoServiceImpl) CreateTask(ctx context.Context, req model.TaskCreation
 	}, nil
 }
 
-func (t *toDoServiceImpl) GetTaskByDate(ctx context.Context, queryDate time.Time) (*[]model.Task, error) {
+func (t *taskServiceImpl) GetTaskByDate(ctx context.Context, queryDate time.Time) (*[]model.Task, error) {
 	userId := ctx.Value("userId").(string)
 	nextDate := queryDate.Add(time.Hour * 24)
 

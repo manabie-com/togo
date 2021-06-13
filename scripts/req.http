@@ -8,7 +8,7 @@ Content-Type: application/json
 }
 
 > {%
- client.global.set("auth_token", response.body.access_token);
+  client.global.set("auth_token", response.body.access_token);
 %}
 
 ###

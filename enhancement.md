@@ -3,6 +3,7 @@
 ## Implement business logic
 
 Add limit n task per day.
+
 ## Refine project structure
 
 We will use project structure from https://github.com/golang-standards/project-layout
@@ -29,17 +30,19 @@ Save with encrypted password
 
 ## Refactor table users
 
-* We will add `username` to this table and then we will login with `username` and `password`. The `id` will generated random when user created .
+* We will add `username` to this table and then we will login with `username` and `password`. The `id` will generated
+  random when user created .
 * Replace created_date from string to timestamp
 
 ## Refactor api login
 
-* Sensitive data should not be sent via a HTTP "GET", should always be sent via POST. 
+* Sensitive data should not be sent via a HTTP "GET", should always be sent via POST.
 * Request data should be sent via body.
 
-## Add new way return error 
+## Add new way return error
 
-Currently, we return error throw http body 
+Currently, we return error throw http body
+
 ````go
 json.NewEncoder(resp).Encode(map[string]string{
 "error": err.Error(),
@@ -49,16 +52,18 @@ json.NewEncoder(resp).Encode(map[string]string{
 I refer http header rather than http body
 
 ## Add ORM
- 
+
 We will add `ent` or `gorm`, so we can use other database.
+
+## Auto retry database connection
 
 ## Apply DI
 
 apply dependency injection
 
-## Use other http server 
+## Use other http server
 
-I don't like `switch case` when handle http request. I think, we will add `chi` or `gin`... 
+I don't like `switch case` when handle http request. I think, we will add `chi` or `gin`...
 
 ## Add log
 

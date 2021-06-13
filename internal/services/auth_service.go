@@ -42,6 +42,8 @@ func (a *authServiceImpl) Login(ctx context.Context, credential model.LoginCrede
 
 	atClaims := jwt.MapClaims{}
 	atClaims["user_id"] = foundUser.UserID
+	atClaims["max_todo"] = foundUser.MaxTodo
+
 	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	token, err := at.SignedString([]byte(a.jwtKey))
