@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	//sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 	"log"
 	"net/http"
 	"time"
@@ -11,13 +12,14 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/storages"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	//sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	postgres "github.com/manabie-com/togo/internal/storages/postgres"
 )
 
 // ToDoService implement HTTP server
 type ToDoService struct {
 	JWTKey string
-	Store  *sqllite.LiteDB
+	Store  *postgres.PG
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
@@ -40,6 +42,9 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		req, ok = s.validToken(req)
 		if !ok {
 			resp.WriteHeader(http.StatusUnauthorized)
+			json.NewEncoder(resp).Encode(map[string]string{
+				"error": "valid token",
+			})
 			return
 		}
 
@@ -54,17 +59,18 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
-	id := value(req, "user_id")
-	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
+	userId := value(req, "user_id")
+	pwd := value(req, "password")
+	if !s.Store.ValidateUser(req.Context(), userId, pwd) {
 		resp.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "incorrect user_id/pwd",
+			"error": "incorrect user_id/password",
 		})
 		return
 	}
 	resp.Header().Set("Content-Type", "application/json")
 
-	token, err := s.createToken(id.String)
+	token, err := s.createToken(userId.String)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
@@ -98,7 +104,6 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 		})
 		return
 	}
-
 	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
 		"data": tasks,
 	})
@@ -113,14 +118,20 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	now := time.Now()
+	CreatedDate := time.Now().Format("2006-01-02")
 	userID, _ := userIDFromCtx(req.Context())
 	t.ID = uuid.New().String()
 	t.UserID = userID
-	t.CreatedDate = now.Format("2006-01-02")
+	t.CreatedDate = CreatedDate
 
 	resp.Header().Set("Content-Type", "application/json")
-
+	max_todo := s.Store.GetMaxTodoUser(req.Context(), userID)
+	if s.Store.CheckAddTask(req.Context(), userID, max_todo, CreatedDate) {
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": "Max Tasks",
+		})
+		return
+	}
 	err = s.Store.AddTask(req.Context(), t)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
@@ -156,7 +167,6 @@ func (s *ToDoService) createToken(id string) (string, error) {
 
 func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
 	token := req.Header.Get("Authorization")
-
 	claims := make(jwt.MapClaims)
 	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
 		return []byte(s.JWTKey), nil
