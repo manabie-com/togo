@@ -1,0 +1,22 @@
+version: '3.1'
+
+services:
+
+  postgresql:
+    image: postgres:12.2
+    restart: on-failure
+    environment:
+      POSTGRES_USER: ad
+      POSTGRES_PASSWORD: pwd
+      POSTGRES_DB: myapp
+    ports:
+      - 5432:5432
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "6831:6831/udp"
+      - "16686:16686"
+    networks:
+      - jaeger-example
+networks:
+  jaeger-example:

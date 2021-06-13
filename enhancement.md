@@ -3,6 +3,9 @@
 ## Implement business logic
 
 Add limit n task per day.
+## Refine project structure
+
+We will use project structure from https://github.com/golang-standards/project-layout
 
 ## Refine Authorization
 

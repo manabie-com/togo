@@ -1,4 +1,4 @@
-GET http://localhost:5050/login?user_id=firstUser&password=examplef
+GET http://localhost:5050/login?user_id=firstUser&password=example
 Accept: application/json
 
 
