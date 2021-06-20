@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=task
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  java:
+    image: openjdk:16-oraclelinux7
+    volumes:
+      - ../target:/usr/src/task
+      - ./config:/usr/src/task/config
+    depends_on:
+      db:
+        condition: service_healthy
+    working_dir: /usr/src/task
+    command: java -jar task-0.0.1-SNAPSHOT.jar --spring.config.location=/usr/src/task/config/application.properties
+    ports:
+      - "8080:8080"

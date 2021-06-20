@@ -1,0 +1,59 @@
+### Register
+POST http://localhost:8080/user/register
+Content-Type: application/json
+
+{"username": "tester1", "password": "password1"}
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 202, "Response status is not 202");
+});
+%}
+
+###
+### Login and take token
+POST http://localhost:8080/user/login
+Content-Type: application/json
+
+{"username": "tester1", "password": "password1"}
+
+> {%
+
+client.test("Response content-type is json", function() {
+  var type = response.contentType.mimeType;
+  client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+  client.assert(response.status === 200, "Response status is not 200");
+});
+client.global.set("auth_token", response.body.token);
+%}
+
+###
+### Create task, using token in previous step
+POST http://localhost:8080/task/add
+Content-Type: application/json
+Authorization: {{auth_token}}
+
+{"content": "task 2"}
+> {%
+
+client.test("Response content-type is json", function() {
+  var type = response.contentType.mimeType;
+  client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+  client.assert(response.status === 202, "Response status is not 202");
+});
+%}
+
+###
+### List created task for verifying, using token in previous step
+GET http://localhost:8080/task/list
+Content-Type: application/json
+Authorization: {{auth_token}}
+
+> {%
+
+client.test("Response content-type is json", function() {
+  var type = response.contentType.mimeType;
+  client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
