@@ -6,6 +6,9 @@ type Task struct {
 	Content     string `json:"content"`
 	UserID      string `json:"user_id"`
 	CreatedDate string `json:"created_date"`
+	UpdatedDate string `json:"updated_date"`
+	CreatedBy   string `json:"created_by"`
+	UpdatedBy   string `json:"updated_by"`
 }
 
 // User reflects users data from DB

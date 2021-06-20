@@ -1,18 +1,18 @@
 package services
 
 import (
-	"context"
 	"database/sql"
 	"encoding/json"
-	"log"
 	"net/http"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/storages"
 	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	"github.com/manabie-com/togo/internal/utils"
 )
+
+var dailyTaskLimit int
 
 // ToDoService implement HTTP server
 type ToDoService struct {
@@ -20,75 +20,18 @@ type ToDoService struct {
 	Store  *sqllite.LiteDB
 }
 
-func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
-	log.Println(req.Method, req.URL.Path)
-	resp.Header().Set("Access-Control-Allow-Origin", "*")
-	resp.Header().Set("Access-Control-Allow-Headers", "*")
-	resp.Header().Set("Access-Control-Allow-Methods", "*")
-
-	if req.Method == http.MethodOptions {
-		resp.WriteHeader(http.StatusOK)
-		return
-	}
-
-	switch req.URL.Path {
-	case "/login":
-		s.getAuthToken(resp, req)
-		return
-	case "/tasks":
-		var ok bool
-		req, ok = s.validToken(req)
-		if !ok {
-			resp.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-
-		switch req.Method {
-		case http.MethodGet:
-			s.listTasks(resp, req)
-		case http.MethodPost:
-			s.addTask(resp, req)
-		}
-		return
-	}
+func init() {
+	dailyTaskLimit = 1
 }
 
-func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
-	id := value(req, "user_id")
-	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
-		resp.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "incorrect user_id/pwd",
-		})
-		return
-	}
-	resp.Header().Set("Content-Type", "application/json")
-
-	token, err := s.createToken(id.String)
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	json.NewEncoder(resp).Encode(map[string]string{
-		"data": token,
-	})
-}
-
-func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
-	id, _ := userIDFromCtx(req.Context())
-	tasks, err := s.Store.RetrieveTasks(
-		req.Context(),
+func (s *ToDoService) listTasksByUser(resp http.ResponseWriter, req *http.Request) {
+	id, _ := UserIDFromCtx(req.Context())
+	tasks, err := s.Store.RetrieveTasks(req.Context(),
 		sql.NullString{
 			String: id,
 			Valid:  true,
 		},
-		value(req, "created_date"),
-	)
-
+		utils.Value(req, "created_date"))
 	resp.Header().Set("Content-Type", "application/json")
 
 	if err != nil {
@@ -105,19 +48,39 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
+	id, _ := UserIDFromCtx(req.Context())
+	now := time.Now().Format("2006-01-02")
+	tasks, err1 := s.Store.RetrieveTasks1(req.Context(), id, now)
+
+	if len(tasks) >= dailyTaskLimit {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": "Daily task limit exceeded!",
+		})
+		return
+	}
+
+	if err1 != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err1.Error(),
+		})
+		return
+	}
+
 	t := &storages.Task{}
 	err := json.NewDecoder(req.Body).Decode(t)
 	defer req.Body.Close()
+
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	now := time.Now()
-	userID, _ := userIDFromCtx(req.Context())
+	userID, _ := UserIDFromCtx(req.Context())
 	t.ID = uuid.New().String()
 	t.UserID = userID
-	t.CreatedDate = now.Format("2006-01-02")
+	t.CreatedDate = now
 
 	resp.Header().Set("Content-Type", "application/json")
 
@@ -135,54 +98,91 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	})
 }
 
-func value(req *http.Request, p string) sql.NullString {
-	return sql.NullString{
-		String: req.FormValue(p),
-		Valid:  true,
-	}
-}
+func (s *ToDoService) listAllTasks(resp http.ResponseWriter, req *http.Request) {
+	tasks, err := s.Store.GetListTasks(req.Context())
 
-func (s *ToDoService) createToken(id string) (string, error) {
-	atClaims := jwt.MapClaims{}
-	atClaims["user_id"] = id
-	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
-	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
-	token, err := at.SignedString([]byte(s.JWTKey))
+	resp.Header().Set("Content-Type", "application/json")
+
 	if err != nil {
-		return "", err
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
 	}
-	return token, nil
-}
 
-func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
-	token := req.Header.Get("Authorization")
-
-	claims := make(jwt.MapClaims)
-	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
-		return []byte(s.JWTKey), nil
+	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
+		"data": tasks,
 	})
-	if err != nil {
-		log.Println(err)
-		return req, false
-	}
-
-	if !t.Valid {
-		return req, false
-	}
-
-	id, ok := claims["user_id"].(string)
-	if !ok {
-		return req, false
-	}
-
-	req = req.WithContext(context.WithValue(req.Context(), userAuthKey(0), id))
-	return req, true
 }
 
-type userAuthKey int8
+func (s *ToDoService) updateTask(resp http.ResponseWriter, req *http.Request) {
+	taskId := req.FormValue("task_id")
+	t := &storages.Task{}
+	t.ID = taskId
+	err := json.NewDecoder(req.Body).Decode(t)
+	defer req.Body.Close()
 
-func userIDFromCtx(ctx context.Context) (string, bool) {
-	v := ctx.Value(userAuthKey(0))
-	id, ok := v.(string)
-	return id, ok
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	now := time.Now().Format("2006-01-02")
+
+	userID, _ := UserIDFromCtx(req.Context())
+	t.UpdatedBy = userID
+	t.UpdatedDate = now
+
+	resp.Header().Set("Content-Type", "application/json")
+
+	err = s.Store.UpdateTask(req.Context(), t)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	json.NewEncoder(resp).Encode(map[string]*storages.Task{
+		"data": t,
+	})
+	resp.Header().Set("Content-Type", "application/json")
+}
+
+func (s *ToDoService) deleteTask(resp http.ResponseWriter, req *http.Request) {
+	taskId := req.FormValue("task_id")
+	err := s.Store.DeleteTask(req.Context(), taskId)
+
+	resp.Header().Set("Content-Type", "application/json")
+
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	json.NewEncoder(resp).Encode(map[string]string{
+		"message": "Task deleted successfully",
+	})
+}
+
+func (s *ToDoService) getTaskById(resp http.ResponseWriter, req *http.Request) {
+	taskId := req.FormValue("task_id")
+	tasks, err := s.Store.GetTaskById(req.Context(), taskId)
+	resp.Header().Set("Content-Type", "application/json")
+
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
+		"data": tasks,
+	})
 }
