@@ -1,0 +1,27 @@
+### Register
+POST http://localhost:8080/user/register
+Content-Type: application/json
+
+{"username": "tester1", "password": "password1"}
+
+###
+### Login and take token
+POST http://localhost:8080/user/login
+Content-Type: application/json
+
+{"username": "tester1", "password": "password1"}
+
+###
+## Create task, using token in previous step
+POST http://localhost:8080/task/add
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0ZXIxIiwiZXhwIjoxNjI0MTg5Njg1fQ.uPj82YuZtn-U62WKWiDtYBVVv9UmvOn7LDRtNl-NXL2GolZUFlLC56hb-f6DeWv8ZBQx-szhFNVY4IgELgFBIA
+
+{"content": "task 2"}
+
+###
+### List created task for verifying, using token in previous step
+GET http://localhost:8080/task/list
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0ZXIxIiwiZXhwIjoxNjI0MTg5ODgxfQ.8fWBQYxenobDjEbyFHTROUdgrGw0W2Q1hRMnCK-TnTPC9tKCiQ484V8_zjQ-aUQyXkUG8Uk8oI1-MG2VaLxOdw
+
