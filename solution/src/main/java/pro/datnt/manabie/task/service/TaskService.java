@@ -1,6 +1,9 @@
 package pro.datnt.manabie.task.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.PermissionDeniedDataAccessException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 import pro.datnt.manabie.task.model.TaskDBO;
 import pro.datnt.manabie.task.model.UserDBO;
@@ -19,7 +22,7 @@ public class TaskService {
         UserDBO userDBO = userRepository.getOne(userId);
         Integer totalTask = taskRepository.countTask(userId);
         if (totalTask >= userDBO.getMaxTodo()) {
-            throw new IllegalArgumentException("User dont have permission to create task");
+            throw new AccessDeniedException("User dont have permission to create task");
         }
         TaskDBO taskDBO = new TaskDBO();
         taskDBO.setContent(content);

@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.MockMvc;
 import pro.datnt.manabie.task.model.TaskDBO;
 import pro.datnt.manabie.task.service.TaskService;
@@ -63,6 +64,17 @@ class TaskControllerTest {
                 .header("Authorization", "token")
             .content("{\"content\": \"task 1\"}"))
                 .andExpect(status().isAccepted());
+        verify(taskService).createTask("task 1", 99L);
+    }
+
+    @Test
+    void createTaskReachLimitation() throws Exception {
+        when(taskService.createTask("task 1", 99L)).thenThrow(new AccessDeniedException("Cant add more"));
+        mockMvc.perform(post("/task/add")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "token")
+                .content("{\"content\": \"task 1\"}"))
+                .andExpect(status().isUnprocessableEntity());
         verify(taskService).createTask("task 1", 99L);
     }
 }

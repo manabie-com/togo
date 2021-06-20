@@ -11,13 +11,14 @@ import pro.datnt.manabie.task.properties.AuthenticationProperties;
 @SpringBootApplication
 @EnableConfigurationProperties({AuthenticationProperties.class})
 public class TaskApplication {
-    @Bean
-    public PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
-    }
 
     public static void main(String[] args) {
         SpringApplication.run(TaskApplication.class, args);
+    }
+
+    @Bean
+    public PasswordEncoder encoder() {
+        return new BCryptPasswordEncoder();
     }
 
 }
