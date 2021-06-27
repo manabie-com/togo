@@ -1,20 +1,21 @@
 package routers
 
 import (
-	"encoding/json"
+	"github.com/manabie-com/togo/internal/config"
 	"github.com/manabie-com/togo/internal/delivery/rest"
-	"github.com/manabie-com/togo/internal/utils"
 	"log"
 	"net/http"
 )
 
 type Server struct {
 	Serializer *rest.Serializer
+	HTTP       config.HTTPConf
 }
 
-func NewServer(serializer *rest.Serializer) *Server {
+func NewServer(serializer *rest.Serializer, http config.HTTPConf) *Server {
 	return &Server{
 		Serializer: serializer,
+		HTTP: http,
 	}
 }
 
@@ -34,15 +35,8 @@ func (s *Server) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		s.Serializer.GetAuthToken(resp, req)
 		return
 	case "/tasks":
-		var ok bool
-		req, ok = s.Serializer.ValidToken(req)
-		if !ok {
-			resp.WriteHeader(http.StatusUnauthorized)
-			json.NewEncoder(resp).Encode(
-				utils.BuildErrorResponseRequest(&utils.Meta{
-					Code:    http.StatusUnauthorized,
-					Message: "Unauthorized",
-				}))
+		req, valid := s.Serializer.ValidToken(resp, req)
+		if !valid {
 			return
 		}
 		switch req.Method {
@@ -56,5 +50,5 @@ func (s *Server) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (s *Server) Run() {
-	http.ListenAndServe(":5050", s )
+	http.ListenAndServe(s.HTTP.Addr, s)
 }

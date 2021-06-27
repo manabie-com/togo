@@ -2,6 +2,7 @@ package utils
 
 const (
 	SuccessRequestMessage = "success"
+	UnauthorizedRequestMessage = "Unauthorized"
 )
 
 type Meta struct {

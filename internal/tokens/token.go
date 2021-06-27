@@ -3,6 +3,7 @@ package tokens
 import (
 	"errors"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/manabie-com/togo/internal/utils/constants"
 	"time"
 )
 
@@ -41,7 +42,7 @@ func (t *TokenManager) GetAuthToken(userID, password string) (string, error) {
 
 func (t *TokenManager) createToken(id string) (string, error) {
 	atClaims := jwt.MapClaims{}
-	atClaims["user_id"] = id
+	atClaims[constants.UserIDKey] = id
 	atClaims["exp"] = time.Now().Add(time.Minute * tokenExpiredTimeInMin).Unix()
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	token, err := at.SignedString([]byte(t.JWT))
@@ -64,7 +65,7 @@ func (t *TokenManager) ValidToken(token string) (userID string, valid bool) {
 		return "", false
 	}
 
-	id, ok := claims["user_id"].(string)
+	id, ok := claims[constants.UserIDKey].(string)
 	if !ok {
 		return "", false
 	}

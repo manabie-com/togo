@@ -2,20 +2,22 @@ package clients
 
 import (
 	"github.com/avast/retry-go"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"time"
-	"gorm.io/driver/postgres"
 )
 
 type PSQLConfig struct {
-	DSN                   string `envconfig:"POSTGRES_DSN" required:"true"`
-	ConnMaxLifeTimeSecond int64  `envconfig:"POSTGRES_CONN_MAX_LIFE_TIME_SECOND" default:"300"`
+	DSN                   string `envconfig:"POSTGRES_DSN" required:"true" default:"host=localhost user=togo password=ad34a$dg dbname=manabie_togo port=5432 sslmode=disable"`
+	ConnMaxLifeTimeSecond int64  `default:"300"`
+	ConnMaxIdleTime       int    `default:"10"`
+	MaxOpenConns          int    `default:"100"`
 }
 
 func InitPSQLDB(cfg PSQLConfig) (*gorm.DB, error) {
 	const (
-		maxAttempts   = 10
-		delaySeconds  = 6
+		maxAttempts  = 10
+		delaySeconds = 6
 	)
 	var gormDB *gorm.DB
 	err := retry.Do(
@@ -39,5 +41,12 @@ func InitPSQLDB(cfg PSQLConfig) (*gorm.DB, error) {
 	if cfg.ConnMaxLifeTimeSecond > 0 {
 		sqlDB.SetConnMaxLifetime(time.Duration(cfg.ConnMaxLifeTimeSecond) * time.Second)
 	}
+	if cfg.ConnMaxIdleTime > 0 {
+		sqlDB.SetConnMaxIdleTime(time.Duration(cfg.ConnMaxLifeTimeSecond) * time.Second)
+	}
+	if cfg.MaxOpenConns > 0 {
+		sqlDB.SetMaxOpenConns(cfg.MaxOpenConns)
+	}
+
 	return gormDB, nil
 }
