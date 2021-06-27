@@ -8,7 +8,7 @@ import (
 )
 
 type PSQLConfig struct {
-	DSN                   string `envconfig:"POSTGRES_DSN" required:"true" default:"host=localhost user=togo password=ad34a$dg dbname=manabie_togo port=5432 sslmode=disable"`
+	DSN                   string `envconfig:"POSTGRES_DSN" required:"true" default:"host=localhost user=togo password=ad34a$dg dbname=manabie_togo port=5432 sslmode=disable timezone=UTC"`
 	ConnMaxLifeTimeSecond int64  `default:"300"`
 	ConnMaxIdleTime       int    `default:"10"`
 	MaxOpenConns          int    `default:"100"`

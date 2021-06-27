@@ -15,27 +15,30 @@ func (Task) TableName() string {
 	return TasksTableName
 }
 
+type TaskRepo interface {
+	AddTask(task *Task) (*Task, error)
+	ListTask(userID, createdAt string) (*[]Task, error)
+}
 
-type TaskRepo struct {
+type TaskRepoImpl struct {
 	db *gorm.DB
 }
 
-func NewTaskRepo(db *gorm.DB) *TaskRepo {
-	return &TaskRepo{
+func NewTaskRepo(db *gorm.DB) *TaskRepoImpl {
+	return &TaskRepoImpl{
 		db: db,
 	}
 }
 
-func (t *TaskRepo) AddTask(task *Task) (*Task, error) {
+func (t *TaskRepoImpl) AddTask(task *Task) (*Task, error) {
 	if err := t.db.Create(&task).Error; err != nil {
 		return nil, err
 	}
 	return task, nil
 }
 
-func (t *TaskRepo) ListTask(userID, createdAt string) (*[]Task, error) {
+func (t *TaskRepoImpl) ListTask(userID, createdAt string) (*[]Task, error) {
 	var tasks []Task
-	// TODO Add Preload
 	err := t.db.Where(fmt.Sprintf("%s = ? AND date(%s) = ?", fieldTaskUserIDName, fieldCreatedAtName), userID, createdAt).Find(&tasks).Error
 
 	if err != nil {

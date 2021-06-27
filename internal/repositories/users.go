@@ -1,35 +1,49 @@
 package repositories
 
 import (
+	"fmt"
 	"gorm.io/gorm"
 )
 
 const (
-	UsersTableName = "users"
+	usersTableName = "users"
 	fieldUserIDName = "id"
-
+	fieldPasswordName = "password"
 )
 
 func (User) TableName() string {
-	return UsersTableName
+	return usersTableName
 }
 
-
-type UserRepo struct {
+type UserRepoImpl struct {
 	db *gorm.DB
 }
 
-func NewUserRepo(db *gorm.DB) *UserRepo {
-	return &UserRepo{
+func NewUserRepo(db *gorm.DB) *UserRepoImpl {
+	return &UserRepoImpl{
 		db: db,
 	}
 }
 
-func (u *UserRepo) ValidateUser(userID, password string) bool {
+type UserRepo interface {
+	ValidateUser(userID, password string) bool
+	GetMaxToDoOfUser(userID string) (int, error)
+}
+
+func (u *UserRepoImpl) ValidateUser(userID, password string) bool {
 	var user  User
-	err := u.db.Where("id = ? and password = ?", userID, password).First(&user).Error
+	err := u.db.Where(fmt.Sprintf("%s = ? and %s = ?",fieldUserIDName, fieldPasswordName), userID, password).First(&user).Error
 	if err != nil {
 		return false
 	}
 	return true
+}
+
+func (u *UserRepoImpl) GetMaxToDoOfUser(userID string) (int, error) {
+	var user User
+	err := u.db.Where(fmt.Sprintf("%s = ?", fieldUserIDName), userID).First(&user).Error
+	if err != nil {
+		return 0, err
+	}
+	return user.MaxTodo, nil
 }

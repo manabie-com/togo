@@ -6,11 +6,14 @@ import (
 	"github.com/manabie-com/togo/internal/pkgs/clients"
 )
 
-
 type Config struct {
 	DB clients.PSQLConfig
 	HTTP HTTPConf
-
+	Redis clients.RedisConf
+	Token Token
+}
+type Token struct {
+	JWT string `envconfig:"JWT_TOKEN" default:"wqGyEBBfPK9w3Lxw"`
 }
 
 type HTTPConf struct {

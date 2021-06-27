@@ -8,10 +8,8 @@ import (
 	"github.com/manabie-com/togo/internal/routers"
 	"github.com/manabie-com/togo/internal/services"
 	"github.com/manabie-com/togo/internal/tokens"
-	"go.uber.org/zap"
-	"log"
-
 	_ "github.com/mattn/go-sqlite3"
+	"go.uber.org/zap"
 )
 
 func init() {
@@ -29,21 +27,26 @@ func main() {
 	if err != nil {
 		zap.L().Panic("load config error", zap.Error(err))
 	}
-	//dbConf := clients.PSQLConfig{
-	//	DSN: "host=localhost user=togo password=ad34a$dg dbname=manabie_togo port=5432 sslmode=disable",
-	//}
 	db, err := clients.InitPSQLDB(conf.DB)
 	if err != nil {
-		log.Fatal("error opening db", err)
+		zap.L().Panic("connecting to db error", zap.Error(err))
 	}
 
+	cacheClient, err := clients.InitRedisClient(conf.Redis)
+	if err != nil {
+		zap.L().Panic("connecting to redis error", zap.Error(err))
+	}
+
+	defer cacheClient.Close()
 
 
 	taskService := repositories.NewTaskRepo(db)
 	userService := repositories.NewUserRepo(db)
-	tokenService := tokens.NewTokenManager("wqGyEBBfPK9w3Lxw", userService)
+	tokenService := tokens.NewTokenManager(conf.Token.JWT, userService)
+	cachingService := repositories.NewCacheManager(cacheClient)
 
-	todoService := services.NewToDoService(taskService, tokenService)
+
+	todoService := services.NewToDoService(taskService, userService, tokenService, cachingService)
 	serializer := rest.NewSerializer(todoService)
 
 	server := routers.NewServer(serializer, conf.HTTP)

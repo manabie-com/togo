@@ -3,15 +3,13 @@ package rest
 import (
 	"context"
 	"encoding/json"
-	"github.com/manabie-com/togo/internal/utils"
-	"github.com/manabie-com/togo/internal/utils/constants"
 	"go.uber.org/zap"
 	"net/http"
+
+	"github.com/manabie-com/togo/internal/utils"
+	"github.com/manabie-com/togo/internal/utils/constants"
 )
 
-const (
-
-)
 
 func (s *Serializer) GetAuthToken(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-Type", "application/json")
@@ -20,7 +18,7 @@ func (s *Serializer) GetAuthToken(resp http.ResponseWriter, req *http.Request) {
 
 	token, err := s.TodoService.GetAuthToken(userID, password)
 	if err != nil {
-		zap.L().Error("get token Error.", zap.Error(err))
+		zap.L().Error("get token error.", zap.Error(err))
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(
 			utils.BuildErrorResponseRequest(&utils.Meta{
@@ -45,6 +43,7 @@ func (s *Serializer) ValidToken(resp http.ResponseWriter, req *http.Request) (*h
 	token := req.Header.Get(constants.AuthorizationHeader)
 	userID, valid := s.TodoService.ValidToken(token)
 	if !valid {
+		zap.L().Error("token is invalid.")
 		resp.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(resp).Encode(
 			utils.BuildErrorResponseRequest(&utils.Meta{
