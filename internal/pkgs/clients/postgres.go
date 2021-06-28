@@ -9,9 +9,9 @@ import (
 
 type PSQLConfig struct {
 	DSN                   string `envconfig:"POSTGRES_DSN" required:"true" default:"host=localhost user=togo password=ad34a$dg dbname=manabie_togo port=5432 sslmode=disable timezone=UTC"`
-	ConnMaxLifeTimeSecond int64  `default:"300"`
-	ConnMaxIdleTime       int    `default:"10"`
-	MaxOpenConns          int    `default:"100"`
+	ConnMaxLifeTimeSecond int64  `envconfig:"POSTGRES_CONN_MAX_LIFE_TIME_SECOND" default:"300"`
+	ConnMaxIdleTime       int    `envconfig:"POSTGRES_CONN_MAX_IDLE_TIME_SECOND" default:"10"`
+	MaxOpenConns          int    `envconfig:"POSTGRES_MAX_OPEN_CONN" default:"100"`
 }
 
 func InitPSQLDB(cfg PSQLConfig) (*gorm.DB, error) {

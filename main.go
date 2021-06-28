@@ -8,7 +8,6 @@ import (
 	"github.com/manabie-com/togo/internal/routers"
 	"github.com/manabie-com/togo/internal/services"
 	"github.com/manabie-com/togo/internal/tokens"
-	_ "github.com/mattn/go-sqlite3"
 	"go.uber.org/zap"
 )
 

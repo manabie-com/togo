@@ -9,10 +9,10 @@ CREATE TABLE IF NOT EXISTS users (
 INSERT INTO users (id, password, max_todo) VALUES('firstUser', 'example', 5);
 
 CREATE TABLE IF NOT EXISTS tasks (
-	id VARCHAR(255) NOT NULL,
-	content VARCHAR(255) NOT NULL,
-	user_id VARCHAR(255) NOT NULL,
+    id VARCHAR(255) NOT NULL,
+    content VARCHAR(255) NOT NULL,
+    user_id VARCHAR(255) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT tasks_PK PRIMARY KEY (id),
-	CONSTRAINT tasks_FK FOREIGN KEY (user_id) REFERENCES users(id)
+    CONSTRAINT tasks_FK FOREIGN KEY (user_id) REFERENCES users(id)
 );
