@@ -125,9 +125,19 @@ https://github.com/swdream/togo/blob/feature/THANHNT-Todo-Service-submission/int
 
 #### Run service
 
-- `go run main.go`
-- Import Postman collection from docs to check requested. I updated something.
+- Run with env variables are exported in bash `env.sh` file
+https://github.com/swdream/togo/blob/feature/THANHNT-Todo-Service-submission/env.sh .
+Edit this file to suit your environment. 
 
+```
+source env.sh
+go run main.go
+```
+Note:
+- You can run go run `go run main.go` only as I set default value for all variable.
+- Don't push `env.sh` file to github when developing actual service.  
+
+- Import Postman collection from docs to check requested. I updated something.
 
 #### what is missing, what else you want to improve but don't have enough time? 
 
@@ -135,6 +145,7 @@ https://github.com/swdream/togo/blob/feature/THANHNT-Todo-Service-submission/int
 - Format Logger
 - Format Response of Request
 - Validate Request data/params
-- Unittest: I just write some test case for `success` and `failed` scenarios. It is not too detail
+- Handle Sigterm to make sure all requests will be handled when service killed suddenly.
+- Unittest: I just wrote some testcase for `success` and `failed` scenarios. It is not too detail
  and I used `https://github.com/vektra/mockery` for  mocking.
 - We can expose more APIs to manage user (create/update, list ...) and manage tasks.

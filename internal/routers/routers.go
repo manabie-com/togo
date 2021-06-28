@@ -1,8 +1,10 @@
 package routers
 
 import (
+	"fmt"
 	"github.com/manabie-com/togo/internal/config"
 	"github.com/manabie-com/togo/internal/delivery/rest"
+	"go.uber.org/zap"
 	"log"
 	"net/http"
 )
@@ -50,5 +52,6 @@ func (s *Server) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (s *Server) Run() {
+	zap.L().Info(fmt.Sprintf("HTTP server is running %s ...", s.HTTP.Addr))
 	http.ListenAndServe(s.HTTP.Addr, s)
 }
