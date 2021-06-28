@@ -10,6 +10,7 @@ require (
 	github.com/google/uuid v1.1.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/mattn/go-sqlite3 v1.14.0
+	github.com/stretchr/testify v1.7.0
 	github.com/vektra/mockery v1.1.2 // indirect
 	go.opentelemetry.io/otel/internal/metric v0.21.0 // indirect
 	go.uber.org/zap v1.13.0

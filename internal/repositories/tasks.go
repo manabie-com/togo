@@ -17,7 +17,7 @@ func (Task) TableName() string {
 
 type TaskRepo interface {
 	AddTask(task *Task) (*Task, error)
-	ListTask(userID, createdAt string) (*[]Task, error)
+	ListTasks(userID, createdAt string) (*[]Task, error)
 }
 
 type TaskRepoImpl struct {
@@ -37,7 +37,7 @@ func (t *TaskRepoImpl) AddTask(task *Task) (*Task, error) {
 	return task, nil
 }
 
-func (t *TaskRepoImpl) ListTask(userID, createdAt string) (*[]Task, error) {
+func (t *TaskRepoImpl) ListTasks(userID, createdAt string) (*[]Task, error) {
 	var tasks []Task
 	err := t.db.Where(fmt.Sprintf("%s = ? AND date(%s) = ?", fieldTaskUserIDName, fieldCreatedAtName), userID, createdAt).Find(&tasks).Error
 

@@ -39,7 +39,6 @@ func main() {
 
 	defer cacheClient.Close()
 
-
 	taskService := repositories.NewTaskRepo(db)
 	userService := repositories.NewUserRepo(db)
 	tokenService := tokens.NewTokenManager(conf.Token.JWT, userService)

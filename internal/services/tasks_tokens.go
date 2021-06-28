@@ -42,7 +42,7 @@ func NewToDoService(taskRepo repositories.TaskRepo, userRepo repositories.UserRe
 
 
 func (s *ToDoServiceImpl) ListTasks(userID, createdAt string) (*[]repositories.Task, error) {
-	return s.TaskRepo.ListTask(userID, createdAt)
+	return s.TaskRepo.ListTasks(userID, createdAt)
 }
 
 func (s *ToDoServiceImpl) AddTask(userID string, task *repositories.Task) (*repositories.Task, error) {
@@ -69,7 +69,7 @@ func (s *ToDoServiceImpl) AddTask(userID string, task *repositories.Task) (*repo
 		}
 
 		if counter >= maxToDo {
-			return nil, errors.New("exceed the limited times to add task")
+			return nil, errors.New("exceed the limited times to add task per day")
 		}
 		err = s.CachingRepo.Increase(cachedAddTaskTimesKey, noChangeExpiredTime)
 		if err != nil {
