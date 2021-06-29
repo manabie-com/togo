@@ -1,26 +1,53 @@
 package main
 
 import (
-	"database/sql"
-	"log"
-	"net/http"
-
+	"github.com/manabie-com/togo/internal/config"
+	"github.com/manabie-com/togo/internal/delivery/rest"
+	"github.com/manabie-com/togo/internal/pkgs/clients"
+	"github.com/manabie-com/togo/internal/repositories"
+	"github.com/manabie-com/togo/internal/routers"
 	"github.com/manabie-com/togo/internal/services"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
-
-	_ "github.com/mattn/go-sqlite3"
+	"github.com/manabie-com/togo/internal/tokens"
+	"go.uber.org/zap"
 )
 
-func main() {
-	db, err := sql.Open("sqlite3", "./data.db")
+func init() {
+	logger, err := zap.NewProduction()
 	if err != nil {
-		log.Fatal("error opening db", err)
+		panic(err)
+	}
+	zap.ReplaceGlobals(logger)
+	defer logger.Sync()
+
+}
+
+func main() {
+	conf, err := config.Load()
+	if err != nil {
+		zap.L().Panic("load config error", zap.Error(err))
+	}
+	db, err := clients.InitPSQLDB(conf.DB)
+	if err != nil {
+		zap.L().Panic("connecting to db error", zap.Error(err))
 	}
 
-	http.ListenAndServe(":5050", &services.ToDoService{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
-			DB: db,
-		},
-	})
+	cacheClient, err := clients.InitRedisClient(conf.Redis)
+	if err != nil {
+		zap.L().Panic("connecting to redis error", zap.Error(err))
+	}
+
+	defer cacheClient.Close()
+
+	taskService := repositories.NewTaskRepo(db)
+	userService := repositories.NewUserRepo(db)
+	tokenService := tokens.NewTokenManager(conf.Token.JWT, userService)
+	cachingService := repositories.NewCacheManager(cacheClient)
+
+
+	todoService := services.NewToDoService(taskService, userService, tokenService, cachingService)
+	serializer := rest.NewSerializer(todoService)
+
+	server := routers.NewServer(serializer, conf.HTTP)
+
+	server.Run()
 }

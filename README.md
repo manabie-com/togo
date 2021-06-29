@@ -13,7 +13,7 @@ Right now a user can add many task as they want, we want ability to limit N task
 Example: users are limited to create only 5 task only per day, if the daily limit is reached, return 4xx code to client and ignore the create request.
 #### Backend requirements
 - A nice README on how to run, what is missing, what else you want to improve but don't have enough time
-- Fork this repo and show us your development progess by a PR.
+- Fork this repo and show us your development progress by a PR.
 - Write integration tests for this project
 - Make this code DRY
 - Write unit test for `services` layer
