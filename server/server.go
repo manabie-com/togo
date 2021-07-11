@@ -1,13 +1,13 @@
 package server
 
 import (
-	context "context"
-	fmt "fmt"
-	http "net/http"
-	os "os"
-	signal "os/signal"
-	syscall "syscall"
-	time "time"
+	"context"
+	"fmt"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 )
 
 func NewConfig(httpPort int) Config {
