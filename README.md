@@ -1,5 +1,5 @@
 ### Overview
-This is a simple backend for a good old todo service, right now this service can handle login/list/create simple tasks.  
+This is a simple backend for a good old task service, right now this service can handle login/list/create simple tasks.  
 To make it run:
 - `go run main.go`
 - Import Postman collection from `docs` to check example
@@ -34,11 +34,11 @@ Example: users are limited to create only 5 task only per day, if the daily limi
 CREATE TABLE users (
 	id TEXT NOT NULL,
 	password TEXT NOT NULL,
-	max_todo INTEGER DEFAULT 5 NOT NULL,
+	max_task INTEGER DEFAULT 5 NOT NULL,
 	CONSTRAINT users_PK PRIMARY KEY (id)
 );
 
-INSERT INTO users (id, password, max_todo) VALUES('firstUser', 'example', 5);
+INSERT INTO users (id, password, max_task) VALUES('firstUser', '$2a$14$BdgOuNVBU7sdGW9rIDIIv.MWXDdvTVKyTppb3qW03bmvz/6hhA1FO', 5);
 
 -- tasks definition
 

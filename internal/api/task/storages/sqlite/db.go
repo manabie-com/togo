@@ -3,8 +3,8 @@ package sqllite
 import (
 	"context"
 	"database/sql"
-
-	"github.com/manabie-com/togo/internal/storages"
+	"github.com/manabie-com/togo/internal/api/task/storages"
+	"github.com/manabie-com/togo/internal/api/utils"
 )
 
 // LiteDB for working with sqllite
@@ -13,9 +13,21 @@ type LiteDB struct {
 }
 
 // RetrieveTasks returns tasks if match userID AND createDate.
-func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*storages.Task, error) {
-	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`
-	rows, err := l.DB.QueryContext(ctx, stmt, userID, createdDate)
+func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate string, page, limit int) ([]*storages.Task, error) {
+
+	limit, offset := utils.GetLimitOffsetFormPageNumber(page, limit)
+
+	userIDSQL := sql.NullString{
+		String: userID,
+		Valid:  true,
+	}
+	createdDateSql := sql.NullString{
+		String: createdDate,
+		Valid:  true,
+	}
+
+	query := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = $1 AND created_date = $2 LIMIT $3 OFFSET $4`
+	rows, err := l.DB.QueryContext(ctx, query, userIDSQL, createdDateSql, limit, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -47,17 +59,4 @@ func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
 	}
 
 	return nil
-}
-
-// ValidateUser returns tasks if match userID AND password
-func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
-	stmt := `SELECT id FROM users WHERE id = ? AND password = ?`
-	row := l.DB.QueryRowContext(ctx, stmt, userID, pwd)
-	u := &storages.User{}
-	err := row.Scan(&u.ID)
-	if err != nil {
-		return false
-	}
-
-	return true
 }

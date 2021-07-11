@@ -1,0 +1,17 @@
+version: '3.3'
+
+services:
+  db:
+    container_name: mb_postgres
+    image: postgres:13.3
+    environment:
+      POSTGRES_DB: 'togo'
+      POSTGRES_USER: 'user'
+      POSTGRES_PASSWORD: 'password'
+    ports:
+      - '5432:5432'
+    volumes:
+      - db:/var/lib/postgres
+
+volumes:
+  db:

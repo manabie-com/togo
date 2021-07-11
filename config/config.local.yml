@@ -1,0 +1,15 @@
+restful_api:
+  host: "localhost"
+  port: "5050"
+store: "sqlite"
+dbs:
+  sqlite:
+    data_source_name: "./data.db"
+  postgres:
+    host: "localhost"
+    port: "5432"
+    database: "togo"
+    username: "user"
+    password: "password"
+jwt_key: "wqGyEBBfPK9w3Lxw"
+ss_expire: 15m
