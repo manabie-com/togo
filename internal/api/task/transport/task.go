@@ -1,8 +1,10 @@
 package transport
 
 import (
+	"encoding/json"
 	"errors"
 	"github.com/manabie-com/togo/internal/api/dictionary"
+	"github.com/manabie-com/togo/internal/api/task/storages"
 	"github.com/manabie-com/togo/internal/api/task/usecase"
 	"github.com/manabie-com/togo/internal/api/utils"
 	"github.com/manabie-com/togo/internal/pkg/token"
@@ -60,5 +62,36 @@ func (t *Task) List(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (t *Task) Add(resp http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
 
+	task := &storages.Task{}
+	err := json.NewDecoder(req.Body).Decode(task)
+	if err != nil {
+		utils.WriteJSON(ctx, resp, http.StatusBadRequest, nil, err)
+		return
+	}
+
+	valErr := utils.ValidateRequest(task)
+	if valErr != nil {
+		utils.WriteJSON(ctx, resp, http.StatusBadRequest, nil, valErr)
+		return
+	}
+
+	userID, err := utils.GetValueFromCtx(ctx, token.UserIDField)
+	if err != nil {
+		utils.WriteJSON(ctx, resp, http.StatusInternalServerError, nil, err)
+		return
+	}
+
+	task, err = t.TaskUC.Add(ctx, userID, task)
+	if err != nil {
+		if err == errors.New(dictionary.UserReachTaskLimit) {
+			utils.WriteJSON(ctx, resp, http.StatusForbidden, nil, err)
+			return
+		}
+		utils.WriteJSON(ctx, resp, http.StatusInternalServerError, nil, err)
+		return
+	}
+
+	utils.WriteJSON(ctx, resp, http.StatusOK, task, nil)
 }

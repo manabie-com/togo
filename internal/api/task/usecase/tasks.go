@@ -2,20 +2,17 @@ package usecase
 
 import (
 	"context"
-	"database/sql"
-	"encoding/json"
 	"errors"
 	"github.com/manabie-com/togo/internal/api/dictionary"
 	"github.com/manabie-com/togo/internal/api/task/storages"
+	userStorages "github.com/manabie-com/togo/internal/api/user/storages"
+	"github.com/manabie-com/togo/internal/api/utils"
 	"github.com/manabie-com/togo/internal/pkg/logger"
-	"net/http"
-	"time"
-
-	"github.com/google/uuid"
 )
 
 type Task struct {
-	Store storages.Store
+	Store     storages.Store
+	UserStore userStorages.Store
 }
 
 func (s *Task) List(ctx context.Context, userID, createdDate string, page, limit int) ([]*storages.Task, error) {
@@ -28,48 +25,32 @@ func (s *Task) List(ctx context.Context, userID, createdDate string, page, limit
 	return tasks, nil
 }
 
-func (s *Task) Add(resp http.ResponseWriter, req *http.Request) {
-	t := &storages.Task{}
-	err := json.NewDecoder(req.Body).Decode(t)
-	defer req.Body.Close()
+func (s *Task) Add(ctx context.Context, userID string, task *storages.Task) (*storages.Task, error) {
+	now := utils.GetTimeNowWithDefaultLayoutInString()
+
+	user, err := s.UserStore.Get(ctx, userID)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		return
+		logger.MBError(ctx, err)
+		return nil, errors.New(dictionary.FailedToGetUser)
 	}
 
-	now := time.Now()
-	userID, _ := userIDFromCtx(req.Context())
-	t.ID = uuid.New().String()
-	t.UserID = userID
-	t.CreatedDate = now.Format("2006-01-02")
-
-	resp.Header().Set("Content-Type", "application/json")
-
-	err = s.Store.AddTask(req.Context(), t)
+	tasks, err := s.List(ctx, userID, now, 0, user.MaxTodo+1)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
+		return nil, err
 	}
 
-	json.NewEncoder(resp).Encode(map[string]*storages.Task{
-		"data": t,
-	})
-}
-
-func value(req *http.Request, p string) sql.NullString {
-	return sql.NullString{
-		String: req.FormValue(p),
-		Valid:  true,
+	if len(tasks) >= user.MaxTodo {
+		return nil, errors.New(dictionary.UserReachTaskLimit)
 	}
-}
 
-type userAuthKey int8
+	task.UserID = userID
+	task.ID = utils.GenerateNewUUID()
+	task.CreatedDate = now
 
-func userIDFromCtx(ctx context.Context) (string, bool) {
-	v := ctx.Value(userAuthKey(0))
-	id, ok := v.(string)
-	return id, ok
+	if err = s.Store.AddTask(ctx, task); err != nil {
+		logger.MBErrorln(ctx, err)
+		return nil, errors.New(dictionary.StoreTaskFailed)
+	}
+
+	return task, nil
 }

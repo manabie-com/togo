@@ -12,7 +12,7 @@ type PostgresDB struct {
 }
 
 // ValidateUser returns tasks if match userID AND password
-func (l *PostgresDB) ValidateUser(ctx context.Context, userID string) (*storages.User, error) {
+func (l *PostgresDB) Get(ctx context.Context, userID string) (*storages.User, error) {
 	id := sql.NullString{
 		String: userID,
 		Valid:  true,

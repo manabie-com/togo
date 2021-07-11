@@ -12,7 +12,7 @@ type LiteDB struct {
 }
 
 // ValidateUser returns tasks if match userID AND password
-func (l *LiteDB) ValidateUser(ctx context.Context, userID string) (*storages.User, error) {
+func (l *LiteDB) Get(ctx context.Context, userID string) (*storages.User, error) {
 	id := sql.NullString{
 		String: userID,
 		Valid:  true,

@@ -84,7 +84,8 @@ func CreateTransport(cfg *config.Config) (*UserTransport.User, *TaskTransport.Ta
 		Store: userStore,
 	}
 	taskUC := taskUseCase.Task{
-		Store: taskStore,
+		Store:     taskStore,
+		UserStore: userStore,
 	}
 
 	return &UserTransport.User{

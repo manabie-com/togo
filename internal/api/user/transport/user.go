@@ -18,12 +18,14 @@ type User struct {
 }
 
 func (s *User) Login(resp http.ResponseWriter, req *http.Request) {
-	user := &storages.User{}
-
-	err := json.NewDecoder(req.Body).Decode(user)
-	defer req.Body.Close()
-
 	ctx := req.Context()
+
+	user := &storages.User{}
+	err := json.NewDecoder(req.Body).Decode(user)
+	if err != nil {
+		utils.WriteJSON(ctx, resp, http.StatusBadRequest, nil, err)
+		return
+	}
 
 	valErr := utils.ValidateRequest(user)
 	if valErr != nil {

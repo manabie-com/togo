@@ -10,4 +10,7 @@ var (
 	CreatedDateRequestEmpty     = "created_date is empty"
 	DateRequestEmptyIsNotValid  = "created_date is not valid"
 	FailedGetRetrieveTasks      = "failed get retrieve tasks"
+	FailedToGetUser             = "failed to get user"
+	UserReachTaskLimit          = "user reach task limit per day"
+	StoreTaskFailed             = "store task failed"
 )

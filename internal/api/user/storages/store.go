@@ -5,5 +5,5 @@ import (
 )
 
 type Store interface {
-	ValidateUser(ctx context.Context, userID string) (*User, error)
+	Get(ctx context.Context, userID string) (*User, error)
 }

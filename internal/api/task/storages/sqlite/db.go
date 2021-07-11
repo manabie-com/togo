@@ -52,11 +52,9 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate string, 
 
 // AddTask adds a new task to DB
 func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
-	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
-	_, err := l.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
-	if err != nil {
+	query := `INSERT INTO tasks (id, content, user_id, created_date) VALUES ($1, $2, $3, $4)`
+	if _, err := l.DB.ExecContext(ctx, query, &t.ID, &t.Content, &t.UserID, &t.CreatedDate); err != nil {
 		return err
 	}
-
 	return nil
 }

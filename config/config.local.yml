@@ -1,7 +1,7 @@
 restful_api:
   host: "localhost"
   port: "5050"
-store: "sqlite"
+store: "postgres"
 dbs:
   sqlite:
     data_source_name: "./data.db"
