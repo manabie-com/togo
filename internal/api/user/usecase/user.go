@@ -3,7 +3,6 @@ package usecase
 import (
 	"context"
 	"errors"
-	"github.com/manabie-com/togo/config"
 	"github.com/manabie-com/togo/internal/api/dictionary"
 	"github.com/manabie-com/togo/internal/api/user/storages"
 	"github.com/manabie-com/togo/internal/api/utils"
@@ -11,7 +10,6 @@ import (
 )
 
 type User struct {
-	Cfg   *config.Config
 	Store storages.Store
 }
 

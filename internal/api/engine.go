@@ -27,10 +27,10 @@ type ToDoHandler struct {
 }
 
 // CreateAPIEngine creates engine instance that serves API endpoints,
-func CreateAPIEngine(cfg *config.Config) error {
+func CreateAPIEngine(cfg *config.Config) (*http.Server, error) {
 	userTp, taskTp, err := CreateTransport(cfg)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	generator := createJWTGenerator(cfg)
@@ -42,7 +42,8 @@ func CreateAPIEngine(cfg *config.Config) error {
 	}
 
 	apiDomainString := fmt.Sprintf("%v:%v", cfg.RestfulAPI.Host, cfg.RestfulAPI.Port)
-	return http.ListenAndServe(apiDomainString, middleware.AddCors(middleware.ValidToken(&handler, cfg, generator)))
+	server := &http.Server{Addr: apiDomainString, Handler: middleware.AddCors(middleware.ValidToken(&handler, cfg, generator))}
+	return server, nil
 }
 
 func initSQLiteDB(cfg *config.Config) (*sql.DB, error) {
@@ -80,7 +81,6 @@ func CreateTransport(cfg *config.Config) (*UserTransport.User, *TaskTransport.Ta
 	}
 
 	userUC := userUseCase.User{
-		Cfg:   cfg,
 		Store: userStore,
 	}
 	taskUC := taskUseCase.Task{

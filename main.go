@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"github.com/manabie-com/togo/config"
@@ -8,6 +9,11 @@ import (
 	"github.com/manabie-com/togo/internal/pkg/logger"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
@@ -19,7 +25,28 @@ func main() {
 	state := flag.String("state", "local", "state of service")
 	mbLogger = logger.WithPrefix("main")
 	cfg := getConfig(*state)
-	initRestfulAPI(cfg)
+	var server *http.Server
+	go func() {
+		server = initRestfulAPI(cfg)
+		err := server.ListenAndServe()
+		if err != nil && err != http.ErrServerClosed {
+			mbLogger.Panicf("Fail to listen and server: %v", err)
+		}
+	}()
+
+	signals := make(chan os.Signal, 1)
+	signal.Notify(signals, os.Interrupt, syscall.SIGTERM, syscall.SIGHUP)
+	<-signals
+
+	mbLogger.Info("shutting server")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := server.Shutdown(ctx); err != nil {
+		mbLogger.Errorf("Fail to listen and server: %v", err)
+	}
+	mbLogger.Info("shutdown server")
+
 }
 
 func getConfig(state string) *config.Config {
@@ -38,11 +65,12 @@ func getConfig(state string) *config.Config {
 	return &cfg
 }
 
-func initRestfulAPI(cfg *config.Config) {
+func initRestfulAPI(cfg *config.Config) *http.Server {
 	mbLogger.Info("Start server")
-	err := api.CreateAPIEngine(cfg)
+	server, err := api.CreateAPIEngine(cfg)
 	if err != nil {
-		mbLogger.Panicf("Fail to listen and server: %v", err)
-		return
+		mbLogger.Panicf("Fail init server: %v", err)
+		return nil
 	}
+	return server
 }
