@@ -47,6 +47,6 @@ func Serve() {
 	log.Printf("Starting server... at port: %d", 5050)
 	err = s.Serve()
 	if err != nil {
-		log.Fatalf("Error serve servers cause by %w", err)
+		log.Fatalf("Error serve servers cause by %s", err.Error())
 	}
 }
