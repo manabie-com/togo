@@ -1,8 +1,2 @@
-export HTTP_PORT=8088
-export MYSQL_HOST=localhost
-export MYSQL_PORT=3307
-export MYSQL_DATABASE=product
-export MYSQL_USERNAME=root
-export MYSQL_PASSWORD=example
-export GIN_MODE=debug
-export NOTI_PROVIDER_TYPE=sms
+export HTTP_PORT=5050
+export JWT_KEY=wqGyEBBfPK9w3Lxw

@@ -29,6 +29,7 @@ func (s *taskHandler) List(resp http.ResponseWriter, req *http.Request) {
 	tasks, err := s.taskSvc.List(req.Context(), createDate)
 	if err != nil {
 		respondWithError(resp, http.StatusInternalServerError, err.Error())
+		return
 	}
 	respondWithJSON(resp, http.StatusOK, tasks)
 }
@@ -39,12 +40,16 @@ func (s *taskHandler) Create(resp http.ResponseWriter, req *http.Request) {
 		respondWithError(resp, http.StatusInternalServerError, err.Error())
 		return
 	}
-	task, err := s.taskSvc.Create(req.Context(), createTaskRequest.Content)
+	t, err := s.taskSvc.Create(req.Context(), createTaskRequest.Content)
 	if err != nil {
-		respondWithError(resp, http.StatusInternalServerError, err.Error())
+		httpStatus := http.StatusInternalServerError
+		if err == task.ErrReachedOutTaskTodoPerDay {
+			httpStatus = http.StatusTooManyRequests
+		}
+		respondWithError(resp, httpStatus, err.Error())
 		return
 	}
-	respondWithJSON(resp, http.StatusOK, task)
+	respondWithJSON(resp, http.StatusOK, t)
 }
 
 func getCreateTaskRequest(r *http.Request) (*CreateTaskRequest, error) {

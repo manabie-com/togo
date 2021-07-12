@@ -9,8 +9,9 @@ import (
 type TaskStorage interface {
 	RetrieveTasks(ctx context.Context, userID, createdDate string) ([]*entity.Task, error)
 	AddTask(ctx context.Context, task *entity.Task) error
+	GetNumberOfTasks(ctx context.Context, userID, date string) (int, error)
 }
 
 type UserStorage interface {
-	Find(ctx context.Context, userID, pw string) (*entity.User, error)
+	FindByID(ctx context.Context, userID string) (*entity.User, error)
 }

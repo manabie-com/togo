@@ -31,11 +31,11 @@ func (s *authHandler) Login(resp http.ResponseWriter, req *http.Request) {
 
 	token, err := s.authSvc.Login(req.Context(), userID, pwd)
 	if err != nil {
+		httpStatus := http.StatusInternalServerError
 		if err == auth.ErrWrongAccount {
-			respondWithError(resp, http.StatusUnprocessableEntity, err.Error())
-			return
+			httpStatus = http.StatusUnprocessableEntity
 		}
-		respondWithError(resp, http.StatusBadRequest, err.Error())
+		respondWithError(resp, httpStatus, err.Error())
 		return
 	}
 

@@ -18,13 +18,13 @@ func NewUserRepo(db *sql.DB) *userRepository {
 }
 
 // Find returns user if found.
-func (l *userRepository) Find(ctx context.Context, userID, pwd string) (*entity.User, error) {
-	stmt := `SELECT id FROM users WHERE id = ? AND password = ?`
-	row := l.db.QueryRowContext(ctx, stmt, userID, pwd)
+func (l *userRepository) FindByID(ctx context.Context, userID string) (*entity.User, error) {
+	stmt := `SELECT id, password, max_todo FROM users WHERE id = ?`
+	row := l.db.QueryRowContext(ctx, stmt, userID)
 	u := &entity.User{}
-	err := row.Scan(&u.ID)
+	err := row.Scan(&u.ID, &u.Password, &u.MaxTodoPerday)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}
-	return u, nil
+	return u, err
 }
