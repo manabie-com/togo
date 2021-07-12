@@ -251,6 +251,8 @@ func TestTask_Add(t *testing.T) {
 	taskStorage := mock.NewMockStore(ctrl)
 	userStorage := mock2.NewMockStore(ctrl)
 
+	timeNow := utils.GetTimeNowWithDefaultLayoutInString()
+
 	type fields struct {
 		Store     storages.Store
 		UserStore userStorages.Store
@@ -317,22 +319,22 @@ func TestTask_Add(t *testing.T) {
 					}, nil)
 			},
 			mockStoreList: func() {
-				taskStorage.EXPECT().RetrieveTasks(gomock.Any(), "test1", utils.GetTimeNowWithDefaultLayoutInString(), 0, 6).
+				taskStorage.EXPECT().RetrieveTasks(gomock.Any(), "test1", timeNow, 0, 6).
 					Return([]*storages.Task{{
 						ID:          "1",
 						Content:     "a",
 						UserID:      "test1",
-						CreatedDate: utils.GetTimeNowWithDefaultLayoutInString(),
+						CreatedDate: timeNow,
 					}, {
 						ID:          "2",
 						Content:     "b",
 						UserID:      "test1",
-						CreatedDate: utils.GetTimeNowWithDefaultLayoutInString(),
+						CreatedDate: timeNow,
 					}, {
 						ID:          "3",
 						Content:     "c",
 						UserID:      "test1",
-						CreatedDate: utils.GetTimeNowWithDefaultLayoutInString(),
+						CreatedDate: timeNow,
 					}}, nil)
 			},
 			mockStoreAdd: func() {
@@ -340,7 +342,7 @@ func TestTask_Add(t *testing.T) {
 					ID:          "id_test",
 					Content:     "",
 					UserID:      "test1",
-					CreatedDate: utils.GetTimeNowWithDefaultLayoutInString(),
+					CreatedDate: timeNow,
 				}).
 					Return(errors.New("storage got error"))
 			},
@@ -370,22 +372,22 @@ func TestTask_Add(t *testing.T) {
 					}, nil)
 			},
 			mockStoreList: func() {
-				taskStorage.EXPECT().RetrieveTasks(gomock.Any(), "test1", utils.GetTimeNowWithDefaultLayoutInString(), 0, 6).
+				taskStorage.EXPECT().RetrieveTasks(gomock.Any(), "test1", timeNow, 0, 6).
 					Return([]*storages.Task{{
 						ID:          "1",
 						Content:     "a",
 						UserID:      "test1",
-						CreatedDate: utils.GetTimeNowWithDefaultLayoutInString(),
+						CreatedDate: timeNow,
 					}, {
 						ID:          "2",
 						Content:     "b",
 						UserID:      "test1",
-						CreatedDate: utils.GetTimeNowWithDefaultLayoutInString(),
+						CreatedDate: timeNow,
 					}, {
 						ID:          "3",
 						Content:     "c",
 						UserID:      "test1",
-						CreatedDate: utils.GetTimeNowWithDefaultLayoutInString(),
+						CreatedDate: timeNow,
 					}}, nil)
 			},
 			mockStoreAdd: func() {
@@ -393,7 +395,7 @@ func TestTask_Add(t *testing.T) {
 					ID:          "id_test",
 					Content:     "",
 					UserID:      "test1",
-					CreatedDate: utils.GetTimeNowWithDefaultLayoutInString(),
+					CreatedDate: timeNow,
 				}).
 					Return(errors.New("storage got error"))
 			},
@@ -423,7 +425,7 @@ func TestTask_Add(t *testing.T) {
 					}, nil)
 			},
 			mockStoreList: func() {
-				taskStorage.EXPECT().RetrieveTasks(gomock.Any(), "test1", utils.GetTimeNowWithDefaultLayoutInString(), 0, 6).
+				taskStorage.EXPECT().RetrieveTasks(gomock.Any(), "test1", timeNow, 0, 6).
 					Return(nil, errors.New("storage got error"))
 			},
 			mockStoreAdd: nil,
@@ -453,32 +455,32 @@ func TestTask_Add(t *testing.T) {
 					}, nil)
 			},
 			mockStoreList: func() {
-				taskStorage.EXPECT().RetrieveTasks(gomock.Any(), "test1", utils.GetTimeNowWithDefaultLayoutInString(), 0, 6).
+				taskStorage.EXPECT().RetrieveTasks(gomock.Any(), "test1", timeNow, 0, 6).
 					Return([]*storages.Task{{
 						ID:          "1",
 						Content:     "a",
 						UserID:      "test1",
-						CreatedDate: utils.GetTimeNowWithDefaultLayoutInString(),
+						CreatedDate: timeNow,
 					}, {
 						ID:          "2",
 						Content:     "b",
 						UserID:      "test1",
-						CreatedDate: utils.GetTimeNowWithDefaultLayoutInString(),
+						CreatedDate: timeNow,
 					}, {
 						ID:          "3",
 						Content:     "c",
 						UserID:      "test1",
-						CreatedDate: utils.GetTimeNowWithDefaultLayoutInString(),
+						CreatedDate: timeNow,
 					}, {
 						ID:          "4",
 						Content:     "c",
 						UserID:      "test1",
-						CreatedDate: utils.GetTimeNowWithDefaultLayoutInString(),
+						CreatedDate: timeNow,
 					}, {
 						ID:          "5",
 						Content:     "c",
 						UserID:      "test1",
-						CreatedDate: utils.GetTimeNowWithDefaultLayoutInString(),
+						CreatedDate: timeNow,
 					}}, nil)
 			},
 			mockStoreAdd: nil,
@@ -508,27 +510,27 @@ func TestTask_Add(t *testing.T) {
 					}, nil)
 			},
 			mockStoreList: func() {
-				taskStorage.EXPECT().RetrieveTasks(gomock.Any(), "test1", utils.GetTimeNowWithDefaultLayoutInString(), 0, 6).
+				taskStorage.EXPECT().RetrieveTasks(gomock.Any(), "test1", timeNow, 0, 6).
 					Return([]*storages.Task{{
 						ID:          "1",
 						Content:     "a",
 						UserID:      "test1",
-						CreatedDate: utils.GetTimeNowWithDefaultLayoutInString(),
+						CreatedDate: timeNow,
 					}, {
 						ID:          "2",
 						Content:     "b",
 						UserID:      "test1",
-						CreatedDate: utils.GetTimeNowWithDefaultLayoutInString(),
+						CreatedDate: timeNow,
 					}, {
 						ID:          "3",
 						Content:     "c",
 						UserID:      "test1",
-						CreatedDate: utils.GetTimeNowWithDefaultLayoutInString(),
+						CreatedDate: timeNow,
 					}, {
 						ID:          "4",
 						Content:     "c",
 						UserID:      "test1",
-						CreatedDate: utils.GetTimeNowWithDefaultLayoutInString(),
+						CreatedDate: timeNow,
 					}}, nil)
 			},
 			mockStoreAdd: func() {
@@ -536,7 +538,7 @@ func TestTask_Add(t *testing.T) {
 					ID:          "id_test",
 					Content:     "abc",
 					UserID:      "test1",
-					CreatedDate: utils.GetTimeNowWithDefaultLayoutInString(),
+					CreatedDate: timeNow,
 				}).
 					Return(nil)
 			},
@@ -544,7 +546,7 @@ func TestTask_Add(t *testing.T) {
 				ID:          "id_test",
 				Content:     "abc",
 				UserID:      "test1",
-				CreatedDate: utils.GetTimeNowWithDefaultLayoutInString(),
+				CreatedDate: timeNow,
 			},
 			wantErr: false,
 		},
