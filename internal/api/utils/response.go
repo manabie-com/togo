@@ -8,6 +8,10 @@ import (
 	"net/http"
 )
 
+type CommonResponse struct {
+	Data interface{} `json:"data"`
+}
+
 // WriteJSON create response with data or error if exist
 func WriteJSON(ctx context.Context, rsp http.ResponseWriter, statusCode int, data interface{}, err error) {
 	rsp.Header().Set("Content-Type", "application/json")
@@ -22,9 +26,7 @@ func WriteJSON(ctx context.Context, rsp http.ResponseWriter, statusCode int, dat
 		return
 	}
 
-	if jsonErr := json.NewEncoder(rsp).Encode(map[string]interface{}{
-		"data": data,
-	}); jsonErr != nil {
+	if jsonErr := json.NewEncoder(rsp).Encode(CommonResponse{Data: data}); jsonErr != nil {
 		logger.MBErrorf(ctx, "%s: %s", dictionary.FailedToEncodeJSON, jsonErr)
 	}
 }

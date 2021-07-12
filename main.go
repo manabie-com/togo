@@ -3,12 +3,9 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"github.com/manabie-com/togo/config"
 	"github.com/manabie-com/togo/internal/api"
 	"github.com/manabie-com/togo/internal/pkg/logger"
-	"gopkg.in/yaml.v2"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"os/signal"
@@ -24,7 +21,10 @@ var mbLogger logger.Logger
 func main() {
 	state := flag.String("state", "local", "state of service")
 	mbLogger = logger.WithPrefix("main")
-	cfg := getConfig(*state)
+	cfg, err := config.Load(state)
+	if err != nil {
+		mbLogger.Panicln(err)
+	}
 	var server *http.Server
 	go func() {
 		server = initRestfulAPI(cfg)
@@ -46,23 +46,6 @@ func main() {
 		mbLogger.Errorf("Fail to listen and server: %v", err)
 	}
 	mbLogger.Info("shutdown server")
-
-}
-
-func getConfig(state string) *config.Config {
-	cfgPath := fmt.Sprintf("config/config.%v.yml", state)
-	f, err := ioutil.ReadFile(cfgPath)
-	if err != nil {
-		mbLogger.Panicf("Fail to open configurations file: %v", err)
-	}
-
-	var cfg config.Config
-	err = yaml.Unmarshal(f, &cfg)
-	if err != nil {
-		mbLogger.Panicf("Fail to decode configurations file: %v", err)
-	}
-	cfg.State = state
-	return &cfg
 }
 
 func initRestfulAPI(cfg *config.Config) *http.Server {
