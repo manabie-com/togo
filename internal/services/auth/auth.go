@@ -24,11 +24,11 @@ func NewAuthService(userStorage storages.UserStorage, jwtProvider jwtprovider.JW
 }
 
 func (s *service) Login(ctx context.Context, userID, pwd string) (string, error) {
-	user, err := s.userStorage.Find(ctx, userID, pwd)
+	user, err := s.userStorage.FindByID(ctx, userID)
 	if err != nil {
 		return "", err
 	}
-	if user == nil {
+	if user == nil || user.Password != pwd {
 		return "", ErrWrongAccount
 	}
 	return s.jwtProvider.GenerateToken(map[string]interface{}{
