@@ -11,8 +11,9 @@ import (
 )
 
 type Task struct {
-	Store     storages.Store
-	UserStore userStorages.Store
+	Store           storages.Store
+	UserStore       userStorages.Store
+	GeneratorUUIDFn utils.GenerateNewUUIDFn
 }
 
 func (s *Task) List(ctx context.Context, userID, createdDate string, page, limit int) ([]*storages.Task, error) {
@@ -44,7 +45,7 @@ func (s *Task) Add(ctx context.Context, userID string, task *storages.Task) (*st
 	}
 
 	task.UserID = userID
-	task.ID = utils.GenerateNewUUID()
+	task.ID = s.GeneratorUUIDFn()
 	task.CreatedDate = now
 
 	if err = s.Store.AddTask(ctx, task); err != nil {

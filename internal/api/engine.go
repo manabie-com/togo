@@ -16,6 +16,7 @@ import (
 	userSqlite "github.com/manabie-com/togo/internal/api/user/storages/sqlite"
 	UserTransport "github.com/manabie-com/togo/internal/api/user/transport"
 	userUseCase "github.com/manabie-com/togo/internal/api/user/usecase"
+	"github.com/manabie-com/togo/internal/api/utils"
 	"github.com/manabie-com/togo/internal/pkg/token/jwt"
 	"net/http"
 )
@@ -84,8 +85,9 @@ func CreateTransport(cfg *config.Config) (*UserTransport.User, *TaskTransport.Ta
 		Store: userStore,
 	}
 	taskUC := taskUseCase.Task{
-		Store:     taskStore,
-		UserStore: userStore,
+		Store:           taskStore,
+		UserStore:       userStore,
+		GeneratorUUIDFn: utils.GenerateNewUUID,
 	}
 
 	return &UserTransport.User{
