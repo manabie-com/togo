@@ -3,6 +3,7 @@ package integration
 import (
 	"encoding/json"
 	"fmt"
+	_ "github.com/lib/pq"
 	"github.com/manabie-com/togo/config"
 	"github.com/manabie-com/togo/internal/api"
 	"github.com/manabie-com/togo/internal/api/utils"
