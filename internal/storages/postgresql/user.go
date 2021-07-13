@@ -19,7 +19,7 @@ func NewUserRepo(db *sql.DB) *userRepository {
 
 // Find returns user if found.
 func (l *userRepository) FindByID(ctx context.Context, userID string) (*entity.User, error) {
-	stmt := `SELECT id, password, max_todo FROM users WHERE id = ?`
+	stmt := `SELECT id, password, max_todo FROM users WHERE id = $1`
 	row := l.db.QueryRowContext(ctx, stmt, userID)
 	u := &entity.User{}
 	err := row.Scan(&u.ID, &u.Password, &u.MaxTodoPerday)

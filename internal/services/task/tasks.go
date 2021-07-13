@@ -4,13 +4,13 @@ import (
 	"context"
 	"time"
 
+	storages "github.com/manabie-com/togo/internal"
 	"github.com/manabie-com/togo/internal/entity"
-	"github.com/manabie-com/togo/internal/storages"
 	"github.com/manabie-com/togo/pkg/customcontext"
 )
 
 var (
-	nowFunc           = time.Now
+	nowFunc    = time.Now
 	timeLayout = "2006-01-02"
 )
 
@@ -44,7 +44,7 @@ func (s *service) Create(ctx context.Context, content string) (*entity.Task, err
 	if err != nil {
 		return nil, err
 	}
-	if !reached {
+	if reached {
 		return nil, ErrReachedOutTaskTodoPerDay
 	}
 	t := &entity.Task{}
@@ -56,7 +56,10 @@ func (s *service) Create(ctx context.Context, content string) (*entity.Task, err
 func (s *service) reachedOutTaskTodoLimit(ctx context.Context, userID string) (bool, error) {
 
 	// should ignore error due to userID is passed from ctx after passing auth middleware.
-	user, _ := s.userStorage.FindByID(ctx, userID)
+	user, err := s.userStorage.FindByID(ctx, userID)
+	if err != nil {
+		return false, nil
+	}
 	if user == nil {
 		return false, NewUserNotExistedError(userID)
 	}
@@ -66,7 +69,7 @@ func (s *service) reachedOutTaskTodoLimit(ctx context.Context, userID string) (b
 	if err != nil {
 		return false, err
 	}
-	if nTaskCreated > user.MaxTodoPerday {
+	if nTaskCreated >= user.MaxTodoPerday {
 		return true, nil
 	}
 	return false, nil

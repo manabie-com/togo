@@ -27,7 +27,7 @@ func NewTaskRepo(db *sql.DB) *taskRepository {
 
 // RetrieveTasks returns tasks if match userID AND createDate.
 func (r *taskRepository) RetrieveTasks(ctx context.Context, userID, createdDate string) ([]*entity.Task, error) {
-	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`
+	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = $1 AND created_date = $2`
 	rows, err := r.db.QueryContext(ctx, stmt, userID, createdDate)
 	if err != nil {
 		return nil, err
@@ -56,7 +56,7 @@ func (r *taskRepository) AddTask(ctx context.Context, t *entity.Task) error {
 	now := nowFunc()
 	t.ID = idGeneratorFunc()
 	t.CreatedDate = now.Format("2006-01-02")
-	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
+	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES ($1, $2, $3, $4)`
 	_, err := r.db.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
 	if err != nil {
 		return err
@@ -68,7 +68,7 @@ func (r *taskRepository) AddTask(ctx context.Context, t *entity.Task) error {
 // GetNumberOfTasks returns number of task created of user at date
 // TODO: use cache couter to return
 func (r *taskRepository) GetNumberOfTasks(ctx context.Context, userID, date string) (int, error) {
-	stmt := `SELECT count(*) FROM tasks WHERE user_id = ? and created_date = ?`
+	stmt := `SELECT count(*) FROM tasks WHERE user_id = $1 and created_date = $2`
 	row := r.db.QueryRowContext(ctx, stmt, userID, date)
 	var count int
 	err := row.Scan(&count)
@@ -77,7 +77,3 @@ func (r *taskRepository) GetNumberOfTasks(ctx context.Context, userID, date stri
 	}
 	return count, nil
 }
-
-const (
-	prefixUserTaskCreated = "task_created_per_day:"
-)
