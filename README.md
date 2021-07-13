@@ -4,17 +4,6 @@
 * direnv: For manage and auto switch config on `.envrc` https://direnv.net/
 * go 1.16+ with enable module support
 
-You can install it by those command (not sure it can working properly)
-```
-## For macOS users
-$ make install-osx
-
-# for Linux user
-$ sudo echo this command to promp password
-$ make install-linux
-```
-
-
 ### Application Config
 
 * Set inside `.envrc`
