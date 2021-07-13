@@ -1,4 +1,4 @@
-package database
+package storages
 
 import (
 	"context"
@@ -7,18 +7,18 @@ import (
 	"github.com/manabie-com/togo/internal/entity"
 )
 
-type userRepository struct {
+type userStorage struct {
 	db *sql.DB
 }
 
-func NewUserRepo(db *sql.DB) *userRepository {
-	return &userRepository{
+func NewUserStorage(db *sql.DB) *userStorage {
+	return &userStorage{
 		db: db,
 	}
 }
 
 // Find returns user if found.
-func (l *userRepository) FindByID(ctx context.Context, userID string) (*entity.User, error) {
+func (l *userStorage) FindByID(ctx context.Context, userID string) (*entity.User, error) {
 	stmt := `SELECT id, password, max_todo FROM users WHERE id = $1`
 	row := l.db.QueryRowContext(ctx, stmt, userID)
 	u := &entity.User{}

@@ -11,7 +11,7 @@ import (
 	"github.com/manabie-com/togo/config"
 	"github.com/manabie-com/togo/internal/services/auth"
 	"github.com/manabie-com/togo/internal/services/task"
-	"github.com/manabie-com/togo/internal/storages/postgresql"
+	storages "github.com/manabie-com/togo/internal/storages/postgresql"
 	"github.com/manabie-com/togo/pkg/jwtprovider"
 	"github.com/manabie-com/togo/pkg/server"
 	"github.com/manabie-com/togo/server/handler"
@@ -23,8 +23,8 @@ func Serve() {
 	jwtProvider := jwtprovider.NewJWTProvider(config.JWT.Key, config.JWT.ExpiresIn)
 	db := getPostgresConnection(config.PostgreSQL)
 
-	userRepo := database.NewUserRepo(db)
-	taskRepo := database.NewTaskRepo(db)
+	userRepo := storages.NewUserStorage(db)
+	taskRepo := storages.NewTaskStorage(db)
 
 	authService := auth.NewAuthService(userRepo, jwtProvider)
 	taskService := task.NewTaskService(taskRepo, userRepo)
