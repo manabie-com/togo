@@ -1,52 +1,76 @@
 package server
 
 import (
-	"database/sql"
-	"log"
+	"context"
+	"fmt"
 	"net/http"
-
-	"github.com/gorilla/mux"
-
-	"github.com/manabie-com/togo/internal/services/auth"
-	"github.com/manabie-com/togo/internal/services/task"
-	"github.com/manabie-com/togo/internal/storages/database"
-	"github.com/manabie-com/togo/pkg/jwtprovider"
-	"github.com/manabie-com/togo/pkg/server/config"
-	"github.com/manabie-com/togo/pkg/server/handler"
-	"github.com/manabie-com/togo/pkg/server/middleware"
-	"github.com/manabie-com/togo/server"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 )
 
-func Serve() {
-
-	jwtProvider := jwtprovider.NewJWTProvider(config.JWTKey, config.JWTExpiresIn)
-	db, err := sql.Open("sqlite3", "./data.db")
-	if err != nil {
-		log.Fatal("error opening db", err)
+func NewConfig(httpPort int) Config {
+	return Config{
+		HTTP: ServerListen{
+			Host: "0.0.0.0",
+			Port: httpPort,
+		},
 	}
+}
 
-	userRepo := database.NewUserRepo(db)
-	taskRepo := database.NewTaskRepo(db)
+type Config struct {
+	HTTP ServerListen
+}
 
-	authService := auth.NewAuthService(userRepo, jwtProvider)
-	taskService := task.NewTaskService(taskRepo, userRepo)
+type ServerListen struct {
+	Host string
+	Port int
+}
 
-	taskHandler := handler.NewTaskHandler(taskService)
-	authHandler := handler.NewAuthHandler(authService)
+func (l ServerListen) String() string {
+	return fmt.Sprintf("%s:%d", l.Host, l.Port)
+}
 
-	authMiddleware := middleware.NewAuthMiddleware(jwtProvider)
+type Server struct {
+	cfg     Config
+	handler http.Handler
+}
 
-	router := mux.NewRouter()
+func NewServer(cfg Config) *Server {
+	return &Server{
+		cfg: cfg,
+	}
+}
 
-	router.HandleFunc("/login", authHandler.Login)
-	router.Handle("/tasks", authMiddleware.IsAuthorized(http.HandlerFunc(taskHandler.Create))).Methods(http.MethodPost)
-	router.Handle("/tasks", authMiddleware.IsAuthorized(http.HandlerFunc(taskHandler.List))).Methods(http.MethodGet)
+func (s *Server) Register(handler http.Handler) {
+	s.handler = handler
+}
 
-	s := server.NewServer(server.NewConfig(5050))
-	s.Register(router)
-	log.Printf("Starting server... at port: %d", 5050)
-	err = s.Serve()
-	if err != nil {
-		log.Fatalf("Error serve servers cause by %s", err.Error())
+func (s *Server) Serve() error {
+	stop := make(chan os.Signal, 1)
+	errch := make(chan error)
+	signal.Notify(stop, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+	httpServer := http.Server{
+		Addr:    s.cfg.HTTP.String(),
+		Handler: s.handler,
+	}
+	go func() {
+		if err := httpServer.ListenAndServe(); err != nil {
+			errch <- err
+		}
+	}()
+
+	for {
+		select {
+		case <-stop:
+			ctx, cancelFn := context.WithTimeout(context.Background(), 30*time.Second)
+			defer cancelFn()
+			httpServer.Shutdown(ctx)
+			return nil
+		case err := <-errch:
+			return err
+		}
 	}
 }

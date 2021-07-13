@@ -1,78 +1,62 @@
 package server
 
 import (
-	"context"
-	"fmt"
+	"database/sql"
+	"log"
 	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
+
+	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
+
+	"github.com/manabie-com/togo/config"
+	"github.com/manabie-com/togo/internal/services/auth"
+	"github.com/manabie-com/togo/internal/services/task"
+	"github.com/manabie-com/togo/internal/storages/postgresql"
+	"github.com/manabie-com/togo/pkg/jwtprovider"
+	"github.com/manabie-com/togo/pkg/server"
+	"github.com/manabie-com/togo/server/handler"
+	"github.com/manabie-com/togo/server/middleware"
 )
 
-func NewConfig(httpPort int) Config {
-	return Config{
-		HTTP: ServerListen{
-			Host: "0.0.0.0",
-			Port: httpPort,
-		},
+func Serve() {
+
+	jwtProvider := jwtprovider.NewJWTProvider(config.JWT.Key, config.JWT.ExpiresIn)
+	db := getPostgresConnection(config.PostgreSQL)
+
+	userRepo := database.NewUserRepo(db)
+	taskRepo := database.NewTaskRepo(db)
+
+	authService := auth.NewAuthService(userRepo, jwtProvider)
+	taskService := task.NewTaskService(taskRepo, userRepo)
+
+	taskHandler := handler.NewTaskHandler(taskService)
+	authHandler := handler.NewAuthHandler(authService)
+
+	authMiddleware := middleware.NewAuthMiddleware(jwtProvider)
+
+	router := mux.NewRouter()
+
+	router.HandleFunc("/login", authHandler.Login)
+	router.Handle("/tasks", authMiddleware.IsAuthorized(http.HandlerFunc(taskHandler.Create))).Methods(http.MethodPost)
+	router.Handle("/tasks", authMiddleware.IsAuthorized(http.HandlerFunc(taskHandler.List))).Methods(http.MethodGet)
+
+	s := server.NewServer(server.NewConfig(config.HTTPPort))
+	s.Register(router)
+	log.Printf("Starting server... at port: %d", config.HTTPPort)
+	err := s.Serve()
+	if err != nil {
+		log.Fatalf("Error serve servers cause by %s", err.Error())
 	}
 }
 
-type Config struct {
-	HTTP ServerListen
-}
-
-type ServerListen struct {
-	Host string
-	Port int
-}
-
-func (l ServerListen) String() string {
-	return fmt.Sprintf("%s:%d", l.Host, l.Port)
-}
-
-type Server struct {
-	cfg     Config
-	handler http.Handler
-}
-
-func NewServer(cfg Config) *Server {
-	return &Server{
-		cfg: cfg,
+func getPostgresConnection(postgresCfg config.PostgreSQLConfig) *sql.DB {
+	db, err := sql.Open("postgres", postgresCfg.String())
+	if err != nil {
+		log.Fatalf("Error when connect postgres cause by %s", err.Error())
 	}
-}
 
-func (s *Server) Register(handler http.Handler) {
-	s.handler = handler
-}
-
-func (s *Server) Serve() error {
-	stop := make(chan os.Signal, 1)
-	errch := make(chan error)
-	signal.Notify(stop, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
-
-	httpServer := http.Server{
-		Addr:    s.cfg.HTTP.String(),
-		Handler: s.handler,
-	}
-	go func() {
-		if err := httpServer.ListenAndServe(); err != nil {
-			errch <- err
-		}
-	}()
-
-	for {
-		select {
-		case <-stop:
-			ctx, cancelFn := context.WithTimeout(context.Background(), 30*time.Second)
-			defer cancelFn()
-			if err := httpServer.Shutdown(ctx); err != nil {
-				// log.Errorf("failed to stop server: %w", err)
-			}
-			return nil
-		case err := <-errch:
-			return err
-		}
-	}
+	db.SetMaxIdleConns(postgresCfg.MaxIdleConns)
+	db.SetMaxOpenConns(postgresCfg.MaxOpenConns)
+	db.SetConnMaxLifetime(postgresCfg.ConnMaxLifetime)
+	return db
 }

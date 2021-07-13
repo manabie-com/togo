@@ -1,14 +1,14 @@
 package entity
 
-// Task reflects tasks in DB
+// Task represents for Task entity in system.
 type Task struct {
-	ID          string `json:"id"`
-	Content     string `json:"content"`
-	UserID      string `json:"user_id"`
-	CreatedDate string `json:"created_date"`
+	ID          string
+	Content     string
+	UserID      string
+	CreatedDate string
 }
 
-// User reflects users data from DB
+// User represents for User entity in system.
 type User struct {
 	ID            string
 	Password      string
