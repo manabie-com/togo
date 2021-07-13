@@ -50,6 +50,7 @@ func main() {
 
 func initRestfulAPI(cfg *config.Config) *http.Server {
 	mbLogger.Info("Start server")
+	mbLogger.Infof("%s:%s", cfg.RestfulAPI.Host, cfg.RestfulAPI.Port)
 	server, err := api.CreateAPIEngine(cfg)
 	if err != nil {
 		mbLogger.Panicf("Fail init server: %v", err)

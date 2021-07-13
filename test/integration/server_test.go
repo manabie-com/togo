@@ -1,3 +1,5 @@
+//+build integration
+
 package integration
 
 import (
@@ -6,6 +8,7 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/manabie-com/togo/config"
 	"github.com/manabie-com/togo/internal/api"
+	"github.com/manabie-com/togo/internal/api/dictionary"
 	"github.com/manabie-com/togo/internal/api/utils"
 	"github.com/stretchr/testify/suite"
 	"io/ioutil"
@@ -94,6 +97,16 @@ func (s *serverTestSuite) TestAddTask() {
 	client := http.Client{}
 	response, err := client.Do(req)
 	s.NoError(err)
-	s.Equal(http.StatusOK, response.StatusCode)
+	if http.StatusOK != response.StatusCode {
+		responseData := utils.ErrorCommonResponse{}
+		byteBody, err := ioutil.ReadAll(response.Body)
+		s.NoError(err)
+
+		err = json.Unmarshal(byteBody, &responseData)
+		s.Equal(responseData.ErrorStr, dictionary.UserReachTaskLimit)
+		s.NoError(err)
+	} else {
+		s.Equal(http.StatusOK, response.StatusCode)
+	}
 	response.Body.Close()
 }

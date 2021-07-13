@@ -85,7 +85,7 @@ func (t *Task) Add(resp http.ResponseWriter, req *http.Request) {
 
 	task, err = t.TaskUC.Add(ctx, userID, task)
 	if err != nil {
-		if err == errors.New(dictionary.UserReachTaskLimit) {
+		if err.Error() == errors.New(dictionary.UserReachTaskLimit).Error() {
 			utils.WriteJSON(ctx, resp, http.StatusForbidden, nil, err)
 			return
 		}
