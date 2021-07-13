@@ -1,0 +1,10 @@
+version: '3.5'
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: todo
+      POSTGRES_PASSWORD: example
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
