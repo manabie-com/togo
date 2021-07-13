@@ -39,8 +39,6 @@ jobs:
       run: go test -v ./...
 
       env:
-        POSTGRES_HOST: localhost
-        POSTGRES_PORT: 5432
         HTTP_PORT: 5050
         JWT_KEY: wqGyEBBfPK9w3Lxw
         POSTGRES_HOST: localhost
