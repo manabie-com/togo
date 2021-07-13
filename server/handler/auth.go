@@ -16,8 +16,8 @@ func NewAuthHandler(authSvc auth.Service) *authHandler {
 	}
 }
 
-// LoginResponse to return result for client.
-type LoginResponse struct {
+// LoginResult to return login result for client.
+type LoginResult struct {
 	Data string `json:"data"`
 }
 
@@ -39,7 +39,7 @@ func (s *authHandler) Login(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	response := &LoginResponse{
+	response := &LoginResult{
 		Data: token,
 	}
 	respondWithJSON(resp, http.StatusOK, response)

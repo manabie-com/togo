@@ -1,3 +1,51 @@
+### Prerequisite
+
+* docker-compose: for setup everything quickly
+* direnv: For manage and auto switch config on `.envrc` https://direnv.net/
+* go 1.16+ with enable module support
+
+You can install it by those command (not sure it can working properly)
+```
+## For macOS users
+$ make install-osx
+
+# for Linux user
+$ sudo echo this command to promp password
+$ make install-linux
+```
+
+
+### Application Config
+
+* Set inside `.envrc`
+
+```
+$ cat .envrc
+export HTTP_PORT=5050
+```
+
+* Auto env by command `direnv allow`
+
+```
+$ direnv allow
+direnv: loading .envrc
+```
+
+### Preparing the Infrastructure
+* init postgres with docker-compose
+```
+$ docker-compose up -d
+```
+* init tables schema
+```
+$ make migrate up
+```
+### Run
+
+* run run server
+```
+$ go run cmd/server/main.go server or make run
+```
 ### Overview
 This is a simple backend for a good old todo service, right now this service can handle login/list/create simple tasks.  
 To make it run:

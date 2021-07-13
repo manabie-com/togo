@@ -5,6 +5,8 @@ import (
 
 	"github.com/manabie-com/togo/internal/entity"
 )
+//go:generate mockery --name=TaskStorage
+//go:generate mockery --name=UserStorage
 
 type TaskStorage interface {
 	RetrieveTasks(ctx context.Context, userID, createdDate string) ([]*entity.Task, error)

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/manabie-com/togo/internal/entity"
 	"github.com/manabie-com/togo/internal/services/task"
 )
 
@@ -14,6 +15,17 @@ type (
 
 	CreateTaskRequest struct {
 		Content string `json:"content"`
+	}
+
+	ListTasksResult struct {
+		Tasks []*TaskResult `json:"tasks"`
+	}
+
+	TaskResult struct {
+		ID          string `json:"id"`
+		Content     string `json:"content"`
+		UserID      string `json:"user_id"`
+		CreatedDate string `json:"created_date"`
 	}
 )
 
@@ -31,7 +43,7 @@ func (s *taskHandler) List(resp http.ResponseWriter, req *http.Request) {
 		respondWithError(resp, http.StatusInternalServerError, err.Error())
 		return
 	}
-	respondWithJSON(resp, http.StatusOK, tasks)
+	respondWithJSON(resp, http.StatusOK, &ListTasksResult{Tasks: passToListTaskResult(tasks)})
 }
 
 func (s *taskHandler) Create(resp http.ResponseWriter, req *http.Request) {
@@ -49,7 +61,7 @@ func (s *taskHandler) Create(resp http.ResponseWriter, req *http.Request) {
 		respondWithError(resp, httpStatus, err.Error())
 		return
 	}
-	respondWithJSON(resp, http.StatusOK, t)
+	respondWithJSON(resp, http.StatusOK, passToTaskResult(t))
 }
 
 func getCreateTaskRequest(r *http.Request) (*CreateTaskRequest, error) {
@@ -61,4 +73,22 @@ func getCreateTaskRequest(r *http.Request) (*CreateTaskRequest, error) {
 		return nil, err
 	}
 	return &createTaskRequest, nil
+}
+
+func passToListTaskResult(tasks []*entity.Task) []*TaskResult {
+	result := make([]*TaskResult, len(tasks))
+
+	for i, t := range tasks {
+		result[i] = passToTaskResult(t)
+	}
+	return result
+}
+
+func passToTaskResult(t *entity.Task) *TaskResult {
+	return &TaskResult{
+		ID:          t.ID,
+		Content:     t.Content,
+		UserID:      t.UserID,
+		CreatedDate: t.CreatedDate,
+	}
 }

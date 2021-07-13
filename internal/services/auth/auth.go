@@ -3,7 +3,7 @@ package auth
 import (
 	"context"
 
-	"github.com/manabie-com/togo/internal/storages"
+	storages "github.com/manabie-com/togo/internal"
 	"github.com/manabie-com/togo/pkg/jwtprovider"
 )
 

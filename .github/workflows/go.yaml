@@ -7,8 +7,21 @@ on:
     branches: [ master ]
 
 jobs:
+
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:10.8
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+        - 5432:5432
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
     steps:
     - uses: actions/checkout@v2
 
@@ -22,3 +35,12 @@ jobs:
 
     - name: Test
       run: go test -v ./...
+
+      env:
+        HTTP_PORT: 5050
+        JWT_KEY: wqGyEBBfPK9w3Lxw
+        POSTGRES_HOST: localhost
+        POSTGRES_PORT: 5432
+        POSTGRES_DATABASE: postgres
+        POSTGRES_USERNAME: postgres
+        POSTGRES_PASSWORD: postgres
