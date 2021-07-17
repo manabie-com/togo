@@ -4,6 +4,7 @@
 Simply
 
 ```shell
+go get
 go run main.go
 ```
 
