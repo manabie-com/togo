@@ -20,37 +20,55 @@ type ToDoService struct {
 	Store  *sqllite.LiteDB
 }
 
-func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
-	log.Println(req.Method, req.URL.Path)
-	resp.Header().Set("Access-Control-Allow-Origin", "*")
-	resp.Header().Set("Access-Control-Allow-Headers", "*")
-	resp.Header().Set("Access-Control-Allow-Methods", "*")
+func setHeaders(w http.ResponseWriter) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "*")
+	w.Header().Set("Content-Type", "application/json")
+}
 
-	if req.Method == http.MethodOptions {
-		resp.WriteHeader(http.StatusOK)
-		return
-	}
+func (s *ToDoService) ServeHTTP() http.Handler {
+	mux := http.NewServeMux()
 
-	switch req.URL.Path {
-	case "/login":
-		s.getAuthToken(resp, req)
-		return
-	case "/tasks":
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		setHeaders(w)
+
+		json.NewEncoder(w).Encode(map[string]string{
+			"app":  "togo promax",
+			"from": "Seth Phat",
+		})
+	})
+
+	mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
+		setHeaders(w)
+
+		if r.Method == http.MethodPost {
+			s.getAuthToken(w, r)
+		} else {
+			json.NewEncoder(w).Encode(map[string]string{
+				"error": "Method not supported",
+			})
+		}
+	})
+
+	mux.HandleFunc("/tasks", func(w http.ResponseWriter, r *http.Request) {
+		setHeaders(w)
+
 		var ok bool
-		req, ok = s.validToken(req)
+		r, ok = s.validToken(r)
 		if !ok {
-			resp.WriteHeader(http.StatusUnauthorized)
-			return
+			w.WriteHeader(http.StatusUnauthorized)
 		}
 
-		switch req.Method {
+		switch r.Method {
 		case http.MethodGet:
-			s.listTasks(resp, req)
+			s.listTasks(w, r)
 		case http.MethodPost:
-			s.addTask(resp, req)
+			s.addTask(w, r)
 		}
-		return
-	}
+	})
+
+	return mux
 }
 
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
@@ -62,7 +80,6 @@ func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 		})
 		return
 	}
-	resp.Header().Set("Content-Type", "application/json")
 
 	token, err := s.createToken(id.String)
 	if err != nil {
@@ -88,8 +105,6 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 		},
 		value(req, "created_date"),
 	)
-
-	resp.Header().Set("Content-Type", "application/json")
 
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
@@ -118,8 +133,6 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	t.ID = uuid.New().String()
 	t.UserID = userID
 	t.CreatedDate = now.Format("2006-01-02")
-
-	resp.Header().Set("Content-Type", "application/json")
 
 	err = s.Store.AddTask(req.Context(), t)
 	if err != nil {
