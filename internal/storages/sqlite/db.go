@@ -61,3 +61,12 @@ func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) b
 
 	return true
 }
+
+// GetUserById returns user by userId
+func (l *LiteDB) GetUserById(ctx context.Context, userID sql.NullString) (*storages.User, error) {
+	stmt := `SELECT id FROM users WHERE id = ?`
+	row := l.DB.QueryRowContext(ctx, stmt, userID)
+	u := &storages.User{}
+	err := row.Scan(&u.ID)
+	return u, err
+}

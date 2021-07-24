@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -80,6 +81,15 @@ func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 
 func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	id, _ := userIDFromCtx(req.Context())
+	user, err := s.Store.GetUserById(req.Context(), convertStringToSqlNullString(id))
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+	fmt.Println(user.MaxTodo)
 	tasks, err := s.Store.RetrieveTasks(
 		req.Context(),
 		sql.NullString{
@@ -105,6 +115,8 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
+	resp.Header().Set("Content-Type", "application/json")
+
 	t := &storages.Task{}
 	err := json.NewDecoder(req.Body).Decode(t)
 	defer req.Body.Close()
@@ -114,12 +126,43 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	now := time.Now()
+	createdDate := now.Format("2006-01-02")
 	userID, _ := userIDFromCtx(req.Context())
+
+	user, err := s.Store.GetUserById(req.Context(), convertStringToSqlNullString(userID))
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+	tasks, err := s.Store.RetrieveTasks(
+		req.Context(),
+		sql.NullString{
+			String: userID,
+			Valid:  true,
+		},
+		convertStringToSqlNullString(createdDate),
+	)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+	if len(tasks) == int(user.MaxTodo) {
+		resp.WriteHeader(http.StatusConflict)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": "Exceed today maximum allowed number of tasks",
+		})
+		return
+	}
+
 	t.ID = uuid.New().String()
 	t.UserID = userID
-	t.CreatedDate = now.Format("2006-01-02")
-
-	resp.Header().Set("Content-Type", "application/json")
+	t.CreatedDate = createdDate
 
 	err = s.Store.AddTask(req.Context(), t)
 	if err != nil {
@@ -138,6 +181,13 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 func value(req *http.Request, p string) sql.NullString {
 	return sql.NullString{
 		String: req.FormValue(p),
+		Valid:  true,
+	}
+}
+
+func convertStringToSqlNullString(s string) sql.NullString {
+	return sql.NullString{
+		String: s,
 		Valid:  true,
 	}
 }
