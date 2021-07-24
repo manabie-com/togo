@@ -10,9 +10,33 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/surw/togo/internal/storages"
 	sqllite "github.com/surw/togo/internal/storages/sqlite"
 )
+
+func NewToDoService() *ToDoService {
+	db, err := sql.Open("sqlite3", "./data.db")
+	if err != nil {
+		log.Fatal("error opening db", err)
+	}
+	return &ToDoService{
+		JWTKey: "wqGyEBBfPK9w3Lxw",
+		Store: &sqllite.LiteDB{
+			DB: db,
+		},
+	}
+}
+
+func (s *ToDoService) Serve(port int32, router *Router) {
+	defaultInterceptors := NewInterceptor(s.logInterceptor())
+	withAuthInterceptors := NewInterceptor(s.logInterceptor(), s.authInterceptor())
+	router.AddHandler("/login", s.getAuthToken, defaultInterceptors)
+	router.AddHandler("/tasks", s.listTasks, withAuthInterceptors, "GET")
+	router.AddHandler("/tasks", s.addTask, withAuthInterceptors, "POST")
+
+	router.Start(port)
+}
 
 // ToDoService implement HTTP server
 type ToDoService struct {
@@ -20,65 +44,38 @@ type ToDoService struct {
 	Store  *sqllite.LiteDB
 }
 
-func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
-	log.Println(req.Method, req.URL.Path)
-	resp.Header().Set("Access-Control-Allow-Origin", "*")
-	resp.Header().Set("Access-Control-Allow-Headers", "*")
-	resp.Header().Set("Access-Control-Allow-Methods", "*")
-
-	if req.Method == http.MethodOptions {
-		resp.WriteHeader(http.StatusOK)
-		return
-	}
-
-	switch req.URL.Path {
-	case "/login":
-		s.getAuthToken(resp, req)
-		return
-	case "/tasks":
-		var ok bool
-		req, ok = s.validToken(req)
-		if !ok {
-			resp.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-
-		switch req.Method {
-		case http.MethodGet:
-			s.listTasks(resp, req)
-		case http.MethodPost:
-			s.addTask(resp, req)
+func (s *ToDoService) logInterceptor() httpInterceptor {
+	return func(req *http.Request, handler httpHandler) (resp interface{}, err error) {
+		resp, err = handler(req)
+		if err != nil {
+			log.Println(req.Method, req.URL.Path, err)
 		}
 		return
 	}
 }
-
-func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
-	id := value(req, "user_id")
-	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
-		resp.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "incorrect user_id/pwd",
-		})
-		return
+func (s *ToDoService) authInterceptor() httpInterceptor {
+	return func(req *http.Request, handler httpHandler) (resp interface{}, err error) {
+		newReq, ok := s.validToken(req)
+		if !ok {
+			return nil, newError(http.StatusUnauthorized, "invalid token")
+		}
+		return handler(newReq)
 	}
-	resp.Header().Set("Content-Type", "application/json")
+}
+
+func (s *ToDoService) getAuthToken(req *http.Request) (resp interface{}, err error) {
+	id := value(req, "user_id")
+	if err = s.Store.ValidateUser(req.Context(), id, value(req, "password")); err != nil {
+		return nil, newError(http.StatusUnauthorized, err.Error())
+	}
 
 	token, err := s.createToken(id.String)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
+		return nil, err
 	}
-
-	json.NewEncoder(resp).Encode(map[string]string{
-		"data": token,
-	})
+	return token, nil
 }
-
-func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
+func (s *ToDoService) listTasks(req *http.Request) (resp interface{}, err error) {
 	id, _ := userIDFromCtx(req.Context())
 	tasks, err := s.Store.RetrieveTasks(
 		req.Context(),
@@ -89,28 +86,18 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 		value(req, "created_date"),
 	)
 
-	resp.Header().Set("Content-Type", "application/json")
-
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
+		return nil, err
 	}
 
-	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
-		"data": tasks,
-	})
+	return tasks, nil
 }
-
-func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
+func (s *ToDoService) addTask(req *http.Request) (resp interface{}, err error) {
 	t := &storages.Task{}
-	err := json.NewDecoder(req.Body).Decode(t)
+	err = json.NewDecoder(req.Body).Decode(t)
 	defer req.Body.Close()
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		return
+		return nil, err
 	}
 
 	now := time.Now()
@@ -119,27 +106,12 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	t.UserID = userID
 	t.CreatedDate = now.Format("2006-01-02")
 
-	resp.Header().Set("Content-Type", "application/json")
-
 	err = s.Store.AddTask(req.Context(), t)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
+		return nil, err
 	}
 
-	json.NewEncoder(resp).Encode(map[string]*storages.Task{
-		"data": t,
-	})
-}
-
-func value(req *http.Request, p string) sql.NullString {
-	return sql.NullString{
-		String: req.FormValue(p),
-		Valid:  true,
-	}
+	return t, nil
 }
 
 func (s *ToDoService) createToken(id string) (string, error) {
@@ -153,7 +125,6 @@ func (s *ToDoService) createToken(id string) (string, error) {
 	}
 	return token, nil
 }
-
 func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
 	token := req.Header.Get("Authorization")
 
@@ -177,12 +148,4 @@ func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
 
 	req = req.WithContext(context.WithValue(req.Context(), userAuthKey(0), id))
 	return req, true
-}
-
-type userAuthKey int8
-
-func userIDFromCtx(ctx context.Context) (string, bool) {
-	v := ctx.Value(userAuthKey(0))
-	id, ok := v.(string)
-	return id, ok
 }
