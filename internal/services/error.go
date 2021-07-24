@@ -1,5 +1,9 @@
 package services
 
+
+const (
+	limitErrorMsg = "users are limited to create only 5 tasks only per day"
+)
 type serviceError struct {
 	Message string
 	Status  int

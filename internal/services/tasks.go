@@ -25,6 +25,7 @@ func NewToDoService() *ToDoService {
 		Store: &sqllite.LiteDB{
 			DB: db,
 		},
+		limitController: newLimitController(),
 	}
 }
 
@@ -40,8 +41,9 @@ func (s *ToDoService) Serve(port int32, router *Router) {
 
 // ToDoService implement HTTP server
 type ToDoService struct {
-	JWTKey string
-	Store  *sqllite.LiteDB
+	JWTKey          string
+	Store           *sqllite.LiteDB
+	limitController limitController
 }
 
 func (s *ToDoService) logInterceptor() httpInterceptor {
@@ -99,13 +101,20 @@ func (s *ToDoService) addTask(req *http.Request) (resp interface{}, err error) {
 	if err != nil {
 		return nil, err
 	}
-
-	now := time.Now()
 	userID, _ := userIDFromCtx(req.Context())
 	t.ID = uuid.New().String()
 	t.UserID = userID
-	t.CreatedDate = now.Format("2006-01-02")
+	t.CreatedDate = todayStr
 
+	fallbackFn, err := s.limitController.ReachLimit(req.Context(), t.UserID, t.CreatedDate, 5)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if err != nil {
+			fallbackFn()
+		}
+	}()
 	err = s.Store.AddTask(req.Context(), t)
 	if err != nil {
 		return nil, err
