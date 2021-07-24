@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:13.3
+    restart: always
+    container_name: "postgres"
+    environment:
+      - POSTGRES_USER=dev
+      - POSTGRES_PASSWORD=passwd
+      - POSTGRES_DB=togo
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+
+  redis:
+    image: redis:6.2.5-buster
+    container_name: redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+
+  app:
+    build: .
+    ports:
+      - 5050:5050
+
+volumes:
+  postgres_data:
+  redis_data:
