@@ -3,15 +3,21 @@ package services
 import "fmt"
 
 const (
-	host     = "postgres"
-	port     = 5432
-	user     = "dev"
-	password = "passwd"
-	dbname   = "togo"
+	limitCacheKeyPrefix         = "limit"
+)
+const (
+	redisHost = "redis:6379"
+)
+const (
+	postgresHost = "postgres"
+	port         = 5432
+	user         = "dev"
+	password     = "passwd"
+	dbname       = "togo"
 )
 
 var (
 	psqlInfo = fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
+		postgresHost, port, user, password, dbname)
 )
