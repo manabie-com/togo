@@ -10,13 +10,13 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/lib/pq"
 	"github.com/surw/togo/internal/storages"
 	sqllite "github.com/surw/togo/internal/storages/sqlite"
 )
 
 func NewToDoService() *ToDoService {
-	db, err := sql.Open("sqlite3", "./data.db")
+	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
 		log.Fatal("error opening db", err)
 	}
