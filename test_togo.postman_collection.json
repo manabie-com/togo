@@ -58,6 +58,68 @@
 			"response": []
 		},
 		{
+			"name": "Delete today task",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var moment = require('moment')",
+							"pm.environment.set(\"todayDate\", moment().format('YYYY-MM-DD'))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"content\": \"task\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5050/tasks?created_date={{todayDate}}",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"tasks"
+					],
+					"query": [
+						{
+							"key": "created_date",
+							"value": "{{todayDate}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "List content - Nil result",
 			"event": [
 				{
@@ -191,7 +253,15 @@
 							"pm.test(\"Have correct task after creation\", function () {",
 							"    taskList = pm.response.json().data;",
 							"    pm.expect(taskList).is.not.null;",
-							"    pm.expect(taskList[0].content).eq(\"first task\");",
+							"    var haveTask = false;",
+							"    console.log(taskList);",
+							"    _.each(taskList, (task) =>",
+							"    {",
+							"        if (task.content == \"first task\") {",
+							"            haveTask = true;",
+							"        }",
+							"    });",
+							"    pm.expect(haveTask).is.true;",
 							"});"
 						],
 						"type": "text/javascript"

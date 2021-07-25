@@ -48,6 +48,8 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 			s.listTasks(resp, req)
 		case http.MethodPost:
 			s.addTask(resp, req)
+		case http.MethodDelete:
+			s.deleteTaskByDate(resp, req)
 		}
 		return
 	}
@@ -177,6 +179,44 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(map[string]*storages.Task{
 		"data": t,
 	})
+}
+
+func (s *ToDoService) deleteTaskByDate(resp http.ResponseWriter, req *http.Request) {
+	resp.Header().Set("Content-Type", "application/json")
+
+	createdDate := value(req, "created_date")
+	userID, _ := userIDFromCtx(req.Context())
+
+	user, err := s.Store.GetUserById(req.Context(), convertStringToSqlNullString(userID))
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+	if user == nil {
+		resp.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": "User not found",
+		})
+		return
+	}
+
+	err = s.Store.DeleteTaskByDate(
+		req.Context(),
+		convertStringToSqlNullString(userID),
+		createdDate,
+	)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	resp.WriteHeader(http.StatusNoContent)
 }
 
 func value(req *http.Request, p string) sql.NullString {

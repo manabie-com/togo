@@ -11,6 +11,7 @@ type Repository interface {
 	RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*Task, error)
 	// AddTask adds a new task to DB
 	AddTask(ctx context.Context, t *Task) error
+	DeleteTaskByDate(ctx context.Context, userID, createdDate sql.NullString) error
 	// ValidateUser returns tasks if match userID AND password
 	ValidateUser(ctx context.Context, username, pwd sql.NullString) (*User, error)
 	// GetUserById returns user by userId

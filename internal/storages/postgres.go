@@ -68,6 +68,16 @@ func (db Database) AddTask(ctx context.Context, t *Task) error {
 	return nil
 }
 
+func (db Database) DeleteTaskByDate(ctx context.Context, userId, createdDate sql.NullString) error {
+	stmt := `DELETE FROM "tasks" WHERE "user_id" = $1 AND "created_date" = $2`
+	_, err := db.DB.ExecContext(ctx, stmt, userId, createdDate)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // ValidateUser returns tasks if match userID AND password
 func (db Database) ValidateUser(ctx context.Context, username, pwd sql.NullString) (*User, error) {
 	stmt := `SELECT "id", "user_name", "max_todo" FROM "users" WHERE "user_name" = $1 AND "password" = $2`
