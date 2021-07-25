@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"fmt"
+	"github.com/surw/togo/internal/config"
 	"log"
 	"net/http"
 
@@ -15,7 +16,7 @@ type limitController interface {
 
 func newLimitController() *redisCache {
 	return &redisCache{client: redis.NewClient(&redis.Options{
-		Addr: redisHost,
+		Addr: config.RedisHost,
 	})}
 }
 
@@ -50,5 +51,5 @@ func (c *redisCache) ReachLimit(ctx context.Context, userID, date string, limitP
 }
 
 func createLimitCacheKey(userID, date string) string {
-	return fmt.Sprintf("%s:%s:%s", limitCacheKeyPrefix, date, userID)
+	return fmt.Sprintf("%s:%s:%s", config.LimitCacheKeyPrefix, date, userID)
 }

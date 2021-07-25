@@ -9,27 +9,13 @@ services:
       - POSTGRES_USER=dev
       - POSTGRES_PASSWORD=passwd
       - POSTGRES_DB=togo
-    ports:
-      - 5432:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
 
-  pgadmin:
-    image: dpage/pgadmin4
-    restart: always
-    container_name: pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: trungtvq.work@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: passwd
-    ports:
-      - 54320:80
-
   redis:
     image: redis:6.2.5-buster
     container_name: redis
-    ports:
-    - 6379:6379
     command: redis-server --appendonly yes
     volumes:
       - redis_data:/data
