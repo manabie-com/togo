@@ -12,37 +12,34 @@ import (
 	"github.com/google/uuid"
 	_ "github.com/lib/pq"
 	"github.com/surw/togo/internal/storages"
-	sqllite "github.com/surw/togo/internal/storages/sqlite"
 )
 
-func NewToDoService() *ToDoService {
-	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil {
-		log.Fatal("error opening db", err)
-	}
+func NewToDoService(db ILiteDB) *ToDoService {
 	return &ToDoService{
 		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
-			DB: db,
-		},
+		Store: db,
 		limitController: newLimitController(),
 	}
 }
 
-func (s *ToDoService) Serve(port int32, router *Router) {
+func (s *ToDoService) Register(router *Router) {
 	defaultInterceptors := NewInterceptor(s.logInterceptor())
 	withAuthInterceptors := NewInterceptor(s.logInterceptor(), s.authInterceptor())
 	router.AddHandler("/login", s.getAuthToken, defaultInterceptors)
 	router.AddHandler("/tasks", s.listTasks, withAuthInterceptors, "GET")
 	router.AddHandler("/tasks", s.addTask, withAuthInterceptors, "POST")
+}
 
-	router.Start(port)
+type ILiteDB interface {
+	RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*storages.Task, error)
+	AddTask(ctx context.Context, t *storages.Task) error
+	ValidateUser(ctx context.Context, userID, pwd string) error
 }
 
 // ToDoService implement HTTP server
 type ToDoService struct {
 	JWTKey          string
-	Store           *sqllite.LiteDB
+	Store           ILiteDB
 	limitController limitController
 }
 
@@ -66,12 +63,12 @@ func (s *ToDoService) authInterceptor() httpInterceptor {
 }
 
 func (s *ToDoService) getAuthToken(req *http.Request) (resp interface{}, err error) {
-	id := value(req, "user_id")
-	if err = s.Store.ValidateUser(req.Context(), id, value(req, "password")); err != nil {
+	id := req.FormValue("user_id")
+	if err = s.Store.ValidateUser(req.Context(), id, req.FormValue("password")); err != nil {
 		return nil, newError(http.StatusUnauthorized, err.Error())
 	}
 
-	token, err := s.createToken(id.String)
+	token, err := s.createToken(id)
 	if err != nil {
 		return nil, err
 	}

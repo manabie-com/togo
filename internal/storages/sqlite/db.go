@@ -50,7 +50,7 @@ func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
 }
 
 // ValidateUser returns tasks if match userID AND password
-func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) error {
+func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd string) error {
 	stmt := `SELECT id FROM users WHERE id = $1 AND password = $2`
 	row := l.DB.QueryRowContext(ctx, stmt, userID, pwd)
 	u := &storages.User{}
