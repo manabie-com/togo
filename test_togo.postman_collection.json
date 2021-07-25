@@ -1,0 +1,240 @@
+{
+	"info": {
+		"_postman_id": "f1be1fec-7be8-4d00-be9a-cbbab7d93ba4",
+		"name": "Test togo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"var tokenString = \"pm.response.json().data;\"",
+							"pm.test(\"Response is in correct format\", function () {",
+							"    tokenString = pm.response.json().data;",
+							"    // token is present in data's value",
+							"    pm.expect(tokenString).is.not.null;",
+							"    // token matched JWT token regex",
+							"    pm.expect(tokenString.match(\"^[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_=]+\\.?[A-Za-z0-9-_.+/=]*$\"));",
+							"});",
+							"",
+							"//set token to environment variable for next tests",
+							"pm.environment.set(\"token\", tokenString);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5050/login?user_name={{userName}}&password={{password}}",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"login"
+					],
+					"query": [
+						{
+							"key": "user_name",
+							"value": "{{userName}}"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List content - Nil result",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var moment = require('moment')",
+							"pm.environment.set(\"todayDate\", moment().format('YYYY-MM-DD'))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"No data for that date\", function () {",
+							"    tokenString = pm.response.json().data;",
+							"    pm.expect(tokenString).is.null;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:5050/tasks?created_date={{todayDate}}",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"tasks"
+					],
+					"query": [
+						{
+							"key": "created_date",
+							"value": "{{todayDate}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create task",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"content\": \"first task\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5050/tasks",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"tasks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List content - have result for today",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var moment = require('moment')",
+							"pm.environment.set(\"todayDate\", moment().format('YYYY-MM-DD'))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Have correct task after creation\", function () {",
+							"    taskList = pm.response.json().data;",
+							"    pm.expect(taskList).is.not.null;",
+							"    pm.expect(taskList[0].content).eq(\"first task\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:5050/tasks?created_date={{todayDate}}",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"tasks"
+					],
+					"query": [
+						{
+							"key": "created_date",
+							"value": "{{todayDate}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
