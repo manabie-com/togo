@@ -11,6 +11,7 @@ type Task struct {
 // User reflects users data from DB
 type User struct {
 	ID       string
+	Username string
 	Password string
 	MaxTodo  int64
 }

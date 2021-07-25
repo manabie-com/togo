@@ -31,26 +31,35 @@ For example, users are limited to create only 5 tasks only per day, if the daily
 
 #### DB Schema
 ```sql
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 -- users definition
 
 CREATE TABLE users (
-	id TEXT NOT NULL,
-	password TEXT NOT NULL,
+	id uuid DEFAULT uuid_generate_v4 (),
+	user_name VARCHAR(32) NOT NULL,
+	password VARCHAR(255) NOT NULL,
 	max_todo INTEGER DEFAULT 5 NOT NULL,
 	CONSTRAINT users_PK PRIMARY KEY (id)
 );
 
-INSERT INTO users (id, password, max_todo) VALUES('firstUser', 'example', 5);
+INSERT INTO users (user_name, password, max_todo) VALUES('firstUser', 'password', 5);
 
 -- tasks definition
 
 CREATE TABLE tasks (
-	id TEXT NOT NULL,
+	id uuid DEFAULT uuid_generate_v4 (),
 	content TEXT NOT NULL,
-	user_id TEXT NOT NULL,
-    created_date TEXT NOT NULL,
+	user_id uuid NOT NULL,
+    created_date VARCHAR(10) NOT NULL,
 	CONSTRAINT tasks_PK PRIMARY KEY (id),
 	CONSTRAINT tasks_FK FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE INDEX tasks_date ON tasks USING btree
+(
+    created_date
 );
 ```
 
