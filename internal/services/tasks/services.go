@@ -121,7 +121,7 @@ func (s *ToDoService) AddTask(ctx context.Context, id sql.NullString, t storages
 		return nil, err
 	}
 	if len(tasks) == int(user.MaxTodo) {
-		return nil, errors.New("Exceed today maximum allowed number of tasks")
+		return nil, errors.New("exceed today maximum allowed number of tasks")
 	}
 
 	t.UserID = id.String
@@ -132,12 +132,9 @@ func (s *ToDoService) AddTask(ctx context.Context, id sql.NullString, t storages
 		return nil, err
 	}
 
-	task, err := s.repo.RetrieveTaskById(ctx, convertStringToSqlNullString(taskId))
-	if err != nil {
-		return nil, err
-	}
+	t.ID = taskId
 
-	return task, nil
+	return &t, nil
 }
 
 func (s *ToDoService) deleteTaskByDate(resp http.ResponseWriter, req *http.Request) {
