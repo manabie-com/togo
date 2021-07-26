@@ -1,15 +1,15 @@
-package task
+package tasks
 
 import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/storages"
 )
 
@@ -47,8 +47,6 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		}
 
 		switch req.Method {
-		case http.MethodPost:
-			s.addTask(resp, req)
 		case http.MethodDelete:
 			s.deleteTaskByDate(resp, req)
 		}
@@ -100,68 +98,46 @@ func (s *ToDoService) ListTasks(context context.Context, id string, created_date
 	return tasks, nil
 }
 
-func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
-	resp.Header().Set("Content-Type", "application/json")
+func (s *ToDoService) AddTask(ctx context.Context, id sql.NullString, t storages.Task) (*storages.Task, error) {
+	// err := json.NewDecoder(req.Body).Decode(t)
+	// defer req.Body.Close()
+	// if err != nil {
+	// 	resp.WriteHeader(http.StatusInternalServerError)
+	// 	return
+	// }
 
-	t := &storages.Task{}
-	err := json.NewDecoder(req.Body).Decode(t)
-	defer req.Body.Close()
+	createdDateInSqlNullString := convertStringToSqlNullString(time.Now().Format("2006-01-02"))
+
+	user, err := s.repo.GetUserById(ctx, id)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	now := time.Now()
-	createdDate := now.Format("2006-01-02")
-	userID, _ := s.UserIDFromCtx(req.Context())
-
-	user, err := s.repo.GetUserById(req.Context(), convertStringToSqlNullString(userID))
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
+		return nil, err
 	}
 	tasks, err := s.repo.RetrieveTasks(
-		req.Context(),
-		sql.NullString{
-			String: userID,
-			Valid:  true,
-		},
-		convertStringToSqlNullString(createdDate),
+		ctx,
+		id,
+		createdDateInSqlNullString,
 	)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
+		return nil, err
 	}
 	if len(tasks) == int(user.MaxTodo) {
-		resp.WriteHeader(http.StatusConflict)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "Exceed today maximum allowed number of tasks",
-		})
-		return
+		return nil, errors.New("Exceed today maximum allowed number of tasks")
 	}
 
-	t.ID = uuid.New().String()
-	t.UserID = userID
-	t.CreatedDate = createdDate
+	t.UserID = id.String
+	t.CreatedDate = createdDateInSqlNullString.String
 
-	err = s.repo.AddTask(req.Context(), t)
+	taskId, err := s.repo.AddTask(ctx, &t)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
+		return nil, err
 	}
 
-	json.NewEncoder(resp).Encode(map[string]*storages.Task{
-		"data": t,
-	})
+	task, err := s.repo.RetrieveTaskById(ctx, convertStringToSqlNullString(taskId))
+	if err != nil {
+		return nil, err
+	}
+
+	return task, nil
 }
 
 func (s *ToDoService) deleteTaskByDate(resp http.ResponseWriter, req *http.Request) {

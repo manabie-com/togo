@@ -8,8 +8,8 @@ import (
 	"github.com/codegangsta/negroni"
 	"github.com/gorilla/mux"
 	"github.com/manabie-com/togo/internal/handlers"
-	"github.com/manabie-com/togo/internal/services/task"
-	"github.com/manabie-com/togo/internal/services/user"
+	"github.com/manabie-com/togo/internal/services/tasks"
+	"github.com/manabie-com/togo/internal/services/users"
 	"github.com/manabie-com/togo/internal/storages"
 )
 
@@ -24,8 +24,8 @@ func main() {
 	}
 	defer db.DB.Close()
 
-	userService := user.SetupNewService("wqGyEBBfPK9w3Lxw", db)
-	taskService := task.SetupNewService("wqGyEBBfPK9w3Lxw", db)
+	userService := users.SetupNewService("wqGyEBBfPK9w3Lxw", db)
+	taskService := tasks.SetupNewService("wqGyEBBfPK9w3Lxw", db)
 
 	// taskService := task.SetupNewService("wqGyEBBfPK9w3Lxw", db)
 	r := mux.NewRouter()

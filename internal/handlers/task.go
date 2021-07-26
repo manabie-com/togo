@@ -8,13 +8,13 @@ import (
 	"github.com/codegangsta/negroni"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
-	"github.com/manabie-com/togo/internal/services/task"
-	"github.com/manabie-com/togo/internal/services/user"
+	"github.com/manabie-com/togo/internal/services/tasks"
+	"github.com/manabie-com/togo/internal/services/users"
 	"github.com/manabie-com/togo/internal/storages"
 	"github.com/manabie-com/togo/internal/utils"
 )
 
-func listTasks(service task.ToDoService) http.Handler {
+func listTasks(service tasks.ToDoService) http.Handler {
 	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
 		id, ok := userIDFromCtx(req.Context())
 		if !ok {
@@ -36,9 +36,38 @@ func listTasks(service task.ToDoService) http.Handler {
 	})
 }
 
+func addTask(service tasks.ToDoService) http.Handler {
+	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
+		id, ok := userIDFromCtx(req.Context())
+		if !ok {
+			resp.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		t := &storages.Task{}
+		err := json.NewDecoder(req.Body).Decode(t)
+		defer req.Body.Close()
+		if err != nil {
+			resp.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		task, err := service.AddTask(req.Context(), utils.ConvertStringToSqlNullString(id), *t)
+		if err != nil {
+			resp.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(resp).Encode(map[string]string{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		json.NewEncoder(resp).Encode(map[string]*storages.Task{
+			"data": task,
+		})
+	})
+}
+
 type userAuthKey int8
 
-func validToken(taskService task.ToDoService, userService user.ToDoService) negroni.HandlerFunc {
+func validToken(taskService tasks.ToDoService, userService users.ToDoService) negroni.HandlerFunc {
 	return func(resp http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 		resp.Header().Set("Content-Type", "application/json")
 		token := req.Header.Get("Authorization")
@@ -80,9 +109,13 @@ func userIDFromCtx(ctx context.Context) (string, bool) {
 	return id, ok
 }
 
-func MakeTaskHandler(r *mux.Router, n negroni.Negroni, taskService task.ToDoService, userService user.ToDoService) {
+func MakeTaskHandler(r *mux.Router, n negroni.Negroni, taskService tasks.ToDoService, userService users.ToDoService) {
 	r.Handle("/tasks", n.With(
 		validToken(taskService, userService),
 		negroni.Wrap(listTasks(taskService)),
 	)).Methods("GET", "OPTIONS").Name("list tasks")
+	r.Handle("/tasks", n.With(
+		validToken(taskService, userService),
+		negroni.Wrap(addTask(taskService)),
+	)).Methods("POST", "OPTIONS").Name("add task")
 }

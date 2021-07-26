@@ -6,11 +6,11 @@ import (
 
 	"github.com/codegangsta/negroni"
 	"github.com/gorilla/mux"
-	"github.com/manabie-com/togo/internal/services/user"
+	"github.com/manabie-com/togo/internal/services/users"
 	"github.com/manabie-com/togo/internal/utils"
 )
 
-func getAuthToken(service user.ToDoService) http.Handler {
+func getAuthToken(service users.ToDoService) http.Handler {
 	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
 		resp.Header().Set("Content-Type", "application/json")
 
@@ -30,7 +30,7 @@ func getAuthToken(service user.ToDoService) http.Handler {
 	})
 }
 
-func MakeUserHandlers(r *mux.Router, n negroni.Negroni, service user.ToDoService) {
+func MakeUserHandlers(r *mux.Router, n negroni.Negroni, service users.ToDoService) {
 	r.Handle("/login", n.With(
 		negroni.Wrap(getAuthToken(service)),
 	)).Methods("GET", "OPTIONS").Name("login")

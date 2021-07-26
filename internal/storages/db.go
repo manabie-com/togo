@@ -9,8 +9,9 @@ import (
 type Repository interface {
 	// RetrieveTasks returns tasks if match userID AND createDate.
 	RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*Task, error)
+	RetrieveTaskById(ctx context.Context, taskID sql.NullString) (*Task, error)
 	// AddTask adds a new task to DB
-	AddTask(ctx context.Context, t *Task) error
+	AddTask(ctx context.Context, t *Task) (string, error)
 	DeleteTaskByDate(ctx context.Context, userID, createdDate sql.NullString) error
 	// ValidateUser returns tasks if match userID AND password
 	ValidateUser(username, pwd sql.NullString) (*User, error)

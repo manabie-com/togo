@@ -57,15 +57,33 @@ func (db Database) RetrieveTasks(ctx context.Context, userID, createdDate sql.Nu
 	return tasks, nil
 }
 
-// AddTask adds a new task to DB
-func (db Database) AddTask(ctx context.Context, t *Task) error {
-	stmt := `INSERT INTO "tasks" ("content", "user_id", "created_date") VALUES ($1, $2, $3)`
-	_, err := db.DB.ExecContext(ctx, stmt, &t.Content, &t.UserID, &t.CreatedDate)
-	if err != nil {
-		return err
+func (db Database) RetrieveTaskById(ctx context.Context, taskID sql.NullString) (*Task, error) {
+	t := &Task{}
+	stmt := `SELECT "id", "content", "user_id", "created_date" FROM "tasks" WHERE "id" = $1;`
+	row := db.DB.QueryRowContext(ctx, stmt, taskID)
+	if row.Err() != nil {
+		return nil, row.Err()
 	}
 
-	return nil
+	err := row.Scan(&t.ID, &t.Content, &t.UserID, &t.CreatedDate)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return t, nil
+}
+
+// AddTask adds a new task to DB
+func (db Database) AddTask(ctx context.Context, t *Task) (string, error) {
+	stmt := `INSERT INTO "tasks" ("content", "user_id", "created_date") VALUES ($1, $2, $3) RETURNING "id"`
+	id := ""
+	err := db.DB.QueryRowContext(ctx, stmt, &t.Content, &t.UserID, &t.CreatedDate).Scan(&id)
+	if err != nil {
+		return "", err
+	}
+
+	return id, nil
 }
 
 func (db Database) DeleteTaskByDate(ctx context.Context, userId, createdDate sql.NullString) error {
