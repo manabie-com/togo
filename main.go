@@ -27,7 +27,6 @@ func main() {
 	userService := users.SetupNewService("wqGyEBBfPK9w3Lxw", db)
 	taskService := tasks.SetupNewService(db)
 
-	// taskService := task.SetupNewService("wqGyEBBfPK9w3Lxw", db)
 	r := mux.NewRouter()
 	//handlers
 	n := negroni.Classic()

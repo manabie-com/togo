@@ -6,7 +6,55 @@
 	},
 	"item": [
 		{
-			"name": "Login",
+			"name": "Login - Failure",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});",
+							"var expectedError = \"incorrect user_id/pwd\"",
+							"pm.test(\"Error is returned\", function () {",
+							"    errorObj = pm.response.json();",
+							"    pm.expect(errorObj.error).is.not.null;",
+							"    errorMessage = errorObj.error;",
+							"    pm.expect(errorMessage).eq(expectedError);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5050/login?user_name={{userName}}&password=wrong_password",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"login"
+					],
+					"query": [
+						{
+							"key": "user_name",
+							"value": "{{userName}}"
+						},
+						{
+							"key": "password",
+							"value": "wrong_password"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login - Success",
 			"event": [
 				{
 					"listen": "test",
