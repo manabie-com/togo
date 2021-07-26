@@ -13,7 +13,7 @@ type Repository interface {
 	AddTask(ctx context.Context, t *Task) error
 	DeleteTaskByDate(ctx context.Context, userID, createdDate sql.NullString) error
 	// ValidateUser returns tasks if match userID AND password
-	ValidateUser(ctx context.Context, username, pwd sql.NullString) (*User, error)
+	ValidateUser(username, pwd sql.NullString) (*User, error)
 	// GetUserById returns user by userId
 	GetUserById(ctx context.Context, userID sql.NullString) (*User, error)
 	GetUserByUsername(ctx context.Context, username sql.NullString) (*User, error)

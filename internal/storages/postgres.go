@@ -79,9 +79,9 @@ func (db Database) DeleteTaskByDate(ctx context.Context, userId, createdDate sql
 }
 
 // ValidateUser returns tasks if match userID AND password
-func (db Database) ValidateUser(ctx context.Context, username, pwd sql.NullString) (*User, error) {
+func (db Database) ValidateUser(username, pwd sql.NullString) (*User, error) {
 	stmt := `SELECT "id", "user_name", "max_todo" FROM "users" WHERE "user_name" = $1 AND "password" = $2`
-	row := db.DB.QueryRowContext(ctx, stmt, username, pwd)
+	row := db.DB.QueryRow(stmt, username, pwd)
 	u := &User{}
 	err := row.Scan(&u.ID, &u.Username, &u.MaxTodo)
 	return u, err

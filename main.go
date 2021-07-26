@@ -1,12 +1,21 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
-	"github.com/manabie-com/togo/internal/services"
+	"github.com/codegangsta/negroni"
+	"github.com/gorilla/mux"
+	"github.com/manabie-com/togo/internal/handlers"
+	"github.com/manabie-com/togo/internal/services/task"
+	"github.com/manabie-com/togo/internal/services/user"
 	"github.com/manabie-com/togo/internal/storages"
 )
+
+func index(w http.ResponseWriter, req *http.Request) {
+	fmt.Fprintf(w, "Hello there - Obiwan")
+}
 
 func main() {
 	db, err := storages.Initialize("postgres", "postgres", "todo")
@@ -15,8 +24,17 @@ func main() {
 	}
 	defer db.DB.Close()
 
-	http.ListenAndServe(":5050", &services.ToDoService{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store:  db,
-	})
+	userService := user.SetupNewService("wqGyEBBfPK9w3Lxw", db)
+	taskService := task.SetupNewService("wqGyEBBfPK9w3Lxw", db)
+
+	// taskService := task.SetupNewService("wqGyEBBfPK9w3Lxw", db)
+	r := mux.NewRouter()
+	//handlers
+	n := negroni.Classic()
+	handlers.MakeUserHandlers(r, *n, *userService)
+	handlers.MakeTaskHandler(r, *n, *taskService, *userService)
+	r.HandleFunc("/", index)
+
+	n.UseHandler(r)
+	n.Run(":5050")
 }
