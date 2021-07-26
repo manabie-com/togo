@@ -65,16 +65,40 @@ func addTask(service tasks.ToDoService) http.Handler {
 	})
 }
 
+func deleteTaskByDate(service tasks.ToDoService) http.Handler {
+	return http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
+		resp.Header().Set("Content-Type", "application/json")
+
+		createdDate := utils.Value(req, "created_date")
+		userID, _ := userIDFromCtx(req.Context())
+
+		err := service.DeleteTaskByDate(
+			req.Context(),
+			utils.ConvertStringToSqlNullString(userID),
+			createdDate,
+		)
+		if err != nil {
+			resp.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(resp).Encode(map[string]string{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		resp.WriteHeader(http.StatusNoContent)
+	})
+}
+
 type userAuthKey int8
 
-func validToken(taskService tasks.ToDoService, userService users.ToDoService) negroni.HandlerFunc {
+func validToken(userService users.ToDoService) negroni.HandlerFunc {
 	return func(resp http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 		resp.Header().Set("Content-Type", "application/json")
 		token := req.Header.Get("Authorization")
 
 		claims := make(jwt.MapClaims)
 		t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
-			return []byte(taskService.JWTKey), nil
+			return []byte(userService.JWTKey), nil
 		})
 		if err != nil {
 			resp.WriteHeader(http.StatusUnauthorized)
@@ -111,11 +135,15 @@ func userIDFromCtx(ctx context.Context) (string, bool) {
 
 func MakeTaskHandler(r *mux.Router, n negroni.Negroni, taskService tasks.ToDoService, userService users.ToDoService) {
 	r.Handle("/tasks", n.With(
-		validToken(taskService, userService),
+		validToken(userService),
 		negroni.Wrap(listTasks(taskService)),
 	)).Methods("GET", "OPTIONS").Name("list tasks")
 	r.Handle("/tasks", n.With(
-		validToken(taskService, userService),
+		validToken(userService),
 		negroni.Wrap(addTask(taskService)),
 	)).Methods("POST", "OPTIONS").Name("add task")
+	r.Handle("/tasks", n.With(
+		validToken(userService),
+		negroni.Wrap(deleteTaskByDate(taskService)),
+	)).Methods("DELETE", "OPTIONS").Name("delete task")
 }

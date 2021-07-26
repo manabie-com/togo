@@ -25,7 +25,7 @@ func main() {
 	defer db.DB.Close()
 
 	userService := users.SetupNewService("wqGyEBBfPK9w3Lxw", db)
-	taskService := tasks.SetupNewService("wqGyEBBfPK9w3Lxw", db)
+	taskService := tasks.SetupNewService(db)
 
 	// taskService := task.SetupNewService("wqGyEBBfPK9w3Lxw", db)
 	r := mux.NewRouter()
