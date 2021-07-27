@@ -137,13 +137,13 @@ func MakeTaskHandler(r *mux.Router, n negroni.Negroni, taskService tasks.ToDoSer
 	r.Handle("/tasks", n.With(
 		validToken(userService),
 		negroni.Wrap(listTasks(taskService)),
-	)).Methods("GET", "OPTIONS").Name("list tasks")
+	)).Methods("GET").Name("list tasks")
 	r.Handle("/tasks", n.With(
 		validToken(userService),
 		negroni.Wrap(addTask(taskService)),
-	)).Methods("POST", "OPTIONS").Name("add task")
+	)).Methods("POST").Name("add task")
 	r.Handle("/tasks", n.With(
 		validToken(userService),
 		negroni.Wrap(deleteTaskByDate(taskService)),
-	)).Methods("DELETE", "OPTIONS").Name("delete task")
+	)).Methods("DELETE").Name("delete task")
 }

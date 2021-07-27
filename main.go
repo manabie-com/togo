@@ -11,6 +11,7 @@ import (
 	"github.com/manabie-com/togo/internal/services/tasks"
 	"github.com/manabie-com/togo/internal/services/users"
 	"github.com/manabie-com/togo/internal/storages"
+	"github.com/rs/cors"
 )
 
 func index(w http.ResponseWriter, req *http.Request) {
@@ -30,6 +31,9 @@ func main() {
 	r := mux.NewRouter()
 	//handlers
 	n := negroni.Classic()
+	//will need to include allowed origins. Currently, all origins are allowed
+	c := cors.New(cors.Options{})
+	n.Use(c)
 	handlers.MakeUserHandlers(r, *n, *userService)
 	handlers.MakeTaskHandler(r, *n, *taskService, *userService)
 	r.HandleFunc("/", index)

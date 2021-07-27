@@ -33,5 +33,5 @@ func getAuthToken(service users.ToDoService) http.Handler {
 func MakeUserHandlers(r *mux.Router, n negroni.Negroni, service users.ToDoService) {
 	r.Handle("/login", n.With(
 		negroni.Wrap(getAuthToken(service)),
-	)).Methods("GET", "OPTIONS").Name("login")
+	)).Methods("GET").Name("login")
 }
