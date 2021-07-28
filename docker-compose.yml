@@ -8,8 +8,8 @@ services:
       - .env
     ports:
       - "5432:5432"
-    volumes:
-      - data:/etc/data
+    volumes: 
+      - ./pg:/docker-entrypoint-initdb.d/ 
   pgadmin:
     image: dpage/pgadmin4
     depends_on:
@@ -20,6 +20,3 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@manabie.com
       PGADMIN_DEFAULT_PASSWORD: admin
     restart: always
-
-volumes:
-  data:
