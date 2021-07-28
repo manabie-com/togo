@@ -1,0 +1,42 @@
+version: '3'
+networks:
+    internal_network:
+      driver: bridge
+      
+services:
+    db:
+        image: postgres
+        restart: always
+        ports:
+            - "5432:5432"
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: 123456
+            POSTGRES_DB: "togo"
+        networks:
+            - internal_network
+        env_file:
+            - ./.env.docker_compose
+
+    togo:
+        build:
+            context: .
+            dockerfile: ./Dockerfile
+        networks:
+            - internal_network
+        env_file:
+            - ./.env.docker_compose
+        working_dir: /go/src/togo
+        command: |
+            sh -c 'go run main.go'
+        expose:
+            - "5050"
+        ports:
+            - "5050:5050"
+        volumes:
+            - ./:/go/src/togo
+        depends_on:
+            - db
+volumes:
+    togo_db:
+        driver: local

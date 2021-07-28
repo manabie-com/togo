@@ -56,3 +56,18 @@ CREATE TABLE tasks (
 
 #### Sequence diagram
 ![auth and create tasks request](https://github.com/manabie-com/togo/blob/master/docs/sequence.svg)
+
+
+#### Candidate notes:
+- I missed some test cases in unit tests and integration tests
+- Run app with docker-compose:
+	`docker-compose up`
+- Run app with `go run`:
+1. export environment in `.env`
+2. run entrypoint.sh script
+3. run `go run main.go`
+
+- Run unit tests and integration test:
+1. create database test
+2. export environment in `.env`
+3. run `go test ./...`
