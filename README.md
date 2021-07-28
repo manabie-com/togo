@@ -63,11 +63,11 @@ CREATE TABLE tasks (
 - Run app with docker-compose:
 	`docker-compose up`
 - Run app with `go run`:
-1. export environment in `.env`
+1. export environment in `.env.example`
 2. run entrypoint.sh script
 3. run `go run main.go`
 
 - Run unit tests and integration test:
 1. create database test
-2. export environment in `.env`
+2. export environment in `.env.example`
 3. run `go test ./...`
