@@ -1,8 +1,6 @@
 package user
 
 import (
-	"fmt"
-
 	"github.com/jinzhu/gorm"
 	"github.com/manabie-com/togo/internal/storages"
 )
@@ -23,7 +21,6 @@ func (s *userStorage) GetUser(id, password string) error {
 }
 
 func (s *userStorage) GetUsersTasks(userID string, createdDate string) (storages.User, error) {
-	fmt.Println("userID", userID)
 	user := storages.User{}
 
 	tx := s.db.Begin()
