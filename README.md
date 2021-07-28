@@ -1,20 +1,11 @@
 ### Notes
 This is a simple backend for a todo service, right now this service can handle login/list/create simple tasks, to make it run:
+- `sudo docker-compose up`
+- go to http://localhost:5051/login with username `admin@manabie.com` and password `admin` and run queries in `migration_script.sql`
 - `go run main.go`
-- Import Postman collection from docs to check example
-
-Candidates are invited to implement the below requirements but the point is **NOT to resolve everything perfectly** but selective about what you can do best in a limited time.  
-Thus, **there is no correct-or-perfect answer**, your solutions are a way for us to continue the discussion and collaboration.  
-
-We're using **Golang** but candidates can use any language (NodeJS/Java/PHP/Python...) **as long as**:  
-- You show us how to run **reliably** - many of us use Ubuntu, some use Mac
-- Your solution is **compatible with our REST interface** and we can use our Postman collection for verifying
-
----
-
-### Functional requirement:
-Right now a user can add as many tasks as they want, we want the ability to **limit N tasks per day**.  
-For example, users are limited to create only 5 tasks only per day, if the daily limit is reached, return 4xx code to the client and ignore the create request.
+- Postman collections can be imported to run integration testing through two files using Postman Runner
+	- collection file: togo.postman_collection.json
+	- environment file: local.postman_environment.json
 
 ### Non-functional requirements:
 - [ ] **A nice README on how to run, what is missing, what else you want to improve but don't have enough time**
@@ -28,40 +19,6 @@ For example, users are limited to create only 5 tasks only per day, if the daily
 - [ ] Write unit test for storages layer
 - [ ] Split services layer to use case and transport layer
 
-
-#### DB Schema
-```sql
-
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
--- users definition
-
-CREATE TABLE users (
-	id uuid DEFAULT uuid_generate_v4 (),
-	user_name VARCHAR(32) NOT NULL,
-	password VARCHAR(255) NOT NULL,
-	max_todo INTEGER DEFAULT 5 NOT NULL,
-	CONSTRAINT users_PK PRIMARY KEY (id)
-);
-
-INSERT INTO users (user_name, password, max_todo) VALUES('firstUser', 'password', 5);
-
--- tasks definition
-
-CREATE TABLE tasks (
-	id uuid DEFAULT uuid_generate_v4 (),
-	content TEXT NOT NULL,
-	user_id uuid NOT NULL,
-    created_date VARCHAR(10) NOT NULL,
-	CONSTRAINT tasks_PK PRIMARY KEY (id),
-	CONSTRAINT tasks_FK FOREIGN KEY (user_id) REFERENCES users(id)
-);
-
-CREATE INDEX tasks_date ON tasks USING btree
-(
-    created_date
-);
-```
 
 #### Sequence diagram
 ![auth and create tasks request](https://github.com/manabie-com/togo/blob/master/docs/sequence.svg)

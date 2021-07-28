@@ -28,26 +28,25 @@
 				}
 			],
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_name\": \"{{userName}}\",\n    \"password\": \"wrong_password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "localhost:5050/login?user_name={{userName}}&password=wrong_password",
+					"raw": "localhost:5050/login",
 					"host": [
 						"localhost"
 					],
 					"port": "5050",
 					"path": [
 						"login"
-					],
-					"query": [
-						{
-							"key": "user_name",
-							"value": "{{userName}}"
-						},
-						{
-							"key": "password",
-							"value": "wrong_password"
-						}
 					]
 				}
 			},
@@ -80,26 +79,25 @@
 				}
 			],
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_name\": \"{{userName}}\",\n    \"password\": \"{{password}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "localhost:5050/login?user_name={{userName}}&password={{password}}",
+					"raw": "localhost:5050/login",
 					"host": [
 						"localhost"
 					],
 					"port": "5050",
 					"path": [
 						"login"
-					],
-					"query": [
-						{
-							"key": "user_name",
-							"value": "{{userName}}"
-						},
-						{
-							"key": "password",
-							"value": "{{password}}"
-						}
 					]
 				}
 			},
@@ -245,6 +243,22 @@
 						],
 						"type": "text/javascript"
 					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Have correct task after creation\", function () {",
+							"    task = pm.response.json().data;",
+							"    pm.expect(task).is.not.null;",
+							"    pm.expect(task.content).eq(\"first task\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
 				}
 			],
 			"request": {
@@ -349,6 +363,242 @@
 							"key": "created_date",
 							"value": "{{todayDate}}"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login Second User - Success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"var tokenString = \"pm.response.json().data;\"",
+							"pm.test(\"Response is in correct format\", function () {",
+							"    tokenString = pm.response.json().data;",
+							"    // token is present in data's value",
+							"    pm.expect(tokenString).is.not.null;",
+							"    // token matched JWT token regex",
+							"    pm.expect(tokenString.match(\"^[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_=]+\\.?[A-Za-z0-9-_.+/=]*$\"));",
+							"});",
+							"",
+							"//set token to environment variable for next tests",
+							"pm.environment.set(\"token\", tokenString);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_name\": \"{{secondUserName}}\",\n    \"password\": \"{{password}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5050/login",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete today task - second user",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var moment = require('moment')",
+							"pm.environment.set(\"todayDate\", moment().format('YYYY-MM-DD'))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"content\": \"task\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5050/tasks?created_date={{todayDate}}",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"tasks"
+					],
+					"query": [
+						{
+							"key": "created_date",
+							"value": "{{todayDate}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create task - second user - Success",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Have correct task after creation\", function () {",
+							"    task = pm.response.json().data;",
+							"    pm.expect(task).is.not.null;",
+							"    pm.expect(task.content).eq(\"first task\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"content\": \"first task\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5050/tasks",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"tasks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create task - second user - Limit exceeded",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 409\", function () {",
+							"    pm.response.to.have.status(409);",
+							"});",
+							"",
+							"var expectedError = \"exceed today maximum allowed number of tasks\"",
+							"pm.test(\"Error is returned\", function () {",
+							"    errorObj = pm.response.json();",
+							"    pm.expect(errorObj.error).is.not.null;",
+							"    errorMessage = errorObj.error;",
+							"    pm.expect(errorMessage).eq(expectedError);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"content\": \"first task\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5050/tasks",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"tasks"
 					]
 				}
 			},

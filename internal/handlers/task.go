@@ -52,7 +52,11 @@ func addTask(service tasks.ToDoService) http.Handler {
 		}
 		task, err := service.AddTask(req.Context(), utils.ConvertStringToSqlNullString(id), *t)
 		if err != nil {
-			resp.WriteHeader(http.StatusInternalServerError)
+			if err.Error() == "exceed today maximum allowed number of tasks" {
+				resp.WriteHeader(http.StatusConflict)
+			} else {
+				resp.WriteHeader(http.StatusInternalServerError)
+			}
 			json.NewEncoder(resp).Encode(map[string]string{
 				"error": err.Error(),
 			})
