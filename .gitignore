@@ -19,3 +19,4 @@ out/
 .idea
 /.env
 /.env.idea
+/bin
