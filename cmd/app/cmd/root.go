@@ -5,9 +5,9 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/spf13/cobra"
 	"os"
-	"togo/cmd/router"
 	"togo/config"
 	"togo/db/postgres"
+	"togo/router"
 )
 
 var rootCmd = &cobra.Command{

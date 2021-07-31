@@ -1,6 +1,8 @@
 package main
 
-import "togo/cmd"
+import (
+	"togo/cmd/migrate/cmd"
+)
 
 func main() {
 	cmd.Execute()

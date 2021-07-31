@@ -1,0 +1,25 @@
+version: "3.9"
+services:
+  db:
+    image: 'bitnami/postgresql:12'
+    ports:
+      - '5433:5432'
+    environment:
+      POSTGRESQL_USERNAME: postgres
+      POSTGRESQL_PASSWORD: 123123123
+      POSTGRESQL_DATABASE: togo
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: 123123123
+      DB_NAME: togo
+      SSL_MODE: disable
+      PORT: 3000
+      GIN_MODE: release
+    depends_on:
+      - db
