@@ -21,8 +21,8 @@ var (
 
 var rootCmd = &cobra.Command{
 	Use:   "Togo",
-	Short: "Togo api",
-	Long:  "Togo Web api",
+	Short: "Togo Migrate",
+	Long:  "Togo Migrate",
 	Run: func(cmd *cobra.Command, args []string) {
 		flags.Usage = usage
 		flags.Parse(os.Args[1:])
