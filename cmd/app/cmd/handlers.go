@@ -1,4 +1,4 @@
-package router
+package cmd
 
 import (
 	"database/sql"
@@ -9,13 +9,16 @@ import (
 	"togo/config"
 )
 
-type router struct {
+type ServerConfig struct {
 	*config.Config
 	*sql.DB
 }
+type server struct {
+	*ServerConfig
+}
 
-func NewRouter(config *config.Config, DB *sql.DB) *router {
-	return &router{Config: config, DB: DB}
+func NewServer(serverConfig *ServerConfig) *server {
+	return &server{ServerConfig: serverConfig}
 }
 
 func ping() fiber.Handler {
@@ -26,7 +29,7 @@ func ping() fiber.Handler {
 	}
 }
 
-func (r *router) Start() error {
+func (s *server) Start() error {
 	app := fiber.New()
 	app.Use(logger.New())
 	app.Use(recover.New())
@@ -34,7 +37,7 @@ func (r *router) Start() error {
 	app.Get("/", ping())
 	app.Get("/ping", ping())
 
-	addr := fmt.Sprintf(":%d", r.Port)
+	addr := fmt.Sprintf(":%d", s.Port)
 	err := app.Listen(addr)
 	if err != nil {
 		return err

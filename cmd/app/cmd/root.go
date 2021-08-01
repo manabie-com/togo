@@ -6,7 +6,6 @@ import (
 	"os"
 	"togo/cmd/internal"
 	"togo/config"
-	"togo/router"
 )
 
 var rootCmd = &cobra.Command{
@@ -14,19 +13,17 @@ var rootCmd = &cobra.Command{
 	Short: "Togo api",
 	Long:  "Togo Web api",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		c, err := config.NewConfig()
+		conf, err := config.NewConfig()
 		if err != nil {
 			return err
 		}
 
-		db, err := internal.NewPostgresql(c)
+		db, err := internal.NewPostgresql(conf)
 		if err != nil {
 			return err
 		}
 
-		r := router.NewRouter(c, db)
-
-		err = r.Start()
+		err = NewServer(&ServerConfig{Config: conf, DB: db}).Start()
 		if err != nil {
 			return err
 		}
