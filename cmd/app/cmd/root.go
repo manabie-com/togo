@@ -1,12 +1,12 @@
 package cmd
 
 import (
+	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
 	"github.com/spf13/cobra"
 	"os"
 	"togo/config"
-	"togo/db/postgres"
 	"togo/router"
 )
 
@@ -21,15 +21,19 @@ var rootCmd = &cobra.Command{
 		}
 
 		dataSourceName := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=%s", c.DbUsername, c.DbPassword, c.DbHost, c.DbPort, c.DbName, c.SslMode)
-		store, err := postgres.NewStore(dataSourceName)
+
+		db, err := sql.Open("postgres", dataSourceName)
 		if err != nil {
 			return err
 		}
 
-		serviceContext := config.NewServiceContext(store, c)
+		if err = db.Ping(); err != nil {
+			return err
+		}
 
-		err = router.NewRouter(serviceContext)
-		if err != nil {
+		r := router.NewRouter(c, db)
+
+		if err := r.Start(); err != nil {
 			return err
 		}
 
