@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"os"
 
 	"github.com/manabie-com/togo/configs"
@@ -28,13 +29,15 @@ func main() {
 
 func loadConfig() {
 	cfg = &configs.Config{
-		DBAddress: os.Getenv("DB_ADRESS"),
+		DBAddress: os.Getenv("DB_ADDRESS"),
 	}
 }
 
 func loadDatabase() error {
 	var err error
+	fmt.Println("connect postgres with address", cfg.DBAddress)
 	dbClient, err = postgres.NewPostgresClient(cfg.DBAddress)
+
 	return err
 }
 

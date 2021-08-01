@@ -66,7 +66,7 @@ func loadConfig() error {
 		return err
 	}
 	cfg = &configs.Config{
-		DBAddress:    os.Getenv("DB_ADRESS"),
+		DBAddress:    os.Getenv("DB_ADDRESS"),
 		RedisAddress: os.Getenv("REDIS_ADDRESS"),
 		Port:         p,
 		JwtKey:       os.Getenv("JWT_KEY"),
@@ -77,12 +77,18 @@ func loadConfig() error {
 func loadDatabase() error {
 	var err error
 	dbClient, err = postgres.NewPostgresClient(cfg.DBAddress)
+	if err == nil {
+		fmt.Println("connect database successful", cfg.DBAddress)
+	}
 	return err
 }
 
 func loadRedis() error {
 	var err error
 	redisClient, err = rd.NewRedisClient(cfg.RedisAddress)
+	if err == nil {
+		fmt.Println("connect redis successful", cfg.RedisAddress)
+	}
 	return err
 }
 

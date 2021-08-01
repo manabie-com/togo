@@ -4,7 +4,7 @@ services:
     image: redis
     container_name: "my_redis"
     ports:
-      - "6379:6379"
+      - 6379:6379
   postgres:
     image: postgres:latest
     restart: always
@@ -18,7 +18,7 @@ services:
   pgadmin:
     image: dpage/pgadmin4:latest
     ports:
-      - "6000:80"
+      - 6000:80
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD:-admin}
@@ -30,3 +30,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - 5050:5050
+    depends_on:
+      - redis
+      - postgres
