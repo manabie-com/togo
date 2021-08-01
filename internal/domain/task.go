@@ -2,7 +2,6 @@ package domain
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/manabie-com/togo/common/errors"
@@ -54,7 +53,7 @@ func (d *taskDomain) Create(ctx context.Context, content string) error {
 	if err := d.taskCountStore.CreateIfNotExists(ctx, userID, date); err != nil {
 		return err
 	}
-	total, err := d.taskCountStore.UpdateAndGet(ctx, userID, date)
+	total, err := d.taskCountStore.Inc(ctx, userID, date)
 	if err != nil {
 		return err
 	}
@@ -63,15 +62,17 @@ func (d *taskDomain) Create(ctx context.Context, content string) error {
 		return errors.ErrTaskLimitExceeded
 	}
 
-	fmt.Println(date)
-
 	task := &storages.Task{
 		UserID:       userID,
 		Content:      content,
 		CreatedDate:  date,
 		NumberInDate: total,
 	}
-	return d.taskStore.AddTask(ctx, task)
+	if err := d.taskStore.AddTask(ctx, task); err != nil {
+		d.taskCountStore.Desc(ctx, userID, date)
+		return err
+	}
+	return nil
 }
 
 func NewTaskDomain(
