@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	jwtware "github.com/gofiber/jwt/v2"
 	"togo/config"
 	"togo/internal/rest"
 )
@@ -32,6 +33,14 @@ func (s *server) Start() error {
 
 	app.Get("/", ping())
 	app.Get("/ping", ping())
+
+	app.Post("/login", rest.UserLogin(s.SC))
+	app.Post("/signup", rest.UserSignup(s.SC))
+
+	// JWT Middleware
+	app.Use(jwtware.New(jwtware.Config{
+		SigningKey: []byte(s.SC.JwtSecret),
+	}))
 
 	tasks := app.Group("/tasks")
 	tasks.Post("", rest.CreateTask(s.SC))

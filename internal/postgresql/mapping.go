@@ -11,3 +11,12 @@ func (task Task) MapToEntity() entity.Task {
 		IsDone:      task.IsDone,
 	}
 }
+
+func (user User) MapToEntity() entity.User {
+	return entity.User{
+		ID:       user.ID,
+		Username: user.Username,
+		Password: user.Password,
+		MaxTodo:  user.MaxTodo,
+	}
+}

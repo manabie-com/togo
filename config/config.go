@@ -12,6 +12,7 @@ type Config struct {
 	DbPort     int    `required:"true" split_words:"true"`
 	SslMode    string `required:"true" split_words:"true"`
 	Port       int    `required:"true" split_words:"true"`
+	JwtSecret  string `required:"true" split_words:"true"`
 }
 
 func NewConfig() (*Config, error) {
