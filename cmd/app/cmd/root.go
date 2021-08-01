@@ -1,11 +1,10 @@
 package cmd
 
 import (
-	"database/sql"
 	"fmt"
-	_ "github.com/lib/pq"
 	"github.com/spf13/cobra"
 	"os"
+	"togo/cmd/internal"
 	"togo/config"
 	"togo/router"
 )
@@ -15,25 +14,20 @@ var rootCmd = &cobra.Command{
 	Short: "Togo api",
 	Long:  "Togo Web api",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		c, err := config.New()
+		c, err := config.NewConfig()
 		if err != nil {
 			return err
 		}
 
-		dataSourceName := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=%s", c.DbUsername, c.DbPassword, c.DbHost, c.DbPort, c.DbName, c.SslMode)
-
-		db, err := sql.Open("postgres", dataSourceName)
+		db, err := internal.NewPostgresql(c)
 		if err != nil {
-			return err
-		}
-
-		if err = db.Ping(); err != nil {
 			return err
 		}
 
 		r := router.NewRouter(c, db)
 
-		if err := r.Start(); err != nil {
+		err = r.Start()
+		if err != nil {
 			return err
 		}
 

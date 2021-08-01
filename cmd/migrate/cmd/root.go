@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"database/sql"
 	"flag"
 	"fmt"
 	_ "github.com/lib/pq"
@@ -9,6 +8,7 @@ import (
 	"github.com/spf13/cobra"
 	"log"
 	"os"
+	"togo/cmd/internal"
 	"togo/config"
 )
 
@@ -45,14 +45,15 @@ var rootCmd = &cobra.Command{
 			return
 		}
 
-		c, err := config.New()
+		c, err := config.NewConfig()
 		if err != nil {
 			return
 		}
 
-		dataSourceName := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=%s", c.DbUsername, c.DbPassword, c.DbHost, c.DbPort, c.DbName, c.SslMode)
-
-		db, err := sql.Open(dialect, dataSourceName)
+		db, err := internal.NewPostgresql(c)
+		if err != nil {
+			log.Fatal(err)
+		}
 
 		if err := goose.SetDialect(dialect); err != nil {
 			log.Fatal(err)

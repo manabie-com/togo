@@ -14,7 +14,7 @@ type Config struct {
 	Port       int    `required:"true" split_words:"true"`
 }
 
-func New() (*Config, error) {
+func NewConfig() (*Config, error) {
 	var c Config
 
 	err := envconfig.Process("", &c)
