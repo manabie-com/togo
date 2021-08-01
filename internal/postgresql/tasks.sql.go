@@ -7,15 +7,32 @@ import (
 	"context"
 )
 
+const deleteTask = `-- name: DeleteTask :exec
+DELETE
+FROM tasks
+WHERE id = $1
+`
+
+func (q *Queries) DeleteTask(ctx context.Context, id int32) error {
+	_, err := q.db.ExecContext(ctx, deleteTask, id)
+	return err
+}
+
 const getTask = `-- name: GetTask :one
 SELECT id, content, user_id, created_date, is_done, created_at, updated_at
 FROM tasks
 WHERE id = $1
+  AND user_id = $2
 LIMIT 1
 `
 
-func (q *Queries) GetTask(ctx context.Context, id int32) (Task, error) {
-	row := q.db.QueryRowContext(ctx, getTask, id)
+type GetTaskParams struct {
+	ID     int32 `json:"id"`
+	UserID int32 `json:"user_id"`
+}
+
+func (q *Queries) GetTask(ctx context.Context, arg GetTaskParams) (Task, error) {
+	row := q.db.QueryRowContext(ctx, getTask, arg.ID, arg.UserID)
 	var i Task
 	err := row.Scan(
 		&i.ID,
@@ -32,11 +49,12 @@ func (q *Queries) GetTask(ctx context.Context, id int32) (Task, error) {
 const listTasks = `-- name: ListTasks :many
 SELECT id, content, user_id, created_date, is_done, created_at, updated_at
 FROM tasks
+WHERE user_id = $1
 ORDER BY id
 `
 
-func (q *Queries) ListTasks(ctx context.Context) ([]Task, error) {
-	rows, err := q.db.QueryContext(ctx, listTasks)
+func (q *Queries) ListTasks(ctx context.Context, userID int32) ([]Task, error) {
+	rows, err := q.db.QueryContext(ctx, listTasks, userID)
 	if err != nil {
 		return nil, err
 	}
