@@ -15,7 +15,6 @@ import (
 	"github.com/manabie-com/togo/internal/storages/postgres"
 	rd "github.com/manabie-com/togo/internal/storages/redis"
 	"github.com/manabie-com/togo/internal/transport"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 var (

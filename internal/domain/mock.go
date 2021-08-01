@@ -32,9 +32,14 @@ func (s *mockTaskCountStore) CreateIfNotExists(ctx context.Context, userID, date
 	args := s.Called(userID, date)
 	return args.Error(0)
 }
-func (s *mockTaskCountStore) UpdateAndGet(ctx context.Context, userID, date string) (int, error) {
+func (s *mockTaskCountStore) Inc(ctx context.Context, userID, date string) (int, error) {
 	args := s.Called(userID, date)
 	return args.Int(0), args.Error(1)
+}
+
+func (s *mockTaskCountStore) Desc(ctx context.Context, userID, date string) error {
+	args := s.Called(userID, date)
+	return args.Error(0)
 }
 
 type mockUserStore struct {
