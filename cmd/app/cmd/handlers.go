@@ -1,24 +1,20 @@
 package cmd
 
 import (
-	"database/sql"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"togo/config"
+	"togo/internal/rest"
 )
 
-type ServerConfig struct {
-	*config.Config
-	*sql.DB
-}
 type server struct {
-	*ServerConfig
+	SC *config.ServerConfig
 }
 
-func NewServer(serverConfig *ServerConfig) *server {
-	return &server{ServerConfig: serverConfig}
+func NewServer(serverConfig *config.ServerConfig) *server {
+	return &server{SC: serverConfig}
 }
 
 func ping() fiber.Handler {
@@ -37,7 +33,15 @@ func (s *server) Start() error {
 	app.Get("/", ping())
 	app.Get("/ping", ping())
 
-	addr := fmt.Sprintf(":%d", s.Port)
+	tasks := app.Group("/tasks")
+	tasks.Post("", rest.CreateTask(s.SC))
+	tasks.Get("/:id", rest.GetTask(s.SC))
+	tasks.Get("", rest.ListTask(s.SC))
+	tasks.Patch("/:id", rest.UpdateTask(s.SC))
+	tasks.Patch("/:id", rest.UpdateTask(s.SC))
+	tasks.Delete("/:id", rest.DeleteTask(s.SC))
+
+	addr := fmt.Sprintf(":%d", s.SC.Port)
 	err := app.Listen(addr)
 	if err != nil {
 		return err

@@ -3,10 +3,9 @@ package internal
 import (
 	"database/sql"
 	"fmt"
+	_ "github.com/lib/pq"
 	"net/url"
 	"togo/config"
-
-	_ "github.com/lib/pq"
 )
 
 func NewPostgresql(config *config.Config) (*sql.DB, error) {

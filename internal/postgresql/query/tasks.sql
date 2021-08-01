@@ -19,4 +19,10 @@ WHERE id = $1;
 -- name: DeleteTask :exec
 DELETE
 FROM tasks
-WHERE id = $1;
+WHERE id = $1
+  AND user_id = $2;
+
+-- name: InsertTask :one
+INSERT INTO tasks (content, user_id, created_date)
+VALUES (@content, @user_id, @created_date)
+RETURNING *;

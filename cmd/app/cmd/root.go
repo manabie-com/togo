@@ -23,7 +23,7 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 
-		err = NewServer(&ServerConfig{Config: conf, DB: db}).Start()
+		err = NewServer(&config.ServerConfig{Config: conf, DB: db}).Start()
 		if err != nil {
 			return err
 		}

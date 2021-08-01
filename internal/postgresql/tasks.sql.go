@@ -5,16 +5,23 @@ package postgresql
 
 import (
 	"context"
+	"time"
 )
 
 const deleteTask = `-- name: DeleteTask :exec
 DELETE
 FROM tasks
 WHERE id = $1
+  AND user_id = $2
 `
 
-func (q *Queries) DeleteTask(ctx context.Context, id int32) error {
-	_, err := q.db.ExecContext(ctx, deleteTask, id)
+type DeleteTaskParams struct {
+	ID     int32 `json:"id"`
+	UserID int32 `json:"user_id"`
+}
+
+func (q *Queries) DeleteTask(ctx context.Context, arg DeleteTaskParams) error {
+	_, err := q.db.ExecContext(ctx, deleteTask, arg.ID, arg.UserID)
 	return err
 }
 
@@ -33,6 +40,33 @@ type GetTaskParams struct {
 
 func (q *Queries) GetTask(ctx context.Context, arg GetTaskParams) (Task, error) {
 	row := q.db.QueryRowContext(ctx, getTask, arg.ID, arg.UserID)
+	var i Task
+	err := row.Scan(
+		&i.ID,
+		&i.Content,
+		&i.UserID,
+		&i.CreatedDate,
+		&i.IsDone,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const insertTask = `-- name: InsertTask :one
+INSERT INTO tasks (content, user_id, created_date)
+VALUES ($1, $2, $3)
+RETURNING id, content, user_id, created_date, is_done, created_at, updated_at
+`
+
+type InsertTaskParams struct {
+	Content     string    `json:"content"`
+	UserID      int32     `json:"user_id"`
+	CreatedDate time.Time `json:"created_date"`
+}
+
+func (q *Queries) InsertTask(ctx context.Context, arg InsertTaskParams) (Task, error) {
+	row := q.db.QueryRowContext(ctx, insertTask, arg.Content, arg.UserID, arg.CreatedDate)
 	var i Task
 	err := row.Scan(
 		&i.ID,
