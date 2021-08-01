@@ -1,0 +1,32 @@
+version: "3"
+services:
+  redis:
+    image: redis
+    container_name: "my_redis"
+    ports:
+      - "6379:6379"
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=togo
+    ports:
+      - 5432:5432
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    ports:
+      - "6000:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD:-admin}
+      - PGADMIN_CONFIG_SERVER_MODE='False'
+    restart: unless-stopped
+  togo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 5050:5050
