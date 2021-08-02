@@ -1,0 +1,13 @@
+environment="Local"
+appname="Togo Backend API"
+appversion="1.0"
+jwt_secret="wqGyEBBfPK9w3Lxw"
+
+togo_database_host = "127.0.0.1"
+togo_database_name= "togo-db-local"
+togo_database_user = "username"
+togo_database_password = "password"
+togo_database_port = "15432"
+togo_database_ssl_mode = "disable"
+togo_database_dialect="postgres"
+togo_database_timezone="Asia/Ho_Chi_Minh"

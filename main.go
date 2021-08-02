@@ -1,26 +1,46 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
+	"os"
+	"time"
 
-	"github.com/manabie-com/togo/internal/services"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	"github.com/manabie-com/togo/internal/config"
+	"github.com/manabie-com/togo/internal/database"
+	"github.com/manabie-com/togo/internal/router"
 
-	_ "github.com/mattn/go-sqlite3"
+	"github.com/rs/cors"
 )
 
 func main() {
-	db, err := sql.Open("sqlite3", "./data.db")
-	if err != nil {
-		log.Fatal("error opening db", err)
+	database.SyncDB(false)
+	config := config.GetConfig()
+	r := router.GetRouter()
+	//set global timezone to GMT+7
+	loc, _ := time.LoadLocation("Asia/Ho_Chi_Minh")
+	time.Local = loc //
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
 	}
 
-	http.ListenAndServe(":5050", &services.ToDoService{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
-			DB: db,
-		},
+	log.Printf(`
+	-----------------------------------------------------
+	App name: %s
+	Version: %s
+	Listening Port: %v
+	Environment: %s
+	-----------------------------------------------------
+	`, config.AppName, config.AppVersion, port, config.Environment)
+
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowCredentials: true,
+		AllowedHeaders:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
 	})
+
+	log.Fatal(http.ListenAndServe(":"+port, c.Handler(r)))
+
 }
