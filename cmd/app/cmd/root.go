@@ -23,7 +23,12 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 
-		err = NewServer(&config.ServerConfig{Config: conf, DB: db}).Start()
+		rdb, err := internal.NewRedis(conf)
+		if err != nil {
+			return err
+		}
+
+		err = NewServer(&config.ServerConfig{Config: conf, DB: db, Redis: rdb}).Start()
 		if err != nil {
 			return err
 		}

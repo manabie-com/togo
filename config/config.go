@@ -13,6 +13,8 @@ type Config struct {
 	SslMode    string `required:"true" split_words:"true"`
 	Port       int    `required:"true" split_words:"true"`
 	JwtSecret  string `required:"true" split_words:"true"`
+	RedisHost  string `required:"true" split_words:"true"`
+	RedisDB    string `required:"true" split_words:"true"`
 }
 
 func NewConfig() (*Config, error) {

@@ -16,12 +16,22 @@ type TaskRepository interface {
 	CountTaskByUser(ctx context.Context, userID int32) (int32, error)
 }
 
-type TaskService struct {
-	repo TaskRepository
+type TaskRedisRepo interface {
+	GetTask(ctx context.Context, id int32, userId int32) (*entity.Task, error)
+	SetTask(ctx context.Context, task *entity.Task) error
+	DeleteTask(ctx context.Context, task *entity.Task) error
 }
 
-func NewTaskService(repo TaskRepository) *TaskService {
-	return &TaskService{repo: repo}
+type TaskService struct {
+	repo    TaskRepository
+	rdbRepo TaskRedisRepo
+}
+
+func NewTaskService(repo TaskRepository, rdbRepo TaskRedisRepo) *TaskService {
+	return &TaskService{
+		repo:    repo,
+		rdbRepo: rdbRepo,
+	}
 }
 
 func (t *TaskService) Create(ctx context.Context, user entity.User, content string, userId int32, createdDate time.Time) (*entity.Task, error) {
@@ -39,6 +49,8 @@ func (t *TaskService) Create(ctx context.Context, user entity.User, content stri
 		return nil, err
 	}
 
+	_ = t.rdbRepo.SetTask(ctx, task)
+
 	return task, nil
 }
 
@@ -52,36 +64,53 @@ func (t *TaskService) ListTasks(ctx context.Context, userId int32, isDone bool, 
 }
 
 func (t *TaskService) GetTask(ctx context.Context, id int32, userId int32) (*entity.Task, error) {
+	taskRdb, err := t.rdbRepo.GetTask(ctx, id, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	if taskRdb != nil {
+		return taskRdb, nil
+	}
+
 	task, err := t.repo.GetTask(ctx, id, userId)
 	if err != nil {
 		return nil, err
 	}
 
+	_ = t.rdbRepo.SetTask(ctx, task)
+
 	return task, nil
 }
 
 func (t *TaskService) DeleteTask(ctx context.Context, id int32, user entity.User) error {
-	if _, err := t.repo.GetTask(ctx, id, user.ID); err != nil {
-		return err
-	}
-
-	err := t.repo.DeleteTask(ctx, id, user.ID)
+	task, err := t.repo.GetTask(ctx, id, user.ID)
 	if err != nil {
 		return err
 	}
+
+	if err = t.repo.DeleteTask(ctx, id, user.ID); err != nil {
+		return err
+	}
+
+	_ = t.rdbRepo.DeleteTask(ctx, task)
 
 	return nil
 }
 
 func (t *TaskService) UpdateTask(ctx context.Context, user entity.User, id int32, isDone bool) error {
-	if _, err := t.repo.GetTask(ctx, id, user.ID); err != nil {
-		return err
-	}
-
-	err := t.repo.UpdateTask(ctx, id, isDone)
+	task, err := t.repo.GetTask(ctx, id, user.ID);
 	if err != nil {
 		return err
 	}
+
+	if err = t.repo.UpdateTask(ctx, id, isDone); err != nil {
+		return err
+	}
+
+	task.IsDone = isDone
+
+	_ = t.rdbRepo.SetTask(ctx, task)
 
 	return nil
 }

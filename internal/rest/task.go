@@ -7,18 +7,14 @@ import (
 	"time"
 	"togo/config"
 	"togo/internal/dto"
+	"togo/internal/redix"
 	"togo/internal/repository"
 	"togo/internal/service"
 )
 
-type SearchTasksRequest struct {
-	IsDone      bool      `query:"is_done"`
-	CreatedDate time.Time `query:"created_date"`
-}
-
 func ListTask(sc *config.ServerConfig) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		var r SearchTasksRequest
+		var r dto.SearchTasksRequest
 
 		if err := c.QueryParser(&r); err != nil {
 			return SimpleError(c, err)
@@ -26,9 +22,11 @@ func ListTask(sc *config.ServerConfig) fiber.Handler {
 
 		currentUser := GetCurrentUser(c)
 
+		rdb := sc.Redis
 		db := sc.DB
 		repo := repository.NewRepo(db)
-		svc := service.NewTaskService(repo)
+		rdbStore := redix.NewRedisStore(rdb)
+		svc := service.NewTaskService(repo, rdbStore)
 
 		tasks, err := svc.ListTasks(c.UserContext(), currentUser.ID, r.IsDone, r.CreatedDate)
 		if err != nil {
@@ -53,9 +51,11 @@ func CreateTask(sc *config.ServerConfig) fiber.Handler {
 
 		currentUser := GetCurrentUser(c)
 
+		rdb := sc.Redis
 		db := sc.DB
 		repo := repository.NewRepo(db)
-		svc := service.NewTaskService(repo)
+		rdbStore := redix.NewRedisStore(rdb)
+		svc := service.NewTaskService(repo, rdbStore)
 
 		task, err := svc.Create(c.UserContext(), currentUser, data.Content, currentUser.ID, time.Now())
 		if err != nil {
@@ -74,9 +74,12 @@ func GetTask(sc *config.ServerConfig) fiber.Handler {
 		if err != nil {
 			return SimpleError(c, err)
 		}
+
+		rdb := sc.Redis
 		db := sc.DB
 		repo := repository.NewRepo(db)
-		svc := service.NewTaskService(repo)
+		rdbStore := redix.NewRedisStore(rdb)
+		svc := service.NewTaskService(repo, rdbStore)
 
 		task, err := svc.GetTask(c.UserContext(), int32(id), currentUser.ID)
 		if err != nil {
@@ -96,9 +99,11 @@ func DeleteTask(sc *config.ServerConfig) fiber.Handler {
 			return SimpleError(c, err)
 		}
 
+		rdb := sc.Redis
 		db := sc.DB
 		repo := repository.NewRepo(db)
-		svc := service.NewTaskService(repo)
+		rdbStore := redix.NewRedisStore(rdb)
+		svc := service.NewTaskService(repo, rdbStore)
 
 		err = svc.DeleteTask(c.UserContext(), int32(id), currentUser)
 		if err != nil {
@@ -132,9 +137,11 @@ func UpdateTask(sc *config.ServerConfig) fiber.Handler {
 			return SimpleError(c, err)
 		}
 
+		rdb := sc.Redis
 		db := sc.DB
 		repo := repository.NewRepo(db)
-		svc := service.NewTaskService(repo)
+		rdbStore := redix.NewRedisStore(rdb)
+		svc := service.NewTaskService(repo, rdbStore)
 
 		err = svc.UpdateTask(c.UserContext(), currentUser, int32(id), data.IsDone)
 		if err != nil {
