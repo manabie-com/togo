@@ -6,18 +6,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/crypto/bcrypt"
 	"togo/config"
+	"togo/internal/dto"
 	"togo/internal/repository"
 	"togo/internal/service"
 )
 
-type UserLoginDTO struct {
-	Username string `json:"username" validate:"required,min=6,max=32"`
-	Password string `json:"password" validate:"required,min=6,max=32"`
-}
-
 func UserLogin(sc *config.ServerConfig) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		data := new(UserLoginDTO)
+		data := new(dto.UserLoginDTO)
 
 		if err := c.BodyParser(data); err != nil {
 			return SimpleError(c, err)
@@ -57,14 +53,9 @@ func UserLogin(sc *config.ServerConfig) fiber.Handler {
 	}
 }
 
-type CreateUserDTO struct {
-	Username string `json:"username" validate:"required,min=6,max=32"`
-	Password string `json:"password" validate:"required,min=6,max=32"`
-}
-
 func UserSignup(sc *config.ServerConfig) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		data := new(CreateUserDTO)
+		data := new(dto.CreateUserDTO)
 
 		if err := c.BodyParser(data); err != nil {
 			return SimpleError(c, err)
