@@ -8,6 +8,7 @@ import (
 
 	"github.com/manabie-com/togo/configs"
 	"github.com/manabie-com/togo/internal/storages/postgres"
+	"github.com/manabie-com/togo/utils"
 )
 
 var (
@@ -53,9 +54,9 @@ func loadMigrations() error {
 	if _, err := dbClient.ExecContext(ctx, stmt); err != nil {
 		return err
 	}
-
-	stmt = `INSERT INTO users (id, password, max_todo) VALUES('firstUser', 'example', 5)`
-	if _, err := dbClient.ExecContext(ctx, stmt); err != nil {
+	pwd, _ := utils.HashPassword("example")
+	stmt = `INSERT INTO users (id, password, max_todo) VALUES('firstUser', $1, 5)`
+	if _, err := dbClient.ExecContext(ctx, stmt, pwd); err != nil {
 		return err
 	}
 

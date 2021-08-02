@@ -25,8 +25,10 @@ func Test_Task_Create_InvalidContext(t *testing.T) {
 	taskCountStore := &mockTaskCountStore{}
 	taskDomain := NewTaskDomain(taskCountStore, taskStore, userStore)
 
-	err := taskDomain.Create(context.Background(), "something content")
+	task, err := taskDomain.Create(context.Background(), "something content")
+
 	assert.Error(t, errors.ErrUserIDIsInvalid, err)
+	assert.Nil(t, task)
 }
 
 func Test_Task_Create_UserNotExist(t *testing.T) {
@@ -37,8 +39,10 @@ func Test_Task_Create_UserNotExist(t *testing.T) {
 
 	userStore.On("FindUser", mock.Anything).Return(nil, fmt.Errorf("something error"))
 	ctx := utils.AddToContext(context.Background(), userID)
-	err := taskDomain.Create(ctx, "something content")
+	task, err := taskDomain.Create(ctx, "something content")
+
 	assert.Equal(t, errors.ErrUserDoesNotExist, err)
+	assert.Nil(t, task)
 }
 
 func Test_Task_Create_CreateIfNotExistsFail(t *testing.T) {
@@ -56,8 +60,10 @@ func Test_Task_Create_CreateIfNotExistsFail(t *testing.T) {
 
 	ctx := utils.AddToContext(context.Background(), userID)
 
-	err := taskDomain.Create(ctx, "something content")
+	task, err := taskDomain.Create(ctx, "something content")
+
 	assert.Equal(t, err, rErr)
+	assert.Nil(t, task)
 }
 
 func Test_Task_Create_TaskLimitExceeded(t *testing.T) {
@@ -77,13 +83,15 @@ func Test_Task_Create_TaskLimitExceeded(t *testing.T) {
 
 	taskCountStore.On("Inc", mock.Anything, mock.Anything).Return(u.MaxTodo+1, nil).Once()
 
-	err := taskDomain.Create(ctx, "something content")
+	task, err := taskDomain.Create(ctx, "something content")
 	assert.Equal(t, errors.ErrTaskLimitExceeded, err)
+	assert.Nil(t, task)
 
 	taskCountStore.On("Inc", mock.Anything, mock.Anything).Return(u.MaxTodo, nil).Once()
 
-	err = taskDomain.Create(ctx, "something content")
+	task, err = taskDomain.Create(ctx, "something content")
 	assert.NoError(t, err)
+	assert.NotNil(t, task)
 
 }
 
@@ -107,8 +115,10 @@ func Test_Task_Create_AddTaskFail(t *testing.T) {
 
 	ctx := utils.AddToContext(context.Background(), userID)
 
-	err := taskDomain.Create(ctx, "something content")
+	task, err := taskDomain.Create(ctx, "something content")
+
 	assert.Equal(t, rErr, err)
+	assert.Nil(t, task)
 }
 
 func Test_Task_Create_Success(t *testing.T) {
@@ -130,8 +140,10 @@ func Test_Task_Create_Success(t *testing.T) {
 
 	ctx := utils.AddToContext(context.Background(), userID)
 
-	err := taskDomain.Create(ctx, "something content")
+	task, err := taskDomain.Create(ctx, "something content")
+
 	assert.NoError(t, err)
+	assert.NotNil(t, task)
 }
 
 func Test_Task_GetList_InvalidContext(t *testing.T) {
@@ -140,8 +152,10 @@ func Test_Task_GetList_InvalidContext(t *testing.T) {
 	taskCountStore := &mockTaskCountStore{}
 	taskDomain := NewTaskDomain(taskCountStore, taskStore, userStore)
 
-	err := taskDomain.Create(context.Background(), "something content")
+	tasks, err := taskDomain.GetList(context.Background(), "something content")
+
 	assert.Error(t, errors.ErrUserIDIsInvalid, err)
+	assert.Nil(t, tasks)
 }
 
 func Test_Task_GetList_UserNotExist(t *testing.T) {
@@ -152,8 +166,10 @@ func Test_Task_GetList_UserNotExist(t *testing.T) {
 
 	userStore.On("FindUser", mock.Anything).Return(nil, fmt.Errorf("something error"))
 	ctx := utils.AddToContext(context.Background(), userID)
-	err := taskDomain.Create(ctx, "something content")
+	tasks, err := taskDomain.GetList(ctx, "2021-07-31")
+
 	assert.Equal(t, errors.ErrUserDoesNotExist, err)
+	assert.Nil(t, tasks)
 }
 
 func Test_Task_GetList_RetrieveTasksFail(t *testing.T) {

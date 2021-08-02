@@ -4,7 +4,9 @@ services:
     image: redis
     container_name: "my_redis"
     ports:
-      - "6379:6379"
+      - 6379:6379
+    networks:
+      - postgres
   postgres:
     image: postgres:latest
     restart: always
@@ -14,12 +16,29 @@ services:
       - POSTGRES_DB=togo
     ports:
       - 5432:5432
+    networks:
+      - postgres
 
   pgadmin:
     image: dpage/pgadmin4:latest
-    ports:
-      - "6000:80"
+
     environment:
-      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
-      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD:-admin}
+      - PGADMIN_DEFAULT_EMAIL=pgadmin4@pgadmin.org
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - 6001:80
     restart: unless-stopped
+    volumes:
+      - pgadmin:/root/.pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - postgres
+
+networks:
+  postgres:
+    driver: bridge
+
+volumes:
+  postgres:
+  pgadmin:

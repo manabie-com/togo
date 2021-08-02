@@ -43,7 +43,9 @@
 │   └── errors/
 │   |   └── ... 
 │   └── constants/
-│  |    └── storages/  
+│   |    └── storages/  
+├── test/                     # integration test 
+├── └── ... 
 ├── utils/ 
 ├── Dockerfile
 ├── docker-compose.yml
@@ -93,6 +95,11 @@ Start server with docker:
 ```sh
 $ make docker-start
 ```
+## Unit test
+```sh
+$ make unit-test
+```
+
 Your app should now be running on [localhost:5050](http://localhost:5050/).
 
 
