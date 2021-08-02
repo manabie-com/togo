@@ -5,6 +5,8 @@ services:
     container_name: "my_redis"
     ports:
       - 6379:6379
+    networks:
+      - postgres
   postgres:
     image: postgres:latest
     restart: always
@@ -38,9 +40,13 @@ services:
       dockerfile: Dockerfile
     ports:
       - 5050:5050
+    networks:
+      - postgres
     depends_on:
       - redis
       - postgres
+    restart: always
+
 networks:
   postgres:
     driver: bridge
