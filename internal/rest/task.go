@@ -1,23 +1,37 @@
 package rest
 
 import (
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"strconv"
 	"time"
 	"togo/config"
+	"togo/internal/dto"
 	"togo/internal/repository"
 	"togo/internal/service"
 )
 
+//type SearchTasksRequest struct {
+//	IsDone      *bool      `query:"is_done"`
+//	CreatedDate *time.Time `query:"created_date"`
+//}
+
 func ListTask(sc *config.ServerConfig) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		userId := GetCurrentUserId(c)
+		currentUser := GetCurrentUser(c)
+
+		//var r SearchTasksRequest
+		//
+		//if err := c.QueryParser(&r); err != nil {
+		//	fmt.Println(err)
+		//	return SimpleError(c, err)
+		//}
 
 		db := sc.DB
 		repo := repository.NewRepo(db)
 		svc := service.NewTaskService(repo)
 
-		tasks, err := svc.ListTasks(c.UserContext(), userId)
+		tasks, err := svc.ListTasks(c.UserContext(), currentUser.ID)
 		if err != nil {
 			return SimpleError(c, err)
 		}
@@ -26,19 +40,25 @@ func ListTask(sc *config.ServerConfig) fiber.Handler {
 	}
 }
 
-type CreateTaskDTO struct {
-	Content string `json:"content" validate:"required,min=6,max=32"`
-}
-
 func CreateTask(sc *config.ServerConfig) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		userId := GetCurrentUserId(c)
+		data := new(dto.CreateTaskDTO)
+
+		if err := c.BodyParser(data); err != nil {
+			return SimpleError(c, err)
+		}
+
+		if err := validator.New().Struct(data); err != nil {
+			return SimpleError(c, err)
+		}
+
+		currentUser := GetCurrentUser(c)
 
 		db := sc.DB
 		repo := repository.NewRepo(db)
 		svc := service.NewTaskService(repo)
 
-		task, err := svc.Create(c.UserContext(), "ahih", userId, time.Now())
+		task, err := svc.Create(c.UserContext(), currentUser, data.Content, currentUser.ID, time.Now())
 		if err != nil {
 			return SimpleError(c, err)
 		}
@@ -49,7 +69,7 @@ func CreateTask(sc *config.ServerConfig) fiber.Handler {
 
 func GetTask(sc *config.ServerConfig) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		userId := GetCurrentUserId(c)
+		currentUser := GetCurrentUser(c)
 
 		id, err := strconv.ParseInt(c.Params("id"), 10, 32)
 		if err != nil {
@@ -59,7 +79,7 @@ func GetTask(sc *config.ServerConfig) fiber.Handler {
 		repo := repository.NewRepo(db)
 		svc := service.NewTaskService(repo)
 
-		task, err := svc.GetTask(c.UserContext(), int32(id), userId)
+		task, err := svc.GetTask(c.UserContext(), int32(id), currentUser.ID)
 		if err != nil {
 			return SimpleError(c, err)
 		}
@@ -70,7 +90,7 @@ func GetTask(sc *config.ServerConfig) fiber.Handler {
 
 func DeleteTask(sc *config.ServerConfig) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		userId := GetCurrentUserId(c)
+		currentUser := GetCurrentUser(c)
 
 		id, err := strconv.ParseInt(c.Params("id"), 10, 32)
 		if err != nil {
@@ -80,7 +100,7 @@ func DeleteTask(sc *config.ServerConfig) fiber.Handler {
 		repo := repository.NewRepo(db)
 		svc := service.NewTaskService(repo)
 
-		err = svc.DeleteTask(c.UserContext(), int32(id), userId)
+		err = svc.DeleteTask(c.UserContext(), int32(id), currentUser.ID)
 		if err != nil {
 			return SimpleError(c, err)
 		}

@@ -75,3 +75,12 @@ func (r *Repo) UpdateTask(ctx context.Context, id int32, isDone bool) error {
 
 	return nil
 }
+
+func (r *Repo) CountTaskByUser(ctx context.Context, userID int32) (int32, error) {
+	count, err := r.q.CountTaskByUser(ctx, userID)
+	if err != nil {
+		return 0, err
+	}
+
+	return int32(count), nil
+}

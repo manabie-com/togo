@@ -8,6 +8,20 @@ import (
 	"time"
 )
 
+const countTaskByUser = `-- name: CountTaskByUser :one
+SELECT COUNT(id)
+FROM tasks
+WHERE user_id = $1
+  AND created_date = CURRENT_DATE
+`
+
+func (q *Queries) CountTaskByUser(ctx context.Context, userID int32) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countTaskByUser, userID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const deleteTask = `-- name: DeleteTask :exec
 DELETE
 FROM tasks

@@ -26,3 +26,9 @@ WHERE id = $1
 INSERT INTO tasks (content, user_id, created_date)
 VALUES (@content, @user_id, @created_date)
 RETURNING *;
+
+-- name: CountTaskByUser :one
+SELECT COUNT(id)
+FROM tasks
+WHERE user_id = $1
+  AND created_date = CURRENT_DATE;

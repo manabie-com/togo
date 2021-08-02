@@ -11,20 +11,16 @@ import (
 	"togo/utils/validator"
 )
 
-const appErrFormErrResponseFailure = "form error response failure"
-
 func SimpleError(c *fiber.Ctx, err error) error {
 	resp := validator.ToErrResponse(err)
 
 	if resp == nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": fiber.Map{"errors": appErrFormErrResponseFailure},
+			"errors": err.Error(),
 		})
 	}
 
-	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-		"message": resp,
-	})
+	return c.Status(fiber.StatusInternalServerError).JSON(resp)
 }
 
 func GenerateJWT(user *entity.User, sc *config.ServerConfig) (string, error) {
@@ -46,10 +42,8 @@ func GetHash(pwd []byte) string {
 	return string(hash)
 }
 
-func GetCurrentUserId(c *fiber.Ctx) int32 {
-	user := c.Locals("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userId := claims["user_id"].(float64)
+func GetCurrentUser(c *fiber.Ctx) entity.User {
+	currentUser := c.Locals("currentUser").(entity.User)
 
-	return int32(userId)
+	return currentUser
 }

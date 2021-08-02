@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"time"
 	"togo/internal/entity"
 )
@@ -12,6 +13,7 @@ type TaskRepository interface {
 	GetTask(ctx context.Context, id int32, userId int32) (entity.Task, error)
 	DeleteTask(ctx context.Context, id int32, userId int32) error
 	UpdateTask(ctx context.Context, id int32, isDone bool) error
+	CountTaskByUser(ctx context.Context, userID int32) (int32, error)
 }
 
 type TaskService struct {
@@ -22,7 +24,16 @@ func NewTaskService(repo TaskRepository) *TaskService {
 	return &TaskService{repo: repo}
 }
 
-func (t *TaskService) Create(ctx context.Context, content string, userId int32, createdDate time.Time) (entity.Task, error) {
+func (t *TaskService) Create(ctx context.Context, user entity.User, content string, userId int32, createdDate time.Time) (entity.Task, error) {
+	count, err := t.repo.CountTaskByUser(ctx, user.ID)
+	if err != nil {
+		return entity.Task{}, err
+	}
+
+	if count >= user.MaxTodo {
+		return entity.Task{}, errors.New("Too many tasks today")
+	}
+
 	task, err := t.repo.CreateTask(ctx, content, userId, createdDate)
 	if err != nil {
 		return entity.Task{}, err
