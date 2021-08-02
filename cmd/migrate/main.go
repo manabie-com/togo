@@ -53,6 +53,12 @@ func loadMigrations() error {
 	if _, err := dbClient.ExecContext(ctx, stmt); err != nil {
 		return err
 	}
+
+	stmt = `INSERT INTO users (id, password, max_todo) VALUES('firstUser', 'example', 5)`
+	if _, err := dbClient.ExecContext(ctx, stmt); err != nil {
+		return err
+	}
+
 	stmt = `CREATE TABLE tasks (
 		id TEXT NOT NULL,
 		content TEXT NOT NULL,
