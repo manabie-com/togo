@@ -45,7 +45,7 @@ Explanation: This line of code will force the server to truncate & recreate tabl
 
 Start the server by running the `start_app_local.sh` script:
 ```bash
-$ chmod +x install_dependencies.sh
+$ chmod +x start_app_local.sh
 ./start_app_local.sh
 ```
 Once the database is migrated,close the server, revert the code change, then start the server again.
