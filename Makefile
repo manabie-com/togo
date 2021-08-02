@@ -1,4 +1,4 @@
-.PHONY: migrate, rollback, migration, run, sqlc
+.PHONY: migrate, rollback, migration, run, sqlc, test
 
 migrate:
 	go run cmd/migrate/main.go up
@@ -15,3 +15,6 @@ run:
 
 sqlc:
 	sqlc generate
+
+test:
+	go test
