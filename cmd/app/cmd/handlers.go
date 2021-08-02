@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	jwtware "github.com/gofiber/jwt/v2"
 	"togo/config"
+	"togo/internal/middleware"
 	"togo/internal/rest"
 )
 
@@ -46,6 +47,8 @@ func (s *server) Start() error {
 		},
 		SigningKey: []byte(s.SC.JwtSecret),
 	}))
+
+	app.Use(middleware.SetCurrentUser(s.SC))
 
 	tasks := app.Group("/tasks")
 	tasks.Post("", rest.CreateTask(s.SC))
