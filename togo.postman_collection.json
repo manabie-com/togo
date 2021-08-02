@@ -1,0 +1,172 @@
+{
+	"info": {
+		"_postman_id": "0a7c8f91-f423-42e9-91d6-ddd495173e0c",
+		"name": "togo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Account",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"testcreate2\",\r\n    \"password\":\"password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/login",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Resgiter",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"testcreate2\",\r\n    \"password\":\"password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/register",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "View Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50X2lkIjoiMGVkYjYzOTgtZmE2MS00M2M5LTlmZmQtZTgzMTI3ZmM2MDYwIiwiZXhwIjoxNjI3OTY1MzY1LCJtYXhfZGFpbHlfdGFza3NfY291bnQiOjUsInVzZXJuYW1lIjoiU3BhY2VQb3RhdG8ifQ.hKGfh_sHF6l0wiizNkTPWdqCGTJe73PbG63ZT_b-kec",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/profile",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"profile"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tasks",
+			"item": [
+				{
+					"name": "View Task",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50X2lkIjoiMzJkNTU5NDctZmI5MS00NGNkLWFkZWUtZTJhZTcwNGNjNjI4IiwiZXhwIjoxNjI3OTY0MzAyLCJtYXhfZGFpbHlfdGFza3NfY291bnQiOjUsInVzZXJuYW1lIjoidGVzdGNyZWF0ZSJ9.LFqA5X_MkcoYYvCzR8zdFvr8f0LK8_pPRULpJlZhn9k",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/tasks?start=02-08-2021",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "start",
+									"value": "02-08-2021"
+								},
+								{
+									"key": "end",
+									"value": "04-08-2021",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Task",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50X2lkIjoiMGVkYjYzOTgtZmE2MS00M2M5LTlmZmQtZTgzMTI3ZmM2MDYwIiwiZXhwIjoxNjI3OTY1NDQ3LCJtYXhfZGFpbHlfdGFza3NfY291bnQiOjUsInVzZXJuYW1lIjoiU3BhY2VQb3RhdG8ifQ.F83oBdFg1b8a6i6VjWfC11IA7c0GuzWNz-Ldnn5YpLc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"content\":\"testcreate\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/tasks",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
