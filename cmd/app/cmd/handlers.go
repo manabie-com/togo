@@ -39,6 +39,11 @@ func (s *server) Start() error {
 
 	// JWT Middleware
 	app.Use(jwtware.New(jwtware.Config{
+		ErrorHandler: func(ctx *fiber.Ctx, err error) error {
+			return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"message": "Unauthorized",
+			})
+		},
 		SigningKey: []byte(s.SC.JwtSecret),
 	}))
 
