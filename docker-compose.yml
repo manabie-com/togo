@@ -21,3 +21,4 @@ services:
       - '16543:80'
     depends_on:
       - togo-db-postgres
+      
