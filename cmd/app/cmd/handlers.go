@@ -55,7 +55,6 @@ func (s *server) Start() error {
 	tasks.Get("/:id", rest.GetTask(s.SC))
 	tasks.Get("", rest.ListTask(s.SC))
 	tasks.Patch("/:id", rest.UpdateTask(s.SC))
-	tasks.Patch("/:id", rest.UpdateTask(s.SC))
 	tasks.Delete("/:id", rest.DeleteTask(s.SC))
 
 	addr := fmt.Sprintf(":%d", s.SC.Port)

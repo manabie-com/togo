@@ -11,27 +11,26 @@ import (
 	"togo/internal/service"
 )
 
-//type SearchTasksRequest struct {
-//	IsDone      *bool      `query:"is_done"`
-//	CreatedDate *time.Time `query:"created_date"`
-//}
+type SearchTasksRequest struct {
+	IsDone      bool      `query:"is_done"`
+	CreatedDate time.Time `query:"created_date"`
+}
 
 func ListTask(sc *config.ServerConfig) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		currentUser := GetCurrentUser(c)
+		var r SearchTasksRequest
 
-		//var r SearchTasksRequest
-		//
-		//if err := c.QueryParser(&r); err != nil {
-		//	fmt.Println(err)
-		//	return SimpleError(c, err)
-		//}
+		if err := c.QueryParser(&r); err != nil {
+			return SimpleError(c, err)
+		}
+
+		currentUser := GetCurrentUser(c)
 
 		db := sc.DB
 		repo := repository.NewRepo(db)
 		svc := service.NewTaskService(repo)
 
-		tasks, err := svc.ListTasks(c.UserContext(), currentUser.ID)
+		tasks, err := svc.ListTasks(c.UserContext(), currentUser.ID, r.IsDone, r.CreatedDate)
 		if err != nil {
 			return SimpleError(c, err)
 		}
@@ -96,11 +95,12 @@ func DeleteTask(sc *config.ServerConfig) fiber.Handler {
 		if err != nil {
 			return SimpleError(c, err)
 		}
+
 		db := sc.DB
 		repo := repository.NewRepo(db)
 		svc := service.NewTaskService(repo)
 
-		err = svc.DeleteTask(c.UserContext(), int32(id), currentUser.ID)
+		err = svc.DeleteTask(c.UserContext(), int32(id), currentUser)
 		if err != nil {
 			return SimpleError(c, err)
 		}
@@ -110,17 +110,33 @@ func DeleteTask(sc *config.ServerConfig) fiber.Handler {
 		})
 	}
 }
+
 func UpdateTask(sc *config.ServerConfig) fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		data := new(dto.UpdateTaskDTO)
+
+		if err := c.BodyParser(data); err != nil {
+			return SimpleError(c, err)
+		}
+
+		v := validator.New()
+		err := v.Struct(data)
+		if err != nil {
+			return SimpleError(c, err)
+		}
+
+		currentUser := GetCurrentUser(c)
+
 		id, err := strconv.ParseInt(c.Params("id"), 10, 32)
 		if err != nil {
 			return SimpleError(c, err)
 		}
+
 		db := sc.DB
 		repo := repository.NewRepo(db)
 		svc := service.NewTaskService(repo)
 
-		err = svc.UpdateTask(c.UserContext(), int32(id), true)
+		err = svc.UpdateTask(c.UserContext(), currentUser, int32(id), data.IsDone)
 		if err != nil {
 			return SimpleError(c, err)
 		}

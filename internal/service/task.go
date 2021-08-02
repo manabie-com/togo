@@ -9,7 +9,7 @@ import (
 
 type TaskRepository interface {
 	CreateTask(ctx context.Context, context string, userId int32, createdDate time.Time) (entity.Task, error)
-	ListTasks(ctx context.Context, userId int32) ([]entity.Task, error)
+	ListTasks(ctx context.Context, userId int32, isDone bool, createdDate time.Time) ([]entity.Task, error)
 	GetTask(ctx context.Context, id int32, userId int32) (entity.Task, error)
 	DeleteTask(ctx context.Context, id int32, userId int32) error
 	UpdateTask(ctx context.Context, id int32, isDone bool) error
@@ -42,8 +42,8 @@ func (t *TaskService) Create(ctx context.Context, user entity.User, content stri
 	return task, nil
 }
 
-func (t *TaskService) ListTasks(ctx context.Context, userId int32) ([]entity.Task, error) {
-	tasks, err := t.repo.ListTasks(ctx, userId)
+func (t *TaskService) ListTasks(ctx context.Context, userId int32, isDone bool, createdDate time.Time) ([]entity.Task, error) {
+	tasks, err := t.repo.ListTasks(ctx, userId, isDone, createdDate)
 	if err != nil {
 		return nil, err
 	}
@@ -60,8 +60,12 @@ func (t *TaskService) GetTask(ctx context.Context, id int32, userId int32) (enti
 	return task, nil
 }
 
-func (t *TaskService) DeleteTask(ctx context.Context, id int32, userId int32) error {
-	err := t.repo.DeleteTask(ctx, id, userId)
+func (t *TaskService) DeleteTask(ctx context.Context, id int32, user entity.User) error {
+	if _, err := t.repo.GetTask(ctx, id, user.ID); err != nil {
+		return err
+	}
+
+	err := t.repo.DeleteTask(ctx, id, user.ID)
 	if err != nil {
 		return err
 	}
@@ -69,7 +73,11 @@ func (t *TaskService) DeleteTask(ctx context.Context, id int32, userId int32) er
 	return nil
 }
 
-func (t *TaskService) UpdateTask(ctx context.Context, id int32, isDone bool) error {
+func (t *TaskService) UpdateTask(ctx context.Context, user entity.User, id int32, isDone bool) error {
+	if _, err := t.repo.GetTask(ctx, id, user.ID); err != nil {
+		return err
+	}
+
 	err := t.repo.UpdateTask(ctx, id, isDone)
 	if err != nil {
 		return err

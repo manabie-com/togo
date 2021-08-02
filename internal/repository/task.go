@@ -23,8 +23,12 @@ func (r *Repo) CreateTask(ctx context.Context, context string, userId int32, cre
 	return task.MapToEntity(), nil
 }
 
-func (r *Repo) ListTasks(ctx context.Context, userId int32) ([]entity.Task, error) {
-	tasks, err := r.q.ListTasks(ctx, userId)
+func (r *Repo) ListTasks(ctx context.Context, userId int32, isDone bool, createdDate time.Time) ([]entity.Task, error) {
+	tasks, err := r.q.ListTasks(ctx, postgresql.ListTasksParams{
+		UserID:      userId,
+		IsDone:      isDone,
+		CreatedDate: createdDate,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -45,6 +49,10 @@ func (r *Repo) GetTask(ctx context.Context, id int32, userId int32) (entity.Task
 	})
 
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return entity.Task{}, errors.New("No record")
+		}
+
 		return entity.Task{}, err
 	}
 

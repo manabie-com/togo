@@ -98,11 +98,19 @@ const listTasks = `-- name: ListTasks :many
 SELECT id, content, user_id, created_date, is_done, created_at, updated_at
 FROM tasks
 WHERE user_id = $1
+  AND ($2::date = '0001-01-01' OR created_date = $2)
+  AND (NOT $3::boolean OR is_done = $3)
 ORDER BY id
 `
 
-func (q *Queries) ListTasks(ctx context.Context, userID int32) ([]Task, error) {
-	rows, err := q.db.QueryContext(ctx, listTasks, userID)
+type ListTasksParams struct {
+	UserID      int32     `json:"user_id"`
+	CreatedDate time.Time `json:"created_date"`
+	IsDone      bool      `json:"is_done"`
+}
+
+func (q *Queries) ListTasks(ctx context.Context, arg ListTasksParams) ([]Task, error) {
+	rows, err := q.db.QueryContext(ctx, listTasks, arg.UserID, arg.CreatedDate, arg.IsDone)
 	if err != nil {
 		return nil, err
 	}

@@ -1,7 +1,9 @@
 -- name: ListTasks :many
 SELECT *
 FROM tasks
-WHERE user_id = $1
+WHERE user_id = @user_id
+  AND (@created_date::date = '0001-01-01' OR created_date = @created_date)
+  AND (NOT @is_done::boolean OR is_done = @is_done)
 ORDER BY id;
 
 -- name: GetTask :one
