@@ -15,7 +15,8 @@ LIMIT 1;
 
 -- name: UpdateTask :exec
 UPDATE tasks
-SET is_done = $2
+SET is_done    = $2,
+    updated_at = NOW()
 WHERE id = $1;
 
 -- name: DeleteTask :exec

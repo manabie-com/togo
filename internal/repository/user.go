@@ -4,12 +4,15 @@ import (
 	"context"
 	"togo/internal/entity"
 	"togo/internal/postgresql"
+	"togo/utils"
 )
 
 func (r *Repo) CreateUser(ctx context.Context, username string, password string) (entity.User, error) {
 	user, err := r.q.InsertUser(ctx, postgresql.InsertUserParams{
-		Username: username, Password: password,
+		Username: username,
+		Password: utils.GetHash([]byte(password)),
 	})
+
 	if err != nil {
 		return entity.User{}, err
 	}

@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"golang.org/x/crypto/bcrypt"
+	"togo/common/cmerrors"
 	"togo/internal/entity"
 )
 
@@ -20,6 +22,10 @@ func NewUserService(repo UserRepository) *UserService {
 }
 
 func (u *UserService) CreateUser(ctx context.Context, username string, password string) (entity.User, error) {
+	if _, err := u.repo.GetUserByUsername(ctx, username); err == nil {
+		return entity.User{}, cmerrors.ErrUserAlreadyExist
+	}
+
 	user, err := u.repo.CreateUser(ctx, username, password)
 	if err != nil {
 		return entity.User{}, err
@@ -31,7 +37,23 @@ func (u *UserService) CreateUser(ctx context.Context, username string, password 
 func (u *UserService) GetUserByUsername(ctx context.Context, username string) (*entity.User, error) {
 	user, err := u.repo.GetUserByUsername(ctx, username)
 	if err != nil {
-		return nil, err
+		return nil, cmerrors.ErrUserNotFound
+	}
+
+	return user, nil
+}
+
+func (u *UserService) Login(ctx context.Context, username string, password string) (*entity.User, error) {
+	user, err := u.repo.GetUserByUsername(ctx, username)
+	if err != nil {
+		return nil, cmerrors.ErrUserNotFound
+	}
+
+	userPass := []byte(password)
+	dbPass := []byte(user.Password)
+
+	if passErr := bcrypt.CompareHashAndPassword(dbPass, userPass); passErr != nil {
+		return nil, cmerrors.ErrPasswordNotMatch
 	}
 
 	return user, nil

@@ -5,11 +5,12 @@ import (
 	"database/sql"
 	"errors"
 	"time"
+	"togo/common/cmerrors"
 	"togo/internal/entity"
 	"togo/internal/postgresql"
 )
 
-func (r *Repo) CreateTask(ctx context.Context, context string, userId int32, createdDate time.Time) (entity.Task, error) {
+func (r *Repo) CreateTask(ctx context.Context, context string, userId int32, createdDate time.Time) (*entity.Task, error) {
 	task, err := r.q.InsertTask(ctx, postgresql.InsertTaskParams{
 		Content:     context,
 		UserID:      userId,
@@ -17,10 +18,11 @@ func (r *Repo) CreateTask(ctx context.Context, context string, userId int32, cre
 	})
 
 	if err != nil {
-		return entity.Task{}, err
+		return nil, err
 	}
 
-	return task.MapToEntity(), nil
+	t := task.MapToEntity()
+	return &t, nil
 }
 
 func (r *Repo) ListTasks(ctx context.Context, userId int32, isDone bool, createdDate time.Time) ([]entity.Task, error) {
@@ -42,7 +44,7 @@ func (r *Repo) ListTasks(ctx context.Context, userId int32, isDone bool, created
 	return res, nil
 }
 
-func (r *Repo) GetTask(ctx context.Context, id int32, userId int32) (entity.Task, error) {
+func (r *Repo) GetTask(ctx context.Context, id int32, userId int32) (*entity.Task, error) {
 	task, err := r.q.GetTask(ctx, postgresql.GetTaskParams{
 		ID:     id,
 		UserID: userId,
@@ -50,13 +52,14 @@ func (r *Repo) GetTask(ctx context.Context, id int32, userId int32) (entity.Task
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return entity.Task{}, errors.New("No record")
+			return nil, cmerrors.ErrTaskNotFound
 		}
 
-		return entity.Task{}, err
+		return nil, err
 	}
 
-	return task.MapToEntity(), nil
+	t := task.MapToEntity()
+	return &t, nil
 }
 
 func (r *Repo) DeleteTask(ctx context.Context, id int32, userId int32) error {
@@ -65,7 +68,7 @@ func (r *Repo) DeleteTask(ctx context.Context, id int32, userId int32) error {
 	})
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return errors.New("task not found")
+			return cmerrors.ErrTaskNotFound
 		}
 		return err
 	}

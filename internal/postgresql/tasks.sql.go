@@ -142,7 +142,8 @@ func (q *Queries) ListTasks(ctx context.Context, arg ListTasksParams) ([]Task, e
 
 const updateTask = `-- name: UpdateTask :exec
 UPDATE tasks
-SET is_done = $2
+SET is_done    = $2,
+    updated_at = NOW()
 WHERE id = $1
 `
 
