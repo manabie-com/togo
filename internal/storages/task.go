@@ -11,5 +11,6 @@ type TaskStore interface {
 
 type TaskCountStore interface {
 	CreateIfNotExists(ctx context.Context, userID, date string) error
-	UpdateAndGet(ctx context.Context, userID, date string) (int, error)
+	Inc(ctx context.Context, userID, date string) (int, error)
+	Desc(ctx context.Context, userID, date string) error
 }

@@ -53,7 +53,7 @@ func (d *taskDomain) Create(ctx context.Context, content string) (*storages.Task
 	if err := d.taskCountStore.CreateIfNotExists(ctx, userID, date); err != nil {
 		return nil, err
 	}
-	total, err := d.taskCountStore.UpdateAndGet(ctx, userID, date)
+	total, err := d.taskCountStore.Inc(ctx, userID, date)
 	if err != nil {
 		return nil, err
 	}
@@ -69,6 +69,7 @@ func (d *taskDomain) Create(ctx context.Context, content string) (*storages.Task
 		NumberInDate: total,
 	}
 	if err := d.taskStore.AddTask(ctx, task); err != nil {
+		d.taskCountStore.Desc(ctx, userID, date)
 		return nil, err
 	}
 	return task, nil

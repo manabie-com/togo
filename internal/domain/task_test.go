@@ -81,13 +81,13 @@ func Test_Task_Create_TaskLimitExceeded(t *testing.T) {
 	taskCountStore.On("CreateIfNotExists", mock.Anything, mock.Anything).Return(nil)
 	taskStore.On("AddTask", mock.Anything).Return(nil)
 
-	taskCountStore.On("UpdateAndGet", mock.Anything, mock.Anything).Return(u.MaxTodo+1, nil).Once()
+	taskCountStore.On("Inc", mock.Anything, mock.Anything).Return(u.MaxTodo+1, nil).Once()
 
 	task, err := taskDomain.Create(ctx, "something content")
 	assert.Equal(t, errors.ErrTaskLimitExceeded, err)
 	assert.Nil(t, task)
 
-	taskCountStore.On("UpdateAndGet", mock.Anything, mock.Anything).Return(u.MaxTodo, nil).Once()
+	taskCountStore.On("Inc", mock.Anything, mock.Anything).Return(u.MaxTodo, nil).Once()
 
 	task, err = taskDomain.Create(ctx, "something content")
 	assert.NoError(t, err)
@@ -109,7 +109,7 @@ func Test_Task_Create_AddTaskFail(t *testing.T) {
 	userStore.On("FindUser", mock.Anything).Return(u, nil)
 
 	taskCountStore.On("CreateIfNotExists", mock.Anything, mock.Anything).Return(nil)
-	taskCountStore.On("UpdateAndGet", mock.Anything, mock.Anything).Return(u.MaxTodo-1, nil)
+	taskCountStore.On("Inc", mock.Anything, mock.Anything).Return(u.MaxTodo-1, nil)
 
 	taskStore.On("AddTask", mock.Anything).Return(rErr)
 
@@ -134,7 +134,7 @@ func Test_Task_Create_Success(t *testing.T) {
 	userStore.On("FindUser", mock.Anything).Return(u, nil)
 
 	taskCountStore.On("CreateIfNotExists", mock.Anything, mock.Anything).Return(nil)
-	taskCountStore.On("UpdateAndGet", mock.Anything, mock.Anything).Return(u.MaxTodo-1, nil)
+	taskCountStore.On("Inc", mock.Anything, mock.Anything).Return(u.MaxTodo-1, nil)
 
 	taskStore.On("AddTask", mock.Anything).Return(nil)
 
@@ -184,7 +184,7 @@ func Test_Task_GetList_RetrieveTasksFail(t *testing.T) {
 	userStore.On("FindUser", mock.Anything).Return(u, nil)
 
 	taskCountStore.On("CreateIfNotExists", mock.Anything, mock.Anything).Return(nil)
-	taskCountStore.On("UpdateAndGet", mock.Anything, mock.Anything).Return(u.MaxTodo-1, nil)
+	taskCountStore.On("Inc", mock.Anything, mock.Anything).Return(u.MaxTodo-1, nil)
 	date := "2021-07-31"
 	rErr := fmt.Errorf("RetrieveTasks error")
 	taskStore.On("RetrieveTasks", mock.Anything).Return(nil, rErr)
@@ -207,7 +207,7 @@ func Test_Task_GetList_Success(t *testing.T) {
 	}, nil)
 
 	taskCountStore.On("CreateIfNotExists", mock.Anything, mock.Anything).Return(nil)
-	taskCountStore.On("UpdateAndGet", mock.Anything, mock.Anything).Return(constants.TaskLimit-1, nil)
+	taskCountStore.On("Inc", mock.Anything, mock.Anything).Return(constants.TaskLimit-1, nil)
 	date := "2021-07-31"
 	tasks := []*storages.Task{
 		{

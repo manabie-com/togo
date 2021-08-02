@@ -30,7 +30,7 @@ func (s *taskCountStore) CreateIfNotExists(ctx context.Context, userID, date str
 	cmd := s.client.SetNX(ctx, key, 0, getTimeRemain())
 	return cmd.Err()
 }
-func (s *taskCountStore) UpdateAndGet(ctx context.Context, userID, date string) (int, error) {
+func (s *taskCountStore) Inc(ctx context.Context, userID, date string) (int, error) {
 	key := getKey(userID, date)
 	cmd := s.client.Incr(ctx, key)
 	if cmd.Err() != nil {
@@ -40,6 +40,12 @@ func (s *taskCountStore) UpdateAndGet(ctx context.Context, userID, date string) 
 
 }
 
+func (s *taskCountStore) Desc(ctx context.Context, userID, date string) error {
+	key := getKey(userID, date)
+	cmd := s.client.Decr(ctx, key)
+	return cmd.Err()
+
+}
 func NewTaskCountStore(client *redis.Client) storages.TaskCountStore {
 	return &taskCountStore{
 		client: client,
