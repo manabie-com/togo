@@ -18,8 +18,8 @@ func SimpleError(c *fiber.Ctx, err error) error {
 	return c.Status(fiber.StatusInternalServerError).JSON(resp)
 }
 
-func GetCurrentUser(c *fiber.Ctx) entity.User {
-	currentUser := c.Locals("currentUser").(entity.User)
+func GetCurrentUser(c *fiber.Ctx) *entity.User {
+	currentUser := c.Locals("currentUser").(*entity.User)
 
 	return currentUser
 }

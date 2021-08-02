@@ -13,40 +13,85 @@ type UserRepository interface {
 	GetUser(ctx context.Context, id int32) (entity.User, error)
 }
 
+type UserRedisRepo interface {
+	GetUserByUsername(ctx context.Context, username string) (*entity.User, error)
+	GetUser(ctx context.Context, id int32) (*entity.User, error)
+	SetUser(ctx context.Context, user entity.User) error
+}
 type UserService struct {
-	repo UserRepository
+	repo    UserRepository
+	rdbRepo UserRedisRepo
 }
 
-func NewUserService(repo UserRepository) *UserService {
-	return &UserService{repo: repo}
+func NewUserService(repo UserRepository, rdbRepo UserRedisRepo) *UserService {
+	return &UserService{repo: repo, rdbRepo: rdbRepo}
 }
 
-func (u *UserService) CreateUser(ctx context.Context, username string, password string) (entity.User, error) {
-	if _, err := u.repo.GetUserByUsername(ctx, username); err == nil {
-		return entity.User{}, cmerrors.ErrUserAlreadyExist
+func (u *UserService) CreateUser(ctx context.Context, username string, password string) (*entity.User, error) {
+	userRdb, err := u.rdbRepo.GetUserByUsername(ctx, username)
+	if err != nil {
+		return nil, err
+	}
+
+	if userRdb != nil {
+		return nil, cmerrors.ErrUserAlreadyExist
+	}
+
+	if _, err = u.repo.GetUserByUsername(ctx, username); err == nil {
+		return nil, cmerrors.ErrUserAlreadyExist
 	}
 
 	user, err := u.repo.CreateUser(ctx, username, password)
 	if err != nil {
-		return entity.User{}, err
+		return nil, err
 	}
 
-	return user, nil
+	_ = u.rdbRepo.SetUser(ctx, user)
+
+	return &user, nil
 }
 
 func (u *UserService) GetUserByUsername(ctx context.Context, username string) (*entity.User, error) {
+	userRdb, err := u.rdbRepo.GetUserByUsername(ctx, username)
+	if err != nil {
+		return nil, err
+	}
+
+	if userRdb != nil {
+		return userRdb, nil
+	}
+
 	user, err := u.repo.GetUserByUsername(ctx, username)
 	if err != nil {
 		return nil, cmerrors.ErrUserNotFound
 	}
+
+	_ = u.rdbRepo.SetUser(ctx, *user)
 
 	return user, nil
 }
 
 func (u *UserService) Login(ctx context.Context, username string, password string) (*entity.User, error) {
-	user, err := u.repo.GetUserByUsername(ctx, username)
+	var user *entity.User
+
+	userRdb, err := u.rdbRepo.GetUserByUsername(ctx, username)
 	if err != nil {
-		return nil, cmerrors.ErrUserNotFound
+		return nil, err
+	}
+
+	if userRdb != nil {
+		user = userRdb
+	}
+
+	if user == nil {
+		userDb, err := u.repo.GetUserByUsername(ctx, username)
+		if err != nil {
+			return nil, cmerrors.ErrUserNotFound
+		}
+
+		_ = u.rdbRepo.SetUser(ctx, *userDb)
+
+		user = userDb
 	}
 
 	userPass := []byte(password)
@@ -59,11 +104,22 @@ func (u *UserService) Login(ctx context.Context, username string, password strin
 	return user, nil
 }
 
-func (u *UserService) GetUser(ctx context.Context, id int32) (entity.User, error) {
-	user, err := u.repo.GetUser(ctx, id)
+func (u *UserService) GetUser(ctx context.Context, id int32) (*entity.User, error) {
+	userRdb, err := u.rdbRepo.GetUser(ctx, id)
 	if err != nil {
-		return entity.User{}, err
+		return nil, err
 	}
 
-	return user, nil
+	if userRdb != nil {
+		return userRdb, nil
+	}
+
+	user, err := u.repo.GetUser(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	_ = u.rdbRepo.SetUser(ctx, user)
+
+	return &user, nil
 }

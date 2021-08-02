@@ -57,7 +57,7 @@ func CreateTask(sc *config.ServerConfig) fiber.Handler {
 		rdbStore := redix.NewRedisStore(rdb)
 		svc := service.NewTaskService(repo, rdbStore)
 
-		task, err := svc.Create(c.UserContext(), currentUser, data.Content, currentUser.ID, time.Now())
+		task, err := svc.Create(c.UserContext(), *currentUser, data.Content, currentUser.ID, time.Now())
 		if err != nil {
 			return SimpleError(c, err)
 		}
@@ -105,7 +105,7 @@ func DeleteTask(sc *config.ServerConfig) fiber.Handler {
 		rdbStore := redix.NewRedisStore(rdb)
 		svc := service.NewTaskService(repo, rdbStore)
 
-		err = svc.DeleteTask(c.UserContext(), int32(id), currentUser)
+		err = svc.DeleteTask(c.UserContext(), int32(id), *currentUser)
 		if err != nil {
 			return SimpleError(c, err)
 		}
@@ -143,7 +143,7 @@ func UpdateTask(sc *config.ServerConfig) fiber.Handler {
 		rdbStore := redix.NewRedisStore(rdb)
 		svc := service.NewTaskService(repo, rdbStore)
 
-		err = svc.UpdateTask(c.UserContext(), currentUser, int32(id), data.IsDone)
+		err = svc.UpdateTask(c.UserContext(), *currentUser, int32(id), data.IsDone)
 		if err != nil {
 			return SimpleError(c, err)
 		}
