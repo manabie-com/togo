@@ -5,6 +5,7 @@
 Run this command in the terminal then run the script:
 ```bash
 $ chmod +x install_dependencies.sh
+./install_dependencies.sh
 ```
 
 ## Setting up Docker for the database
