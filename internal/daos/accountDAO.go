@@ -92,14 +92,3 @@ func (u *AccountDAO) FindAccountByUsername(account models.Account) (*models.Acco
 		First(&accountResult, "username=?", account.Username).Error
 	return &accountResult, err
 }
-
-func (u *AccountDAO) GetAccountByAccountID(id uuid.UUID) (*models.Account, error) {
-	account := models.Account{}
-	db, err := database.ConnectToDB()
-	if err != nil {
-		return nil, err
-	}
-	err = db.Debug().Model(&models.Account{}).
-		First(&account, "id=?", id).Error
-	return &account, err
-}
