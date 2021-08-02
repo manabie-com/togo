@@ -2,7 +2,6 @@ package domain
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/manabie-com/togo/common/errors"
@@ -12,7 +11,7 @@ import (
 
 type TaskDomain interface {
 	GetList(ctx context.Context, createdDate string) ([]*storages.Task, error)
-	Create(ctx context.Context, content string) error
+	Create(ctx context.Context, content string) (*storages.Task, error)
 }
 
 type taskDomain struct {
@@ -38,32 +37,30 @@ func (d *taskDomain) GetList(ctx context.Context, createdDate string) ([]*storag
 	})
 }
 
-func (d *taskDomain) Create(ctx context.Context, content string) error {
+func (d *taskDomain) Create(ctx context.Context, content string) (*storages.Task, error) {
 	userID, ok := utils.ExtractFromContext(ctx)
 
 	if !ok {
-		return errors.ErrUserIDIsInvalid
+		return nil, errors.ErrUserIDIsInvalid
 	}
 	user, err := d.userStore.FindUser(ctx, userID)
 	if err != nil {
-		return errors.ErrUserDoesNotExist
+		return nil, errors.ErrUserDoesNotExist
 	}
 
 	t := time.Now()
 	date := t.Format("2006-01-02")
 	if err := d.taskCountStore.CreateIfNotExists(ctx, userID, date); err != nil {
-		return err
+		return nil, err
 	}
 	total, err := d.taskCountStore.UpdateAndGet(ctx, userID, date)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	// check is amount exceeded
 	if total > user.MaxTodo {
-		return errors.ErrTaskLimitExceeded
+		return nil, errors.ErrTaskLimitExceeded
 	}
-
-	fmt.Println(date)
 
 	task := &storages.Task{
 		UserID:       userID,
@@ -71,7 +68,10 @@ func (d *taskDomain) Create(ctx context.Context, content string) error {
 		CreatedDate:  date,
 		NumberInDate: total,
 	}
-	return d.taskStore.AddTask(ctx, task)
+	if err := d.taskStore.AddTask(ctx, task); err != nil {
+		return nil, err
+	}
+	return task, nil
 }
 
 func NewTaskDomain(

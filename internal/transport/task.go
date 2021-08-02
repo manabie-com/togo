@@ -39,13 +39,12 @@ func (h *taskHandler) AddTask(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	if err := h.taskDomain.Create(r.Context(), req.Content); err != nil {
+	task, err := h.taskDomain.Create(r.Context(), req.Content)
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	responseWithJson(w, http.StatusOK, map[string]interface{}{
-		"success": true,
-	})
+	responseWithJson(w, http.StatusOK, task)
 }
 func NewTaskHandler(taskDomain domain.TaskDomain) TaskHandler {
 	return &taskHandler{

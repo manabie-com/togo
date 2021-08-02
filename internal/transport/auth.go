@@ -30,9 +30,7 @@ func (h *authHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	responseWithJson(w, http.StatusOK, map[string]string{
-		"data": token,
-	})
+	responseWithJson(w, http.StatusOK, token)
 }
 
 func (h *authHandler) Register(w http.ResponseWriter, r *http.Request) {
@@ -48,9 +46,7 @@ func (h *authHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	responseWithJson(w, http.StatusOK, map[string]string{
-		"status": "success",
-	})
+	responseWithJson(w, http.StatusOK, true)
 }
 func NewAuthHandler(authDomain domain.AuthDomain) AuthHandler {
 	return &authHandler{

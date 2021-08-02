@@ -41,5 +41,8 @@ func taskRouter(taskHandler TaskHandler) http.Handler {
 func responseWithJson(writer http.ResponseWriter, status int, object interface{}) {
 	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(status)
-	json.NewEncoder(writer).Encode(object)
+	data := map[string]interface{}{
+		"data": object,
+	}
+	json.NewEncoder(writer).Encode(data)
 }
