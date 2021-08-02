@@ -10,14 +10,6 @@ import (
 var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
 // isEmailValid checks if the email provided passes the required structure and length.
-func IsEmailValid(e string) bool {
-	if len(e) < 3 && len(e) > 55 {
-		return false
-	}
-	return emailRegex.MatchString(e)
-}
-
-// isEmailValid checks if the email provided passes the required structure and length.
 func IsUsernameValid(e string) (bool, error) {
 	if e != "" {
 		if len(e) < 3 || len(e) > 55 {
@@ -26,6 +18,17 @@ func IsUsernameValid(e string) (bool, error) {
 		return true, nil
 	} else {
 		return false, errors.New(`username contains ""`)
+	}
+}
+
+func IsPasswordValid(e string) (bool, error) {
+	if e != "" {
+		if len(e) < 3 || len(e) > 55 {
+			return false, errors.New("invalid password length (3 to 55 characters)")
+		}
+		return true, nil
+	} else {
+		return false, errors.New(`password contains ""`)
 	}
 }
 

@@ -12,6 +12,7 @@ import (
 	"github.com/manabie-com/togo/internal/daos"
 	"github.com/manabie-com/togo/internal/middleware"
 	"github.com/manabie-com/togo/internal/models"
+	"github.com/manabie-com/togo/internal/utils"
 )
 
 func CreateAccountHandler(w http.ResponseWriter, r *http.Request) {
@@ -32,8 +33,22 @@ func CreateAccountHandler(w http.ResponseWriter, r *http.Request) {
 		config.ResponseWithError(w, "Malformed data", err)
 		return
 	}
-	if len(account.Password) == 0 {
-		config.ResponseWithError(w, "Invalid password", err)
+	isUsernameValid, err := utils.IsUsernameValid(account.Username)
+	if err != nil {
+		config.ResponseWithError(w, "Malformed data", err)
+		return
+	}
+	if !isUsernameValid {
+		config.ResponseWithError(w, "Invalid username", err)
+		return
+	}
+	isPasswordValid, err := utils.IsPasswordValid(account.Password)
+	if err != nil {
+		config.ResponseWithError(w, "Malformed data", err)
+		return
+	}
+	if !isPasswordValid {
+		config.ResponseWithError(w, "Invalid username", err)
 		return
 	}
 	//create account on db

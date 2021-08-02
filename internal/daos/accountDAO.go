@@ -3,14 +3,12 @@ package daos
 import (
 	"errors"
 	"fmt"
-	"strconv"
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/manabie-com/togo/internal/database"
 	models "github.com/manabie-com/togo/internal/models"
-	"github.com/manabie-com/togo/internal/utils"
 )
 
 type AccountDAO struct {
@@ -31,12 +29,6 @@ func (u *AccountDAO) CreateAccount(account models.Account) (*models.Account, err
 	accountAvailable, _ := accountDAO.FindAccountByUsername(account)
 	if accountAvailable.Username != "" {
 		return &account, errors.New("account unavailable")
-	}
-	//Generate username if reqbody doesn't have one
-	if account.Username == "" {
-		currentTimeMillis := utils.GetCurrentEpochTimeInMiliseconds()
-		newUsername := account.Username + strconv.FormatInt(currentTimeMillis, 10)
-		account.Username = newUsername
 	}
 	//if id is not inputted, generate one.
 	if account.ID.String() == "00000000-0000-0000-0000-000000000000" {
