@@ -14,4 +14,5 @@ test:
 docker-dev:
 	docker-compose -f docker-compose.dev.yml up -d
 docker-start:
+	docker-compose down
 	docker-compose up -d --build
