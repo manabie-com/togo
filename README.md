@@ -44,7 +44,7 @@
 │   |   └── ... 
 │   └── constants/
 │   |    └── storages/  
-├── test/                     # integration test 
+├── test/                     # e2e test 
 ├── └── ... 
 ├── utils/ 
 ├── Dockerfile
