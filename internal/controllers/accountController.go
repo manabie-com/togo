@@ -35,20 +35,16 @@ func CreateAccountHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	isUsernameValid, err := utils.IsUsernameValid(account.Username)
 	if err != nil {
-		config.ResponseWithError(w, "Malformed data", err)
+		config.ResponseWithError(w, fmt.Sprint(err), err)
 		return
 	}
-	if !isUsernameValid {
-		config.ResponseWithError(w, "Invalid username", err)
+	if !isUsernameValid || err != nil {
+		config.ResponseWithError(w, fmt.Sprint(err), err)
 		return
 	}
 	isPasswordValid, err := utils.IsPasswordValid(account.Password)
-	if err != nil {
-		config.ResponseWithError(w, "Malformed data", err)
-		return
-	}
-	if !isPasswordValid {
-		config.ResponseWithError(w, "Invalid username", err)
+	if !isPasswordValid || err != nil {
+		config.ResponseWithError(w, fmt.Sprint(err), err)
 		return
 	}
 	//create account on db
