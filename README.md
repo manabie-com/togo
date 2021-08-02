@@ -38,8 +38,10 @@ Password: password
 ```
 
 ### Starting up the server for the first time: 
-In `main.go`, change `database.SyncDB(false)` to `database.SyncDB(true)`
+In `main.go`, change `database.SyncDB(false)` to `database.SyncDB(true)`.
+
 Explanation: This line of code will force the server to truncate & recreate tables based on the `models` files.
+
 Start the server by running the `start_app_local.sh` script:
 ```bash
 $ chmod +x install_dependencies.sh
