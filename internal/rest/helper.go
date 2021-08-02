@@ -8,11 +8,22 @@ import (
 	"time"
 	"togo/config"
 	"togo/internal/entity"
+	"togo/utils/validator"
 )
 
+const appErrFormErrResponseFailure = "form error response failure"
+
 func SimpleError(c *fiber.Ctx, err error) error {
+	resp := validator.ToErrResponse(err)
+
+	if resp == nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": fiber.Map{"errors": appErrFormErrResponseFailure},
+		})
+	}
+
 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-		"message": err.Error(),
+		"message": resp,
 	})
 }
 

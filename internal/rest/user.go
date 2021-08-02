@@ -60,10 +60,8 @@ func UserSignup(sc *config.ServerConfig) fiber.Handler {
 		if err := c.BodyParser(data); err != nil {
 			return SimpleError(c, err)
 		}
-		v := validator.New()
 
-		err := v.Struct(data)
-		if err != nil {
+		if err := validator.New().Struct(data); err != nil {
 			return SimpleError(c, err)
 		}
 
