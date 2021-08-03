@@ -101,6 +101,7 @@ Your app should now be running on [localhost:5050](http://localhost:5050/).
 ## Unit test
 
 ```sh
+$chmod +x ./test.sh
 $make unit-test
 ```
 
