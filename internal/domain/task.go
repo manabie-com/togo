@@ -1,4 +1,4 @@
-package service
+package domain
 
 import (
 	"context"
@@ -22,19 +22,19 @@ type TaskRedisRepo interface {
 	DeleteTask(ctx context.Context, task *entity.Task) error
 }
 
-type TaskService struct {
+type TaskDomain struct {
 	repo    TaskRepository
 	rdbRepo TaskRedisRepo
 }
 
-func NewTaskService(repo TaskRepository, rdbRepo TaskRedisRepo) *TaskService {
-	return &TaskService{
+func NewTaskDomain(repo TaskRepository, rdbRepo TaskRedisRepo) *TaskDomain {
+	return &TaskDomain{
 		repo:    repo,
 		rdbRepo: rdbRepo,
 	}
 }
 
-func (t *TaskService) Create(ctx context.Context, user entity.User, content string, userId int32, createdDate time.Time) (*entity.Task, error) {
+func (t *TaskDomain) Create(ctx context.Context, user entity.User, content string, userId int32, createdDate time.Time) (*entity.Task, error) {
 	count, err := t.repo.CountTaskByUser(ctx, user.ID)
 	if err != nil {
 		return nil, err
@@ -54,7 +54,7 @@ func (t *TaskService) Create(ctx context.Context, user entity.User, content stri
 	return task, nil
 }
 
-func (t *TaskService) ListTasks(ctx context.Context, userId int32, isDone bool, createdDate time.Time) ([]entity.Task, error) {
+func (t *TaskDomain) ListTasks(ctx context.Context, userId int32, isDone bool, createdDate time.Time) ([]entity.Task, error) {
 	tasks, err := t.repo.ListTasks(ctx, userId, isDone, createdDate)
 	if err != nil {
 		return nil, err
@@ -63,7 +63,7 @@ func (t *TaskService) ListTasks(ctx context.Context, userId int32, isDone bool, 
 	return tasks, nil
 }
 
-func (t *TaskService) GetTask(ctx context.Context, id int32, userId int32) (*entity.Task, error) {
+func (t *TaskDomain) GetTask(ctx context.Context, id int32, userId int32) (*entity.Task, error) {
 	taskRdb, err := t.rdbRepo.GetTask(ctx, id, userId)
 	if err != nil {
 		return nil, err
@@ -83,7 +83,7 @@ func (t *TaskService) GetTask(ctx context.Context, id int32, userId int32) (*ent
 	return task, nil
 }
 
-func (t *TaskService) DeleteTask(ctx context.Context, id int32, user entity.User) error {
+func (t *TaskDomain) DeleteTask(ctx context.Context, id int32, user entity.User) error {
 	task, err := t.repo.GetTask(ctx, id, user.ID)
 	if err != nil {
 		return err
@@ -98,8 +98,8 @@ func (t *TaskService) DeleteTask(ctx context.Context, id int32, user entity.User
 	return nil
 }
 
-func (t *TaskService) UpdateTask(ctx context.Context, user entity.User, id int32, isDone bool) error {
-	task, err := t.repo.GetTask(ctx, id, user.ID);
+func (t *TaskDomain) UpdateTask(ctx context.Context, user entity.User, id int32, isDone bool) error {
+	task, err := t.repo.GetTask(ctx, id, user.ID)
 	if err != nil {
 		return err
 	}

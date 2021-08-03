@@ -6,7 +6,7 @@ import (
 	"togo/config"
 	"togo/internal/redix"
 	"togo/internal/repository"
-	"togo/internal/service"
+	"togo/internal/domain"
 )
 
 func SetCurrentUser(sc *config.ServerConfig) fiber.Handler {
@@ -19,7 +19,7 @@ func SetCurrentUser(sc *config.ServerConfig) fiber.Handler {
 		db := sc.DB
 		repo := repository.NewRepo(db)
 		rdbStore := redix.NewRedisStore(rdb)
-		svc := service.NewUserService(repo, rdbStore)
+		svc := domain.NewUserDomain(repo, rdbStore)
 
 		currentUser, err := svc.GetUser(c.UserContext(), int32(userId))
 		if err != nil {

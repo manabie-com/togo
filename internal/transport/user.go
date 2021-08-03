@@ -1,13 +1,13 @@
-package rest
+package transport
 
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"togo/config"
+	"togo/internal/domain"
 	"togo/internal/dto"
 	"togo/internal/redix"
 	"togo/internal/repository"
-	"togo/internal/service"
 	"togo/utils"
 )
 
@@ -29,9 +29,9 @@ func UserLogin(sc *config.ServerConfig) fiber.Handler {
 		db := sc.DB
 		repo := repository.NewRepo(db)
 		rdbStore := redix.NewRedisStore(rdb)
-		svc := service.NewUserService(repo, rdbStore)
+		userDomain := domain.NewUserDomain(repo, rdbStore)
 
-		user, err := svc.Login(c.UserContext(), data.Username, data.Password)
+		user, err := userDomain.Login(c.UserContext(), data.Username, data.Password)
 		if err != nil {
 			return SimpleError(c, err)
 		}
@@ -63,9 +63,9 @@ func UserSignup(sc *config.ServerConfig) fiber.Handler {
 		db := sc.DB
 		repo := repository.NewRepo(db)
 		rdbStore := redix.NewRedisStore(rdb)
-		svc := service.NewUserService(repo, rdbStore)
+		userDomain := domain.NewUserDomain(repo, rdbStore)
 
-		user, err := svc.CreateUser(c.UserContext(), data.Username, data.Password)
+		user, err := userDomain.CreateUser(c.UserContext(), data.Username, data.Password)
 		if err != nil {
 			return SimpleError(c, err)
 		}

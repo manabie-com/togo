@@ -1,4 +1,4 @@
-package service
+package domain
 
 import (
 	"context"
@@ -18,16 +18,16 @@ type UserRedisRepo interface {
 	GetUser(ctx context.Context, id int32) (*entity.User, error)
 	SetUser(ctx context.Context, user entity.User) error
 }
-type UserService struct {
+type UserDomain struct {
 	repo    UserRepository
 	rdbRepo UserRedisRepo
 }
 
-func NewUserService(repo UserRepository, rdbRepo UserRedisRepo) *UserService {
-	return &UserService{repo: repo, rdbRepo: rdbRepo}
+func NewUserDomain(repo UserRepository, rdbRepo UserRedisRepo) *UserDomain {
+	return &UserDomain{repo: repo, rdbRepo: rdbRepo}
 }
 
-func (u *UserService) CreateUser(ctx context.Context, username string, password string) (*entity.User, error) {
+func (u *UserDomain) CreateUser(ctx context.Context, username string, password string) (*entity.User, error) {
 	userRdb, err := u.rdbRepo.GetUserByUsername(ctx, username)
 	if err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func (u *UserService) CreateUser(ctx context.Context, username string, password 
 	return &user, nil
 }
 
-func (u *UserService) GetUserByUsername(ctx context.Context, username string) (*entity.User, error) {
+func (u *UserDomain) GetUserByUsername(ctx context.Context, username string) (*entity.User, error) {
 	userRdb, err := u.rdbRepo.GetUserByUsername(ctx, username)
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func (u *UserService) GetUserByUsername(ctx context.Context, username string) (*
 	return user, nil
 }
 
-func (u *UserService) Login(ctx context.Context, username string, password string) (*entity.User, error) {
+func (u *UserDomain) Login(ctx context.Context, username string, password string) (*entity.User, error) {
 	var user *entity.User
 
 	userRdb, err := u.rdbRepo.GetUserByUsername(ctx, username)
@@ -104,7 +104,7 @@ func (u *UserService) Login(ctx context.Context, username string, password strin
 	return user, nil
 }
 
-func (u *UserService) GetUser(ctx context.Context, id int32) (*entity.User, error) {
+func (u *UserDomain) GetUser(ctx context.Context, id int32) (*entity.User, error) {
 	userRdb, err := u.rdbRepo.GetUser(ctx, id)
 	if err != nil {
 		return nil, err

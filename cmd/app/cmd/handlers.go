@@ -8,7 +8,7 @@ import (
 	jwtware "github.com/gofiber/jwt/v2"
 	"togo/config"
 	"togo/internal/middleware"
-	"togo/internal/rest"
+	"togo/internal/transport"
 )
 
 type server struct {
@@ -35,8 +35,8 @@ func (s *server) Start() error {
 	app.Get("/", ping())
 	app.Get("/ping", ping())
 
-	app.Post("/login", rest.UserLogin(s.SC))
-	app.Post("/signup", rest.UserSignup(s.SC))
+	app.Post("/login", transport.UserLogin(s.SC))
+	app.Post("/signup", transport.UserSignup(s.SC))
 
 	// JWT Middleware
 	app.Use(jwtware.New(jwtware.Config{
@@ -51,11 +51,11 @@ func (s *server) Start() error {
 	app.Use(middleware.SetCurrentUser(s.SC))
 
 	tasks := app.Group("/tasks")
-	tasks.Post("", rest.CreateTask(s.SC))
-	tasks.Get("/:id", rest.GetTask(s.SC))
-	tasks.Get("", rest.ListTask(s.SC))
-	tasks.Patch("/:id", rest.UpdateTask(s.SC))
-	tasks.Delete("/:id", rest.DeleteTask(s.SC))
+	tasks.Post("", transport.CreateTask(s.SC))
+	tasks.Get("/:id", transport.GetTask(s.SC))
+	tasks.Get("", transport.ListTask(s.SC))
+	tasks.Patch("/:id", transport.UpdateTask(s.SC))
+	tasks.Delete("/:id", transport.DeleteTask(s.SC))
 
 	addr := fmt.Sprintf(":%d", s.SC.Port)
 	err := app.Listen(addr)
