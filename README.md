@@ -1,58 +1,135 @@
-### Notes
-This is a simple backend for a todo service, right now this service can handle login/list/create simple tasks, to make it run:
-- `go run main.go`
-- Import Postman collection from docs to check example
+# Manabie Togo
 
-Candidates are invited to implement the below requirements but the point is **NOT to resolve everything perfectly** but selective about what you can do best in a limited time.  
-Thus, **there is no correct-or-perfect answer**, your solutions are a way for us to continue the discussion and collaboration.  
+[![Go|GoDoc](https://godoc.org/github.com/hellofresh/health-go?status.svg)](https://godoc.org/github.com/hellofresh/health-go)
 
-We're using **Golang** but candidates can use any language (NodeJS/Java/PHP/Python...) **as long as**:  
-- You show us how to run **reliably** - many of us use Ubuntu, some use Mac
-- Your solution is **compatible with our REST interface** and we can use our Postman collection for verifying
+[![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
 
----
+## Features
 
-### Functional requirement:
-Right now a user can add as many tasks as they want, we want the ability to **limit N tasks per day**.  
-For example, users are limited to create only 5 tasks only per day, if the daily limit is reached, return 4xx code to the client and ignore the create request.
+- Change method login to POST instead of GET.
+- Add method register (POST /regisger).
+- Split services layer to domain and transport layer.
+- Write unit test for the domain layer.
+- Write unit test for the repository/store layer.
 
-### Non-functional requirements:
-- [ ] **A nice README on how to run, what is missing, what else you want to improve but don't have enough time**
-- [ ] **Consistency is a MUST**
-- [ ] Fork this repo and show us your development progress by a PR
-- [ ] Write integration tests for this project
-- [ ] Make this code DRY
-- [ ] Write unit test for the services layer
-- [ ] Change from using SQLite to Postgres with docker-compose
-- [ ] This project includes many issues from code to DB structure, feel free to optimize them
-- [ ] Write unit test for storages layer
-- [ ] Split services layer to use case and transport layer
+## Project Structure
 
-
-#### DB Schema
-```sql
--- users definition
-
-CREATE TABLE users (
-	id TEXT NOT NULL,
-	password TEXT NOT NULL,
-	max_todo INTEGER DEFAULT 5 NOT NULL,
-	CONSTRAINT users_PK PRIMARY KEY (id)
-);
-
-INSERT INTO users (id, password, max_todo) VALUES('firstUser', 'example', 5);
-
--- tasks definition
-
-CREATE TABLE tasks (
-	id TEXT NOT NULL,
-	content TEXT NOT NULL,
-	user_id TEXT NOT NULL,
-    created_date TEXT NOT NULL,
-	CONSTRAINT tasks_PK PRIMARY KEY (id),
-	CONSTRAINT tasks_FK FOREIGN KEY (user_id) REFERENCES users(id)
-);
+```sh
+.
+├── cmd/
+│   └── srv/        
+│   │   └── main.go           #  main func 
+│   └── migrate                
+│   |   └── main.go           #  main func for migrate
+├── configs/
+│   ├── config.go             # contain config variable
+├── internal/ 
+│   ├── transport/            # contain transport layer
+│   │   └── ...
+|   ├── domain/               # contain bussiness layer 
+│   │   └── ...
+│   └── storages/             # contain model and repository/store layer
+│   │   └── postgres/         
+│   │   |   └── ...
+│   │   └── redis/         
+│   │   |   └── ...
+│   │   └── entities.go       #  contain models and entities
+│   │   └── task.go           #  contain interface  of task store
+│   │   └── user.go           #  contain interface of user store
+├── docs/ 
+├── common/ 
+│   └── errors/
+│   |   └── ... 
+│   └── constants/
+│   |    └── storages/  
+├── test/                     # e2e test 
+├── └── ... 
+├── utils/ 
+├── Dockerfile
+├── docker-compose.yml
+├── docker-compose.dev.yml
+├── .gitignore                # specifies intentionally untracked files to ignore
+├── .env
+├── docker.env
+├──.dockerignore
+├── go.mod 
+├── go.sum
 ```
 
-#### Sequence diagram
-![auth and create tasks request](https://github.com/manabie-com/togo/blob/master/docs/sequence.svg)
+## Installation
+
+Make sure you have Go installed ([download](https://golang.org/dl/)). Version `1.16` or higher is required.
+
+Install make for start the server.
+
+For Linux:
+
+```sh
+$sudo apt install make
+```
+
+For Macos:
+
+```sh
+$brew install make
+```
+
+## Start server
+
+First of all, you must copy .env.example to .env:
+
+```sh
+$cp .env.example .env
+```
+
+Start server with cmd/terminal:
+
+```sh
+$make docker-dev     # start docker with dev environment
+$make migrate
+$make start
+```
+
+Start server with docker:
+
+```sh
+$make docker-start
+```
+
+Your app should now be running on [localhost:5050](http://localhost:5050/).
+
+## Unit test
+
+```sh
+$chmod +x ./test.sh
+$make unit-test
+```
+
+## License
+
+MIT
+
+**Free Software, Hell Yeah!**
+
+[//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
+
+   [dill]: <https://github.com/joemccann/dillinger>
+   [git-repo-url]: <https://github.com/joemccann/dillinger.git>
+   [john gruber]: <http://daringfireball.net>
+   [df1]: <http://daringfireball.net/projects/markdown/>
+   [markdown-it]: <https://github.com/markdown-it/markdown-it>
+   [Ace Editor]: <http://ace.ajax.org>
+   [node.js]: <http://nodejs.org>
+   [Twitter Bootstrap]: <http://twitter.github.com/bootstrap/>
+   [jQuery]: <http://jquery.com>
+   [@tjholowaychuk]: <http://twitter.com/tjholowaychuk>
+   [express]: <http://expressjs.com>
+   [AngularJS]: <http://angularjs.org>
+   [Gulp]: <http://gulpjs.com>
+
+   [PlDb]: <https://github.com/joemccann/dillinger/tree/master/plugins/dropbox/README.md>
+   [PlGh]: <https://github.com/joemccann/dillinger/tree/master/plugins/github/README.md>
+   [PlGd]: <https://github.com/joemccann/dillinger/tree/master/plugins/googledrive/README.md>
+   [PlOd]: <https://github.com/joemccann/dillinger/tree/master/plugins/onedrive/README.md>
+   [PlMe]: <https://github.com/joemccann/dillinger/tree/master/plugins/medium/README.md>
+   [PlGa]: <https://github.com/RahulHP/dillinger/blob/master/plugins/googleanalytics/README.md>
