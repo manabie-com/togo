@@ -1,7 +1,7 @@
 # Manabie Togo
 ## 
 
-[![N|Solid](https://cldup.com/dTxpPi9lDf.thumb.png)](https://nodesource.com/products/nsolid)
+[![Go|GoDoc](https://godoc.org/github.com/hellofresh/health-go?status.svg)](https://godoc.org/github.com/hellofresh/health-go)
 
 [![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
 
@@ -95,12 +95,13 @@ Start server with docker:
 ```sh
 $ make docker-start
 ```
+Your app should now be running on [localhost:5050](http://localhost:5050/).
+
 ## Unit test
 ```sh
 $ make unit-test
 ```
 
-Your app should now be running on [localhost:5050](http://localhost:5050/).
 
 
 ## License
