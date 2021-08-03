@@ -21,6 +21,10 @@ type TaskRedisRepo interface {
 	GetTask(ctx context.Context, id int32) (*entity.Task, error)
 	SetTask(ctx context.Context, task *entity.Task) error
 	DeleteTask(ctx context.Context, id int32) error
+	GetCountTaskToday(ctx context.Context, userID int32) (int32, error)
+	SetCountTaskToday(ctx context.Context, userID int32, count int32) error
+	IncrCountTaskToday(ctx context.Context, userID int32) error
+	DecrCountTaskToday(ctx context.Context, userID int32) error
 }
 
 type TaskHandler struct {
@@ -33,10 +37,21 @@ func NewTaskHandler(repo TaskRepository, rdbRepo TaskRedisRepo) *TaskHandler {
 }
 
 func (t *TaskHandler) CountTaskByUser(ctx context.Context, userID int32) (int32, error) {
+	number, err := t.rdbRepo.GetCountTaskToday(ctx, userID)
+	if err != nil {
+		return 0, err
+	}
+
+	if number != 0 {
+		return number, nil
+	}
+
 	count, err := t.repo.CountTaskByUser(ctx, userID)
 	if err != nil {
 		return 0, err
 	}
+
+	_ = t.rdbRepo.SetCountTaskToday(ctx, userID, count)
 
 	return count, nil
 }
@@ -48,6 +63,7 @@ func (t *TaskHandler) CreateTask(ctx context.Context, content string, userID int
 	}
 
 	_ = t.rdbRepo.SetTask(ctx, task)
+	_ = t.rdbRepo.IncrCountTaskToday(ctx, userID)
 
 	return task, nil
 }
@@ -91,6 +107,7 @@ func (t *TaskHandler) DeleteTask(ctx context.Context, id int32, userID int32) er
 	}
 
 	_ = t.rdbRepo.DeleteTask(ctx, id)
+	_ = t.rdbRepo.DecrCountTaskToday(ctx, userID)
 
 	return nil
 }
