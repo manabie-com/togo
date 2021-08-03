@@ -1,4 +1,4 @@
-.PHONY: migrate, rollback, migration, run, sqlc, test
+.PHONY: migrate, rollback, migration, run, sqlc, test, docker-up, docker-build
 
 migrate:
 	go run cmd/migrate/main.go up
@@ -17,4 +17,10 @@ sqlc:
 	sqlc generate
 
 test:
-	go test
+	go test ./...
+
+docker-up:
+	docker-compose up
+
+docker-build:
+	docker-compose build
