@@ -2,7 +2,6 @@ package domain
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/manabie-com/togo/common/errors"
 	"github.com/manabie-com/togo/internal/storages"
@@ -24,7 +23,6 @@ func (d *authDomain) Login(ctx context.Context, u *storages.User) (string, error
 	if err != nil {
 		return "", errors.ErrUserDoesNotExist
 	}
-	fmt.Println(user)
 	if err := utils.VerifyPassword(u.Password, user.Password); err != nil {
 		return "", err
 	}
