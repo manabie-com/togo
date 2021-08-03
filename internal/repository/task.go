@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"time"
-	"togo/common/cmerrors"
+	"togo/common"
 	"togo/internal/entity"
 	"togo/internal/postgresql"
 )
@@ -52,7 +52,7 @@ func (r *Repo) GetTask(ctx context.Context, id int32, userId int32) (*entity.Tas
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, cmerrors.ErrTaskNotFound
+			return nil, common.ErrTaskNotFound
 		}
 
 		return nil, err
@@ -68,7 +68,7 @@ func (r *Repo) DeleteTask(ctx context.Context, id int32, userId int32) error {
 	})
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return cmerrors.ErrTaskNotFound
+			return common.ErrTaskNotFound
 		}
 		return err
 	}

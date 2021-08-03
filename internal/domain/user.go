@@ -3,7 +3,7 @@ package domain
 import (
 	"context"
 	"golang.org/x/crypto/bcrypt"
-	"togo/common/cmerrors"
+	"togo/common"
 	"togo/internal/entity"
 )
 
@@ -18,6 +18,7 @@ type UserRedisRepo interface {
 	GetUser(ctx context.Context, id int32) (*entity.User, error)
 	SetUser(ctx context.Context, user entity.User) error
 }
+
 type UserDomain struct {
 	repo    UserRepository
 	rdbRepo UserRedisRepo
@@ -34,11 +35,11 @@ func (u *UserDomain) CreateUser(ctx context.Context, username string, password s
 	}
 
 	if userRdb != nil {
-		return nil, cmerrors.ErrUserAlreadyExist
+		return nil, common.ErrUserAlreadyExist
 	}
 
 	if _, err = u.repo.GetUserByUsername(ctx, username); err == nil {
-		return nil, cmerrors.ErrUserAlreadyExist
+		return nil, common.ErrUserAlreadyExist
 	}
 
 	user, err := u.repo.CreateUser(ctx, username, password)
@@ -63,7 +64,7 @@ func (u *UserDomain) GetUserByUsername(ctx context.Context, username string) (*e
 
 	user, err := u.repo.GetUserByUsername(ctx, username)
 	if err != nil {
-		return nil, cmerrors.ErrUserNotFound
+		return nil, common.ErrUserNotFound
 	}
 
 	_ = u.rdbRepo.SetUser(ctx, *user)
@@ -86,7 +87,7 @@ func (u *UserDomain) Login(ctx context.Context, username string, password string
 	if user == nil {
 		userDb, err := u.repo.GetUserByUsername(ctx, username)
 		if err != nil {
-			return nil, cmerrors.ErrUserNotFound
+			return nil, common.ErrUserNotFound
 		}
 
 		_ = u.rdbRepo.SetUser(ctx, *userDb)
@@ -98,7 +99,7 @@ func (u *UserDomain) Login(ctx context.Context, username string, password string
 	dbPass := []byte(user.Password)
 
 	if passErr := bcrypt.CompareHashAndPassword(dbPass, userPass); passErr != nil {
-		return nil, cmerrors.ErrPasswordNotMatch
+		return nil, common.ErrPasswordNotMatch
 	}
 
 	return user, nil

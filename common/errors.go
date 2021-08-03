@@ -1,4 +1,4 @@
-package cmerrors
+package common
 
 import (
 	"errors"

@@ -3,7 +3,7 @@ package domain
 import (
 	"context"
 	"time"
-	"togo/common/cmerrors"
+	"togo/common"
 	"togo/internal/entity"
 )
 
@@ -41,7 +41,7 @@ func (t *TaskDomain) Create(ctx context.Context, user entity.User, content strin
 	}
 
 	if count >= user.MaxTodo {
-		return nil, cmerrors.ErrTooManyTask
+		return nil, common.ErrTooManyTask
 	}
 
 	task, err := t.repo.CreateTask(ctx, content, userId, createdDate)
