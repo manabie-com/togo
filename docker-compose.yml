@@ -1,13 +1,17 @@
 version: "3.9"
 services:
   db:
-    image: 'bitnami/postgresql:12'
+    image: bitnami/postgresql:12
     ports:
       - '5433:5432'
     environment:
       POSTGRESQL_USERNAME: postgres
       POSTGRESQL_PASSWORD: 123123123
       POSTGRESQL_DATABASE: togo
+  redis:
+    image: redis:6.2-alpine
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
   web:
     build: .
     deploy:
@@ -20,7 +24,9 @@ services:
       DB_NAME: togo
       SSL_MODE: disable
       PORT: 3000
-      GIN_MODE: release
+      JWT_SECRET: KF2QT4fwpMeJf36POk6yJ
+      REDIS_HOST: redis:6379
+      REDIS_DB: 0
     depends_on:
       - db
   nginx:
