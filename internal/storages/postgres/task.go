@@ -10,7 +10,7 @@ import (
 
 const (
 	RetrieveTasksStmt = `SELECT id, content, user_id, created_date, number_in_date FROM tasks WHERE user_id = $1 AND created_date = $2`
-	AddTaskStmt       = `INSERT INTO tasks (id, content, user_id, created_date, number) VALUES ($1, $2, $3, $4, $5)`
+	AddTaskStmt       = `INSERT INTO tasks (id, content, user_id, created_date, number_in_date) VALUES ($1, $2, $3, $4, $5)`
 )
 
 type taskStore struct {
