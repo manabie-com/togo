@@ -2,97 +2,48 @@ package domain
 
 import (
 	"context"
+
 	"golang.org/x/crypto/bcrypt"
 	"togo/common"
 	"togo/internal/entity"
 )
 
-type UserRepository interface {
-	CreateUser(ctx context.Context, username string, password string) (entity.User, error)
-	GetUserByUsername(ctx context.Context, username string) (*entity.User, error)
-	GetUser(ctx context.Context, id int32) (entity.User, error)
-}
-
-type UserRedisRepo interface {
+type UserHandler interface {
+	CreateUser(ctx context.Context, username string, password string) (*entity.User, error)
 	GetUserByUsername(ctx context.Context, username string) (*entity.User, error)
 	GetUser(ctx context.Context, id int32) (*entity.User, error)
-	SetUser(ctx context.Context, user entity.User) error
 }
 
 type UserDomain struct {
-	repo    UserRepository
-	rdbRepo UserRedisRepo
+	handler UserHandler
 }
 
-func NewUserDomain(repo UserRepository, rdbRepo UserRedisRepo) *UserDomain {
-	return &UserDomain{repo: repo, rdbRepo: rdbRepo}
+func NewUserDomain(handler UserHandler) *UserDomain {
+	return &UserDomain{handler: handler}
 }
 
 func (u *UserDomain) CreateUser(ctx context.Context, username string, password string) (*entity.User, error) {
-	userRdb, err := u.rdbRepo.GetUserByUsername(ctx, username)
+	user, err := u.handler.CreateUser(ctx, username, password)
 	if err != nil {
 		return nil, err
 	}
 
-	if userRdb != nil {
-		return nil, common.ErrUserAlreadyExist
-	}
-
-	if _, err = u.repo.GetUserByUsername(ctx, username); err == nil {
-		return nil, common.ErrUserAlreadyExist
-	}
-
-	user, err := u.repo.CreateUser(ctx, username, password)
-	if err != nil {
-		return nil, err
-	}
-
-	_ = u.rdbRepo.SetUser(ctx, user)
-
-	return &user, nil
+	return user, nil
 }
 
 func (u *UserDomain) GetUserByUsername(ctx context.Context, username string) (*entity.User, error) {
-	userRdb, err := u.rdbRepo.GetUserByUsername(ctx, username)
+	user, err := u.handler.GetUserByUsername(ctx, username)
 	if err != nil {
 		return nil, err
 	}
-
-	if userRdb != nil {
-		return userRdb, nil
-	}
-
-	user, err := u.repo.GetUserByUsername(ctx, username)
-	if err != nil {
-		return nil, common.ErrUserNotFound
-	}
-
-	_ = u.rdbRepo.SetUser(ctx, *user)
 
 	return user, nil
 }
 
 func (u *UserDomain) Login(ctx context.Context, username string, password string) (*entity.User, error) {
-	var user *entity.User
-
-	userRdb, err := u.rdbRepo.GetUserByUsername(ctx, username)
+	user, err := u.handler.GetUserByUsername(ctx, username)
 	if err != nil {
 		return nil, err
-	}
-
-	if userRdb != nil {
-		user = userRdb
-	}
-
-	if user == nil {
-		userDb, err := u.repo.GetUserByUsername(ctx, username)
-		if err != nil {
-			return nil, common.ErrUserNotFound
-		}
-
-		_ = u.rdbRepo.SetUser(ctx, *userDb)
-
-		user = userDb
 	}
 
 	userPass := []byte(password)
@@ -106,21 +57,10 @@ func (u *UserDomain) Login(ctx context.Context, username string, password string
 }
 
 func (u *UserDomain) GetUser(ctx context.Context, id int32) (*entity.User, error) {
-	userRdb, err := u.rdbRepo.GetUser(ctx, id)
+	user, err := u.handler.GetUser(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	if userRdb != nil {
-		return userRdb, nil
-	}
-
-	user, err := u.repo.GetUser(ctx, id)
-	if err != nil {
-		return nil, err
-	}
-
-	_ = u.rdbRepo.SetUser(ctx, user)
-
-	return &user, nil
+	return user, nil
 }

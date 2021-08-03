@@ -4,9 +4,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
 	"togo/config"
+	"togo/internal/domain"
+	"togo/internal/handler"
 	"togo/internal/redix"
 	"togo/internal/repository"
-	"togo/internal/domain"
 )
 
 func SetCurrentUser(sc *config.ServerConfig) fiber.Handler {
@@ -19,9 +20,10 @@ func SetCurrentUser(sc *config.ServerConfig) fiber.Handler {
 		db := sc.DB
 		repo := repository.NewRepo(db)
 		rdbStore := redix.NewRedisStore(rdb)
-		svc := domain.NewUserDomain(repo, rdbStore)
+		hdl := handler.NewUserHandler(repo, rdbStore)
+		userDomain := domain.NewUserDomain(hdl)
 
-		currentUser, err := svc.GetUser(c.UserContext(), int32(userId))
+		currentUser, err := userDomain.GetUser(c.UserContext(), int32(userId))
 		if err != nil {
 			return err
 		}

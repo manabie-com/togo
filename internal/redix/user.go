@@ -4,8 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/go-redis/redis/v8"
 	"time"
+
+	"github.com/go-redis/redis/v8"
 	"togo/internal/entity"
 )
 
@@ -36,15 +37,14 @@ func (r *redisStore) GetUser(ctx context.Context, id int32) (*entity.User, error
 		return nil, err
 	}
 
-	user := entity.User{}
+	u := entity.User{}
 
-	_ = json.Unmarshal([]byte(result), &user)
+	_ = json.Unmarshal([]byte(result), &u)
 
-	return &user, nil
+	return &u, nil
 }
 
-func (r *redisStore) SetUser(ctx context.Context, user entity.User) error {
-
+func (r *redisStore) SetUser(ctx context.Context, user *entity.User) error {
 	out, err := json.Marshal(user)
 	if err != nil {
 		return err

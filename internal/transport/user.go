@@ -6,6 +6,7 @@ import (
 	"togo/config"
 	"togo/internal/domain"
 	"togo/internal/dto"
+	"togo/internal/handler"
 	"togo/internal/redix"
 	"togo/internal/repository"
 	"togo/utils"
@@ -29,7 +30,8 @@ func UserLogin(sc *config.ServerConfig) fiber.Handler {
 		db := sc.DB
 		repo := repository.NewRepo(db)
 		rdbStore := redix.NewRedisStore(rdb)
-		userDomain := domain.NewUserDomain(repo, rdbStore)
+		hdl := handler.NewUserHandler(repo, rdbStore)
+		userDomain := domain.NewUserDomain(hdl)
 
 		user, err := userDomain.Login(c.UserContext(), data.Username, data.Password)
 		if err != nil {
@@ -61,9 +63,13 @@ func UserSignup(sc *config.ServerConfig) fiber.Handler {
 
 		rdb := sc.Redis
 		db := sc.DB
+
 		repo := repository.NewRepo(db)
 		rdbStore := redix.NewRedisStore(rdb)
-		userDomain := domain.NewUserDomain(repo, rdbStore)
+
+		hdl := handler.NewUserHandler(repo, rdbStore)
+
+		userDomain := domain.NewUserDomain(hdl)
 
 		user, err := userDomain.CreateUser(c.UserContext(), data.Username, data.Password)
 		if err != nil {
