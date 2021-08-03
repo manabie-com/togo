@@ -1,10 +1,8 @@
 # Manabie Togo
-## 
 
 [![Go|GoDoc](https://godoc.org/github.com/hellofresh/health-go?status.svg)](https://godoc.org/github.com/hellofresh/health-go)
 
 [![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
-
 
 ## Features
 
@@ -14,8 +12,8 @@
 - Write unit test for the domain layer.
 - Write unit test for the repository/store layer.
 
-
 ## Project Structure
+
 ```sh
 .
 ├── cmd/
@@ -65,44 +63,46 @@ Make sure you have Go installed ([download](https://golang.org/dl/)). Version `1
 Install make for start the server.
 
 For Linux:
+
 ```sh
-$ sudo apt install make
+$sudo apt install make
 ```
 
 For Macos:
 
 ```sh
-$ brew install make
+$brew install make
 ```
 
 ## Start server
 
 First of all, you must copy .env.example to .env:
+
 ```sh
-$ cp .env.example .env
+$cp .env.example .env
 ```
 
 Start server with cmd/terminal:
 
 ```sh
-$ make docker-dev     # start docker with dev environment
-$ make migrate
-$ make start
+$make docker-dev     # start docker with dev environment
+$make migrate
+$make start
 ```
 
 Start server with docker:
 
 ```sh
-$ make docker-start
+$make docker-start
 ```
+
 Your app should now be running on [localhost:5050](http://localhost:5050/).
 
 ## Unit test
+
 ```sh
-$ make unit-test
+$make unit-test
 ```
-
-
 
 ## License
 
