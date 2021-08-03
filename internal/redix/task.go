@@ -4,13 +4,18 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/go-redis/redis/v8"
 	"time"
+
+	"github.com/go-redis/redis/v8"
 	"togo/internal/entity"
 )
 
-func (r *redisStore) GetTask(ctx context.Context, id int32, userId int32) (*entity.Task, error) {
-	key := fmt.Sprintf("tasks/%d/%d", userId, id)
+func TaskKey(id int32) string {
+	return fmt.Sprintf("tasks/%d", id)
+}
+
+func (r *redisStore) GetTask(ctx context.Context, id int32) (*entity.Task, error) {
+	key := TaskKey(id)
 
 	result, err := r.client.Get(ctx, key).Result()
 	if err == redis.Nil {
@@ -21,7 +26,7 @@ func (r *redisStore) GetTask(ctx context.Context, id int32, userId int32) (*enti
 
 	task := entity.Task{}
 
-	json.Unmarshal([]byte(result), &task)
+	_ = json.Unmarshal([]byte(result), &task)
 
 	return &task, nil
 }
@@ -43,15 +48,12 @@ func (r *redisStore) SetTask(ctx context.Context, task *entity.Task) error {
 	return nil
 }
 
-func (r *redisStore) DeleteTask(ctx context.Context, task *entity.Task) error {
-	key := fmt.Sprintf("tasks/%d/%d", task.UserID, task.ID)
+func (r *redisStore) DeleteTask(ctx context.Context, id int32) error {
+	key := TaskKey(id)
 
-	result, err := r.client.Del(ctx, key).Result()
-	if err != nil {
+	if _, err := r.client.Del(ctx, key).Result(); err != nil {
 		return err
 	}
-
-	fmt.Println(result)
 
 	return nil
 }

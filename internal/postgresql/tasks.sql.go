@@ -140,11 +140,12 @@ func (q *Queries) ListTasks(ctx context.Context, arg ListTasksParams) ([]Task, e
 	return items, nil
 }
 
-const updateTask = `-- name: UpdateTask :exec
+const updateTask = `-- name: UpdateTask :one
 UPDATE tasks
 SET is_done    = $2,
     updated_at = NOW()
 WHERE id = $1
+RETURNING id, content, user_id, created_date, is_done, created_at, updated_at
 `
 
 type UpdateTaskParams struct {
@@ -152,7 +153,17 @@ type UpdateTaskParams struct {
 	IsDone bool  `json:"is_done"`
 }
 
-func (q *Queries) UpdateTask(ctx context.Context, arg UpdateTaskParams) error {
-	_, err := q.db.ExecContext(ctx, updateTask, arg.ID, arg.IsDone)
-	return err
+func (q *Queries) UpdateTask(ctx context.Context, arg UpdateTaskParams) (Task, error) {
+	row := q.db.QueryRowContext(ctx, updateTask, arg.ID, arg.IsDone)
+	var i Task
+	err := row.Scan(
+		&i.ID,
+		&i.Content,
+		&i.UserID,
+		&i.CreatedDate,
+		&i.IsDone,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }

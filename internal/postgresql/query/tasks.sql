@@ -13,11 +13,12 @@ WHERE id = $1
   AND user_id = $2
 LIMIT 1;
 
--- name: UpdateTask :exec
+-- name: UpdateTask :one
 UPDATE tasks
 SET is_done    = $2,
     updated_at = NOW()
-WHERE id = $1;
+WHERE id = $1
+RETURNING *;
 
 -- name: DeleteTask :exec
 DELETE

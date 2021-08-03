@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"time"
+
 	"togo/common"
 	"togo/internal/entity"
 	"togo/internal/postgresql"
@@ -76,15 +77,16 @@ func (r *Repo) DeleteTask(ctx context.Context, id int32, userId int32) error {
 	return nil
 }
 
-func (r *Repo) UpdateTask(ctx context.Context, id int32, isDone bool) error {
-	err := r.q.UpdateTask(ctx, postgresql.UpdateTaskParams{
+func (r *Repo) UpdateTask(ctx context.Context, id int32, isDone bool) (*entity.Task, error) {
+	task, err := r.q.UpdateTask(ctx, postgresql.UpdateTaskParams{
 		ID: id, IsDone: isDone,
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	t := task.MapToEntity()
+	return &t, nil
 }
 
 func (r *Repo) CountTaskByUser(ctx context.Context, userID int32) (int32, error) {

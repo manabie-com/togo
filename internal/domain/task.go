@@ -3,39 +3,30 @@ package domain
 import (
 	"context"
 	"time"
+
 	"togo/common"
 	"togo/internal/entity"
 )
 
-type TaskRepository interface {
-	CreateTask(ctx context.Context, context string, userId int32, createdDate time.Time) (*entity.Task, error)
-	ListTasks(ctx context.Context, userId int32, isDone bool, createdDate time.Time) ([]entity.Task, error)
-	GetTask(ctx context.Context, id int32, userId int32) (*entity.Task, error)
-	DeleteTask(ctx context.Context, id int32, userId int32) error
-	UpdateTask(ctx context.Context, id int32, isDone bool) error
+type TaskHandler interface {
 	CountTaskByUser(ctx context.Context, userID int32) (int32, error)
-}
-
-type TaskRedisRepo interface {
-	GetTask(ctx context.Context, id int32, userId int32) (*entity.Task, error)
-	SetTask(ctx context.Context, task *entity.Task) error
-	DeleteTask(ctx context.Context, task *entity.Task) error
+	CreateTask(ctx context.Context, content string, userID int32, createdDate time.Time) (*entity.Task, error)
+	ListTask(ctx context.Context, userID int32, isDone bool, createdDate time.Time) ([]entity.Task, error)
+	GetTask(ctx context.Context, id int32, userID int32) (*entity.Task, error)
+	DeleteTask(ctx context.Context, id int32, userID int32) error
+	UpdateTask(ctx context.Context, id int32, isDone bool) error
 }
 
 type TaskDomain struct {
-	repo    TaskRepository
-	rdbRepo TaskRedisRepo
+	handler TaskHandler
 }
 
-func NewTaskDomain(repo TaskRepository, rdbRepo TaskRedisRepo) *TaskDomain {
-	return &TaskDomain{
-		repo:    repo,
-		rdbRepo: rdbRepo,
-	}
+func NewTaskDomain(handler TaskHandler) *TaskDomain {
+	return &TaskDomain{handler: handler}
 }
 
-func (t *TaskDomain) Create(ctx context.Context, user entity.User, content string, userId int32, createdDate time.Time) (*entity.Task, error) {
-	count, err := t.repo.CountTaskByUser(ctx, user.ID)
+func (t *TaskDomain) Create(ctx context.Context, user *entity.User, content string, createdDate time.Time) (*entity.Task, error) {
+	count, err := t.handler.CountTaskByUser(ctx, user.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -44,18 +35,16 @@ func (t *TaskDomain) Create(ctx context.Context, user entity.User, content strin
 		return nil, common.ErrTooManyTask
 	}
 
-	task, err := t.repo.CreateTask(ctx, content, userId, createdDate)
+	task, err := t.handler.CreateTask(ctx, content, user.ID, createdDate)
 	if err != nil {
 		return nil, err
 	}
 
-	_ = t.rdbRepo.SetTask(ctx, task)
-
 	return task, nil
 }
 
-func (t *TaskDomain) ListTasks(ctx context.Context, userId int32, isDone bool, createdDate time.Time) ([]entity.Task, error) {
-	tasks, err := t.repo.ListTasks(ctx, userId, isDone, createdDate)
+func (t *TaskDomain) ListTasks(ctx context.Context, userID int32, isDone bool, createdDate time.Time) ([]entity.Task, error) {
+	tasks, err := t.handler.ListTask(ctx, userID, isDone, createdDate)
 	if err != nil {
 		return nil, err
 	}
@@ -63,54 +52,37 @@ func (t *TaskDomain) ListTasks(ctx context.Context, userId int32, isDone bool, c
 	return tasks, nil
 }
 
-func (t *TaskDomain) GetTask(ctx context.Context, id int32, userId int32) (*entity.Task, error) {
-	taskRdb, err := t.rdbRepo.GetTask(ctx, id, userId)
+func (t *TaskDomain) GetTask(ctx context.Context, id int32, userID int32) (*entity.Task, error) {
+	task, err := t.handler.GetTask(ctx, id, userID)
 	if err != nil {
 		return nil, err
 	}
-
-	if taskRdb != nil {
-		return taskRdb, nil
-	}
-
-	task, err := t.repo.GetTask(ctx, id, userId)
-	if err != nil {
-		return nil, err
-	}
-
-	_ = t.rdbRepo.SetTask(ctx, task)
 
 	return task, nil
 }
 
-func (t *TaskDomain) DeleteTask(ctx context.Context, id int32, user entity.User) error {
-	task, err := t.repo.GetTask(ctx, id, user.ID)
+func (t *TaskDomain) DeleteTask(ctx context.Context, id int32, userID int32) error {
+	_, err := t.handler.GetTask(ctx, id, userID)
 	if err != nil {
 		return err
 	}
 
-	if err = t.repo.DeleteTask(ctx, id, user.ID); err != nil {
+	if err = t.handler.DeleteTask(ctx, id, userID); err != nil {
 		return err
 	}
-
-	_ = t.rdbRepo.DeleteTask(ctx, task)
 
 	return nil
 }
 
-func (t *TaskDomain) UpdateTask(ctx context.Context, user entity.User, id int32, isDone bool) error {
-	task, err := t.repo.GetTask(ctx, id, user.ID)
+func (t *TaskDomain) UpdateTask(ctx context.Context, userID int32, id int32, isDone bool) error {
+	_, err := t.handler.GetTask(ctx, id, userID)
 	if err != nil {
 		return err
 	}
 
-	if err = t.repo.UpdateTask(ctx, id, isDone); err != nil {
+	if err = t.handler.UpdateTask(ctx, id, isDone); err != nil {
 		return err
 	}
-
-	task.IsDone = isDone
-
-	_ = t.rdbRepo.SetTask(ctx, task)
 
 	return nil
 }
