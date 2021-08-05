@@ -1,0 +1,25 @@
+version: '3'
+services:
+  postgres:
+    container_name: manabie-db
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: "admin"
+      POSTGRES_USER: "admin"
+    volumes:
+      - ./database_init.sql:/docker-entrypoint-initdb.d/init.sql
+  app:
+    container_name: manabie-app
+    image: golang:1.15.3-alpine
+    ports:
+      - "5050:5050"
+    volumes:
+      - .:/go/src/app
+    working_dir: /go/src/app
+    command: >
+            sh -c "go mod vendor
+            && go run main.go"
+    depends_on:
+      - postgres
