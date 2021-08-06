@@ -7,7 +7,7 @@ namespace togo.Service.Interface
 {
     public interface ITaskService
     {
-        Task<TaskEntity> Create(TaskCreateDto input);
-        Task<List<TaskEntity>> List(string created_date);
+        Task<TaskDetailDto> Create(TaskCreateDto input);
+        Task<List<TaskDetailDto>> List(string created_date);
     }
 }

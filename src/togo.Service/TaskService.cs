@@ -25,28 +25,51 @@ namespace togo.Service
             _currentHttpContext = currentHttpContext;
         }
 
-        public async Task<TaskEntity> Create(TaskCreateDto input)
+        public async Task<TaskDetailDto> Create(TaskCreateDto input)
         {
             if (string.IsNullOrEmpty(input.Content))
             {
                 throw new RestException(HttpStatusCode.BadRequest);
             }
 
+            var userId = _currentHttpContext.GetCurrentUserId();
+            var cacheKey = $"{userId}__{DateTime.Now.ToShortDateString()}";
+            await ValiateRateLimit(cacheKey);
+
             var task = new TaskEntity
             {
                 Id = Guid.NewGuid().ToString(),
                 Content = input.Content,
-                UserId = _currentHttpContext.GetCurrentUserId(),
+                UserId = userId,
                 CreatedDate = DateTime.Now.ToShortDateString(),
             };
 
             await _context.AddAsync(task);
             await _context.SaveChangesAsync();
 
-            return task;
+            RateLimitHelper.Increase(cacheKey);
+
+            return new TaskDetailDto
+            {
+                Id = task.Id,
+                Content = task.Content,
+                CreatedDate = task.CreatedDate,
+                UserId = task.UserId,
+            };
         }
 
-        public async Task<List<TaskEntity>> List(string created_date)
+        private async System.Threading.Tasks.Task ValiateRateLimit(string cacheKey)
+        {
+            var currentRate = RateLimitHelper.Peek(cacheKey);
+            var maxTodo = (await _context.Users.FirstOrDefaultAsync(x => x.Id == _currentHttpContext.GetCurrentUserId()))?.MaxTodo;
+
+            if (maxTodo <= currentRate)
+            {
+                throw new RestException(HttpStatusCode.TooManyRequests);
+            }
+        }
+
+        public async Task<List<TaskDetailDto>> List(string created_date)
         {
             var query = from t in _context.Tasks
                         where t.UserId == _currentHttpContext.GetCurrentUserId()
@@ -65,7 +88,13 @@ namespace togo.Service
                         select t;
             }
 
-            return await query.ToListAsync();
+            return (await query.ToListAsync()).ConvertAll(task => new TaskDetailDto
+            {
+                Id = task.Id,
+                Content = task.Content,
+                CreatedDate = task.CreatedDate,
+                UserId = task.UserId,
+            });
         }
     }
 }

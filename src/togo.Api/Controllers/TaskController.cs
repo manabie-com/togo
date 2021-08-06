@@ -17,13 +17,13 @@ namespace togo.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ApiResponse<TaskEntity>> CreateTask([FromBody] TaskCreateDto input)
+        public async Task<ApiResponse<TaskDetailDto>> CreateTask([FromBody] TaskCreateDto input)
         {
             return await _taskService.Create(input);
         }
 
         [HttpGet]
-        public async Task<ApiResponse<List<TaskEntity>>> ListTasks([FromQuery] string created_date)
+        public async Task<ApiResponse<List<TaskDetailDto>>> ListTasks([FromQuery] string created_date)
         {
             return await _taskService.List(created_date);
         }
