@@ -4,6 +4,6 @@ namespace togo.Service.Interface
 {
     public interface IUserService
     {
-        Task<(bool, string)> Login(string userId, string password);
+        Task<string> Login(string userId, string password);
     }
 }

@@ -1,9 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using togo.Service.Context;
 using togo.Service.Interface;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using togo.Service.Errors;
+using System.Net;
 
 namespace togo.Service
 {
@@ -20,14 +21,14 @@ namespace togo.Service
             _jwtGenerator = jwtGenerator;
         }
 
-        public async Task<(bool, string)> Login(string userId, string password)
+        public async Task<string> Login(string userId, string password)
         {
             var isValid = await ValidateUser(userId, password);
             if (!isValid)
             {
-                return (isValid, string.Empty);
+                throw new RestException(HttpStatusCode.Unauthorized);
             }
-            return (isValid, _jwtGenerator.CreateToken(userId));
+            return _jwtGenerator.CreateToken(userId);
         }
 
         private async Task<bool> ValidateUser(string userId, string password)

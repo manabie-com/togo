@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 using togo.Service.Interface;
 
@@ -19,11 +18,7 @@ namespace togo.Api.Controllers
         [HttpGet("login")]
         public async Task<ActionResult<Dictionary<string, string>>> Login([FromQuery] string user_id, [FromQuery] string password)
         {
-            var (isSuccess, token) = await _userService.Login(user_id, password);
-            if (!isSuccess)
-            {
-                Unauthorized();
-            }
+            var token = await _userService.Login(user_id, password);
             return new Dictionary<string, string> { { "data", token } };
         }
     }
