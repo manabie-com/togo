@@ -34,6 +34,8 @@ namespace togo.Api
                 });
             });
 
+            services.AddHttpContextAccessor();
+
             services.AddDbContext<TogoContext>(opt =>
             {
                 opt.UseSqlite($"Data Source=.{Path.DirectorySeparatorChar}togo.db");
@@ -53,6 +55,8 @@ namespace togo.Api
                     });
 
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ITaskService, TaskService>();
+            services.AddScoped<ICurrentHttpContext, CurrentHttpContext>();
             services.AddScoped<IJwtGenerator, JwtGenerator>();
         }
 

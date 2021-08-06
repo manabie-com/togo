@@ -21,8 +21,8 @@ namespace togo.Service.Context
                 entity.HasKey(e => e.Id);
 
                 entity.Property(e => e.Id)
-                      .IsRequired()
-                      .HasMaxLength(256);
+                      .IsRequired();
+
                 entity.Property(e => e.Content)
                       .IsRequired();
             });
@@ -37,12 +37,10 @@ namespace togo.Service.Context
                 entity.HasKey(e => e.Id);
 
                 entity.Property(e => e.Id)
-                      .IsRequired()
-                      .HasMaxLength(256);
+                      .IsRequired();
 
                 entity.Property(e => e.Password)
-                      .IsRequired()
-                      .HasMaxLength(256);
+                      .IsRequired();
 
                 entity.Property(e => e.MaxTodo)
                       .IsRequired()
@@ -58,7 +56,7 @@ namespace togo.Service.Context
         public string Id { get; set; }
         public string UserId { get; set; }
         public string Content { get; set; }
-        public DateTime CreatedDate { get; set; }
+        public string CreatedDate { get; set; }
 
         public User User { get; set; }
     }
