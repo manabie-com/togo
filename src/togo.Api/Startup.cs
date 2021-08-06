@@ -1,14 +1,13 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
+using Microsoft.IdentityModel.Tokens;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 using togo.Api.Middlewares;
 using togo.Service;
 using togo.Service.Context;
@@ -20,7 +19,11 @@ namespace togo.Api
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers(opt =>
+            {
+                var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                opt.Filters.Add(new AuthorizeFilter(policy));
+            });
             services.AddCors(opt =>
             {
                 opt.AddPolicy("allowAll", builder =>
@@ -35,6 +38,19 @@ namespace togo.Api
             {
                 opt.UseSqlite($"Data Source=.{Path.DirectorySeparatorChar}togo.db");
             });
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("wqGyEBBfPK9w3Lxw"));
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddJwtBearer(opt =>
+                    {
+                        opt.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuerSigningKey = true,
+                            IssuerSigningKey = key,
+                            ValidateAudience = false,
+                            ValidateIssuer = false
+                        };
+                    });
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IJwtGenerator, JwtGenerator>();
