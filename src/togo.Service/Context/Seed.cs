@@ -12,7 +12,8 @@ namespace togo.Service.Context
                 var user = new User
                 {
                     Id = "firstUser",
-                    Password = "example",
+                    PasswordSalt = "q+/pqaqsAslRAgZOK4b0ug==",
+                    PasswordHash = "KxcQVXazTAsDE6+oIXW6aAeqzsLglHImlaleuVAvyMs=",
                     MaxTodo = 5,
                 };
 

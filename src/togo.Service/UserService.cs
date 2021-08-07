@@ -23,21 +23,22 @@ namespace togo.Service
 
         public async Task<string> Login(string userId, string password)
         {
-            var isValid = await ValidateUser(userId, password);
+            await ValidateUser(userId, password);
+            return _jwtGenerator.CreateToken(userId);
+        }
+
+        private async System.Threading.Tasks.Task ValidateUser(string userId, string password)
+        {
+            var query = from u in _context.Users
+                        where u.Id == userId
+                        select u;
+            var user = await query.FirstOrDefaultAsync();
+
+            var isValid = SercurityHelper.ComparePassword(password, user?.PasswordSalt, user?.PasswordHash);
             if (!isValid)
             {
                 throw new RestException(HttpStatusCode.Unauthorized);
             }
-            return _jwtGenerator.CreateToken(userId);
-        }
-
-        private async Task<bool> ValidateUser(string userId, string password)
-        {
-            var query = from u in _context.Users
-                        where u.Id == userId && u.Password == password
-                        select u;
-
-            return await query.AnyAsync();
         }
     }
 }

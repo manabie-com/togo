@@ -39,7 +39,10 @@ namespace togo.Service.Context
                 entity.Property(e => e.Id)
                       .IsRequired();
 
-                entity.Property(e => e.Password)
+                entity.Property(e => e.PasswordHash)
+                      .IsRequired();
+
+                entity.Property(e => e.PasswordSalt)
                       .IsRequired();
 
                 entity.Property(e => e.MaxTodo)
@@ -64,7 +67,8 @@ namespace togo.Service.Context
     public class User
     {
         public string Id { get; set; }
-        public string Password { get; set; }
+        public string PasswordHash { get; set; }
+        public string PasswordSalt { get; set; }
         public int MaxTodo { get; set; }
 
         public List<Task> Tasks { get; set; }
