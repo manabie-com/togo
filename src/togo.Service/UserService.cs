@@ -5,26 +5,23 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using togo.Service.Errors;
 using System.Net;
+using togo.Service.Helper;
 
 namespace togo.Service
 {
     public class UserService : IUserService
     {
         private readonly TogoContext _context;
-        private readonly IJwtGenerator _jwtGenerator;
 
-        public UserService(
-              TogoContext context
-            , IJwtGenerator jwtGenerator)
+        public UserService(TogoContext context)
         {
             _context = context;
-            _jwtGenerator = jwtGenerator;
         }
 
         public async Task<string> Login(string userId, string password)
         {
             await ValidateUser(userId, password);
-            return _jwtGenerator.CreateToken(userId);
+            return JwtGeneratorHelper.CreateToken(userId);
         }
 
         private async System.Threading.Tasks.Task ValidateUser(string userId, string password)

@@ -57,7 +57,6 @@ namespace togo.Api
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITaskService, TaskService>();
             services.AddScoped<ICurrentHttpContext, CurrentHttpContext>();
-            services.AddScoped<IJwtGenerator, JwtGenerator>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

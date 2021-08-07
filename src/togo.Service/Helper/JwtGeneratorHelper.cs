@@ -1,17 +1,15 @@
-﻿using System;
+﻿using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Collections.Generic;
-using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
-using Microsoft.Extensions.Configuration;
-using togo.Service.Interface;
 
-namespace togo.Service
+namespace togo.Service.Helper
 {
-    public class JwtGenerator : IJwtGenerator
+    public class JwtGeneratorHelper
     {
-        public string CreateToken(string userId)
+        public static string CreateToken(string userId)
         {
             var claims = new List<Claim>
             {
