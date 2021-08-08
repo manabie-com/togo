@@ -1,0 +1,1 @@
+INSERT INTO public.users (id, username, password, max_todo) VALUES ('6e135b1d-1e54-46f3-99f8-5b78df9cb857', 'firstUser', 'example', 5);

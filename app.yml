@@ -1,0 +1,14 @@
+host:
+  host: localhost
+  port: 5050
+
+db:
+  host: localhost
+  port: 5432
+  username: postgres
+  password: postgres
+  dbname: togo
+
+token:
+  key: wqGyEBBfPK9w3Lxw
+  timeout: 60 #minutes
