@@ -9,6 +9,7 @@ import (
 	"github.com/manabie-com/togo/handler/dto"
 	"log"
 	"net/http"
+	"time"
 )
 
 type TodoHandler interface {
@@ -30,7 +31,14 @@ type todoHandler struct {
 func (t *todoHandler) GetTasks(ctx *gin.Context) {
 	log.Println("get tasks")
 	appCtx := context.FromContext(ctx)
-	createDate := ctx.Request.URL.Query().Get("created_date")
+	createDateString := ctx.Request.URL.Query().Get("created_date")
+	createDate, err := time.Parse("2006-01-02", createDateString)
+	if err != nil {
+		log.Println("can't parse create date")
+		dto.ResponseError(ctx, err, http.StatusBadRequest)
+		return
+	}
+
 	tasks, err := t.todoService.GetTaskAtDate(appCtx, createDate)
 	if err != nil {
 		log.Println("can't get tasks")
@@ -85,7 +93,7 @@ func mapTaskModelToDto(taskModel *model.Task) *dto.Task {
 		ID:          taskModel.ID,
 		Content:     taskModel.Content,
 		UserID:      taskModel.UserID,
-		CreatedDate: taskModel.CreatedDate,
+		CreatedDate: taskModel.CreatedDate.Format("2006-01-02"),
 	}
 }
 

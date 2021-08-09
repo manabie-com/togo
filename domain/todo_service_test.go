@@ -14,6 +14,8 @@ func Test_todoService_GetTaskAtDate(t1 *testing.T) {
 	userRepo := new(repo.UserRepositoryMock)
 	taskRepo := new(repo.TaskRepositoryMock)
 	contextMock := new(context.ContextMock)
+	now := time.Now()
+	nowRounded := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
 	type fields struct {
 		jwtKey       string
 		tokenTimeout int
@@ -22,7 +24,7 @@ func Test_todoService_GetTaskAtDate(t1 *testing.T) {
 	}
 	type args struct {
 		ctx        context.Context
-		createDate string
+		createDate time.Time
 	}
 	tests := []struct {
 		name    string
@@ -41,25 +43,25 @@ func Test_todoService_GetTaskAtDate(t1 *testing.T) {
 			},
 			args: args{
 				ctx:        contextMock,
-				createDate: "2021-08-09",
+				createDate: nowRounded,
 			},
 			want: []*model.Task{
 				{
 					ID:          "c8545a7f-81a4-4774-af41-c8fbe64afaa4",
 					Content:     "some task",
 					UserID:      "6e135b1d-1e54-46f3-99f8-5b78df9cb857",
-					CreatedDate: "2021-08-09",
+					CreatedDate: nowRounded,
 				},
 			},
 		},
 	}
 	contextMock.On("GetUserId").Return("6e135b1d-1e54-46f3-99f8-5b78df9cb857")
-	taskRepo.On("FindTaskByUserIdAndDate", contextMock, "6e135b1d-1e54-46f3-99f8-5b78df9cb857", "2021-08-09").Return([]*model.Task{
+	taskRepo.On("FindTaskByUserIdAndDate", contextMock, "6e135b1d-1e54-46f3-99f8-5b78df9cb857", nowRounded).Return([]*model.Task{
 		{
 			ID:          "c8545a7f-81a4-4774-af41-c8fbe64afaa4",
 			Content:     "some task",
 			UserID:      "6e135b1d-1e54-46f3-99f8-5b78df9cb857",
-			CreatedDate: "2021-08-09",
+			CreatedDate: nowRounded,
 		},
 	}, nil)
 	for _, tt := range tests {
@@ -86,7 +88,8 @@ func Test_todoService_CreateTask(t1 *testing.T) {
 	userRepo := new(repo.UserRepositoryMock)
 	taskRepo := new(repo.TaskRepositoryMock)
 	contextMock := new(context.ContextMock)
-	nowString := time.Now().Format("2006-01-02")
+	now := time.Now()
+	nowRounded := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
 	type fields struct {
 		jwtKey       string
 		tokenTimeout int
@@ -117,18 +120,18 @@ func Test_todoService_CreateTask(t1 *testing.T) {
 				content: "abcd",
 			},
 			want: &model.Task{
-				CreatedDate: nowString,
+				CreatedDate: nowRounded,
 			},
 		},
 	}
 
 	contextMock.On("GetUserId").Return("6e135b1d-1e54-46f3-99f8-5b78df9cb857")
-	taskRepo.On("FindTaskByUserIdAndDate", contextMock, "6e135b1d-1e54-46f3-99f8-5b78df9cb857", nowString).Return([]*model.Task{
+	taskRepo.On("FindTaskByUserIdAndDate", contextMock, "6e135b1d-1e54-46f3-99f8-5b78df9cb857", nowRounded).Return([]*model.Task{
 		{
 			ID:          "c8545a7f-81a4-4774-af41-c8fbe64afaa4",
 			Content:     "some task",
 			UserID:      "6e135b1d-1e54-46f3-99f8-5b78df9cb857",
-			CreatedDate: nowString,
+			CreatedDate: nowRounded,
 		},
 	}, nil)
 	taskRepo.On("Insert", contextMock, mock.Anything).Return(nil)
@@ -163,7 +166,8 @@ func Test_todoService_CreateTask_Fail(t1 *testing.T) {
 	userRepo := new(repo.UserRepositoryMock)
 	taskRepo := new(repo.TaskRepositoryMock)
 	contextMock := new(context.ContextMock)
-	nowString := time.Now().Format("2006-01-02")
+	now := time.Now()
+	nowRounded := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
 	type fields struct {
 		jwtKey       string
 		tokenTimeout int
@@ -198,12 +202,12 @@ func Test_todoService_CreateTask_Fail(t1 *testing.T) {
 	}
 
 	contextMock.On("GetUserId").Return("6e135b1d-1e54-46f3-99f8-5b78df9cb857")
-	taskRepo.On("FindTaskByUserIdAndDate", contextMock, "6e135b1d-1e54-46f3-99f8-5b78df9cb857", nowString).Return([]*model.Task{
+	taskRepo.On("FindTaskByUserIdAndDate", contextMock, "6e135b1d-1e54-46f3-99f8-5b78df9cb857", nowRounded).Return([]*model.Task{
 		{
 			ID:          "c8545a7f-81a4-4774-af41-c8fbe64afaa4",
 			Content:     "some task",
 			UserID:      "6e135b1d-1e54-46f3-99f8-5b78df9cb857",
-			CreatedDate: nowString,
+			CreatedDate: nowRounded,
 		},
 	}, nil)
 	taskRepo.On("Insert", contextMock, mock.Anything).Return(nil)

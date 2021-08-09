@@ -1,5 +1,7 @@
 package model
 
+import "time"
+
 type User struct {
 	Id       string
 	Username string
@@ -11,5 +13,5 @@ type Task struct {
 	ID          string
 	Content     string
 	UserID      string
-	CreatedDate string
+	CreatedDate time.Time
 }

@@ -14,7 +14,7 @@ import (
 type TodoService interface {
 	GetAccessToken(ctx context.Context, username, password string) (string, error)
 	CreateTask(ctx context.Context, content string) (*model.Task, error)
-	GetTaskAtDate(ctx context.Context, createDate string) ([]*model.Task, error)
+	GetTaskAtDate(ctx context.Context, createDate time.Time) ([]*model.Task, error)
 }
 
 func NewTodoService(
@@ -38,7 +38,7 @@ type todoService struct {
 	taskRepo     repo.TaskRepository
 }
 
-func (t *todoService) GetTaskAtDate(ctx context.Context, createDate string) ([]*model.Task, error) {
+func (t *todoService) GetTaskAtDate(ctx context.Context, createDate time.Time) ([]*model.Task, error) {
 	log.Println("get task")
 	userId := ctx.GetUserId()
 	tasks, err := t.taskRepo.FindTaskByUserIdAndDate(ctx, userId, createDate)
@@ -61,8 +61,10 @@ func (t *todoService) CreateTask(ctx context.Context, content string) (*model.Ta
 		log.Println("can't found user")
 		return nil, ErrUserNotFound
 	}
-	nowString := time.Now().Format("2006-01-02")
-	existingTasks, err := t.taskRepo.FindTaskByUserIdAndDate(ctx, userId, nowString)
+	now := time.Now()
+	nowRounded := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
+
+	existingTasks, err := t.taskRepo.FindTaskByUserIdAndDate(ctx, userId, nowRounded)
 	if err != nil {
 		log.Println("can't find tasks")
 		return nil, err
@@ -76,7 +78,7 @@ func (t *todoService) CreateTask(ctx context.Context, content string) (*model.Ta
 		ID:          uuid.New().String(),
 		Content:     content,
 		UserID:      userId,
-		CreatedDate: nowString,
+		CreatedDate: nowRounded,
 	}
 	err = t.taskRepo.Insert(ctx, task)
 	if err != nil {

@@ -3,18 +3,19 @@ package repo
 import (
 	"github.com/manabie-com/togo/common/context"
 	"github.com/manabie-com/togo/domain/model"
+	"time"
 )
 
 type TaskRepository interface {
 	Insert(ctx context.Context, task *model.Task) error
-	FindTaskByUserIdAndDate(ctx context.Context, userId string, createdDate string) ([]*model.Task, error)
+	FindTaskByUserIdAndDate(ctx context.Context, userId string, createdDate time.Time) ([]*model.Task, error)
 }
 
 type task struct {
 	ID          string
 	UserID      string
 	Content     string
-	CreatedDate string
+	CreatedDate time.Time
 }
 
 func (t *task) TableName() string {
@@ -28,7 +29,7 @@ func NewTaskRepo() TaskRepository {
 type taskRepo struct {
 }
 
-func (t *taskRepo) FindTaskByUserIdAndDate(ctx context.Context, userId string, createdDate string) ([]*model.Task, error) {
+func (t *taskRepo) FindTaskByUserIdAndDate(ctx context.Context, userId string, createdDate time.Time) ([]*model.Task, error) {
 	var tasks []*task
 	db := ctx.GetDb()
 	err := db.Find(&tasks, "user_id = ? and created_date = ?", userId, createdDate).Error

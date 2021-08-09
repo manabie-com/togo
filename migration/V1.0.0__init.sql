@@ -13,12 +13,12 @@ create unique index users_username_uindex
 
 create table tasks
 (
-    id           uuid not null
+    id           uuid        not null
         constraint tasks_pk
             primary key,
-    user_id      uuid not null
+    user_id      uuid        not null
         constraint tasks_users_id_fk
             references users,
-    content      text not null,
-    created_date text not null
+    content      text        not null,
+    created_date timestamptz not null
 );
