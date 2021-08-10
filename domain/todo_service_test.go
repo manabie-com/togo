@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"github.com/manabie-com/togo/common"
 	"github.com/manabie-com/togo/common/context"
 	"github.com/manabie-com/togo/domain/model"
 	"github.com/manabie-com/togo/repo"
@@ -14,8 +15,7 @@ func Test_todoService_GetTaskAtDate(t1 *testing.T) {
 	userRepo := new(repo.UserRepositoryMock)
 	taskRepo := new(repo.TaskRepositoryMock)
 	contextMock := new(context.ContextMock)
-	now := time.Now()
-	nowRounded := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
+	nowRounded := common.GetCurrentDateRounded()
 	type fields struct {
 		jwtKey       string
 		tokenTimeout int
@@ -88,8 +88,7 @@ func Test_todoService_CreateTask(t1 *testing.T) {
 	userRepo := new(repo.UserRepositoryMock)
 	taskRepo := new(repo.TaskRepositoryMock)
 	contextMock := new(context.ContextMock)
-	now := time.Now()
-	nowRounded := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
+	nowRounded := common.GetCurrentDateRounded()
 	type fields struct {
 		jwtKey       string
 		tokenTimeout int
@@ -166,8 +165,7 @@ func Test_todoService_CreateTask_Fail(t1 *testing.T) {
 	userRepo := new(repo.UserRepositoryMock)
 	taskRepo := new(repo.TaskRepositoryMock)
 	contextMock := new(context.ContextMock)
-	now := time.Now()
-	nowRounded := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
+	nowRounded := common.GetCurrentDateRounded()
 	type fields struct {
 		jwtKey       string
 		tokenTimeout int

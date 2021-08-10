@@ -3,6 +3,7 @@ package domain
 import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
+	"github.com/manabie-com/togo/common"
 	"github.com/manabie-com/togo/common/context"
 	"github.com/manabie-com/togo/common/middleware"
 	"github.com/manabie-com/togo/domain/model"
@@ -61,9 +62,7 @@ func (t *todoService) CreateTask(ctx context.Context, content string) (*model.Ta
 		log.Println("can't found user")
 		return nil, ErrUserNotFound
 	}
-	now := time.Now()
-	nowRounded := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
-
+	nowRounded := common.GetCurrentDateRounded()
 	existingTasks, err := t.taskRepo.FindTaskByUserIdAndDate(ctx, userId, nowRounded)
 	if err != nil {
 		log.Println("can't find tasks")
