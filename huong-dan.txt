@@ -1,0 +1,15 @@
+﻿Hướng dẫn dùng docker-php
+
+Phần 1: Set up mới docker
+Bước 1: Copy thư mục code vào trong thư mục code
+Bước 2: Cài đặt docker
+Bước 3: Chạy lệnh `docker compose up -d` trong thư mục docker
+Bước 4: Kiểm tra xem đã share forder code hay chưa
+Bước 5: SSH vào container và chạy: `chmod 777 storage/ -R`
+
+Phần 2: Set up project mới
+Bước 1: Copy thư mục code vào trong thư mục code
+Bước 2: Tạo file config trong thư mục nginx-vhost
+Bước 3: Chỉnh sửa file config theo đúng tên của thư mục code
+Bước 4: Chạy lệnh: `docker-compose restart web` trong thư mục docker
+Bước 5: Trỏ domain trong file hosts của máy
