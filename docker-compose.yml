@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:11-alpine
+    networks:
+      default:
+        aliases:
+          - db
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - .docker/init:/docker-entrypoint-initdb.d
+      - .docker/volumes/pgdata:/var/lib/postgresql/data
+    container_name: togo

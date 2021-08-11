@@ -1,0 +1,1 @@
+docker run --rm --network togo_default --name flyway -v $(pwd)/migration:/flyway/sql -v $(pwd)/migration:/flyway/conf flyway/flyway -url=jdbc:postgresql://db:5432/togo -user=postgres -password=postgres migrate info
