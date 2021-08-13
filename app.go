@@ -20,33 +20,6 @@ type App struct {
 	DB     *gorm.DB
 }
 
-var (
-	drivers = []Driver{
-		{Name: "Jimmy Johnson", License: "ABC123"},
-		{Name: "Howard Hills", License: "XYZ789"},
-		{Name: "Craig Colbin", License: "DEF333"},
-	}
-	cars = []Car{
-		{Year: 2000, Make: "Toyota", ModelName: "Tundra", DriverID: 1},
-		{Year: 2001, Make: "Honda", ModelName: "Accord", DriverID: 1},
-		{Year: 2002, Make: "Nissan", ModelName: "Sentra", DriverID: 2},
-		{Year: 2003, Make: "Ford", ModelName: "F-150", DriverID: 3},
-	}
-)
-type Driver struct {
-	gorm.Model
-	Name    string
-	License string
-	Cars    []Car
-}
-
-type Car struct {
-	gorm.Model
-	Year      int
-	Make      string
-	ModelName string
-	DriverID  int
-}
 func (a *App) Initialize() {
 	var err error
 	a.DB, err = config.GetPostgersDB()
@@ -54,19 +27,6 @@ func (a *App) Initialize() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	a.DB.AutoMigrate(&Driver{})
-	a.DB.AutoMigrate(&Car{})
-
-	for index := range cars {
-		a.DB.Create(&cars[index])
-	}
-
-	for index := range drivers {
-		a.DB.Create(&drivers[index])
-	}
-
-	var car Car
-	a.DB.First(&car)
 
 	a.Router = mux.NewRouter()
 
