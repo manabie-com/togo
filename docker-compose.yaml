@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  postgres:
+    container_name: postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=Admin@123#
+    ports:
+      - '2345:5432'
+    volumes:
+      - '/Users/admin/HungPC/steup/POSTGRES_HOME/data:/var/lib/postgresql/data'
+    image: 'ledangtuanbk/postgres:9.6'
