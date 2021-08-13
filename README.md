@@ -1,6 +1,9 @@
 ### Notes
 This is a simple backend for a todo service, right now this service can handle login/list/create simple tasks, to make it run:
-- `go run main.go`
+- `run: docker-compose up -d` # init postgresql
+- `go get ./...` # install dependency
+- Access to postgres init table users and task
+- `go run main.go` # run project or go to class main.go run main function 
 - Import Postman collection from docs to check example
 
 Candidates are invited to implement the below requirements but the point is **NOT to resolve everything perfectly** but selective about what you can do best in a limited time.  
