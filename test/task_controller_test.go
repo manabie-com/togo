@@ -1,19 +1,23 @@
 package test
 
 import (
+	"github.com/jinzhu/configor"
 	"github.com/manabie-com/togo/internal/config"
 	"github.com/manabie-com/togo/internal/controller"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
 
 func TestTaskControllerSuccess(t *testing.T) {
-	db, err := config.GetPostgersDB()
-
-	if err != nil{
-		t.Fatal(err)
+	appCfg := &config.Config{}
+	err1 := configor.Load(appCfg, "../config.yml")
+	if err1 != nil {
+		log.Fatal(err1)
 	}
+
+	db, err := config.GetPostgersDB(appCfg.DB.Host, appCfg.DB.Port, appCfg.DB.User, appCfg.DB.Password, appCfg.DB.Name)
 
 	task :=controller.NewTaskController(db)
 	req, err := http.NewRequest("GET", "/login", nil)

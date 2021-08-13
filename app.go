@@ -1,11 +1,11 @@
 package main
 
 import (
+	"github.com/gorilla/mux"
+	"github.com/jinzhu/configor"
 	"github.com/manabie-com/togo/internal/controller"
 	"log"
 	"net/http"
-
-	"github.com/gorilla/mux"
 
 	"github.com/jinzhu/gorm"
 	"github.com/rs/cors"
@@ -22,7 +22,13 @@ type App struct {
 
 func (a *App) Initialize() {
 	var err error
-	a.DB, err = config.GetPostgersDB()
+	appCfg := &config.Config{}
+	err1 := configor.Load(appCfg, "config.yml")
+	if err1 != nil {
+		log.Fatal(err1)
+	}
+
+	a.DB, err = config.GetPostgersDB(appCfg.DB.Host, appCfg.DB.Port, appCfg.DB.User, appCfg.DB.Password, appCfg.DB.Name)
 
 	if err != nil {
 		log.Fatal(err)

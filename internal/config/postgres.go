@@ -9,18 +9,9 @@ import (
 
 //var db *gorm.DB
 
-func GetPostgersDB() (*gorm.DB, error) {
-	//port := `mapstructure:"DB_DRIVER"`
-	//user := os.Getenv("APP_DB_USERNAME")
-	//password := os.Getenv("APP_DB_PASSWORD")
-	//databaseName := os.Getenv("APP_DB_NAME")
+func GetPostgersDB(host, port, user, password, databaseName string) (*gorm.DB, error) {
 
-	port := "2345"
-	user := "postgres"
-	password := "Admin@123#"
-	databaseName := "postgres"
-
-	desc := fmt.Sprintf("host=localhost port=%s user=%s password=%s dbname=%s sslmode=disable", port, user, password, databaseName)
+	desc := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, databaseName)
 
 	db, err := createConnection(desc)
 

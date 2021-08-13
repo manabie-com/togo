@@ -2,9 +2,11 @@ package test
 
 import (
 	"encoding/json"
+	"github.com/jinzhu/configor"
 	"github.com/manabie-com/togo/internal/config"
 	"github.com/manabie-com/togo/internal/controller"
 	"github.com/manabie-com/togo/internal/utils"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -12,7 +14,15 @@ import (
 )
 
 func TestAuthControllerSuccess(t *testing.T) {
-	db, err := config.GetPostgersDB()
+
+	appCfg := &config.Config{}
+	err1 := configor.Load(appCfg, "../config.yml")
+	if err1 != nil {
+		log.Fatal(err1)
+	}
+
+	db, err := config.GetPostgersDB(appCfg.DB.Host, appCfg.DB.Port, appCfg.DB.User, appCfg.DB.Password, appCfg.DB.Name)
+
 
 	if err != nil{
 		t.Fatal(err)
