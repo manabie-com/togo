@@ -12,7 +12,7 @@ type Jwt struct{
 }
 
 func NewJwt() *Jwt{
-	return &Jwt{"AWSkey"}
+	return &Jwt{"wqGyEBBfPK9w3Lxw"}
 }
 
 func (j *Jwt) CreateToken(id string) (string, error) {
