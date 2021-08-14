@@ -3,6 +3,7 @@ package sqllite
 import (
 	"context"
 	"database/sql"
+	"strconv"
 
 	"github.com/manabie-com/togo/internal/storages"
 )
@@ -36,6 +37,19 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.Null
 	}
 
 	return tasks, nil
+}
+
+func (l *LiteDB) RetrieveTaskLimit(ctx context.Context, userID sql.NullString) (int, error) {
+	stmt := `SELECT max_todo FROM users WHERE id = ?`
+	row := l.DB.QueryRowContext(ctx, stmt, userID)
+	var maxTask string
+	err := row.Scan(&maxTask)
+	i, err := strconv.Atoi(maxTask)
+	if err != nil {
+		return 0, err
+	}
+
+	return i, nil
 }
 
 // AddTask adds a new task to DB
