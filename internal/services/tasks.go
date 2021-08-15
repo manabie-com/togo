@@ -121,6 +121,35 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 
 	resp.Header().Set("Content-Type", "application/json")
 
+	id, _ := userIDFromCtx(req.Context())
+
+	tasks, err := s.Store.RetrieveTasks(
+		req.Context(),
+		sql.NullString{
+			String: id,
+			Valid:  true,
+		},
+		sql.NullString{
+			String: t.CreatedDate,
+			Valid:  true,
+		},
+	)
+
+	maxTaskPerDay, err := s.Store.RetrieveTaskLimit(
+		req.Context(),
+		sql.NullString{
+			String: id,
+			Valid:  true,
+		})
+
+	if len(tasks) >= maxTaskPerDay {
+		resp.WriteHeader(http.StatusForbidden)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": "Task limit reached",
+		})
+		return
+	}
+
 	err = s.Store.AddTask(req.Context(), t)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
