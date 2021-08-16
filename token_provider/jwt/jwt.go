@@ -1,28 +1,17 @@
 package jwt
 
 import (
-	"c08-portal/app_context/tokenprovider"
-	"c08-portal/shared"
 	"errors"
+	tokenprovider "github.com/manabie-com/togo/token_provider"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 )
 
 var (
-	ErrNotFound = shared.NewCustomError(
-		errors.New("tokenprovider not found"),
-		"tokenprovider not found",
-		"ErrNotFound",
-	)
-	ErrEncodingToken = shared.NewCustomError(errors.New("error encoding the tokenprovider"),
-		"error encoding the tokenprovider",
-		"ErrEncodingToken",
-	)
-	ErrInvalidToken = shared.NewCustomError(errors.New("invalid tokenprovider provided"),
-		"invalid tokenprovider provided",
-		"ErrInvalidToken",
-	)
+	ErrNotFound      = errors.New("tokenprovider not found")
+	ErrEncodingToken = errors.New("error encoding the tokenprovider")
+	ErrInvalidToken  = errors.New("invalid tokenprovider provided")
 )
 
 type jwtProvider struct {
@@ -70,8 +59,7 @@ func (j *jwtProvider) GenRefreshToken(pl tokenprovider.IPayload, expiry int) (*t
 	// generate the JWT
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256, myClaims{
 		tokenprovider.JwtPayload{
-			UserId:         pl.GetUserId(),
-			RefreshTokenId: pl.GetRefreshTokenId(),
+			UserId: pl.GetUserId(),
 		},
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Second * time.Duration(j.expiry)).Unix(),

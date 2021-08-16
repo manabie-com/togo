@@ -11,17 +11,14 @@ const (
 )
 
 var (
-	ErrIdOrPasswordInvalid = apperror.NewCustomError(errors.New("id or password invalid"),
-		"id or password invalid", "ErrIdOrPasswordInvalid")
-
 	ErrUserHasBeenBlock = apperror.NewCustomError(errors.New("user has been block"),
 		"user has been block", "ErrUserHasBeenBlock")
 )
 
 type User struct {
-	model.BaseModel `json:",inline"`
-	LoginId         string `json:"id" gorm:"column:login_id"`
-	Password        string `json:"password" gorm:"column:password"`
+	model.BaseModel
+	LogInId  string `gorm:"column:login_id"`
+	Password string `gorm:"column:password"`
 }
 
 func (User) TableName() string {
