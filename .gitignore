@@ -17,3 +17,7 @@
 out/
 
 .idea
+WebApi/WebApiService/obj/
+WebApi/WebApi/obj/
+WebApi/WebApi/bin/
+WebApi/.vs/
