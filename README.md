@@ -56,3 +56,13 @@ CREATE TABLE tasks (
 
 #### Sequence diagram
 ![auth and create tasks request](https://github.com/manabie-com/togo/blob/master/docs/sequence.svg)
+
+#### Prerequisite:
+- MacOS (because I only tested on MacOS).
+- docker environment is required.
+#### How to run project in dev mode:
+- clone my project on github
+- change directory to path project
+- `docker-compose up ` to run project in dev mode
+#### Note:
+- because initialize database has taken time to depend on IO operation if you can't run success with `docker-compose up` command. Please change param in `command: [ "./wait-for-it.sh", "-t", "20", "db:3306", "--", "./task-service"].` For my PC I set it 20 second to wait database service startup.

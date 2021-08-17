@@ -25,6 +25,7 @@ RUN apt-get update \
 
 # Copies the binary file from the BUILD container to /app folder
 COPY --from=build /build/app/task-service $APP_DIR/task-service
+COPY wait-for-it.sh $APP_DIR
 
 # Switches working directory to /app
 WORKDIR $APP_DIR
@@ -33,4 +34,4 @@ WORKDIR $APP_DIR
 EXPOSE 5050
 
 # Runs the binary once the container starts
-ENTRYPOINT ["./task-service"]
+#ENTRYPOINT ["./task-service"]
