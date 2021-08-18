@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -52,14 +53,19 @@ namespace WebApi.Services
         {
             // generate token that is valid for 7 days
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("AppSettings:Secret"));
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var authClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.Id.ToString()),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                };
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+            var token = new JwtSecurityToken(
+                  issuer: _configuration["JWT:ValidIssuer"],
+                  audience: _configuration["JWT:ValidAudience"],
+                  expires: DateTime.Now.AddDays(1),
+                  claims: authClaims,
+                  signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256));
+
             return tokenHandler.WriteToken(token);
         }
         #endregion
