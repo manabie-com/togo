@@ -1,0 +1,29 @@
+version: "3.9"
+   
+services:
+
+  todo_db:
+    image: postgres:13
+    volumes:
+      - todo_data:/var/lib/postgres
+      - ./docker/initdb.d:/docker-entrypoint-initdb.d
+    environment:
+      - POSTGRES_DB=todo
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  todo_service:
+    build: .
+    volumes:
+      - ./internal:/app
+    ports:
+      - "5050:5050"
+    depends_on:
+      - todo_db
+
+
+volumes: 
+  todo_data:
