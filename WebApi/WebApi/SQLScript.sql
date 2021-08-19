@@ -8,11 +8,12 @@ CREATE TABLE users (
 
 INSERT INTO users (id, password, max_todo) VALUES(uuid_generate_v4(), 'example', 5);
 
+
 CREATE TABLE tasks (
 	id uuid DEFAULT uuid_generate_v4() NOT NULL,
 	content TEXT NOT NULL,
 	user_id uuid NOT NULL,
-    created_date TEXT NOT NULL,
+    created_date TIMESTAMP DEFAULT NOW() NOT NULL,
 	CONSTRAINT tasks_PK PRIMARY KEY (id),
 	CONSTRAINT tasks_FK FOREIGN KEY (user_id) REFERENCES users(id)
 );
