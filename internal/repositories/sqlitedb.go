@@ -1,10 +1,10 @@
-package sqllite
+package repositories
 
 import (
 	"context"
 	"database/sql"
 
-	"github.com/manabie-com/togo/internal/storages"
+	"github.com/manabie-com/togo/internal/models"
 )
 
 // LiteDB for working with sqllite
@@ -12,8 +12,38 @@ type LiteDB struct {
 	DB *sql.DB
 }
 
+// Returns the max_todo of the user if match userID
+func (l *LiteDB) RetrieveMaxToDoSetting(ctx context.Context, userID sql.NullString) int {
+	query := `SELECT * FROM users WHERE id = ? LIMIT 1`
+	rows, err := l.DB.QueryContext(ctx, query, userID)
+	if err != nil {
+		return 0
+	}
+	defer rows.Close()
+
+	var users []*models.User
+	for rows.Next() {
+		t := &models.User{}
+		err := rows.Scan(&t.ID, &t.Password, &t.MaxToDo)
+		if err != nil {
+			return 0
+		}
+		users = append(users, t)
+	}
+
+	if err := rows.Err(); err != nil {
+		return 0
+	}
+
+	if len(users) == 0 {
+		return 0
+	}
+
+	return users[0].MaxToDo
+}
+
 // RetrieveTasks returns tasks if match userID AND createDate.
-func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*storages.Task, error) {
+func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*models.Task, error) {
 	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`
 	rows, err := l.DB.QueryContext(ctx, stmt, userID, createdDate)
 	if err != nil {
@@ -21,9 +51,9 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.Null
 	}
 	defer rows.Close()
 
-	var tasks []*storages.Task
+	var tasks []*models.Task
 	for rows.Next() {
-		t := &storages.Task{}
+		t := &models.Task{}
 		err := rows.Scan(&t.ID, &t.Content, &t.UserID, &t.CreatedDate)
 		if err != nil {
 			return nil, err
@@ -39,7 +69,7 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.Null
 }
 
 // AddTask adds a new task to DB
-func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
+func (l *LiteDB) AddTask(ctx context.Context, t *models.Task) error {
 	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
 	_, err := l.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
 	if err != nil {
@@ -53,7 +83,7 @@ func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
 func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
 	stmt := `SELECT id FROM users WHERE id = ? AND password = ?`
 	row := l.DB.QueryRowContext(ctx, stmt, userID, pwd)
-	u := &storages.User{}
+	u := &models.User{}
 	err := row.Scan(&u.ID)
 	if err != nil {
 		return false

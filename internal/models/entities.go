@@ -1,4 +1,4 @@
-package storages
+package models
 
 // Task reflects tasks in DB
 type Task struct {
@@ -12,4 +12,5 @@ type Task struct {
 type User struct {
 	ID       string
 	Password string
+	MaxToDo  int
 }
