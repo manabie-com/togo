@@ -8,9 +8,9 @@ services:
       - todo_data:/var/lib/postgres
       - ./docker/initdb.d:/docker-entrypoint-initdb.d
     environment:
-      - POSTGRES_DB=todo
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - "POSTGRES_DB=${DB_NAME}"
+      - "POSTGRES_USER=${DB_USERNAME}"
+      - "POSTGRES_PASSWORD=${DB_PASSWORD}"
     ports:
       - "5432:5432"
     restart: unless-stopped
@@ -21,6 +21,12 @@ services:
       - ./internal:/app
     ports:
       - "5050:5050"
+    environment:
+      - "DB_HOST=${DB_HOST}"
+      - "DB_PORT=${DB_PORT}"
+      - "DB_NAME=${DB_NAME}"
+      - "DB_USERNAME=${DB_USERNAME}"
+      - "DB_PASSWORD=${DB_PASSWORD}"
     depends_on:
       - todo_db
 
