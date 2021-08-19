@@ -1,0 +1,8 @@
+jwt:
+  key :     "wqGyEBBfPK9w3Lxw"
+db:
+  host:     localhost
+  name:     postgres
+  user:     postgres
+  password: Abcd@1234
+  port:     5432
