@@ -6,7 +6,6 @@
 *.dylib
 
 # Test binary, built with `go test -c`
-*.test
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
@@ -17,3 +16,9 @@
 out/
 
 .idea
+WebApi/WebApiService/obj/
+WebApi/WebApi/obj/
+WebApi/WebApi/bin/
+WebApi/.vs/
+WebApi/WebApi.Test/bin/
+WebApi/WebApi.Test/obj/

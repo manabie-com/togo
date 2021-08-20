@@ -31,24 +31,29 @@ For example, users are limited to create only 5 tasks only per day, if the daily
 
 #### DB Schema
 ```sql
+-- Create extension for create new guid
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 -- users definition
 
 CREATE TABLE users (
-	id TEXT NOT NULL,
+	id uuid DEFAULT uuid_generate_v4() NOT NULL,
 	password TEXT NOT NULL,
 	max_todo INTEGER DEFAULT 5 NOT NULL,
 	CONSTRAINT users_PK PRIMARY KEY (id)
 );
 
-INSERT INTO users (id, password, max_todo) VALUES('firstUser', 'example', 5);
+
+INSERT INTO users (id, password, max_todo) VALUES(uuid_generate_v4(), 'example', 5);
 
 -- tasks definition
 
 CREATE TABLE tasks (
-	id TEXT NOT NULL,
+	id uuid DEFAULT uuid_generate_v4() NOT NULL,
 	content TEXT NOT NULL,
-	user_id TEXT NOT NULL,
-    created_date TEXT NOT NULL,
+	user_id uuid NOT NULL,
+    created_date TIMESTAMP DEFAULT NOW() NOT NULL,
 	CONSTRAINT tasks_PK PRIMARY KEY (id),
 	CONSTRAINT tasks_FK FOREIGN KEY (user_id) REFERENCES users(id)
 );
@@ -56,3 +61,17 @@ CREATE TABLE tasks (
 
 #### Sequence diagram
 ![auth and create tasks request](https://github.com/manabie-com/togo/blob/master/docs/sequence.svg)
+
+#### How to run?
+This is project .Net core, so please following some steps below:
+- Using Visual Studio IDE
+- Create local database with SQL script above
+- Change connection string in appsetting.json
+- I have summited Overview.gif file and DiemNguyenAssignment.postman_collection.json for testing
+
+#### Noted
+This is basic project so some thing need to improve:
+- Login API: we can use POST method for security, hash password
+- Add more api: user register, get daily task for user, update task, delete task ...
+- Currently create task api, user create task for itself, we need to extend to create for another user 
+
