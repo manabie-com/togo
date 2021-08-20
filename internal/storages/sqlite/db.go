@@ -61,3 +61,32 @@ func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) b
 
 	return true
 }
+
+func (l *LiteDB) RetrieveUser(ctx context.Context, userID sql.NullString) (*storages.User, error) {
+	stmt := `SELECT id, password, max_todo FROM users WHERE id = ?`
+	rows, err := l.DB.QueryContext(ctx, stmt, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var user *storages.User
+	for rows.Next() {
+		u := &storages.User{}
+		err := rows.Scan(&u.ID, &u.Password, &u.MaxTodo)
+		if err != nil {
+			return nil, err
+		}
+		if user == nil {
+			user = u
+		} else {
+			return nil, err //more than 1 user with this id, TODO apply error message
+		}
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}

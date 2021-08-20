@@ -4,9 +4,16 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/manabie-com/togo/pkg"
+
+	"github.com/go-redis/redis_rate/v9"
+
+	"github.com/go-redis/redis/v8"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
@@ -115,6 +122,24 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 
 	now := time.Now()
 	userID, _ := userIDFromCtx(req.Context())
+	user, err := s.Store.RetrieveUser(req.Context(), sql.NullString{
+		String: userID,
+		Valid:  true,
+	})
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		//TODO apply log error
+		return
+	}
+	isInRateLimit, err := checkRateLimit(user.MaxTodo, user.ID)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if !isInRateLimit {
+		resp.WriteHeader(http.StatusTooManyRequests)
+		return
+	}
 	t.ID = uuid.New().String()
 	t.UserID = userID
 	t.CreatedDate = now.Format("2006-01-02")
@@ -134,7 +159,25 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 		"data": t,
 	})
 }
+func checkRateLimit(rateCount int, userId string) (bool, error) {
+	//TODO test this logic
+	ctx := context.Background()
+	rdb := redis.NewClient(&redis.Options{
+		Addr: "localhost:6379",
+	})
+	redisRate := redis_rate.NewLimiter(rdb)
+	endOfDayRateLimitRule := redis_rate.Limit{
+		Rate:   rateCount,
+		Period: time.Second * time.Duration(pkg.UnixTimeUntilEndOfDay(time.Now())),
+		Burst:  rateCount,
+	}
+	res, err := redisRate.Allow(ctx, fmt.Sprintf("addTask-%s", userId), endOfDayRateLimitRule)
+	if err != nil {
+		return false, err
+	}
 
+	return res.Allowed > 0, nil
+}
 func value(req *http.Request, p string) sql.NullString {
 	return sql.NullString{
 		String: req.FormValue(p),
