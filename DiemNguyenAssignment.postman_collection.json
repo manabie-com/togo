@@ -1,0 +1,72 @@
+{
+	"info": {
+		"_postman_id": "e272baf7-12db-4142-8d70-58629317a21a",
+		"name": "DiemNguyenAssignment",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create task",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYjM5NzViN2UtNzNjNC00M2NiLWIwMWItYTg0MWZkYTMyYjYzIiwianRpIjoiMjFiMTgwNzUtNjg3Yy00ODllLWI0NDctNDYxYzgwYWNkNzAzIiwiZXhwIjoxNjI5NTU1OTU1LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjYxOTU1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo0MjAwIn0.66rvM65qLVX0r79dMyz_xpHq_PfcMy-Q3c0KrnE_iiQ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Content\": \"Task 06\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:44331/tasks",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44331",
+					"path": [
+						"tasks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:44331/login?user_id=b3975b7e-73c4-43cb-b01b-a841fda32b63&password=example",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44331",
+					"path": [
+						"login"
+					],
+					"query": [
+						{
+							"key": "user_id",
+							"value": "b3975b7e-73c4-43cb-b01b-a841fda32b63"
+						},
+						{
+							"key": "password",
+							"value": "example"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
