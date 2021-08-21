@@ -18,16 +18,16 @@ Right now a user can add as many tasks as they want, we want the ability to **li
 For example, users are limited to create only 5 tasks only per day, if the daily limit is reached, return 4xx code to the client and ignore the create request.
 
 ### Non-functional requirements:
-- [ ] **A nice README on how to run, what is missing, what else you want to improve but don't have enough time**
-- [ ] **Consistency is a MUST**
-- [ ] Fork this repo and show us your development progress by a PR
+- [x] **A nice README on how to run, what is missing, what else you want to improve but don't have enough time**
+- [x] **Consistency is a MUST**
+- [x] Fork this repo and show us your development progress by a PR
 - [ ] Write integration tests for this project
-- [ ] Make this code DRY
+- [x] Make this code DRY
 - [ ] Write unit test for the services layer
-- [ ] Change from using SQLite to Postgres with docker-compose
-- [ ] This project includes many issues from code to DB structure, feel free to optimize them
+- [x] Change from using SQLite to Postgres with docker-compose
+- [x] This project includes many issues from code to DB structure, feel free to optimize them
 - [ ] Write unit test for storages layer
-- [ ] Split services layer to use case and transport layer
+- [x] Split services layer to use case and transport layer
 
 
 #### DB Schema
