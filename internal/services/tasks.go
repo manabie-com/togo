@@ -50,6 +50,9 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 			s.addTask(resp, req)
 		}
 		return
+	case "/ping":
+		s.ping(resp, req)
+		return
 	}
 }
 
