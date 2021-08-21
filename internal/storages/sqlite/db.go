@@ -61,3 +61,15 @@ func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) b
 
 	return true
 }
+
+func (l *LiteDB) CountTaskPerDay(ctx context.Context, userID string, dateStr string) int {
+	stmt := `SELECT COUNT(*) FROM tasks WHERE user_id = ? AND created_date = ?`
+	row := l.DB.QueryRowContext(ctx, stmt, userID, dateStr)
+	var count int
+	err := row.Scan(&count)
+	if err != nil {
+		return 0
+	}
+
+	return count
+}
