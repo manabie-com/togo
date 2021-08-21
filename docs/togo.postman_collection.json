@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "05327fec-8670-470b-8253-f27686acf809",
+		"_postman_id": "71cf1723-cea3-4326-8cc3-5e83ddcc1266",
 		"name": "Test togo",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -8,25 +8,36 @@
 		{
 			"name": "Login",
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\": \"firstUser\",\n    \"password\": \"example\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "localhost:5050/login?user_id=firstUser&password=example",
+					"raw": "localhost:5000/login",
 					"host": [
 						"localhost"
 					],
-					"port": "5050",
+					"port": "5000",
 					"path": [
 						"login"
 					],
 					"query": [
 						{
 							"key": "user_id",
-							"value": "firstUser"
+							"value": "firstUser",
+							"disabled": true
 						},
 						{
 							"key": "password",
-							"value": "example"
+							"value": "example",
+							"disabled": true
 						}
 					]
 				}
@@ -50,23 +61,24 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTM0Mjc4MjEsInVzZXJfaWQiOiJmaXJzdFVzZXIifQ.zJdFGhDFwPcR1-VZyUGmYgNMEDHpNYsttYYvJPcI7h4",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Mjk1NDE1OTYsInVzZXJfaWQiOiJmaXJzdFVzZXIifQ.OMw46x2urbd3TzbcbSfiXGWeb4P72_xcJ-E5_tupiRw",
 						"type": "text"
 					}
 				],
 				"url": {
-					"raw": "localhost:5050/tasks?created_date=2020-06-29",
+					"raw": "localhost:5000/tasks",
 					"host": [
 						"localhost"
 					],
-					"port": "5050",
+					"port": "5000",
 					"path": [
 						"tasks"
 					],
 					"query": [
 						{
 							"key": "created_date",
-							"value": "2020-06-29"
+							"value": "2020-06-29",
+							"disabled": true
 						}
 					]
 				}
@@ -80,7 +92,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTM0Mjc4MjEsInVzZXJfaWQiOiJmaXJzdFVzZXIifQ.zJdFGhDFwPcR1-VZyUGmYgNMEDHpNYsttYYvJPcI7h4",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Mjk1NjQ0OTcsInVzZXJfaWQiOiJmaXJzdFVzZXIifQ.Yh5IhZhYFxQ4fQnuJ_3OPG278eqKcbFNPHo98cxLGJk",
 						"type": "text"
 					}
 				],
@@ -94,11 +106,11 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5050/tasks",
+					"raw": "localhost:5000/tasks",
 					"host": [
 						"localhost"
 					],
-					"port": "5050",
+					"port": "5000",
 					"path": [
 						"tasks"
 					]
@@ -106,6 +118,5 @@
 			},
 			"response": []
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }

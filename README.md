@@ -37,7 +37,9 @@ For example, users are limited to create only 5 tasks only per day, if the daily
 CREATE TABLE users (
 	id TEXT NOT NULL,
 	password TEXT NOT NULL,
-	max_todo INTEGER DEFAULT 5 NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_DATE,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_DATE,
+    deleted_at TIMESTAMP NULL DEFAULT NULL,
 	CONSTRAINT users_PK PRIMARY KEY (id)
 );
 
@@ -49,7 +51,9 @@ CREATE TABLE tasks (
 	id TEXT NOT NULL,
 	content TEXT NOT NULL,
 	user_id TEXT NOT NULL,
-    created_date TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_DATE,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_DATE,
+    deleted_at TIMESTAMP NULL DEFAULT NULL,
 	CONSTRAINT tasks_PK PRIMARY KEY (id),
 	CONSTRAINT tasks_FK FOREIGN KEY (user_id) REFERENCES users(id)
 );
