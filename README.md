@@ -18,7 +18,7 @@ For example, users are limited to create only 5 tasks only per day, if the daily
 
 ### Non-functional requirements:
 - [ ] **A nice README on how to run, what is missing, what else you want to improve but don't have enough time**
-- [ ] **Consistency is a MUST**
+- [x] **Consistency is a MUST**
 - [x] Fork this repo and show us your development progress by a PR
 - [ ] Write integration tests for this project
 - [ ] Make this code DRY
@@ -26,7 +26,7 @@ For example, users are limited to create only 5 tasks only per day, if the daily
 - [ ] Change from using SQLite to Postgres with docker-compose
 - [ ] This project includes many issues from code to DB structure, feel free to optimize them
 - [ ] Write unit test for storages layer
-- [ ] Split services layer to use case and transport layer
+- [x] Split services layer to use case and transport layer
 
 
 #### DB Schema

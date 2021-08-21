@@ -2,11 +2,9 @@ package main
 
 import (
 	"database/sql"
+	"github.com/manabie-com/togo/internal/api"
 	"log"
 	"net/http"
-
-	"github.com/manabie-com/togo/internal/services"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -16,11 +14,9 @@ func main() {
 	if err != nil {
 		log.Fatal("error opening db", err)
 	}
-
-	http.ListenAndServe(":5050", &services.ToDoService{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
-			DB: db,
-		},
-	})
+	todoApi := api.NewToDoApi("wqGyEBBfPK9w3Lxw", db)
+	err = http.ListenAndServe(":5050", &todoApi)
+	if err != nil {
+		log.Fatal("error listen and serve api", err)
+	}
 }
