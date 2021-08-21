@@ -1,6 +1,7 @@
 ### Notes
 This is a simple backend for a todo service, right now this service can handle login/list/create simple tasks, to make it run:
 - `go run main.go`
+- `docker-compose up -d`
 - Import Postman collection from docs to check example
 
 Candidates are invited to implement the below requirements but the point is **NOT to resolve everything perfectly** but selective about what you can do best in a limited time.  

@@ -5,7 +5,7 @@ CREATE TABLE users (
                        password TEXT NOT NULL,
                        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_DATE,
                        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_DATE,
-                       deleted_at TIMESTAMP NULL,
+                       deleted_at TIMESTAMP NULL DEFAULT NULL,
                        CONSTRAINT users_PK PRIMARY KEY (id)
 );
 
@@ -19,7 +19,7 @@ CREATE TABLE tasks (
                        user_id TEXT NOT NULL,
                        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_DATE,
                        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_DATE,
-                       deleted_at TIMESTAMP NULL,
+                       deleted_at TIMESTAMP NULL DEFAULT NULL,
                        CONSTRAINT tasks_PK PRIMARY KEY (id),
                        CONSTRAINT tasks_FK FOREIGN KEY (user_id) REFERENCES users(id)
 );
