@@ -2,126 +2,81 @@ package services
 
 import (
 	"context"
-	"database/sql"
 	"encoding/json"
-	"log"
+	"errors"
+	"github.com/google/uuid"
 	"net/http"
+	"strconv"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/storages"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	"github.com/manabie-com/togo/internal/storages/redis"
 )
 
-// ToDoService implement HTTP server
-type ToDoService struct {
-	JWTKey string
-	Store  *sqllite.LiteDB
-}
-
-func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
-	log.Println(req.Method, req.URL.Path)
-	resp.Header().Set("Access-Control-Allow-Origin", "*")
-	resp.Header().Set("Access-Control-Allow-Headers", "*")
-	resp.Header().Set("Access-Control-Allow-Methods", "*")
-
-	if req.Method == http.MethodOptions {
-		resp.WriteHeader(http.StatusOK)
-		return
-	}
-
-	switch req.URL.Path {
-	case "/login":
-		s.getAuthToken(resp, req)
-		return
-	case "/tasks":
-		var ok bool
-		req, ok = s.validToken(req)
-		if !ok {
-			resp.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-
-		switch req.Method {
-		case http.MethodGet:
-			s.listTasks(resp, req)
-		case http.MethodPost:
-			s.addTask(resp, req)
-		}
-		return
-	}
-}
-
-func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
-	id := value(req, "user_id")
-	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
-		resp.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "incorrect user_id/pwd",
-		})
-		return
-	}
-	resp.Header().Set("Content-Type", "application/json")
-
-	token, err := s.createToken(id.String)
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	json.NewEncoder(resp).Encode(map[string]string{
-		"data": token,
-	})
-}
 
 func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
+	var isParamCreatedDate bool
+	var cd time.Time
 	id, _ := userIDFromCtx(req.Context())
-	tasks, err := s.Store.RetrieveTasks(
-		req.Context(),
-		sql.NullString{
-			String: id,
-			Valid:  true,
-		},
-		value(req, "created_date"),
-	)
-
+	createdDate := req.FormValue("created_date")
+	if len(createdDate) > 0 {
+		isParamCreatedDate = true
+		t, err := time.Parse("2006-01-02", createdDate)
+		if err != nil {
+			resp.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(resp).Encode(map[string]string{
+				"error": "created_date is failed",
+			})
+			return
+		}
+		cd = t
+	}
 	resp.Header().Set("Content-Type", "application/json")
 
+	tasks := storages.GetTasks()
+	err := s.Store.Where("user_id = ? and (false = ? or created_at > ?) ", id, isParamCreatedDate, cd).Find(&tasks).Error
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
+		resp.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
+			"error": "Get list Task Failed",
 		})
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
+	json.NewEncoder(resp).Encode(map[string][]storages.Task{
 		"data": tasks,
 	})
 }
 
 func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
-	t := &storages.Task{}
-	err := json.NewDecoder(req.Body).Decode(t)
+	ct := storages.GetCreateTask()
+	err := json.NewDecoder(req.Body).Decode(&ct)
 	defer req.Body.Close()
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
+		resp.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	resp.Header().Set("Content-Type", "application/json")
 
-	now := time.Now()
+	t := storages.GetTask()
+	now := time.Now().UTC()
 	userID, _ := userIDFromCtx(req.Context())
 	t.ID = uuid.New().String()
 	t.UserID = userID
-	t.CreatedDate = now.Format("2006-01-02")
+	t.CreatedAt = now
+	t.UpdatedAt = now
+	t.Content = ct.Content
 
-	resp.Header().Set("Content-Type", "application/json")
+	err = validationLimitedToCreate(req.Context(), &t, 6)
+	if err != nil {
+		resp.WriteHeader(http.StatusForbidden)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
 
-	err = s.Store.AddTask(req.Context(), t)
+	err = s.Store.Create(&t).Error
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
@@ -131,58 +86,36 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	json.NewEncoder(resp).Encode(map[string]*storages.Task{
-		"data": t,
+		"data": &t,
 	})
 }
-
-func value(req *http.Request, p string) sql.NullString {
-	return sql.NullString{
-		String: req.FormValue(p),
-		Valid:  true,
-	}
-}
-
-func (s *ToDoService) createToken(id string) (string, error) {
-	atClaims := jwt.MapClaims{}
-	atClaims["user_id"] = id
-	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
-	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
-	token, err := at.SignedString([]byte(s.JWTKey))
-	if err != nil {
-		return "", err
-	}
-	return token, nil
-}
-
-func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
-	token := req.Header.Get("Authorization")
-
-	claims := make(jwt.MapClaims)
-	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
-		return []byte(s.JWTKey), nil
-	})
-	if err != nil {
-		log.Println(err)
-		return req, false
-	}
-
-	if !t.Valid {
-		return req, false
-	}
-
-	id, ok := claims["user_id"].(string)
-	if !ok {
-		return req, false
-	}
-
-	req = req.WithContext(context.WithValue(req.Context(), userAuthKey(0), id))
-	return req, true
-}
-
-type userAuthKey int8
 
 func userIDFromCtx(ctx context.Context) (string, bool) {
 	v := ctx.Value(userAuthKey(0))
 	id, ok := v.(string)
 	return id, ok
+}
+
+func validationLimitedToCreate(ctx context.Context, t *storages.Task, n int64) error {
+	client := redis.Init()
+	year, month, day := time.Now().Date()
+	sYear := strconv.Itoa(year)
+	sMonth := strconv.Itoa(int(month))
+	sDay := strconv.Itoa(day)
+	key := t.UserID+sYear+sMonth+sDay
+
+	err := client.SetNX(ctx, key, 0)
+	if err != nil {
+		return err
+	}
+
+	integer, err := client.Incr(ctx, key)
+	if err != nil {
+		return err
+	}
+	if integer >= n {
+		return errors.New("Create only 5 tasks only per day")
+	}
+
+	return nil
 }
