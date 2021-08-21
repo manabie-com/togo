@@ -24,7 +24,7 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.Null
 	var tasks []*storages.Task
 	for rows.Next() {
 		t := &storages.Task{}
-		err := rows.Scan(&t.ID, &t.Content, &t.UserID, &t.CreatedDate)
+		err := rows.Scan(&t.ID, &t.Content, &t.UserID)
 		if err != nil {
 			return nil, err
 		}
@@ -41,7 +41,7 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.Null
 // AddTask adds a new task to DB
 func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
 	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
-	_, err := l.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
+	_, err := l.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID)
 	if err != nil {
 		return err
 	}
