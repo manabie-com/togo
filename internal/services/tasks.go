@@ -47,7 +47,7 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		case http.MethodGet:
 			s.listTasks(resp, req)
 		case http.MethodPost:
-			if s.limitTask(req) >= 5 {
+			if s.limitTask(req) {
 				resp.WriteHeader(http.StatusMethodNotAllowed)
 				json.NewEncoder(resp).Encode(map[string]string{
 					"error": "You reach a limit to create task in date",
@@ -142,11 +142,13 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	})
 }
 
-func (s *ToDoService) limitTask(req *http.Request) int {
+func (s *ToDoService) limitTask(req *http.Request) bool {
 	now := time.Now()
 	userID, _ := userIDFromCtx(req.Context())
 	dateNow := now.Format("2006-01-02")
-	return s.Store.CountTaskPerDay(req.Context(), userID, dateNow)
+	countTaskPerDate := s.Store.CountTaskPerDay(req.Context(), userID, dateNow)
+	maxTaskPerDate := s.Store.GetLimitPerUser(req.Context(), userID)
+	return countTaskPerDate >= maxTaskPerDate
 }
 
 func value(req *http.Request, p string) sql.NullString {

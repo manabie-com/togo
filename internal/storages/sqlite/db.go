@@ -73,3 +73,14 @@ func (l *LiteDB) CountTaskPerDay(ctx context.Context, userID string, dateStr str
 
 	return count
 }
+
+func (l *LiteDB) GetLimitPerUser(ctx context.Context, userID string) int {
+	stmt := `SELECT max_todo FROM users WHERE id = ?`
+	row := l.DB.QueryRowContext(ctx, stmt, userID)
+	var maxCount int
+	err := row.Scan(&maxCount)
+	if err != nil {
+		return 0
+	}
+	return maxCount
+}
