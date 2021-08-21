@@ -38,13 +38,15 @@ func (s *TodoApi) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		res, err = s.author.Login(ctx, req)
 	case "/tasks":
 		ctx, err = s.author.Validate(req)
-		switch req.Method {
-		case http.MethodGet:
-			res, err = s.task.ListTasksByUserAndDate(ctx, req)
-		case http.MethodPost:
-			err = s.quotaService.LimitTask(ctx)
-			if err == nil {
-				res, err = s.task.AddTask(ctx, req)
+		if err == nil {
+			switch req.Method {
+			case http.MethodGet:
+				res, err = s.task.ListTasksByUserAndDate(ctx, req)
+			case http.MethodPost:
+				err = s.quotaService.LimitTask(ctx)
+				if err == nil {
+					res, err = s.task.AddTask(ctx, req)
+				}
 			}
 		}
 	}

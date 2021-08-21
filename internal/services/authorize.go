@@ -51,7 +51,7 @@ func (as *AuthorizeService) Validate(req *http.Request) (context.Context, error)
 		return nil, tools.NewTodoError(500, "Something went wrong")
 	}
 
-	ctx := context.WithValue(req.Context(), tools.UserAuthKey(0), id)
+	ctx := tools.WriteUserIDToContext(req.Context(), id)
 	return ctx, nil
 }
 
