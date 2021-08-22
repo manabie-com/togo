@@ -2,7 +2,6 @@ package storages
 
 import (
 	"context"
-	"github.com/jmoiron/sqlx"
 	"github.com/manabie-com/togo/internal/tools"
 	"net/http"
 )
@@ -14,7 +13,6 @@ type IQuotaRepo interface {
 
 type QuotaRepo struct {
 	*Queries
-	db *sqlx.DB
 }
 
 func (qr *QuotaRepo) CountTaskPerDayStore(ctx context.Context, arg CountTaskPerDayParams) (int64, *tools.TodoError) {
@@ -33,9 +31,8 @@ func (qr *QuotaRepo) GetLimitPerUserStore(ctx context.Context, id string) (int32
 	return count, nil
 }
 
-func NewQuotaRepo(db *sqlx.DB) IQuotaRepo {
+func NewQuotaRepo(db DBTX) IQuotaRepo {
 	return &QuotaRepo{
 		Queries: New(db),
-		db:      db,
 	}
 }

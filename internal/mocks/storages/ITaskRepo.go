@@ -4,11 +4,9 @@ package mocks
 
 import (
 	context "context"
-	sql "database/sql"
-
-	mock "github.com/stretchr/testify/mock"
 
 	storages "github.com/manabie-com/togo/internal/storages"
+	mock "github.com/stretchr/testify/mock"
 
 	tools "github.com/manabie-com/togo/internal/tools"
 )
@@ -18,13 +16,13 @@ type ITaskRepo struct {
 	mock.Mock
 }
 
-// AddTask provides a mock function with given fields: ctx, t
-func (_m *ITaskRepo) AddTask(ctx context.Context, t *storages.Task) *tools.TodoError {
-	ret := _m.Called(ctx, t)
+// AddTaskStore provides a mock function with given fields: ctx, arg
+func (_m *ITaskRepo) AddTaskStore(ctx context.Context, arg storages.AddTaskParams) *tools.TodoError {
+	ret := _m.Called(ctx, arg)
 
 	var r0 *tools.TodoError
-	if rf, ok := ret.Get(0).(func(context.Context, *storages.Task) *tools.TodoError); ok {
-		r0 = rf(ctx, t)
+	if rf, ok := ret.Get(0).(func(context.Context, storages.AddTaskParams) *tools.TodoError); ok {
+		r0 = rf(ctx, arg)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*tools.TodoError)
@@ -34,22 +32,22 @@ func (_m *ITaskRepo) AddTask(ctx context.Context, t *storages.Task) *tools.TodoE
 	return r0
 }
 
-// RetrieveTasks provides a mock function with given fields: ctx, userID, createdDate
-func (_m *ITaskRepo) RetrieveTasks(ctx context.Context, userID sql.NullString, createdDate sql.NullString) ([]*storages.Task, *tools.TodoError) {
-	ret := _m.Called(ctx, userID, createdDate)
+// RetrieveTasksStore provides a mock function with given fields: ctx, arg
+func (_m *ITaskRepo) RetrieveTasksStore(ctx context.Context, arg storages.RetrieveTasksParams) ([]storages.Task, *tools.TodoError) {
+	ret := _m.Called(ctx, arg)
 
-	var r0 []*storages.Task
-	if rf, ok := ret.Get(0).(func(context.Context, sql.NullString, sql.NullString) []*storages.Task); ok {
-		r0 = rf(ctx, userID, createdDate)
+	var r0 []storages.Task
+	if rf, ok := ret.Get(0).(func(context.Context, storages.RetrieveTasksParams) []storages.Task); ok {
+		r0 = rf(ctx, arg)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*storages.Task)
+			r0 = ret.Get(0).([]storages.Task)
 		}
 	}
 
 	var r1 *tools.TodoError
-	if rf, ok := ret.Get(1).(func(context.Context, sql.NullString, sql.NullString) *tools.TodoError); ok {
-		r1 = rf(ctx, userID, createdDate)
+	if rf, ok := ret.Get(1).(func(context.Context, storages.RetrieveTasksParams) *tools.TodoError); ok {
+		r1 = rf(ctx, arg)
 	} else {
 		if ret.Get(1) != nil {
 			r1 = ret.Get(1).(*tools.TodoError)

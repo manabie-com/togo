@@ -5,6 +5,7 @@ package mocks
 import (
 	context "context"
 
+	storages "github.com/manabie-com/togo/internal/storages"
 	mock "github.com/stretchr/testify/mock"
 
 	tools "github.com/manabie-com/togo/internal/tools"
@@ -15,20 +16,20 @@ type IQuotaRepo struct {
 	mock.Mock
 }
 
-// CountTaskPerDay provides a mock function with given fields: ctx, userID, dateStr
-func (_m *IQuotaRepo) CountTaskPerDay(ctx context.Context, userID string, dateStr string) (int, *tools.TodoError) {
-	ret := _m.Called(ctx, userID, dateStr)
+// CountTaskPerDayStore provides a mock function with given fields: ctx, arg
+func (_m *IQuotaRepo) CountTaskPerDayStore(ctx context.Context, arg storages.CountTaskPerDayParams) (int64, *tools.TodoError) {
+	ret := _m.Called(ctx, arg)
 
-	var r0 int
-	if rf, ok := ret.Get(0).(func(context.Context, string, string) int); ok {
-		r0 = rf(ctx, userID, dateStr)
+	var r0 int64
+	if rf, ok := ret.Get(0).(func(context.Context, storages.CountTaskPerDayParams) int64); ok {
+		r0 = rf(ctx, arg)
 	} else {
-		r0 = ret.Get(0).(int)
+		r0 = ret.Get(0).(int64)
 	}
 
 	var r1 *tools.TodoError
-	if rf, ok := ret.Get(1).(func(context.Context, string, string) *tools.TodoError); ok {
-		r1 = rf(ctx, userID, dateStr)
+	if rf, ok := ret.Get(1).(func(context.Context, storages.CountTaskPerDayParams) *tools.TodoError); ok {
+		r1 = rf(ctx, arg)
 	} else {
 		if ret.Get(1) != nil {
 			r1 = ret.Get(1).(*tools.TodoError)
@@ -38,20 +39,20 @@ func (_m *IQuotaRepo) CountTaskPerDay(ctx context.Context, userID string, dateSt
 	return r0, r1
 }
 
-// GetLimitPerUser provides a mock function with given fields: ctx, userID
-func (_m *IQuotaRepo) GetLimitPerUser(ctx context.Context, userID string) (int, *tools.TodoError) {
-	ret := _m.Called(ctx, userID)
+// GetLimitPerUserStore provides a mock function with given fields: ctx, id
+func (_m *IQuotaRepo) GetLimitPerUserStore(ctx context.Context, id string) (int32, *tools.TodoError) {
+	ret := _m.Called(ctx, id)
 
-	var r0 int
-	if rf, ok := ret.Get(0).(func(context.Context, string) int); ok {
-		r0 = rf(ctx, userID)
+	var r0 int32
+	if rf, ok := ret.Get(0).(func(context.Context, string) int32); ok {
+		r0 = rf(ctx, id)
 	} else {
-		r0 = ret.Get(0).(int)
+		r0 = ret.Get(0).(int32)
 	}
 
 	var r1 *tools.TodoError
 	if rf, ok := ret.Get(1).(func(context.Context, string) *tools.TodoError); ok {
-		r1 = rf(ctx, userID)
+		r1 = rf(ctx, id)
 	} else {
 		if ret.Get(1) != nil {
 			r1 = ret.Get(1).(*tools.TodoError)

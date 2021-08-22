@@ -33,9 +33,8 @@ func (tr *TaskRepo) AddTaskStore(ctx context.Context, arg AddTaskParams) *tools.
 	return nil
 }
 
-func NewTaskRepo(db *sqlx.DB) ITaskRepo {
+func NewTaskRepo(db DBTX) ITaskRepo {
 	return &TaskRepo{
 		Queries: New(db),
-		db:      db,
 	}
 }
