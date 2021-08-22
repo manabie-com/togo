@@ -6,13 +6,12 @@ import (
 	"github.com/google/uuid"
 	taskApi "github.com/manabie-com/togo/internal/iservices"
 	"github.com/manabie-com/togo/internal/storages"
-	"github.com/manabie-com/togo/internal/storages/repos"
 	"github.com/manabie-com/togo/internal/tools"
 	"time"
 )
 
 type TaskService struct {
-	repo        repos.ITaskRepo
+	repo        storages.ITaskRepo
 	contextTool tools.IContextTool
 }
 
@@ -65,7 +64,7 @@ func (ts *TaskService) AddTask(ctx context.Context, request taskApi.AddTaskReque
 	}, nil
 }
 
-func NewTaskService(repo repos.ITaskRepo, contextTool tools.IContextTool) taskApi.ITaskService {
+func NewTaskService(repo storages.ITaskRepo, contextTool tools.IContextTool) taskApi.ITaskService {
 	return &TaskService{
 		repo:        repo,
 		contextTool: contextTool,

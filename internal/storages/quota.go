@@ -1,4 +1,4 @@
-package repos
+package storages
 
 import (
 	"context"
@@ -13,7 +13,7 @@ type IQuotaRepo interface {
 }
 
 type QuotaRepo struct {
-	db *sql.DB
+	db DBTX
 }
 
 const QueryCountTaskPerDay = `SELECT COUNT(*) FROM tasks WHERE user_id = ? AND created_date = ?`

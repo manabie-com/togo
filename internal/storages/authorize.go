@@ -1,9 +1,8 @@
-package repos
+package storages
 
 import (
 	"context"
 	"database/sql"
-	"github.com/manabie-com/togo/internal/storages"
 )
 
 type IAuthorizeRepo interface {
@@ -11,7 +10,7 @@ type IAuthorizeRepo interface {
 }
 
 type AuthorizeRepo struct {
-	db *sql.DB
+	db DBTX
 }
 
 const QueryValidateUser = `SELECT id FROM users WHERE id = ? AND password = ?`
@@ -20,7 +19,7 @@ const QueryValidateUser = `SELECT id FROM users WHERE id = ? AND password = ?`
 func (l *AuthorizeRepo) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
 	stmt := QueryValidateUser
 	row := l.db.QueryRowContext(ctx, stmt, userID, pwd)
-	u := &storages.User{}
+	u := &User{}
 	err := row.Scan(&u.ID)
 	if err != nil {
 		return false

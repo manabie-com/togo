@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"github.com/manabie-com/togo/internal/services"
+	"github.com/manabie-com/togo/internal/storages"
 	"github.com/manabie-com/togo/internal/tools"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -11,11 +12,9 @@ import (
 	"time"
 
 	"github.com/manabie-com/togo/internal/iservices"
-	"github.com/manabie-com/togo/internal/storages"
-
 	"testing"
 
-	mockRepo "github.com/manabie-com/togo/internal/mocks/storages/repos"
+	mockRepo "github.com/manabie-com/togo/internal/mocks/storages"
 	mockTool "github.com/manabie-com/togo/internal/mocks/tools"
 )
 

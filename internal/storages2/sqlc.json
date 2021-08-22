@@ -1,0 +1,12 @@
+{
+  "version": "1",
+  "packages": [
+    {
+      "name": "storages2",
+      "path": "/",
+      "schema": "schema/todo.sql",
+      "queries": "schema/query.sql",
+      "emit_json_tags": true
+    }
+  ]
+}

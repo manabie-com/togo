@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"github.com/manabie-com/togo/internal/iservices"
-	mockRepo "github.com/manabie-com/togo/internal/mocks/storages/repos"
+	mockRepo "github.com/manabie-com/togo/internal/mocks/storages"
 	mockTool "github.com/manabie-com/togo/internal/mocks/tools"
 	"github.com/manabie-com/togo/internal/services"
 	"github.com/manabie-com/togo/internal/tools"

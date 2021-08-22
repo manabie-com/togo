@@ -3,15 +3,15 @@ package services
 import (
 	"context"
 	"database/sql"
+	"github.com/manabie-com/togo/internal/storages"
 	"net/http"
 
 	authorizeApi "github.com/manabie-com/togo/internal/iservices"
-	"github.com/manabie-com/togo/internal/storages/repos"
 	"github.com/manabie-com/togo/internal/tools"
 )
 
 type AuthorizeService struct {
-	repo        repos.IAuthorizeRepo
+	repo        storages.IAuthorizeRepo
 	JWTKey      string
 	contextTool tools.IContextTool
 	tokenTool   tools.ITokenTool
@@ -42,7 +42,7 @@ func (as *AuthorizeService) Validate(req *http.Request) (context.Context, *tools
 	return ctx, nil
 }
 
-func NewAuthorizeService(repo repos.IAuthorizeRepo, jwtKey string, tokenTool tools.ITokenTool, contextTool tools.IContextTool) authorizeApi.IAuthorizeService {
+func NewAuthorizeService(repo storages.IAuthorizeRepo, jwtKey string, tokenTool tools.ITokenTool, contextTool tools.IContextTool) authorizeApi.IAuthorizeService {
 	return &AuthorizeService{
 		repo:        repo,
 		JWTKey:      jwtKey,

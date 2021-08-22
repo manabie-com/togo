@@ -2,7 +2,7 @@ package services
 
 import (
 	"context"
-	"github.com/manabie-com/togo/internal/storages/repos"
+	"github.com/manabie-com/togo/internal/storages"
 	"github.com/manabie-com/togo/internal/tools"
 	"net/http"
 	"time"
@@ -13,7 +13,7 @@ type IQuotaService interface {
 }
 
 type QuotaService struct {
-	repo        repos.IQuotaRepo
+	repo        storages.IQuotaRepo
 	contextTool tools.IContextTool
 }
 
@@ -38,7 +38,7 @@ func (qs *QuotaService) LimitTask(ctx context.Context) *tools.TodoError {
 	return nil
 }
 
-func NewQuotaService(repo repos.IQuotaRepo, contextTool tools.IContextTool) IQuotaService {
+func NewQuotaService(repo storages.IQuotaRepo, contextTool tools.IContextTool) IQuotaService {
 	return &QuotaService{
 		repo:        repo,
 		contextTool: contextTool,

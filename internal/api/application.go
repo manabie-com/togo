@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"github.com/manabie-com/togo/internal/services"
-	"github.com/manabie-com/togo/internal/storages/repos"
+	"github.com/manabie-com/togo/internal/storages"
 	"github.com/manabie-com/togo/internal/tools"
 	"log"
 	"net/http"
@@ -67,6 +67,6 @@ func NewToDoApi(jwtKey string, db *sql.DB) TodoApi {
 	return TodoApi{
 		author:       NewAuthorApi(db, jwtKey, requestTool, tokenTool, contextTool),
 		task:         NewTaskApi(db, contextTool, requestTool),
-		quotaService: services.NewQuotaService(repos.NewQuotaRepo(db), contextTool),
+		quotaService: services.NewQuotaService(storages.NewQuotaRepo(db), contextTool),
 	}
 }

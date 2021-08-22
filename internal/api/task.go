@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"github.com/manabie-com/togo/internal/iservices"
 	"github.com/manabie-com/togo/internal/services"
-	"github.com/manabie-com/togo/internal/storages/repos"
+	"github.com/manabie-com/togo/internal/storages"
 	"github.com/manabie-com/togo/internal/tools"
 	"net/http"
 )
@@ -41,7 +41,7 @@ func (ta *TaskApi) AddTask(ctx context.Context, req *http.Request) (*iservices.A
 
 func NewTaskApi(db *sql.DB, contextTool tools.IContextTool, requestTool tools.IRequestTool) TaskApi {
 	return TaskApi{
-		taskService: services.NewTaskService(repos.NewTaskRepo(db), contextTool),
+		taskService: services.NewTaskService(storages.NewTaskRepo(db), contextTool),
 		requestTool: requestTool,
 	}
 }
