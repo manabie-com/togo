@@ -1,6 +1,9 @@
 package dto
 
-import "context"
+import (
+	"context"
+	"github.com/manabie-com/togo/internal/tools"
+)
 
 type ListTaskRequest struct {
 	CreatedDate string `json:"created_date"`
@@ -34,6 +37,6 @@ func (atr *AddTaskResponse) ToRes() interface{} {
 }
 
 type ITaskApi interface {
-	ListTasksByUserAndDate(ctx context.Context, request ListTaskRequest) (*ListTaskResponse, error)
-	AddTask(ctx context.Context, request AddTaskRequest) (*AddTaskResponse, error)
+	ListTasksByUserAndDate(ctx context.Context, request ListTaskRequest) (*ListTaskResponse, *tools.TodoError)
+	AddTask(ctx context.Context, request AddTaskRequest) (*AddTaskResponse, *tools.TodoError)
 }

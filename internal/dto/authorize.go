@@ -2,6 +2,7 @@ package dto
 
 import (
 	"context"
+	"github.com/manabie-com/togo/internal/tools"
 	"net/http"
 )
 
@@ -19,6 +20,6 @@ func (lr *LoginResponse) ToRes() interface{} {
 }
 
 type IAuthorizeApi interface {
-	Login(ctx context.Context, req LoginRequest) (*LoginResponse, error)
-	Validate(req *http.Request) (context.Context, error)
+	Login(ctx context.Context, req LoginRequest) (*LoginResponse, *tools.TodoError)
+	Validate(req *http.Request) (context.Context, *tools.TodoError)
 }

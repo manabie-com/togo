@@ -14,7 +14,7 @@ type AuthorApi struct {
 	service dto.IAuthorizeApi
 }
 
-func (aa *AuthorApi) Login(ctx context.Context, req *http.Request) (*dto.LoginResponse, error) {
+func (aa *AuthorApi) Login(ctx context.Context, req *http.Request) (*dto.LoginResponse, *tools.TodoError) {
 	id := tools.Value(req, "user_id")
 	password := tools.Value(req, "password")
 	if !id.Valid || !password.Valid {
@@ -23,7 +23,7 @@ func (aa *AuthorApi) Login(ctx context.Context, req *http.Request) (*dto.LoginRe
 	return aa.service.Login(ctx, dto.LoginRequest{UserId: id.String, Password: password.String})
 }
 
-func (aa *AuthorApi) Validate(req *http.Request) (context.Context, error) {
+func (aa *AuthorApi) Validate(req *http.Request) (context.Context, *tools.TodoError) {
 	return aa.service.Validate(req)
 }
 

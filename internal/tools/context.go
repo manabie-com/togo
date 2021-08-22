@@ -2,15 +2,16 @@ package tools
 
 import (
 	"context"
+	"net/http"
 )
 
 type UserAuthKey int8
 
-func UserIDFromCtx(ctx context.Context) (string, error) {
+func UserIDFromCtx(ctx context.Context) (string, *TodoError) {
 	v := ctx.Value(UserAuthKey(0))
 	id, ok := v.(string)
 	if !ok {
-		return "", NewTodoError(500, "Something wrong when set user id")
+		return "", NewTodoError(http.StatusInternalServerError, "Something wrong when set user id")
 	}
 	return id, nil
 }

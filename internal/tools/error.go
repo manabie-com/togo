@@ -13,7 +13,7 @@ func (err TodoError) ToRes() interface{} {
 	return err
 }
 
-func NewTodoError(code int, errMessage string) error {
+func NewTodoError(code int, errMessage string) *TodoError {
 	return &TodoError{
 		Code:         code,
 		ErrorMessage: errMessage,

@@ -14,16 +14,17 @@ type AuthorizeRepo struct {
 	db *sql.DB
 }
 
+const QueryValidateUser = `SELECT id FROM users WHERE id = ? AND password = ?`
+
 // ValidateUser returns tasks if match userID AND password
 func (l *AuthorizeRepo) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
-	stmt := `SELECT id FROM users WHERE id = ? AND password = ?`
+	stmt := QueryValidateUser
 	row := l.db.QueryRowContext(ctx, stmt, userID, pwd)
 	u := &storages.User{}
 	err := row.Scan(&u.ID)
 	if err != nil {
 		return false
 	}
-
 	return true
 }
 

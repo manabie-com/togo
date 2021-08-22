@@ -31,7 +31,7 @@ func (s *TodoApi) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 	ctx := req.Context()
-	var err error
+	var err *tools.TodoError
 	var res IResponse
 	switch req.URL.Path {
 	case "/login":
@@ -51,16 +51,8 @@ func (s *TodoApi) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		}
 	}
 	if err != nil {
-		errToDo, ok := err.(*tools.TodoError)
-		if !ok {
-			resp.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(resp).Encode(map[string]string{
-				"error": "Something when wrong",
-			})
-			return
-		}
-		resp.WriteHeader(errToDo.Code)
-		json.NewEncoder(resp).Encode(errToDo.ToRes())
+		resp.WriteHeader(err.Code)
+		json.NewEncoder(resp).Encode(err.ToRes())
 		return
 	}
 	resp.Header().Set("Content-Type", "application/json")

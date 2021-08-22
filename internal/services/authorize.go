@@ -17,20 +17,20 @@ type AuthorizeService struct {
 	JWTKey string
 }
 
-func (as *AuthorizeService) Login(ctx context.Context, req authorizeApi.LoginRequest) (*authorizeApi.LoginResponse, error) {
+func (as *AuthorizeService) Login(ctx context.Context, req authorizeApi.LoginRequest) (*authorizeApi.LoginResponse, *tools.TodoError) {
 	if !as.repo.ValidateUser(ctx,
 		sql.NullString{String: req.UserId, Valid: true},
 		sql.NullString{String: req.Password, Valid: true}) {
-		return nil, tools.NewTodoError(401, "incorrect user_id/pwd")
+		return nil, tools.NewTodoError(http.StatusUnauthorized, "incorrect user_id/pwd")
 	}
 	token, err := tools.CreateToken(req.UserId, as.JWTKey)
 	if err != nil {
-		return nil, tools.TodoError{Code: 500, ErrorMessage: err.Error()}
+		return nil, err
 	}
 	return &authorizeApi.LoginResponse{Data: token}, nil
 }
 
-func (as *AuthorizeService) Validate(req *http.Request) (context.Context, error) {
+func (as *AuthorizeService) Validate(req *http.Request) (context.Context, *tools.TodoError) {
 	token := req.Header.Get("Authorization")
 
 	claims := make(jwt.MapClaims)
@@ -39,16 +39,16 @@ func (as *AuthorizeService) Validate(req *http.Request) (context.Context, error)
 	})
 	if err != nil {
 		log.Println(err)
-		return nil, tools.NewTodoError(500, err.Error())
+		return nil, tools.NewTodoError(http.StatusInternalServerError, err.Error())
 	}
 
 	if !t.Valid {
-		return nil, tools.NewTodoError(401, "Your request is unauthorized")
+		return nil, tools.NewTodoError(http.StatusUnauthorized, "Your request is unauthorized")
 	}
 
 	id, ok := claims["user_id"].(string)
 	if !ok {
-		return nil, tools.NewTodoError(500, "Something went wrong")
+		return nil, tools.NewTodoError(http.StatusInternalServerError, "Something went wrong")
 	}
 
 	ctx := tools.WriteUserIDToContext(req.Context(), id)

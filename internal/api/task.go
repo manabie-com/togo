@@ -15,7 +15,7 @@ type TaskApi struct {
 	taskService dto.ITaskApi
 }
 
-func (ta *TaskApi) ListTasksByUserAndDate(ctx context.Context, req *http.Request) (*dto.ListTaskResponse, error) {
+func (ta *TaskApi) ListTasksByUserAndDate(ctx context.Context, req *http.Request) (*dto.ListTaskResponse, *tools.TodoError) {
 	createDate := tools.Value(req, "created_date")
 	if !createDate.Valid {
 		return nil, tools.NewTodoError(400, "not found created_date to check data")
@@ -23,12 +23,12 @@ func (ta *TaskApi) ListTasksByUserAndDate(ctx context.Context, req *http.Request
 	return ta.taskService.ListTasksByUserAndDate(ctx, dto.ListTaskRequest{CreatedDate: createDate.String})
 }
 
-func (ta *TaskApi) AddTask(ctx context.Context, req *http.Request) (*dto.AddTaskResponse, error) {
+func (ta *TaskApi) AddTask(ctx context.Context, req *http.Request) (*dto.AddTaskResponse, *tools.TodoError) {
 	t := &dto.AddTaskRequest{}
 	err := json.NewDecoder(req.Body).Decode(t)
 	defer req.Body.Close()
 	if err != nil {
-		return nil, err
+		return nil, tools.NewTodoError(500, err.Error())
 	}
 	return ta.taskService.AddTask(ctx, *t)
 }

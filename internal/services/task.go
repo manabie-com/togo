@@ -15,7 +15,7 @@ type TaskService struct {
 	repo repos.ITaskRepo
 }
 
-func (ts *TaskService) ListTasksByUserAndDate(ctx context.Context, request taskApi.ListTaskRequest) (*taskApi.ListTaskResponse, error) {
+func (ts *TaskService) ListTasksByUserAndDate(ctx context.Context, request taskApi.ListTaskRequest) (*taskApi.ListTaskResponse, *tools.TodoError) {
 	id, err := tools.UserIDFromCtx(ctx)
 	if err != nil {
 		return nil, err
@@ -24,7 +24,7 @@ func (ts *TaskService) ListTasksByUserAndDate(ctx context.Context, request taskA
 		sql.NullString{String: id, Valid: true},
 		sql.NullString{String: request.CreatedDate, Valid: true})
 	if err != nil {
-		return nil, tools.NewTodoError(500, err.Error())
+		return nil, err
 	}
 	var taskRes []taskApi.Task
 	for _, entity := range taskEntities {
@@ -38,7 +38,7 @@ func (ts *TaskService) ListTasksByUserAndDate(ctx context.Context, request taskA
 	return &taskApi.ListTaskResponse{Data: taskRes}, nil
 }
 
-func (ts *TaskService) AddTask(ctx context.Context, request taskApi.AddTaskRequest) (*taskApi.AddTaskResponse, error) {
+func (ts *TaskService) AddTask(ctx context.Context, request taskApi.AddTaskRequest) (*taskApi.AddTaskResponse, *tools.TodoError) {
 	id, err := tools.UserIDFromCtx(ctx)
 	if err != nil {
 		return nil, err
@@ -52,7 +52,7 @@ func (ts *TaskService) AddTask(ctx context.Context, request taskApi.AddTaskReque
 	}
 	err = ts.repo.AddTask(ctx, &taskEntity)
 	if err != nil {
-		return nil, tools.NewTodoError(500, err.Error())
+		return nil, err
 	}
 	return &taskApi.AddTaskResponse{
 		Data: taskApi.Task{
