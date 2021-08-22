@@ -3,18 +3,18 @@ package services
 import (
 	"context"
 	"database/sql"
-	"log"
 	"net/http"
 
-	"github.com/dgrijalva/jwt-go"
-	authorizeApi "github.com/manabie-com/togo/internal/dto"
+	authorizeApi "github.com/manabie-com/togo/internal/iservices"
 	"github.com/manabie-com/togo/internal/storages/repos"
 	"github.com/manabie-com/togo/internal/tools"
 )
 
 type AuthorizeService struct {
-	repo   repos.IAuthorizeRepo
-	JWTKey string
+	repo        repos.IAuthorizeRepo
+	JWTKey      string
+	contextTool tools.IContextTool
+	tokenTool   tools.ITokenTool
 }
 
 func (as *AuthorizeService) Login(ctx context.Context, req authorizeApi.LoginRequest) (*authorizeApi.LoginResponse, *tools.TodoError) {
@@ -23,7 +23,7 @@ func (as *AuthorizeService) Login(ctx context.Context, req authorizeApi.LoginReq
 		sql.NullString{String: req.Password, Valid: true}) {
 		return nil, tools.NewTodoError(http.StatusUnauthorized, "incorrect user_id/pwd")
 	}
-	token, err := tools.CreateToken(req.UserId, as.JWTKey)
+	token, err := as.tokenTool.CreateToken(req.UserId, as.JWTKey)
 	if err != nil {
 		return nil, err
 	}
@@ -31,33 +31,22 @@ func (as *AuthorizeService) Login(ctx context.Context, req authorizeApi.LoginReq
 }
 
 func (as *AuthorizeService) Validate(req *http.Request) (context.Context, *tools.TodoError) {
-	token := req.Header.Get("Authorization")
+	token := as.tokenTool.GetToken(req)
+	id, err := as.tokenTool.ClaimToken(token, as.JWTKey)
 
-	claims := make(jwt.MapClaims)
-	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
-		return []byte(as.JWTKey), nil
-	})
 	if err != nil {
-		log.Println(err)
-		return nil, tools.NewTodoError(http.StatusInternalServerError, err.Error())
+		return nil, err
 	}
 
-	if !t.Valid {
-		return nil, tools.NewTodoError(http.StatusUnauthorized, "Your request is unauthorized")
-	}
-
-	id, ok := claims["user_id"].(string)
-	if !ok {
-		return nil, tools.NewTodoError(http.StatusInternalServerError, "Something went wrong")
-	}
-
-	ctx := tools.WriteUserIDToContext(req.Context(), id)
+	ctx := as.contextTool.WriteUserIDToContext(req.Context(), id)
 	return ctx, nil
 }
 
 func NewAuthorizeService(repo repos.IAuthorizeRepo, jwtKey string) authorizeApi.IAuthorizeService {
 	return &AuthorizeService{
-		repo:   repo,
-		JWTKey: jwtKey,
+		repo:        repo,
+		JWTKey:      jwtKey,
+		tokenTool:   tools.NewTokenTool(),
+		contextTool: tools.NewContextTool(),
 	}
 }

@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"github.com/google/uuid"
-	taskApi "github.com/manabie-com/togo/internal/dto"
+	taskApi "github.com/manabie-com/togo/internal/iservices"
 	"github.com/manabie-com/togo/internal/storages"
 	"github.com/manabie-com/togo/internal/storages/repos"
 	"github.com/manabie-com/togo/internal/tools"
@@ -12,11 +12,12 @@ import (
 )
 
 type TaskService struct {
-	repo repos.ITaskRepo
+	repo        repos.ITaskRepo
+	contextTool tools.IContextTool
 }
 
 func (ts *TaskService) ListTasksByUserAndDate(ctx context.Context, request taskApi.ListTaskRequest) (*taskApi.ListTaskResponse, *tools.TodoError) {
-	id, err := tools.UserIDFromCtx(ctx)
+	id, err := ts.contextTool.UserIDFromCtx(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +40,7 @@ func (ts *TaskService) ListTasksByUserAndDate(ctx context.Context, request taskA
 }
 
 func (ts *TaskService) AddTask(ctx context.Context, request taskApi.AddTaskRequest) (*taskApi.AddTaskResponse, *tools.TodoError) {
-	id, err := tools.UserIDFromCtx(ctx)
+	id, err := ts.contextTool.UserIDFromCtx(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -66,6 +67,7 @@ func (ts *TaskService) AddTask(ctx context.Context, request taskApi.AddTaskReque
 
 func NewTaskService(repo repos.ITaskRepo) taskApi.ITaskService {
 	return &TaskService{
-		repo: repo,
+		repo:        repo,
+		contextTool: tools.NewContextTool(),
 	}
 }

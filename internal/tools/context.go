@@ -7,7 +7,14 @@ import (
 
 type UserAuthKey int8
 
-func UserIDFromCtx(ctx context.Context) (string, *TodoError) {
+type IContextTool interface {
+	UserIDFromCtx(ctx context.Context) (string, *TodoError)
+	WriteUserIDToContext(ctx context.Context, id string) context.Context
+}
+
+type ContextTool struct{}
+
+func (ct *ContextTool) UserIDFromCtx(ctx context.Context) (string, *TodoError) {
 	v := ctx.Value(UserAuthKey(0))
 	id, ok := v.(string)
 	if !ok {
@@ -16,6 +23,10 @@ func UserIDFromCtx(ctx context.Context) (string, *TodoError) {
 	return id, nil
 }
 
-func WriteUserIDToContext(ctx context.Context, id string) context.Context {
+func (ct *ContextTool) WriteUserIDToContext(ctx context.Context, id string) context.Context {
 	return context.WithValue(ctx, UserAuthKey(0), id)
+}
+
+func NewContextTool() IContextTool {
+	return &ContextTool{}
 }

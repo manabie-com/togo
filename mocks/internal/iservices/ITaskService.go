@@ -5,7 +5,7 @@ package mocks
 import (
 	context "context"
 
-	dto "github.com/manabie-com/togo/internal/dto"
+	iservices "github.com/manabie-com/togo/internal/iservices"
 	mock "github.com/stretchr/testify/mock"
 
 	tools "github.com/manabie-com/togo/internal/tools"
@@ -17,20 +17,20 @@ type ITaskService struct {
 }
 
 // AddTask provides a mock function with given fields: ctx, request
-func (_m *ITaskService) AddTask(ctx context.Context, request dto.AddTaskRequest) (*dto.AddTaskResponse, *tools.TodoError) {
+func (_m *ITaskService) AddTask(ctx context.Context, request iservices.AddTaskRequest) (*iservices.AddTaskResponse, *tools.TodoError) {
 	ret := _m.Called(ctx, request)
 
-	var r0 *dto.AddTaskResponse
-	if rf, ok := ret.Get(0).(func(context.Context, dto.AddTaskRequest) *dto.AddTaskResponse); ok {
+	var r0 *iservices.AddTaskResponse
+	if rf, ok := ret.Get(0).(func(context.Context, iservices.AddTaskRequest) *iservices.AddTaskResponse); ok {
 		r0 = rf(ctx, request)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*dto.AddTaskResponse)
+			r0 = ret.Get(0).(*iservices.AddTaskResponse)
 		}
 	}
 
 	var r1 *tools.TodoError
-	if rf, ok := ret.Get(1).(func(context.Context, dto.AddTaskRequest) *tools.TodoError); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, iservices.AddTaskRequest) *tools.TodoError); ok {
 		r1 = rf(ctx, request)
 	} else {
 		if ret.Get(1) != nil {
@@ -42,20 +42,20 @@ func (_m *ITaskService) AddTask(ctx context.Context, request dto.AddTaskRequest)
 }
 
 // ListTasksByUserAndDate provides a mock function with given fields: ctx, request
-func (_m *ITaskService) ListTasksByUserAndDate(ctx context.Context, request dto.ListTaskRequest) (*dto.ListTaskResponse, *tools.TodoError) {
+func (_m *ITaskService) ListTasksByUserAndDate(ctx context.Context, request iservices.ListTaskRequest) (*iservices.ListTaskResponse, *tools.TodoError) {
 	ret := _m.Called(ctx, request)
 
-	var r0 *dto.ListTaskResponse
-	if rf, ok := ret.Get(0).(func(context.Context, dto.ListTaskRequest) *dto.ListTaskResponse); ok {
+	var r0 *iservices.ListTaskResponse
+	if rf, ok := ret.Get(0).(func(context.Context, iservices.ListTaskRequest) *iservices.ListTaskResponse); ok {
 		r0 = rf(ctx, request)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*dto.ListTaskResponse)
+			r0 = ret.Get(0).(*iservices.ListTaskResponse)
 		}
 	}
 
 	var r1 *tools.TodoError
-	if rf, ok := ret.Get(1).(func(context.Context, dto.ListTaskRequest) *tools.TodoError); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, iservices.ListTaskRequest) *tools.TodoError); ok {
 		r1 = rf(ctx, request)
 	} else {
 		if ret.Get(1) != nil {

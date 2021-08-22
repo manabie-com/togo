@@ -13,12 +13,13 @@ type IQuotaService interface {
 }
 
 type QuotaService struct {
-	repo repos.IQuotaRepo
+	repo        repos.IQuotaRepo
+	contextTool tools.IContextTool
 }
 
 func (qs *QuotaService) LimitTask(ctx context.Context) *tools.TodoError {
 	now := time.Now()
-	userID, err := tools.UserIDFromCtx(ctx)
+	userID, err := qs.contextTool.UserIDFromCtx(ctx)
 	if err != nil {
 		return err
 	}
@@ -39,6 +40,7 @@ func (qs *QuotaService) LimitTask(ctx context.Context) *tools.TodoError {
 
 func NewQuotaService(repo repos.IQuotaRepo) IQuotaService {
 	return &QuotaService{
-		repo: repo,
+		repo:        repo,
+		contextTool: tools.NewContextTool(),
 	}
 }

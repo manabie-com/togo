@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"github.com/manabie-com/togo/internal/dto"
+	"github.com/manabie-com/togo/internal/iservices"
 	"github.com/manabie-com/togo/internal/services"
 	"github.com/manabie-com/togo/internal/storages/repos"
 	"github.com/manabie-com/togo/internal/tools"
@@ -12,24 +12,25 @@ import (
 )
 
 type ITaskApi interface {
-	ListTasksByUserAndDate(ctx context.Context, req *http.Request) (*dto.ListTaskResponse, *tools.TodoError)
-	AddTask(ctx context.Context, req *http.Request) (*dto.AddTaskResponse, *tools.TodoError)
+	ListTasksByUserAndDate(ctx context.Context, req *http.Request) (*iservices.ListTaskResponse, *tools.TodoError)
+	AddTask(ctx context.Context, req *http.Request) (*iservices.AddTaskResponse, *tools.TodoError)
 }
 
 type TaskApi struct {
-	taskService dto.ITaskService
+	taskService iservices.ITaskService
+	requestTool tools.IRequestTool
 }
 
-func (ta *TaskApi) ListTasksByUserAndDate(ctx context.Context, req *http.Request) (*dto.ListTaskResponse, *tools.TodoError) {
-	createDate := tools.Value(req, "created_date")
+func (ta *TaskApi) ListTasksByUserAndDate(ctx context.Context, req *http.Request) (*iservices.ListTaskResponse, *tools.TodoError) {
+	createDate := ta.requestTool.Value(req, "created_date")
 	if !createDate.Valid {
 		return nil, tools.NewTodoError(400, "not found created_date to check data")
 	}
-	return ta.taskService.ListTasksByUserAndDate(ctx, dto.ListTaskRequest{CreatedDate: createDate.String})
+	return ta.taskService.ListTasksByUserAndDate(ctx, iservices.ListTaskRequest{CreatedDate: createDate.String})
 }
 
-func (ta *TaskApi) AddTask(ctx context.Context, req *http.Request) (*dto.AddTaskResponse, *tools.TodoError) {
-	t := &dto.AddTaskRequest{}
+func (ta *TaskApi) AddTask(ctx context.Context, req *http.Request) (*iservices.AddTaskResponse, *tools.TodoError) {
+	t := &iservices.AddTaskRequest{}
 	err := json.NewDecoder(req.Body).Decode(t)
 	defer req.Body.Close()
 	if err != nil {
@@ -41,5 +42,6 @@ func (ta *TaskApi) AddTask(ctx context.Context, req *http.Request) (*dto.AddTask
 func NewTaskApi(db *sql.DB) TaskApi {
 	return TaskApi{
 		taskService: services.NewTaskService(repos.NewTaskRepo(db)),
+		requestTool: tools.NewRequestTool(),
 	}
 }

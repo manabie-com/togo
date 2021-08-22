@@ -6,8 +6,7 @@ import (
 	context "context"
 	http "net/http"
 
-	dto "github.com/manabie-com/togo/internal/dto"
-
+	iservices "github.com/manabie-com/togo/internal/iservices"
 	mock "github.com/stretchr/testify/mock"
 
 	tools "github.com/manabie-com/togo/internal/tools"
@@ -19,15 +18,15 @@ type IAuthorApi struct {
 }
 
 // Login provides a mock function with given fields: ctx, req
-func (_m *IAuthorApi) Login(ctx context.Context, req *http.Request) (*dto.LoginResponse, *tools.TodoError) {
+func (_m *IAuthorApi) Login(ctx context.Context, req *http.Request) (*iservices.LoginResponse, *tools.TodoError) {
 	ret := _m.Called(ctx, req)
 
-	var r0 *dto.LoginResponse
-	if rf, ok := ret.Get(0).(func(context.Context, *http.Request) *dto.LoginResponse); ok {
+	var r0 *iservices.LoginResponse
+	if rf, ok := ret.Get(0).(func(context.Context, *http.Request) *iservices.LoginResponse); ok {
 		r0 = rf(ctx, req)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*dto.LoginResponse)
+			r0 = ret.Get(0).(*iservices.LoginResponse)
 		}
 	}
 

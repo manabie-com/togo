@@ -6,8 +6,7 @@ import (
 	context "context"
 	http "net/http"
 
-	dto "github.com/manabie-com/togo/internal/dto"
-
+	iservices "github.com/manabie-com/togo/internal/iservices"
 	mock "github.com/stretchr/testify/mock"
 
 	tools "github.com/manabie-com/togo/internal/tools"
@@ -19,20 +18,20 @@ type IAuthorizeService struct {
 }
 
 // Login provides a mock function with given fields: ctx, req
-func (_m *IAuthorizeService) Login(ctx context.Context, req dto.LoginRequest) (*dto.LoginResponse, *tools.TodoError) {
+func (_m *IAuthorizeService) Login(ctx context.Context, req iservices.LoginRequest) (*iservices.LoginResponse, *tools.TodoError) {
 	ret := _m.Called(ctx, req)
 
-	var r0 *dto.LoginResponse
-	if rf, ok := ret.Get(0).(func(context.Context, dto.LoginRequest) *dto.LoginResponse); ok {
+	var r0 *iservices.LoginResponse
+	if rf, ok := ret.Get(0).(func(context.Context, iservices.LoginRequest) *iservices.LoginResponse); ok {
 		r0 = rf(ctx, req)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*dto.LoginResponse)
+			r0 = ret.Get(0).(*iservices.LoginResponse)
 		}
 	}
 
 	var r1 *tools.TodoError
-	if rf, ok := ret.Get(1).(func(context.Context, dto.LoginRequest) *tools.TodoError); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, iservices.LoginRequest) *tools.TodoError); ok {
 		r1 = rf(ctx, req)
 	} else {
 		if ret.Get(1) != nil {

@@ -6,8 +6,7 @@ import (
 	context "context"
 	http "net/http"
 
-	dto "github.com/manabie-com/togo/internal/dto"
-
+	iservices "github.com/manabie-com/togo/internal/iservices"
 	mock "github.com/stretchr/testify/mock"
 
 	tools "github.com/manabie-com/togo/internal/tools"
@@ -19,15 +18,15 @@ type ITaskApi struct {
 }
 
 // AddTask provides a mock function with given fields: ctx, req
-func (_m *ITaskApi) AddTask(ctx context.Context, req *http.Request) (*dto.AddTaskResponse, *tools.TodoError) {
+func (_m *ITaskApi) AddTask(ctx context.Context, req *http.Request) (*iservices.AddTaskResponse, *tools.TodoError) {
 	ret := _m.Called(ctx, req)
 
-	var r0 *dto.AddTaskResponse
-	if rf, ok := ret.Get(0).(func(context.Context, *http.Request) *dto.AddTaskResponse); ok {
+	var r0 *iservices.AddTaskResponse
+	if rf, ok := ret.Get(0).(func(context.Context, *http.Request) *iservices.AddTaskResponse); ok {
 		r0 = rf(ctx, req)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*dto.AddTaskResponse)
+			r0 = ret.Get(0).(*iservices.AddTaskResponse)
 		}
 	}
 
@@ -44,15 +43,15 @@ func (_m *ITaskApi) AddTask(ctx context.Context, req *http.Request) (*dto.AddTas
 }
 
 // ListTasksByUserAndDate provides a mock function with given fields: ctx, req
-func (_m *ITaskApi) ListTasksByUserAndDate(ctx context.Context, req *http.Request) (*dto.ListTaskResponse, *tools.TodoError) {
+func (_m *ITaskApi) ListTasksByUserAndDate(ctx context.Context, req *http.Request) (*iservices.ListTaskResponse, *tools.TodoError) {
 	ret := _m.Called(ctx, req)
 
-	var r0 *dto.ListTaskResponse
-	if rf, ok := ret.Get(0).(func(context.Context, *http.Request) *dto.ListTaskResponse); ok {
+	var r0 *iservices.ListTaskResponse
+	if rf, ok := ret.Get(0).(func(context.Context, *http.Request) *iservices.ListTaskResponse); ok {
 		r0 = rf(ctx, req)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*dto.ListTaskResponse)
+			r0 = ret.Get(0).(*iservices.ListTaskResponse)
 		}
 	}
 
