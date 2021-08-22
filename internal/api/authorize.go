@@ -2,7 +2,7 @@ package api
 
 import (
 	"context"
-	"database/sql"
+	"github.com/jmoiron/sqlx"
 	"github.com/manabie-com/togo/internal/storages"
 	"net/http"
 
@@ -34,7 +34,7 @@ func (aa *AuthorApi) Validate(req *http.Request) (context.Context, *tools.TodoEr
 	return aa.service.Validate(req)
 }
 
-func NewAuthorApi(db *sql.DB, JWTKey string, requestTool tools.IRequestTool, tokenTool tools.ITokenTool, contextTool tools.IContextTool) AuthorApi {
+func NewAuthorApi(db *sqlx.DB, JWTKey string, requestTool tools.IRequestTool, tokenTool tools.ITokenTool, contextTool tools.IContextTool) AuthorApi {
 	return AuthorApi{
 		service:     services.NewAuthorizeService(storages.NewAuthorizeRepo(db), JWTKey, tokenTool, contextTool),
 		requestTool: requestTool,

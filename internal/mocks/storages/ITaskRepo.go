@@ -5,8 +5,10 @@ package mocks
 import (
 	context "context"
 	sql "database/sql"
-	"github.com/manabie-com/togo/internal/storages"
+
 	mock "github.com/stretchr/testify/mock"
+
+	storages "github.com/manabie-com/togo/internal/storages"
 
 	tools "github.com/manabie-com/togo/internal/tools"
 )

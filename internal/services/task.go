@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"database/sql"
 	"github.com/google/uuid"
 	taskApi "github.com/manabie-com/togo/internal/iservices"
 	"github.com/manabie-com/togo/internal/storages"
@@ -20,9 +19,7 @@ func (ts *TaskService) ListTasksByUserAndDate(ctx context.Context, request taskA
 	if err != nil {
 		return nil, err
 	}
-	taskEntities, err := ts.repo.RetrieveTasks(ctx,
-		sql.NullString{String: id, Valid: true},
-		sql.NullString{String: request.CreatedDate, Valid: true})
+	taskEntities, err := ts.repo.RetrieveTasksStore(ctx, storages.RetrieveTasksParams{UserID: id, CreatedDate: request.CreatedDate})
 	if err != nil {
 		return nil, err
 	}
@@ -44,13 +41,13 @@ func (ts *TaskService) AddTask(ctx context.Context, request taskApi.AddTaskReque
 		return nil, err
 	}
 	now := time.Now()
-	taskEntity := storages.Task{
+	taskEntity := storages.AddTaskParams{
 		Content:     request.Content,
 		UserID:      id,
 		CreatedDate: now.Format("2006-01-02"),
 		ID:          uuid.New().String(),
 	}
-	err = ts.repo.AddTask(ctx, &taskEntity)
+	err = ts.repo.AddTaskStore(ctx, taskEntity)
 	if err != nil {
 		return nil, err
 	}

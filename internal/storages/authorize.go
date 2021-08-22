@@ -2,33 +2,31 @@ package storages
 
 import (
 	"context"
-	"database/sql"
+	"github.com/jmoiron/sqlx"
+	"github.com/manabie-com/togo/internal/tools"
+	"net/http"
 )
 
 type IAuthorizeRepo interface {
-	ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool
+	ValidateUserStore(ctx context.Context, arg ValidateUserParams) (string, *tools.TodoError)
 }
 
 type AuthorizeRepo struct {
-	db DBTX
+	*Queries
+	db *sqlx.DB
 }
 
-const QueryValidateUser = `SELECT id FROM users WHERE id = ? AND password = ?`
-
-// ValidateUser returns tasks if match userID AND password
-func (l *AuthorizeRepo) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
-	stmt := QueryValidateUser
-	row := l.db.QueryRowContext(ctx, stmt, userID, pwd)
-	u := &User{}
-	err := row.Scan(&u.ID)
+func (ar *AuthorizeRepo) ValidateUserStore(ctx context.Context, arg ValidateUserParams) (string, *tools.TodoError) {
+	id, err := ar.ValidateUser(ctx, arg)
 	if err != nil {
-		return false
+		return "", tools.NewTodoError(http.StatusInternalServerError, err.Error())
 	}
-	return true
+	return id, nil
 }
 
-func NewAuthorizeRepo(db *sql.DB) IAuthorizeRepo {
+func NewAuthorizeRepo(db *sqlx.DB) IAuthorizeRepo {
 	return &AuthorizeRepo{
-		db: db,
+		Queries: New(db),
+		db:      db,
 	}
 }

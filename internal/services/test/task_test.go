@@ -2,20 +2,17 @@ package test
 
 import (
 	"context"
-	"database/sql"
+	"github.com/manabie-com/togo/internal/iservices"
+	mockRepo "github.com/manabie-com/togo/internal/mocks/storages2"
+	mockTool "github.com/manabie-com/togo/internal/mocks/tools"
 	"github.com/manabie-com/togo/internal/services"
 	"github.com/manabie-com/togo/internal/storages"
 	"github.com/manabie-com/togo/internal/tools"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
-	"time"
-
-	"github.com/manabie-com/togo/internal/iservices"
 	"testing"
-
-	mockRepo "github.com/manabie-com/togo/internal/mocks/storages"
-	mockTool "github.com/manabie-com/togo/internal/mocks/tools"
+	"time"
 )
 
 func TestListTaskByUserAndDate(t *testing.T) {
@@ -28,12 +25,12 @@ func TestListTaskByUserAndDate(t *testing.T) {
 		contextTool := mockTool.IContextTool{}
 		contextTool.On("UserIDFromCtx", context.TODO()).Return("1", nil)
 		taskRepo := mockRepo.ITaskRepo{}
-		taskRepo.On("RetrieveTasks", context.TODO(),
-			sql.NullString{String: "1", Valid: true},
-			sql.NullString{String: req.CreatedDate, Valid: true}).Return([]*storages.Task{
-			{ID: "1", Content: "valid", UserID: "1", CreatedDate: req.CreatedDate},
-			{ID: "2", Content: "valid2", UserID: "1", CreatedDate: req.CreatedDate},
-		}, nil)
+		taskRepo.On("RetrieveTasksStore", context.TODO(),
+			storages.RetrieveTasksParams{UserID: "1", CreatedDate: req.CreatedDate}).
+			Return([]storages.Task{
+				{ID: "1", Content: "valid", UserID: "1", CreatedDate: req.CreatedDate},
+				{ID: "2", Content: "valid2", UserID: "1", CreatedDate: req.CreatedDate},
+			}, nil)
 		taskService := services.NewTaskService(&taskRepo, &contextTool)
 		res, err := taskService.ListTasksByUserAndDate(context.TODO(), req)
 		require.Nil(t, err)
@@ -55,10 +52,9 @@ func TestListTaskByUserAndDate(t *testing.T) {
 		contextTool := mockTool.IContextTool{}
 		contextTool.On("UserIDFromCtx", context.TODO()).Return("1", nil)
 		taskRepo := mockRepo.ITaskRepo{}
-		taskRepo.On("RetrieveTasks",
-			context.TODO(),
-			sql.NullString{String: "1", Valid: true},
-			sql.NullString{String: req.CreatedDate, Valid: true}).Return(nil, tools.NewTodoError(500, "fail to get data from repo"))
+		taskRepo.On("RetrieveTasksStore", context.TODO(),
+			storages.RetrieveTasksParams{UserID: "1", CreatedDate: req.CreatedDate}).
+			Return(nil, tools.NewTodoError(500, "fail to get data from repo"))
 		taskService := services.NewTaskService(&taskRepo, &contextTool)
 		res, err := taskService.ListTasksByUserAndDate(context.TODO(), req)
 		require.Nil(t, res)
@@ -74,7 +70,7 @@ func TestAddTask(t *testing.T) {
 		contextTool := mockTool.IContextTool{}
 		contextTool.On("UserIDFromCtx", context.TODO()).Return("1", nil)
 		taskRepo := mockRepo.ITaskRepo{}
-		taskRepo.On("AddTask", context.TODO(), mock.Anything).Return(nil)
+		taskRepo.On("AddTaskStore", context.TODO(), mock.Anything).Return(nil)
 		taskService := services.NewTaskService(&taskRepo, &contextTool)
 		res, err := taskService.AddTask(context.TODO(), req)
 		require.Nil(t, err)
@@ -99,7 +95,7 @@ func TestAddTask(t *testing.T) {
 		contextTool := mockTool.IContextTool{}
 		contextTool.On("UserIDFromCtx", context.TODO()).Return("1", nil)
 		taskRepo := mockRepo.ITaskRepo{}
-		taskRepo.On("AddTask", context.TODO(), mock.Anything).Return(tools.NewTodoError(500, "fail to add task to repo"))
+		taskRepo.On("AddTaskStore", context.TODO(), mock.Anything).Return(tools.NewTodoError(500, "fail to add task to repo"))
 		taskService := services.NewTaskService(&taskRepo, &contextTool)
 		res, err := taskService.AddTask(context.TODO(), req)
 		require.Nil(t, res)

@@ -2,11 +2,11 @@ package test
 
 import (
 	"context"
-	"database/sql"
 	"github.com/manabie-com/togo/internal/iservices"
-	mockRepo "github.com/manabie-com/togo/internal/mocks/storages"
+	mockRepo "github.com/manabie-com/togo/internal/mocks/storages2"
 	mockTool "github.com/manabie-com/togo/internal/mocks/tools"
 	"github.com/manabie-com/togo/internal/services"
+	"github.com/manabie-com/togo/internal/storages"
 	"github.com/manabie-com/togo/internal/tools"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -21,9 +21,10 @@ func TestLogin(t *testing.T) {
 			Data: "token valid",
 		}
 		authorizeRepo := mockRepo.IAuthorizeRepo{}
-		authorizeRepo.On("ValidateUser", context.TODO(),
-			sql.NullString{String: req.UserId, Valid: true},
-			sql.NullString{String: req.Password, Valid: true}).Return(true)
+		authorizeRepo.On("ValidateUserStore", context.TODO(), storages.ValidateUserParams{
+			ID:       req.UserId,
+			Password: req.Password,
+		}).Return(req.UserId, nil)
 		contextTool := mockTool.IContextTool{}
 		tokenTool := mockTool.ITokenTool{}
 		tokenTool.On("CreateToken", req.UserId, "1234").Return(resExpect.Data, nil)
@@ -37,9 +38,10 @@ func TestLogin(t *testing.T) {
 		req := iservices.LoginRequest{UserId: "1", Password: "123"}
 		errExpect := tools.NewTodoError(http.StatusUnauthorized, "incorrect user_id/pwd")
 		authorizeRepo := mockRepo.IAuthorizeRepo{}
-		authorizeRepo.On("ValidateUser", context.TODO(),
-			sql.NullString{String: req.UserId, Valid: true},
-			sql.NullString{String: req.Password, Valid: true}).Return(false)
+		authorizeRepo.On("ValidateUserStore", context.TODO(), storages.ValidateUserParams{
+			ID:       req.UserId,
+			Password: req.Password,
+		}).Return("", tools.NewTodoError(http.StatusInternalServerError, "something wrong"))
 		contextTool := mockTool.IContextTool{}
 		tokenTool := mockTool.ITokenTool{}
 		authorizeService := services.NewAuthorizeService(&authorizeRepo, "1234", &tokenTool, &contextTool)
@@ -52,9 +54,10 @@ func TestLogin(t *testing.T) {
 		req := iservices.LoginRequest{UserId: "1", Password: "123"}
 		errExpect := tools.NewTodoError(http.StatusInternalServerError, "fail when create token")
 		authorizeRepo := mockRepo.IAuthorizeRepo{}
-		authorizeRepo.On("ValidateUser", context.TODO(),
-			sql.NullString{String: req.UserId, Valid: true},
-			sql.NullString{String: req.Password, Valid: true}).Return(true)
+		authorizeRepo.On("ValidateUserStore", context.TODO(), storages.ValidateUserParams{
+			ID:       req.UserId,
+			Password: req.Password,
+		}).Return(req.UserId, nil)
 		contextTool := mockTool.IContextTool{}
 		tokenTool := mockTool.ITokenTool{}
 		tokenTool.On("CreateToken", req.UserId, "1234").Return("", errExpect)

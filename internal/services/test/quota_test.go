@@ -2,14 +2,16 @@ package test
 
 import (
 	"context"
-	mockRepo "github.com/manabie-com/togo/internal/mocks/storages"
-	mockTool "github.com/manabie-com/togo/internal/mocks/tools"
-	"github.com/manabie-com/togo/internal/services"
-	"github.com/manabie-com/togo/internal/tools"
-	"github.com/stretchr/testify/require"
 	"net/http"
 	"testing"
 	"time"
+
+	mockRepo "github.com/manabie-com/togo/internal/mocks/storages2"
+	mockTool "github.com/manabie-com/togo/internal/mocks/tools"
+	"github.com/manabie-com/togo/internal/services"
+	"github.com/manabie-com/togo/internal/storages"
+	"github.com/manabie-com/togo/internal/tools"
+	"github.com/stretchr/testify/require"
 )
 
 func TestLimitTask(t *testing.T) {
@@ -18,8 +20,10 @@ func TestLimitTask(t *testing.T) {
 		contextTool := mockTool.IContextTool{}
 		contextTool.On("UserIDFromCtx", context.TODO()).Return("1", nil)
 		quotaRepo := mockRepo.IQuotaRepo{}
-		quotaRepo.On("CountTaskPerDay", context.TODO(), "1", now.Format("2006-01-02")).Return(2, nil)
-		quotaRepo.On("GetLimitPerUser", context.TODO(), "1").Return(5, nil)
+		quotaRepo.On("CountTaskPerDayStore", context.TODO(),
+			storages.CountTaskPerDayParams{UserID: "1", CreatedDate: now.Format("2006-01-02")}).
+			Return(int64(2), nil)
+		quotaRepo.On("GetLimitPerUserStore", context.TODO(), "1").Return(int32(5), nil)
 		quotaService := services.NewQuotaService(&quotaRepo, &contextTool)
 		err := quotaService.LimitTask(context.TODO())
 		require.Nil(t, err)
@@ -40,7 +44,9 @@ func TestLimitTask(t *testing.T) {
 		contextTool := mockTool.IContextTool{}
 		contextTool.On("UserIDFromCtx", context.TODO()).Return("1", nil)
 		quotaRepo := mockRepo.IQuotaRepo{}
-		quotaRepo.On("CountTaskPerDay", context.TODO(), "1", now.Format("2006-01-02")).Return(0, errExpect)
+		quotaRepo.On("CountTaskPerDayStore", context.TODO(),
+			storages.CountTaskPerDayParams{UserID: "1", CreatedDate: now.Format("2006-01-02")}).
+			Return(int64(0), errExpect)
 		quotaService := services.NewQuotaService(&quotaRepo, &contextTool)
 		err := quotaService.LimitTask(context.TODO())
 		require.Error(t, err, errExpect.ErrorMessage)
@@ -52,8 +58,10 @@ func TestLimitTask(t *testing.T) {
 		contextTool := mockTool.IContextTool{}
 		contextTool.On("UserIDFromCtx", context.TODO()).Return("1", nil)
 		quotaRepo := mockRepo.IQuotaRepo{}
-		quotaRepo.On("CountTaskPerDay", context.TODO(), "1", now.Format("2006-01-02")).Return(2, nil)
-		quotaRepo.On("GetLimitPerUser", context.TODO(), "1").Return(0, errExpect)
+		quotaRepo.On("CountTaskPerDayStore", context.TODO(),
+			storages.CountTaskPerDayParams{UserID: "1", CreatedDate: now.Format("2006-01-02")}).
+			Return(int64(2), nil)
+		quotaRepo.On("GetLimitPerUserStore", context.TODO(), "1").Return(int32(0), errExpect)
 		quotaService := services.NewQuotaService(&quotaRepo, &contextTool)
 		err := quotaService.LimitTask(context.TODO())
 		require.Error(t, err, errExpect.ErrorMessage)
@@ -65,8 +73,10 @@ func TestLimitTask(t *testing.T) {
 		contextTool := mockTool.IContextTool{}
 		contextTool.On("UserIDFromCtx", context.TODO()).Return("1", nil)
 		quotaRepo := mockRepo.IQuotaRepo{}
-		quotaRepo.On("CountTaskPerDay", context.TODO(), "1", now.Format("2006-01-02")).Return(5, nil)
-		quotaRepo.On("GetLimitPerUser", context.TODO(), "1").Return(5, nil)
+		quotaRepo.On("CountTaskPerDayStore", context.TODO(),
+			storages.CountTaskPerDayParams{UserID: "1", CreatedDate: now.Format("2006-01-02")}).
+			Return(int64(5), nil)
+		quotaRepo.On("GetLimitPerUserStore", context.TODO(), "1").Return(int32(5), nil)
 		quotaService := services.NewQuotaService(&quotaRepo, &contextTool)
 		err := quotaService.LimitTask(context.TODO())
 		require.Error(t, err, errExpect.ErrorMessage)

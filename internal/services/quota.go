@@ -24,15 +24,15 @@ func (qs *QuotaService) LimitTask(ctx context.Context) *tools.TodoError {
 		return err
 	}
 	dateNow := now.Format("2006-01-02")
-	countTaskPerDate, err := qs.repo.CountTaskPerDay(ctx, userID, dateNow)
+	countTaskPerDate, err := qs.repo.CountTaskPerDayStore(ctx, storages.CountTaskPerDayParams{UserID: userID, CreatedDate: dateNow})
 	if err != nil {
 		return err
 	}
-	maxTaskPerDate, err := qs.repo.GetLimitPerUser(ctx, userID)
+	maxTaskPerDate, err := qs.repo.GetLimitPerUserStore(ctx, userID)
 	if err != nil {
 		return err
 	}
-	if countTaskPerDate >= maxTaskPerDate {
+	if countTaskPerDate >= int64(maxTaskPerDate) {
 		return tools.NewTodoError(http.StatusMethodNotAllowed, "You reach a limit to create task in date")
 	}
 	return nil

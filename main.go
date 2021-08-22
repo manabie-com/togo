@@ -1,16 +1,25 @@
 package main
 
 import (
-	"database/sql"
+	"fmt"
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 	"github.com/manabie-com/togo/internal/api"
 	"log"
 	"net/http"
+)
 
-	_ "github.com/mattn/go-sqlite3"
+const (
+	host     = "localhost"
+	port     = 5432
+	user     = "docker"
+	password = "docker"
+	dbname   = "todo"
 )
 
 func main() {
-	db, err := sql.Open("sqlite3", "./data.db")
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	db, err := sqlx.Open("postgres", psqlInfo)
 	if err != nil {
 		log.Fatal("error opening db", err)
 	}

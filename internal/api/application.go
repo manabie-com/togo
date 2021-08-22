@@ -1,8 +1,8 @@
 package api
 
 import (
-	"database/sql"
 	"encoding/json"
+	"github.com/jmoiron/sqlx"
 	"github.com/manabie-com/togo/internal/services"
 	"github.com/manabie-com/togo/internal/storages"
 	"github.com/manabie-com/togo/internal/tools"
@@ -60,7 +60,7 @@ func (s *TodoApi) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	return
 }
 
-func NewToDoApi(jwtKey string, db *sql.DB) TodoApi {
+func NewToDoApi(jwtKey string, db *sqlx.DB) TodoApi {
 	contextTool := tools.NewContextTool()
 	tokenTool := tools.NewTokenTool()
 	requestTool := tools.NewRequestTool()

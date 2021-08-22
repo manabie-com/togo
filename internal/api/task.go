@@ -2,8 +2,8 @@ package api
 
 import (
 	"context"
-	"database/sql"
 	"encoding/json"
+	"github.com/jmoiron/sqlx"
 	"github.com/manabie-com/togo/internal/iservices"
 	"github.com/manabie-com/togo/internal/services"
 	"github.com/manabie-com/togo/internal/storages"
@@ -39,7 +39,7 @@ func (ta *TaskApi) AddTask(ctx context.Context, req *http.Request) (*iservices.A
 	return ta.taskService.AddTask(ctx, *t)
 }
 
-func NewTaskApi(db *sql.DB, contextTool tools.IContextTool, requestTool tools.IRequestTool) TaskApi {
+func NewTaskApi(db *sqlx.DB, contextTool tools.IContextTool, requestTool tools.IRequestTool) TaskApi {
 	return TaskApi{
 		taskService: services.NewTaskService(storages.NewTaskRepo(db), contextTool),
 		requestTool: requestTool,

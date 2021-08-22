@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"database/sql"
 	"github.com/manabie-com/togo/internal/storages"
 	"net/http"
 
@@ -18,9 +17,8 @@ type AuthorizeService struct {
 }
 
 func (as *AuthorizeService) Login(ctx context.Context, req authorizeApi.LoginRequest) (*authorizeApi.LoginResponse, *tools.TodoError) {
-	if !as.repo.ValidateUser(ctx,
-		sql.NullString{String: req.UserId, Valid: true},
-		sql.NullString{String: req.Password, Valid: true}) {
+	_, err := as.repo.ValidateUserStore(ctx, storages.ValidateUserParams{ID: req.UserId, Password: req.Password})
+	if err != nil {
 		return nil, tools.NewTodoError(http.StatusUnauthorized, "incorrect user_id/pwd")
 	}
 	token, err := as.tokenTool.CreateToken(req.UserId, as.JWTKey)
