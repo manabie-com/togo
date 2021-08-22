@@ -42,11 +42,11 @@ func (as *AuthorizeService) Validate(req *http.Request) (context.Context, *tools
 	return ctx, nil
 }
 
-func NewAuthorizeService(repo repos.IAuthorizeRepo, jwtKey string) authorizeApi.IAuthorizeService {
+func NewAuthorizeService(repo repos.IAuthorizeRepo, jwtKey string, tokenTool tools.ITokenTool, contextTool tools.IContextTool) authorizeApi.IAuthorizeService {
 	return &AuthorizeService{
 		repo:        repo,
 		JWTKey:      jwtKey,
-		tokenTool:   tools.NewTokenTool(),
-		contextTool: tools.NewContextTool(),
+		tokenTool:   tokenTool,
+		contextTool: contextTool,
 	}
 }

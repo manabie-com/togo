@@ -3,11 +3,12 @@ package api
 import (
 	"context"
 	"database/sql"
+	"net/http"
+
 	"github.com/manabie-com/togo/internal/iservices"
 	"github.com/manabie-com/togo/internal/services"
 	"github.com/manabie-com/togo/internal/storages/repos"
 	"github.com/manabie-com/togo/internal/tools"
-	"net/http"
 )
 
 type IAuthorApi interface {
@@ -33,9 +34,9 @@ func (aa *AuthorApi) Validate(req *http.Request) (context.Context, *tools.TodoEr
 	return aa.service.Validate(req)
 }
 
-func NewAuthorApi(db *sql.DB, JWTKey string) AuthorApi {
+func NewAuthorApi(db *sql.DB, JWTKey string, requestTool tools.IRequestTool, tokenTool tools.ITokenTool, contextTool tools.IContextTool) AuthorApi {
 	return AuthorApi{
-		service:     services.NewAuthorizeService(repos.NewAuthorizeRepo(db), JWTKey),
-		requestTool: tools.NewRequestTool(),
+		service:     services.NewAuthorizeService(repos.NewAuthorizeRepo(db), JWTKey, tokenTool, contextTool),
+		requestTool: requestTool,
 	}
 }

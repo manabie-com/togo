@@ -38,9 +38,9 @@ func (qs *QuotaService) LimitTask(ctx context.Context) *tools.TodoError {
 	return nil
 }
 
-func NewQuotaService(repo repos.IQuotaRepo) IQuotaService {
+func NewQuotaService(repo repos.IQuotaRepo, contextTool tools.IContextTool) IQuotaService {
 	return &QuotaService{
 		repo:        repo,
-		contextTool: tools.NewContextTool(),
+		contextTool: contextTool,
 	}
 }

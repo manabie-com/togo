@@ -61,9 +61,12 @@ func (s *TodoApi) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 }
 
 func NewToDoApi(jwtKey string, db *sql.DB) TodoApi {
+	contextTool := tools.NewContextTool()
+	tokenTool := tools.NewTokenTool()
+	requestTool := tools.NewRequestTool()
 	return TodoApi{
-		author:       NewAuthorApi(db, jwtKey),
-		task:         NewTaskApi(db),
-		quotaService: services.NewQuotaService(repos.NewQuotaRepo(db)),
+		author:       NewAuthorApi(db, jwtKey, requestTool, tokenTool, contextTool),
+		task:         NewTaskApi(db, contextTool, requestTool),
+		quotaService: services.NewQuotaService(repos.NewQuotaRepo(db), contextTool),
 	}
 }

@@ -39,9 +39,9 @@ func (ta *TaskApi) AddTask(ctx context.Context, req *http.Request) (*iservices.A
 	return ta.taskService.AddTask(ctx, *t)
 }
 
-func NewTaskApi(db *sql.DB) TaskApi {
+func NewTaskApi(db *sql.DB, contextTool tools.IContextTool, requestTool tools.IRequestTool) TaskApi {
 	return TaskApi{
-		taskService: services.NewTaskService(repos.NewTaskRepo(db)),
-		requestTool: tools.NewRequestTool(),
+		taskService: services.NewTaskService(repos.NewTaskRepo(db), contextTool),
+		requestTool: requestTool,
 	}
 }

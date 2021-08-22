@@ -65,9 +65,9 @@ func (ts *TaskService) AddTask(ctx context.Context, request taskApi.AddTaskReque
 	}, nil
 }
 
-func NewTaskService(repo repos.ITaskRepo) taskApi.ITaskService {
+func NewTaskService(repo repos.ITaskRepo, contextTool tools.IContextTool) taskApi.ITaskService {
 	return &TaskService{
 		repo:        repo,
-		contextTool: tools.NewContextTool(),
+		contextTool: contextTool,
 	}
 }
