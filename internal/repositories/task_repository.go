@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"fmt"
 	"gorm.io/gorm"
 	models "github.com/manabie-com/togo/internal/models"
 )
@@ -15,8 +16,10 @@ func ProvideTaskRepository(DB *gorm.DB) TaskRepository {
 
 func (repo *TaskRepository) FindAll() []models.Task {
 	var tasks []models.Task
-	repo.DB.Find(&tasks)
-
+	result := repo.DB.Find(&tasks)
+	if result.Error != nil {
+		panic("Error when final all records");
+	}
 	return tasks
 }
 
@@ -27,9 +30,12 @@ func (repo *TaskRepository) FindByID(id string) models.Task {
 	return task
 }
 
-func (repo *TaskRepository) Save(task models.Task) models.Task {
-	repo.DB.Save(&task)
-
+func (repo *TaskRepository) Create(task models.Task) models.Task {
+	result := repo.DB.Create(&task)
+	if result.Error != nil {
+		fmt.Println(result.Error)
+		panic("Error, insert task to into database!")
+	}
 	return task
 }
 

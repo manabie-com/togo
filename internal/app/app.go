@@ -32,6 +32,15 @@ func InitTaskController(db *gorm.DB) *controllers.TaskController {
 	}
 }
 
+func InitAuthController(db *gorm.DB) *controllers.AuthController {
+	repository := repositories.ProvideUserRepository(db)
+	service := services.ProvideAuthService(repository)
+
+	return &controllers.AuthController{
+		AuthService: service,
+	}
+}
+
 // Initialize : Initialize Application Components
 func (app *APP) Initialize() {
 	gin.SetMode(gin.ReleaseMode)
@@ -52,14 +61,20 @@ func (app *APP) Initialize() {
 	app.Router.Use(middleware.EnableCORS())
 	app.Router.Use(middleware.ErrorHandler)
 
-	v1 := app.Router.Group("/v1/tasks")
+	v1 := app.Router.Group("/v1")
 	{
+		taskRoutes := v1.Group("/tasks")
 		taskCtrl := InitTaskController(db.DB)
-		v1.GET("/", taskCtrl.FindAll)
-		// v1.GET("/:id", taskCtrl.FindByID)
-		// v1.POST("/", taskCtrl.Create)
-		// v1.PUT("/:id", taskCtrl.Update)
-		// v1.DELETE("/:id", taskCtrl.Delete)
+		taskRoutes.GET("", middleware.AuthUser(), taskCtrl.FindAll)
+		taskRoutes.POST("", middleware.AuthUser(), taskCtrl.Create)
+		// taskRoutes.GET("/:id", taskCtrl.FindByID)
+		// taskRoutes.PUT("/:id", taskCtrl.Update)
+		// taskRoutes.DELETE("/:id", taskCtrl.Delete)
+			
+		authRoutes := v1.Group("/auth")
+		authCtrl := InitAuthController(db.DB)
+		authRoutes.POST("/signup", authCtrl.Signup)
+		authRoutes.POST("/login", authCtrl.Login)
 	}
 
 	app.Server = &http.Server{

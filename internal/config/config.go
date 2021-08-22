@@ -22,7 +22,7 @@ func InitConfig() {
 		AppDebug: false,
 		AppUrl: "localhost",
 		AppPort: "5050",
-		DBHost: "127.0.0.1",
+		DBHost: "127.0.0.1", // "todo_db",
 		DBPort: "5432",
 		DBUser: "todo_user",
 		DBPass: "todo123",

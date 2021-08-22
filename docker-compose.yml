@@ -15,21 +15,34 @@ services:
       - "5432:5432"
     restart: unless-stopped
 
-  todo_service:
-    build: .
-    volumes:
-      - ./internal:/app
-    ports:
-      - "5050:5050"
+  # todo_service:
+  #   build: .
+  #   volumes:
+  #     - ./internal:/app
+  #   ports:
+  #     - "5050:5050"
+  #   environment:
+  #     - "DB_HOST=${DB_HOST}"
+  #     - "DB_PORT=${DB_PORT}"
+  #     - "DB_NAME=${DB_NAME}"
+  #     - "DB_USERNAME=${DB_USERNAME}"
+  #     - "DB_PASSWORD=${DB_PASSWORD}"
+  #   depends_on:
+  #     - todo_db
+
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
     environment:
-      - "DB_HOST=${DB_HOST}"
-      - "DB_PORT=${DB_PORT}"
-      - "DB_NAME=${DB_NAME}"
-      - "DB_USERNAME=${DB_USERNAME}"
-      - "DB_PASSWORD=${DB_PASSWORD}"
-    depends_on:
-      - todo_db
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+       - pgadmin:/var/lib/pgadmin
+    ports:
+      - "5433:80"
 
 
 volumes: 
   todo_data:
+  pgadmin:

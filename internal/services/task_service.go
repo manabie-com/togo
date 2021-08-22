@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	models "github.com/manabie-com/togo/internal/models"
 	repositories "github.com/manabie-com/togo/internal/repositories"
 )
@@ -13,20 +14,22 @@ func ProvideTaskService(repo repositories.TaskRepository) TaskService {
 	return TaskService{TaskRepository: repo}
 }
 
-func (p *TaskService) FindAll() []models.Task {
-	return p.TaskRepository.FindAll()
+func (service *TaskService) FindAll() []models.Task {
+	result := service.TaskRepository.FindAll()
+	fmt.Println("Repo findAll()")
+	return result
 }
 
-func (p *TaskService) FindByID(id string) models.Task {
-	return p.TaskRepository.FindByID(id)
+func (service *TaskService) FindByID(id string) models.Task {
+	return service.TaskRepository.FindByID(id)
 }
 
-func (p *TaskService) Save(task models.Task) models.Task {
-	p.TaskRepository.Save(task)
+func (service *TaskService) Create(task models.Task) models.Task {
+	service.TaskRepository.Create(task)
 
 	return task
 }
 
-func (p *TaskService) Delete(task models.Task) {
-	p.TaskRepository.Delete(task)
+func (service *TaskService) Delete(task models.Task) {
+	service.TaskRepository.Delete(task)
 }

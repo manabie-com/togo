@@ -15,7 +15,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"user_id\": \"firstUser\",\n    \"password\": \"example\"\n}",
+							"raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"12345\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -23,14 +23,44 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:5050/v1/login",
+							"raw": "localhost:5050/v1/auth/login",
 							"host": [
 								"localhost"
 							],
 							"port": "5050",
 							"path": [
 								"v1",
+								"auth",
 								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Signup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Quan\",\n    \"email\": \"user@example.com\",\n    \"password\": \"12345\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5050/v1/auth/signup",
+							"host": [
+								"localhost"
+							],
+							"port": "5050",
+							"path": [
+								"v1",
+								"auth",
+								"signup"
 							]
 						}
 					},
@@ -49,19 +79,13 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjkyOTI1NTQsInVzZXJfaWQiOiJmaXJzdFVzZXIifQ.dat8CFkE3N0slsYbDzYa-ZdWtD6DlBW63u6pTPScxIs",
+									"value": "{{access_token}}",
 									"type": "string"
 								}
 							]
 						},
 						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTM0Mjc4MjEsInVzZXJfaWQiOiJmaXJzdFVzZXIifQ.zJdFGhDFwPcR1-VZyUGmYgNMEDHpNYsttYYvJPcI7h4",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"url": {
 							"raw": "localhost:5050/v1/tasks",
 							"host": [
@@ -86,17 +110,21 @@
 				{
 					"name": "Task - Create",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTM0Mjc4MjEsInVzZXJfaWQiOiJmaXJzdFVzZXIifQ.zJdFGhDFwPcR1-VZyUGmYgNMEDHpNYsttYYvJPcI7h4",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"content\": \"another content\"\n}",
+							"raw": "{\n    \"content\": \"Learn Golang\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
