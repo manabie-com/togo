@@ -10,8 +10,13 @@ import (
 	"net/http"
 )
 
+type IAuthorApi interface {
+	Login(ctx context.Context, req *http.Request) (*dto.LoginResponse, *tools.TodoError)
+	Validate(req *http.Request) (context.Context, *tools.TodoError)
+}
+
 type AuthorApi struct {
-	service dto.IAuthorizeApi
+	service dto.IAuthorizeService
 }
 
 func (aa *AuthorApi) Login(ctx context.Context, req *http.Request) (*dto.LoginResponse, *tools.TodoError) {

@@ -36,7 +36,7 @@ func (atr *AddTaskResponse) ToRes() interface{} {
 	return atr
 }
 
-type ITaskApi interface {
+type ITaskService interface {
 	ListTasksByUserAndDate(ctx context.Context, request ListTaskRequest) (*ListTaskResponse, *tools.TodoError)
 	AddTask(ctx context.Context, request AddTaskRequest) (*AddTaskResponse, *tools.TodoError)
 }

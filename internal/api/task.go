@@ -11,8 +11,13 @@ import (
 	"net/http"
 )
 
+type ITaskApi interface {
+	ListTasksByUserAndDate(ctx context.Context, req *http.Request) (*dto.ListTaskResponse, *tools.TodoError)
+	AddTask(ctx context.Context, req *http.Request) (*dto.AddTaskResponse, *tools.TodoError)
+}
+
 type TaskApi struct {
-	taskService dto.ITaskApi
+	taskService dto.ITaskService
 }
 
 func (ta *TaskApi) ListTasksByUserAndDate(ctx context.Context, req *http.Request) (*dto.ListTaskResponse, *tools.TodoError) {

@@ -19,7 +19,7 @@ func (lr *LoginResponse) ToRes() interface{} {
 	return lr
 }
 
-type IAuthorizeApi interface {
+type IAuthorizeService interface {
 	Login(ctx context.Context, req LoginRequest) (*LoginResponse, *tools.TodoError)
 	Validate(req *http.Request) (context.Context, *tools.TodoError)
 }
