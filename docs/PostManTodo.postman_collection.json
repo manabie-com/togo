@@ -11,8 +11,8 @@
 				"method": "POST",
 				"header": [
 					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjOTVhMTczMC1kMzMxLTRkODgtOTdkZC1jNWNjOTVmZWUxNGYiLCJlbWFpbCI6ImZpcnN0VXNlckBnbWFpbC5jb20iLCJ1aWQiOiJmaXJzdFVzZXIiLCJleHAiOjE2Mjk2NDA0NDksImlzcyI6IkNvcmVJZGVudGl0eSIsImF1ZCI6IkNvcmVJZGVudGl0eVVzZXIifQ.kzgHTaVEROs5K84rOl5vWbhsAOMwPtyzAN0UpVazodc",
+						"key": "",
+						"value": "",
 						"type": "text",
 						"disabled": true
 					}
@@ -27,12 +27,12 @@
 					}
 				},
 				"url": {
-					"raw": "https://localhost:44329/api/User/login",
+					"raw": "https://localhost:5001/api/User/login",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
-					"port": "44329",
+					"port": "5001",
 					"path": [
 						"api",
 						"User",
@@ -55,7 +55,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {jwttoken in login api}",
+						"value": "Bearer  {{jwttoken}}",
 						"type": "text"
 					}
 				],
@@ -64,12 +64,12 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "https://localhost:44329/api/Task/getAll",
+					"raw": "https://localhost:5001/api/Task/getAll",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
-					"port": "44329",
+					"port": "5001",
 					"path": [
 						"api",
 						"Task",
@@ -86,7 +86,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer {jwttoken in login api}",
+						"value": "Bearer  {{jwttoken}}",
 						"type": "text"
 					}
 				],
@@ -100,12 +100,12 @@
 					}
 				},
 				"url": {
-					"raw": "https://localhost:44329/api/Task",
+					"raw": "https://localhost:5001/api/Task",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
-					"port": "44329",
+					"port": "5001",
 					"path": [
 						"api",
 						"Task"
