@@ -3,7 +3,7 @@ package test
 import (
 	"context"
 	"github.com/manabie-com/togo/internal/iservices"
-	mockRepo "github.com/manabie-com/togo/internal/mocks/storages2"
+	mockRepo "github.com/manabie-com/togo/internal/mocks/storages"
 	mockTool "github.com/manabie-com/togo/internal/mocks/tools"
 	"github.com/manabie-com/togo/internal/services"
 	"github.com/manabie-com/togo/internal/storages"

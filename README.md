@@ -17,10 +17,10 @@ Right now a user can add as many tasks as they want, we want the ability to **li
 For example, users are limited to create only 5 tasks only per day, if the daily limit is reached, return 4xx code to the client and ignore the create request.
 
 ### Non-functional requirements:
-- [ ] **A nice README on how to run, what is missing, what else you want to improve but don't have enough time**
+- [x] **A nice README on how to run, what is missing, what else you want to improve but don't have enough time**
 - [x] **Consistency is a MUST**
 - [x] Fork this repo and show us your development progress by a PR
-- [ ] Write integration tests for this project
+- [x] Write integration tests for this project
 - [ ] Make this code DRY
 - [x] Write unit test for the services layer
 - [x] Change from using SQLite to Postgres with docker-compose
@@ -56,3 +56,41 @@ CREATE TABLE tasks (
 
 #### Sequence diagram
 ![auth and create tasks request](https://github.com/manabie-com/togo/blob/master/docs/sequence.svg)
+
+---
+## How to run project
+### Step 1:
+```shell
+make dev_up
+```
+### Step 2:
+```shell
+make run
+```
+---
+## How to run unit test
+```shell
+make test_unit
+```
+---
+## How to run integration test
+### Step 1:
+```shell
+make test_up
+```
+### Step 2:
+```shell
+make test_integration
+```
+### Step 3:
+```shell
+make test_down
+```
+## Missing in project
+- Unit test for storage because I use sqlc to generate code go to integrate with sql so no need to write unit test for this layer.
+## Improve in project
+- Should have test report.
+- Automate flow run and test in project
+- Migrate data when add more schema or change something.
+- Have place to create fixture for easy to test
+- ....
