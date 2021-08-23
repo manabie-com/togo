@@ -1,0 +1,6 @@
+{
+    "name": "todo",
+    "description": "To do test",
+    "repository": "https://github.com/tuankien/manabie-test",
+    "keywords": ["php", "slim-micro-framework", "rest-api", "mysql", "slim3", "slim", "rest", "api"]
+}

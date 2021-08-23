@@ -1,0 +1,66 @@
+version: '3'
+
+services:
+  nginx:
+    image: nginx:latest
+    container_name: todo-nginx-container
+    ports:
+      - "8081:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - php-fpm
+
+  php-fpm:
+    build: ./docker/php7
+    container_name: todo-php-container
+    links:
+      - mysql
+      - redis
+    environment:
+      - PHP_FPM_ENABLE=1
+      - PHP_FPM_SERVER_ADDR=php
+      - PHP_FPM_SERVER_PORT=9000
+      - PHP_FPM_TIMEOUT=${HTTPD_TIMEOUT_TO_PHP_FPM:-180}
+      - DB_HOST=mysql
+      - DB_NAME=todo_test
+      - DB_USER=root
+      - DB_PASS=
+      - DB_PORT=3306
+
+    volumes:
+      - ./:/var/www/html
+
+  redis:
+    image: redis:4.0.5-alpine
+    ports:
+      - 63790:6379
+    hostname: redis
+    volumes:
+      - redis-data:/data
+
+  mysql:
+    image: mysql:8.0
+    ports:
+      - 3309:3306
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: todo_test
+      MYSQL_ROOT_PASSWORD:
+    volumes:
+      - my-data:/var/lib/mysql
+      - ./database/database.sql:/docker-entrypoint-initdb.d/database.sql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - mysql
+    ports:
+        - 8888:80
+    environment:
+        PMA_HOST: mysql
+
+volumes:
+  redis-data:
+  my-data:
