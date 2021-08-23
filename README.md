@@ -1,4 +1,63 @@
-### Notes
+### Todo Service
+
+**Techstack:**
+
+- Golang 1.6+
+- Gin framework
+- Docker, docker-compose
+- Postgres 13+
+
+**Features:**
+
+- API design base on Restful.
+- Use Gorm for working with postgres database.
+- Project structure.
+
+**Project structure**
+
+```
+- root
+	|_ app
+	|_ controllers		# for http controller
+	|_ resource			# api resource format
+	|_ repositories		# Repository pattern working with databbase only
+	|_ services			# Service pattren for apply business logic
+	|_ models			# Map struct type with database table
+	|_ config			# Global configuration for app
+	|_ db				# Initial database providers
+```
+
+**API Design**
+
+| API  | Name          | Method | Url            |
+|------|---------------|--------|----------------|
+| Auth | User Signup   | POST   | v1/auth/signup |
+|      | User login    | POST   | v1/auth/login  |
+| Todo | List Tasks    | GET    | v1/tasks       |
+|      | Create a Task | POST   | v1/tasks       |
+
+## TODO
+
+- [x] Structure project.
+- [x] Support Docker.
+- [x] Use gorm for working with database.
+- [x] Apply Service, Repository pattern.
+- [x] API docs with Postman
+- [ ] Unit test (not implement yet)
+- [ ] Feature test (not implement yet)
+
+## Quickstart
+
+To start project run this command:
+
+```shell
+cp .env/example .env
+docker-compose up -d
+```
+
+
+## Requirement
+
 This is a simple backend for a todo service, right now this service can handle login/list/create simple tasks, to make it run:
 - `go run main.go`
 - Import Postman collection from docs to check example

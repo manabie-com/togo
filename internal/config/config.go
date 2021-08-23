@@ -1,5 +1,8 @@
 package config
 
+import (
+	"os"
+)
 // Config Global Variable
 var Config *Conf
 
@@ -7,7 +10,7 @@ type Conf struct {
 	AppEnv	string
 	AppDebug bool
 	AppUrl  string
-	AppPort string
+	AppPort int
 	DBHost 	string
 	DBPort 	string   
 	DBUser 	string
@@ -20,13 +23,12 @@ func InitConfig() {
 	config := &Conf{
 		AppEnv: "local",
 		AppDebug: false,
-		AppUrl: "localhost",
-		AppPort: "5050",
-		DBHost: "127.0.0.1", // "todo_db",
-		DBPort: "5432",
-		DBUser: "todo_user",
-		DBPass: "todo123",
-		DBName: "todo",
+		AppPort: 5050,
+		DBHost: os.Getenv("DB_HOST"),
+		DBPort: os.Getenv("DB_PORT"),
+		DBUser: os.Getenv("DB_USERNAME"),
+		DBPass: os.Getenv("DB_PASSWORD"),
+		DBName: os.Getenv("DB_NAME"),
 	}
 	Config = config
 }

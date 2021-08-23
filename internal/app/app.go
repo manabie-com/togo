@@ -78,7 +78,7 @@ func (app *APP) Initialize() {
 	}
 
 	app.Server = &http.Server{
-		Addr:    "127.0.0.1:" + strconv.Itoa(5050),
+		Addr:    "0.0.0.0:" + strconv.Itoa(config.Config.AppPort),
 		Handler: app.Router,
 	}
 }
