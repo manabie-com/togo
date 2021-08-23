@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20210822041502_init.cs" />
+    <Compile Remove="Migrations\20210822041502_init.Designer.cs" />
+    <Compile Remove="Migrations\20210822041659_init.cs" />
+    <Compile Remove="Migrations\20210822041659_init.Designer.cs" />
+    <Compile Remove="Migrations\20210822051217_ini.cs" />
+    <Compile Remove="Migrations\20210822051217_ini.Designer.cs" />
+    <Compile Remove="Migrations\20210822051600_init.cs" />
+    <Compile Remove="Migrations\20210822051600_init.Designer.cs" />
+    <Compile Remove="Migrations\20210822051648_init.cs" />
+    <Compile Remove="Migrations\20210822051648_init.Designer.cs" />
+    <Compile Remove="Migrations\20210822051818_init.cs" />
+    <Compile Remove="Migrations\20210822051818_init.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Repositories\UserRepositoryAsync.cs~RF55711da3.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.18" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.18" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.18">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Serilog.Settings.Configuration" Version="3.2.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.12.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\core\Application\Application.csproj" />
+    <ProjectReference Include="..\..\core\Domain\Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Consts\" />
+  </ItemGroup>
+
+</Project>
