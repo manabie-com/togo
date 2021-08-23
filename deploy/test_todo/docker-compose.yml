@@ -12,10 +12,10 @@ services:
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=123
-      - APP_DB_USER=docker
-      - APP_DB_PASS=docker
+      - APP_DB_USER=test
+      - APP_DB_PASS=test
       - APP_DB_NAME=todo
     volumes:
       - ./db:/docker-entrypoint-initdb.d/
     ports:
-      - 5432:5432
+      - 5431:5432

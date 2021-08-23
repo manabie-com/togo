@@ -11,3 +11,6 @@ test:
 
 testup:
 	@command cd deploy/test_todo && docker-compose up
+
+testdown:
+	@command cd deploy/test_todo && docker-compose down
