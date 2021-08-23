@@ -14,8 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Api\TodoNet.Api\TodoNet.Api.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Infrastructure.Persistence\Infrastructure.Persistence.csproj" />
-    <ProjectReference Include="..\..\WebApi2\TodoNet.Api\TodoNet.Api.csproj" />
   </ItemGroup>
 
 </Project>
