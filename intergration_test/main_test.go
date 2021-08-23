@@ -1,22 +1,21 @@
-package main
+package intergration_test
 
 import (
+	"github.com/jmoiron/sqlx"
+	"github.com/manabie-com/togo/internal/api"
 	"github.com/manabie-com/togo/internal/tools"
 	"log"
 	"net/http"
 	"os"
-
-	"github.com/jmoiron/sqlx"
-	_ "github.com/lib/pq"
-	"github.com/manabie-com/togo/internal/api"
+	"testing"
 )
 
-func main() {
-	args := os.Args
-	if len(args) < 2 {
-		log.Fatal("You should run application with config file")
-	}
-	config, err := tools.LoadConfig(args[1])
+func TestMain(m *testing.M) {
+	os.Exit(testMain(m))
+}
+
+func testMain(m *testing.M) int {
+	config, err := tools.LoadConfig("../deploy/test_todo/")
 	if err != nil {
 		log.Fatal("You should run application with valid file path", err)
 	}
@@ -29,4 +28,5 @@ func main() {
 	if err != nil {
 		log.Fatal("error listen and serve api", err)
 	}
+	return m.Run()
 }
