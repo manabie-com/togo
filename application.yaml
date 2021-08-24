@@ -1,0 +1,6 @@
+
+server:
+  address: 5050
+
+jwt:
+  secret-key: wqGyEBBfPK9w3Lxw
