@@ -101,27 +101,29 @@ func TestCreateTask(t *testing.T) {
 	tests := []struct {
 		testName string
 		task     *storages.Task
-		succeed  bool
+		canAdd   bool
+		noError  bool
 	}{
-		{"create todo #1 (u1, max 1)", &storages.Task{UserID: user1.ID, CreatedDate: "2021-1-1"}, true},
-		{"create todo #2 (u1, max 1)", &storages.Task{UserID: user1.ID, CreatedDate: "2021-1-1"}, false},
-		{"create todo #1 (u2, max 2)", &storages.Task{UserID: user2.ID, CreatedDate: "2021-1-1"}, true},
-		{"create todo #2 (u2, max 2)", &storages.Task{UserID: user2.ID, CreatedDate: "2021-1-1"}, true},
-		{"create todo #3 (u2, max 2)", &storages.Task{UserID: user2.ID, CreatedDate: "2021-1-1"}, false},
-		{"create todo #1 (u1, max 1, day 2)", &storages.Task{UserID: user1.ID, CreatedDate: "2021-1-2"}, true},
-		{"create todo #2 (u1, max 1, day 2)", &storages.Task{UserID: user1.ID, CreatedDate: "2021-1-2"}, false},
+		{"create todo #1 (u1, max 1)", &storages.Task{UserID: user1.ID, CreatedDate: "2021-1-1"}, true, true},
+		{"create todo #2 (u1, max 1)", &storages.Task{UserID: user1.ID, CreatedDate: "2021-1-1"}, false, true},
+		{"create todo #1 (u2, max 2)", &storages.Task{UserID: user2.ID, CreatedDate: "2021-1-1"}, true, true},
+		{"create todo #2 (u2, max 2)", &storages.Task{UserID: user2.ID, CreatedDate: "2021-1-1"}, true, true},
+		{"create todo #3 (u2, max 2)", &storages.Task{UserID: user2.ID, CreatedDate: "2021-1-1"}, false, true},
+		{"create todo #1 (u1, max 1, day 2)", &storages.Task{UserID: user1.ID, CreatedDate: "2021-1-2"}, true, true},
+		{"create todo #2 (u1, max 1, day 2)", &storages.Task{UserID: user1.ID, CreatedDate: "2021-1-2"}, false, true},
 	}
 
 	for k, tt := range tests {
 		t.Run(tt.testName, func(t *testing.T) {
-			succeed := true
+			noError := true
 			tt.task.ID = fmt.Sprintf("task-%d", k)
 			tt.task.Content = fmt.Sprintf("content-%d", k)
-			err := store.AddTask(context.Background(), tt.task)
+			canAdd, err := store.AddTask(context.Background(), tt.task)
 			if err != nil {
-				succeed = false
+				noError = false
 			}
-			require.Equal(t, tt.succeed, succeed, err)
+			require.Equal(t, tt.canAdd, canAdd, "canAdd not equal")
+			require.Equal(t, tt.noError, noError)
 		})
 	}
 
@@ -148,4 +150,16 @@ func TestValidateUser(t *testing.T) {
 			require.Equal(t, tt.succeed, succeed)
 		})
 	}
+}
+
+func TestUpdatePassword(t *testing.T) {
+	err := store.SetUserPassword(context.Background(), user1.ID, user1.Password+"-updated")
+	require.Nil(t, err)
+
+	ok := store.ValidateUser(context.Background(), user1.ID, user1.Password)
+	require.False(t, ok)
+
+	ok = store.ValidateUser(context.Background(), user1.ID, user1.Password+"-updated")
+	require.True(t, ok)
+	user1.Password = user1.Password + "-updated"
 }

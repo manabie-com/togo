@@ -71,22 +71,21 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate string) 
 }
 
 // AddTask adds a new task to DB
-func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
-	ok, err := l.CanUserCreateTodo(ctx, t)
-	if err != nil {
-		return err
-	}
-	if !ok {
-		return fmt.Errorf("user %s cannot create any more todos for %s", t.UserID, t.CreatedDate)
+// if an error is returned it is a database error
+// canAdd will be true if the user has created all their daily todos
+func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) (canAdd bool, err error) {
+	canAdd, err = l.CanUserCreateTodo(ctx, t)
+	if err != nil || !canAdd {
+		return
 	}
 
 	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
 	_, err = l.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
 	if err != nil {
-		return err
+		return true, err
 	}
 
-	return nil
+	return true, nil
 }
 
 // AddUser adds a new user to DB
@@ -99,6 +98,22 @@ func (l *LiteDB) AddUser(ctx context.Context, user *storages.User) error {
 	}
 
 	_, err = l.DB.ExecContext(ctx, stmt, user.ID, string(hash), user.MaxTodo)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// SetUserPassword sets the user's password
+func (l *LiteDB) SetUserPassword(ctx context.Context, id, password string) error {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	stmt := `UPDATE users SET password = ? WHERE id = ?`
+	_, err = l.DB.ExecContext(ctx, stmt, string(hash), id)
 	if err != nil {
 		return err
 	}

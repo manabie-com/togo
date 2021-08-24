@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"log"
 	"net/http"
@@ -22,13 +23,32 @@ func main() {
 	if err != nil {
 		log.Fatal("error pinging db", err)
 	}
-	log.Println("Database ping succeeded")
 
-	err = http.ListenAndServe(":5050", &services.ToDoService{
+	svc := &services.ToDoService{
 		JWTKey: "wqGyEBBfPK9w3Lxw",
 		Store: &sqllite.LiteDB{
 			DB: db,
 		},
-	})
+	}
+
+	log.Println("Database Setup...")
+	// just for fun
+	log.Println("Database ping succeeded")
+
+	// update the example user password so that it gets hashed in the DB
+	err = svc.Store.SetUserPassword(context.Background(), "firstUser", "example")
+	if err != nil {
+		log.Fatal("error setting firstUser password", err)
+	}
+	log.Println("firstUser password hashed")
+
+	max, err := svc.Store.MaxTodo(context.Background(), "firstUser")
+	if err != nil {
+		log.Fatal("error setting firstUser password", err)
+	}
+	log.Println("firstUser max todos:", max)
+
+	log.Println("Starting Server")
+	err = http.ListenAndServe(":5050", svc)
 	log.Fatalln("http server error", err)
 }

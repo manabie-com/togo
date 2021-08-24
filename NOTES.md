@@ -1,4 +1,10 @@
 
+### Run Tests
+
+```bash
+    go test -v ./internal/storages/sqlite/
+```
+
 ### Things I Fixed
 - passwords should be hashed
 - service package imports sql and makes use of sql.NullString
