@@ -17,10 +17,18 @@ func main() {
 		log.Fatal("error opening db", err)
 	}
 
-	http.ListenAndServe(":5050", &services.ToDoService{
+	log.Println("SQL database opened")
+	err = db.Ping()
+	if err != nil {
+		log.Fatal("error pinging db", err)
+	}
+	log.Println("Database ping succeeded")
+
+	err = http.ListenAndServe(":5050", &services.ToDoService{
 		JWTKey: "wqGyEBBfPK9w3Lxw",
 		Store: &sqllite.LiteDB{
 			DB: db,
 		},
 	})
+	log.Fatalln("http server error", err)
 }
