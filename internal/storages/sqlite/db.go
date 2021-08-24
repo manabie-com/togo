@@ -14,6 +14,8 @@ type LiteDB struct {
 	DB *sql.DB
 }
 
+// InitTables creates the tables in the database
+// it is used in tests currently
 func (l *LiteDB) InitTables() error {
 
 	stmt := `
