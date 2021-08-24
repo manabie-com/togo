@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/manabie-com/togo/internal/adapter"
 	"github.com/manabie-com/togo/internal/services"
 	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 	"github.com/manabie-com/togo/internal/usecase"
@@ -20,12 +21,11 @@ func main() {
 	defer db.Close()
 
 	JWTKey := "wqGyEBBfPK9w3Lxw"
-	store := &sqllite.LiteDB{
-		DB: db,
-	}
 
-	userUsecase := usecase.NewLoginUsecase(JWTKey, store)
-	taskUsecase := usecase.NewTaskUsecase(store)
+	jwtAdapter := adapter.NewJWTAdapter(JWTKey)
+	liteDB := sqllite.NewLiteDB(db)
+	userUsecase := usecase.NewUserUsecase(jwtAdapter, liteDB)
+	taskUsecase := usecase.NewTaskUsecase(liteDB)
 
 	http.ListenAndServe("localhost:5050", &services.ToDoService{
 		UserUsecase: userUsecase,

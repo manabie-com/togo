@@ -21,13 +21,13 @@ type (
 	}
 
 	taskUsecase struct {
-		store *sqllite.LiteDB
+		liteDB sqllite.LiteDB
 	}
 )
 
-func NewTaskUsecase(store *sqllite.LiteDB) TaskUsecase {
+func NewTaskUsecase(liteDB sqllite.LiteDB) TaskUsecase {
 	return &taskUsecase{
-		store: store,
+		liteDB: liteDB,
 	}
 }
 
@@ -39,7 +39,7 @@ func (u *taskUsecase) ListTasks(ctx context.Context, req *dto.ListTasksRequestDT
 	if err != nil {
 		return nil, errors.New(common.ReasonDateInvalidFormat.Code())
 	}
-	tasks, err := u.store.RetrieveTasks(ctx, req.UserID, req.CreatedDate)
+	tasks, err := u.liteDB.RetrieveTasks(ctx, req.UserID, req.CreatedDate)
 	if err != nil {
 		log.Printf("retrieve tasks from DB error: %v", err)
 		return nil, errors.New(common.ReasonInternalError.Code())
@@ -71,13 +71,13 @@ func (u *taskUsecase) AddTask(ctx context.Context, req *dto.AddTaskRequestDTO) (
 		return nil, errors.New(common.ReasonInvalidArgument.Code())
 	}
 
-	maxTodo, err := u.store.GetMaxTodo(ctx, req.UserID)
+	maxTodo, err := u.liteDB.GetMaxTodo(ctx, req.UserID)
 	if err != nil {
 		log.Printf("get max todo from DB error: %v\n", err)
 		return nil, errors.New(common.ReasonInternalError.Code())
 	}
 
-	tasks, err := u.store.RetrieveTasks(ctx, req.UserID, time.Now().Format("2006-01-02"))
+	tasks, err := u.liteDB.RetrieveTasks(ctx, req.UserID, time.Now().Format("2006-01-02"))
 	if err != nil {
 		log.Printf("retrieve tasks from DB error: %v\n", err)
 		return nil, errors.New(common.ReasonInternalError.Code())
@@ -95,7 +95,7 @@ func (u *taskUsecase) AddTask(ctx context.Context, req *dto.AddTaskRequestDTO) (
 		CreatedDate: util.ConvertSQLNullString(time.Now().Format("2006-01-02")),
 	}
 
-	err = u.store.AddTask(ctx, addTask)
+	err = u.liteDB.AddTask(ctx, addTask)
 	if err != nil {
 		log.Printf("Add task DB error: %s\n", err)
 		return nil, errors.New(common.ReasonInternalError.Code())

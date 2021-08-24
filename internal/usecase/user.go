@@ -5,18 +5,16 @@ import (
 	"errors"
 	"log"
 	"regexp"
-	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/manabie-com/togo/internal/adapter"
 	"github.com/manabie-com/togo/internal/common"
 	"github.com/manabie-com/togo/internal/dto"
 	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	"github.com/manabie-com/togo/internal/util"
 )
 
 const (
-	jwtPattern      = "^Bearer (\\S*)"
-	jwtClaimsUserID = "user_id"
-	jwtClaimsExp    = "exp"
+	jwtPattern = "^Bearer (\\S*)"
 )
 
 type (
@@ -26,28 +24,16 @@ type (
 	}
 
 	userUsecase struct {
-		JWTKey string
-		store  *sqllite.LiteDB
+		jwtAdapter adapter.JWTAdapter
+		liteDB     sqllite.LiteDB
 	}
 )
 
-func NewLoginUsecase(jwtKey string, store *sqllite.LiteDB) UserUsecase {
+func NewUserUsecase(jwtAdapter adapter.JWTAdapter, liteDB sqllite.LiteDB) UserUsecase {
 	return &userUsecase{
-		JWTKey: jwtKey,
-		store:  store,
+		jwtAdapter: jwtAdapter,
+		liteDB:     liteDB,
 	}
-}
-
-func (u *userUsecase) createToken(id string) (string, error) {
-	atClaims := jwt.MapClaims{}
-	atClaims[jwtClaimsUserID] = id
-	atClaims[jwtClaimsExp] = time.Now().Add(time.Minute * 15).Unix()
-	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
-	token, err := at.SignedString([]byte(u.JWTKey))
-	if err != nil {
-		return "", err
-	}
-	return token, nil
 }
 
 func (u *userUsecase) Login(ctx context.Context, req *dto.LoginRequestDTO) (resp *dto.LoginResponseDTO, err error) {
@@ -55,11 +41,12 @@ func (u *userUsecase) Login(ctx context.Context, req *dto.LoginRequestDTO) (resp
 		return nil, errors.New(common.ReasonUserIDPasswordEmptyError.Code())
 	}
 
-	if !u.store.ValidateUser(ctx, req.UserID, req.Password) {
+	pwdMd5 := util.GetMD5Hash(req.Password)
+	if !u.liteDB.ValidateUser(ctx, req.UserID, pwdMd5) {
 		return nil, errors.New(common.ReasonUnauthorized.Code())
 	}
 
-	token, err := u.createToken(req.UserID)
+	token, err := u.jwtAdapter.CreateToken(ctx, req.UserID)
 	if err != nil {
 		return nil, errors.New(common.ReasonCreateTokenError.Code())
 	}
@@ -82,26 +69,12 @@ func (u *userUsecase) VerifyToken(ctx context.Context, req *dto.VerifyTokenReque
 	}
 	token := string(tokens[1])
 
-	claims := make(jwt.MapClaims)
-	jwtToken, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
-		return []byte(u.JWTKey), nil
-	})
+	userID, err := u.jwtAdapter.VerifyToken(ctx, token)
 	if err != nil {
-		log.Printf("parse with claims error: %v", err)
-		return nil, errors.New(common.ReasonInvalidToken.Code())
+		return nil, err
 	}
 
-	if !jwtToken.Valid {
-		log.Println("jwtToken invalid")
-		return nil, errors.New(common.ReasonInvalidToken.Code())
-	}
-
-	id, ok := claims[jwtClaimsUserID].(string)
-	if !ok {
-		log.Println("claims user id not ok")
-		return nil, errors.New(common.ReasonInvalidToken.Code())
-	}
 	return &dto.VerifyTokenResponseDTO{
-		UserID: id,
+		UserID: userID,
 	}, nil
 }
