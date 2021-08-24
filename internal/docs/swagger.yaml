@@ -1,0 +1,175 @@
+definitions:
+  dtos.ConfigurationDto:
+    properties:
+      capacity:
+        type: integer
+      date:
+        type: string
+      id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  dtos.CreateConfigurationRequest:
+    properties:
+      capacity:
+        type: integer
+      date:
+        type: string
+    type: object
+  dtos.CreateConfigurationResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.ConfigurationDto'
+        type: object
+    type: object
+  dtos.CreateTaskRequest:
+    properties:
+      content:
+        type: string
+    type: object
+  dtos.CreateTaskResponse:
+    properties:
+      data:
+        $ref: '#/definitions/dtos.TaskDto'
+        type: object
+    type: object
+  dtos.GetListTaskResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dtos.TaskDto'
+        type: array
+    type: object
+  dtos.TaskDto:
+    properties:
+      content:
+        type: string
+      created_date:
+        type: string
+      id:
+        type: string
+      user_id:
+        type: string
+    type: object
+  dtos.TokenResponse:
+    properties:
+      data:
+        type: string
+    type: object
+info:
+  contact: {}
+  license: {}
+paths:
+  /configurations:
+    post:
+      consumes:
+      - application/json
+      description: Create New Configuration
+      parameters:
+      - description: Information of CreateConfigurationRequest
+        in: body
+        name: CreateConfigurationRequest
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CreateConfigurationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.CreateConfigurationResponse'
+      summary: Create New Configuration
+      tags:
+      - Configuration
+  /configurations/date:
+    get:
+      consumes:
+      - application/json
+      description: Get Configuration By Date
+      parameters:
+      - description: Current Date
+        in: query
+        name: current_date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.GetListTaskResponse'
+      summary: Get Configuration By Date
+      tags:
+      - Configuration
+  /login:
+    get:
+      consumes:
+      - application/json
+      description: Get Authentication Token
+      parameters:
+      - description: User Id
+        in: query
+        name: user_id
+        required: true
+        type: string
+      - description: Password
+        in: query
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.TokenResponse'
+      summary: Get Authentication Token
+      tags:
+      - User
+  /tasks:
+    get:
+      consumes:
+      - application/json
+      description: Get List Tasks
+      parameters:
+      - description: Created Date
+        in: query
+        name: created_date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.GetListTaskResponse'
+      summary: Get List Tasks
+      tags:
+      - Task
+    post:
+      consumes:
+      - application/json
+      description: Get New Task
+      parameters:
+      - description: Information of CreateTaskRequest
+        in: body
+        name: CreateTaskRequest
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CreateTaskRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.CreateTaskResponse'
+      summary: Create New Task
+      tags:
+      - Task
+swagger: "2.0"
