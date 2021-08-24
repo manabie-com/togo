@@ -17,10 +17,10 @@ Right now a user can add as many tasks as they want, we want the ability to **li
 For example, users are limited to create only 5 tasks only per day, if the daily limit is reached, return 4xx code to the client and ignore the create request.
 
 - [x] User Task Limits
-- [ ] HTTP status codes
+- [x] HTTP status codes
 
 ### Non-functional requirements:
-- [ ] **[A nice README](NOTES.md) on how to run, what is missing, what else you want to improve but don't have enough time**
+- [x] **[A nice README](NOTES.md) on how to run, what is missing, what else you want to improve but don't have enough time**
 - [ ] **Consistency is a MUST**
 - [x] Fork this repo and show us your development progress by a PR
 - [ ] Write integration tests for this project
