@@ -19,10 +19,6 @@ func main() {
 	}
 
 	log.Println("SQL database opened")
-	err = db.Ping()
-	if err != nil {
-		log.Fatal("error pinging db", err)
-	}
 
 	svc := &services.ToDoService{
 		JWTKey: "wqGyEBBfPK9w3Lxw",
@@ -31,8 +27,12 @@ func main() {
 		},
 	}
 
-	log.Println("Database Setup...")
-	// just for fun
+	log.Println("Database Setup & Check...")
+
+	err = db.Ping()
+	if err != nil {
+		log.Fatal("error pinging db", err)
+	}
 	log.Println("Database ping succeeded")
 
 	// update the example user password so that it gets hashed in the DB
