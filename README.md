@@ -12,11 +12,15 @@ There're something that I have done in this test
 
 
 ### Non-completed requirements:
+Because of my limitation of time, so many of requirements below I couldn't complete. 
 - Fork this repo and show us your development progress by a PR. I have just fork your repository and submit pull request then.
-- I have't yet completed testing function. I have not found the best solution for testing with google wire.
+- I haven't yet completed testing function. I have not found the best solution for testing with google wire.
 - Change from using SQLite to Postgres with docker-compose
-
+- Password is being stored as raw text in DB.
 
 ### Running my application
 
 	go run main.go
+	
+- Import postman file: docs/togo_new_api.json, I added 2 APIs for create configuration and get configuration.
+- Call API create configuration firstly to limit task per day
