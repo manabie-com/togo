@@ -17,3 +17,4 @@
 out/
 
 .idea
+internal/storages/sqlite/test-data.db

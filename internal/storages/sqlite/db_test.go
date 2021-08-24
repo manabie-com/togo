@@ -39,16 +39,23 @@ func TestInitTables(t *testing.T) {
 	require.Nil(t, err, "init tables error")
 }
 
+// Test Users
+var (
+	user1 = storages.User{ID: "user1", Password: "password1", MaxTodo: 1}
+	user2 = storages.User{ID: "user2", Password: "password2", MaxTodo: 2}
+	user3 = storages.User{ID: "user3", Password: "password3", MaxTodo: 4}
+)
+
 func TestCreateUsers(t *testing.T) {
 	tests := []struct {
 		testName string
 		user     *storages.User
 		succeed  bool
 	}{
-		{"create user1", &storages.User{ID: "user1", Password: "password1", MaxTodo: 1}, true},
-		{"create user2", &storages.User{ID: "user2", Password: "password2", MaxTodo: 2}, true},
-		{"create user3", &storages.User{ID: "user3", Password: "password3", MaxTodo: 4}, true},
-		{"duplicate user", &storages.User{ID: "user3", Password: "password3", MaxTodo: 5}, false},
+		{"create user1", &user1, true},
+		{"create user2", &user2, true},
+		{"create user3", &user3, true},
+		{"duplicate user", &user3, false},
 	}
 
 	for _, tt := range tests {
@@ -70,10 +77,10 @@ func TestMaxTasks(t *testing.T) {
 		maxTodo  int
 		succeed  bool
 	}{
-		{"test user1 maxTodo = 5", "user1", 1, true},
-		{"test user2 maxTodo = 5", "user2", 2, true},
-		{"test user3 maxTodo = 10", "user3", 4, true},
-		{"test bad user user4", "user4", 0, false},
+		{"test user1", user1.ID, user1.MaxTodo, true},
+		{"test user2", user2.ID, user2.MaxTodo, true},
+		{"test user3", user3.ID, user3.MaxTodo, true},
+		{"test not-exist user", "user4", 0, false},
 	}
 
 	for _, tt := range tests {
@@ -96,13 +103,13 @@ func TestCreateTask(t *testing.T) {
 		task     *storages.Task
 		succeed  bool
 	}{
-		{"create todo 1 (u1, max 1)", &storages.Task{UserID: "user1", CreatedDate: "2021-1-1"}, true},
-		{"create todo 2 (u1, max 1)", &storages.Task{UserID: "user1", CreatedDate: "2021-1-1"}, false},
-		{"create todo 1 (u2, max 2)", &storages.Task{UserID: "user2", CreatedDate: "2021-1-1"}, true},
-		{"create todo 2 (u2, max 2)", &storages.Task{UserID: "user2", CreatedDate: "2021-1-1"}, true},
-		{"create todo 3 (u2, max 2)", &storages.Task{UserID: "user2", CreatedDate: "2021-1-1"}, false},
-		{"create todo 1 (u1, max 1, day 2)", &storages.Task{UserID: "user1", CreatedDate: "2021-1-2"}, true},
-		{"create todo 2 (u1, max 1, day 2)", &storages.Task{UserID: "user1", CreatedDate: "2021-1-2"}, false},
+		{"create todo #1 (u1, max 1)", &storages.Task{UserID: user1.ID, CreatedDate: "2021-1-1"}, true},
+		{"create todo #2 (u1, max 1)", &storages.Task{UserID: user1.ID, CreatedDate: "2021-1-1"}, false},
+		{"create todo #1 (u2, max 2)", &storages.Task{UserID: user2.ID, CreatedDate: "2021-1-1"}, true},
+		{"create todo #2 (u2, max 2)", &storages.Task{UserID: user2.ID, CreatedDate: "2021-1-1"}, true},
+		{"create todo #3 (u2, max 2)", &storages.Task{UserID: user2.ID, CreatedDate: "2021-1-1"}, false},
+		{"create todo #1 (u1, max 1, day 2)", &storages.Task{UserID: user1.ID, CreatedDate: "2021-1-2"}, true},
+		{"create todo #2 (u1, max 1, day 2)", &storages.Task{UserID: user1.ID, CreatedDate: "2021-1-2"}, false},
 	}
 
 	for k, tt := range tests {
