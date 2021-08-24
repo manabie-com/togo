@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/manabie-com/togo/internal/storages"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // LiteDB for working with sqllite
@@ -44,7 +45,7 @@ func (l *LiteDB) InitTables() error {
 }
 
 // RetrieveTasks returns tasks if match userID AND createDate.
-func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*storages.Task, error) {
+func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate string) ([]*storages.Task, error) {
 	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`
 	rows, err := l.DB.QueryContext(ctx, stmt, userID, createdDate)
 	if err != nil {
@@ -91,7 +92,13 @@ func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
 // AddUser adds a new user to DB
 func (l *LiteDB) AddUser(ctx context.Context, user *storages.User) error {
 	stmt := `INSERT INTO users (id, password, max_todo) VALUES (?, ?, ?)`
-	_, err := l.DB.ExecContext(ctx, stmt, user.ID, user.Password, user.MaxTodo)
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	_, err = l.DB.ExecContext(ctx, stmt, user.ID, string(hash), user.MaxTodo)
 	if err != nil {
 		return err
 	}
@@ -132,11 +139,20 @@ func (l *LiteDB) CanUserCreateTodo(ctx context.Context, t *storages.Task) (bool,
 }
 
 // ValidateUser returns tasks if match userID AND password
-func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
-	stmt := `SELECT id FROM users WHERE id = ? AND password = ?`
-	row := l.DB.QueryRowContext(ctx, stmt, userID, pwd)
-	u := &storages.User{}
-	err := row.Scan(&u.ID)
+func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd string) bool {
+	stmt := `SELECT password FROM users WHERE id = ?`
+
+	row := l.DB.QueryRowContext(ctx, stmt, userID)
+
+	var passwordHash string
+	err := row.Scan(&passwordHash)
+	if err != nil {
+		// should return error here
+		fmt.Println(passwordHash, err)
+		return false
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(pwd))
 	if err != nil {
 		return false
 	}

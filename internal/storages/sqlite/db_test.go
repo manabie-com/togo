@@ -126,3 +126,26 @@ func TestCreateTask(t *testing.T) {
 	}
 
 }
+
+func TestValidateUser(t *testing.T) {
+	tests := []struct {
+		testName string
+		id       string
+		password string
+		succeed  bool
+	}{
+		{"validate user1", user1.ID, user1.Password, true},
+		{"validate user2", user2.ID, user2.Password, true},
+		{"validate user3", user3.ID, user3.Password, true},
+		{"validate user1 with wrong password", user1.ID, user1.Password + "asdf", false},
+		{"validate user2 with wrong accounts password", user2.ID, user1.Password, false},
+		{"validate user3 with no password", user3.ID, "", false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.testName, func(t *testing.T) {
+			succeed := store.ValidateUser(context.Background(), tt.id, tt.password)
+			require.Equal(t, tt.succeed, succeed)
+		})
+	}
+}
