@@ -5,8 +5,10 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/manabie-com/togo/internal/adapter"
 	"github.com/manabie-com/togo/internal/services"
 	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	"github.com/manabie-com/togo/internal/usecase"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -16,11 +18,17 @@ func main() {
 	if err != nil {
 		log.Fatal("error opening db", err)
 	}
+	defer db.Close()
 
-	http.ListenAndServe(":5050", &services.ToDoService{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
-			DB: db,
-		},
+	JWTKey := "wqGyEBBfPK9w3Lxw"
+
+	jwtAdapter := adapter.NewJWTAdapter(JWTKey)
+	liteDB := sqllite.NewLiteDB(db)
+	userUsecase := usecase.NewUserUsecase(jwtAdapter, liteDB)
+	taskUsecase := usecase.NewTaskUsecase(liteDB)
+
+	http.ListenAndServe("localhost:5050", &services.ToDoService{
+		UserUsecase: userUsecase,
+		TaskUsecase: taskUsecase,
 	})
 }

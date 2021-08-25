@@ -1,15 +1,18 @@
 package storages
 
+import "database/sql"
+
 // Task reflects tasks in DB
 type Task struct {
-	ID          string `json:"id"`
-	Content     string `json:"content"`
-	UserID      string `json:"user_id"`
-	CreatedDate string `json:"created_date"`
+	ID          sql.NullString
+	Content     sql.NullString
+	UserID      sql.NullString
+	CreatedDate sql.NullString
 }
 
 // User reflects users data from DB
 type User struct {
-	ID       string
-	Password string
+	ID       sql.NullString
+	Password sql.NullString
+	MaxTodo  uint32
 }
