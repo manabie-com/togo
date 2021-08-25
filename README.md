@@ -12,7 +12,7 @@
    * Migration 
  * When those concerns are seperated, we can do api test and unit test easier
 
-##My recommended structure 
+## My recommended structure 
 Inspired by go-clean-arch
 ```
 - cmd #where all cmd file contain
@@ -31,5 +31,5 @@ Inspired by go-clean-arch
     - repository
 - pkg #util class that consume from all above package
 ```
-##Idealy structure flow
+## Idealy structure flow
 ![arch.png](arch.png)
