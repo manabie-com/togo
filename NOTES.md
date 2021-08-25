@@ -11,10 +11,13 @@ Cheers!
 ```bash
     go mod tidy
     
-    # test
-    go test -v ./internal/storages/sqlite/
+
+    # running tests for sqlite and postgres stores
+    docker-compose -f docker-compose-test.yml up # starts test postgres
+    go test -v ./internal/storages
     
-    # running
+    # running the service
+    docker-compose up # starts postgres
     go run main.go
 ```
 
@@ -34,6 +37,8 @@ Cheers!
 - bcrypt hash passwords
 - 400 status code if max_todos reached
 - service no longer imports the sql package
+- implemented postgres store
+- altered storages tests to cover both sqlite and postgres store implementations
 
 ### Things To Fix if I had time
 - service handlers can use CORS and auth via middlewares, perhaps use labstack/echo framework

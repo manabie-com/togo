@@ -1,4 +1,4 @@
-package sqllite
+package sqlite
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// LiteDB for working with sqllite
+// LiteDB for working with sqlite
 type LiteDB struct {
 	DB *sql.DB
 }

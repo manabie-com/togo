@@ -10,6 +10,8 @@ import (
 	"github.com/manabie-com/togo/internal/services"
 	"github.com/manabie-com/togo/internal/storages/postgres"
 
+	// "github.com/manabie-com/togo/internal/storages/sqlite"
+
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -24,7 +26,7 @@ func main() {
 	// 	log.Fatal("error opening db", err)
 	// }
 	// log.Println("SQL database opened")
-	// store := &sqllite.LiteDB{
+	// store := &sqlte.LiteDB{
 	// 	DB: db,
 	// }
 
