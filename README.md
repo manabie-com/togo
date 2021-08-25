@@ -12,8 +12,8 @@
    * Migration 
  * When those concerns are seperated, we can do api test and unit test easier
 
-###My recommended structure 
-####Inspired by go-clean-arch
+##My recommended structure 
+Inspired by go-clean-arch
 ```
 - cmd #where all cmd file contain
     - main # entry point for the app
@@ -31,5 +31,5 @@
     - repository
 - pkg #util class that consume from all above package
 ```
-###Idealy structure flow
-![img.png](img.png)
+##Idealy structure flow
+![arch.png](arch.png)
