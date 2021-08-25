@@ -69,13 +69,13 @@ func createPostgresStore() {
 		DB: db,
 	})
 }
-func printStoreName(store storages.Store) {
-	fmt.Println("Testing Store", reflect.TypeOf(store))
+func storeName(store storages.Store) string {
+	return reflect.TypeOf(store).String()
 }
 
 func TestInitTables(t *testing.T) {
 	for _, store := range stores {
-		printStoreName(store)
+		fmt.Println("Testing store", storeName(store))
 		err := store.InitTables()
 		require.Nil(t, err, "init tables error")
 	}
@@ -101,9 +101,8 @@ func TestCreateUsers(t *testing.T) {
 	}
 
 	for _, store := range stores {
-		printStoreName(store)
 		for _, tt := range tests {
-			t.Run(tt.testName, func(t *testing.T) {
+			t.Run(storeName(store)+"/"+tt.testName, func(t *testing.T) {
 				succeed := true
 				err := store.AddUser(context.Background(), tt.user)
 				if err != nil {
@@ -128,10 +127,8 @@ func TestMaxTasks(t *testing.T) {
 		{"test not-exist user", "user4", 0, false},
 	}
 	for _, store := range stores {
-		printStoreName(store)
-
 		for _, tt := range tests {
-			t.Run(tt.testName, func(t *testing.T) {
+			t.Run(storeName(store)+"/"+tt.testName, func(t *testing.T) {
 				succeed := true
 				maxTodo, err := store.MaxTodo(context.Background(), tt.userID)
 				if err != nil {
@@ -161,10 +158,8 @@ func TestCreateTask(t *testing.T) {
 	}
 
 	for _, store := range stores {
-		printStoreName(store)
-
 		for k, tt := range tests {
-			t.Run(tt.testName, func(t *testing.T) {
+			t.Run(storeName(store)+"/"+tt.testName, func(t *testing.T) {
 				noError := true
 				tt.task.ID = fmt.Sprintf("task-%d", k)
 				tt.task.Content = fmt.Sprintf("content-%d", k)
@@ -195,10 +190,8 @@ func TestValidateUser(t *testing.T) {
 		{"validate user3 with no password", user3.ID, "", false},
 	}
 	for _, store := range stores {
-		printStoreName(store)
-
 		for _, tt := range tests {
-			t.Run(tt.testName, func(t *testing.T) {
+			t.Run(storeName(store)+"/"+tt.testName, func(t *testing.T) {
 				succeed := store.ValidateUser(context.Background(), tt.id, tt.password)
 				require.Equal(t, tt.succeed, succeed)
 			})
@@ -208,7 +201,8 @@ func TestValidateUser(t *testing.T) {
 
 func TestUpdatePassword(t *testing.T) {
 	for _, store := range stores {
-		printStoreName(store)
+		fmt.Println("Testing store", storeName(store))
+
 		err := store.SetUserPassword(context.Background(), user1.ID, user1.Password+"-updated")
 		require.Nil(t, err)
 
