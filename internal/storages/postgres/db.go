@@ -1,4 +1,4 @@
-package sqlite
+package postgres
 
 import (
 	"context"
@@ -9,14 +9,14 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// LiteDB for working with sqlite
-type LiteDB struct {
+// PostgresDB for working with postgres
+type PostgresDB struct {
 	DB *sql.DB
 }
 
 // InitTables creates the tables in the database
 // it is used in tests currently
-func (l *LiteDB) InitTables() error {
+func (l *PostgresDB) InitTables() error {
 
 	stmt := `
 	CREATE TABLE IF NOT EXISTS users (
@@ -43,12 +43,21 @@ func (l *LiteDB) InitTables() error {
 	if err != nil {
 		return err
 	}
+
+	err = l.AddUser(context.Background(), &storages.User{
+		ID:       "firstUser",
+		Password: "Example",
+		MaxTodo:  5,
+	})
+	if err != nil {
+		fmt.Println("Adding firstUser error:", err)
+	}
 	return nil
 }
 
 // RetrieveTasks returns tasks if match userID AND createDate.
-func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate string) ([]*storages.Task, error) {
-	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`
+func (l *PostgresDB) RetrieveTasks(ctx context.Context, userID, createdDate string) ([]*storages.Task, error) {
+	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = $1 AND created_date = $2`
 	rows, err := l.DB.QueryContext(ctx, stmt, userID, createdDate)
 	if err != nil {
 		return nil, err
@@ -75,13 +84,13 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate string) 
 // AddTask adds a new task to DB
 // if an error is returned it is a database error
 // canAdd will be true if the user has created all their daily todos
-func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) (canAdd bool, err error) {
+func (l *PostgresDB) AddTask(ctx context.Context, t *storages.Task) (canAdd bool, err error) {
 	canAdd, err = l.CanUserCreateTodo(ctx, t)
 	if err != nil || !canAdd {
 		return
 	}
 
-	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
+	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES ($1, $2, $3, $4)`
 	_, err = l.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
 	if err != nil {
 		return true, err
@@ -91,9 +100,10 @@ func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) (canAdd bool, er
 }
 
 // AddUser adds a new user to DB
-func (l *LiteDB) AddUser(ctx context.Context, user *storages.User) error {
-	stmt := `INSERT INTO users (id, password, max_todo) VALUES (?, ?, ?)`
+func (l *PostgresDB) AddUser(ctx context.Context, user *storages.User) error {
+	stmt := `INSERT INTO users (id, password, max_todo) VALUES ($1, $2, $3)`
 
+	// hash the password so nobody can get the real password
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
@@ -108,13 +118,13 @@ func (l *LiteDB) AddUser(ctx context.Context, user *storages.User) error {
 }
 
 // SetUserPassword sets the user's password
-func (l *LiteDB) SetUserPassword(ctx context.Context, id, password string) error {
+func (l *PostgresDB) SetUserPassword(ctx context.Context, id, password string) error {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
 
-	stmt := `UPDATE users SET password = ? WHERE id = ?`
+	stmt := `UPDATE users SET password = $1 WHERE id = $2`
 	_, err = l.DB.ExecContext(ctx, stmt, string(hash), id)
 	if err != nil {
 		return err
@@ -124,8 +134,8 @@ func (l *LiteDB) SetUserPassword(ctx context.Context, id, password string) error
 }
 
 // MaxTodo checks the user account for how many max todos it has
-func (l *LiteDB) MaxTodo(ctx context.Context, userID string) (int, error) {
-	stmt := `SELECT max_todo FROM users WHERE id = ?`
+func (l *PostgresDB) MaxTodo(ctx context.Context, userID string) (int, error) {
+	stmt := `SELECT max_todo FROM users WHERE id = $1`
 	row := l.DB.QueryRowContext(ctx, stmt, userID)
 	var maxTodo int
 	err := row.Scan(&maxTodo)
@@ -138,8 +148,8 @@ func (l *LiteDB) MaxTodo(ctx context.Context, userID string) (int, error) {
 
 // CanUserCreateTodo checks if the user can create a todo.
 // this will return false if the user has no more todos left for the day
-func (l *LiteDB) CanUserCreateTodo(ctx context.Context, t *storages.Task) (bool, error) {
-	stmt := `SELECT count(id) FROM tasks where user_id = ? AND created_date = ?`
+func (l *PostgresDB) CanUserCreateTodo(ctx context.Context, t *storages.Task) (bool, error) {
+	stmt := `SELECT count(id) FROM tasks where user_id = $1 AND created_date = $2`
 	row := l.DB.QueryRowContext(ctx, stmt, t.UserID, t.CreatedDate)
 
 	num := 0
@@ -156,8 +166,8 @@ func (l *LiteDB) CanUserCreateTodo(ctx context.Context, t *storages.Task) (bool,
 }
 
 // ValidateUser returns tasks if match userID AND password
-func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd string) bool {
-	stmt := `SELECT password FROM users WHERE id = ?`
+func (l *PostgresDB) ValidateUser(ctx context.Context, userID, pwd string) bool {
+	stmt := `SELECT password FROM users WHERE id = $1`
 
 	row := l.DB.QueryRowContext(ctx, stmt, userID)
 
@@ -170,9 +180,5 @@ func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd string) bool {
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(pwd))
-	if err != nil {
-		return false
-	}
-
-	return true
+	return err == nil
 }

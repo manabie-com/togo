@@ -1,0 +1,8 @@
+test-db:
+    image: postgres
+    restart: always
+    ports:
+        - 65432:5432
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres-test
