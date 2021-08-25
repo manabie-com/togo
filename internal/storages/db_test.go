@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"reflect"
+	"strings"
 	"testing"
 
 	_ "github.com/lib/pq"
@@ -70,7 +71,7 @@ func createPostgresStore() {
 	})
 }
 func storeName(store storages.Store) string {
-	return reflect.TypeOf(store).String()
+	return strings.TrimPrefix(reflect.TypeOf(store).String(), "*")
 }
 
 func TestInitTables(t *testing.T) {
