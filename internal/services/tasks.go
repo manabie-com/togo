@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"time"
@@ -11,13 +12,13 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/storages"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	postgresql "github.com/manabie-com/togo/internal/storages/postgresql"
 )
 
 // ToDoService implement HTTP server
 type ToDoService struct {
 	JWTKey string
-	Store  *sqllite.LiteDB
+	Store  *postgresql.PostGresDB
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
@@ -42,12 +43,16 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 			resp.WriteHeader(http.StatusUnauthorized)
 			return
 		}
-
 		switch req.Method {
 		case http.MethodGet:
 			s.listTasks(resp, req)
 		case http.MethodPost:
-			s.addTask(resp, req)
+			err := s.addTask(resp, req)
+			if err != nil {
+				json.NewEncoder(resp).Encode(map[string]string{
+					"error": err.Error(),
+				})
+			}
 		}
 		return
 	}
@@ -81,7 +86,6 @@ func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	id, _ := userIDFromCtx(req.Context())
 	tasks, err := s.Store.RetrieveTasks(
-		req.Context(),
 		sql.NullString{
 			String: id,
 			Valid:  true,
@@ -104,17 +108,41 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	})
 }
 
-func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
+func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) error {
 	t := &storages.Task{}
 	err := json.NewDecoder(req.Body).Decode(t)
 	defer req.Body.Close()
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
-		return
+		return errors.New("server internal error")
+	}
+	userID, _ := userIDFromCtx(req.Context())
+	maxTodo, err := s.Store.GetMaxTodo(req.Context(), userID)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		return errors.New("server internal error")
+	}
+
+	tasks, err := s.Store.RetrieveTasks(
+		sql.NullString{
+			String: userID,
+			Valid:  true,
+		},
+		sql.NullString{
+			String: time.Now().Format("2006-01-02"),
+			Valid:  true,
+		})
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		return errors.New("server internal error")
+	}
+
+	if len(tasks) == int(maxTodo) {
+		resp.WriteHeader(http.StatusBadRequest)
+		return errors.New("task exceeded limit per day")
 	}
 
 	now := time.Now()
-	userID, _ := userIDFromCtx(req.Context())
 	t.ID = uuid.New().String()
 	t.UserID = userID
 	t.CreatedDate = now.Format("2006-01-02")
@@ -127,12 +155,13 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": err.Error(),
 		})
-		return
+		return errors.New("server internal error")
 	}
 
 	json.NewEncoder(resp).Encode(map[string]*storages.Task{
 		"data": t,
 	})
+	return nil
 }
 
 func value(req *http.Request, p string) sql.NullString {
