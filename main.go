@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/manabie-com/togo/internal/services"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	postgresql "github.com/manabie-com/togo/internal/storages/postgresql"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -19,7 +19,7 @@ func main() {
 
 	http.ListenAndServe(":5050", &services.ToDoService{
 		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
+		Store: &postgresql.PostGresDB{
 			DB: db,
 		},
 	})
