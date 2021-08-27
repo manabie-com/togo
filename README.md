@@ -1,58 +1,26 @@
+## Manabie Togo app
+
 ### Notes
 This is a simple backend for a todo service, right now this service can handle login/list/create simple tasks, to make it run:
-- `go run main.go`
+- `java -jar togo-app-1.0.jar`
 - Import Postman collection from docs to check example
 
-Candidates are invited to implement the below requirements but the point is **NOT to resolve everything perfectly** but selective about what you can do best in a limited time.  
-Thus, **there is no correct-or-perfect answer**, your solutions are a way for us to continue the discussion and collaboration.  
+### Functions I have done 
+- The Togo application is written by Java + Spring framework.
+- The main difference between my version and orginal version is: my app is written by 100% Java, it is nicer, cleaner, the layers are more seperater, easier to maintain, and reuse.
+- Authenticate / Authorization JWT 
+- Add a new JWT filter chain to handle everything about Authenticate / Authorization JWT, and the REST API Controller does not worry any thing about the security (better than the original Golang source code, the security is mixing with the Controller).
+- The /login url is allowed for everyone, but others should authenticated (login first, then make a call later).
+- The user contains the **encrypt** password (not the raw text as the orginal).
+- Is is only support the Postgress connection (server: localhost / port 5432 / username postgres / password 123456), and does not support SQLite.
+- Login request: get username/password, then return the JWT token to user (I sign it by SignatureAlgorithm.HS512, with SecretKey). 
+- List task request: get created date, then return the tasks at created_date (must pass login first, and has Authorization header).
+- Add task request: get content, then if under limit, create a new task and add to database / if over limit, throw HTTP Error 429 Too many request.
+- Some unit tests (but I do not enoush time to finish everything).
+- Fork the orginal repo.
+- The source code is commented, and easy to read and understand.
 
-We're using **Golang** but candidates can use any language (NodeJS/Java/PHP/Python...) **as long as**:  
-- You show us how to run **reliably** - many of us use Ubuntu, some use Mac
-- Your solution is **compatible with our REST interface** and we can use our Postman collection for verifying
-
----
-
-### Functional requirement:
-Right now a user can add as many tasks as they want, we want the ability to **limit N tasks per day**.  
-For example, users are limited to create only 5 tasks only per day, if the daily limit is reached, return 4xx code to the client and ignore the create request.
-
-### Non-functional requirements:
-- [ ] **A nice README on how to run, what is missing, what else you want to improve but don't have enough time**
-- [ ] **Consistency is a MUST**
-- [ ] Fork this repo and show us your development progress by a PR
-- [ ] Write integration tests for this project
-- [ ] Make this code DRY
-- [ ] Write unit test for the services layer
-- [ ] Change from using SQLite to Postgres with docker-compose
-- [ ] This project includes many issues from code to DB structure, feel free to optimize them
-- [ ] Write unit test for storages layer
-- [ ] Split services layer to use case and transport layer
-
-
-#### DB Schema
-```sql
--- users definition
-
-CREATE TABLE users (
-	id TEXT NOT NULL,
-	password TEXT NOT NULL,
-	max_todo INTEGER DEFAULT 5 NOT NULL,
-	CONSTRAINT users_PK PRIMARY KEY (id)
-);
-
-INSERT INTO users (id, password, max_todo) VALUES('firstUser', 'example', 5);
-
--- tasks definition
-
-CREATE TABLE tasks (
-	id TEXT NOT NULL,
-	content TEXT NOT NULL,
-	user_id TEXT NOT NULL,
-    created_date TEXT NOT NULL,
-	CONSTRAINT tasks_PK PRIMARY KEY (id),
-	CONSTRAINT tasks_FK FOREIGN KEY (user_id) REFERENCES users(id)
-);
-```
-
-#### Sequence diagram
-![auth and create tasks request](https://github.com/manabie-com/togo/blob/master/docs/sequence.svg)
+### Functions I do not yet done
+- Not yet finsih do unit tests.
+- Not yet write docker-compose.
+- I think the DB structure contain some small issues, but in practically, it can works, and can solve what I want.
