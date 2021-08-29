@@ -1,3 +1,48 @@
+# See http://help.github.com/ignore-files/ for more about ignoring file.
+
+# compiled output
+/dist
+dist*.*
+!dist*.ts
+/tmp
+/out-tsc
+.env
+/src/assets/upload
+upload/
+.docker/
+
+# dependencies
+/node_modules
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/typings
+
+# System Files
+Icon
+Thumbs.db
+.DS_Store
+*.log
+/log*
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -11,9 +56,4 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-# Dependency directories (remove the comment below to include it)
-# vendor/
-
 out/
-
-.idea

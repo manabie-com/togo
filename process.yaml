@@ -1,0 +1,17 @@
+apps:
+  - script: "./dist/index.js"
+    name: togo-api
+    watch: ["dist"]
+    watch_delay: 1000
+    instances: -1
+    exec_mode: cluster
+    output: './togo-api.log'
+    error: './togo-api.error.log'
+    log: './togo-api.all.log'
+    merge_logs: true
+    env:
+      NODE_ENV: production
+    env_staging:
+      NODE_ENV: staging
+    env_production:
+      NODE_ENV: production
