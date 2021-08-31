@@ -1,5 +1,5 @@
 ### Notes
-This is a simple backend for a todo service, right now this service can handle signup/login/list/create simple tasks:
+This is a simple backend for a todo service, right now this service can handle signup/login/list/create simple tasks
 
 ### Prerequisites
 You have to setup on your machine:
@@ -21,8 +21,10 @@ To make it run:
 
 ### Running tests
 In order to execute test cases, the project has provided integration and unit tests.
+
 Performing integration tests as below:
 - `make test.integration`
+
 Performing unit tests as below:
 - `make test.unit`
 
