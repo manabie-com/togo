@@ -10,6 +10,7 @@ You have to setup on your machine:
 
 Your dependencies have been installed yet? Boot up database first:
 - `make docker.start.components`
+
 In case you want to take database down:
 - `make docker.stop`
 
