@@ -17,3 +17,8 @@
 out/
 
 .idea
+
+.DS_Store
+
+.vscode/
+db/postgre
