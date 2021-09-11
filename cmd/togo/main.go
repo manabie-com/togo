@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/manabie-com/togo/internal/services"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	"github.com/manabie-com/togo/internal/storages/sqlite"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -17,10 +17,8 @@ func main() {
 		log.Fatal("error opening db", err)
 	}
 
-	http.ListenAndServe(":5050", &services.ToDoService{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
-			DB: db,
-		},
-	})
+	liteDB := sqlite.NewLiteDB(db)
+	todoService := services.NewToDoService("wqGyEBBfPK9w3Lxw", liteDB)
+
+	http.ListenAndServe(":5050", todoService)
 }
