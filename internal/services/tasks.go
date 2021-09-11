@@ -73,7 +73,7 @@ func (s *toDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 	isValid, err := s.task.ValidateUser(req.Context(), id, value(req, "password"))
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
+		_ = json.NewEncoder(resp).Encode(map[string]string{
 			"error": err.Error(),
 		})
 		return
@@ -81,7 +81,7 @@ func (s *toDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 
 	if !isValid {
 		resp.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(resp).Encode(map[string]string{
+		_ = json.NewEncoder(resp).Encode(map[string]string{
 			"error": "incorrect user_id/pwd",
 		})
 		return
@@ -92,13 +92,13 @@ func (s *toDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 	token, err := s.createToken(id.String)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
+		_ = json.NewEncoder(resp).Encode(map[string]string{
 			"error": err.Error(),
 		})
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string]string{
+	_ = json.NewEncoder(resp).Encode(map[string]string{
 		"data": token,
 	})
 }
@@ -118,13 +118,13 @@ func (s *toDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
+		_ = json.NewEncoder(resp).Encode(map[string]string{
 			"error": err.Error(),
 		})
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
+	_ = json.NewEncoder(resp).Encode(map[string][]*storages.Task{
 		"data": tasks,
 	})
 }
@@ -155,13 +155,13 @@ func (s *toDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	err = s.task.AddTask(req.Context(), t)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
+		_ = json.NewEncoder(resp).Encode(map[string]string{
 			"error": err.Error(),
 		})
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string]*storages.Task{
+	_ = json.NewEncoder(resp).Encode(map[string]*storages.Task{
 		"data": t,
 	})
 }

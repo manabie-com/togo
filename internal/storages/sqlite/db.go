@@ -59,9 +59,9 @@ func (l *liteDB) AddTask(ctx context.Context, t *storages.Task) error {
 	defer func() {
 		switch err {
 		case nil:
-			tx.Commit()
+			_ = tx.Commit()
 		default:
-			tx.Rollback()
+			_ = tx.Rollback()
 		}
 	}()
 

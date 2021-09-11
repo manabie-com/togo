@@ -28,5 +28,7 @@ func main() {
 	userLimiter := services.NewUserRateLimiter(rate.Every(24 * time.Hour / time.Duration(*requestsPerDay)), int(*requestsPerDay))
 	todoService := services.NewToDoService("wqGyEBBfPK9w3Lxw", liteDB, userLimiter)
 
-	http.ListenAndServe(":5050", todoService)
+	if err := http.ListenAndServe(":5050", todoService); err != nil {
+		log.Fatal(err)
+	}
 }
