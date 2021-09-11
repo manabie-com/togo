@@ -9,8 +9,8 @@ import (
 
 const (
 	sqlValidateUser = `SELECT id FROM users WHERE id = ? AND password = ?`
-	sqlRetrieveTasks = `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`
 	sqlAddTask = `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
+	sqlRetrieveTasks = `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`
 )
 
 // liteDB for working with sqllite
@@ -51,7 +51,22 @@ func (l *liteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.Null
 
 // AddTask adds a new task to db
 func (l *liteDB) AddTask(ctx context.Context, t *storages.Task) error {
-	_, err := l.db.ExecContext(ctx, sqlAddTask, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
+	tx, err := l.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		switch err {
+		case nil:
+			tx.Commit()
+		default:
+			tx.Rollback()
+		}
+	}()
+
+
+	_, err = l.db.ExecContext(ctx, sqlAddTask, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
 	if err != nil {
 		return err
 	}
@@ -60,13 +75,17 @@ func (l *liteDB) AddTask(ctx context.Context, t *storages.Task) error {
 }
 
 // ValidateUser returns tasks if match userID AND password
-func (l *liteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
+func (l *liteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) (bool, error) {
 	row := l.db.QueryRowContext(ctx, sqlValidateUser, userID, pwd)
 	u := &storages.User{}
-	err := row.Scan(&u.ID)
+	err := row.Scan(&u.ID, &u.Password)
 	if err != nil {
-		return false
+		return false, err
 	}
 
-	return true
+	if u.ID == userID.String && u.Password == pwd.String {
+		return true, nil
+	}
+
+	return false, nil
 }

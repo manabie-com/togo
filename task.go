@@ -8,7 +8,7 @@ import (
 )
 
 type TaskService interface {
-	ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool
+	ValidateUser(ctx context.Context, userID, pwd sql.NullString) (bool, error)
 	RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*storages.Task, error)
 	AddTask(ctx context.Context, t *storages.Task) error
 }

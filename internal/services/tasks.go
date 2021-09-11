@@ -65,13 +65,23 @@ func (s *toDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 
 func (s *toDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
 	id := value(req, "user_id")
-	if !s.task.ValidateUser(req.Context(), id, value(req, "password")) {
+	isValid, err := s.task.ValidateUser(req.Context(), id, value(req, "password"))
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	if !isValid {
 		resp.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": "incorrect user_id/pwd",
 		})
 		return
 	}
+
 	resp.Header().Set("Content-Type", "application/json")
 
 	token, err := s.createToken(id.String)
