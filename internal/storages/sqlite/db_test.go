@@ -44,7 +44,7 @@ func TestValidateUser(t *testing.T) {
 				ID:       tc.id,
 				Password: tc.password,
 			}
-			rows := sqlmock.NewRows([]string{"id", "password"}).AddRow(u.ID, password)
+			rows := sqlmock.NewRows([]string{"id"}).AddRow(1)
 			mock.ExpectQuery(regexp.QuoteMeta(sqlValidateUser)).WithArgs(u.ID, u.Password).WillReturnRows(rows)
 
 			liteDB := NewLiteDB(db)

@@ -78,12 +78,12 @@ func (l *liteDB) AddTask(ctx context.Context, t *storages.Task) error {
 func (l *liteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) (bool, error) {
 	row := l.db.QueryRowContext(ctx, sqlValidateUser, userID, pwd)
 	u := &storages.User{}
-	err := row.Scan(&u.ID, &u.Password)
+	err := row.Scan(&u.ID)
 	if err != nil {
 		return false, err
 	}
 
-	if u.ID == userID.String && u.Password == pwd.String {
+	if u.ID == userID.String {
 		return true, nil
 	}
 

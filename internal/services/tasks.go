@@ -43,6 +43,11 @@ func (s *toDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 
 	switch req.URL.Path {
 	case "/login":
+		if req.Method != http.MethodPost {
+			resp.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+
 		s.getAuthToken(resp, req)
 		return
 	case "/tasks":
