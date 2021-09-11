@@ -18,13 +18,15 @@ import (
 // toDoService implement HTTP server
 type toDoService struct {
 	jwtKey string
-	task   togo.TaskService
+	task        togo.TaskService
+	userLimiter togo.UserLimiter
 }
 
-func NewToDoService(jwtKey string, task togo.TaskService) *toDoService {
+func NewToDoService(jwtKey string, task togo.TaskService, userLimiter togo.UserLimiter) *toDoService {
 	return &toDoService{
-		jwtKey: jwtKey,
-		task: task,
+		jwtKey:      jwtKey,
+		task:        task,
+		userLimiter: userLimiter,
 	}
 }
 
@@ -126,6 +128,12 @@ func (s *toDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	t.ID = uuid.New().String()
 	t.UserID = userID
 	t.CreatedDate = now.Format("2006-01-02")
+
+	limiter := s.userLimiter.GetLimiter(userID)
+	if !limiter.Allow() {
+		resp.WriteHeader(http.StatusTooManyRequests)
+		return
+	}
 
 	resp.Header().Set("Content-Type", "application/json")
 
