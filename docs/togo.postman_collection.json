@@ -9,6 +9,15 @@
 			"name": "Login",
 			"event": [
 				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
 					"listen": "test",
 					"script": {
 						"exec": [
@@ -20,26 +29,31 @@
 				}
 			],
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "user_id",
+							"value": "firstUser",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "example",
+							"type": "text"
+						}
+					]
+				},
 				"url": {
-					"raw": "localhost:5050/login?user_id=firstUser&password=example",
+					"raw": "{{host}}:5050/login",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
 					"port": "5050",
 					"path": [
 						"login"
-					],
-					"query": [
-						{
-							"key": "user_id",
-							"value": "firstUser"
-						},
-						{
-							"key": "password",
-							"value": "example"
-						}
 					]
 				}
 			},
@@ -67,9 +81,9 @@
 					}
 				],
 				"url": {
-					"raw": "localhost:5050/tasks?created_date=2020-06-29",
+					"raw": "{{host}}:5050/tasks?created_date=2020-06-29",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
 					"port": "5050",
 					"path": [
@@ -88,6 +102,16 @@
 		{
 			"name": "Create task",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [
 					{
@@ -106,9 +130,9 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5050/tasks",
+					"raw": "{{host}}:5050/tasks",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
 					"port": "5050",
 					"path": [
@@ -117,6 +141,12 @@
 				}
 			},
 			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "localhost"
 		}
 	]
 }
