@@ -1,33 +1,59 @@
 {
 	"info": {
-		"_postman_id": "05327fec-8670-470b-8253-f27686acf809",
+		"_postman_id": "7a577bbf-9c41-4395-b90f-ebe5cff3b0be",
 		"name": "Test togo",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
 			"name": "Login",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"pm.globals.set('token', responseJson.data)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "user_id",
+							"value": "firstUser",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "example",
+							"type": "text"
+						}
+					]
+				},
 				"url": {
-					"raw": "localhost:5050/login?user_id=firstUser&password=example",
+					"raw": "{{host}}:5050/login",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
 					"port": "5050",
 					"path": [
 						"login"
-					],
-					"query": [
-						{
-							"key": "user_id",
-							"value": "firstUser"
-						},
-						{
-							"key": "password",
-							"value": "example"
-						}
 					]
 				}
 			},
@@ -50,14 +76,14 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTM0Mjc4MjEsInVzZXJfaWQiOiJmaXJzdFVzZXIifQ.zJdFGhDFwPcR1-VZyUGmYgNMEDHpNYsttYYvJPcI7h4",
+						"value": "{{token}}",
 						"type": "text"
 					}
 				],
 				"url": {
-					"raw": "localhost:5050/tasks?created_date=2020-06-29",
+					"raw": "{{host}}:5050/tasks?created_date=2020-06-29",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
 					"port": "5050",
 					"path": [
@@ -76,11 +102,21 @@
 		{
 			"name": "Create task",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTM0Mjc4MjEsInVzZXJfaWQiOiJmaXJzdFVzZXIifQ.zJdFGhDFwPcR1-VZyUGmYgNMEDHpNYsttYYvJPcI7h4",
+						"value": "{{token}}",
 						"type": "text"
 					}
 				],
@@ -94,9 +130,9 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5050/tasks",
+					"raw": "{{host}}:5050/tasks",
 					"host": [
-						"localhost"
+						"{{host}}"
 					],
 					"port": "5050",
 					"path": [
@@ -107,5 +143,10 @@
 			"response": []
 		}
 	],
-	"protocolProfileBehavior": {}
+	"variable": [
+		{
+			"key": "host",
+			"value": "localhost"
+		}
+	]
 }

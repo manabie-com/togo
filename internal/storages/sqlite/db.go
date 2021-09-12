@@ -1,4 +1,4 @@
-package sqllite
+package sqlite
 
 import (
 	"context"
@@ -7,15 +7,26 @@ import (
 	"github.com/manabie-com/togo/internal/storages"
 )
 
-// LiteDB for working with sqllite
-type LiteDB struct {
-	DB *sql.DB
+const (
+	sqlValidateUser = `SELECT id FROM users WHERE id = ? AND password = ?`
+	sqlAddTask = `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
+	sqlRetrieveTasks = `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`
+)
+
+// liteDB for working with sqllite
+type liteDB struct {
+	db *sql.DB
+}
+
+func NewLiteDB(db *sql.DB) *liteDB {
+	return &liteDB{
+		db: db,
+	}
 }
 
 // RetrieveTasks returns tasks if match userID AND createDate.
-func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*storages.Task, error) {
-	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`
-	rows, err := l.DB.QueryContext(ctx, stmt, userID, createdDate)
+func (l *liteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*storages.Task, error) {
+	rows, err := l.db.QueryContext(ctx, sqlRetrieveTasks, userID, createdDate)
 	if err != nil {
 		return nil, err
 	}
@@ -38,10 +49,24 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.Null
 	return tasks, nil
 }
 
-// AddTask adds a new task to DB
-func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
-	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
-	_, err := l.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
+// AddTask adds a new task to db
+func (l *liteDB) AddTask(ctx context.Context, t *storages.Task) error {
+	tx, err := l.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		switch err {
+		case nil:
+			_ = tx.Commit()
+		default:
+			_ = tx.Rollback()
+		}
+	}()
+
+
+	_, err = l.db.ExecContext(ctx, sqlAddTask, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
 	if err != nil {
 		return err
 	}
@@ -50,14 +75,17 @@ func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
 }
 
 // ValidateUser returns tasks if match userID AND password
-func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
-	stmt := `SELECT id FROM users WHERE id = ? AND password = ?`
-	row := l.DB.QueryRowContext(ctx, stmt, userID, pwd)
+func (l *liteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) (bool, error) {
+	row := l.db.QueryRowContext(ctx, sqlValidateUser, userID, pwd)
 	u := &storages.User{}
 	err := row.Scan(&u.ID)
 	if err != nil {
-		return false
+		return false, err
 	}
 
-	return true
+	if u.ID == userID.String {
+		return true, nil
+	}
+
+	return false, nil
 }

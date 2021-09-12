@@ -1,0 +1,23 @@
+services:
+  togo:
+    image: quantonganh/togo:master
+    container_name: togo
+    ports:
+      - "5050:5050"
+    volumes:
+      - ./data.db:/data.db
+    healthcheck:
+      test: wget -qO- http://127.0.0.1:5050 || exit 1
+      interval: 1s
+      timeout: 1s
+      retries: 3
+
+  newman:
+    image: postman/newman
+    container_name: newman
+    volumes:
+      - ./docs/togo.postman_collection.json:/togo.postman_collection.json
+    command: run --env-var host=togo /togo.postman_collection.json --reporters cli,json
+    depends_on:
+      togo:
+        condition: service_healthy
