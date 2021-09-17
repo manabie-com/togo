@@ -4,24 +4,24 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"log"
 	"net/http"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/storages"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 )
 
 // ToDoService implement HTTP server
 type ToDoService struct {
 	JWTKey string
-	Store  *sqllite.LiteDB
+	Store  *gorm.DB
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
-	log.Println(req.Method, req.URL.Path)
+	logrus.Info(req.Method, req.URL.Path)
 	resp.Header().Set("Access-Control-Allow-Origin", "*")
 	resp.Header().Set("Access-Control-Allow-Headers", "*")
 	resp.Header().Set("Access-Control-Allow-Methods", "*")
@@ -162,7 +162,7 @@ func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
 		return []byte(s.JWTKey), nil
 	})
 	if err != nil {
-		log.Println(err)
+		logrus.Error(err)
 		return req, false
 	}
 

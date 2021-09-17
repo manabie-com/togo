@@ -1,26 +1,40 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
+	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/manabie-com/togo/internal/services"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	"github.com/manabie-com/togo/pkg/postgresql"
+	"github.com/sirupsen/logrus"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
+// enviroment value
+var (
+	port string
+	dsn  string
+)
+
+func init() {
+	godotenv.Load()
+	port = os.Getenv("PORT")
+	dsn = os.Getenv("DSN")
+}
+
 func main() {
-	db, err := sql.Open("sqlite3", "./data.db")
+	db, err := postgresql.GetInstance(dsn)
 	if err != nil {
-		log.Fatal("error opening db", err)
+		log.Fatal("error to connecting db", err)
 	}
 
-	http.ListenAndServe(":5050", &services.ToDoService{
+	logrus.Infof("server is started at %v", port)
+	logrus.Fatal(http.ListenAndServe(port, &services.ToDoService{
 		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
-			DB: db,
-		},
-	})
+		Store:  db,
+	}))
+
 }
