@@ -30,7 +30,7 @@ CREATE TABLE public.tasks (
     id text NOT NULL,
     content text NOT NULL,
     user_id text NOT NULL,
-    created_date text NOT NULL
+    created_date timestamp without time zone
 );
 
 

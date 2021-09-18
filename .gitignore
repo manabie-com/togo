@@ -20,3 +20,6 @@ out/
 
 # docker
 volumes/
+
+# vscode
+.vscode

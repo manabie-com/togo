@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "05327fec-8670-470b-8253-f27686acf809",
+		"_postman_id": "6969bd24-7476-4cb1-b43e-cc5671535257",
 		"name": "Test togo",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -8,26 +8,25 @@
 		{
 			"name": "Login",
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"firstUser\",\n    \"password\": \"example\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "localhost:5050/login?user_id=firstUser&password=example",
+					"raw": "localhost:5050/login",
 					"host": [
 						"localhost"
 					],
 					"port": "5050",
 					"path": [
 						"login"
-					],
-					"query": [
-						{
-							"key": "user_id",
-							"value": "firstUser"
-						},
-						{
-							"key": "password",
-							"value": "example"
-						}
 					]
 				}
 			},
@@ -50,12 +49,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTM0Mjc4MjEsInVzZXJfaWQiOiJmaXJzdFVzZXIifQ.zJdFGhDFwPcR1-VZyUGmYgNMEDHpNYsttYYvJPcI7h4",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MzE5NTg5MDUsInVzZXJJZCI6ImZpcnN0VXNlciJ9.8_p7UW_ZdMefHk4me-xKFqFnU1pS8NQuEJGb5taGsUw",
 						"type": "text"
 					}
 				],
 				"url": {
-					"raw": "localhost:5050/tasks?created_date=2020-06-29",
+					"raw": "localhost:5050/tasks?created_date=2021-09-18",
 					"host": [
 						"localhost"
 					],
@@ -66,7 +65,7 @@
 					"query": [
 						{
 							"key": "created_date",
-							"value": "2020-06-29"
+							"value": "2021-09-18"
 						}
 					]
 				}
@@ -76,11 +75,14 @@
 		{
 			"name": "Create task",
 			"request": {
+				"auth": {
+					"type": "noauth"
+				},
 				"method": "POST",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTM0Mjc4MjEsInVzZXJfaWQiOiJmaXJzdFVzZXIifQ.zJdFGhDFwPcR1-VZyUGmYgNMEDHpNYsttYYvJPcI7h4",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MzE5NTc3MjMsInVzZXJJZCI6ImZpcnN0VXNlciJ9.1Bl2y0qjIR9UQW7H1OxHJZzJ-7V9NUcZ0qBfvYAiI_M",
 						"type": "text"
 					}
 				],
@@ -106,6 +108,5 @@
 			},
 			"response": []
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }

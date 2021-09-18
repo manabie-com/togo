@@ -9,8 +9,5 @@ init-env:
 	# install dbmate
 	@brew install dbmate
 
-setup-db:
-	@export DATABASE_URL="postgres://postgres:postgres@localhost:5434/togo_postgres?sslmode=disable"
-	@dbmate -d ./db/init up
 dev:
 	@go run main.go

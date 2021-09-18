@@ -1,13 +1,16 @@
 package services
 
 import (
-	"encoding/json"
-	"net/http"
+	"context"
+	"errors"
 
+	"github.com/manabie-com/togo/internal/models"
 	"github.com/manabie-com/togo/internal/repositories"
+	httpPkg "github.com/manabie-com/togo/pkg/http"
 )
 
 type UserService interface {
+	GetAuthToken(ctx context.Context, user models.User) (string, error)
 }
 
 type userService struct {
@@ -20,27 +23,18 @@ func newUserService(repo *repositories.Repository) UserService {
 	}
 }
 
-func (s *userService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
-	id := value(req, "user_id")
-	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
-		resp.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "incorrect user_id/pwd",
-		})
-		return
-	}
-	resp.Header().Set("Content-Type", "application/json")
-
-	token, err := s.createToken(id.String)
+func (s *userService) GetAuthToken(ctx context.Context, userReq models.User) (string, error) {
+	user, err := s.repo.UserRepository.ValidateUser(ctx, userReq.ID)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
+		return "", err
+	}
+	if userReq.Password != user.Password {
+		return "", errors.New("password is wrong")
 	}
 
-	json.NewEncoder(resp).Encode(map[string]string{
-		"data": token,
-	})
+	token, err := httpPkg.CreateToken(user.ID)
+	if err != nil {
+		return "", err
+	}
+	return token, nil
 }

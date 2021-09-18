@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/manabie-com/togo/internal/services"
+	"github.com/manabie-com/togo/internal/routers"
 	"github.com/manabie-com/togo/pkg/postgresql"
 	"github.com/sirupsen/logrus"
 
@@ -31,10 +31,14 @@ func main() {
 		log.Fatal("error to connecting db", err)
 	}
 
-	logrus.Infof("server is started at %v", port)
-	logrus.Fatal(http.ListenAndServe(port, &services.ToDoService{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store:  db,
-	}))
+	routersInit := routers.InitRouter(db)
+	server := &http.Server{
+		Addr:    port,
+		Handler: routersInit,
+	}
+
+	logrus.Infof("server start http server listening %v", port)
+
+	server.ListenAndServe()
 
 }
