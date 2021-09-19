@@ -2,11 +2,12 @@ package services
 
 import (
 	"context"
-	"errors"
+	"net/http"
 	"time"
 
 	"github.com/manabie-com/togo/internal/models"
 	"github.com/manabie-com/togo/internal/repositories"
+	errPkg "github.com/manabie-com/togo/pkg/errors"
 	httpPkg "github.com/manabie-com/togo/pkg/http"
 	"github.com/manabie-com/togo/pkg/txmanager"
 )
@@ -31,11 +32,11 @@ func newTaskService(repo *repositories.Repository, tx txmanager.TransactionManag
 func (s *taskService) ListTasks(ctx context.Context, createdDate time.Time) ([]models.Task, error) {
 	userID, ok := ctx.Value(httpPkg.UserIDKey).(string)
 	if !ok || userID == "" {
-		return nil, errors.New("not authorize")
+		return nil, errPkg.NewCustomError("forbidden", http.StatusForbidden)
 	}
 	tasks, err := s.repo.TaskRepository.ListTasks(ctx, userID, createdDate)
 	if err != nil {
-		return nil, err
+		return nil, errPkg.NewCustomError("failed to list tasks", http.StatusInternalServerError)
 	}
 	return tasks, nil
 }
@@ -43,7 +44,7 @@ func (s *taskService) ListTasks(ctx context.Context, createdDate time.Time) ([]m
 func (s *taskService) AddTask(ctx context.Context, task *models.Task) (*models.Task, error) {
 	userID, ok := ctx.Value(httpPkg.UserIDKey).(string)
 	if !ok || userID == "" {
-		return nil, errors.New("not authorize")
+		return nil, errPkg.NewCustomError("forbidden", http.StatusForbidden)
 	}
 	task.UserID = userID
 	var (
@@ -61,15 +62,15 @@ func (s *taskService) AddTask(ctx context.Context, task *models.Task) (*models.T
 
 	taskID, err = s.repo.TaskRepository.AddTask(ctx, *task)
 	if err != nil {
-		return nil, err
+		return nil, errPkg.NewCustomError("failed to add task", http.StatusInternalServerError)
 	}
 	if taskID == "" {
-		return nil, errors.New("limit 5 tasks per day")
+		return nil, errPkg.NewCustomError("limit 5 tasks per day", http.StatusTooManyRequests)
 	}
 
 	resp, err = s.repo.TaskRepository.GetTask(ctx, taskID)
 	if err != nil {
-		return nil, err
+		return nil, errPkg.NewCustomError("failed to get task", http.StatusInternalServerError)
 	}
 
 	return resp, nil

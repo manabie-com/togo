@@ -2,10 +2,11 @@ package services
 
 import (
 	"context"
-	"errors"
+	"net/http"
 
 	"github.com/manabie-com/togo/internal/models"
 	"github.com/manabie-com/togo/internal/repositories"
+	errPkg "github.com/manabie-com/togo/pkg/errors"
 	httpPkg "github.com/manabie-com/togo/pkg/http"
 )
 
@@ -26,15 +27,15 @@ func newUserService(repo *repositories.Repository) UserService {
 func (s *userService) GetAuthToken(ctx context.Context, userReq models.User) (string, error) {
 	user, err := s.repo.UserRepository.ValidateUser(ctx, userReq.ID)
 	if err != nil {
-		return "", err
+		return "", errPkg.NewCustomError("failed to validate user", http.StatusInternalServerError)
 	}
 	if userReq.Password != user.Password {
-		return "", errors.New("password is wrong")
+		return "", errPkg.NewCustomError("password is wrong", http.StatusInternalServerError)
 	}
 
 	token, err := httpPkg.CreateToken(user.ID)
 	if err != nil {
-		return "", err
+		return "", errPkg.NewCustomError("failed to create token", http.StatusInternalServerError)
 	}
 	return token, nil
 }

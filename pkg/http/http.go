@@ -21,6 +21,7 @@ func EncodeJSONResponse(ctx context.Context, resW http.ResponseWriter, res inter
 		resW.WriteHeader(code)
 		return json.NewEncoder(resW).Encode(map[string]interface{}{
 			"message": err.Error(),
+			"code":    code,
 		})
 	}
 
