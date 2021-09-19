@@ -5,11 +5,10 @@ import (
 	"errors"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/models"
 	"github.com/manabie-com/togo/internal/repositories"
 	httpPkg "github.com/manabie-com/togo/pkg/http"
-	"github.com/manabie-com/togo/pkg/transactional"
+	"github.com/manabie-com/togo/pkg/txmanager"
 )
 
 type TaskService interface {
@@ -18,14 +17,14 @@ type TaskService interface {
 }
 
 type taskService struct {
-	db   transactional.DB
 	repo *repositories.Repository
+	tx   txmanager.TransactionManager
 }
 
-func newTaskService(repo *repositories.Repository, db transactional.DB) TaskService {
+func newTaskService(repo *repositories.Repository, tx txmanager.TransactionManager) TaskService {
 	return &taskService{
-		db:   db,
-		repo: repo,
+		repo,
+		tx,
 	}
 }
 
@@ -46,22 +45,30 @@ func (s *taskService) AddTask(ctx context.Context, task *models.Task) (*models.T
 	if !ok || userID == "" {
 		return nil, errors.New("not authorize")
 	}
-	task.ID = uuid.New().String()
 	task.UserID = userID
-	task.CreatedDate = time.Now()
-	var resp *models.Task
+	var (
+		resp   *models.Task
+		taskID string
+		err    error
+	)
+	//
+	tx := s.tx.Begin(ctx)
+	ctx = tx.InjectTransaction(ctx)
+	defer func() {
+		tx.End(ctx, err)
+	}()
+	defer tx.Recover(ctx)
 
-	if err := transactional.WithTx(ctx, s.db, func(ctx context.Context) (err error) {
-		err = s.repo.TaskRepository.AddTask(ctx, *task)
-		if err != nil {
-			return err
-		}
-		resp, err = s.repo.TaskRepository.GetTask(ctx, task.ID)
-		if err != nil {
-			return err
-		}
-		return nil
-	}); err != nil {
+	taskID, err = s.repo.TaskRepository.AddTask(ctx, *task)
+	if err != nil {
+		return nil, err
+	}
+	if taskID == "" {
+		return nil, errors.New("limit 5 tasks per day")
+	}
+
+	resp, err = s.repo.TaskRepository.GetTask(ctx, taskID)
+	if err != nil {
 		return nil, err
 	}
 

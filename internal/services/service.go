@@ -1,10 +1,8 @@
 package services
 
 import (
-	"database/sql"
-
 	"github.com/manabie-com/togo/internal/repositories"
-	"github.com/manabie-com/togo/pkg/transactional"
+	"github.com/manabie-com/togo/pkg/txmanager"
 )
 
 type Service struct {
@@ -13,10 +11,9 @@ type Service struct {
 }
 
 // InitServiceFactory initialize services factory
-func InitServiceFactory(db *sql.DB, repo *repositories.Repository) *Service {
-	_db := transactional.NewDB(db)
+func InitServiceFactory(repo *repositories.Repository, tx txmanager.TransactionManager) *Service {
 	return &Service{
-		TaskService: newTaskService(repo, _db),
+		TaskService: newTaskService(repo, tx),
 		UserService: newUserService(repo),
 	}
 }

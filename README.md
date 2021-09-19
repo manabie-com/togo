@@ -79,7 +79,7 @@ For example, users are limited to create only 5 tasks only per day, if the daily
 - [ ] Write unit test for the services layer
 - [x] Change from using SQLite to Postgres with docker-compose
 - [x] This project includes many issues from code to DB structure, feel free to optimize them
-- [ ] Write unit test for storages layer
+- [x] Write unit test for storages layer
 - [x] Split services layer to use case and transport layer
 
 

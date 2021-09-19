@@ -10,6 +10,7 @@ import (
 	endpoints "github.com/manabie-com/togo/internal/routers/endpoints"
 	"github.com/manabie-com/togo/internal/services"
 	httpPkg "github.com/manabie-com/togo/pkg/http"
+	"github.com/manabie-com/togo/pkg/txmanager"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
@@ -22,13 +23,10 @@ type router struct {
 func InitRouter(db *gorm.DB) http.Handler {
 	// Initialize repository
 	repo := repositories.InitRepositoryFactory(db)
-	// Initialize service
 
-	sqlDB, err := db.DB()
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	services := services.InitServiceFactory(sqlDB, repo)
+	tx := txmanager.NewTransactionManager(db)
+	// Initialize service
+	services := services.InitServiceFactory(repo, tx)
 	// Initialize endpoints
 	endpoint := endpoints.Endpoints{
 		User: endpoints.UserEndpoint{
