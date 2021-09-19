@@ -17,3 +17,9 @@
 out/
 
 .idea
+
+# docker
+volumes/
+
+# vscode
+.vscode
