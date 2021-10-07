@@ -1,0 +1,8 @@
+postgres:
+  host: localhost
+  port: 5432
+  username: admin
+  password: admin
+  database: todoApp
+  ssl_mode: disable
+  time_zone: Asia/Ho_Chi_Minh
