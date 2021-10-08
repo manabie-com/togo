@@ -3,6 +3,7 @@ module github.com/cuongtop4598/togo-interview/togo
 go 1.16
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/google/uuid v1.3.0
 	github.com/jinzhu/now v1.1.2
