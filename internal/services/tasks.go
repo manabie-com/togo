@@ -162,6 +162,8 @@ func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
 	if strings.Contains(rawToken, tokenSchema) {
 		splitToken := strings.Split(rawToken, " ")
 		token = splitToken[1]
+	} else {
+		token = rawToken
 	}
 
 	claims := make(jwt.MapClaims)
