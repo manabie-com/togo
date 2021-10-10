@@ -4,8 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -26,6 +28,7 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Access-Control-Allow-Headers", "*")
 	resp.Header().Set("Access-Control-Allow-Methods", "*")
 
+	
 	if req.Method == http.MethodOptions {
 		resp.WriteHeader(http.StatusOK)
 		return
@@ -148,6 +151,7 @@ func (s *ToDoService) createToken(id string) (string, error) {
 	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	token, err := at.SignedString([]byte(s.JWTKey))
+	fmt.Println("token", token)
 	if err != nil {
 		return "", err
 	}
@@ -155,7 +159,13 @@ func (s *ToDoService) createToken(id string) (string, error) {
 }
 
 func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
-	token := req.Header.Get("Authorization")
+	tokenSchema := "Bearer"
+	rawToken := req.Header.Get("Authorization")
+	token := ""
+	if strings.Contains(rawToken, tokenSchema){
+		splitToken := strings.Split(rawToken, " ")
+		token = splitToken[1]
+	} 
 
 	claims := make(jwt.MapClaims)
 	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {

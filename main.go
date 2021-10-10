@@ -11,13 +11,18 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+const (
+	host = "localhost"
+	port = ":5050"
+)
+
 func main() {
 	db, err := sql.Open("sqlite3", "./data.db")
 	if err != nil {
 		log.Fatal("error opening db", err)
 	}
-
-	http.ListenAndServe(":5050", &services.ToDoService{
+	log.Printf("Listening and serving in %s%s", host, port)
+	http.ListenAndServe(port, &services.ToDoService{
 		JWTKey: "wqGyEBBfPK9w3Lxw",
 		Store: &sqllite.LiteDB{
 			DB: db,
