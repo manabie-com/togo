@@ -1,4 +1,4 @@
-module github.com/manabie-com/togo
+module github.com/jericogantuangco/togo
 
 go 1.14
 
