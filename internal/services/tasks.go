@@ -19,6 +19,7 @@ import (
 type ToDoService struct {
 	JWTKey string
 	Store  *sqllite.LiteDB
+	MaxTasksPerDay int 
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
@@ -121,8 +122,7 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	t.CreatedDate = now.Format("2006-01-02")
 
 	resp.Header().Set("Content-Type", "application/json")
-
-	err = s.Store.AddTask(req.Context(), t)
+	tasks, err := s.Store.RetrieveTasksNoReqParam(req.Context(), t)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
@@ -130,7 +130,19 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 		})
 		return
 	}
-
+	if len(tasks) >= s.MaxTasksPerDay {
+		resp.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	} else {
+		err = s.Store.AddTask(req.Context(), t)
+		if err != nil {
+			resp.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(resp).Encode(map[string]string{
+				"error": err.Error(),
+			})
+			return
+		}
+	}
 	json.NewEncoder(resp).Encode(map[string]*storages.Task{
 		"data": t,
 	})

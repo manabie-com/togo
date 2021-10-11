@@ -20,7 +20,22 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.Null
 		return nil, err
 	}
 	defer rows.Close()
+	tasks, err := l.iterateRows(rows)
+	return tasks, err
+}
 
+func (l *LiteDB) RetrieveTasksNoReqParam(ctx context.Context, t *storages.Task)  ([]*storages.Task, error) { 
+	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`
+	rows, err := l.DB.QueryContext(ctx, stmt, &t.UserID, &t.CreatedDate)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	tasks, err := l.iterateRows(rows)
+	return tasks, err
+}
+
+func (l *LiteDB) iterateRows( rows *sql.Rows ) ([]*storages.Task, error) {
 	var tasks []*storages.Task
 	for rows.Next() {
 		t := &storages.Task{}
@@ -30,11 +45,9 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.Null
 		}
 		tasks = append(tasks, t)
 	}
-
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
-
 	return tasks, nil
 }
 

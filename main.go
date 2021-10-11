@@ -27,5 +27,6 @@ func main() {
 		Store: &sqllite.LiteDB{
 			DB: db,
 		},
+		MaxTasksPerDay: 5,
 	})
 }
