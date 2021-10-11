@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/manabie-com/togo/internal/storages"
+	"github.com/cuongtop4598/togo-interview/togo/internal/storages"
 )
 
 // LiteDB for working with sqllite

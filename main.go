@@ -1,26 +1,27 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
 
-	"github.com/manabie-com/togo/internal/services"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
-
-	_ "github.com/mattn/go-sqlite3"
+	"github.com/cuongtop4598/togo-interview/togo/internal/helper"
+	"github.com/cuongtop4598/togo-interview/togo/internal/services"
+	"github.com/cuongtop4598/togo-interview/togo/internal/storages/postgres"
 )
 
 func main() {
-	db, err := sql.Open("sqlite3", "./data.db")
+	err := helper.AutoBindConfig("./internal/storages/postgres/config.yml")
 	if err != nil {
-		log.Fatal("error opening db", err)
+		panic(err)
 	}
-
-	http.ListenAndServe(":5050", &services.ToDoService{
+	db, err := postgres.NewDBManager()
+	if err != nil {
+		panic(err)
+	}
+	log.Println("listion and serve on :5510")
+	http.ListenAndServe(":5510", &services.ToDoService{
 		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
-			DB: db,
-		},
+		Store:  db.(*postgres.DBmanager),
 	})
+
 }

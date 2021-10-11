@@ -8,16 +8,16 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/cuongtop4598/togo-interview/togo/internal/helper"
+	"github.com/cuongtop4598/togo-interview/togo/internal/storages"
+	"github.com/cuongtop4598/togo-interview/togo/internal/storages/postgres"
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/google/uuid"
-	"github.com/manabie-com/togo/internal/storages"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 )
 
 // ToDoService implement HTTP server
 type ToDoService struct {
 	JWTKey string
-	Store  *sqllite.LiteDB
+	Store  *postgres.DBmanager
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
@@ -72,10 +72,11 @@ func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 		})
 		return
 	}
-
+	resp.Header().Set("Authorization", token)
 	json.NewEncoder(resp).Encode(map[string]string{
 		"data": token,
 	})
+
 }
 
 func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
@@ -102,6 +103,7 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
 		"data": tasks,
 	})
+
 }
 
 func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
@@ -115,7 +117,6 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 
 	now := time.Now()
 	userID, _ := userIDFromCtx(req.Context())
-	t.ID = uuid.New().String()
 	t.UserID = userID
 	t.CreatedDate = now.Format("2006-01-02")
 
@@ -123,10 +124,18 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 
 	err = s.Store.AddTask(req.Context(), t)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
+		if err == helper.ErrExceedMaxTaskPerDay {
+			resp.WriteHeader(http.StatusMethodNotAllowed)
+			json.NewEncoder(resp).Encode(map[string]string{
+				"error": err.Error(),
+			})
+		} else {
+			resp.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(resp).Encode(map[string]string{
+				"error": err.Error(),
+			})
+		}
+
 		return
 	}
 
@@ -156,7 +165,6 @@ func (s *ToDoService) createToken(id string) (string, error) {
 
 func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
 	token := req.Header.Get("Authorization")
-
 	claims := make(jwt.MapClaims)
 	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
 		return []byte(s.JWTKey), nil
