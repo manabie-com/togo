@@ -105,23 +105,24 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
-	t := &storages.Task{}
-	err := json.NewDecoder(req.Body).Decode(t)
-	defer req.Body.Close()
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	resp.Header().Set("Content-Type", "application/json")
 
 	now := time.Now()
 	userID, _ := userIDFromCtx(req.Context())
-	t.ID = uuid.New().String()
-	t.UserID = userID
-	t.CreatedDate = now.Format("2006-01-02")
+	date := now.Format("2006-01-02")
 
-	resp.Header().Set("Content-Type", "application/json")
-
-	err = s.Store.AddTask(req.Context(), t)
+	// Check number of existing tasks by user today
+	tCount, err := s.Store.CountTasks(
+		req.Context(),
+		sql.NullString{
+			String: userID,
+			Valid:  true,
+		},
+		sql.NullString{
+			String: date,
+			Valid:  true,
+		},
+	)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
@@ -130,9 +131,59 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string]*storages.Task{
-		"data": t,
-	})
+	// Query task count limit of the user
+	mCount, err := s.Store.RetrieveUserTaskLimit(
+		req.Context(),
+		sql.NullString{
+			String: userID,
+			Valid:  true,
+		},
+	)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	// Return status 400 if task count limit is already met
+	if tCount >= mCount {
+		resp.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": "Task count limit exceeded.",
+		})
+	}
+
+	// Insert task into database
+	if tCount <= mCount {
+		t := &storages.Task{}
+		err = json.NewDecoder(req.Body).Decode(t)
+		defer req.Body.Close()
+		if err != nil {
+			resp.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		t.ID = uuid.New().String()
+		t.UserID = userID
+		t.CreatedDate = date
+
+		err = s.Store.AddTask(req.Context(), t)
+		if err != nil {
+			resp.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(resp).Encode(map[string]string{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		// Return data into the API response
+		json.NewEncoder(resp).Encode(map[string]*storages.Task{
+			"data": t,
+		})
+		return
+	}
 }
 
 func value(req *http.Request, p string) sql.NullString {

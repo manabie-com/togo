@@ -12,6 +12,17 @@ type LiteDB struct {
 	DB *sql.DB
 }
 
+// RetrieveUserTaskLimit returns max number of tasks that can be created if match ID.
+func (l *LiteDB) RetrieveUserTaskLimit(ctx context.Context, userID sql.NullString) (int, error) {
+	stmt := `SELECT max_todo FROM users WHERE id = ?`
+	row := l.DB.QueryRowContext(ctx, stmt, userID)
+
+	var taskCount int
+	err := row.Scan(&taskCount)
+
+	return taskCount, err
+}
+
 // RetrieveTasks returns tasks if match userID AND createDate.
 func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*storages.Task, error) {
 	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`
@@ -28,6 +39,7 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.Null
 		if err != nil {
 			return nil, err
 		}
+
 		tasks = append(tasks, t)
 	}
 
@@ -36,6 +48,17 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.Null
 	}
 
 	return tasks, nil
+}
+
+// CountTasks returns total number of tasks if match userID AND createDate.
+func (l *LiteDB) CountTasks(ctx context.Context, userID, createdDate sql.NullString) (int, error) {
+	stmt := `SELECT COUNT(*) FROM tasks WHERE user_id = ? AND created_date = ?`
+	row := l.DB.QueryRowContext(ctx, stmt, userID, createdDate)
+
+	var taskCount int
+	err := row.Scan(&taskCount)
+
+	return taskCount, err
 }
 
 // AddTask adds a new task to DB
