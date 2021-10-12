@@ -9,9 +9,9 @@ import (
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/dhoycenaomi/togo/internal/storages"
-	sqllite "github.com/dhoycenaomi/togo/internal/storages/sqlite"
 	"github.com/google/uuid"
+	"github.com/manabie-com/togo/internal/storages"
+	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 )
 
 // ToDoService implements HTTP server
