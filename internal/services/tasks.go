@@ -14,12 +14,13 @@ import (
 	"github.com/google/uuid"
 )
 
-// ToDoService implement HTTP server
+// ToDoService implements HTTP server
 type ToDoService struct {
 	JWTKey string
 	Store  *sqllite.LiteDB
 }
 
+// ServeHTTP listens to calls and executes corresponding action
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	log.Println(req.Method, req.URL.Path)
 	resp.Header().Set("Access-Control-Allow-Origin", "*")
@@ -27,10 +28,7 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Access-Control-Allow-Methods", "*")
 
 	if req.Method == http.MethodOptions {
-		sendOKResponse(
-			resp,
-			nil,
-		)
+		sendOKResponse(resp, nil)
 		return
 	}
 
@@ -42,11 +40,7 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		var ok bool
 		req, ok = s.validToken(req)
 		if !ok {
-			sendCodeResponse(
-				resp,
-				http.StatusUnauthorized,
-				nil,
-			)
+			sendCodeResponse(resp, http.StatusUnauthorized, nil)
 			return
 		}
 
@@ -60,15 +54,14 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	}
 }
 
+// getAuthToken generates token for validated user credentials
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
 	id := value(req, "user_id")
 	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
 		sendCodeResponse(
 			resp,
 			http.StatusUnauthorized,
-			map[string]string{
-				"error": "incorrect user_id/pwd",
-			},
+			map[string]string{"error": "incorrect user_id/pwd"},
 		)
 		return
 	}
@@ -78,21 +71,18 @@ func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 		sendCodeResponse(
 			resp,
 			http.StatusInternalServerError,
-			map[string]string{
-				"error": err.Error(),
-			},
+			map[string]string{"error": err.Error()},
 		)
 		return
 	}
 
 	sendOKResponse(
 		resp,
-		map[string]string{
-			"data": token,
-		},
+		map[string]string{"data": token},
 	)
 }
 
+// listTasks returns all tasks under a user on a specified date
 func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	id, _ := userIDFromCtx(req.Context())
 	tasks, err := s.Store.RetrieveTasks(
@@ -115,12 +105,11 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 
 	sendOKResponse(
 		resp,
-		map[string][]*storages.Task{
-			"data": tasks,
-		},
+		map[string][]*storages.Task{"data": tasks},
 	)
 }
 
+// addTask adds provided task for the current date
 func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Content-Type", "application/json")
 
@@ -206,14 +195,13 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 		// Return data into the API response
 		sendOKResponse(
 			resp,
-			map[string]*storages.Task{
-				"data": t,
-			},
+			map[string]*storages.Task{"data": t},
 		)
 		return
 	}
 }
 
+// value converts a string into a SQL Null String
 func value(req *http.Request, p string) sql.NullString {
 	return sql.NullString{
 		String: req.FormValue(p),
@@ -221,6 +209,7 @@ func value(req *http.Request, p string) sql.NullString {
 	}
 }
 
+// createToken generates a token for the user
 func (s *ToDoService) createToken(id string) (string, error) {
 	atClaims := jwt.MapClaims{}
 	atClaims["user_id"] = id
@@ -233,6 +222,7 @@ func (s *ToDoService) createToken(id string) (string, error) {
 	return token, nil
 }
 
+// validToken checks whether a given token is valid
 func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
 	token := req.Header.Get("Authorization")
 
@@ -260,6 +250,7 @@ func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
 
 type userAuthKey int8
 
+// userIDFromCtx retrieves the userID from the request
 func userIDFromCtx(ctx context.Context) (string, bool) {
 	v := ctx.Value(userAuthKey(0))
 	id, ok := v.(string)
