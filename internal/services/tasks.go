@@ -111,15 +111,58 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 
 // addTask adds provided task for the current date
 func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
-	resp.Header().Set("Content-Type", "application/json")
-
 	now := time.Now()
 	userID, _ := userIDFromCtx(req.Context())
 	date := now.Format("2006-01-02")
 
+	// Return status 400 if task count limit is already met
+	if !s.addTaskAllowed(req.Context(), resp, userID, date) {
+		sendCodeResponse(
+			resp,
+			http.StatusBadRequest,
+			map[string]string{"error": "Task count limit exceeded."},
+		)
+		return
+	}
+
+	t := &storages.Task{}
+	err := json.NewDecoder(req.Body).Decode(t)
+	defer req.Body.Close()
+	if err != nil {
+		sendCodeResponse(
+			resp,
+			http.StatusInternalServerError,
+			map[string]string{"error": err.Error()},
+		)
+		return
+	}
+
+	t.ID = uuid.New().String()
+	t.UserID = userID
+	t.CreatedDate = date
+
+	err = s.Store.AddTask(req.Context(), t)
+	if err != nil {
+		sendCodeResponse(
+			resp,
+			http.StatusInternalServerError,
+			map[string]string{"error": err.Error()},
+		)
+		return
+	}
+
+	// Return data into the API response
+	sendOKResponse(
+		resp,
+		map[string]*storages.Task{"data": t},
+	)
+}
+
+// addTaskAllowed checks whether user exceeded allowed task count
+func (s *ToDoService) addTaskAllowed(context context.Context, resp http.ResponseWriter, userID, date string) bool {
 	// Check number of existing tasks by user today
 	tCount, err := s.Store.CountTasks(
-		req.Context(),
+		context,
 		sql.NullString{
 			String: userID,
 			Valid:  true,
@@ -135,12 +178,12 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 			http.StatusInternalServerError,
 			map[string]string{"error": err.Error()},
 		)
-		return
+		return false
 	}
 
 	// Query task count limit of the user
 	mCount, err := s.Store.RetrieveUserTaskLimit(
-		req.Context(),
+		context,
 		sql.NullString{
 			String: userID,
 			Valid:  true,
@@ -152,53 +195,15 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 			http.StatusInternalServerError,
 			map[string]string{"error": err.Error()},
 		)
-		return
+		return false
 	}
 
-	// Return status 400 if task count limit is already met
-	if tCount >= mCount {
-		sendCodeResponse(
-			resp,
-			http.StatusBadRequest,
-			map[string]string{"error": "Task count limit exceeded."},
-		)
+	// Return true if user's current task count is less than the task count limit
+	if tCount < mCount {
+		return true
 	}
 
-	// Insert task into database
-	if tCount <= mCount {
-		t := &storages.Task{}
-		err = json.NewDecoder(req.Body).Decode(t)
-		defer req.Body.Close()
-		if err != nil {
-			sendCodeResponse(
-				resp,
-				http.StatusInternalServerError,
-				map[string]string{"error": err.Error()},
-			)
-			return
-		}
-
-		t.ID = uuid.New().String()
-		t.UserID = userID
-		t.CreatedDate = date
-
-		err = s.Store.AddTask(req.Context(), t)
-		if err != nil {
-			sendCodeResponse(
-				resp,
-				http.StatusInternalServerError,
-				map[string]string{"error": err.Error()},
-			)
-			return
-		}
-
-		// Return data into the API response
-		sendOKResponse(
-			resp,
-			map[string]*storages.Task{"data": t},
-		)
-		return
-	}
+	return false
 }
 
 // value converts a string into a SQL Null String
