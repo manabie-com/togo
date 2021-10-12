@@ -9,9 +9,9 @@ import (
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/dhoycenaomi/togo/internal/storages"
+	sqllite "github.com/dhoycenaomi/togo/internal/storages/sqlite"
 	"github.com/google/uuid"
-	"github.com/manabie-com/togo/internal/storages"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 )
 
 // ToDoService implement HTTP server
@@ -27,7 +27,10 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	resp.Header().Set("Access-Control-Allow-Methods", "*")
 
 	if req.Method == http.MethodOptions {
-		resp.WriteHeader(http.StatusOK)
+		sendOKResponse(
+			resp,
+			nil,
+		)
 		return
 	}
 
@@ -39,7 +42,11 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		var ok bool
 		req, ok = s.validToken(req)
 		if !ok {
-			resp.WriteHeader(http.StatusUnauthorized)
+			sendCodeResponse(
+				resp,
+				http.StatusUnauthorized,
+				nil,
+			)
 			return
 		}
 
@@ -56,26 +63,34 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
 	id := value(req, "user_id")
 	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
-		resp.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "incorrect user_id/pwd",
-		})
+		sendCodeResponse(
+			resp,
+			http.StatusUnauthorized,
+			map[string]string{
+				"error": "incorrect user_id/pwd",
+			},
+		)
 		return
 	}
-	resp.Header().Set("Content-Type", "application/json")
 
 	token, err := s.createToken(id.String)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
+		sendCodeResponse(
+			resp,
+			http.StatusInternalServerError,
+			map[string]string{
+				"error": err.Error(),
+			},
+		)
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string]string{
-		"data": token,
-	})
+	sendOKResponse(
+		resp,
+		map[string]string{
+			"data": token,
+		},
+	)
 }
 
 func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
@@ -89,19 +104,21 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 		value(req, "created_date"),
 	)
 
-	resp.Header().Set("Content-Type", "application/json")
-
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
+		sendCodeResponse(
+			resp,
+			http.StatusInternalServerError,
+			map[string]string{"error": err.Error()},
+		)
 		return
 	}
 
-	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
-		"data": tasks,
-	})
+	sendOKResponse(
+		resp,
+		map[string][]*storages.Task{
+			"data": tasks,
+		},
+	)
 }
 
 func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
@@ -124,10 +141,11 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 		},
 	)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
+		sendCodeResponse(
+			resp,
+			http.StatusInternalServerError,
+			map[string]string{"error": err.Error()},
+		)
 		return
 	}
 
@@ -140,19 +158,21 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 		},
 	)
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
+		sendCodeResponse(
+			resp,
+			http.StatusInternalServerError,
+			map[string]string{"error": err.Error()},
+		)
 		return
 	}
 
 	// Return status 400 if task count limit is already met
 	if tCount >= mCount {
-		resp.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "Task count limit exceeded.",
-		})
+		sendCodeResponse(
+			resp,
+			http.StatusBadRequest,
+			map[string]string{"error": "Task count limit exceeded."},
+		)
 	}
 
 	// Insert task into database
@@ -161,7 +181,11 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 		err = json.NewDecoder(req.Body).Decode(t)
 		defer req.Body.Close()
 		if err != nil {
-			resp.WriteHeader(http.StatusInternalServerError)
+			sendCodeResponse(
+				resp,
+				http.StatusInternalServerError,
+				map[string]string{"error": err.Error()},
+			)
 			return
 		}
 
@@ -171,17 +195,21 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 
 		err = s.Store.AddTask(req.Context(), t)
 		if err != nil {
-			resp.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(resp).Encode(map[string]string{
-				"error": err.Error(),
-			})
+			sendCodeResponse(
+				resp,
+				http.StatusInternalServerError,
+				map[string]string{"error": err.Error()},
+			)
 			return
 		}
 
 		// Return data into the API response
-		json.NewEncoder(resp).Encode(map[string]*storages.Task{
-			"data": t,
-		})
+		sendOKResponse(
+			resp,
+			map[string]*storages.Task{
+				"data": t,
+			},
+		)
 		return
 	}
 }
@@ -236,4 +264,21 @@ func userIDFromCtx(ctx context.Context) (string, bool) {
 	v := ctx.Value(userAuthKey(0))
 	id, ok := v.(string)
 	return id, ok
+}
+
+// sendCodeResponse creates a response with indicated status code and payload
+func sendCodeResponse(resp http.ResponseWriter, statusCode int, content interface{}) {
+	resp.Header().Set("Content-Type", "application/json")
+	resp.WriteHeader(statusCode)
+	if content != nil {
+		json.NewEncoder(resp).Encode(content)
+	}
+}
+
+// sendOKResponse creates a response with status code 200 and payload
+func sendOKResponse(resp http.ResponseWriter, content interface{}) {
+	resp.Header().Set("Content-Type", "application/json")
+	if content != nil {
+		json.NewEncoder(resp).Encode(content)
+	}
 }
