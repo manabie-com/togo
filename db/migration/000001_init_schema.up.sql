@@ -1,13 +1,13 @@
 CREATE TABLE "users" (
-  "id" uuid PRIMARY KEY NOT NULL,
+  "id" bigserial PRIMARY KEY NOT NULL,
   "password" text NOT NULL,
   "max_todo" integer NOT NULL DEFAULT 5
 );
 
 CREATE TABLE "tasks" (
-  "id" uuid PRIMARY KEY NOT NULL,
+  "id" bigserial PRIMARY KEY NOT NULL,
   "content" text NOT NULL,
-  "user_id" uuid NOT NULL,
+  "user_id" bigserial NOT NULL,
   "created_date" text NOT NULL
 );
 
