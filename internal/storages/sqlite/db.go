@@ -3,6 +3,8 @@ package sqllite
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"time"
 
 	"github.com/manabie-com/togo/internal/storages"
 )
@@ -47,6 +49,30 @@ func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
 	}
 
 	return nil
+}
+
+// Count user today task adds a new task to DB
+func (l *LiteDB) CountTodayTask(ctx context.Context, userID sql.NullString) (int, error) {
+	stmt := `SELECT COUNT(*) FROM tasks WHERE user_id = ? AND created_date = ?`
+	currentTime := time.Now()
+	rows, err := l.DB.QueryContext(ctx, stmt, userID, currentTime.Format("2006-01-02"))
+	if err != nil {
+		fmt.Println("Count error ", err)
+		return 0, err
+	}
+
+	defer rows.Close()
+
+	var count int
+
+	for rows.Next() {
+		err := rows.Scan(&count)
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	return count, err
 }
 
 // ValidateUser returns tasks if match userID AND password
