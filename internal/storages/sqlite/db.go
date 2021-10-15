@@ -12,15 +12,25 @@ type LiteDB struct {
 	DB *sql.DB
 }
 
+func NewLiteDB(db *sql.DB) *LiteDB {
+	return &LiteDB{
+		DB: db,
+	}
+}
+
 // RetrieveUserTaskLimit returns max number of tasks that can be created if match ID.
 func (l *LiteDB) RetrieveUserTaskLimit(ctx context.Context, userID sql.NullString) (int, error) {
 	stmt := `SELECT max_todo FROM users WHERE id = ?`
 	row := l.DB.QueryRowContext(ctx, stmt, userID)
 
-	var taskCount int
-	err := row.Scan(&taskCount)
+	taskLimit := 0
+	err := row.Scan(&taskLimit)
 
-	return taskCount, err
+	if err == sql.ErrNoRows {
+		return taskLimit, nil
+	}
+
+	return taskLimit, err
 }
 
 // RetrieveTasks returns tasks if match userID AND createDate.
@@ -55,8 +65,12 @@ func (l *LiteDB) CountTasks(ctx context.Context, userID, createdDate sql.NullStr
 	stmt := `SELECT COUNT(*) FROM tasks WHERE user_id = ? AND created_date = ?`
 	row := l.DB.QueryRowContext(ctx, stmt, userID, createdDate)
 
-	var taskCount int
+	taskCount := 0
 	err := row.Scan(&taskCount)
+
+	if err == sql.ErrNoRows {
+		return taskCount, nil
+	}
 
 	return taskCount, err
 }
