@@ -104,6 +104,26 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	})
 }
 
+func verifyMaxTask(req *http.Request, store *sqllite.LiteDB, userId string) bool {
+	sqlUserId := sql.NullString{
+		String: userId,
+		Valid:  true,
+	}
+	maxTodo, err := store.GetUserMaxTodo(req.Context(), sqlUserId)
+	if err != nil {
+		return false
+	}
+	count, err := store.CountTodayTask(req.Context(), sqlUserId)
+	if err != nil {
+		return false
+	}
+	if count > maxTodo {
+		return false
+	}
+
+	return true
+}
+
 func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	t := &storages.Task{}
 	err := json.NewDecoder(req.Body).Decode(t)
@@ -117,21 +137,7 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	userID, _ := userIDFromCtx(req.Context())
 
 	// check if user has exceeded create limit or not
-	createLimit := 5
-	count, err := s.Store.CountTodayTask(req.Context(), sql.NullString{
-		String: userID,
-		Valid:  true,
-	})
-
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	if count > createLimit {
+	if !verifyMaxTask(req, s.Store, userID) {
 		resp.WriteHeader(http.StatusNotAcceptable)
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": "Create Task Limit Exceeded!",

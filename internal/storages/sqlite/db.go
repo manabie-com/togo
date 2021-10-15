@@ -51,6 +51,21 @@ func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
 	return nil
 }
 
+// Get user max todo
+func (l *LiteDB) GetUserMaxTodo(ctx context.Context, userID sql.NullString) (int, error) {
+	stmt := `SELECT max_todo FROM users WHERE id = ?`
+	row := l.DB.QueryRowContext(ctx, stmt, userID)
+
+	u := &storages.User{}
+
+	err := row.Scan(&u.MaxTodo)
+	if err != nil {
+		return 0, err
+	}
+
+	return u.MaxTodo, nil
+}
+
 // Count user today task adds a new task to DB
 func (l *LiteDB) CountTodayTask(ctx context.Context, userID sql.NullString) (int, error) {
 	stmt := `SELECT COUNT(*) FROM tasks WHERE user_id = ? AND created_date = ?`
