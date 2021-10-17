@@ -1,0 +1,32 @@
+version: "3.8"
+services:
+  app:
+    build: .
+    ports:
+      - 5050:5050
+    env_file:
+      - .env
+    restart: unless-stopped
+    volumes:
+      - .:/var/www/src
+    depends_on:
+      - db
+    networks:
+      - nohattee
+
+  db:
+    image: postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - ./docker-compose:/docker-entrypoint-initdb.d
+    networks:
+      - nohattee
+
+networks:
+  nohattee:
+    driver: bridge
+

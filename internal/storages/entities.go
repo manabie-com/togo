@@ -4,12 +4,14 @@ package storages
 type Task struct {
 	ID          string `json:"id"`
 	Content     string `json:"content"`
-	UserID      string `json:"user_id"`
+	UserID      uint   `json:"user_id"`
 	CreatedDate string `json:"created_date"`
 }
 
 // User reflects users data from DB
 type User struct {
-	ID       string
-	Password string
+	ID       uint   `json:"id"`
+	Username string `json:"username"`
+	Password string `json:"-,omitempty"`
+	MaxTodo  uint   `json:"max_todo"`
 }
