@@ -20,7 +20,7 @@ RETURNING id, content, user_id, created_date
 
 type CreateTaskParams struct {
 	Content     string `json:"content"`
-	UserID      int64  `json:"user_id"`
+	UserID      string `json:"user_id"`
 	CreatedDate string `json:"created_date"`
 }
 
@@ -36,20 +36,20 @@ func (q *Queries) CreateTask(ctx context.Context, arg CreateTaskParams) (Task, e
 	return i, err
 }
 
-const listTasks = `-- name: ListTasks :many
+const retrieveTasks = `-- name: RetrieveTasks :many
 SELECT id, content, user_id, created_date FROM tasks
 WHERE user_id = $1 
 AND created_date = $2
 ORDER BY created_date
 `
 
-type ListTasksParams struct {
-	UserID      int64  `json:"user_id"`
+type RetrieveTasksParams struct {
+	UserID      string `json:"user_id"`
 	CreatedDate string `json:"created_date"`
 }
 
-func (q *Queries) ListTasks(ctx context.Context, arg ListTasksParams) ([]Task, error) {
-	rows, err := q.db.QueryContext(ctx, listTasks, arg.UserID, arg.CreatedDate)
+func (q *Queries) RetrieveTasks(ctx context.Context, arg RetrieveTasksParams) ([]Task, error) {
+	rows, err := q.db.QueryContext(ctx, retrieveTasks, arg.UserID, arg.CreatedDate)
 	if err != nil {
 		return nil, err
 	}

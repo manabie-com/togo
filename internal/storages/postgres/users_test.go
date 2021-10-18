@@ -14,8 +14,14 @@ func createRandomPassword(number int) string {
 
 func TestCreateUser(t *testing.T) {
 	lenOfPassword := 5
-	user, err := testQueries.CreateUser(context.Background(), createRandomPassword(lenOfPassword))
+	lenOfString := 5
+	arg := CreateUserParams{
+		Username: util.RandomString(lenOfString),
+		Password: createRandomPassword(lenOfPassword),
+	}
+
+	user, err := testQueries.CreateUser(context.Background(), arg)
 	require.NoError(t, err)
-	require.NotEmpty(t,user)
+	require.NotEmpty(t, user)
 	require.Len(t, user.Password, lenOfPassword)
 }

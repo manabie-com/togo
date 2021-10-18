@@ -7,12 +7,12 @@ import ()
 type Task struct {
 	ID          int64  `json:"id"`
 	Content     string `json:"content"`
-	UserID      int64  `json:"user_id"`
+	UserID      string `json:"user_id"`
 	CreatedDate string `json:"created_date"`
 }
 
 type User struct {
-	ID       int64  `json:"id"`
+	Username string `json:"username"`
 	Password string `json:"password"`
 	MaxTodo  int32  `json:"max_todo"`
 }
