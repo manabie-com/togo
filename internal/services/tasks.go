@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -104,6 +105,36 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	})
 }
 
+func (s *ToDoService) exceedDailySubmissionLimit(resp http.ResponseWriter, req *http.Request) bool {
+	const submissionLimit = 5
+
+	id, _ := userIDFromCtx(req.Context())
+
+	today := time.Now().Format("2006-01-02")
+
+	taskCount, err := s.Store.GetTaskCount(
+		req.Context(),
+		sql.NullString{
+			String: id,
+			Valid:  true,
+		},
+		sql.NullString{
+			String: today,
+			Valid:  true,
+		},
+	)
+
+	if err != nil {
+		return false
+	}
+
+	if taskCount < submissionLimit {
+		return false
+	}
+
+	return true
+}
+
 func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	t := &storages.Task{}
 	err := json.NewDecoder(req.Body).Decode(t)
@@ -120,6 +151,14 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	t.CreatedDate = now.Format("2006-01-02")
 
 	resp.Header().Set("Content-Type", "application/json")
+
+	if s.exceedDailySubmissionLimit(resp, req) {
+		resp.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": "Exceed submission limit",
+		})
+		return
+	}
 
 	err = s.Store.AddTask(req.Context(), t)
 	if err != nil {
@@ -154,8 +193,17 @@ func (s *ToDoService) createToken(id string) (string, error) {
 	return token, nil
 }
 
+func ExtractToken(r *http.Request) string {
+	bearToken := r.Header.Get("Authorization")
+
+	//normally Authorization the_token_xxx
+	strArr := strings.Split(bearToken, " ")
+	token := strArr[len(strArr)-1]
+	return token
+}
+
 func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
-	token := req.Header.Get("Authorization")
+	token := ExtractToken(req)
 
 	claims := make(jwt.MapClaims)
 	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
