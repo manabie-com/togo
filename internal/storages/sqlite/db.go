@@ -38,6 +38,30 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.Null
 	return tasks, nil
 }
 
+// GetTaskCount returns a number of tasks if match userID AND createDate.
+func (l *LiteDB) GetTaskCount(ctx context.Context, userID, createdDate sql.NullString) (int, error) {
+	stmt := `SELECT COUNT(*) FROM tasks WHERE user_id = ? AND created_date = ?`
+	rows, err := l.DB.QueryContext(ctx, stmt, userID, createdDate)
+	if err != nil {
+		return 0, err
+	}
+	defer rows.Close()
+
+	var count int
+	for rows.Next() {
+		err := rows.Scan(&count)
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	if err := rows.Err(); err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
 // AddTask adds a new task to DB
 func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
 	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
