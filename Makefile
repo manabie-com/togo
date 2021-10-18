@@ -13,7 +13,13 @@ migrateup:
 migratedown:
 	migrate -path ./db/migration -database "postgresql://root:secret@localhost:5432/todo?sslmode=disable" -verbose down
 
+mock:
+	mockgen -package mockdb -destination internal/storages/mock/store.go github.com/jericogantuangco/togo/internal/storages/postgres Store
+
 test:
 	go test -v -cover ./...
 
-.PHONY: postgres createdb dropdb migrateup migratedown
+server:
+	go run main.go
+
+.PHONY: postgres createdb dropdb migrateup migratedown mock test server
