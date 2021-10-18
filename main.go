@@ -3,30 +3,33 @@ package main
 import (
 	"database/sql"
 	"log"
-	"net/http"
 
 	"github.com/jericogantuangco/togo/internal/services"
-	sqllite "github.com/jericogantuangco/togo/internal/storages/sqlite"
+	"github.com/jericogantuangco/togo/internal/storages/postgres"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/lib/pq"
 )
 
 const (
-	host = "localhost"
-	port = ":5050"
+	dbDriver      = "postgres"
+	dbSource      = "postgresql://root:secret@localhost:5432/todo?sslmode=disable"
+	serverAddress = "0.0.0.0:5050"
 )
 
 func main() {
-	db, err := sql.Open("sqlite3", "./data.db")
+	connection, err := sql.Open(dbDriver, dbSource)
 	if err != nil {
-		log.Fatal("error opening db", err)
+		log.Fatal("Can't connect to the database:", err)
 	}
-	log.Printf("Listening and serving in %s%s", host, port)
-	http.ListenAndServe(port, &services.ToDoService{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
-			DB: db,
-		},
-		MaxTasksPerDay: 5,
-	})
+
+	store := postgres.NewStore(connection)
+	server, err := services.NewServer(store)
+	if err != nil {
+		log.Fatal("Cannot create server")
+	}
+	err = server.Start(serverAddress)
+	if err != nil {
+		log.Fatal("Can't Start server:", err)
+	}
+
 }
