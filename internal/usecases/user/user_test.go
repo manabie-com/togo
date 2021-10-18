@@ -115,10 +115,10 @@ func TestGetUserByUsername(t *testing.T) {
 	db, mock := setupMock()
 	defer db.Close()
 
-	rows := sqlmock.NewRows([]string{"id", "username"}).
-		AddRow(1, username)
+	rows := sqlmock.NewRows([]string{"id", "username", "max_todo"}).
+		AddRow(1, username, 5)
 
-	mock.ExpectQuery("SELECT id, username FROM users").
+	mock.ExpectQuery("SELECT id, username, max_todo FROM users").
 		WithArgs(username).
 		WillReturnRows(rows)
 
@@ -128,6 +128,7 @@ func TestGetUserByUsername(t *testing.T) {
 	expected := &storages.User{
 		ID:       1,
 		Username: username,
+		MaxTodo:  5,
 	}
 	actual, err := usecase.GetUserByUsername(
 		context.TODO(),

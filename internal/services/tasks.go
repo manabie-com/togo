@@ -66,10 +66,26 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
-	username := value(req, "username")
+	userRequest := &storages.User{}
+	err := json.NewDecoder(req.Body).Decode(userRequest)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+	defer req.Body.Close()
 	resp.Header().Set("Content-Type", "application/json")
 
-	if !s.userUseCase.ValidateUser(req.Context(), username, value(req, "password")) {
+	username := utils.SqlString(userRequest.Username)
+	password := utils.SqlString(userRequest.Password)
+
+	if !s.userUseCase.ValidateUser(
+		req.Context(),
+		username,
+		password,
+	) {
 		resp.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": "incorrect username/pwd",
@@ -102,7 +118,7 @@ func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 
 func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	id := userIDFromCtx(req.Context())
-	log.Println(value(req, "created_date"))
+
 	tasks, err := s.taskUseCase.ListTasks(
 		req.Context(),
 		id,
@@ -191,7 +207,6 @@ func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
 		return []byte(os.Getenv("JWT_KEY")), nil
 	})
 	if err != nil {
-		log.Println(err)
 		return req, false
 	}
 

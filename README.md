@@ -34,10 +34,10 @@ For example, users are limited to create only 5 tasks only per day, if the daily
 -- users definition
 
 CREATE TABLE users (
-	id TEXT NOT NULL,
-	password TEXT NOT NULL,
+	id serial PRIMARY KEY,
+	username VARCHAR(50) NOT NULL UNIQUE,
+	password VARCHAR(256) NOT NULL,
 	max_todo INTEGER DEFAULT 5 NOT NULL,
-	CONSTRAINT users_PK PRIMARY KEY (id)
 );
 
 INSERT INTO users (id, password, max_todo) VALUES('firstUser', 'example', 5);
@@ -45,14 +45,14 @@ INSERT INTO users (id, password, max_todo) VALUES('firstUser', 'example', 5);
 -- tasks definition
 
 CREATE TABLE tasks (
-	id TEXT NOT NULL,
+	id VARCHAR(50) NOT NULL,
 	content TEXT NOT NULL,
-	user_id TEXT NOT NULL,
-    created_date TEXT NOT NULL,
+	user_id bigint NOT NULL,
+    created_date VARCHAR(50) NOT NULL,
 	CONSTRAINT tasks_PK PRIMARY KEY (id),
 	CONSTRAINT tasks_FK FOREIGN KEY (user_id) REFERENCES users(id)
 );
 ```
 
 #### Sequence diagram
-![auth and create tasks request](https://github.com/manabie-com/togo/blob/master/docs/sequence.svg)
+![auth and create tasks request](https://www.plantuml.com/plantuml/svg/TT11IyD04CNnUpx5Oyy6yHf48hrvK361UbtQQNTjEjlkl3MW-DrDq9wCiATtsF-FQOq-ino7QZL4KQA-GoVvNNA3-y8WohZnZ4dn8kSYnaeJ1OFisE3vgUjnFQHzL7owOfBL7yKrS9g29qNS5Tp9cuqfR-Vzvkm_sdNtwhukmTkw_hzefwGcFyaSzs5gZf413-iUJ0VHQi6zok8fy50PGM-7l-HvjOcyIKfHph8-HCFqteeHkvJ18A0ObwXeyFZxEV95sOfkfqj-0m00)

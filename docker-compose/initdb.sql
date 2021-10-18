@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 13.4 (Debian 13.4-1.pgdg100+1)
--- Dumped by pg_dump version 13.4 (Debian 13.4-1.pgdg100+1)
+-- Dumped from database version 14.0 (Debian 14.0-1.pgdg110+1)
+-- Dumped by pg_dump version 14.0 (Debian 14.0-1.pgdg110+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -40,7 +40,7 @@ CREATE TABLE public.tasks (
     id character varying(50) NOT NULL,
     content text NOT NULL,
     user_id bigint NOT NULL,
-    created_date DATE NOT NULL
+    created_date date NOT NULL
 );
 
 
@@ -94,7 +94,7 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 --
 
 COPY public.schema_migrations (version, dirty) FROM stdin;
-2       f
+1	t
 \.
 
 
@@ -111,7 +111,7 @@ COPY public.tasks (id, content, user_id, created_date) FROM stdin;
 --
 
 COPY public.users (id, username, password, max_todo) FROM stdin;
-1       nohattee        1qaz@WSX        5
+1	nohattee	1qaz@WSX	5
 \.
 
 
@@ -123,45 +123,6 @@ SELECT pg_catalog.setval('public.users_id_seq', 1, false);
 
 
 --
--- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: togo_user
---
-
-ALTER TABLE ONLY public.schema_migrations
-    ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
-
-
---
--- Name: tasks tasks_pk; Type: CONSTRAINT; Schema: public; Owner: togo_user
---
-
-ALTER TABLE ONLY public.tasks
-    ADD CONSTRAINT tasks_pk PRIMARY KEY (id);
-
-
---
--- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: togo_user
---
-
-ALTER TABLE ONLY public.users
-    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
-
-
---
--- Name: users users_username_key; Type: CONSTRAINT; Schema: public; Owner: togo_user
---
-
-ALTER TABLE ONLY public.users
-    ADD CONSTRAINT users_username_key UNIQUE (username);
-
-
---
--- Name: tasks tasks_fk; Type: FK CONSTRAINT; Schema: public; Owner: togo_user
---
-
-ALTER TABLE ONLY public.tasks
-    ADD CONSTRAINT tasks_fk FOREIGN KEY (user_id) REFERENCES public.users(id);
-
-
---
 -- PostgreSQL database dump complete
 --
+
