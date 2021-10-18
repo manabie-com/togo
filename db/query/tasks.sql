@@ -8,7 +8,7 @@ INSERT INTO tasks (
 )
 RETURNING *;
 
--- name: ListTasks :many
+-- name: RetrieveTasks :many
 SELECT * FROM tasks
 WHERE user_id = $1 
 AND created_date = $2
