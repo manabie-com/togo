@@ -6,18 +6,20 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
-	"github.com/manabie-com/togo/internal/storages"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	"github.com/jericogantuangco/togo/internal/storages"
+	sqllite "github.com/jericogantuangco/togo/internal/storages/sqlite"
 )
 
 // ToDoService implement HTTP server
 type ToDoService struct {
 	JWTKey string
 	Store  *sqllite.LiteDB
+	MaxTasksPerDay int 
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
@@ -120,8 +122,7 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	t.CreatedDate = now.Format("2006-01-02")
 
 	resp.Header().Set("Content-Type", "application/json")
-
-	err = s.Store.AddTask(req.Context(), t)
+	tasks, err := s.Store.RetrieveTasksNoReqParam(req.Context(), t)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
@@ -129,7 +130,19 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 		})
 		return
 	}
-
+	if len(tasks) >= s.MaxTasksPerDay {
+		resp.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	} else {
+		err = s.Store.AddTask(req.Context(), t)
+		if err != nil {
+			resp.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(resp).Encode(map[string]string{
+				"error": err.Error(),
+			})
+			return
+		}
+	}
 	json.NewEncoder(resp).Encode(map[string]*storages.Task{
 		"data": t,
 	})
@@ -155,7 +168,15 @@ func (s *ToDoService) createToken(id string) (string, error) {
 }
 
 func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
-	token := req.Header.Get("Authorization")
+	tokenSchema := "Bearer"
+	rawToken := req.Header.Get("Authorization")
+	token := ""
+	if strings.Contains(rawToken, tokenSchema) {
+		splitToken := strings.Split(rawToken, " ")
+		token = splitToken[1]
+	} else {
+		token = rawToken
+	}
 
 	claims := make(jwt.MapClaims)
 	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
