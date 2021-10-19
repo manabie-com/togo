@@ -48,6 +48,8 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 			s.listTasks(resp, req)
 		case http.MethodPost:
 			s.addTask(resp, req)
+		case http.MethodPut:
+			s.updateTask(resp, req)
 		}
 		return
 	}
@@ -148,10 +150,54 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	t.ID = uuid.New().String()
 	t.UserID = userID
 	t.CreatedDate = now.Format("2006-01-02")
+	t.UpdatedAt = now.Format("2006-01-02")
+	t.StatusCode = "todo"
 
 	resp.Header().Set("Content-Type", "application/json")
 
 	err = s.Store.AddTask(req.Context(), t)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	json.NewEncoder(resp).Encode(map[string]*storages.Task{
+		"data": t,
+	})
+}
+
+/**
+* Update existing task
+ */
+func (s *ToDoService) updateTask(resp http.ResponseWriter, req *http.Request) {
+	t := &storages.Task{}
+	err := json.NewDecoder(req.Body).Decode(t)
+	defer req.Body.Close()
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	now := time.Now()
+	userID, _ := userIDFromCtx(req.Context())
+
+	// check if user has exceeded create limit or not
+	if !verifyMaxTask(req, s.Store, userID) {
+		resp.WriteHeader(http.StatusNotAcceptable)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": "Create Task Limit Exceeded!",
+		})
+		return
+	}
+
+	t.UpdatedAt = now.Format("2006-01-02")
+
+	resp.Header().Set("Content-Type", "application/json")
+
+	err = s.Store.UpdateTask(req.Context(), t)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{

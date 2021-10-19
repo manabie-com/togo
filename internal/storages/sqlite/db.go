@@ -16,7 +16,10 @@ type LiteDB struct {
 
 // RetrieveTasks returns tasks if match userID AND createDate.
 func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*storages.Task, error) {
-	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`
+	stmt := `SELECT t.id, t.content, t.user_id, t.status_code, st.name, t.created_date, t.updated_at
+			FROM tasks t 
+				JOIN task_status st ON st.code = t.status_code
+			WHERE t.user_id = ? AND t.created_date = ?`
 	rows, err := l.DB.QueryContext(ctx, stmt, userID, createdDate)
 	if err != nil {
 		return nil, err
@@ -26,7 +29,7 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.Null
 	var tasks []*storages.Task
 	for rows.Next() {
 		t := &storages.Task{}
-		err := rows.Scan(&t.ID, &t.Content, &t.UserID, &t.CreatedDate)
+		err := rows.Scan(&t.ID, &t.Content, &t.UserID, &t.StatusCode, &t.StatusName, &t.CreatedDate, &t.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -42,8 +45,42 @@ func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.Null
 
 // AddTask adds a new task to DB
 func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
-	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
-	_, err := l.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
+	stmt := `INSERT INTO tasks (id, content, user_id, status_code, created_date, updated_at) VALUES (?, ?, ?, ?, ?, ?)`
+	_, err := l.DB.ExecContext(ctx, stmt, t.ID, &t.Content, t.UserID, t.StatusCode, t.CreatedDate, t.UpdatedAt)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// UpdateTask update existing task
+func (l *LiteDB) UpdateTask(ctx context.Context, t *storages.Task) error {
+	stmt := `UPDATE tasks SET `
+
+	hasContent := false
+	hasStatus := false
+	if len(t.Content) > 0 {
+		stmt += "content=\"" + t.Content + "\""
+		hasContent = true
+	}
+	if len(t.StatusCode) > 0 {
+		if hasContent {
+			stmt += ","
+		}
+		stmt += "status_code=\"" + t.StatusCode + "\""
+		hasStatus = true
+	}
+
+	if hasContent || hasStatus {
+		stmt += ","
+	}
+
+	stmt += "updated_at=? WHERE id = ?"
+
+	fmt.Println(stmt)
+
+	_, err := l.DB.ExecContext(ctx, stmt, t.UpdatedAt, t.ID)
 	if err != nil {
 		return err
 	}
