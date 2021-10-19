@@ -1,10 +1,15 @@
 # Togo
 
 ## Table of contents
+* [Usage](#usage)
 * [Features](#features)
+* [Diagrams](#diagrams)
 * [Easy Start](#easy-start)
 
+## Usage
+This is a Postman collection which contains REST API of Togo service.
 
+[Togo collection](docs/togo_v2.postman_collection.json)
 ## Features
 
 These are the main features in this repo.
@@ -22,6 +27,15 @@ These are some function I want to improve but I don't have enough time.
 :x: Password Encryption
 
 :x: Implement Transport layer interface
+
+## Diagrams
+1. ### Sequence Diagram
+
+![Sequence](https://raw.githubusercontent.com/nohattee/togo/master/docs/togo-sequence.svg)
+
+2. ### ERD Diagram
+
+![ERD](https://raw.githubusercontent.com/nohattee/togo/master/docs/togo-erd.svg)
 
 ## Easy Start
 This section aims to show you how to run Togo service.
