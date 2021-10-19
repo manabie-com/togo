@@ -6,18 +6,29 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/storages"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	"github.com/manabie-com/togo/internal/storages/postgres"
+	"github.com/manabie-com/togo/internal/usecases/task"
+	"github.com/manabie-com/togo/internal/usecases/user"
+	"github.com/manabie-com/togo/internal/utils"
 )
 
 // ToDoService implement HTTP server
 type ToDoService struct {
-	JWTKey string
-	Store  *sqllite.LiteDB
+	taskUseCase task.TaskUseCase
+	userUseCase user.UserUseCase
+}
+
+func NewToDoService(db *sql.DB) *ToDoService {
+	storeRepo := postgres.NewPostgresRepository(db)
+	taskUseCase := task.NewTaskUseCase(storeRepo)
+	userUseCase := user.NewUserUseCase(storeRepo)
+	return &ToDoService{taskUseCase: taskUseCase, userUseCase: userUseCase}
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
@@ -38,6 +49,7 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	case "/tasks":
 		var ok bool
 		req, ok = s.validToken(req)
+
 		if !ok {
 			resp.WriteHeader(http.StatusUnauthorized)
 			return
@@ -54,17 +66,43 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
-	id := value(req, "user_id")
-	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
-		resp.WriteHeader(http.StatusUnauthorized)
+	userRequest := &storages.User{}
+	err := json.NewDecoder(req.Body).Decode(userRequest)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "incorrect user_id/pwd",
+			"error": err.Error(),
 		})
 		return
 	}
+	defer req.Body.Close()
 	resp.Header().Set("Content-Type", "application/json")
 
-	token, err := s.createToken(id.String)
+	username := utils.SqlString(userRequest.Username)
+	password := utils.SqlString(userRequest.Password)
+
+	if !s.userUseCase.ValidateUser(
+		req.Context(),
+		username,
+		password,
+	) {
+		resp.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": "incorrect username/pwd",
+		})
+		return
+	}
+
+	user, err := s.userUseCase.GetUserByUsername(req.Context(), username)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	token, err := s.userUseCase.GenerateToken(user.ID, user.MaxTodo)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
@@ -79,13 +117,11 @@ func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 }
 
 func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
-	id, _ := userIDFromCtx(req.Context())
-	tasks, err := s.Store.RetrieveTasks(
+	id := userIDFromCtx(req.Context())
+
+	tasks, err := s.taskUseCase.ListTasks(
 		req.Context(),
-		sql.NullString{
-			String: id,
-			Valid:  true,
-		},
+		id,
 		value(req, "created_date"),
 	)
 
@@ -114,14 +150,38 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	now := time.Now()
-	userID, _ := userIDFromCtx(req.Context())
+	userID := userIDFromCtx(req.Context())
+	maxTodo := userMaxTodoFromCtx(req.Context())
+
 	t.ID = uuid.New().String()
-	t.UserID = userID
+	t.UserID = uint(userID)
 	t.CreatedDate = now.Format("2006-01-02")
+
+	isMaximum, err := s.taskUseCase.IsMaximumTasks(
+		req.Context(),
+		userID,
+		utils.SqlString(t.CreatedDate),
+		maxTodo,
+	)
 
 	resp.Header().Set("Content-Type", "application/json")
 
-	err = s.Store.AddTask(req.Context(), t)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+	if isMaximum {
+		resp.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": "the maximum number of tasks is reached.",
+		})
+		return
+	}
+
+	err = s.taskUseCase.AddTask(req.Context(), t)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
@@ -136,22 +196,7 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 }
 
 func value(req *http.Request, p string) sql.NullString {
-	return sql.NullString{
-		String: req.FormValue(p),
-		Valid:  true,
-	}
-}
-
-func (s *ToDoService) createToken(id string) (string, error) {
-	atClaims := jwt.MapClaims{}
-	atClaims["user_id"] = id
-	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
-	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
-	token, err := at.SignedString([]byte(s.JWTKey))
-	if err != nil {
-		return "", err
-	}
-	return token, nil
+	return utils.SqlString(req.FormValue(p))
 }
 
 func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
@@ -159,10 +204,9 @@ func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
 
 	claims := make(jwt.MapClaims)
 	t, err := jwt.ParseWithClaims(token, claims, func(*jwt.Token) (interface{}, error) {
-		return []byte(s.JWTKey), nil
+		return []byte(os.Getenv("JWT_KEY")), nil
 	})
 	if err != nil {
-		log.Println(err)
 		return req, false
 	}
 
@@ -170,19 +214,31 @@ func (s *ToDoService) validToken(req *http.Request) (*http.Request, bool) {
 		return req, false
 	}
 
-	id, ok := claims["user_id"].(string)
+	id, ok := claims["user_id"].(float64)
+	if !ok {
+		return req, false
+	}
+
+	max_todo, ok := claims["max_todo"].(float64)
 	if !ok {
 		return req, false
 	}
 
 	req = req.WithContext(context.WithValue(req.Context(), userAuthKey(0), id))
+	req = req.WithContext(context.WithValue(req.Context(), userMaxTodo(0), max_todo))
+
 	return req, true
 }
 
 type userAuthKey int8
+type userMaxTodo int8
 
-func userIDFromCtx(ctx context.Context) (string, bool) {
+func userIDFromCtx(ctx context.Context) uint {
 	v := ctx.Value(userAuthKey(0))
-	id, ok := v.(string)
-	return id, ok
+	return uint(v.(float64))
+}
+
+func userMaxTodoFromCtx(ctx context.Context) uint {
+	v := ctx.Value(userMaxTodo(0))
+	return uint(v.(float64))
 }

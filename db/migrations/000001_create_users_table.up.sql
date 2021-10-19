@@ -1,0 +1,6 @@
+CREATE TABLE users (
+	id serial PRIMARY KEY,
+    username VARCHAR (50) UNIQUE NOT NULL,
+	password VARCHAR (256) NOT NULL,
+	max_todo INTEGER DEFAULT 5 NOT NULL
+);
