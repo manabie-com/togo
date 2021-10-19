@@ -48,7 +48,7 @@ cp .env.example .env
 ```
 2. ### Run unit test & integration test
 ```
-docker-compose up --build -
+docker-compose up --build -d
 docker-compose exec db psql -U togo_user togo_db
 ```
 In the psql console type this:
