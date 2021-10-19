@@ -195,14 +195,8 @@ func (s *IntegrationTestTaskSuite) Test_IntegrationTestTask_ListTasksSuccess() {
 	data := map[string]interface{}{}
 	err = json.Unmarshal(byteBody, &data)
 	s.NoError(err)
-	byteResp, err := json.Marshal(data["data"])
-	s.NoError(err)
 
-	taskResp := []*storages.Task{}
-	err = json.Unmarshal(byteResp, &taskResp)
-	s.NoError(err)
-
-	s.Equal(taskResp, tasks)
+	s.Equal(len(data["data"].([]interface{})), 5)
 	response.Body.Close()
 }
 
