@@ -15,12 +15,16 @@ type LiteDB struct {
 }
 
 // RetrieveTasks returns tasks if match userID AND createDate.
+// createDate is optional
 func (l *LiteDB) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*storages.Task, error) {
 	stmt := `SELECT t.id, t.content, t.user_id, t.status_code, st.name, t.created_date, t.updated_at
 			FROM tasks t 
 				JOIN task_status st ON st.code = t.status_code
-			WHERE t.user_id = ? AND t.created_date = ?`
-	rows, err := l.DB.QueryContext(ctx, stmt, userID, createdDate)
+			WHERE t.user_id = ?`
+	if len(createdDate.String) > 0 {
+		stmt += "AND t.created_date = \"" + createdDate.String + "\""
+	}
+	rows, err := l.DB.QueryContext(ctx, stmt, userID)
 	if err != nil {
 		return nil, err
 	}
