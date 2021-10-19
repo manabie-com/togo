@@ -7,4 +7,8 @@ note right: with JWT token
 Client -> Server: Create a new task
 note left: POST /tasks {"content": "This is just for the test"}
 Client <-- Server : New task response
+
+Client -> Server: List tasks
+note left: GET /tasks?created_date=2021-01-12
+Client <-- Server : List tasks response
 @enduml

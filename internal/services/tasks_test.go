@@ -51,15 +51,18 @@ func (s *IntegrationTestTaskSuite) SetupSuite() {
 	s.Require().NoError(err)
 	s.dbConn = dbConn
 
+	// setup migration
 	s.dbMigration, err = migrate.New("file://../../db/migrations", dns)
 	s.Require().NoError(err)
 	if err := s.dbMigration.Up(); err != nil && err != migrate.ErrNoChange {
 		s.Require().NoError(err)
 	}
 
+	// setup JWT environment variable
 	os.Setenv("JWT_KEY", "ddwqGyEBBdqfPK9w3Lxw")
 	os.Setenv("JWT_TIMEOUT", "9999999")
 
+	// Run http server
 	go func() {
 		if err = http.ListenAndServe(fmt.Sprintf(":%d", s.port), NewToDoService(dbConn)); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("listen:%+s\n", err)
@@ -121,17 +124,20 @@ func (s *IntegrationTestTaskSuite) Test_IntegrationTestTask_LoginError() {
 }
 
 func (s *IntegrationTestTaskSuite) Test_IntegrationTestTask_ListTasksSuccess() {
+	tx, err := s.dbConn.Begin()
+	s.Require().NoError(err)
+
 	// seed username and password
 	stmt := "INSERT INTO users(id, username, password) VALUES (1, 'nohattee', '1qaz@WSX');"
 	s.dbConn.ExecContext(context.Background(), stmt)
 
+	// get token
 	storeRepo := postgres.NewPostgresRepository(s.dbConn)
 	userUseCase := user.NewUserUseCase(storeRepo)
 	token, err := userUseCase.GenerateToken(1, 5)
-	if err != nil {
-		s.Require().NoError(err)
-	}
+	s.Require().NoError(err)
 
+	// seed tasks
 	layout := "2006-01-02"
 	currentDate := time.Now().Format(layout)
 	listTaskIds := []string{uuid.New().String(), uuid.New().String(), uuid.New().String()}
@@ -155,11 +161,6 @@ func (s *IntegrationTestTaskSuite) Test_IntegrationTestTask_ListTasksSuccess() {
 			UserID:      1,
 			CreatedDate: currentDate,
 		},
-	}
-
-	tx, err := s.dbConn.Begin()
-	if err != nil {
-		s.Require().NoError(err)
 	}
 
 	for _, t := range tasks {
@@ -206,17 +207,20 @@ func (s *IntegrationTestTaskSuite) Test_IntegrationTestTask_ListTasksSuccess() {
 }
 
 func (s *IntegrationTestTaskSuite) Test_IntegrationTestTask_AddTasksWhenNotReachedLimit() {
+	tx, err := s.dbConn.Begin()
+	s.Require().NoError(err)
+
 	// seed username and password
 	stmt := "INSERT INTO users(id, username, password) VALUES (1, 'nohattee', '1qaz@WSX');"
 	s.dbConn.ExecContext(context.Background(), stmt)
 
+	// get token
 	storeRepo := postgres.NewPostgresRepository(s.dbConn)
 	userUseCase := user.NewUserUseCase(storeRepo)
 	token, err := userUseCase.GenerateToken(1, 5)
-	if err != nil {
-		s.Require().NoError(err)
-	}
+	s.Require().NoError(err)
 
+	// seed tasks
 	layout := "2006-01-02"
 	currentDate := time.Now().Format(layout)
 	listTaskIds := []string{uuid.New().String(), uuid.New().String(), uuid.New().String()}
@@ -240,11 +244,6 @@ func (s *IntegrationTestTaskSuite) Test_IntegrationTestTask_AddTasksWhenNotReach
 			UserID:      1,
 			CreatedDate: currentDate,
 		},
-	}
-
-	tx, err := s.dbConn.Begin()
-	if err != nil {
-		s.Require().NoError(err)
 	}
 
 	for _, t := range tasks {
@@ -292,17 +291,20 @@ func (s *IntegrationTestTaskSuite) Test_IntegrationTestTask_AddTasksWhenNotReach
 }
 
 func (s *IntegrationTestTaskSuite) Test_IntegrationTestTask_AddTasksWhenReachedLimited() {
+	tx, err := s.dbConn.Begin()
+	s.Require().NoError(err)
+
 	// seed username and password
 	stmt := "INSERT INTO users(id, username, password) VALUES (1, 'nohattee', '1qaz@WSX');"
 	s.dbConn.ExecContext(context.Background(), stmt)
 
+	// get token
 	storeRepo := postgres.NewPostgresRepository(s.dbConn)
 	userUseCase := user.NewUserUseCase(storeRepo)
 	token, err := userUseCase.GenerateToken(1, 5)
-	if err != nil {
-		s.Require().NoError(err)
-	}
+	s.Require().NoError(err)
 
+	// seed tasks
 	layout := "2006-01-02"
 	currentDate := time.Now().Format(layout)
 	listTaskIds := []string{
@@ -345,11 +347,6 @@ func (s *IntegrationTestTaskSuite) Test_IntegrationTestTask_AddTasksWhenReachedL
 			UserID:      1,
 			CreatedDate: currentDate,
 		},
-	}
-
-	tx, err := s.dbConn.Begin()
-	if err != nil {
-		s.Require().NoError(err)
 	}
 
 	for _, t := range tasks {

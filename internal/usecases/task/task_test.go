@@ -20,6 +20,7 @@ var (
 	maxTodo = 5
 )
 
+// setup mock
 func setupMock() (*sql.DB, sqlmock.Sqlmock) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
