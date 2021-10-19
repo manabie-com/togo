@@ -196,7 +196,7 @@ func (s *IntegrationTestTaskSuite) Test_IntegrationTestTask_ListTasksSuccess() {
 	err = json.Unmarshal(byteBody, &data)
 	s.NoError(err)
 
-	s.Equal(len(data["data"].([]interface{})), 5)
+	s.Equal(len(data["data"].([]interface{})), 3)
 	response.Body.Close()
 }
 
