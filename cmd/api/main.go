@@ -11,24 +11,13 @@ import (
 	"time"
 
 	_ "github.com/lib/pq"
+	"github.com/manabie-com/togo/internal/services"
 	"github.com/manabie-com/togo/internal/storages"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 //for the new version forked repository and changes
 const version = "1.0.1"
-
-// Added application configuration
-type config struct {
-	port int
-	env  string
-	db   struct {
-		dsn string
-	}
-	jwt struct {
-		secret string
-	}
-}
 
 //for an application status request that will be use by status handler
 type AppStatus struct {
@@ -38,20 +27,15 @@ type AppStatus struct {
 }
 
 // Initializing ToDoService struct which will be the main pointer of the app
-type ToDoService struct {
-	config config
-	logger *log.Logger
-	JWTKey string
-	models storages.Models
-}
+type ToDoService services.ToDoService
 
 //creating the main function responsible for running also the server
 func main() {
-	var cfg config
-	flag.IntVar(&cfg.port, "port", 5050, "Server port to listen on")
-	flag.StringVar(&cfg.env, "env", "development", "Application environment (development|production)")
-	flag.StringVar(&cfg.db.dsn, "dsn", "postgres://postgres:root@localhost/todos?sslmode=disable", "Postgres connection string")
-	flag.StringVar(&cfg.jwt.secret, "jwt-secret", "", "secret")
+	var cfg services.Config
+	flag.IntVar(&cfg.Port, "port", 5050, "Server port to listen on")
+	flag.StringVar(&cfg.Env, "env", "development", "Application environment (development|production)")
+	flag.StringVar(&cfg.Db.Dsn, "dsn", "postgres://postgres:root@localhost/todos?sslmode=disable", "Postgres connection string")
+	flag.StringVar(&cfg.Jwt.Secret, "jwt-secret", "", "secret")
 	flag.Parse()
 	//date and time for the log
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
@@ -63,20 +47,20 @@ func main() {
 	//reference to the application type we define and populate the field
 	//this app will be the receiver for other parts of the application
 	app := &ToDoService{
-		config: cfg,
-		logger: logger,
-		models: storages.NewModels(db),
-		JWTKey: cfg.jwt.secret,
+		Config: cfg,
+		Logger: logger,
+		Models: storages.NewModels(db),
+		JWTKey: cfg.Jwt.Secret,
 	}
 	//running the server
 	srv := &http.Server{
-		Addr:         fmt.Sprintf(":%d", cfg.port),
+		Addr:         fmt.Sprintf(":%d", cfg.Port),
 		Handler:      app.routes(),
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 30 * time.Second,
 	}
-	logger.Println("Starting server on port", cfg.port)
+	logger.Println("Starting server on port", cfg.Port)
 
 	err = srv.ListenAndServe()
 	if err != nil {
@@ -91,8 +75,8 @@ func main() {
 * @param cfg config
 * @return DB connection or error
 **/
-func openDB(cfg config) (*sql.DB, error) {
-	db, err := sql.Open("postgres", cfg.db.dsn)
+func openDB(cfg services.Config) (*sql.DB, error) {
+	db, err := sql.Open("postgres", cfg.Db.Dsn)
 	if err != nil {
 		return nil, err
 	}
