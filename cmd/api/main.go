@@ -18,6 +18,7 @@ import (
 //for the new version forked repository and changes
 const version = "1.0.1"
 
+// Added application configuration
 type config struct {
 	port int
 	env  string
@@ -29,14 +30,14 @@ type config struct {
 	}
 }
 
-//for an app status request
+//for an application status request that will be use by status handler
 type AppStatus struct {
 	Status      string `json:"status"`
 	Environment string `json:"environment"`
 	Version     string `json:"version"`
 }
 
-// ToDoService implement HTTP server
+// Initializing ToDoService struct which will be the main pointer of the app
 type ToDoService struct {
 	config config
 	logger *log.Logger
@@ -44,6 +45,7 @@ type ToDoService struct {
 	models storages.Models
 }
 
+//creating the main function responsible for running also the server
 func main() {
 	var cfg config
 	flag.IntVar(&cfg.port, "port", 5050, "Server port to listen on")
@@ -66,6 +68,7 @@ func main() {
 		models: storages.NewModels(db),
 		JWTKey: cfg.jwt.secret,
 	}
+	//running the server
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", cfg.port),
 		Handler:      app.routes(),
@@ -83,6 +86,11 @@ func main() {
 	}
 }
 
+/**
+* openDB function for postgres connection
+* @param cfg config
+* @return DB connection or error
+**/
 func openDB(cfg config) (*sql.DB, error) {
 	db, err := sql.Open("postgres", cfg.db.dsn)
 	if err != nil {

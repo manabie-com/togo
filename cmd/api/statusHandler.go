@@ -5,6 +5,10 @@ import (
 	"net/http"
 )
 
+/**
+ * Status Handler for application status of our ToDo Service
+ * Also for checking if the project api is working
+**/
 func (app *ToDoService) statusHandler(w http.ResponseWriter, r *http.Request) {
 	currentStatus := AppStatus{
 		Status:      "Available",
