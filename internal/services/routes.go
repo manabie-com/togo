@@ -12,6 +12,7 @@ func (app *ToDoService) Routes() http.Handler {
 
 	router.HandlerFunc(http.MethodGet, "/login", app.getAuthToken)
 	router.HandlerFunc(http.MethodGet, "/tasks", app.listTasks)
+	router.HandlerFunc(http.MethodPost, "/tasks", app.addTask)
 	//get the status of the application
 	return app.enableCORS(router)
 }

@@ -21,7 +21,7 @@ func NewModels(db *sql.DB) Models {
 type Task struct {
 	ID        int       `json:"id"`
 	Content   string    `json:"content"`
-	UserID    string    `json:"user_id"`
+	UserID    int       `json:"user_id"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }

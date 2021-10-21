@@ -39,14 +39,14 @@ func (l *DBModel) RetrieveTasks(ctx context.Context, userID, createdDate sql.Nul
 }
 
 // AddTask adds a new task to DB
-func (l *DBModel) AddTask(ctx context.Context, t *Task) error {
-	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
-	_, err := l.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedAt)
+func (l *DBModel) AddTask(t Task) (int, error) {
+	lastInsertId := 0
+	err := l.DB.QueryRow("INSERT INTO tasks (content, user_id, created_at, updated_at) VALUES ($1, $2, $3, $4) RETURNING id", t.Content, t.UserID, t.CreatedAt, t.UpdatedAt).Scan(&lastInsertId)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	return lastInsertId, nil
 }
 
 // ValidateUser returns tasks if match email AND password

@@ -33,39 +33,6 @@ type ToDoService struct {
 	Models storages.Models
 }
 
-// func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
-// 	log.Println(req.Method, req.URL.Path)
-// 	resp.Header().Set("Access-Control-Allow-Origin", "*")
-// 	resp.Header().Set("Access-Control-Allow-Headers", "*")
-// 	resp.Header().Set("Access-Control-Allow-Methods", "*")
-
-// 	if req.Method == http.MethodOptions {
-// 		resp.WriteHeader(http.StatusOK)
-// 		return
-// 	}
-
-// 	switch req.URL.Path {
-// 	case "/login":
-// 		s.getAuthToken(resp, req)
-// 		return
-// 	case "/tasks":
-// 		var ok bool
-// 		req, ok = s.validToken(req)
-// 		if !ok {
-// 			resp.WriteHeader(http.StatusUnauthorized)
-// 			return
-// 		}
-
-// 		switch req.Method {
-// 		case http.MethodGet:
-// 			s.listTasks(resp, req)
-// 		case http.MethodPost:
-// 			s.addTask(resp, req)
-// 		}
-// 		return
-// 	}
-// }
-
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
 	email := value(req, "email")
 	if !s.Models.DB.ValidateUser(req.Context(), email, value(req, "password")) {
@@ -99,8 +66,8 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 	var user storages.User
-	id, _ := userIDFromCtx(req.Context())
-	m, err := s.Models.DB.GetUserFromEmail(id)
+	email, _ := userIDFromCtx(req.Context())
+	m, err := s.Models.DB.GetUserFromEmail(email)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
@@ -130,42 +97,56 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 			"data": tasks,
 		})
 	}
-	// log.Println(tasks)
-	// log.Println(err, "test")
-	// resp.Header().Set("Content-Type", "application/json")
-
 }
 
-// func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
-// 	t := &storages.Task{}
-// 	err := json.NewDecoder(req.Body).Decode(t)
-// 	defer req.Body.Close()
-// 	if err != nil {
-// 		resp.WriteHeader(http.StatusInternalServerError)
-// 		return
-// 	}
+func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
+	var ok bool
+	req, ok = s.validToken(req)
+	if !ok {
+		resp.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	var t storages.Task
+	resp.Header().Set("Content-Type", "application/json")
+	err := json.NewDecoder(req.Body).Decode(&t)
+	defer req.Body.Close()
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	now := time.Now()
+	var user storages.User
+	email, _ := userIDFromCtx(req.Context())
+	m, err := s.Models.DB.GetUserFromEmail(email)
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	} else {
+		user = *m
+		t.UserID = user.ID
+		t.CreatedAt = now
+		t.UpdatedAt = now
+		t.CreatedAt = now
+		t.UpdatedAt = now
+		lastInsertId, err := s.Models.DB.AddTask(t)
+		if err != nil {
+			resp.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(resp).Encode(map[string]string{
+				"error": err.Error(),
+			})
+			return
+		}
+		t.ID = lastInsertId
+		json.NewEncoder(resp).Encode(map[string]*storages.Task{
+			"data": &t,
+		})
 
-// 	now := time.Now()
-// 	userID, _ := userIDFromCtx(req.Context())
-// 	t.ID = uuid.New().String()
-// 	t.UserID = userID
-// 	t.CreatedAt = now
+	}
 
-// 	resp.Header().Set("Content-Type", "application/json")
-
-// 	err = s.Models.DB.AddTask(req.Context(), t)
-// 	if err != nil {
-// 		resp.WriteHeader(http.StatusInternalServerError)
-// 		json.NewEncoder(resp).Encode(map[string]string{
-// 			"error": err.Error(),
-// 		})
-// 		return
-// 	}
-
-// 	json.NewEncoder(resp).Encode(map[string]*storages.Task{
-// 		"data": t,
-// 	})
-// }
+}
 
 func value(req *http.Request, p string) sql.NullString {
 	return sql.NullString{
