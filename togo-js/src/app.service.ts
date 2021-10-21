@@ -10,7 +10,9 @@ export class AppService {
   constructor(private jwtService: JwtService) {}
 
   async checkDailyTask(id: number) {
-    const user = await User.findOne(id);
+    const user = await User.findOne(id, {
+      select: ['maxTodo']
+    });
     const amountDailyTask = await Task.count({
       where: {
         user: {
