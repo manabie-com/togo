@@ -1,25 +1,30 @@
-import { Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
+import { TaskInput } from './dto/task.create';
+import { JwtAuthGuard } from './services/jwt/auth.guard';
+import { GetUser } from './services/jwt/get-user.decorator';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get('/login')
-  login(
-    @Query('user_id') userId: string,
-    @Query('password') passport: string,
-  ) {
+  login(@Query('user_id') userId: string, @Query('password') passport: string) {
     return this.appService.login(userId, passport);
   }
 
-  @Get('/tasks')
-  getTasks(): string {
-    return 'tasks';
+  @Post('/tasks')
+  @UseGuards(JwtAuthGuard)
+  async createTask(@GetUser() id: number, @Body() input: TaskInput) {
+    await this.appService.checkDailyTask(id);
+    const result = await this.appService.createTask(id, input);
+    return result;
   }
 
-  @Post('/tasks')
-  createTask() {
-    return 'new task';
+  @Get('/tasks')
+  @UseGuards(JwtAuthGuard)
+  async getTasks(@GetUser() id: number) {
+    const result = await this.appService.listTasks(id);
+    return result;
   }
 }

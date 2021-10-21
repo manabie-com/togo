@@ -24,7 +24,7 @@ export class User extends BaseEntity {
   password: string;
 
   @Column({ type: 'int4', default: 5 })
-  maxTodo: string;
+  maxTodo: number;
 
   @OneToMany(() => Task, (task) => task.user)
   tasks: Task[];
