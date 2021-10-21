@@ -1,6 +1,9 @@
 package storages
 
-import "database/sql"
+import (
+	"database/sql"
+	"time"
+)
 
 //Models is the wrapper for database
 type Models struct {
@@ -16,14 +19,20 @@ func NewModels(db *sql.DB) Models {
 
 // Task reflects tasks in DB
 type Task struct {
-	ID          string `json:"id"`
-	Content     string `json:"content"`
-	UserID      string `json:"user_id"`
-	CreatedDate string `json:"created_date"`
+	ID        string    `json:"id"`
+	Content   string    `json:"content"`
+	UserID    string    `json:"user_id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 // User reflects users data from DB
 type User struct {
-	ID       string
-	Password string
+	ID        string
+	Email     string
+	Username  string
+	Password  string
+	MaxTodo   string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }

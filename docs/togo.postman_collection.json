@@ -11,7 +11,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:5050/login?user_id=firstUser&password=example",
+					"raw": "localhost:5050/login?email=me@here.com&password=password",
 					"host": [
 						"localhost"
 					],
@@ -21,12 +21,12 @@
 					],
 					"query": [
 						{
-							"key": "user_id",
-							"value": "firstUser"
+							"key": "email",
+							"value": "me@here.com"
 						},
 						{
 							"key": "password",
-							"value": "example"
+							"value": "password"
 						}
 					]
 				}
@@ -53,9 +53,10 @@
 						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTM0Mjc4MjEsInVzZXJfaWQiOiJmaXJzdFVzZXIifQ.zJdFGhDFwPcR1-VZyUGmYgNMEDHpNYsttYYvJPcI7h4",
 						"type": "text"
 					}
+					
 				],
 				"url": {
-					"raw": "localhost:5050/tasks?created_date=2020-06-29",
+					"raw": "localhost:5050/tasks?created_at=2020-06-29",
 					"host": [
 						"localhost"
 					],
@@ -65,7 +66,7 @@
 					],
 					"query": [
 						{
-							"key": "created_date",
+							"key": "created_at",
 							"value": "2020-06-29"
 						}
 					]

@@ -3,6 +3,8 @@ package storages
 import (
 	"context"
 	"database/sql"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type DBModel struct {
@@ -11,8 +13,8 @@ type DBModel struct {
 
 // RetrieveTasks returns tasks if match userID AND createDate.
 func (l *DBModel) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*Task, error) {
-	stmt := `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`
-	rows, err := l.DB.QueryContext(ctx, stmt, userID, createdDate)
+	stmt := `SELECT id, content, user_id, created_at FROM tasks WHERE user_id = $1 AND created_at = $2`
+	rows, err := l.DB.QueryContext(ctx, stmt, userID.String, createdDate.String)
 	if err != nil {
 		return nil, err
 	}
@@ -21,7 +23,7 @@ func (l *DBModel) RetrieveTasks(ctx context.Context, userID, createdDate sql.Nul
 	var tasks []*Task
 	for rows.Next() {
 		t := &Task{}
-		err := rows.Scan(&t.ID, &t.Content, &t.UserID, &t.CreatedDate)
+		err := rows.Scan(&t.ID, &t.Content, &t.UserID, &t.CreatedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -38,7 +40,7 @@ func (l *DBModel) RetrieveTasks(ctx context.Context, userID, createdDate sql.Nul
 // AddTask adds a new task to DB
 func (l *DBModel) AddTask(ctx context.Context, t *Task) error {
 	stmt := `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
-	_, err := l.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedDate)
+	_, err := l.DB.ExecContext(ctx, stmt, &t.ID, &t.Content, &t.UserID, &t.CreatedAt)
 	if err != nil {
 		return err
 	}
@@ -46,12 +48,21 @@ func (l *DBModel) AddTask(ctx context.Context, t *Task) error {
 	return nil
 }
 
-// ValidateUser returns tasks if match userID AND password
-func (l *DBModel) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
-	stmt := `SELECT id FROM users WHERE id = ? AND password = ?`
-	row := l.DB.QueryRowContext(ctx, stmt, userID, pwd)
+// ValidateUser returns tasks if match email AND password
+func (l *DBModel) ValidateUser(ctx context.Context, email, pwd sql.NullString) bool {
+	// stmt := `SELECT id FROM users WHERE email = $1 AND password = $2`
+	stmtEmail := `SELECT password FROM users WHERE email = $1`
+
+	row := l.DB.QueryRowContext(ctx, stmtEmail, email.String)
 	var u User
-	err := row.Scan(&u.ID)
+	errRow := row.Scan(&u.Password)
+	if errRow != nil {
+		return false
+	}
+	hashedPassword := &u.Password
+	password := []byte(*hashedPassword)
+
+	err := bcrypt.CompareHashAndPassword([]byte(password), []byte(pwd.String))
 	if err != nil {
 		return false
 	}
