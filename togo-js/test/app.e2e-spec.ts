@@ -21,6 +21,7 @@ describe('AppController (e2e)', () => {
           database: 'togo',
           entities: ['./dist/**/**.entity{.ts,.js}'],
           synchronize: false,
+          logging: false,
         }),
       ],
     }).compile();
@@ -42,14 +43,19 @@ describe('AppController (e2e)', () => {
       });
   });
 
-  it('logins successfully with right "user_id" and "password"', () => {
-    const query = {
-      user_name: 'firstUser',
-      password: 'example',
-    };
+  it('fails to create task without token', () => {
     return request(app.getHttpServer())
-      .get(`/login?user_id=${query.user_name}&password=${query.password}`)
-      .expect(200);
+      .post('/tasks')
+      .send({ content: 'content' })
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(401);
+  });
+
+  it('fails to list task without token', () => {
+    return request(app.getHttpServer())
+      .get('/tasks')
+      .expect(401);
   });
   afterAll(async () => {
     await app.close();
