@@ -8,7 +8,7 @@ describe('AppController (e2e)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
-    // should use a staging or testing db here
+    // should use a STAGING or TESTING DB here
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
         AppModule,

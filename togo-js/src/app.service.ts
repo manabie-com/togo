@@ -3,7 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import { TaskInput } from './dto/task.create';
 import { Task } from './models/task.entity';
 import { User } from './models/user.entity';
-import { Raw } from 'typeorm';
+import { Raw, Between } from 'typeorm';
+import { getEndTime, getStartTime } from './utils/date.util';
 
 @Injectable()
 export class AppService {
@@ -41,11 +42,12 @@ export class AppService {
     };
   }
 
-  async listTasks(id: number) {
+  async listTasks(id: number, createdDate: string) {
     // i was considering adding index to task.userId column
     // but it's not worth it
     const tasks = await Task.find({
       where: {
+        createdAt: Between(getStartTime(createdDate), getEndTime(createdDate)),
         user: {
           id,
         },

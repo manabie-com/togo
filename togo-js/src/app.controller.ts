@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
 import { TaskInput } from './dto/task.create';
+import { ValidateDatePipe } from './pipes/validateDate';
 import { JwtAuthGuard } from './services/jwt/auth.guard';
 import { GetUser } from './services/jwt/get-user.decorator';
 
@@ -23,8 +24,11 @@ export class AppController {
 
   @Get('/tasks')
   @UseGuards(JwtAuthGuard)
-  async getTasks(@GetUser() id: number) {
-    const result = await this.appService.listTasks(id);
+  async getTasks(
+    @GetUser() id: number,
+    @Query('created_date', ValidateDatePipe) createdDate: string,
+  ) {
+    const result = await this.appService.listTasks(id, createdDate);
     return result;
   }
 }

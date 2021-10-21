@@ -1,3 +1,4 @@
+DROP DATABASE IF EXISTS "togo";
 CREATE DATABASE "togo"
     WITH OWNER "postgres"
     ENCODING 'UTF8'
