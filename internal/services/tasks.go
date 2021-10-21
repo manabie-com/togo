@@ -6,10 +6,10 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/storages"
 )
 
@@ -92,61 +92,80 @@ func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) 
 }
 
 func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
+	var ok bool
+	req, ok = s.validToken(req)
+	if !ok {
+		resp.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	var user storages.User
 	id, _ := userIDFromCtx(req.Context())
-	tasks, err := s.Models.DB.RetrieveTasks(
-		req.Context(),
-		sql.NullString{
-			String: id,
-			Valid:  true,
-		},
-		value(req, "created_at"),
-	)
-
-	resp.Header().Set("Content-Type", "application/json")
-
+	m, err := s.Models.DB.GetUserFromEmail(id)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": err.Error(),
 		})
 		return
-	}
+	} else {
+		user = *m
+		tasks, err := s.Models.DB.RetrieveTasks(
+			req.Context(),
+			sql.NullString{
+				//convert user id to string
+				String: strconv.Itoa(user.ID),
+				Valid:  true,
+			},
+			value(req, "created_at"),
+		)
+		if err != nil {
+			resp.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(resp).Encode(map[string]string{
+				"error": err.Error(),
+			})
+			return
+		}
 
-	json.NewEncoder(resp).Encode(map[string][]*storages.Task{
-		"data": tasks,
-	})
-}
-
-func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
-	t := &storages.Task{}
-	err := json.NewDecoder(req.Body).Decode(t)
-	defer req.Body.Close()
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	now := time.Now()
-	userID, _ := userIDFromCtx(req.Context())
-	t.ID = uuid.New().String()
-	t.UserID = userID
-	t.CreatedAt = now
-
-	resp.Header().Set("Content-Type", "application/json")
-
-	err = s.Models.DB.AddTask(req.Context(), t)
-	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
+		json.NewEncoder(resp).Encode(map[string][]*storages.Task{
+			"data": tasks,
 		})
-		return
 	}
+	// log.Println(tasks)
+	// log.Println(err, "test")
+	// resp.Header().Set("Content-Type", "application/json")
 
-	json.NewEncoder(resp).Encode(map[string]*storages.Task{
-		"data": t,
-	})
 }
+
+// func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
+// 	t := &storages.Task{}
+// 	err := json.NewDecoder(req.Body).Decode(t)
+// 	defer req.Body.Close()
+// 	if err != nil {
+// 		resp.WriteHeader(http.StatusInternalServerError)
+// 		return
+// 	}
+
+// 	now := time.Now()
+// 	userID, _ := userIDFromCtx(req.Context())
+// 	t.ID = uuid.New().String()
+// 	t.UserID = userID
+// 	t.CreatedAt = now
+
+// 	resp.Header().Set("Content-Type", "application/json")
+
+// 	err = s.Models.DB.AddTask(req.Context(), t)
+// 	if err != nil {
+// 		resp.WriteHeader(http.StatusInternalServerError)
+// 		json.NewEncoder(resp).Encode(map[string]string{
+// 			"error": err.Error(),
+// 		})
+// 		return
+// 	}
+
+// 	json.NewEncoder(resp).Encode(map[string]*storages.Task{
+// 		"data": t,
+// 	})
+// }
 
 func value(req *http.Request, p string) sql.NullString {
 	return sql.NullString{

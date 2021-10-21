@@ -3,6 +3,7 @@ package storages
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -13,7 +14,7 @@ type DBModel struct {
 
 // RetrieveTasks returns tasks if match userID AND createDate.
 func (l *DBModel) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*Task, error) {
-	stmt := `SELECT id, content, user_id, created_at FROM tasks WHERE user_id = $1 AND created_at = $2`
+	stmt := `SELECT id, content, user_id, created_at FROM tasks WHERE user_id = $1 AND created_at >= $2 AND created_at <= $2`
 	rows, err := l.DB.QueryContext(ctx, stmt, userID.String, createdDate.String)
 	if err != nil {
 		return nil, err
@@ -68,4 +69,22 @@ func (l *DBModel) ValidateUser(ctx context.Context, email, pwd sql.NullString) b
 	}
 
 	return true
+}
+
+//returns one user and error, if any using email query
+func (m *DBModel) GetUserFromEmail(email string) (*User, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	query := `select id from users where email = $1
+	`
+	row := m.DB.QueryRowContext(ctx, query, email)
+	var user User
+	err := row.Scan(
+		&user.ID,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, err
 }

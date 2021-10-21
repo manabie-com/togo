@@ -19,7 +19,7 @@ func NewModels(db *sql.DB) Models {
 
 // Task reflects tasks in DB
 type Task struct {
-	ID        string    `json:"id"`
+	ID        int       `json:"id"`
 	Content   string    `json:"content"`
 	UserID    string    `json:"user_id"`
 	CreatedAt time.Time `json:"created_at"`
@@ -28,7 +28,7 @@ type Task struct {
 
 // User reflects users data from DB
 type User struct {
-	ID        string
+	ID        int
 	Email     string
 	Username  string
 	Password  string
