@@ -10,6 +10,26 @@ We're using **Golang** but candidates can use any language (NodeJS/Java/PHP/Pyth
 - You show us how to run **reliably** - many of us use Ubuntu, some use Mac
 - Your solution is **compatible with our REST interface** and we can use our Postman collection for verifying
 
+### Candidate Changes
+- [X] Functional requirement done
+- [X] Added unit test for tasks.go
+- [X] Added integration test placed in integration_test folder
+
+I spent around 27 hours (6hrs/day) for these changes.
+I am new to Go and heavily relied on tutorials and documentations.
+Most of my time was spent reading tutorials/documents to better understand the task at hand.
+
+### How to run tests:
+- go to togo root directory
+- enter command: `go test ./...` to run all test files
+
+### Possible next steps
+I would like to continue working on the task:
+- [ ] This project includes many issues from code to DB structure, feel free to optimize them
+
+Steps to accomplish:
+1. Read more about Effective Go: https://golang.org/doc/effective_go
+2. If there are issues with the project with regards to the document above, I would like to align the project with it.
 ---
 
 ### Functional requirement:

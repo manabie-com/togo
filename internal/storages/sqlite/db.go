@@ -53,11 +53,49 @@ func (l *LiteDB) AddTask(ctx context.Context, t *storages.Task) error {
 func (l *LiteDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
 	stmt := `SELECT id FROM users WHERE id = ? AND password = ?`
 	row := l.DB.QueryRowContext(ctx, stmt, userID, pwd)
+
 	u := &storages.User{}
 	err := row.Scan(&u.ID)
+
 	if err != nil {
 		return false
 	}
 
 	return true
+}
+
+// GetMaxToDo returns max_todo given a userID
+func (l *LiteDB) GetMaxToDo(ctx context.Context, userID sql.NullString) int {
+	stmt := `SELECT max_todo FROM users WHERE id = ?`
+	row := l.DB.QueryRowContext(ctx, stmt, userID)
+	u := &storages.User{}
+
+	err := row.Scan(&u.MaxToDo)
+	if err != nil {
+		return -1
+	}
+
+	return u.MaxToDo
+}
+
+// RetrieveTasksCount returns the number of tasks if match userID AND createDate.
+// possible improvement: reusability: len(RetrieveTasks) vs efficiency: RetrieveTasksCount
+func (l *LiteDB) RetrieveTasksCount(ctx context.Context, userID, createdDate sql.NullString) int {
+	stmt := `SELECT COUNT(id) FROM tasks WHERE user_id = ? AND created_date = ?`
+	rows, err := l.DB.QueryContext(ctx, stmt, userID, createdDate)
+	if err != nil {
+		return -1
+	}
+	defer rows.Close()
+
+	var count int
+	rows.Scan(&count)
+	for rows.Next() {
+		err := rows.Scan(&count)
+		if err != nil {
+			return -1
+		}
+	}
+
+	return count
 }

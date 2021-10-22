@@ -11,13 +11,20 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/storages"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
 )
+
+type DataAccessLayer interface {
+	RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*storages.Task, error)
+	RetrieveTasksCount(ctx context.Context, userID, createdDate sql.NullString) int
+	AddTask(ctx context.Context, t *storages.Task) error
+	ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool
+	GetMaxToDo(ctx context.Context, userID sql.NullString) int
+}
 
 // ToDoService implement HTTP server
 type ToDoService struct {
 	JWTKey string
-	Store  *sqllite.LiteDB
+	Store  DataAccessLayer
 }
 
 func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
@@ -33,6 +40,7 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 
 	switch req.URL.Path {
 	case "/login":
+		// possible improvement, only allow get method in login
 		s.getAuthToken(resp, req)
 		return
 	case "/tasks":
@@ -55,6 +63,7 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
 	id := value(req, "user_id")
+
 	if !s.Store.ValidateUser(req.Context(), id, value(req, "password")) {
 		resp.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(resp).Encode(map[string]string{
@@ -121,6 +130,14 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 
 	resp.Header().Set("Content-Type", "application/json")
 
+	if !s.isBelowLimit(req) {
+		resp.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": "Max limit reached",
+		})
+		return
+	}
+
 	err = s.Store.AddTask(req.Context(), t)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
@@ -133,6 +150,22 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(resp).Encode(map[string]*storages.Task{
 		"data": t,
 	})
+}
+
+// possible improvement: separate StatusInternalServerError vs StatusBadRequest
+func (s *ToDoService) isBelowLimit(req *http.Request) bool {
+	id, _ := userIDFromCtx(req.Context())
+	userId := sql.NullString{
+		String: id,
+		Valid:  true,
+	}
+
+	tasksCount := s.Store.RetrieveTasksCount(req.Context(), userId, sql.NullString{
+		String: time.Now().Format("2006-01-02"),
+		Valid:  true,
+	})
+
+	return (tasksCount < s.Store.GetMaxToDo(req.Context(), userId))
 }
 
 func value(req *http.Request, p string) sql.NullString {
