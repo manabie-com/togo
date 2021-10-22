@@ -1,0 +1,17 @@
+{
+  "type": "postgres",
+  "host": "togo_network",
+  "port": 5432,
+  "username": "postgres",
+  "password": "postgres",
+  "database": "togo",
+  "entities": ["./dist/**/**.entity{.ts,.js}"],
+  "subscribers": ["./dist/**/**.subscriber{.ts,.js}"],
+  "synchronize": false,
+  "logging": true,
+  "migrationsRun": true,
+  "migrations": ["./dist/migrations/*.js"],
+  "cli": {
+    "migrationsDir": "src/migrations"
+  }
+}
