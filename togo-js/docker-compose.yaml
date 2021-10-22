@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:13
+    ports:
+      - 5435:5432
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/create-data.sql
+    env_file:
+      - docker.env
+    restart: always
+    networks:
+      - togo_network
+  hng_backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 5050:5050
+    command: ["node", "dist/main.js"]
+    env_file:
+      - docker.env
+    networks:
+      - togo_network
+    depends_on:
+      - db
+    restart: always
+
+volumes:
+  postgresql_data:
+    driver: local
+networks:
+    togo_network:
