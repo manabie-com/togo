@@ -10,6 +10,9 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtStrategy } from './services/jwt/strategy';
 import { PassportModule } from '@nestjs/passport';
 
+// docker-compose didn't accept the ormconfig file
+// so i have to quick fix by hardcore here...
+
 @Module({
   imports: [
     PassportModule,
