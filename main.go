@@ -1,25 +1,25 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
 
 	"github.com/manabie-com/togo/internal/services"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	pg "github.com/manabie-com/togo/internal/storages/pg"
+	"context"
 
-	_ "github.com/mattn/go-sqlite3"
+	"github.com/jackc/pgx/v4/pgxpool"
 )
 
 func main() {
-	db, err := sql.Open("sqlite3", "./data.db")
+	db, err := pgxpool.Connect(context.Background(),"postgresql://admin:123456@localhost:5432/togodb?sslmode=disable")
 	if err != nil {
 		log.Fatal("error opening db", err)
 	}
 
 	http.ListenAndServe(":5050", &services.ToDoService{
 		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
+		Store: &pg.PgDB{
 			DB: db,
 		},
 	})
