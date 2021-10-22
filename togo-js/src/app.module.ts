@@ -19,6 +19,21 @@ import { PassportModule } from '@nestjs/passport';
       useFactory: async () => {
         return Object.assign(await getConnectionOptions(), {
           autoLoadEntities: true,
+          type: 'postgres',
+          host: 'db',
+          port: 5432,
+          username: 'postgres',
+          password: 'postgres',
+          database: 'togo',
+          entities: ['./dist/**/**.entity{.ts,.js}'],
+          subscribers: ['./dist/**/**.subscriber{.ts,.js}'],
+          synchronize: false,
+          logging: true,
+          migrationsRun: true,
+          migrations: ['./dist/migrations/*.js'],
+          cli: {
+            migrationsDir: 'src/migrations',
+          },
         });
       },
     }),
@@ -29,6 +44,6 @@ import { PassportModule } from '@nestjs/passport';
   ],
   controllers: [AppController],
   providers: [AppService, JwtStrategy],
-  exports: [JwtStrategy]
+  exports: [JwtStrategy],
 })
 export class AppModule {}

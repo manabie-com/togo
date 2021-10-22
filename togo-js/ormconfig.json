@@ -1,6 +1,6 @@
 {
   "type": "postgres",
-  "host": "localhost",
+  "host": "togo_network",
   "port": 5432,
   "username": "postgres",
   "password": "postgres",

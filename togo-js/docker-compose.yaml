@@ -13,7 +13,7 @@ services:
     restart: always
     networks:
       - togo_network
-  hng_backend:
+  togo:
     build:
       context: .
       dockerfile: Dockerfile
