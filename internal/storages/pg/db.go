@@ -29,6 +29,14 @@ func (l *PgDB) AddTask(ctx context.Context, t *storages.Task) error {
 	return err
 }
 
+// Count user tasks that match userID and createdDate
+func (l *PgDB) CountUserTasks(ctx context.Context,  userID, createdDate sql.NullString) (int, error) {
+	query := `SELECT COUNT(*) as count FROM tasks WHERE user_id = $1 AND created_date = $2`
+	var count int
+	err := l.DB.QueryRow(ctx, query, userID, createdDate).Scan(&count)
+	return count, err
+}
+
 // ValidateUser returns tasks if match userID AND password
 func (l *PgDB) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
 	u := storages.User{}

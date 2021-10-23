@@ -105,6 +105,7 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
+	const limitedTasksPerDay = 5
 	t := &storages.Task{}
 	err := json.NewDecoder(req.Body).Decode(t)
 	defer req.Body.Close()
@@ -113,8 +114,34 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	now := time.Now()
 	userID, _ := userIDFromCtx(req.Context())
+	now := time.Now()
+
+	tasksCount, err := s.Store.CountUserTasks(req.Context(),
+	sql.NullString{
+		String: userID,
+		Valid:  true,
+	}, 
+	sql.NullString{
+		String: now.Format("2006-01-02"),
+		Valid:  true,
+	})
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	if tasksCount >= limitedTasksPerDay {
+		resp.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"error": "You've exceeded the maximum tasks created request per day",
+		})
+		return
+	}
+
 	t.ID = uuid.New().String()
 	t.UserID = userID
 	t.CreatedDate = now.Format("2006-01-02")
