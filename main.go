@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/manabie-com/togo/internal/transports"
 	"github.com/manabie-com/togo/internal/services"
 	pg "github.com/manabie-com/togo/internal/storages/pg"
 	"context"
@@ -17,10 +18,12 @@ func main() {
 		log.Fatal("error opening db", err)
 	}
 
-	http.ListenAndServe(":5050", &services.ToDoService{
+	http.ListenAndServe(":5050", &transports.ToDoTrans{
 		JWTKey: "wqGyEBBfPK9w3Lxw",
+		TodoSvc: services.ToDoService{
 		Store: &pg.PgDB{
 			DB: db,
 		},
+	},
 	})
 }
