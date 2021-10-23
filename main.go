@@ -3,27 +3,35 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
-	"github.com/manabie-com/togo/internal/transports"
+	"context"
+
+	"github.com/joho/godotenv"
 	"github.com/manabie-com/togo/internal/services"
 	pg "github.com/manabie-com/togo/internal/storages/pg"
-	"context"
+	"github.com/manabie-com/togo/internal/transports"
 
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
 func main() {
-	db, err := pgxpool.Connect(context.Background(),"postgresql://admin:123456@localhost:5432/togodb?sslmode=disable")
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatalf("error loading .env file")
+	}
+
+	db, err := pgxpool.Connect(context.Background(), os.Getenv("PG_CONN_URI"))
 	if err != nil {
 		log.Fatal("error opening db", err)
 	}
 
 	http.ListenAndServe(":5050", &transports.ToDoTrans{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
+		JWTKey: os.Getenv("JWK_KEY"),
 		TodoSvc: services.ToDoService{
-		Store: &pg.PgDB{
-			DB: db,
+			Store: &pg.PgDB{
+				DB: db,
+			},
 		},
-	},
 	})
 }
