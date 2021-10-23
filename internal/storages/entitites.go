@@ -32,7 +32,7 @@ type User struct {
 	Email     string
 	Username  string
 	Password  string
-	MaxTodo   string
+	MaxTodo   int
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

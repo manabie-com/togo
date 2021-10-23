@@ -35,7 +35,7 @@ type ToDoService struct {
 
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
 	email := value(req, "email")
-	if !s.Models.DB.ValidateUser(req.Context(), email, value(req, "password")) {
+	if !s.Models.DB.ValidateUser(email, value(req, "password")) {
 		resp.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": "incorrect email/pwd",
@@ -77,7 +77,6 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	} else {
 		user = *m
 		tasks, err := s.Models.DB.RetrieveTasks(
-			req.Context(),
 			sql.NullString{
 				//convert user id to string
 				String: strconv.Itoa(user.ID),
@@ -131,7 +130,7 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 		t.UpdatedAt = now
 		t.CreatedAt = now
 		t.UpdatedAt = now
-		lastInsertId, err := s.Models.DB.AddTask(t)
+		lastInsertId, err := s.Models.DB.AddTask(t, user)
 		if err != nil {
 			resp.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(resp).Encode(map[string]string{
@@ -143,7 +142,6 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 		json.NewEncoder(resp).Encode(map[string]*storages.Task{
 			"data": &t,
 		})
-
 	}
 
 }
