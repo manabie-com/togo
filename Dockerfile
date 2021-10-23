@@ -1,6 +1,6 @@
-# Specify the base image for the go app.
+# Start from golang base image
 FROM golang:alpine as builder
-# Specify that we now need to execute any commands in this directory.
+
 # Install git.
 # Git is required for fetching the dependencies.
 RUN apk update && apk add --no-cache git
@@ -17,7 +17,7 @@ RUN go mod download
 # Copy the source from the current directory to the working Directory inside the container
 COPY . .
 
-# Expose port 8080 to the outside world
+# Expose port 5050 to the outside world
 EXPOSE 5050
 
 #Command to run the executable

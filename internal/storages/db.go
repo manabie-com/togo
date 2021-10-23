@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -13,22 +14,39 @@ type DBModel struct {
 	DB *sql.DB
 }
 
-// RetrieveTasks returns tasks if match userID AND createDate.
+/** RetrieveTasks returns tasks if match userID AND createDate.
+* @param userId, createdDate - sql NullString
+* @return Task, error
+ */
 func (l *DBModel) RetrieveTasks(userID, createdDate sql.NullString) ([]*Task, error) {
+	log.Println(createdDate.String)
+	log.Println(createdDate.Valid)
 	//added timeout for context and cancel if there's something wrong
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	stmt := `SELECT id, content, user_id, created_at FROM tasks WHERE user_id = $1 AND DATE(created_at) = $2`
-	rows, err := l.DB.QueryContext(ctx, stmt, userID.String, createdDate.String)
-	if err != nil {
-		return nil, err
+	//initialize variables to be assigned on conditions if there will be a date query
+	var rowsDB *sql.Rows
+	var errDB error
+	stmt := `SELECT id, content, user_id, created_at FROM tasks WHERE user_id = $1`
+	if createdDate.String != "" {
+		stmt = stmt + ` AND DATE(created_at) = $2`
+		rows, err := l.DB.QueryContext(ctx, stmt, userID.String, createdDate.String)
+		rowsDB = rows
+		errDB = err
+	} else {
+		rows, err := l.DB.QueryContext(ctx, stmt, userID.String)
+		rowsDB = rows
+		errDB = err
 	}
-	defer rows.Close()
+	if errDB != nil {
+		return nil, errDB
+	}
+	defer rowsDB.Close()
 	//initialize array of Task
 	var tasks []*Task
-	for rows.Next() {
+	for rowsDB.Next() {
 		t := &Task{}
-		err := rows.Scan(&t.ID, &t.Content, &t.UserID, &t.CreatedAt)
+		err := rowsDB.Scan(&t.ID, &t.Content, &t.UserID, &t.CreatedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -36,14 +54,17 @@ func (l *DBModel) RetrieveTasks(userID, createdDate sql.NullString) ([]*Task, er
 		tasks = append(tasks, t)
 	}
 
-	if err := rows.Err(); err != nil {
+	if err := rowsDB.Err(); err != nil {
 		return nil, err
 	}
 
 	return tasks, nil
 }
 
-// AddTask adds a new task to DB
+/** AddTask adds a new task to DB
+* @param Task, User
+* @return int, error
+ */
 func (l *DBModel) AddTask(t Task, u User) (int, error) {
 	//added timeout for context and cancel if there's something wrong
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
@@ -84,7 +105,10 @@ func (l *DBModel) AddTask(t Task, u User) (int, error) {
 	return lastInsertId, nil
 }
 
-// ValidateUser returns tasks if match email AND password
+/** ValidateUser check if user existing by query and password hash compare
+* @param email, pwd - sql NullString
+* @return bool
+ */
 func (l *DBModel) ValidateUser(email, pwd sql.NullString) bool {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -107,7 +131,10 @@ func (l *DBModel) ValidateUser(email, pwd sql.NullString) bool {
 	return true
 }
 
-//returns one user and error, if any using email query
+/** GetUserFromEmail get user from email
+* @param email string
+* @return User, error
+ */
 func (l *DBModel) GetUserFromEmail(email string) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -119,4 +146,54 @@ func (l *DBModel) GetUserFromEmail(email string) (*User, error) {
 		return nil, err
 	}
 	return &u, nil
+}
+
+/**Deletion of task
+ * @param id int
+ * @return error
+ */
+func (l *DBModel) DeleteTask(id int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	//check
+	stmt := "delete from tasks where id = $1"
+	res, err := l.DB.ExecContext(ctx, stmt, id)
+	if err != nil {
+		return err
+	}
+	count, err := res.RowsAffected()
+	if err != nil {
+		panic(err)
+	}
+	if count <= 0 {
+		return errors.New("There's no existing data to delete")
+	}
+
+	return nil
+}
+
+/**UpdateTask of task
+ * @param task Task
+ * @return error
+ */
+func (l *DBModel) UpdateTask(task Task) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	stmt := `update tasks set content = $1 where id = $2`
+	//ignore the first item and check for an error
+	res, err := l.DB.ExecContext(ctx, stmt,
+		task.Content,
+		task.ID,
+	)
+	if err != nil {
+		return err
+	}
+	count, err := res.RowsAffected()
+	if err != nil {
+		panic(err)
+	}
+	if count <= 0 {
+		return errors.New("There's no data to update")
+	}
+	return nil
 }

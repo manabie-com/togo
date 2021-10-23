@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "05327fec-8670-470b-8253-f27686acf809",
+		"_postman_id": "aa04e56b-c790-4c07-991e-081a3fb597f4",
 		"name": "Test togo",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -50,10 +50,9 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTM0Mjc4MjEsInVzZXJfaWQiOiJmaXJzdFVzZXIifQ.zJdFGhDFwPcR1-VZyUGmYgNMEDHpNYsttYYvJPcI7h4",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MzUwMTkxNzMsInVzZXJfaWQiOiJtZUBoZXJlLmNvbSJ9.Ckq2fmCvuyMZLvpotXS4ZTxPBVaztMxbWJRsATW7Z9M",
 						"type": "text"
 					}
-					
 				],
 				"url": {
 					"raw": "localhost:5050/tasks?created_at=2021-05-17",
@@ -67,7 +66,7 @@
 					"query": [
 						{
 							"key": "created_at",
-							"value": "2020-06-29"
+							"value": "2021-05-17"
 						}
 					]
 				}
@@ -81,7 +80,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1OTM0Mjc4MjEsInVzZXJfaWQiOiJmaXJzdFVzZXIifQ.zJdFGhDFwPcR1-VZyUGmYgNMEDHpNYsttYYvJPcI7h4",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MzUwMTkxNzMsInVzZXJfaWQiOiJtZUBoZXJlLmNvbSJ9.Ckq2fmCvuyMZLvpotXS4ZTxPBVaztMxbWJRsATW7Z9M",
 						"type": "text"
 					}
 				],
@@ -106,7 +105,60 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Delete task",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MzUwMTkxNzMsInVzZXJfaWQiOiJtZUBoZXJlLmNvbSJ9.Ckq2fmCvuyMZLvpotXS4ZTxPBVaztMxbWJRsATW7Z9M",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:5050/deletetask/1",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"deletetask",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update task",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MzUwMTkxNzMsInVzZXJfaWQiOiJtZUBoZXJlLmNvbSJ9.Ckq2fmCvuyMZLvpotXS4ZTxPBVaztMxbWJRsATW7Z9M",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 1,\r\n    \"content\": \"another content 1\"\r\n}"
+				},
+				"url": {
+					"raw": "localhost:5050/task/update",
+					"host": [
+						"localhost"
+					],
+					"port": "5050",
+					"path": [
+						"task",
+						"update"
+					]
+				}
+			},
+			"response": []
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }

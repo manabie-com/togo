@@ -32,13 +32,20 @@ func main() {
 	var cfg services.Config
 	flag.IntVar(&cfg.Port, "port", 5050, "Server port to listen on")
 	flag.StringVar(&cfg.Env, "env", "development", "Application environment (development|production)")
-	postgresInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", os.Getenv("DATABASE_HOST"), os.Getenv("DATABASE_PORT"), os.Getenv("DATABASE_USER"), os.Getenv("DATABASE_PASSWORD"), os.Getenv("DATABASE_DB"), os.Getenv("DATABASE_SSL"))
-	flag.StringVar(&cfg.Db.Dsn, "dsn", postgresInfo, "Postgres connection string")
+	url := fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable",
+		os.Getenv("POSTGRES_USER"),
+		os.Getenv("POSTGRES_PASSWORD"),
+		os.Getenv("POSTGRES_HOST"),
+		os.Getenv("POSTGRES_PORT"),
+		os.Getenv("POSTGRES_DB"))
+	// postgresInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", os.Getenv("DATABASE_HOST"), os.Getenv("DATABASE_PORT"), os.Getenv("DATABASE_USER"), os.Getenv("DATABASE_PASSWORD"), os.Getenv("DATABASE_DB"), os.Getenv("DATABASE_SSL"))
+	flag.StringVar(&cfg.Db.Dsn, "dsn", url, "Postgres connection string")
 	flag.StringVar(&cfg.Jwt.Secret, "jwt-secret", "", "secret")
 	flag.Parse()
 	//date and time for the log
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 	db, err := openDB(cfg)
+	log.Println(err, "daaaaaaaaave")
 	if err != nil {
 		logger.Fatal(err)
 	}
