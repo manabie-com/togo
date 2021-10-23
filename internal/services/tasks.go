@@ -7,27 +7,25 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/storages"
-	pg "github.com/manabie-com/togo/internal/storages/pg"
 )
 
 // ToDoService implement HTTP server
 type ToDoService struct {
-	Store  *pg.PgDB
+	Store Store
 }
 
 func (s *ToDoService) ValidateUser(ctx context.Context, userID, pwd string) bool {
-	return s.Store.ValidateUser(ctx, 
-	sql.NullString{
-		String: userID,
-		Valid:  true,
-	}, sql.NullString{
-		String: pwd,
-		Valid:  true,
-	})
+	return s.Store.ValidateUser(ctx,
+		sql.NullString{
+			String: userID,
+			Valid:  true,
+		}, sql.NullString{
+			String: pwd,
+			Valid:  true,
+		})
 }
 
-
-func (s *ToDoService) ListTasks(ctx context.Context, userID, createdDate string) ([]Task, error){
+func (s *ToDoService) ListTasks(ctx context.Context, userID, createdDate string) ([]Task, error) {
 	tasks := []Task{}
 	data, err := s.Store.RetrieveTasks(
 		ctx,
@@ -46,10 +44,10 @@ func (s *ToDoService) ListTasks(ctx context.Context, userID, createdDate string)
 
 	for _, task := range data {
 		tasks = append(tasks, Task{
-			ID         :task.ID,
-			Content    : task.Content,
-			UserID      : task.UserID,
-			CreatedDate : task.CreatedDate,
+			ID:          task.ID,
+			Content:     task.Content,
+			UserID:      task.UserID,
+			CreatedDate: task.CreatedDate,
 		})
 	}
 
@@ -58,14 +56,14 @@ func (s *ToDoService) ListTasks(ctx context.Context, userID, createdDate string)
 
 func (s *ToDoService) CountTodayTasks(ctx context.Context, userID string) (int, error) {
 	return s.Store.CountUserTasks(ctx,
-	sql.NullString{
-		String: userID,
-		Valid:  true,
-	}, 
-	sql.NullString{
-		String: time.Now().Format("2006-01-02"),
-		Valid:  true,
-	})
+		sql.NullString{
+			String: userID,
+			Valid:  true,
+		},
+		sql.NullString{
+			String: time.Now().Format("2006-01-02"),
+			Valid:  true,
+		})
 }
 
 func (s *ToDoService) AddTask(ctx context.Context, userID, content string) (Task, error) {
@@ -76,11 +74,16 @@ func (s *ToDoService) AddTask(ctx context.Context, userID, content string) (Task
 	t.Content = content
 
 	return t, s.Store.AddTask(ctx, &storages.Task{
-		ID: t.ID,
-		UserID: t.UserID,
-		Content: t.Content,
+		ID:          t.ID,
+		UserID:      t.UserID,
+		Content:     t.Content,
 		CreatedDate: t.CreatedDate,
-
 	})
 }
 
+type Store interface {
+	RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]storages.Task, error)
+	AddTask(ctx context.Context, t *storages.Task) error
+	CountUserTasks(ctx context.Context, userID, createdDate sql.NullString) (int, error)
+	ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool
+}
