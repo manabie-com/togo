@@ -10,10 +10,10 @@ import (
 	"os"
 	"time"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/manabie-com/togo/internal/services"
 	"github.com/manabie-com/togo/internal/storages"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 //for the new version forked repository and changes
@@ -23,10 +23,17 @@ const version = "1.0.1"
 
 //creating the main function responsible for running also the server
 func main() {
+	//load environment variable
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Some error occured. Err: %s", err)
+	}
+	//set config
 	var cfg services.Config
 	flag.IntVar(&cfg.Port, "port", 5050, "Server port to listen on")
 	flag.StringVar(&cfg.Env, "env", "development", "Application environment (development|production)")
-	flag.StringVar(&cfg.Db.Dsn, "dsn", "postgres://postgres:root@localhost/todos?sslmode=disable", "Postgres connection string")
+	postgresInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", os.Getenv("DATABASE_HOST"), os.Getenv("DATABASE_PORT"), os.Getenv("DATABASE_USER"), os.Getenv("DATABASE_PASSWORD"), os.Getenv("DATABASE_DB"), os.Getenv("DATABASE_SSL"))
+	flag.StringVar(&cfg.Db.Dsn, "dsn", postgresInfo, "Postgres connection string")
 	flag.StringVar(&cfg.Jwt.Secret, "jwt-secret", "", "secret")
 	flag.Parse()
 	//date and time for the log
@@ -57,8 +64,6 @@ func main() {
 	err = srv.ListenAndServe()
 	if err != nil {
 		log.Println(err)
-	} else {
-		log.Println("test")
 	}
 }
 
