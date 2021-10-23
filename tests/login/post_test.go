@@ -1,7 +1,8 @@
 package login
 
 import (
-	"fmt"
+	"bytes"
+	"encoding/json"
 	"net/http"
 	"testing"
 )
@@ -31,7 +32,13 @@ func TestUserLogin(t *testing.T) {
 
 	runInParallel := func(t *testing.T, tc testcase) {
 		t.Parallel()
-		resp, err := http.Get(fmt.Sprintf("http://localhost:5050/login?user_id=%s&password=%s", tc.userID, tc.password))
+		postBody, _ := json.Marshal(map[string]string{
+			"user_id":  tc.userID,
+			"password": tc.password,
+		})
+		responseBody := bytes.NewBuffer(postBody)
+
+		resp, err := http.Post("http://localhost:5050/login", "application/json", responseBody)
 		if err != nil {
 			t.Fatalf("Error happen while trying to login: %v", err)
 		}

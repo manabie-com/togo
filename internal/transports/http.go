@@ -30,7 +30,9 @@ func (s *ToDoTrans) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 
 	switch req.URL.Path {
 	case "/login":
-		s.getAuthToken(resp, req)
+		if req.Method == http.MethodPost {
+			s.getAuthToken(resp, req)
+		}
 		return
 	case "/tasks":
 		var ok bool
@@ -118,8 +120,16 @@ func (s *ToDoTrans) listTasks(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (s *ToDoTrans) getAuthToken(resp http.ResponseWriter, req *http.Request) {
-	id := req.FormValue("user_id")
-	if !s.TodoSvc.ValidateUser(req.Context(), id, req.FormValue("password")) {
+	data := LoginRequest{}
+	err := json.NewDecoder(req.Body).Decode(&data)
+	defer req.Body.Close()
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	id := data.UserID
+	if !s.TodoSvc.ValidateUser(req.Context(), id, data.Password) {
 		resp.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": "incorrect user_id/pwd",
