@@ -1,0 +1,13 @@
+version: "3.3"
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: togodb
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: admin
+    ports:
+      - 5432:5432
+    volumes:
+      - ./init-postgres.sql:/docker-entrypoint-initdb.d/init.sql

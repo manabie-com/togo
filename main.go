@@ -1,26 +1,37 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
+	"os"
 
+	"context"
+
+	"github.com/joho/godotenv"
 	"github.com/manabie-com/togo/internal/services"
-	sqllite "github.com/manabie-com/togo/internal/storages/sqlite"
+	pg "github.com/manabie-com/togo/internal/storages/pg"
+	"github.com/manabie-com/togo/internal/transports"
 
-	_ "github.com/mattn/go-sqlite3"
+	"github.com/jackc/pgx/v4/pgxpool"
 )
 
 func main() {
-	db, err := sql.Open("sqlite3", "./data.db")
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatalf("error loading .env file")
+	}
+
+	db, err := pgxpool.Connect(context.Background(), os.Getenv("PG_CONN_URI"))
 	if err != nil {
 		log.Fatal("error opening db", err)
 	}
 
-	http.ListenAndServe(":5050", &services.ToDoService{
-		JWTKey: "wqGyEBBfPK9w3Lxw",
-		Store: &sqllite.LiteDB{
-			DB: db,
+	http.ListenAndServe(":5050", &transports.ToDoTrans{
+		JWTKey: os.Getenv("JWK_KEY"),
+		TodoSvc: services.ToDoService{
+			Store: &pg.PgDB{
+				DB: db,
+			},
 		},
 	})
 }

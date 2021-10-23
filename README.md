@@ -56,3 +56,56 @@ CREATE TABLE tasks (
 
 #### Sequence diagram
 ![auth and create tasks request](https://github.com/manabie-com/togo/blob/master/docs/sequence.svg)
+
+
+
+#### #########################################################################################
+
+What I have done:
+- add limit user to only create N tasks per day feature
+- break services into services an transport layer
+- write unit for service layer
+- write integration test
+- change from using sqlite to postgres
+- use env
+
+### How to run
+
+### dependencies
+Make sure you have Go and Make (usually buit-in program) installed. 
+to double check:  
+```
+$ go version
+$ make --version
+```
+
+docker is set up for test integration and services prep, thus please make sure you have docker ,docker-compose installed as well 
+To double check: 
+```
+$ docker version
+$ docker-compose version  
+```
+
+### build integration test
+Once you have all the dependencies set up.
+To download go dependencies:
+```
+$ go mod download 
+$ go mod vendor 
+```
+To start docker components: 
+```
+$ make compose-all
+```
+To stop docker components: 
+```
+$ make compose-down
+```
+To run integration test: 
+```
+$ make test-integration
+```
+
+#### Things I wish to improve more but not have enough time:
+- make code DRY
+- better setup for unit & integration test
