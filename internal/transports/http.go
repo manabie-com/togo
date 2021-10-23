@@ -13,8 +13,8 @@ import (
 
 // ToDoTrans implement HTTP server
 type ToDoTrans struct {
-	JWTKey string
-	TodoSvc svc.ToDoService  
+	JWTKey  string
+	TodoSvc svc.ToDoService
 }
 
 func (s *ToDoTrans) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
@@ -50,7 +50,6 @@ func (s *ToDoTrans) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	}
 }
 
-
 func (s *ToDoTrans) addTask(resp http.ResponseWriter, req *http.Request) {
 	const limitedTasksPerDay = 5
 	t := svc.Task{}
@@ -60,11 +59,11 @@ func (s *ToDoTrans) addTask(resp http.ResponseWriter, req *http.Request) {
 		resp.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	
+
 	resp.Header().Set("Content-Type", "application/json")
 
 	userID, _ := userIDFromCtx(req.Context())
-	count, err := s.TodoSvc.CountTodayTasks(req.Context(), userID) 
+	count, err := s.TodoSvc.CountTodayTasks(req.Context(), userID)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
@@ -118,10 +117,9 @@ func (s *ToDoTrans) listTasks(resp http.ResponseWriter, req *http.Request) {
 	})
 }
 
-
 func (s *ToDoTrans) getAuthToken(resp http.ResponseWriter, req *http.Request) {
 	id := req.FormValue("user_id")
-	if !s.TodoSvc.ValidateUser(req.Context(),id , req.FormValue("password")) {
+	if !s.TodoSvc.ValidateUser(req.Context(), id, req.FormValue("password")) {
 		resp.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": "incorrect user_id/pwd",
