@@ -23,9 +23,11 @@ func NewModels(db *sql.DB) *DBModel {
 
 const (
 	sqlValidateUser     = `SELECT password, email FROM users WHERE email = ?`
-	sqlAddTask          = `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
-	sqlRetrieveTasks    = `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND DATE(created_at) = ?`
+	sqlAddTask          = `INSERT INTO tasks (content, user_id, created_at, updated_at) VALUES (?, ?, ?, ?)`
+	sqlRetrieveTasks    = `SELECT id, content, user_id, created_at FROM tasks WHERE user_id = ? AND DATE(created_at) = ?`
 	sqlGetUserFromEmail = `SELECT id, max_todo, email FROM users WHERE email = ?`
+	sqlUpdateTask       = `update tasks set content = $1 where id = $2`
+	sqlDeleteTask       = `delete from tasks where id = ?`
 )
 
 /** RetrieveTasks returns tasks if match userID AND createDate.
@@ -86,6 +88,7 @@ func (l *DBModel) RetrieveTasks(email, createdDate sql.NullString) ([]*storages.
  */
 func (l *DBModel) AddTask(t *storages.Task, email string) error {
 	//added timeout for context and cancel if there's something wrong
+
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	var user storages.User
@@ -112,23 +115,43 @@ func (l *DBModel) AddTask(t *storages.Task, email string) error {
 		return errors.New("Only 5 todo task can be created a day")
 	}
 	//otherwise add task
-	lastInsertId := 0
-	err := l.DB.QueryRow("INSERT INTO tasks (content, user_id, created_at, updated_at) VALUES ($1, $2, $3, $4) RETURNING id", t.Content, t.UserID, t.CreatedAt, t.UpdatedAt).Scan(&lastInsertId)
+	tx, errDB := l.DB.Begin()
+	if errDB != nil {
+		return errDB
+	}
+
+	_, err := l.DB.ExecContext(ctx, sqlAddTask, &t.Content, &t.UserID, t.CreatedAt, t.UpdatedAt)
 	if err != nil {
 		return err
 	}
+	defer func() {
+		switch err {
+		case nil:
+			_ = tx.Commit()
+		default:
+			_ = tx.Rollback()
+		}
+	}()
 	//update max todo of the user
 	incrementTodo := counter + 1
-	stmt := `update users set max_todo = $1, updated_at = $2 where id = $3`
+	stmt := `update users set max_todo = ?, updated_at = ? where id = ?`
 	_, errUpdate := l.DB.ExecContext(ctx, stmt,
 		incrementTodo,
-		now,
+		t.UpdatedAt,
 		t.UserID,
 	)
+
+	defer func() {
+		switch errUpdate {
+		case nil:
+			_ = tx.Commit()
+		default:
+			_ = tx.Rollback()
+		}
+	}()
 	if errUpdate != nil {
 		return errUpdate
 	}
-	t.ID = lastInsertId
 	return nil
 }
 
@@ -179,13 +202,23 @@ func (l *DBModel) GetUserFromEmail(email string) (*storages.User, error) {
 func (l *DBModel) DeleteTask(id int) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	//check
-	stmt := "delete from tasks where id = $1"
-	res, err := l.DB.ExecContext(ctx, stmt, id)
+	tx, errDB := l.DB.Begin()
+	if errDB != nil {
+		return errDB
+	}
+	res, err := l.DB.ExecContext(ctx, sqlDeleteTask, id)
 	if err != nil {
 		return err
 	}
 	count, err := res.RowsAffected()
+	defer func() {
+		switch err {
+		case nil:
+			_ = tx.Commit()
+		default:
+			_ = tx.Rollback()
+		}
+	}()
 	if err != nil {
 		panic(err)
 	}
@@ -203,9 +236,12 @@ func (l *DBModel) DeleteTask(id int) error {
 func (l *DBModel) UpdateTask(task *storages.Task) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	stmt := `update tasks set content = $1 where id = $2`
+	tx, errDB := l.DB.Begin()
+	if errDB != nil {
+		return errDB
+	}
 	//ignore the first item and check for an error
-	res, err := l.DB.ExecContext(ctx, stmt,
+	res, err := l.DB.ExecContext(ctx, sqlUpdateTask,
 		task.Content,
 		task.ID,
 	)
@@ -213,6 +249,14 @@ func (l *DBModel) UpdateTask(task *storages.Task) error {
 		return err
 	}
 	count, err := res.RowsAffected()
+	defer func() {
+		switch err {
+		case nil:
+			_ = tx.Commit()
+		default:
+			_ = tx.Rollback()
+		}
+	}()
 	if err != nil {
 		panic(err)
 	}

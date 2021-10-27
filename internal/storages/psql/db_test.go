@@ -21,11 +21,6 @@ const (
 	userID       = 1
 )
 
-func TestHandler(t *testing.T) {
-	//for Login API tests
-	// t.Run("ValidateUser", testLoginHandlerIncorrectHTTPMethod)
-}
-
 func TestValidateUser(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	require.NoError(t, err)
@@ -112,54 +107,6 @@ func TestGetUserFromEmail(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, user.MaxTodo, u.MaxTodo)
 			require.Equal(t, user.ID, u.ID)
-			// taskCases := map[string]struct {
-			// 	id         int
-			// 	user_id    int
-			// 	content    string
-			// 	created_at string
-			// }{
-			// 	"TaskOne": {
-			// 		id:         10,
-			// 		user_id:    u.ID,
-			// 		content:    "content 1",
-			// 		created_at: "2021-11-12T11:45:26.371Z",
-			// 	},
-			// 	"TaskTwo": {
-			// 		id:         11,
-			// 		user_id:    u.ID,
-			// 		content:    "content 2",
-			// 		created_at: "2020-11-12T11:45:26.371Z",
-			// 	},
-			// }
-			// layout := "2006-01-02T15:04:05.000Z"
-			// for name, taskc := range taskCases {
-			// 	t.Run(name, func(t *testing.T) {
-			// 		timeCreated, err := time.Parse(layout, taskc.created_at)
-			// 		require.NoError(t, err)
-			// 		task := &storages.Task{
-			// 			ID:        taskc.id,
-			// 			Content:   taskc.content,
-			// 			CreatedAt: timeCreated,
-			// 		}
-
-			// 		rows := sqlmock.NewRows([]string{"id", "content", "user_id", "created_at"}).AddRow(task.ID, task.Content, u.ID, task.CreatedAt)
-			// 		mock.ExpectQuery(regexp.QuoteMeta(`SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`)).WithArgs(u.ID, task.CreatedAt).WillReturnRows(rows)
-			// 		liteDB := NewModels(db)
-			// 		user, err := liteDB.RetrieveTasks(
-			// 			sql.NullString{
-			// 				String: u.Email,
-			// 				Valid:  true,
-			// 			},
-			// 			sql.NullString{
-			// 				String: taskc.created_at,
-			// 				Valid:  true,
-			// 			},
-			// 		)
-			// 		require.NoError(t, err)
-			// 		// require.Equal(t, user.MaxTodo, u.MaxTodo)
-			// 		// require.Equal(t, user.ID, u.ID)
-			// 	})
-			// }
 
 		})
 	}
@@ -170,8 +117,9 @@ func TestRetrieveTasks(t *testing.T) {
 	require.NoError(t, err)
 	defer db.Close()
 	u := &storages.User{
-		Email: "test@gmail.com",
-		ID:    1,
+		Email:   "test@gmail.com",
+		ID:      1,
+		MaxTodo: 0,
 	}
 	task := &storages.Task{
 		ID:        1,
@@ -193,7 +141,7 @@ func TestRetrieveTasks(t *testing.T) {
 	rowsTask := sqlmock.NewRows([]string{"id", "max_todo", "email"}).AddRow(u.ID, u.MaxTodo, u.Email)
 	mock.ExpectQuery(regexp.QuoteMeta(sqlGetUserFromEmail)).WithArgs(u.Email).WillReturnRows(rowsTask)
 	rowsTask = sqlmock.NewRows([]string{"id", "content", "user_id", "created_at"}).AddRow(task.ID, task.Content, task.UserID, task.CreatedAt)
-	mock.ExpectQuery(regexp.QuoteMeta(`SELECT id, content, user_id, created_at FROM tasks WHERE user_id = ? AND DATE(created_at) = ?`)).WithArgs(task.UserID, task.CreatedAt.String()).WillReturnRows(rowsTask)
+	mock.ExpectQuery(regexp.QuoteMeta(sqlRetrieveTasks)).WithArgs(task.UserID, task.CreatedAt.String()).WillReturnRows(rowsTask)
 	tasks, err := liteDB.RetrieveTasks(
 		sql.NullString{
 			String: u.Email,
@@ -208,4 +156,87 @@ func TestRetrieveTasks(t *testing.T) {
 	assert.Equal(t, 1, len(tasks))
 	assert.Equal(t, 1, tasks[0].ID)
 	assert.Equal(t, "hash password", tasks[0].Content)
+}
+
+func TestAddTask(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	defer db.Close()
+	u := &storages.User{
+		Email:   "test@gmail.com",
+		ID:      1,
+		MaxTodo: 0,
+	}
+	task := &storages.Task{
+		ID:        1,
+		Content:   "hash password",
+		UserID:    1,
+		CreatedAt: time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC),
+		UpdatedAt: time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC),
+	}
+	rows := sqlmock.NewRows([]string{"id", "max_todo", "email"}).AddRow(u.ID, u.MaxTodo, u.Email)
+	mock.ExpectQuery(regexp.QuoteMeta(sqlGetUserFromEmail)).WithArgs(u.Email).WillReturnRows(rows)
+	liteDB := NewModels(db)
+	user, err := liteDB.GetUserFromEmail(
+		u.Email,
+	)
+	require.NoError(t, err)
+	require.Equal(t, user.MaxTodo, u.MaxTodo)
+	require.Equal(t, user.ID, u.ID)
+
+	rowsTask := sqlmock.NewRows([]string{"id", "max_todo", "email"}).AddRow(u.ID, u.MaxTodo, u.Email)
+	mock.ExpectQuery(regexp.QuoteMeta(sqlGetUserFromEmail)).WithArgs(u.Email).WillReturnRows(rowsTask)
+	rowsTask = sqlmock.NewRows([]string{"id"}).AddRow(task.ID)
+	dateToday := time.Now().Format("2006-01-02")
+	//incrementTodo here since it creates task for the user
+	incrementTodo := u.MaxTodo + 1
+	mock.ExpectQuery(regexp.QuoteMeta(`select count(id) FROM tasks where user_id = $1 AND DATE(created_at) = $2`)).WithArgs(u.ID, dateToday).WillReturnRows(rowsTask)
+
+	mock.ExpectBegin()
+	//another increment todo here for inserting task from user
+	incrementTodo = incrementTodo + 1
+	mock.ExpectExec(regexp.QuoteMeta(sqlAddTask)).WithArgs(task.Content, task.UserID, task.CreatedAt, task.UpdatedAt).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec(regexp.QuoteMeta(`update users set max_todo = ?, updated_at = ? where id = ?`)).WithArgs(incrementTodo, task.UpdatedAt, task.ID).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
+	require.NoError(t, liteDB.AddTask(task, u.Email))
+}
+
+func TestUpdateTask(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	defer db.Close()
+
+	task := &storages.Task{
+		ID:        1,
+		Content:   "hash password",
+		UserID:    1,
+		CreatedAt: time.Now(),
+	}
+
+	mock.ExpectBegin()
+	mock.ExpectExec(regexp.QuoteMeta(sqlUpdateTask)).WithArgs(task.Content, task.ID).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
+
+	liteDB := NewModels(db)
+	require.NoError(t, liteDB.UpdateTask(task))
+}
+
+func TestDeleteTask(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	defer db.Close()
+
+	task := &storages.Task{
+		ID:        1,
+		Content:   "hash password",
+		UserID:    1,
+		CreatedAt: time.Now(),
+	}
+
+	mock.ExpectBegin()
+	mock.ExpectExec(regexp.QuoteMeta(sqlDeleteTask)).WithArgs(task.ID).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
+
+	liteDB := NewModels(db)
+	require.NoError(t, liteDB.DeleteTask(task.ID))
 }
