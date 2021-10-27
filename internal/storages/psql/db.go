@@ -1,12 +1,12 @@
-package storages
+package psql
 
 import (
 	"context"
 	"database/sql"
 	"errors"
-	"log"
 	"time"
 
+	"github.com/manabie-com/togo/internal/storages"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -14,27 +14,39 @@ type DBModel struct {
 	DB *sql.DB
 }
 
+//NewModels returns models with db pool
+func NewModels(db *sql.DB) *DBModel {
+	return &DBModel{
+		DB: db,
+	}
+}
+
 /** RetrieveTasks returns tasks if match userID AND createDate.
-* @param userId, createdDate - sql NullString
+* @param email, createdDate - sql NullString
 * @return Task, error
  */
-func (l *DBModel) RetrieveTasks(userID, createdDate sql.NullString) ([]*Task, error) {
-	log.Println(createdDate.String)
-	log.Println(createdDate.Valid)
+func (l *DBModel) RetrieveTasks(email, createdDate sql.NullString) ([]*storages.Task, error) {
 	//added timeout for context and cancel if there's something wrong
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
+	var user storages.User
+	m, err := l.GetUserFromEmail(email.String)
+	if err != nil {
+		return nil, err
+	}
+	user = *m
+	userID := user.ID
 	//initialize variables to be assigned on conditions if there will be a date query
 	var rowsDB *sql.Rows
 	var errDB error
 	stmt := `SELECT id, content, user_id, created_at FROM tasks WHERE user_id = $1`
 	if createdDate.String != "" {
 		stmt = stmt + ` AND DATE(created_at) = $2`
-		rows, err := l.DB.QueryContext(ctx, stmt, userID.String, createdDate.String)
+		rows, err := l.DB.QueryContext(ctx, stmt, userID, createdDate.String)
 		rowsDB = rows
 		errDB = err
 	} else {
-		rows, err := l.DB.QueryContext(ctx, stmt, userID.String)
+		rows, err := l.DB.QueryContext(ctx, stmt, userID)
 		rowsDB = rows
 		errDB = err
 	}
@@ -43,9 +55,9 @@ func (l *DBModel) RetrieveTasks(userID, createdDate sql.NullString) ([]*Task, er
 	}
 	defer rowsDB.Close()
 	//initialize array of Task
-	var tasks []*Task
+	var tasks []*storages.Task
 	for rowsDB.Next() {
-		t := &Task{}
+		t := &storages.Task{}
 		err := rowsDB.Scan(&t.ID, &t.Content, &t.UserID, &t.CreatedAt)
 		if err != nil {
 			return nil, err
@@ -62,15 +74,22 @@ func (l *DBModel) RetrieveTasks(userID, createdDate sql.NullString) ([]*Task, er
 }
 
 /** AddTask adds a new task to DB
-* @param Task, User
+* @param Task, email string
 * @return int, error
  */
-func (l *DBModel) AddTask(t Task, u User) (int, error) {
+func (l *DBModel) AddTask(t *storages.Task, email string) error {
 	//added timeout for context and cancel if there's something wrong
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
+	var user storages.User
+	m, errGetUser := l.GetUserFromEmail(email)
+	if errGetUser != nil {
+		return errGetUser
+	}
+	user = *m
 	//get the user ID from the user passed in argument
-	userID := u.ID
+	userID := user.ID
+	t.UserID = userID
 	var counter int
 	now := time.Now()
 	dateToday := now.Format("2006-01-02")
@@ -79,17 +98,17 @@ func (l *DBModel) AddTask(t Task, u User) (int, error) {
 	rowTask := l.DB.QueryRow(stmtTask, userID, dateToday)
 	errRowTask := rowTask.Scan(&counter)
 	if errRowTask != nil {
-		return 0, errRowTask
+		return errRowTask
 	}
 	//if the users' tasks exceed to 5 this day then throw and error
 	if counter >= 5 {
-		return 0, errors.New("Only 5 todo task can be created a day")
+		return errors.New("Only 5 todo task can be created a day")
 	}
 	//otherwise add task
 	lastInsertId := 0
 	err := l.DB.QueryRow("INSERT INTO tasks (content, user_id, created_at, updated_at) VALUES ($1, $2, $3, $4) RETURNING id", t.Content, t.UserID, t.CreatedAt, t.UpdatedAt).Scan(&lastInsertId)
 	if err != nil {
-		return 0, err
+		return err
 	}
 	//update max todo of the user
 	incrementTodo := counter + 1
@@ -100,9 +119,10 @@ func (l *DBModel) AddTask(t Task, u User) (int, error) {
 		t.UserID,
 	)
 	if errUpdate != nil {
-		return 0, errUpdate
+		return errUpdate
 	}
-	return lastInsertId, nil
+	t.ID = lastInsertId
+	return nil
 }
 
 /** ValidateUser check if user existing by query and password hash compare
@@ -115,7 +135,7 @@ func (l *DBModel) ValidateUser(email, pwd sql.NullString) bool {
 	stmtEmail := `SELECT password FROM users WHERE email = $1`
 
 	row := l.DB.QueryRowContext(ctx, stmtEmail, email.String)
-	var u User
+	var u storages.User
 	errRow := row.Scan(&u.Password)
 	if errRow != nil {
 		return false
@@ -135,12 +155,12 @@ func (l *DBModel) ValidateUser(email, pwd sql.NullString) bool {
 * @param email string
 * @return User, error
  */
-func (l *DBModel) GetUserFromEmail(email string) (*User, error) {
+func (l *DBModel) GetUserFromEmail(email string) (*storages.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	stmt := `SELECT id, max_todo FROM users WHERE email = $1`
 	row := l.DB.QueryRowContext(ctx, stmt, email)
-	var u User
+	var u storages.User
 	err := row.Scan(&u.ID, &u.MaxTodo)
 	if err != nil {
 		return nil, err
@@ -176,7 +196,7 @@ func (l *DBModel) DeleteTask(id int) error {
  * @param task Task
  * @return error
  */
-func (l *DBModel) UpdateTask(task Task) error {
+func (l *DBModel) UpdateTask(task *storages.Task) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	stmt := `update tasks set content = $1 where id = $2`

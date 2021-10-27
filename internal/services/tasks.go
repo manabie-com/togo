@@ -6,11 +6,10 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strconv"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/julienschmidt/httprouter"
+	repo "github.com/manabie-com/togo/internal/repositories"
 	"github.com/manabie-com/togo/internal/storages"
 )
 
@@ -32,7 +31,14 @@ type ToDoService struct {
 	Config Config
 	//pointer to logger standard library
 	Logger *log.Logger
-	Models storages.Models
+	Task   repo.TaskService
+}
+
+func NewToDoService(jwtKey string, task repo.TaskService) *ToDoService {
+	return &ToDoService{
+		JWTKey: jwtKey,
+		Task:   task,
+	}
 }
 
 /**
@@ -40,8 +46,12 @@ type ToDoService struct {
 * @return jwt token/error
 **/
 func (s *ToDoService) getAuthToken(resp http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodPost {
+		resp.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
 	email := value(req, "email")
-	if !s.Models.DB.ValidateUser(email, value(req, "password")) {
+	if !s.Task.ValidateUser(email, value(req, "password")) {
 		resp.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": "incorrect email/pwd",
@@ -74,37 +84,28 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 		resp.WriteHeader(http.StatusUnauthorized)
 		return
 	}
-	var user storages.User
 	email, _ := userIDFromCtx(req.Context())
-	m, err := s.Models.DB.GetUserFromEmail(email)
+	tasks, err := s.Task.RetrieveTasks(
+		sql.NullString{
+			String: email,
+			Valid:  true,
+		},
+		value(req, "created_date"),
+	)
+
+	resp.Header().Set("Content-Type", "application/json")
+
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(resp).Encode(map[string]string{
+		_ = json.NewEncoder(resp).Encode(map[string]string{
 			"error": err.Error(),
 		})
 		return
-	} else {
-		user = *m
-		tasks, err := s.Models.DB.RetrieveTasks(
-			sql.NullString{
-				//convert user id to string
-				String: strconv.Itoa(user.ID),
-				Valid:  true,
-			},
-			value(req, "created_at"),
-		)
-		if err != nil {
-			resp.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(resp).Encode(map[string]string{
-				"error": err.Error(),
-			})
-			return
-		}
-
-		json.NewEncoder(resp).Encode(map[string][]*storages.Task{
-			"data": tasks,
-		})
 	}
+
+	_ = json.NewEncoder(resp).Encode(map[string][]*storages.Task{
+		"data": tasks,
+	})
 }
 
 /**
@@ -117,7 +118,7 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 		resp.WriteHeader(http.StatusUnauthorized)
 		return
 	}
-	var t storages.Task
+	t := &storages.Task{}
 	resp.Header().Set("Content-Type", "application/json")
 	err := json.NewDecoder(req.Body).Decode(&t)
 	defer req.Body.Close()
@@ -126,36 +127,22 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 	now := time.Now()
-	var user storages.User
 	email, _ := userIDFromCtx(req.Context())
-	m, err := s.Models.DB.GetUserFromEmail(email)
-	if err != nil {
+	t.CreatedAt = now
+	t.UpdatedAt = now
+	//get the user and user ID for the task relation
+	errAddTask := s.Task.AddTask(t, email)
+	if errAddTask != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
+			"error": errAddTask.Error(),
 		})
 		return
-	} else {
-		//get the user and user ID for the task relation
-		user = *m
-		t.UserID = user.ID
-		t.CreatedAt = now
-		t.UpdatedAt = now
-		t.CreatedAt = now
-		t.UpdatedAt = now
-		lastInsertId, err := s.Models.DB.AddTask(t, user)
-		if err != nil {
-			resp.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(resp).Encode(map[string]string{
-				"error": err.Error(),
-			})
-			return
-		}
-		t.ID = lastInsertId
-		json.NewEncoder(resp).Encode(map[string]*storages.Task{
-			"data": &t,
-		})
 	}
+
+	json.NewEncoder(resp).Encode(map[string]*storages.Task{
+		"data": t,
+	})
 
 }
 
@@ -208,6 +195,7 @@ type userAuthKey int8
 func userIDFromCtx(ctx context.Context) (string, bool) {
 	v := ctx.Value(userAuthKey(0))
 	id, ok := v.(string)
+
 	return id, ok
 }
 
@@ -215,16 +203,16 @@ func userIDFromCtx(ctx context.Context) (string, bool) {
 * deleteTask checking valid token before calling delete task function
 **/
 func (s *ToDoService) deleteTask(resp http.ResponseWriter, req *http.Request) {
-	params := httprouter.ParamsFromContext(req.Context())
 	var ok bool
 	req, ok = s.validToken(req)
 	if !ok {
 		resp.WriteHeader(http.StatusUnauthorized)
 		return
 	}
+	var t *storages.Task
+	err := json.NewDecoder(req.Body).Decode(&t)
 	defer req.Body.Close()
-	//get paramater id
-	id, err := strconv.Atoi(params.ByName("id"))
+	id := t.ID
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
@@ -232,7 +220,7 @@ func (s *ToDoService) deleteTask(resp http.ResponseWriter, req *http.Request) {
 		})
 		return
 	}
-	err = s.Models.DB.DeleteTask(id)
+	err = s.Task.DeleteTask(id)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
@@ -257,10 +245,9 @@ func (s *ToDoService) updateTask(resp http.ResponseWriter, req *http.Request) {
 		resp.WriteHeader(http.StatusUnauthorized)
 		return
 	}
-	var t storages.Task
+	var t *storages.Task
 	resp.Header().Set("Content-Type", "application/json")
 	err := json.NewDecoder(req.Body).Decode(&t)
-	log.Println(err)
 	defer req.Body.Close()
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
@@ -270,8 +257,7 @@ func (s *ToDoService) updateTask(resp http.ResponseWriter, req *http.Request) {
 	t.UpdatedAt = time.Now()
 
 	//call the update function of the db
-	err = s.Models.DB.UpdateTask(t)
-	log.Println(err)
+	err = s.Task.UpdateTask(t)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{

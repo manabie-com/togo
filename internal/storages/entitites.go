@@ -1,21 +1,8 @@
 package storages
 
 import (
-	"database/sql"
 	"time"
 )
-
-//Models is the wrapper for database
-type Models struct {
-	DB DBModel
-}
-
-//NewModels returns models with db pool
-func NewModels(db *sql.DB) Models {
-	return Models{
-		DB: DBModel{DB: db},
-	}
-}
 
 // Task reflects tasks in DB
 type Task struct {

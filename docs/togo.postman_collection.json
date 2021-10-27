@@ -8,10 +8,24 @@
 		{
 			"name": "Login",
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "me@here.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "password"
+						}
+					]
+				},
 				"url": {
-					"raw": "localhost:5050/login?email=me@here.com&password=password",
+					"raw": "localhost:5050/login",
 					"host": [
 						"localhost"
 					],
@@ -21,12 +35,9 @@
 					],
 					"query": [
 						{
-							"key": "email",
-							"value": "me@here.com"
-						},
-						{
-							"key": "password",
-							"value": "password"
+							"key": "",
+							"value": "",
+							"disabled": true
 						}
 					]
 				}
@@ -55,7 +66,7 @@
 					}
 				],
 				"url": {
-					"raw": "localhost:5050/tasks?created_at=2021-05-17",
+					"raw": "localhost:5050/tasks?created_at=2021-10-24",
 					"host": [
 						"localhost"
 					],
@@ -66,7 +77,7 @@
 					"query": [
 						{
 							"key": "created_at",
-							"value": "2021-05-17"
+							"value": "2021-10-24"
 						}
 					]
 				}
@@ -109,7 +120,7 @@
 		{
 			"name": "Delete task",
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [
 					{
 						"key": "Authorization",
@@ -117,15 +128,19 @@
 						"type": "text"
 					}
 				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 1\r\n}"
+				},
 				"url": {
-					"raw": "localhost:5050/deletetask/1",
+					"raw": "localhost:5050/task/delete",
 					"host": [
 						"localhost"
 					],
 					"port": "5050",
 					"path": [
-						"deletetask",
-						"1"
+						"task",
+						"delete"
 					]
 				}
 			},

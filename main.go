@@ -8,12 +8,13 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/manabie-com/togo/internal/services"
-	"github.com/manabie-com/togo/internal/storages"
+	"github.com/manabie-com/togo/internal/storages/psql"
 )
 
 //for the new version forked repository and changes
@@ -30,7 +31,11 @@ func main() {
 	}
 	//set config
 	var cfg services.Config
-	flag.IntVar(&cfg.Port, "port", 5050, "Server port to listen on")
+	intPort, err := strconv.Atoi(os.Getenv("TOGO_PORT"))
+	if err != nil {
+		log.Fatalf("Some error occured. Err: %s", err)
+	}
+	flag.IntVar(&cfg.Port, "port", intPort, "Server port to listen on")
 	flag.StringVar(&cfg.Env, "env", "development", "Application environment (development|production)")
 	url := fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable",
 		os.Getenv("POSTGRES_USER"),
@@ -45,7 +50,6 @@ func main() {
 	//date and time for the log
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 	db, err := openDB(cfg)
-	log.Println(err, "daaaaaaaaave")
 	if err != nil {
 		logger.Fatal(err)
 	}
@@ -55,7 +59,7 @@ func main() {
 	app := &services.ToDoService{
 		Config: cfg,
 		Logger: logger,
-		Models: storages.NewModels(db),
+		Task:   psql.NewModels(db),
 		JWTKey: cfg.Jwt.Secret,
 	}
 	//running the server
