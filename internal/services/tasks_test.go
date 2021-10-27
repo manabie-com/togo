@@ -34,31 +34,31 @@ func TestHandler(t *testing.T) {
 	//for Login API tests
 	t.Run("login", testLoginHandlerIncorrectHTTPMethod)
 
-	// //for Task API tests
-	// taskList := &storages.Task{
-	// 	Content:   "hash password",
-	// 	UserID:    userID,
-	// 	CreatedAt: time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC),
-	// }
-	// t.Run("listTasks", func(t *testing.T) {
-	// 	testListTasksHandler(t, taskList)
-	// })
-	// task := &storages.Task{
-	// 	Content:   "hash password",
-	// 	UserID:    userID,
-	// 	CreatedAt: time.Now(),
-	// }
-	// t.Run("addTask", func(t *testing.T) {
-	// 	testAddTaskHandler(t, task)
-	// })
-	// tasktoUpdate := &storages.Task{
-	// 	ID:      1,
-	// 	Content: "update content",
-	// }
-	// t.Run("updateTask", func(t *testing.T) {
-	// 	testUpdateTaskHandler(t, tasktoUpdate)
-	// })
-	//test id
+	//for Task API tests
+	taskList := &storages.Task{
+		Content:   "hash password",
+		UserID:    userID,
+		CreatedAt: time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC),
+	}
+	t.Run("listTasks", func(t *testing.T) {
+		testListTasksHandler(t, taskList)
+	})
+	task := &storages.Task{
+		Content:   "hash password",
+		UserID:    userID,
+		CreatedAt: time.Now(),
+	}
+	t.Run("addTask", func(t *testing.T) {
+		testAddTaskHandler(t, task)
+	})
+	tasktoUpdate := &storages.Task{
+		ID:      1,
+		Content: "update content",
+	}
+	t.Run("updateTask", func(t *testing.T) {
+		testUpdateTaskHandler(t, tasktoUpdate)
+	})
+	// test id
 	tasktoDelete := &storages.Task{
 		ID: 1,
 	}

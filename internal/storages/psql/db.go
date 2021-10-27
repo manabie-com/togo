@@ -21,6 +21,13 @@ func NewModels(db *sql.DB) *DBModel {
 	}
 }
 
+const (
+	sqlValidateUser  = `SELECT password, email FROM users WHERE email = ?`
+	sqlAddTask       = `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
+	sqlRetrieveTasks = `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`
+	sqlGetUser       = `SELECT id, max_todo, email FROM users WHERE email = ?`
+)
+
 /** RetrieveTasks returns tasks if match userID AND createDate.
 * @param email, createdDate - sql NullString
 * @return Task, error
@@ -132,16 +139,14 @@ func (l *DBModel) AddTask(t *storages.Task, email string) error {
 func (l *DBModel) ValidateUser(email, pwd sql.NullString) bool {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	stmtEmail := `SELECT password FROM users WHERE email = $1`
-
-	row := l.DB.QueryRowContext(ctx, stmtEmail, email.String)
+	row := l.DB.QueryRowContext(ctx, sqlValidateUser, email.String)
 	var u storages.User
-	errRow := row.Scan(&u.Password)
+	errRow := row.Scan(&u.Password, &u.Email)
 	if errRow != nil {
 		return false
 	}
-	hashedPassword := &u.Password
-	password := []byte(*hashedPassword)
+	hashedPassword := u.Password
+	password := []byte(hashedPassword)
 	//compare the hash password in the database
 	err := bcrypt.CompareHashAndPassword([]byte(password), []byte(pwd.String))
 	if err != nil {
@@ -158,10 +163,9 @@ func (l *DBModel) ValidateUser(email, pwd sql.NullString) bool {
 func (l *DBModel) GetUserFromEmail(email string) (*storages.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	stmt := `SELECT id, max_todo FROM users WHERE email = $1`
-	row := l.DB.QueryRowContext(ctx, stmt, email)
+	row := l.DB.QueryRowContext(ctx, sqlGetUser, email)
 	var u storages.User
-	err := row.Scan(&u.ID, &u.MaxTodo)
+	err := row.Scan(&u.ID, &u.MaxTodo, &u.Email)
 	if err != nil {
 		return nil, err
 	}
