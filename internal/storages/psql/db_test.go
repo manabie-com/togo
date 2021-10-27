@@ -196,7 +196,7 @@ func TestAddTask(t *testing.T) {
 	//another increment todo here for inserting task from user
 	incrementTodo = incrementTodo + 1
 	mock.ExpectExec(regexp.QuoteMeta(sqlAddTask)).WithArgs(task.Content, task.UserID, task.CreatedAt, task.UpdatedAt).WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectExec(regexp.QuoteMeta(`update users set max_todo = ?, updated_at = ? where id = ?`)).WithArgs(incrementTodo, task.UpdatedAt, task.ID).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec(regexp.QuoteMeta(`update users set max_todo = $1, updated_at = $2 where id = $3`)).WithArgs(incrementTodo, task.UpdatedAt, task.ID).WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 	require.NoError(t, liteDB.AddTask(task, u.Email))
 }

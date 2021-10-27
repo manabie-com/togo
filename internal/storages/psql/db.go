@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log"
 	"time"
 
 	"github.com/manabie-com/togo/internal/storages"
@@ -22,12 +23,12 @@ func NewModels(db *sql.DB) *DBModel {
 }
 
 const (
-	sqlValidateUser     = `SELECT password, email FROM users WHERE email = ?`
-	sqlAddTask          = `INSERT INTO tasks (content, user_id, created_at, updated_at) VALUES (?, ?, ?, ?)`
-	sqlRetrieveTasks    = `SELECT id, content, user_id, created_at FROM tasks WHERE user_id = ? AND DATE(created_at) = ?`
-	sqlGetUserFromEmail = `SELECT id, max_todo, email FROM users WHERE email = ?`
+	sqlValidateUser     = `SELECT password, email FROM users WHERE email = $1`
+	sqlAddTask          = `INSERT INTO tasks (content, user_id, created_at, updated_at) VALUES ($1, $2, $3, $4)`
+	sqlRetrieveTasks    = `SELECT id, content, user_id, created_at FROM tasks WHERE user_id = $1 AND DATE(created_at) = $2`
+	sqlGetUserFromEmail = `SELECT id, max_todo, email FROM users WHERE email = $1`
 	sqlUpdateTask       = `update tasks set content = $1 where id = $2`
-	sqlDeleteTask       = `delete from tasks where id = ?`
+	sqlDeleteTask       = `delete from tasks where id = $1`
 )
 
 /** RetrieveTasks returns tasks if match userID AND createDate.
@@ -48,9 +49,9 @@ func (l *DBModel) RetrieveTasks(email, createdDate sql.NullString) ([]*storages.
 	//initialize variables to be assigned on conditions if there will be a date query
 	var rowsDB *sql.Rows
 	var errDB error
-	stmt := `SELECT id, content, user_id, created_at FROM tasks WHERE user_id = ?`
+	stmt := `SELECT id, content, user_id, created_at FROM tasks WHERE user_id = $1`
 	if createdDate.String != "" {
-		stmt = stmt + ` AND DATE(created_at) = ?`
+		stmt = stmt + ` AND DATE(created_at) = $2`
 		rows, err := l.DB.QueryContext(ctx, stmt, userID, createdDate.String)
 		rowsDB = rows
 		errDB = err
@@ -59,6 +60,7 @@ func (l *DBModel) RetrieveTasks(email, createdDate sql.NullString) ([]*storages.
 		rowsDB = rows
 		errDB = err
 	}
+	log.Print(errDB, "dave")
 	if errDB != nil {
 		return nil, errDB
 	}
@@ -121,6 +123,7 @@ func (l *DBModel) AddTask(t *storages.Task, email string) error {
 	}
 
 	_, err := l.DB.ExecContext(ctx, sqlAddTask, &t.Content, &t.UserID, t.CreatedAt, t.UpdatedAt)
+
 	if err != nil {
 		return err
 	}
@@ -134,7 +137,7 @@ func (l *DBModel) AddTask(t *storages.Task, email string) error {
 	}()
 	//update max todo of the user
 	incrementTodo := counter + 1
-	stmt := `update users set max_todo = ?, updated_at = ? where id = ?`
+	stmt := `update users set max_todo = $1, updated_at = $2 where id = $3`
 	_, errUpdate := l.DB.ExecContext(ctx, stmt,
 		incrementTodo,
 		t.UpdatedAt,

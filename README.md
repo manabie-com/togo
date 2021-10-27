@@ -35,11 +35,6 @@ CREATE TABLE tasks (
 
 INSERT INTO tasks (content, user_id, created_at, updated_at) VALUES('Sample Content Todo', 1,  '2021-05-17 00:00:00', '2021-05-17 00:00:00')
 ```
-
-### WHAT'S MISSING
-- Integration Testing
-- Split services layer to use case and transport layer
-
 ### NEEDS TO IMPROVE
 - Using other libraries for GO that will help a project structure like an MVC pattern
 - Error handling and JSON Response should have a common/centralize function
