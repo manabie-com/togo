@@ -19,14 +19,14 @@ For example, users are limited to create only 5 tasks only per day, if the daily
 ### Non-functional requirements:
 - [ ] **A nice README on how to run, what is missing, what else you want to improve but don't have enough time**
 - [ ] **Consistency is a MUST**
-- [ ] Fork this repo and show us your development progress by a PR
-- [ ] Write integration tests for this project
-- [ ] Make this code DRY
+- [X] Fork this repo and show us your development progress by a PR
+- [ ] Write integration tests for this project => ***use dockertest***
+- [X] Make this code DRY
 - [ ] Write unit test for the services layer
 - [ ] Change from using SQLite to Postgres with docker-compose
-- [ ] This project includes many issues from code to DB structure, feel free to optimize them
+- [X] This project includes many issues from code to DB structure, feel free to optimize them => ***update method (change GET to POST) and use body for request of Login API***
 - [ ] Write unit test for storages layer
-- [ ] Split services layer to use case and transport layer
+- [X] Split services layer to use case and transport layer => ***use Hexagonal structure***
 
 
 #### DB Schema
