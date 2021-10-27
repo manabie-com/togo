@@ -21,4 +21,4 @@ COPY . .
 EXPOSE 5050
 
 #Command to run the executable
-CMD ["go","run","main.go"]
+CMD ["go","run","./"]

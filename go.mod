@@ -11,6 +11,7 @@ require (
 	github.com/joho/godotenv v1.4.0
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/lib/pq v1.10.2
+	github.com/magiconair/properties v1.8.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.9 // indirect
 	github.com/stretchr/testify v1.7.0
 	github.com/vektra/mockery/v2 v2.9.4 // indirect

@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"log"
 	"time"
 
 	"github.com/manabie-com/togo/internal/storages"
@@ -60,7 +59,6 @@ func (l *DBModel) RetrieveTasks(email, createdDate sql.NullString) ([]*storages.
 		rowsDB = rows
 		errDB = err
 	}
-	log.Print(errDB, "dave")
 	if errDB != nil {
 		return nil, errDB
 	}
@@ -76,11 +74,9 @@ func (l *DBModel) RetrieveTasks(email, createdDate sql.NullString) ([]*storages.
 		//push task to the array
 		tasks = append(tasks, t)
 	}
-
 	if err := rowsDB.Err(); err != nil {
 		return nil, err
 	}
-
 	return tasks, nil
 }
 

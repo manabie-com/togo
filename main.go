@@ -43,7 +43,6 @@ func main() {
 		os.Getenv("POSTGRES_HOST"),
 		os.Getenv("POSTGRES_PORT"),
 		os.Getenv("POSTGRES_DB"))
-	// postgresInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", os.Getenv("DATABASE_HOST"), os.Getenv("DATABASE_PORT"), os.Getenv("DATABASE_USER"), os.Getenv("DATABASE_PASSWORD"), os.Getenv("DATABASE_DB"), os.Getenv("DATABASE_SSL"))
 	flag.StringVar(&cfg.Db.Dsn, "dsn", url, "Postgres connection string")
 	flag.StringVar(&cfg.Jwt.Secret, "jwt-secret", "", "secret")
 	flag.Parse()

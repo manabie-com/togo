@@ -90,7 +90,7 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 			String: email,
 			Valid:  true,
 		},
-		value(req, "created_date"),
+		value(req, "created_at"),
 	)
 
 	resp.Header().Set("Content-Type", "application/json")
@@ -133,11 +133,20 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	//get the user and user ID for the task relation
 	errAddTask := s.Task.AddTask(t, email)
 	if errAddTask != nil {
+		errMessage := errAddTask.Error()
+		if errMessage == "Only 5 todo task can be created a day" {
+			resp.WriteHeader(http.StatusTooManyRequests)
+			json.NewEncoder(resp).Encode(map[string]string{
+				"error": errMessage,
+			})
+			return
+		}
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
-			"error": errAddTask.Error(),
+			"error": errMessage,
 		})
 		return
+
 	}
 
 	json.NewEncoder(resp).Encode(map[string]*storages.Task{

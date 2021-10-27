@@ -32,7 +32,7 @@ var token string
 
 func TestHandler(t *testing.T) {
 	//for Login API tests
-	t.Run("login", testLoginHandlerIncorrectHTTPMethod)
+	t.Run("login", testLoginHandlerHTTPMethod)
 
 	//for Task API tests
 	taskList := &storages.Task{
@@ -68,7 +68,7 @@ func TestHandler(t *testing.T) {
 }
 
 //Testing Login API with HTTP Methods
-func testLoginHandlerIncorrectHTTPMethod(t *testing.T) {
+func testLoginHandlerHTTPMethod(t *testing.T) {
 
 	formData := url.Values{}
 	formData.Add("email", email)
@@ -123,7 +123,7 @@ func testLoginHandlerIncorrectHTTPMethod(t *testing.T) {
 	}
 }
 func testListTasksHandler(t *testing.T, task *storages.Task) {
-	request, err := http.NewRequest(http.MethodGet, fmt.Sprintf("/tasks?created_date=%s", time.Now().Format("2006-01-02")), nil)
+	request, err := http.NewRequest(http.MethodGet, fmt.Sprintf("/tasks?created_at=%s", time.Now().Format("2006-01-02")), nil)
 	require.NoError(t, err)
 	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	taskService := new(mocks.TaskService)

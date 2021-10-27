@@ -42,5 +42,6 @@ INSERT INTO tasks (content, user_id, created_at, updated_at) VALUES('Sample Cont
 
 ### ADDITIONAL THAT I'VE MADE
 - Update And Delete task/todo
+- Added password bcrypt
 
 
