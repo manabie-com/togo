@@ -22,10 +22,10 @@ func NewModels(db *sql.DB) *DBModel {
 }
 
 const (
-	sqlValidateUser  = `SELECT password, email FROM users WHERE email = ?`
-	sqlAddTask       = `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
-	sqlRetrieveTasks = `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`
-	sqlGetUser       = `SELECT id, max_todo, email FROM users WHERE email = ?`
+	sqlValidateUser     = `SELECT password, email FROM users WHERE email = ?`
+	sqlAddTask          = `INSERT INTO tasks (id, content, user_id, created_date) VALUES (?, ?, ?, ?)`
+	sqlRetrieveTasks    = `SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND DATE(created_at) = ?`
+	sqlGetUserFromEmail = `SELECT id, max_todo, email FROM users WHERE email = ?`
 )
 
 /** RetrieveTasks returns tasks if match userID AND createDate.
@@ -46,9 +46,9 @@ func (l *DBModel) RetrieveTasks(email, createdDate sql.NullString) ([]*storages.
 	//initialize variables to be assigned on conditions if there will be a date query
 	var rowsDB *sql.Rows
 	var errDB error
-	stmt := `SELECT id, content, user_id, created_at FROM tasks WHERE user_id = $1`
+	stmt := `SELECT id, content, user_id, created_at FROM tasks WHERE user_id = ?`
 	if createdDate.String != "" {
-		stmt = stmt + ` AND DATE(created_at) = $2`
+		stmt = stmt + ` AND DATE(created_at) = ?`
 		rows, err := l.DB.QueryContext(ctx, stmt, userID, createdDate.String)
 		rowsDB = rows
 		errDB = err
@@ -163,7 +163,7 @@ func (l *DBModel) ValidateUser(email, pwd sql.NullString) bool {
 func (l *DBModel) GetUserFromEmail(email string) (*storages.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	row := l.DB.QueryRowContext(ctx, sqlGetUser, email)
+	row := l.DB.QueryRowContext(ctx, sqlGetUserFromEmail, email)
 	var u storages.User
 	err := row.Scan(&u.ID, &u.MaxTodo, &u.Email)
 	if err != nil {

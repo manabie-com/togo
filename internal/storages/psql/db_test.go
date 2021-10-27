@@ -4,9 +4,11 @@ import (
 	"database/sql"
 	"regexp"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/manabie-com/togo/internal/storages"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -102,7 +104,7 @@ func TestGetUserFromEmail(t *testing.T) {
 			}
 
 			rows := sqlmock.NewRows([]string{"id", "max_todo", "email"}).AddRow(u.ID, u.MaxTodo, u.Email)
-			mock.ExpectQuery(regexp.QuoteMeta(`SELECT id, max_todo, email FROM users WHERE email = ?`)).WithArgs(u.Email).WillReturnRows(rows)
+			mock.ExpectQuery(regexp.QuoteMeta(sqlGetUserFromEmail)).WithArgs(u.Email).WillReturnRows(rows)
 			liteDB := NewModels(db)
 			user, err := liteDB.GetUserFromEmail(
 				tc.email,
@@ -110,6 +112,100 @@ func TestGetUserFromEmail(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, user.MaxTodo, u.MaxTodo)
 			require.Equal(t, user.ID, u.ID)
+			// taskCases := map[string]struct {
+			// 	id         int
+			// 	user_id    int
+			// 	content    string
+			// 	created_at string
+			// }{
+			// 	"TaskOne": {
+			// 		id:         10,
+			// 		user_id:    u.ID,
+			// 		content:    "content 1",
+			// 		created_at: "2021-11-12T11:45:26.371Z",
+			// 	},
+			// 	"TaskTwo": {
+			// 		id:         11,
+			// 		user_id:    u.ID,
+			// 		content:    "content 2",
+			// 		created_at: "2020-11-12T11:45:26.371Z",
+			// 	},
+			// }
+			// layout := "2006-01-02T15:04:05.000Z"
+			// for name, taskc := range taskCases {
+			// 	t.Run(name, func(t *testing.T) {
+			// 		timeCreated, err := time.Parse(layout, taskc.created_at)
+			// 		require.NoError(t, err)
+			// 		task := &storages.Task{
+			// 			ID:        taskc.id,
+			// 			Content:   taskc.content,
+			// 			CreatedAt: timeCreated,
+			// 		}
+
+			// 		rows := sqlmock.NewRows([]string{"id", "content", "user_id", "created_at"}).AddRow(task.ID, task.Content, u.ID, task.CreatedAt)
+			// 		mock.ExpectQuery(regexp.QuoteMeta(`SELECT id, content, user_id, created_date FROM tasks WHERE user_id = ? AND created_date = ?`)).WithArgs(u.ID, task.CreatedAt).WillReturnRows(rows)
+			// 		liteDB := NewModels(db)
+			// 		user, err := liteDB.RetrieveTasks(
+			// 			sql.NullString{
+			// 				String: u.Email,
+			// 				Valid:  true,
+			// 			},
+			// 			sql.NullString{
+			// 				String: taskc.created_at,
+			// 				Valid:  true,
+			// 			},
+			// 		)
+			// 		require.NoError(t, err)
+			// 		// require.Equal(t, user.MaxTodo, u.MaxTodo)
+			// 		// require.Equal(t, user.ID, u.ID)
+			// 	})
+			// }
+
 		})
 	}
+}
+
+func TestRetrieveTasks(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	require.NoError(t, err)
+	defer db.Close()
+	u := &storages.User{
+		Email: "test@gmail.com",
+		ID:    1,
+	}
+	task := &storages.Task{
+		ID:        1,
+		Content:   "hash password",
+		UserID:    1,
+		CreatedAt: time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC),
+	}
+
+	rows := sqlmock.NewRows([]string{"id", "max_todo", "email"}).AddRow(u.ID, u.MaxTodo, u.Email)
+	mock.ExpectQuery(regexp.QuoteMeta(sqlGetUserFromEmail)).WithArgs(u.Email).WillReturnRows(rows)
+	liteDB := NewModels(db)
+	user, err := liteDB.GetUserFromEmail(
+		u.Email,
+	)
+	require.NoError(t, err)
+	require.Equal(t, user.MaxTodo, u.MaxTodo)
+	require.Equal(t, user.ID, u.ID)
+
+	rowsTask := sqlmock.NewRows([]string{"id", "max_todo", "email"}).AddRow(u.ID, u.MaxTodo, u.Email)
+	mock.ExpectQuery(regexp.QuoteMeta(sqlGetUserFromEmail)).WithArgs(u.Email).WillReturnRows(rowsTask)
+	rowsTask = sqlmock.NewRows([]string{"id", "content", "user_id", "created_at"}).AddRow(task.ID, task.Content, task.UserID, task.CreatedAt)
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT id, content, user_id, created_at FROM tasks WHERE user_id = ? AND DATE(created_at) = ?`)).WithArgs(task.UserID, task.CreatedAt.String()).WillReturnRows(rowsTask)
+	tasks, err := liteDB.RetrieveTasks(
+		sql.NullString{
+			String: u.Email,
+			Valid:  true,
+		},
+		sql.NullString{
+			String: task.CreatedAt.String(),
+			Valid:  true,
+		},
+	)
+	require.NoError(t, err)
+	assert.Equal(t, 1, len(tasks))
+	assert.Equal(t, 1, tasks[0].ID)
+	assert.Equal(t, "hash password", tasks[0].Content)
 }
