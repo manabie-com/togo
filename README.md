@@ -24,10 +24,16 @@ For example, users are limited to create only 5 tasks only per day, if the daily
 - [X] Make this code DRY
 - [ ] Write unit test for the services layer
 - [ ] Change from using SQLite to Postgres with docker-compose
-- [X] This project includes many issues from code to DB structure, feel free to optimize them => ***update method (change GET to POST) and use body for request of Login API***
+- [X] This project includes many issues from code to DB structure, feel free to optimize them
+   * ***Update method (change GET to POST) and use body for request of Login API***
+   * ***Use Go Gin for RestAPI server***
+   * ***Run sql query in transaction (create database package)***
+   * ***Use username and password to login instead of userid and password***
 - [ ] Write unit test for storages layer
 - [X] Split services layer to use case and transport layer => ***use Hexagonal structure***
 
+### Inprove but don't have enough time
+- Hash password with salt (use bcrypt)
 
 #### DB Schema
 ```sql
