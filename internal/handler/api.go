@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/manabie-com/togo/internal/core/port"
+	"github.com/manabie-com/togo/internal/shared"
 
 	"github.com/gin-gonic/gin"
 )
@@ -92,7 +93,12 @@ func (p *httpHandler) addTask(c *gin.Context) {
 
 	createdTask, err := p.taskService.AddTask(c.Request.Context(), userId, req.Content)
 	if err != nil {
-		p.responseError(c, http.StatusInternalServerError, err)
+		statusCode := http.StatusInternalServerError
+		_, ok := err.(*shared.LimitedError)
+		if ok {
+			statusCode = http.StatusBadRequest
+		}
+		p.responseError(c, statusCode, err)
 		return
 	}
 	p.responseSuccess(c, createdTask)

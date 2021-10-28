@@ -4,10 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 
 	"github.com/manabie-com/togo/internal/core/domain"
 	"github.com/manabie-com/togo/internal/core/port"
+	"github.com/manabie-com/togo/internal/shared"
 	"github.com/manabie-com/togo/pkg/database"
 )
 
@@ -80,7 +80,9 @@ func (p *taskRepo) CheckIfCanAddTask(ctx context.Context, conn database.Connecti
 	}
 
 	if countCreatedTasks >= maxToDo {
-		return fmt.Errorf("you are limited to create %d tasks per day", maxToDo)
+		return &shared.LimitedError{
+			LimitedNumber: maxToDo,
+		}
 	}
 	return nil
 }
