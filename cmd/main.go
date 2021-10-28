@@ -27,7 +27,14 @@ var (
 
 func main() {
 	container := buildContainer()
-	container.Invoke(func(ctx context.Context, serverHandler handler.HttpHandler) {
+	container.Invoke(func(ctx context.Context, taskService port.TaskService, serverHandler handler.HttpHandler) {
+		// Warm up
+		fmt.Println("warming up Flow server")
+		err := taskService.WarmUp(ctx)
+		if err != nil {
+			panic("warm up server failed " + err.Error())
+		}
+
 		// Start server
 		fmt.Println("starting Gateway Api server")
 

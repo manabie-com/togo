@@ -22,6 +22,12 @@ type taskService struct {
 	taskValidator port.TaskValidator
 }
 
+func (p *taskService) WarmUp(ctx context.Context) error {
+	return p.db.Transaction(ctx, func(ctx context.Context, conn database.Connection) error {
+		return p.taskRepo.InitTables(ctx, conn)
+	})
+}
+
 func (p *taskService) RetrieveTasks(ctx context.Context, userId, createdDate string) ([]*domain.Task, error) {
 	err := p.taskValidator.ValidateBeforeRetrieveTasks(userId, createdDate)
 	if err != nil {
