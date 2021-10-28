@@ -6,21 +6,25 @@ For example, users are limited to create only 5 tasks only per day, if the daily
 - [X] **A nice README on how to run, what is missing, what else you want to improve but don't have enough time**
 - [X] **Consistency is a MUST**
 - [X] Fork this repo and show us your development progress by a PR
-- [ ] Write integration tests for this project => ***use dockertest***
+- [ ] Write integration tests for this project
 - [X] Make this code DRY
 - [ ] Write unit test for the services layer
 - [ ] Change from using SQLite to Postgres with docker-compose
 - [X] This project includes many issues from code to DB structure, feel free to optimize them
-- [ ] Write unit test for storages layer
+- [X] Write unit test for storages layer
 - [X] Split services layer to use case and transport layer => ***use Hexagonal structure***
 
 ### Technical requirements:
-- [X] Use [Uber Dig](https://github.com/uber-go/dig) as a dependency injection
 - [X] Warm up: init database if it does not exists
+- [X] Use [Uber Dig](https://github.com/uber-go/dig) as a dependency injection
 - [X] Update method (change GET to POST) and use body instead of param as data of request of Login API
 - [X] Use [Go Gin](https://github.com/gin-gonic/gin) to setup RestAPI server
 - [X] Use username and password to login instead of userid and password
 - [X] Run sql queries in transaction (create database package)
+
+### Missing
+- Use [mockery](https://github.com/vektra/mockery) to test service layer
+- User [dockertest](https://github.com/ory/dockertest) for integration tests
 
 ### Inprove but don't have enough time
 - Hash password with salt (use bcrypt)
