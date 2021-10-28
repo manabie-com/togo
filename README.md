@@ -31,6 +31,7 @@ For example, users are limited to create only 5 tasks only per day, if the daily
    * ***Use username and password to login instead of userid and password***
 - [ ] Write unit test for storages layer
 - [X] Split services layer to use case and transport layer => ***use Hexagonal structure***
+- [X] Use [Uber Dig](https://github.com/uber-go/dig) as a dependency injection
 
 ### Inprove but don't have enough time
 - Hash password with salt (use bcrypt)
