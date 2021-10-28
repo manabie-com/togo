@@ -1,65 +1,73 @@
-### Notes
-This is a simple backend for a todo service, right now this service can handle login/list/create simple tasks, to make it run:
-- `go run main.go`
-- Import Postman collection from docs to check example
-
-Candidates are invited to implement the below requirements but the point is **NOT to resolve everything perfectly** but selective about what you can do best in a limited time.  
-Thus, **there is no correct-or-perfect answer**, your solutions are a way for us to continue the discussion and collaboration.  
-
-We're using **Golang** but candidates can use any language (NodeJS/Java/PHP/Python...) **as long as**:  
-- You show us how to run **reliably** - many of us use Ubuntu, some use Mac
-- Your solution is **compatible with our REST interface** and we can use our Postman collection for verifying
-
----
-
 ### Functional requirement:
 Right now a user can add as many tasks as they want, we want the ability to **limit N tasks per day**.  
 For example, users are limited to create only 5 tasks only per day, if the daily limit is reached, return 4xx code to the client and ignore the create request.
 
 ### Non-functional requirements:
-- [ ] **A nice README on how to run, what is missing, what else you want to improve but don't have enough time**
-- [ ] **Consistency is a MUST**
+- [X] **A nice README on how to run, what is missing, what else you want to improve but don't have enough time**
+- [X] **Consistency is a MUST**
 - [X] Fork this repo and show us your development progress by a PR
 - [ ] Write integration tests for this project => ***use dockertest***
 - [X] Make this code DRY
 - [ ] Write unit test for the services layer
 - [ ] Change from using SQLite to Postgres with docker-compose
 - [X] This project includes many issues from code to DB structure, feel free to optimize them
-   * ***Update method (change GET to POST) and use body for request of Login API***
-   * ***Use Go Gin for RestAPI server***
-   * ***Run sql query in transaction (create database package)***
-   * ***Use username and password to login instead of userid and password***
 - [ ] Write unit test for storages layer
 - [X] Split services layer to use case and transport layer => ***use Hexagonal structure***
+
+### Technical requirements:
 - [X] Use [Uber Dig](https://github.com/uber-go/dig) as a dependency injection
+- [X] Warm up: init database if it does not exists
+- [X] Update method (change GET to POST) and use body instead of param as data of request of Login API
+- [X] Use [Go Gin](https://github.com/gin-gonic/gin) to setup RestAPI server
+- [X] Use username and password to login instead of userid and password
+- [X] Run sql queries in transaction (create database package)
 
 ### Inprove but don't have enough time
 - Hash password with salt (use bcrypt)
-- Get config from file or environment variables (ex: address API, jwt key, ...)
+- Get config from file or environment variables (ex: server address, database address, jwt key, ...)
 - Build a log package
+
+### How to run
+To start the server, run 2 commands:
+```golang
+go mod tidy
+go run ./cmd/main.go
+```
+
+To login, use default account
+```
+Username: tridm
+Password: 123456789
+```
+
 
 #### DB Schema
 ```sql
 -- users definition
 
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS user (
 	id TEXT NOT NULL,
+	username TEXT NOT NULL,
 	password TEXT NOT NULL,
 	max_todo INTEGER DEFAULT 5 NOT NULL,
-	CONSTRAINT users_PK PRIMARY KEY (id)
+	CONSTRAINT user_PK PRIMARY KEY (id),
+	CONSTRAINT user_UK UNIQUE (username)
 );
 
-INSERT INTO users (id, password, max_todo) VALUES('firstUser', 'example', 5);
+INSERT INTO user
+(id, username, password)
+VALUES
+("a5858792-ff00-475d-b9be-a6864f15eb28", "tridm", "123456789");
 
 -- tasks definition
 
-CREATE TABLE tasks (
+CREATE TABLE IF NOT EXISTS task (
 	id TEXT NOT NULL,
 	content TEXT NOT NULL,
 	user_id TEXT NOT NULL,
-    created_date TEXT NOT NULL,
-	CONSTRAINT tasks_PK PRIMARY KEY (id),
-	CONSTRAINT tasks_FK FOREIGN KEY (user_id) REFERENCES users(id)
+	created_date TEXT NOT NULL,
+	CONSTRAINT task_PK PRIMARY KEY (id),
+	CONSTRAINT task_FK FOREIGN KEY (user_id) REFERENCES user(id)
 );
 ```
 
