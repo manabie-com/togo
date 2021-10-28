@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"reflect"
 )
 
 type Connection interface {
@@ -49,7 +48,7 @@ func (p *database) WithoutTransaction(ctx context.Context, cmdFuncs ...CommandFu
 	var err error
 	for _, cmdFunc := range cmdFuncs {
 		err = cmdFunc(ctx, db)
-		if err != nil && !reflect.ValueOf(err).IsNil() {
+		if err != nil {
 			return err
 		}
 	}
@@ -69,7 +68,7 @@ func (p *database) Transaction(ctx context.Context, cmdFuncs ...CommandFunc) err
 
 	for _, cmdFunc := range cmdFuncs {
 		err = cmdFunc(ctx, tx)
-		if err != nil && !reflect.ValueOf(err).IsNil() {
+		if err != nil {
 			tx.Rollback()
 			return err
 		}
