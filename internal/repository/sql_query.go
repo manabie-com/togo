@@ -48,4 +48,17 @@ const (
 		WHERE username = ? AND password = ?
 		LIMIT 1
 	`
+
+	SQL_TASK_GET_USER_MAX_TODO = `
+		SELECT max_todo
+		FROM user
+		WHERE id = ?
+		LIMIT 1
+	`
+
+	SQL_TASK_COUNT_TASKS_CREATED_AT = `
+		SELECT COUNT(1)
+		FROM task
+		WHERE user_id = ? AND created_date = ?
+	`
 )

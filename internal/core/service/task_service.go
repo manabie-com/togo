@@ -2,7 +2,9 @@ package service
 
 import (
 	"context"
+	"time"
 
+	"github.com/google/uuid"
 	"github.com/manabie-com/togo/internal/core/domain"
 	"github.com/manabie-com/togo/internal/core/port"
 	"github.com/manabie-com/togo/pkg/database"
@@ -42,14 +44,32 @@ func (p *taskService) RetrieveTasks(ctx context.Context, userId, createdDate str
 	return tasks, err
 }
 
-func (p *taskService) AddTask(ctx context.Context, task *domain.Task) error {
+func (p *taskService) AddTask(ctx context.Context, userId, taskContent string) (*domain.Task, error) {
+	now := time.Now()
+	currentDate := now.Format("2006-01-02")
+	task := &domain.Task{
+		Id:          uuid.New().String(),
+		Content:     taskContent,
+		UserId:      userId,
+		CreatedDate: currentDate,
+	}
+
 	err := p.taskValidator.ValidateBeforeAddTask(task)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return p.db.Transaction(ctx, func(ctx context.Context, conn database.Connection) error {
+
+	err = p.db.Transaction(ctx, func(ctx context.Context, conn database.Connection) error {
+		err := p.taskRepo.CheckIfCanAddTask(ctx, conn, userId, currentDate)
+		if err != nil {
+			return err
+		}
 		return p.taskRepo.AddTask(ctx, conn, task)
 	})
+	if err != nil {
+		return nil, err
+	}
+	return task, nil
 }
 
 func (p *taskService) Login(ctx context.Context, username, password string) (string, error) {

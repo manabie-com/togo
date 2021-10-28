@@ -3,13 +3,10 @@ package handler
 import (
 	"errors"
 	"net/http"
-	"time"
 
-	"github.com/manabie-com/togo/internal/core/domain"
 	"github.com/manabie-com/togo/internal/core/port"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 // ToDoService implement HTTP server
@@ -93,17 +90,10 @@ func (p *httpHandler) addTask(c *gin.Context) {
 		return
 	}
 
-	now := time.Now()
-	task := &domain.Task{
-		Id:          uuid.New().String(),
-		Content:     req.Content,
-		UserId:      userId,
-		CreatedDate: now.Format("2006-01-02"),
-	}
-	err = p.taskService.AddTask(c.Request.Context(), task)
+	createdTask, err := p.taskService.AddTask(c.Request.Context(), userId, req.Content)
 	if err != nil {
 		p.responseError(c, http.StatusInternalServerError, err)
 		return
 	}
-	p.responseSuccess(c, task)
+	p.responseSuccess(c, createdTask)
 }

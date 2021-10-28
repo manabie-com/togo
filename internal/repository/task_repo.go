@@ -3,6 +3,8 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"fmt"
 
 	"github.com/manabie-com/togo/internal/core/domain"
 	"github.com/manabie-com/togo/internal/core/port"
@@ -67,6 +69,22 @@ func (p *taskRepo) AddTask(ctx context.Context, conn database.Connection, task *
 	return err
 }
 
+func (p *taskRepo) CheckIfCanAddTask(ctx context.Context, conn database.Connection, userId, checkedDate string) error {
+	maxToDo, err := p.getUserMaxTodo(ctx, conn, userId)
+	if err != nil {
+		return err
+	}
+	countCreatedTasks, err := p.countTaskCreatedAt(ctx, conn, userId, checkedDate)
+	if err != nil {
+		return err
+	}
+
+	if countCreatedTasks >= maxToDo {
+		return fmt.Errorf("you are limited to create %d tasks per day", maxToDo)
+	}
+	return nil
+}
+
 func (p *taskRepo) Login(ctx context.Context, conn database.Connection, username, password string) (string, error) {
 	row := conn.QueryRowContext(
 		ctx,
@@ -85,4 +103,43 @@ func (p *taskRepo) Login(ctx context.Context, conn database.Connection, username
 		return "", err
 	}
 	return userId, nil
+}
+
+func (p *taskRepo) countTaskCreatedAt(ctx context.Context, conn database.Connection, userId, createdDate string) (int32, error) {
+	row := conn.QueryRowContext(
+		ctx,
+		SQL_TASK_COUNT_TASKS_CREATED_AT,
+		userId,
+		createdDate,
+	)
+	var count int32
+	err := row.Scan(
+		&count,
+	)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			err = nil
+		}
+		return 0, err
+	}
+	return count, nil
+}
+
+func (p *taskRepo) getUserMaxTodo(ctx context.Context, conn database.Connection, userId string) (int32, error) {
+	row := conn.QueryRowContext(
+		ctx,
+		SQL_TASK_GET_USER_MAX_TODO,
+		userId,
+	)
+	var maxToDo int32
+	err := row.Scan(
+		&maxToDo,
+	)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			err = errors.New("user does not exists")
+		}
+		return 0, err
+	}
+	return maxToDo, nil
 }
