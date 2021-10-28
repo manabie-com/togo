@@ -95,9 +95,9 @@ func (p *httpHandler) addTask(c *gin.Context) {
 
 	now := time.Now()
 	task := &domain.Task{
-		ID:          uuid.New().String(),
+		Id:          uuid.New().String(),
 		Content:     req.Content,
-		UserID:      userId,
+		UserId:      userId,
 		CreatedDate: now.Format("2006-01-02"),
 	}
 	err = p.taskService.AddTask(c.Request.Context(), task)
