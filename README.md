@@ -35,6 +35,7 @@ For example, users are limited to create only 5 tasks only per day, if the daily
 ### Inprove but don't have enough time
 - Hash password with salt (use bcrypt)
 - Get config from file or environment variables (ex: address API, jwt key, ...)
+- Build a log package
 
 #### DB Schema
 ```sql
