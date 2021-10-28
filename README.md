@@ -11,7 +11,7 @@ For example, users are limited to create only 5 tasks only per day, if the daily
 - [ ] Write unit test for the services layer
 - [ ] Change from using SQLite to Postgres with docker-compose
 - [X] This project includes many issues from code to DB structure, feel free to optimize them
-- [X] Write unit test for storages layer
+- [ ] Write unit test for storages layer
 - [X] Split services layer to use case and transport layer => ***use Hexagonal structure***
 
 ### Technical requirements:
@@ -24,7 +24,8 @@ For example, users are limited to create only 5 tasks only per day, if the daily
 
 ### Missing
 - Use [mockery](https://github.com/vektra/mockery) to test service layer
-- User [dockertest](https://github.com/ory/dockertest) for integration tests
+- Use [sqlmock](https://github.com/DATA-DOG/go-sqlmock) to test storages layer
+- Use [dockertest](https://github.com/ory/dockertest) for integration tests
 
 ### Inprove but don't have enough time
 - Hash password with salt (use bcrypt)
