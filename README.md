@@ -1,58 +1,95 @@
-### Notes
-This is a simple backend for a todo service, right now this service can handle login/list/create simple tasks, to make it run:
-- `go run main.go`
-- Import Postman collection from docs to check example
+### Setup database
 
-Candidates are invited to implement the below requirements but the point is **NOT to resolve everything perfectly** but selective about what you can do best in a limited time.  
-Thus, **there is no correct-or-perfect answer**, your solutions are a way for us to continue the discussion and collaboration.  
+1. Pull & run docker iamge
 
-We're using **Golang** but candidates can use any language (NodeJS/Java/PHP/Python...) **as long as**:  
-- You show us how to run **reliably** - many of us use Ubuntu, some use Mac
-- Your solution is **compatible with our REST interface** and we can use our Postman collection for verifying
-
----
-
-### Functional requirement:
-Right now a user can add as many tasks as they want, we want the ability to **limit N tasks per day**.  
-For example, users are limited to create only 5 tasks only per day, if the daily limit is reached, return 4xx code to the client and ignore the create request.
-
-### Non-functional requirements:
-- [ ] **A nice README on how to run, what is missing, what else you want to improve but don't have enough time**
-- [ ] **Consistency is a MUST**
-- [ ] Fork this repo and show us your development progress by a PR
-- [ ] Write integration tests for this project
-- [ ] Make this code DRY
-- [ ] Write unit test for the services layer
-- [ ] Change from using SQLite to Postgres with docker-compose
-- [ ] This project includes many issues from code to DB structure, feel free to optimize them
-- [ ] Write unit test for storages layer
-- [ ] Split services layer to use case and transport layer
-
-
-#### DB Schema
-```sql
--- users definition
-
-CREATE TABLE users (
-	id TEXT NOT NULL,
-	password TEXT NOT NULL,
-	max_todo INTEGER DEFAULT 5 NOT NULL,
-	CONSTRAINT users_PK PRIMARY KEY (id)
-);
-
-INSERT INTO users (id, password, max_todo) VALUES('firstUser', 'example', 5);
-
--- tasks definition
-
-CREATE TABLE tasks (
-	id TEXT NOT NULL,
-	content TEXT NOT NULL,
-	user_id TEXT NOT NULL,
-    created_date TEXT NOT NULL,
-	CONSTRAINT tasks_PK PRIMARY KEY (id),
-	CONSTRAINT tasks_FK FOREIGN KEY (user_id) REFERENCES users(id)
-);
+```bash
+docker run -it -d -p 5432:5432 --name postgres-local -e POSTGRES_PASSWORD=password postgres
 ```
 
-#### Sequence diagram
-![auth and create tasks request](https://github.com/manabie-com/togo/blob/master/docs/sequence.svg)
+2. Go into docker container
+
+```bash
+docker exec -it postgres-local bash
+```
+
+3. Login pg
+
+```bash
+psql -h localhost -U postgres
+```
+
+4. Create user
+
+```bash
+CREATE USER "user_login" WITH PASSWORD 'password';
+ALTER ROLE "user_login" WITH SUPERUSER;
+```
+
+5. Create Database
+
+```bash
+CREATE DATABASE dbtest;
+```
+
+6. Export ENV
+
+```bash
+export PG_HOST=127.0.0.1
+export PG_PORT=5432
+export PG_USER=user_login
+export PG_PASS=password
+export PG_DB=dbtest
+export PORT=9090
+```
+
+6. Insert test data, please take a look for db.sql
+
+### Install go packages & run app
+
+1. Install go packages
+
+```bash
+go get -u ./...
+```
+
+2. Init go vendor for go modules management
+
+```bash
+go mod vendor
+```
+
+3. Run app
+
+```bash
+go run main.go
+```
+
+### Explaining project
+
+1. No one uses http GET for login.
+
+- Instead of GET to POST.
+
+2. Change NoSQL Live to Postgres
+
+3.Update columns.
+
+- No one uses ID of column with TEXT type, expect ony NoSQL using uuid -> Change to bigserialize
+- Change created_date from TEXT to timestamp and set default and create INDEX for it
+- Change user_id of task to INT8 and update INDEX for it
+- Add a username into Users table and check UNIQUE
+- No one exposes raw password, which is very risk. I applied bcrypt hash to encrypt password.
+
+4. DDD architecture
+
+- Currently, I applied DDD (3 layers) and used self-container components, which helps me narrow down business logic in a single directory
+- Domain contains endpoints and logic core
+- Infrastructure contains drivers, services, providers, middleware...etc
+- Pkgs contains utils, common, re-useable codes
+
+5. TODO if I have time
+- Apply redis
+- Black list token after user logout.
+- Apply golint for checking clean code
+
+6. Apply unit test
