@@ -2,12 +2,14 @@ package auth
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 )
 
 type AuthController struct {
-	AuthLoginAction AuthLoginAction
+	AuthLoginAction  AuthLoginAction
+	AuthLogoutAction AuthLogoutAction
 }
 
 // name...
@@ -49,4 +51,17 @@ func (ctrl AuthController) Login(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(accessToken)
+}
+
+// Logout ...
+func (ctrl AuthController) Logout(w http.ResponseWriter, r *http.Request) {
+	err := ctrl.AuthLogoutAction.Execute()
+	if err != nil {
+		w.Header().Set("Content-type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(fmt.Sprintf("Unauthorized : %s", err))
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }

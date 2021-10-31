@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/quochungphp/go-test-assignment/src/pkgs/redis"
 	"github.com/quochungphp/go-test-assignment/src/pkgs/token"
 )
 
@@ -21,11 +22,21 @@ func AuthMiddleware(next http.Handler) http.Handler {
 
 		// Reflect user info to var
 		tk := token.Token{}
-		_, err = tk.ExtractToken(r)
+		accessUserInfo, err := tk.ExtractToken(r)
 		if err != nil {
 			w.Header().Set("Content-type", "application/json")
 			w.WriteHeader(http.StatusUnauthorized)
 			json.NewEncoder(w).Encode(fmt.Sprintf("Unauthorized :%s", err))
+			return
+		}
+
+		// Check black list token
+		cacheKey := redis.TokenBlackListCacheKey(fmt.Sprintf("%s-%d", accessUserInfo.CorrelationID, accessUserInfo.UserID))
+		isBlackListToken, err := redis.GetItem(cacheKey, "")
+		if isBlackListToken != nil && err == nil {
+			w.Header().Set("Content-type", "application/json")
+			w.WriteHeader(http.StatusUnauthorized)
+			json.NewEncoder(w).Encode(fmt.Sprintf("Expired session:%s ", accessUserInfo.CorrelationID))
 			return
 		}
 

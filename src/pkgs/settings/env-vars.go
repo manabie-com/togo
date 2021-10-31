@@ -11,6 +11,10 @@ const (
 
 	SaltRounds = "SALT_ROUNDS"
 
+	RedisHost           = "REDIS_HOST"
+	RedisPort           = "REDIS_PORT"
+	RedisCacheExpiresIn = "REDIS_CACHE_EXPIRES_IN"
+
 	ENV         = "ENV"
 	ENVFilePath = "src/pkgs/settings/config.env"
 	Port        = "PORT"

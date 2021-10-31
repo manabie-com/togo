@@ -3,6 +3,7 @@ package pg_driver
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/go-pg/pg/v10"
 	"github.com/pkg/errors"
@@ -35,7 +36,8 @@ func Setup(config DBConfiguration) (pgSession *pg.DB, Error error) {
 	if err := pgSession.Ping(ctx); err != nil {
 		return nil, errors.Wrap(err, "Error while checking database connection")
 	}
-	fmt.Println("Datebase connection successful")
+	log.Println("Database connection successful")
+
 	return pgSession, nil
 }
 

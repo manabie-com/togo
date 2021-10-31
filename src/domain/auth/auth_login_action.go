@@ -9,10 +9,12 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// AuthLoginAction ...
 type AuthLoginAction struct {
 	Db *pg.DB
 }
 
+// Execute ...
 func (Auth AuthLoginAction) Execute(Username string, Password string) (tokenDetail token.TokenDetail, err error) {
 	user := users.Users{}
 

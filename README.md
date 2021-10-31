@@ -1,9 +1,17 @@
 ### Setup database
 
-1. Pull & run docker iamge
+1. Pull & run docker image
+
+- postgres
 
 ```bash
 docker run -it -d -p 5432:5432 --name postgres-local -e POSTGRES_PASSWORD=password postgres
+```
+
+-redis
+
+```bash
+docker run --name local-redis -d -p 6379:6379 redis
 ```
 
 2. Go into docker container
@@ -40,6 +48,10 @@ export PG_USER=user_login
 export PG_PASS=password
 export PG_DB=dbtest
 export PORT=9090
+
+export REDIS_HOST=127.0.0.1
+export REDIS_PORT=6379
+export REDIS_CACHE_EXPIRES_IN=604800
 ```
 
 6. Insert test data, please take a look for db.sql
@@ -63,7 +75,8 @@ go mod vendor
 ```bash
 go run main.go
 ```
-
+4. Run unit test and integration test and showing logs
+ `$ go test -v ./...`
 ### Explaining project
 
 1. No one uses http GET for login.
@@ -88,8 +101,10 @@ go run main.go
 - Pkgs contains utils, common, re-useable codes
 
 5. TODO if I have time
-- Apply redis
-- Black list token after user logout.
+
+- Apply redis: done
+- Black list token after user logout : done
 - Apply golint for checking clean code
 
 6. Apply unit test
+- TODO
