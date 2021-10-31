@@ -5,11 +5,14 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/quochungphp/go-test-assignment/src/pkgs/token"
 )
 
 // TaskController ...
 type TaskController struct {
 	TaskCreateAction TaskCreateAction
+	TaskListAction   TaskListAction
 }
 
 // name...
@@ -42,13 +45,27 @@ func (ctrl TaskController) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	taskDetail, err := ctrl.TaskCreateAction.Execute(payload.Content, "1")
+	taskDetail, err := ctrl.TaskCreateAction.Execute(payload.Content)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(fmt.Sprintf("While a creating task error: %s", err))
+		json.NewEncoder(w).Encode(fmt.Sprintf("While creating task error: %s", err))
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(taskDetail)
+}
+
+// List ...
+func (ctrl TaskController) List(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-type", "application/json")
+	tasks, err := ctrl.TaskListAction.Execute(token.AccessUser.UserID)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(fmt.Sprintf("While getting list task error: %s", err))
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(tasks)
 }

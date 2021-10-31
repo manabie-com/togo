@@ -70,12 +70,15 @@ func main() {
 
 	// Create task action
 	createTaskAction := tasks.TaskCreateAction{pgSession}
+	listTaskAction := tasks.TaskListAction{pgSession}
 	taskCtrl := tasks.TaskController{
 		createTaskAction,
+		listTaskAction,
 	}
 
 	taskRouter := router.PathPrefix("/tasks").Subrouter()
 	taskRouter.HandleFunc("", taskCtrl.Create).Methods("POST").Name("TaskCreateAction")
+	taskRouter.HandleFunc("", taskCtrl.List).Methods("GET").Name("ListTaskAction")
 	taskRouter.Use(middlewares.AuthMiddleware)
 
 	srv := &graceful.Server{
