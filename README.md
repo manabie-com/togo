@@ -8,7 +8,7 @@
 docker run -it -d -p 5432:5432 --name postgres-local -e POSTGRES_PASSWORD=password postgres
 ```
 
--redis
+- redis
 
 ```bash
 docker run --name local-redis -d -p 6379:6379 redis
@@ -54,7 +54,7 @@ export REDIS_PORT=6379
 export REDIS_CACHE_EXPIRES_IN=604800
 ```
 
-6. Insert test data, please take a look for db.sql
+6. Create tables and insert test data, please take a look for db.sql
 
 ### Install go packages & run app
 

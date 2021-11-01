@@ -22,9 +22,10 @@ func (Auth AuthLoginAction) Execute(Username string, Password string) (tokenDeta
 	if err != nil {
 		return token.TokenDetail{}, errors.Wrapf(err, "Unauthorized")
 	}
+
 	err = security.VerifyPassword(user.Password, Password)
 	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
-		return token.TokenDetail{}, errors.Wrapf(err, "Unauthorized")
+		return token.TokenDetail{}, errors.Wrapf(err, "Verify password has error")
 	}
 
 	tokenDetail, err = token.CreateToken(user.ID, user.MaxTodo)

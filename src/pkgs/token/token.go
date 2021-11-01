@@ -107,11 +107,12 @@ func (t *Token) ExtractToken(r *http.Request) (accessUserInfo AccessUserInfo, er
 	}
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if ok && token.Valid {
-		correlationId, ok := claims["correlationId"].(string)
+		correlationID, ok := claims["correlationId"].(string)
 		if !ok {
-			return AccessUserInfo{}, errors.Errorf("Request id has error")
+			return AccessUserInfo{}, errors.Errorf("Request correlation id has error")
 		}
-		userId, err := strconv.ParseInt(claims["userId"].(string), 10, 64)
+
+		userID, err := strconv.ParseInt(claims["userId"].(string), 10, 64)
 		if err != nil {
 			return AccessUserInfo{}, errors.Errorf("User id has error", err)
 		}
@@ -122,8 +123,8 @@ func (t *Token) ExtractToken(r *http.Request) (accessUserInfo AccessUserInfo, er
 		}
 
 		AccessUser = AccessUserInfo{
-			correlationId,
-			userId,
+			correlationID,
+			userID,
 			maxTodo,
 		}
 
