@@ -75,8 +75,10 @@ go mod vendor
 ```bash
 go run main.go
 ```
+
 4. Run unit test and integration test and showing logs
  `$ go test -v ./...`
+
 ### Explaining project
 
 1. No one uses http GET for login.
@@ -87,7 +89,7 @@ go run main.go
 
 3.Update columns.
 
-- No one uses ID of column with TEXT type, expect ony NoSQL using uuid -> Change to bigserialize
+- No one uses ID of column with TEXT type, expect ony NoSQL using uuid -> Change to big-serialize
 - Change created_date from TEXT to timestamp and set default and create INDEX for it
 - Change user_id of task to INT8 and update INDEX for it
 - Add a username into Users table and check UNIQUE
@@ -104,7 +106,12 @@ go run main.go
 
 - Apply redis: done
 - Black list token after user logout : done
-- Apply golint for checking clean code
+- Apply go-lint for checking clean code : pending
+- Verify token and return user info : pending
 
 6. Apply unit test
+
 - TODO
+- 1. Testing for auth module
+- 2. Testing for task module
+- 3. Testing for user module

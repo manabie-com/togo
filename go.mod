@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/go-pg/pg v8.0.7+incompatible
 	github.com/go-pg/pg/v10 v10.10.6
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/google/uuid v1.3.0

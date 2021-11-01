@@ -114,12 +114,12 @@ func (t *Token) ExtractToken(r *http.Request) (accessUserInfo AccessUserInfo, er
 
 		userID, err := strconv.ParseInt(claims["userId"].(string), 10, 64)
 		if err != nil {
-			return AccessUserInfo{}, errors.Errorf("User id has error", err)
+			return AccessUserInfo{}, errors.Errorf(fmt.Sprintf("User id has error %s", err))
 		}
 
 		maxTodo, err := strconv.Atoi(fmt.Sprintf("%.f", claims["maxTodo"]))
 		if err != nil {
-			return AccessUserInfo{}, errors.Errorf("MaxTodo has error")
+			return AccessUserInfo{}, errors.Errorf(fmt.Sprintf("MaxTodo has error %s", err))
 		}
 
 		AccessUser = AccessUserInfo{
