@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -11,34 +10,18 @@ import (
 	"github.com/tylerb/graceful"
 
 	"github.com/quochungphp/go-test-assignment/src/domain/api"
-	"github.com/quochungphp/go-test-assignment/src/infrastructure/pg_driver"
-	"github.com/quochungphp/go-test-assignment/src/infrastructure/redis_driver"
+	"github.com/quochungphp/go-test-assignment/src/pkgs/db"
+	"github.com/quochungphp/go-test-assignment/src/pkgs/redis"
 	"github.com/quochungphp/go-test-assignment/src/pkgs/settings"
 )
 
 func main() {
 	// Init redis
-	redisHost := os.Getenv(settings.RedisHost) + ":" + os.Getenv(settings.RedisPort)
-	redisDriver := redis_driver.RedisDriver{}
-	err := redisDriver.Setup(redis_driver.RedisConfiguration{
-		Addr: redisHost,
-	})
-	if err != nil {
-		panic(fmt.Sprint("Error while setup redis driver: ", err))
-	}
+	redis.Init()
 
 	// Init postgresql
-	pgSession, err := pg_driver.Setup(pg_driver.DBConfiguration{
-		Driver:   os.Getenv(settings.DbDriver),
-		Host:     os.Getenv(settings.PgHost),
-		Port:     os.Getenv(settings.PgPort),
-		Database: os.Getenv(settings.PgDB),
-		User:     os.Getenv(settings.PgUser),
-		Password: os.Getenv(settings.PgPass),
-	})
-	if err != nil {
-		panic(fmt.Sprint("Error while setup postgres driver: ", err))
-	}
+	pgSession := db.Init()
+
 	// Init Gorilla Router
 	router := mux.NewRouter()
 	api.APIs{router, pgSession}.Init()

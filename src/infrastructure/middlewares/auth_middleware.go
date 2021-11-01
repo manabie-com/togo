@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	cacheKey "github.com/quochungphp/go-test-assignment/src/pkgs/cache_key"
 	"github.com/quochungphp/go-test-assignment/src/pkgs/redis"
 	"github.com/quochungphp/go-test-assignment/src/pkgs/token"
 )
@@ -31,7 +32,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		}
 
 		// Check black list token
-		cacheKey := redis.TokenBlackListCacheKey(fmt.Sprintf("%s-%d", accessUserInfo.CorrelationID, accessUserInfo.UserID))
+		cacheKey := cacheKey.TokenBlackListCacheKey(fmt.Sprintf("%s-%d", accessUserInfo.CorrelationID, accessUserInfo.UserID))
 		isBlackListToken, err := redis.GetItem(cacheKey, "")
 		if isBlackListToken != nil && err == nil {
 			w.Header().Set("Content-type", "application/json")

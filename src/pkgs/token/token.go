@@ -32,7 +32,7 @@ type Token struct{}
 // AccessUserInfo ...
 var AccessUser AccessUserInfo
 
-func CreateToken(UserID string, MaxTodo int) (tokenDetails TokenDetail, err error) {
+func CreateToken(UserID int64, MaxTodo int) (tokenDetails TokenDetail, err error) {
 	// Init token details
 	tokenDetails.AccessTokenExpires = time.Now().Add(time.Hour * 24 * 7).Unix()
 	tokenDetails.RefreshTokenExpires = time.Now().Add(time.Hour * 24 * 7).Unix()
@@ -112,7 +112,7 @@ func (t *Token) ExtractToken(r *http.Request) (accessUserInfo AccessUserInfo, er
 			return AccessUserInfo{}, errors.Errorf("Request correlation id has error")
 		}
 
-		userID, err := strconv.ParseInt(claims["userId"].(string), 10, 64)
+		userID, err := strconv.ParseInt(fmt.Sprintf("%.f", claims["userId"]), 10, 64)
 		if err != nil {
 			return AccessUserInfo{}, errors.Errorf(fmt.Sprintf("User id has error %s", err))
 		}

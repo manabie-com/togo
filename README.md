@@ -113,5 +113,5 @@ go run main.go
 
 - TODO
 - 1. Testing for auth module
-- 2. Testing for task module
+- 2. Testing for task module : done
 - 3. Testing for user module

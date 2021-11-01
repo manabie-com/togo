@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	cacheKey "github.com/quochungphp/go-test-assignment/src/pkgs/cache_key"
 	"github.com/quochungphp/go-test-assignment/src/pkgs/redis"
 	"github.com/quochungphp/go-test-assignment/src/pkgs/settings"
 	"github.com/quochungphp/go-test-assignment/src/pkgs/token"
@@ -28,7 +29,7 @@ func (Auth AuthLogoutAction) Execute() (err error) {
 		return errors.Wrap(err, "Error while parsing redis expires in")
 	}
 
-	cacheKey := redis.TokenBlackListCacheKey(fmt.Sprintf("%s-%d", sessionUser.CorrelationID, sessionUser.UserID))
+	cacheKey := cacheKey.TokenBlackListCacheKey(fmt.Sprintf("%s-%d", sessionUser.CorrelationID, sessionUser.UserID))
 	err = redis.SetItem(cacheKey, true, time.Duration(expiresIn)*time.Second)
 	if err != nil {
 		return errors.Wrap(err, "Error while creating redis expires in")

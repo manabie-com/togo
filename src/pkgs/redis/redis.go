@@ -2,11 +2,26 @@ package redis
 
 import (
 	"encoding/json"
+	"fmt"
+	"os"
 	"time"
 
 	"github.com/pkg/errors"
 	"github.com/quochungphp/go-test-assignment/src/infrastructure/redis_driver"
+	"github.com/quochungphp/go-test-assignment/src/pkgs/settings"
 )
+
+func Init() {
+	// Init redis
+	redisHost := os.Getenv(settings.RedisHost) + ":" + os.Getenv(settings.RedisPort)
+	redisDriver := redis_driver.RedisDriver{}
+	err := redisDriver.Setup(redis_driver.RedisConfiguration{
+		Addr: redisHost,
+	})
+	if err != nil {
+		panic(fmt.Sprint("Error while setup redis driver: ", err))
+	}
+}
 
 // GetItem ...
 func GetItem(key string, src interface{}) (interface{}, error) {
@@ -46,9 +61,4 @@ func DeleteItem(key string) error {
 	}
 
 	return nil
-}
-
-// TokenBlackListCacheKey ...
-func TokenBlackListCacheKey(key string) string {
-	return ":token:BlackList:" + key
 }
