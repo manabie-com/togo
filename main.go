@@ -24,6 +24,7 @@ func main() {
 
 	// Init Gorilla Router
 	router := mux.NewRouter()
+
 	api.APIs{router, pgSession}.Init()
 
 	srv := &graceful.Server{

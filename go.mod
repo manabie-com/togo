@@ -8,11 +8,13 @@ require (
 	github.com/go-pg/pg/v10 v10.10.6
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/google/uuid v1.3.0
+	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/joho/godotenv v1.3.0
 	github.com/linkosmos/mapop v0.0.0-20160129165521-30336b2a6179
 	github.com/manabie-com/togo v0.0.1
 	github.com/pkg/errors v0.9.1
+	github.com/rs/cors v1.8.0
 	github.com/sirupsen/logrus v1.7.0
 	github.com/stretchr/testify v1.7.0
 	github.com/twinj/uuid v1.0.0
