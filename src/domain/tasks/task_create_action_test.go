@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPreserveM2(t *testing.T) {
+func TestTaskCreateAction(t *testing.T) {
 	pgSession := db.Init()
 	userCreateAction := users.UserCreateAction{pgSession}
 	user, err := userCreateAction.Execute("test", "123456")
