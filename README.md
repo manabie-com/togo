@@ -112,6 +112,6 @@ go run main.go
 6. Apply unit test
 
 - TODO
-- 1. Testing for auth module
+- 1. Testing for auth module : done
 - 2. Testing for task module : done
-- 3. Testing for user module
+- 3. Testing for user module : done
