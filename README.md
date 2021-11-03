@@ -108,6 +108,20 @@ go run main.go
 - Black list token after user logout : done
 - Apply go-lint for checking clean code : pending
 - Verify token and return user info : pending
+- Repository : pending.
+I have no time to finish this but I wanna explain to your about my ideal with repository structure
+--- users
+----- user_controller.go
+----- user_repository.go
+----- user_repository_interface.go
+----- user_entity.go
+----- user_list_action.go
+----- user_list_action_test_.go
+----- user_create_action.go
+----- user_create_action_test_.go
+----- etc...
+
+
 
 6. Apply unit test
 
