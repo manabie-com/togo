@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	"github.com/tylerb/graceful"
 
 	"github.com/quochungphp/go-test-assignment/src/domain/api"
@@ -24,7 +25,10 @@ func main() {
 
 	// Init Gorilla Router
 	router := mux.NewRouter()
-
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE"},
+	})
 	api.APIs{router, pgSession}.Init()
 
 	srv := &graceful.Server{
@@ -37,7 +41,7 @@ func main() {
 		},
 		Server: &http.Server{
 			Addr:    ":" + os.Getenv(settings.Port),
-			Handler: router,
+			Handler: c.Handler(router),
 		},
 	}
 
