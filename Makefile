@@ -8,7 +8,4 @@ createdb:
 dropdb:
 	docker exec -it psql-togo dropdb todo
 
-run:
-	bash -c "python todo/manage.py runserver"
-
 # .PHONY: postgres createdb dropdb
