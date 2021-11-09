@@ -1,10 +1,9 @@
-from django.http.response import JsonResponse
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.core import serializers
 import json
 from datetime import datetime
+
+from django.http import HttpResponse
+from django.http.response import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from todo.models import User, Task
 
@@ -13,27 +12,28 @@ def login(request):
     if request.method == 'POST':
         data = json.loads(request.body)
 
-        userid = data.get('user_id')
+        username = data.get('user_id')
         password = data.get('password')
-
-        user = authenticate(userid, password)
-
+        #returns authenticated user instance if username and password matched
+        user = authenticate(username, password)
+        #set session variables
         if user:
             request.session['auth'] = True
             request.session['user'] = user.id
             return HttpResponse('Successfully logged in!')
 
-    return HttpResponse('Failed to login!')
+    return HttpResponse('Failed to login!', status=401)
 
 
 @csrf_exempt
 def tasks(request):
-    if not request.session.has_key('auth') or not request.session['auth']:
-        return HttpResponse('You need to login first!')
+    #check if user is authenticated
+    if request.session.is_empty():
+        return HttpResponse('You need to login first!', status=401)
     
     auth_user_id = request.session['user']
     auth_user = User.objects.get(id=auth_user_id)
-
+    #handles listing of tasks
     if request.method == 'GET':
         date = request.GET.get('created_date')
         date = datetime.strptime(date, '%Y-%m-%d').date()
@@ -53,13 +53,12 @@ def tasks(request):
             tasks_list.append(item)
 
         return JsonResponse(tasks_list, safe=False)
-
+    #handles saving of tasks and checking the max limit
     if request.method == 'POST':
         data = json.loads(request.body)
-
-        date_today = datetime.today()
-
         content = data.get('content')
+        #check no of tasks for the day
+        date_today = datetime.today()
         no_current_tasks = Task.objects.all()\
             .filter(user_id = auth_user,
                 date_created__year = date_today.year,
@@ -67,7 +66,7 @@ def tasks(request):
                 date_created__day = date_today.day).count()
 
         no_max_todo = auth_user.max_todo
-
+        #save tasks if max is not reached
         if (no_current_tasks < no_max_todo):
             task = Task(content = content, user_id = auth_user)
             task.save()
@@ -75,9 +74,9 @@ def tasks(request):
             return HttpResponse('Successfully saved.')
         
         else:
-            return HttpResponse('Max todo for the day already reached.')
+            return HttpResponse('Max todo for the day already reached.', status=400)
  
-    return HttpResponse('No data found.')
+    return HttpResponse(status=400)
 
 
 def authenticate(userid, password):
