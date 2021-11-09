@@ -1,0 +1,38 @@
+[
+    {
+        "model" : "todo.user",
+        "pk" : 1,
+        "fields": {
+            "username" : "firstUser",
+            "password" : "example",
+            "max_todo" : 5
+        }
+    },
+    {
+        "model" : "todo.task",
+        "pk" : 1,
+        "fields": {
+            "content" : "Do the laundry.",
+            "user_id" : 1,
+            "date_created" : "2020-06-29"
+        }
+    },
+    {
+        "model" : "todo.task",
+        "pk" : 2,
+        "fields": {
+            "content" : "Do algebra homework.",
+            "user_id" : 1,
+            "date_created" : "2020-06-29"
+        }
+    },
+    {
+        "model" : "todo.task",
+        "pk" : 3,
+        "fields": {
+            "content" : "Call parents.",
+            "user_id" : 1,
+            "date_created" : "2020-06-29"
+        }
+    }
+]
