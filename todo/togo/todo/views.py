@@ -1,6 +1,8 @@
+from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.core import serializers
 import json
 
 from todo.models import User, Task
@@ -22,13 +24,28 @@ def login(request):
 
 
 def tasks(request):
-    if not request.session['auth']:
+    if not request.session.has_key('auth') or not request.session['auth']:
         return HttpResponse('You need to login first!')
 
-    return HttpResponse('Hello World!!')
+    if request.method == 'GET':
+        date = request.GET.get('created_date')
+        tasks = list(Task.objects.all().filter(date_created = date))
+
+        tasks_list = []
+        for task in list(tasks):
+            item = {
+                'content' : task.content,
+                'date_created' : task.date_created
+            }
+            tasks_list.append(item)
+
+        return JsonResponse(tasks_list, safe=False)
+ 
+    return HttpResponse('No data found.')
+
 
 def authenticate(userid, password):
     try:
-        return User.objects.get(id=userid, password=password)
+        return User.objects.get(username = userid, password = password)
     except:
         return None
