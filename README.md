@@ -94,6 +94,12 @@ the client and ignore the create request.
 - [x] Write unit test for storages layer
 - [x] Split services layer to use case and transport layer
 
+### Something need to improve
+
+- integration + unit test for get tasks feature(i don't have enough time)
+- use test container instead of `sqlmock` is better?
+- increase test case coverage 
+
 #### DB Schema
 
 ```sql
