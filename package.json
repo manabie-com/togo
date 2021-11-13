@@ -1,0 +1,33 @@
+{
+  "name": "interview_nodejs_tthoang",
+  "version": "1.0.0",
+  "description": "Interview NodeJS Tran The Hoang",
+  "main": "index.js",
+  "repository": "https://github.com/Hoangtt4696/togo.git",
+  "author": "Tran The Hoang",
+  "license": "MIT",
+  "scripts": {
+    "start": "NODE_ENV=development nodemon src/index.js",
+    "test": "NODE_ENV=test jest --logHeapUsage --no-cache --collectCoverage --runInBand --forceExit",
+    "setup": "yarn docker:up",
+    "docker:up": "yarn docker up -d",
+    "docker:down": "yarn docker down",
+    "docker": "docker-compose -f docker/docker-compose.yml"
+  },
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "http-status": "^1.5.0",
+    "jsonwebtoken": "^8.5.1",
+    "passport": "^0.5.0",
+    "passport-jwt": "^4.0.0",
+    "sequelize": "^6.9.0"
+  },
+  "devDependencies": {
+    "jest": "^27.3.1",
+    "pg": "^8.7.1",
+    "supertest": "^6.1.6",
+    "swagger-ui-express": "^4.1.6"
+  }
+}

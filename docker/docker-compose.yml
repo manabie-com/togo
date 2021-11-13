@@ -1,0 +1,16 @@
+version: '3'
+services:
+  db:
+    image: postgres:11-alpine
+    ports:
+    - '5432:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./db_init:/docker-entrypoint-initdb.d/
+      - db_data:/var/lib/postgresql/data
+    restart: always
+    container_name: togo_db
+volumes:
+    db_data: {}
