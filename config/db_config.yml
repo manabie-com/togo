@@ -1,0 +1,13 @@
+database:
+  db_host: localhost:3308
+  db_user: stack
+  db_name: minipro
+  db_userpasswd: abc123456
+  db_type: mysql
+auth:
+  jw_public_key: /home/minipro/keystone/jws-keys/public/public.pem
+  auth_url: http://localhost:5003/v3/
+tls:
+  tls_server_key: /home/minipro/ssl/server-key.pem
+  tls_server_crt: /home/minipro/ssl/server.pem
+  tls_root_ca: /home/minipro/ssl/ca.pem

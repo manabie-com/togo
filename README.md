@@ -1,29 +1,34 @@
-### Requirements
+### Requirements.
+ - This project only supports to run on Ubuntu currently
+ - go version >= 1.16
+ - docker
+ - docker-compose
+### Install Protobuffer
+ - https://github.com/protocolbuffers/protobuf/blob/master/src/README.md
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+### Install Docker & docker-compose.
+ * for Ubuntu : 
+    - [Docker](https://docs.docker.com/engine/install/ubuntu/)
+    - [docker-compose](https://docs.docker.com/compose/install/)
 
-### Notes
+### Start docker-compose to run MySQL database & KeyStone.
+    $cd docker
+    $docker-compose up -d
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+### Build & Run mini_project.
+    $make
+    $./mini_project
 
-### How to submit your solution?
+### How To test
 
-- Fork this repo and show us your development progress via a PR
+1. login: run login by terminal windows
+---------
+    Note: For generating a base64 string for user: admin, pass: abc123
+    $ echo -ne "admin:abc123" | base64
+    YWRtaW46YWJjMTIz
+- Endpoint: /api/v2/auth/login
+- Example:
+    curl -i -X POST -H "Authorization: basic YWRtaW46YWJjMTIz" http://localhost:8080/api/v2/auth/login
 
-### Interesting facts about Manabie
-
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
-
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+2. assign OS_TOKEN=Key_got_from_above
+    - Example: OS_TOKEN=eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJzdWIiOiIwMTgwNjVmNjlkYTY0MTgzYjNmNDc5MDAwMWRkOWE5ZSIsImlhdCI6MTYzNzUwNjY4NSwiZXhwIjoxNjM3NTEwMjg1LCJvcGVuc3RhY2tfbWV0aG9kcyI6WyJwYXNzd29yZCJdLCJvcGVuc3RhY2tfYXVkaXRfaWRzIjpbIk5GbTRKWFBSVHBXRVowdlpFWHgzX0EiXSwib3BlbnN0YWNrX3Byb2plY3RfaWQiOiIzYThlZGMyZDcwMDE0NmViOWVjMGQyZjM1M2YxMjQ3ZiJ9.DKJzr82g6My4z3FoshegAvlz1zF1yiZSCMJ-RQL9LP7yLxjYE4Oy107zBsqDBZ9cQHEn0cT66V2pzMhTwyXrjQ

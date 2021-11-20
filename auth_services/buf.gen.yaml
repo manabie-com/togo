@@ -1,0 +1,14 @@
+version: v1
+plugins:
+  - name: go
+    out: .
+  - name: go-grpc
+    out: .
+    opt: require_unimplemented_servers=false
+  - name: grpc-gateway
+    out: .
+  - name: validate
+    out: .
+    opt: lang=go
+  - name: openapiv2
+    out: ../third_party/OpenAPI

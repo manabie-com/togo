@@ -1,0 +1,72 @@
+version: '3.5'
+
+networks:
+  back-tier:
+    driver: bridge
+
+services:
+
+  miniPro-database-dev:
+    image: mariadb
+    container_name: miniPro-database-dev
+    environment:
+      MYSQL_ROOT_PASSWORD: abc123
+      MYSQL_USER: stack
+      MYSQL_PASSWORD: abc123456
+      MYSQL_DATABASE: minipro
+    volumes:
+      - /home/minipro/mysql:/var/lib/mysql
+    command:
+      - mysqld
+      - --default_storage_engine=InnoDB
+      - --innodb_log_file_size=256M
+      - --innodb_buffer_pool_size=1GB
+      - --max_allowed_packet=20M
+      - --bulk_insert_buffer_size=20M
+      - --tmp_table_size=64M
+      - --query_cache_size=32M
+    ports:
+      - 3308:3306
+    restart: always
+    networks:
+      - back-tier
+
+  keystone-dev:
+    image: keystone
+    container_name: keystone-dev
+    volumes:
+      - "/home/minipro/keystone/:/etc/keystone/"
+      - "/etc/localtime:/etc/localtime:ro"
+    environment:
+      KEYSTONE_ADMIN_PASSWORD: abc123
+      CONTROLLER: localhost
+    ports:
+      - 5003:5000
+    links:
+      - keystone-cache:keystone-cache
+      - keystone-database:keystone-database
+    networks:
+      - back-tier
+    depends_on:
+      - keystone-cache
+      - keystone-database
+    restart: always
+
+  keystone-cache:
+    image: memcached
+    container_name: keystone-cache
+  keystone-database:
+    image: mariadb
+    container_name: keystone-database
+    volumes:
+      - /home/minipro/keystone-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: abc123
+      MYSQL_USER: keystone
+      MYSQL_PASSWORD: abc123
+      MYSQL_DATABASE: keystone
+    ports:
+      - 3306
+    networks:
+      - back-tier
+    restart: always
