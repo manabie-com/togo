@@ -39,6 +39,29 @@
         ]
       }
     },
+    "/api/v2/auth/userids": {
+      "get": {
+        "summary": "get list user ID",
+        "operationId": "Auth_GetListUserID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/auth_servicesListUserIDRsp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
     "/api/v2/auth/users": {
       "post": {
         "summary": "create User",
@@ -141,6 +164,10 @@
                 },
                 "phone": {
                   "type": "string"
+                },
+                "numberTask": {
+                  "type": "integer",
+                  "format": "int32"
                 }
               }
             }
@@ -296,6 +323,17 @@
         }
       }
     },
+    "auth_servicesListUserIDRsp": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "auth_servicesUserRequest": {
       "type": "object",
       "properties": {
@@ -313,6 +351,10 @@
         },
         "userName": {
           "type": "string"
+        },
+        "numberTask": {
+          "type": "integer",
+          "format": "int32"
         },
         "enabled": {
           "type": "boolean"
@@ -337,11 +379,12 @@
         "phone": {
           "type": "string"
         },
+        "numberTask": {
+          "type": "integer",
+          "format": "int32"
+        },
         "enabled": {
           "type": "boolean"
-        },
-        "role": {
-          "type": "string"
         }
       }
     },

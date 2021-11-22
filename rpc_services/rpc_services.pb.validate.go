@@ -45,6 +45,8 @@ func (m *NewTaskReq) Validate() error {
 
 	// no validation rules for TaskName
 
+	// no validation rules for UserId
+
 	return nil
 }
 

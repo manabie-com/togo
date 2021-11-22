@@ -3,7 +3,10 @@ package mysql_driver
 import (
 	"errors"
 	"mini_project/db/model"
+	"time"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
 )
 
@@ -44,15 +47,7 @@ func (s *database) IsUserNotExists(userName string) bool {
 func (s *database) GetUsers() []model.User {
 	var users []model.User
 	s.db.Where("deleted = ?", 0).Find(&users)
-	var resp []model.User
-	// for _, user := range users {
-	// 	user.UserName = user.UserName
-	// 	user.Email = user.Email
-	// 	user.Phone = user.Phone
-	// 	user.Whilelist.Ips = user.Whilelist.Ips
-	// 	resp = append(resp, user)
-	// }
-	return resp
+	return users
 }
 
 func (s *database) GetUser(userID string) (*model.User, error) {
@@ -61,10 +56,6 @@ func (s *database) GetUser(userID string) (*model.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	// user.UserName = user.UserName
-	// user.Phone = user.Phone
-	// user.Email = user.Email
-	// user.Whilelist.Ips = user.Whilelist.Ips
 	return &user, err
 }
 
@@ -79,4 +70,68 @@ func (s *database) GetUserByName(userName string) (*model.User, error) {
 	// user.Email = user.Email
 	// user.Whilelist.Ips = user.Whilelist.Ips
 	return &user, err
+}
+
+func (s *database) GetListUserID() []string {
+	var userID []string
+	s.db.Table("user").Select("DISTINCT id").Where("deleted = ?", 0).Find(&userID)
+	return userID
+}
+
+func (s *database) IsUserIDNotExists(userID string) bool {
+	var user model.User
+	result := s.db.Model(&model.User{}).Where("id = ?", userID).Take(&user)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return true
+	}
+	return false
+}
+
+func (s *database) CreateTask(userID, taskName string) error {
+
+	checkexist := s.IsUserIDNotExists(userID)
+
+	if checkexist {
+		return status.Error(codes.Unavailable, "userID : "+userID+" Unavailable in User List")
+	}
+
+	var tasks []model.Task
+	s.db.Model(&model.Task{}).Where("user_id = ?", userID).Find(&tasks)
+	task_count := 0
+
+	if len(tasks) > 0 {
+		var taskN string
+
+		result := s.db.Table("task").Select("task_name").Where("task_name = ?", taskName).Take(&taskN)
+		if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return status.Error(codes.AlreadyExists, "taskName : "+taskName+" Already Exists in Task List")
+		}
+
+		currentTime := time.Now()
+
+		for _, t := range tasks {
+			c_y, c_m, c_d := currentTime.Date()
+			t_y, t_m, t_d := t.CreatedAt.Date()
+
+			if c_y == t_y && c_m == t_m && c_d == t_d {
+				task_count++
+			}
+		}
+
+		user, _ := s.GetUser(userID)
+
+		task_count_max := user.NumberTask
+
+		if task_count >= task_count_max {
+			return status.Error(codes.OutOfRange, "number task assign to this user over task count max")
+		}
+
+	}
+
+	task := model.Task{
+		UserID:    userID,
+		TaskName:  taskName,
+		CreatedAt: time.Now(),
+	}
+	return s.db.Create(&task).Error
 }

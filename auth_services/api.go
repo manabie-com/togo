@@ -151,6 +151,8 @@ func (s *authServer) CreateUser(ctx context.Context, req *UserRequest) (*UserRes
 		panic(err)
 	}
 
+	fmt.Println("adminProject", adminProject)
+
 	createOpts := users.CreateOpts{
 		Name:             req.Name,
 		DomainID:         "default",
@@ -170,12 +172,13 @@ func (s *authServer) CreateUser(ctx context.Context, req *UserRequest) (*UserRes
 	}
 
 	user := model.User{
-		ID:       userInfo.ID,
-		Name:     userInfo.Name,
-		UserName: req.UserName,
-		Email:    req.Email,
-		Phone:    req.Phone,
-		Enabled:  userInfo.Enabled,
+		ID:         userInfo.ID,
+		Name:       userInfo.Name,
+		UserName:   req.UserName,
+		Email:      req.Email,
+		Phone:      req.Phone,
+		NumberTask: int(req.NumberTask),
+		Enabled:    userInfo.Enabled,
 	}
 	err = s.db.CreateUser(user)
 	if err != nil {
@@ -202,24 +205,26 @@ func (s *authServer) UpdateUser(ctx context.Context, req *UserUpdateReq) (*UserR
 	if err != nil {
 		panic(err)
 	}
-	current, err := s.db.GetUser(req.UserId)
-	if err != nil {
-		return nil, status.Error(codes.NotFound, "user not found")
-	}
-	currentUser := UserResponse{
-		Id:       current.ID,
-		Name:     current.Name,
-		UserName: current.UserName,
-		Email:    current.Email,
-		Phone:    current.Phone,
-		Enabled:  current.Enabled,
-	}
-	old := common.Interface2String(&currentUser)
-	to := common.Interface2String(req)
 
 	var updateOpts users.UpdateOpts
 	fields := make(map[string]interface{})
 	update := make(map[string]interface{})
+
+	if req.Phone != "" {
+		update["phone"] = req.Phone
+	}
+
+	if req.Email != "" {
+		update["email"] = req.Email
+	}
+
+	if req.UserName != "" {
+		update["user_name"] = req.UserName
+	}
+
+	if req.NumberTask > 0 {
+		update["number_task"] = req.NumberTask
+	}
 
 	updateOpts = users.UpdateOpts{
 		DomainID:         "default",
@@ -235,19 +240,20 @@ func (s *authServer) UpdateUser(ctx context.Context, req *UserUpdateReq) (*UserR
 	fields["user_name"] = fmt.Sprintf("%v", userInfo.Extra["user_name"])
 	fields["email"] = fmt.Sprintf("%v", userInfo.Extra["email"])
 	fields["phone"] = fmt.Sprintf("%v", userInfo.Extra["phone"])
+	fields["number_task"] = fmt.Sprintf("%v", userInfo.Extra["number_task"])
+
+	s.db.UpdateUser(userInfo.ID, fields)
 
 	updated, _ := s.db.GetUser(req.UserId)
-	var from map[string]string
-	for k := range to {
-		from[k] = old[k]
-	}
+
 	return &UserResponse{
-		Id:       updated.ID,
-		Name:     updated.Name,
-		UserName: updated.UserName,
-		Email:    updated.Email,
-		Phone:    updated.Phone,
-		Enabled:  updated.Enabled,
+		Id:         updated.ID,
+		Name:       updated.Name,
+		UserName:   updated.UserName,
+		Email:      updated.Email,
+		Phone:      updated.Phone,
+		NumberTask: int32(updated.NumberTask),
+		Enabled:    updated.Enabled,
 	}, nil
 }
 
@@ -369,6 +375,18 @@ func (s *authServer) getDefaultProjectID() (string, error) {
 func (s *authServer) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
 	return common.VerifyTokenBearerOrBasic(ctx, fullMethodName, s.db, &s.client)
 	// return nil, nil
+}
+
+// GetListUserID(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListUserIDRsp, error)
+func (s *authServer) GetListUserID(ctx context.Context, _ *empty.Empty) (*ListUserIDRsp, error) {
+
+	rel := s.db.GetListUserID()
+
+	result := ListUserIDRsp{
+		UserId: rel,
+	}
+
+	return &result, nil
 }
 
 // Close () Cleanup handle database

@@ -33,6 +33,8 @@ type AuthClient interface {
 	DeleteUserPermanently(ctx context.Context, in *UserDeleteReq, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// change passord
 	ChangePassword(ctx context.Context, in *UserChangePasswdReq, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// get list user ID
+	GetListUserID(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListUserIDRsp, error)
 }
 
 type authClient struct {
@@ -106,6 +108,15 @@ func (c *authClient) ChangePassword(ctx context.Context, in *UserChangePasswdReq
 	return out, nil
 }
 
+func (c *authClient) GetListUserID(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListUserIDRsp, error) {
+	out := new(ListUserIDRsp)
+	err := c.cc.Invoke(ctx, "/auth_services.Auth/GetListUserID", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServer is the server API for Auth service.
 // All implementations should embed UnimplementedAuthServer
 // for forward compatibility
@@ -124,6 +135,8 @@ type AuthServer interface {
 	DeleteUserPermanently(context.Context, *UserDeleteReq) (*emptypb.Empty, error)
 	// change passord
 	ChangePassword(context.Context, *UserChangePasswdReq) (*emptypb.Empty, error)
+	// get list user ID
+	GetListUserID(context.Context, *emptypb.Empty) (*ListUserIDRsp, error)
 }
 
 // UnimplementedAuthServer should be embedded to have forward compatible implementations.
@@ -150,6 +163,9 @@ func (UnimplementedAuthServer) DeleteUserPermanently(context.Context, *UserDelet
 }
 func (UnimplementedAuthServer) ChangePassword(context.Context, *UserChangePasswdReq) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangePassword not implemented")
+}
+func (UnimplementedAuthServer) GetListUserID(context.Context, *emptypb.Empty) (*ListUserIDRsp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetListUserID not implemented")
 }
 
 // UnsafeAuthServer may be embedded to opt out of forward compatibility for this service.
@@ -289,6 +305,24 @@ func _Auth_ChangePassword_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Auth_GetListUserID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).GetListUserID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/auth_services.Auth/GetListUserID",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).GetListUserID(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Auth_ServiceDesc is the grpc.ServiceDesc for Auth service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -323,6 +357,10 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ChangePassword",
 			Handler:    _Auth_ChangePassword_Handler,
+		},
+		{
+			MethodName: "GetListUserID",
+			Handler:    _Auth_GetListUserID_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

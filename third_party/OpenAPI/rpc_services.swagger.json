@@ -16,7 +16,7 @@
     "application/json"
   ],
   "paths": {
-    "/api/v2/newtask": {
+    "/api/v1/newtask": {
       "post": {
         "operationId": "Services_NewTask",
         "responses": {
@@ -87,6 +87,9 @@
       "type": "object",
       "properties": {
         "taskName": {
+          "type": "string"
+        },
+        "userId": {
           "type": "string"
         }
       }

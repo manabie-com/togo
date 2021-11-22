@@ -18,5 +18,9 @@ type DatabaseAPI interface {
 
 	IsUserNotExists(userName string) bool
 
+	GetListUserID() []string
+
+	CreateTask(userID, taskName string) error
+
 	Close() error
 }

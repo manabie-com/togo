@@ -6,12 +6,8 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	// "grpc_server/audit_middleware"
 	"mini_project/config"
 	"mini_project/db/model"
-
-	// "grpc_server/logutil"
-	// "grpc_server/rbac"
 
 	"strings"
 
@@ -68,17 +64,7 @@ func verifyTokenBasicOrBearer(ctx context.Context, fullMethodName string,
 			return nil, status.Errorf(codes.Unauthenticated, "Bad authorization string"), caller
 		}
 		caller = pair[0]
-		// if pair[0] != "admin" {
-		// user, err := db.GetUserByName(pair[0])
-		// if err != nil {
-		// 	return nil, status.Errorf(codes.Unauthenticated, "try to login with unknown user or deleted user"), caller
-		// }
-		// caller := user.Name
-		// err = checkUserPermission(ctx, fullMethodName, user, ac)
-		// if err != nil {
-		// 	return nil, err, caller
-		// }
-		// }
+
 		newCtx := context.WithValue(ctx, "caller", caller)
 		return context.WithValue(newCtx, "token", pair), nil, caller
 	} else if strings.EqualFold(splits[0], "bearer") {
@@ -91,12 +77,8 @@ func verifyTokenBasicOrBearer(ctx context.Context, fullMethodName string,
 
 func VerifyTokenBearer(ctx context.Context, fullMethodName string,
 	db model.DatabaseAPI) (context.Context, error) {
-	newCtx, err, caller := verifyTokenBearer(ctx, fullMethodName, db, nil)
-	// if err != nil {
-	// 	// export security metrics
-	// 	// audit_middleware.ExportSecurityMetrics(ctx, fullMethodName, err, caller)
-	// }
-	fmt.Println("VerifyTokenBearer caller", caller)
+	newCtx, err, _ := verifyTokenBearer(ctx, fullMethodName, db, nil)
+
 	return newCtx, err
 }
 
@@ -126,16 +108,6 @@ func verifyTokenBearer(ctx context.Context, fullMethodName string,
 	}
 	caller = user.Name
 	audit := extractAudit(claims)
-	// if user.AuditIDs != strings.Join(audit, ";") {
-	// 	return nil, status.Errorf(codes.Unauthenticated, "invalid auth token: %v", "Token was revoke"), caller
-	// }
-
-	// if user.Name != "admin" {
-	// 	err = checkUserPermission(ctx, fullMethodName, user, ac)
-	// 	if err != nil {
-	// 		return nil, err, caller
-	// 	}
-	// }
 
 	if authClient != nil {
 		authClient.SetToken(token)

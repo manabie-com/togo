@@ -30,14 +30,16 @@ service Services {
 	
 	rpc NewTask(NewTaskReq) returns (NewTaskResp) {
 		option (google.api.http) ={
-			post: "/api/v2/newtask"
+			post: "/api/v1/newtask"
 			body: "*"
 		};
 	}
+	
 }
 
 message NewTaskReq {
 	string task_name = 1;
+	string user_id = 2;
 }
 
 message NewTaskResp {

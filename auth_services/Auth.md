@@ -18,7 +18,7 @@ Auth API
 
 - Endpoint: /api/v2/auth/users
 - Example:
-    curl -X POST -H "Authorization: bearer $OS_TOKEN" -H "Content-Type: application/json" -d '{"name": "newuser", "password": "changeme", "enaled": true, "email" : "test123@123", "phone": "123456"}' "http://localhost:8080/api/v2/auth/users"
+    curl -X POST -H "Authorization: bearer $OS_TOKEN" -H "Content-Type: application/json" -d '{"name": "newuser1", "password": "changeme", "enaled": true, "email" : "test123@123", "phone": "123456","number_task":"10"}' "http://localhost:8080/api/v2/auth/users"
 
 3. delete user:
 ---------------
@@ -34,7 +34,7 @@ If you want to delete user permanently use api: /api/v2/auth/users/{user_id}/per
 
 - Endpoint: /api/v2/auth/users/{user_id}
 - Example:
-    curl -X PATCH -H "Authorization: bearer $OS_TOKEN" -H "Content-Type: application/json" -d '{"email": "test@test", "phone": "123456", "status": {"is_enabled": true}}' http://localhost:8080/api/v2/auth/users/b550778e2de2420c9dfd373b4837229e"
+    curl -X PATCH -H "Authorization: bearer $OS_TOKEN" -H "Content-Type: application/json" -d '{"email": "test@test", "phone": "123456", "status": {"is_enabled": true}}' http://localhost:8080/api/v2/auth/users/b550778e2de2420c9dfd373b4837229e
 
 5. reset password (require admin):
 ----------------------------------

@@ -77,7 +77,7 @@ func RegisterServicesHandlerServer(ctx context.Context, mux *runtime.ServeMux, s
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/rpc_services.Services/NewTask", runtime.WithHTTPPathPattern("/api/v2/newtask"))
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/rpc_services.Services/NewTask", runtime.WithHTTPPathPattern("/api/v1/newtask"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -139,7 +139,7 @@ func RegisterServicesHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/rpc_services.Services/NewTask", runtime.WithHTTPPathPattern("/api/v2/newtask"))
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/rpc_services.Services/NewTask", runtime.WithHTTPPathPattern("/api/v1/newtask"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -159,7 +159,7 @@ func RegisterServicesHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 }
 
 var (
-	pattern_Services_NewTask_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v2", "newtask"}, ""))
+	pattern_Services_NewTask_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"api", "v1", "newtask"}, ""))
 )
 
 var (

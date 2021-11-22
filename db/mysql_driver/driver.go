@@ -87,6 +87,7 @@ func New(dbUrl map[string]string) {
 	// create or update table
 	mysqlDB.Set("gorm:table_options", "ENGINE=InnoDB COLLATE=utf8mb4_unicode_ci").AutoMigrate(
 		&model.User{},
+		&model.Task{},
 	)
 
 	db, err := mysqlDB.DB()

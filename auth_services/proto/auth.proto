@@ -77,6 +77,13 @@ service Auth {
 		};
     }
 
+	// get list user ID
+	rpc GetListUserID(google.protobuf.Empty) returns (ListUserIDRsp) {
+		option (google.api.http) ={
+		get: "/api/v2/auth/userids"
+		};
+	}
+
 }
 
 message DetailError {
@@ -119,7 +126,8 @@ message UserRequest {
 	string phone = 3;
 	string name = 4;
 	string user_name = 5;
-	bool enabled = 6;
+	int32 number_task = 6;
+	bool enabled = 7;
 }
 
 message UserResponse {
@@ -128,8 +136,8 @@ message UserResponse {
 	string user_name = 3;
 	string email = 4;
 	string phone = 5;
-	bool enabled = 6;
-	string role = 7;
+	int32 number_task = 6;
+	bool enabled = 7;
 }
 
 message UserUpdateReq {
@@ -137,6 +145,7 @@ message UserUpdateReq {
 	string user_name = 2;
 	string email = 3;
 	string phone = 4;
+	int32 number_task = 5;
 }
 
 message ResetPasswdReq {
@@ -157,5 +166,9 @@ message UserChangePasswdReq {
 	string user_id = 1;
 	string original_password = 2;
 	string password = 3;
+}
+
+message ListUserIDRsp{
+	repeated string user_id = 1;
 }
 

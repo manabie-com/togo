@@ -2,6 +2,8 @@ package server
 
 import (
 	"context"
+	"fmt"
+	"mini_project/common"
 	db_api "mini_project/db"
 	"mini_project/db/model"
 	rpc_api "mini_project/rpc_services"
@@ -15,6 +17,11 @@ type event string
 type APIServer struct {
 	db model.DatabaseAPI
 	m  *sync.RWMutex
+}
+
+// AuthFuncOverride ()
+func (s *APIServer) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
+	return common.VerifyTokenBearer(ctx, fullMethodName, s.db)
 }
 
 // var policy embed.FS
@@ -37,6 +44,8 @@ func NewAPIServer(dbUrl map[string]string) (*APIServer, error) {
 
 //NewTask(context.Context, *NewTaskReq) (*NewTaskResp, error)
 func (s *APIServer) NewTask(ctx context.Context, req *rpc_api.NewTaskReq) (*rpc_api.NewTaskResp, error) {
-
-	return nil, nil
+	fmt.Println("<<<<<<<<<NewTask>>>>>>>>>")
+	err := s.db.CreateTask(req.UserId, req.TaskName)
+	rsp := rpc_api.NewTaskResp{TaskName: req.TaskName}
+	return &rsp, err
 }

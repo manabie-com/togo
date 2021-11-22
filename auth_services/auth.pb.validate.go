@@ -425,6 +425,8 @@ func (m *UserRequest) Validate() error {
 
 	// no validation rules for UserName
 
+	// no validation rules for NumberTask
+
 	// no validation rules for Enabled
 
 	return nil
@@ -502,9 +504,9 @@ func (m *UserResponse) Validate() error {
 
 	// no validation rules for Phone
 
-	// no validation rules for Enabled
+	// no validation rules for NumberTask
 
-	// no validation rules for Role
+	// no validation rules for Enabled
 
 	return nil
 }
@@ -578,6 +580,8 @@ func (m *UserUpdateReq) Validate() error {
 	// no validation rules for Email
 
 	// no validation rules for Phone
+
+	// no validation rules for NumberTask
 
 	return nil
 }
@@ -911,3 +915,68 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UserChangePasswdReqValidationError{}
+
+// Validate checks the field values on ListUserIDRsp with the rules defined in
+// the proto definition for this message. If any rules are violated, an error
+// is returned.
+func (m *ListUserIDRsp) Validate() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+// ListUserIDRspValidationError is the validation error returned by
+// ListUserIDRsp.Validate if the designated constraints aren't met.
+type ListUserIDRspValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListUserIDRspValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListUserIDRspValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListUserIDRspValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListUserIDRspValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListUserIDRspValidationError) ErrorName() string { return "ListUserIDRspValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ListUserIDRspValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListUserIDRsp.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListUserIDRspValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListUserIDRspValidationError{}
