@@ -1,0 +1,30 @@
+[
+  {
+    "id": "todo1",
+    "user_id": "user1",
+    "content": "Task 1",
+    "status": "ACTIVE",
+    "created_date": "2021-11-22T15:07:04.316Z"
+  },
+  {
+    "id": "todo2",
+    "user_id": "user1",
+    "content": "Task 2",
+    "status": "COMPLETED",
+    "created_date": "2021-11-22T15:08:49.896Z"
+  },
+  {
+    "id": "todo3",
+    "user_id": "user2",
+    "content": "Task 1",
+    "status": "ACTIVE",
+    "created_date": "2021-11-22T15:08:25.255Z"
+  },
+  {
+    "id": "todo2",
+    "user_id": "user2",
+    "content": "Task 2",
+    "status": "COMPLETED",
+    "created_date": "2021-11-22T15:08:37.500Z"
+  }
+]

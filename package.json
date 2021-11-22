@@ -1,0 +1,24 @@
+{
+  "name": "togo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "jest -- --watchAll",
+    "cypress:open": "cypress open"
+  },
+  "repository": "https://github.com/HoangDucMinh/togo.git",
+  "author": "Minh <hoangducminh271196@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.15"
+  },
+  "devDependencies": {
+    "cypress": "^9.0.0",
+    "eslint": "^8.3.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.3"
+  }
+}
