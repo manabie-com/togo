@@ -1,29 +1,33 @@
-### Requirements
+1. How to run?
+  - Frontend Source
+    - yarn install
+    - yarn start:fullstack
+    - Login api web:
+      - Username: firstUser
+      - Password: example
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+  - Backend Source:
+    - npm install
+    - npm start
+    - Login api with:
+      - Username: firstUser
+      - Password: example
+    
+  - Unit test 
+    - npm test
+  
+  - Cypress automation test:
+    - cd automation-test
+    - npm install
+    - npm run dev
 
-### Notes
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+2. CURL: 
+  - getTodo: curl -X GET http://localhost:5050 tasks -H "Authorization: testabc.xyz.ahk"
+  
 
-### How to submit your solution?
+3. My solution is based on simple structure, it does not depend on the library. During development it will be easy to find related files.
+Source code has consistent file and directory naming rules, based on a directory tree. The functions covered by automation test and unit test are quite suitable
 
-- Fork this repo and show us your development progress via a PR
 
-### Interesting facts about Manabie
-
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
-
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+4. If I had more time, I would handle the error when calling the api and show on screen in the most detail. I will use docker to create a database and query with real data and use jwt for login.

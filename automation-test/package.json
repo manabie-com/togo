@@ -1,0 +1,15 @@
+{
+  "name": "cypress",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "cypress": "^7.1.0",
+    "human-readable-ids": "^1.0.4",
+    "cypress-wait-until": "^1.7.1"
+  },
+  "scripts": {
+    "cypress": "./node_modules/.bin/cypress",
+    "dev": "yarn cypress open --config-file cypress.json"
+  }
+}
