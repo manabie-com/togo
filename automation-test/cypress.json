@@ -1,0 +1,12 @@
+{
+  "name": "cypress",
+  "env": {
+    "baseUrlConsole": "http://localhost:3000",
+    "user": {
+      "userName": "firstUser",
+      "password": "example"
+    }
+  },
+  "chromeWebSecurity": false,
+  "defaultCommandTimeout": 10000
+}
