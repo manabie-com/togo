@@ -9,14 +9,20 @@ import (
 
 var defaultConfig = []byte(`
 http_address: 9000
+storage_type: InMemory
 `)
 
 type Config struct {
-	Base `mapstructure:",squash"`
+	Base    `mapstructure:",squash"`
+	Storage `mapstructure:",squash"`
 }
 
 type Base struct {
 	HTTPAddress int `yaml:"http_address" mapstructure:"http_address"`
+}
+
+type Storage struct {
+	StorageType string `yaml:"storage_type" mapstructure:"storage_type"`
 }
 
 var (
