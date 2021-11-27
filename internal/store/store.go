@@ -1,6 +1,7 @@
 package store
 
 import (
+	"errors"
 	"main/config"
 	"main/internal/model"
 )
@@ -13,19 +14,39 @@ const (
 
 type Store interface {
 	CreateTodo(todo model.Todo) (model.Todo, error)
+	GetTodo(id uint) (model.Todo, error)
+	GetAllTodo() ([]model.Todo, error)
 }
 
-var idCounter = 1
+var idCounter = uint(1)
 
 type InMemoryStore struct {
-	todoTable map[int]model.Todo
+	todoTable map[uint]model.Todo
 }
 
-func (s InMemoryStore) CreateTodo(todo model.Todo) (model.Todo, error) {
+func (s *InMemoryStore) CreateTodo(todo model.Todo) (model.Todo, error) {
 	todo.Id = idCounter
 	s.todoTable[idCounter] = todo
 	idCounter = idCounter + 1
 	return s.todoTable[todo.Id], nil
+}
+
+func (s *InMemoryStore) GetTodo(id uint) (model.Todo, error) {
+	todo, ok := s.todoTable[id]
+	if !ok {
+		return model.Todo{}, errors.New("not found")
+	}
+
+	return todo, nil
+}
+
+func (s *InMemoryStore) GetAllTodo() ([]model.Todo, error) {
+	var todos []model.Todo
+	for _, todo := range s.todoTable {
+		todos = append(todos, todo)
+	}
+
+	return todos, nil
 }
 
 func NewStorage(cfg config.Config) (Store, error) {
@@ -37,7 +58,7 @@ func NewStorage(cfg config.Config) (Store, error) {
 	}
 }
 
-func newInMemoryStorage() (Store, error) {
-	table := make(map[int]model.Todo, 0)
-	return InMemoryStore{todoTable: table}, nil
+func newInMemoryStorage() (*InMemoryStore, error) {
+	table := make(map[uint]model.Todo, 0)
+	return &InMemoryStore{todoTable: table}, nil
 }

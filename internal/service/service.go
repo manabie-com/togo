@@ -21,7 +21,7 @@ type TogoService struct {
 	log   logger.Logger
 }
 
-func NewTogoService(cfg config.Config, store store.Store, log logger.Logger) (Service, error) {
+func NewTogoService(cfg config.Config, store store.Store, log logger.Logger) (*TogoService, error) {
 	return &TogoService{
 		cfg:   cfg,
 		store: store,
@@ -38,7 +38,7 @@ type CreateTodoResponse struct {
 	Todo model.Todo `json:"todo"`
 }
 
-func (s TogoService) CreateTodoHandler() http.Handler {
+func (s *TogoService) CreateTodoHandler() http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
 		if req.Method != "POST" {
 			http.Error(w, "Method unsupported", 405)
@@ -51,7 +51,7 @@ func (s TogoService) CreateTodoHandler() http.Handler {
 			return
 		}
 
-		objectResp, err := s.createTodo(objectReq)
+		objectResp, err := s.CreateTodo(objectReq)
 		if err != nil {
 			http.Error(w, "Internal Server Error", 500)
 			return
@@ -95,7 +95,7 @@ func (s *TogoService) createTodoReqParser(req *http.Request) (*CreateTodoRequest
 	return createTodoReq, err
 }
 
-func (s *TogoService) createTodo(req *CreateTodoRequest) (*CreateTodoResponse, error) {
+func (s *TogoService) CreateTodo(req *CreateTodoRequest) (*CreateTodoResponse, error) {
 	todo, err := s.store.CreateTodo(model.Todo{
 		Title:  req.Title,
 		UserId: req.UserId,
