@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-func TestCreateTodoService(t *testing.T) {
+func Init(t *testing.T) *service.TogoService {
 	cfg := config.Config{
 		Base: config.Base{
 			HTTPAddress: 9000,
@@ -31,6 +31,12 @@ func TestCreateTodoService(t *testing.T) {
 	if err != nil {
 		t.Fatal("create service fail:", logger.Object("error", err))
 	}
+
+	return svc
+}
+
+func TestCreateTodoService(t *testing.T) {
+	svc := Init(t)
 
 	req := &service.CreateTodoRequest{
 		Title:  "make breakfast",
