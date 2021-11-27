@@ -29,8 +29,8 @@ var (
 	log = logger.New()
 )
 
-func Load() *Config {
-	var cfg = &Config{}
+func Load() Config {
+	var cfg = Config{}
 
 	viper.SetConfigType("yaml")
 	err := viper.ReadConfig(bytes.NewBuffer(defaultConfig))

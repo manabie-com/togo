@@ -16,15 +16,16 @@ type Store interface {
 }
 
 type InMemoryStore struct {
+	idCounter int
 	todoTable map[int]model.Todo
 }
 
 func (s InMemoryStore) CreateTodo(todo model.Todo) (model.Todo, error) {
-	s.todoTable[todo.Id] = todo
+	s.todoTable[s.idCounter] = todo
 	return s.todoTable[todo.Id], nil
 }
 
-func NewStorage(cfg *config.Config) (Store, error) {
+func NewStorage(cfg config.Config) (Store, error) {
 	switch cfg.StorageType {
 	case InMemory:
 		return newInMemoryStorage()
@@ -35,5 +36,5 @@ func NewStorage(cfg *config.Config) (Store, error) {
 
 func newInMemoryStorage() (Store, error) {
 	table := make(map[int]model.Todo, 0)
-	return InMemoryStore{todoTable: table}, nil
+	return InMemoryStore{todoTable: table, idCounter: 1}, nil
 }
