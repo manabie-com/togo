@@ -22,12 +22,13 @@ var idCounter = uint(1)
 
 type InMemoryStore struct {
 	todoTable map[uint]model.Todo
+	idCounter uint
 }
 
 func (s *InMemoryStore) CreateTodo(todo model.Todo) (model.Todo, error) {
-	todo.Id = idCounter
+	todo.Id = s.idCounter
 	s.todoTable[idCounter] = todo
-	idCounter = idCounter + 1
+	s.idCounter = idCounter + 1
 	return s.todoTable[todo.Id], nil
 }
 
@@ -60,5 +61,5 @@ func NewStorage(cfg config.Config) (Store, error) {
 
 func newInMemoryStorage() (*InMemoryStore, error) {
 	table := make(map[uint]model.Todo, 0)
-	return &InMemoryStore{todoTable: table}, nil
+	return &InMemoryStore{todoTable: table, idCounter: 1}, nil
 }
