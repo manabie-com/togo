@@ -18,8 +18,6 @@ type Store interface {
 	GetAllTodo() ([]model.Todo, error)
 }
 
-var idCounter = uint(1)
-
 type InMemoryStore struct {
 	todoTable map[uint]model.Todo
 	idCounter uint
@@ -27,8 +25,8 @@ type InMemoryStore struct {
 
 func (s *InMemoryStore) CreateTodo(todo model.Todo) (model.Todo, error) {
 	todo.Id = s.idCounter
-	s.todoTable[idCounter] = todo
-	s.idCounter = idCounter + 1
+	s.todoTable[s.idCounter] = todo
+	s.idCounter = s.idCounter + 1
 	return s.todoTable[todo.Id], nil
 }
 
