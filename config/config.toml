@@ -1,0 +1,5 @@
+environment_prefix="local"
+server_port=7171
+db_connection="storage/api-server-staging.db"
+default_page_num=1
+default_page_limit=10
