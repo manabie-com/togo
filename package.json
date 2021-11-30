@@ -1,0 +1,29 @@
+{
+  "name": "togo",
+  "version": "1.0.0",
+  "description": "- Implement one single API which accepts a todo task and records it\r   - There is a maximum **limit of N tasks per user** that can be added **per day**.\r - Write integration (functional) tests\r - Write unit tests\r - Choose a suitable architecture to make your code simple, organizable, and maintainable\r - Write a concise README\r   - How to run your code locally?\r   - A sample “curl” command to call your API\r   - How to run your unit tests locally?\r   - What do you love about your solution?\r   - What else do you want us to know about however you do not have enough time to complete?",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./server/index.js",
+    "test": "cypress open"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shjnhajung1/togo.git"
+  },
+  "author": "shjnhajung",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shjnhajung1/togo/issues"
+  },
+  "homepage": "https://github.com/shjnhajung1/togo#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "cypress": "^9.1.0",
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "http": "0.0.1-security",
+    "moment": "^2.29.1"
+  }
+}
