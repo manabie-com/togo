@@ -1,5 +1,3 @@
-DROP DATABASE IF EXISTS togo;
-CREATE DATABASE togo;
 \c togo;
 
 DROP TABLE IF EXISTS users;

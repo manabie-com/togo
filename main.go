@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -80,6 +81,9 @@ func (r *router) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		req, ok = r.handler.ValidateToken(req)
 		if !ok {
 			resp.WriteHeader(http.StatusUnauthorized)
+			json.NewEncoder(resp).Encode(map[string]string{
+				"error": "Unauthorized",
+			})
 			return
 		}
 

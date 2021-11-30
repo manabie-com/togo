@@ -16,9 +16,10 @@ func TestListTasks(t *testing.T) {
 	if err != nil {
 		t.Errorf("error : '%s'", err)
 	}
+	time.Now().Format("2006-01-02")
 	rows := sqlmock.NewRows([]string{"id", "content", "user_id", "created_date"}).
 		AddRow(1, "Learning Go", "firstUser", time.Now())
-	query := "SELECT id, content, user_id, created_date FROM tasks WHERE user_id = \\? AND created_date = \\?"
+	query := "SELECT id, content, user_id, created_date FROM tasks WHERE user_id = \\$1 AND to_char(created_date,'YYYY-MM-DD') = \\$2"
 	mock.ExpectQuery(query).WillReturnRows(rows)
 
 	pDB := postgres.NewPostgresDB(db)
