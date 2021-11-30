@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	_ "github.com/lib/pq"
 	"github.com/manabie-com/togo/internal/storages/postgres"
 	"github.com/manabie-com/togo/internal/transport"
 	"github.com/manabie-com/togo/internal/usecase"
@@ -48,7 +49,7 @@ func main() {
 	}()
 	timeoutContext := time.Duration(viper.GetInt("context.timeout")) * time.Second
 	taskDB := postgres.NewPostgresDB(dbConn)
-	taskU := usecase.NewTaskUsecase("", taskDB, timeoutContext)
+	taskU := usecase.NewTaskUsecase(taskDB, timeoutContext)
 	tHandler := transport.NewTaskHandler(taskU)
 	mux := http.NewServeMux()
 	mux.Handle("/", &router{
@@ -76,7 +77,7 @@ func (r *router) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		return
 	case "/tasks":
 		var ok bool
-		//req, ok = r.handler.ValidToken(req)
+		req, ok = r.handler.ValidateToken(req)
 		if !ok {
 			resp.WriteHeader(http.StatusUnauthorized)
 			return

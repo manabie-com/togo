@@ -1,18 +1,19 @@
 {
-  "debug": true,
+  "debug": false,
   "server": {
-    "address": ":9090"
+    "address": ":5050"
   },
   "context": {
     "timeout": 2
   },
   "database": {
       "postgres": {
-        "host": "postgres",
+        "host": "localhost",
         "port": "5432",
         "user": "user",
         "pass": "password",
-        "name": "todo"
+        "name": "togo"
       }
-  }
+  },
+  "JWT_Key":"wqGyEBBfPK9w3Lxw"
 }

@@ -1,5 +1,6 @@
-CREATE DATABASE  IF NOT EXISTS todo
-USE todo;
+DROP DATABASE IF EXISTS togo;
+CREATE DATABASE togo;
+\c togo;
 
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
@@ -12,7 +13,7 @@ CREATE TABLE users (
 INSERT INTO users (id, password, max_todo) VALUES('firstUser', 'example', 5);
 
 -- tasks definition
-
+DROP TABLE IF EXISTS tasks;
 CREATE TABLE tasks (
 	id SERIAL NOT NULL,
 	content TEXT NOT NULL,

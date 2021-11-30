@@ -1,4 +1,4 @@
-package postgres
+package postgres_test
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/manabie-com/togo/internal/storages"
+	"github.com/manabie-com/togo/internal/storages/postgres"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -20,7 +21,7 @@ func TestListTasks(t *testing.T) {
 	query := "SELECT id, content, user_id, created_date FROM tasks WHERE user_id = \\? AND created_date = \\?"
 	mock.ExpectQuery(query).WillReturnRows(rows)
 
-	pDB := NewPostgresDB(db)
+	pDB := postgres.NewPostgresDB(db)
 	userID := "firstUser"
 	created_date := time.Now()
 	listTask, err := pDB.RetrieveTasks(context.TODO(), userID, created_date)
@@ -42,7 +43,7 @@ func TestAddTask(t *testing.T) {
 
 	prep := mock.ExpectPrepare(query)
 	prep.ExpectExec().WithArgs(ta.ID, ta.Content, ta.UserID, ta.CreatedDate).WillReturnResult(sqlmock.NewResult(0, 1))
-	pDB := NewPostgresDB(db)
+	pDB := postgres.NewPostgresDB(db)
 	pDB.AddTask(context.TODO(), ta)
 	assert.NoError(t, err)
 	assert.Equal(t, int64(0), ta.ID)

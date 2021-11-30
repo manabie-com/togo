@@ -4,9 +4,10 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/spf13/viper"
 )
 
-const JWTKey = "wqGyEBBfPK9w3Lxw"
+var JWTKey = viper.GetString("JWT_Key")
 
 func CreateToken(id string) (string, error) {
 	atClaims := jwt.MapClaims{}
