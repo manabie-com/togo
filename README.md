@@ -36,7 +36,7 @@ A challenge from manabie, build togo API assignment .
 	|-integration_test/
 	|-unit_test/
 		|-auth/
-		|-todu/
+		|-test/
 |-index.js	
 		
 ```
@@ -45,12 +45,12 @@ The application is divided into distribution packages:
 * config: It contains `databse.config.js` connect to database.
 
 * controllers: it contains `auth.controller.js`, `note.controller.js`  pakages, this pakages provides functions to handle requests and return repsonses.
-* middlewares: it contain `checkLogin.middleware.js` is a next function, used to check logged.
+* middlewares: it contains `checkLogin.middleware.js` is a next function, used to check logged.
 * models: it contains `user.model.js`, `note.model.js` are the schemas to store when working with the database.
 * services: provides function to handle data with database 
 * test: it contains integration test and unit test
 * docs: it contains Postman requests collection.
-* `index.js`: it run server 
+* `index.js`: it runs server 
 
 ## Future
 * Use logger to write log requests.
