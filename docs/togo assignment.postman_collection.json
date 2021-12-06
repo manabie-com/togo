@@ -1,0 +1,193 @@
+{
+	"info": {
+		"_postman_id": "0f19454e-80f3-45fc-a5f2-2b362712fda5",
+		"name": "togo assignment",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user\":\"Anh Phan\",\r\n    \"password\":\"1234567\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/auth/register",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userName\":\"Anh Phan\",\r\n    \"password\":\"1234567\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/auth/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "todo",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/todo/create",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"todo",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get list",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxYTg3ZTE1NjczN2FlOWQyN2I3NGJhYSIsImlhdCI6MTYzODU4ODQ1MiwiZXhwIjoxNjM4NjEzNjUyfQ.KNHmops55uCMOmlzeRRVgCz6qRSKOhYqtu4mvrssy6k",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/todo/tasks?day=2021-12-03",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"todo",
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "day",
+									"value": "2021-12-03"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "tick task",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxYTg3ZTE1NjczN2FlOWQyN2I3NGJhYSIsImlhdCI6MTYzODUyMTQ5OCwiZXhwIjoxNjM4NTQ2Njk4fQ.HaNVWaOFg2UcNTS4q4vFMiJeAUIkjHW6hyH2v0K5Hjw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/todo/task/tick/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"todo",
+								"task",
+								"tick",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/todo/task/tick/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"todo",
+								"task",
+								"tick",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
