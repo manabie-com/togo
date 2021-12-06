@@ -54,3 +54,5 @@ curl -XPOST -H 'Accept: application/json' -H 'Authorization: Bearer 3|wMejWoyjQX
 ## Misc
 
 This solution uses the repository pattern to abstract data access. I love my solution because it is easy to read and adhears to SOLID principle.
+
+I wanted to use golang for this, but I am not yet confident with using the language so I go with my comfort language (PHP) and framework (Laravel) as for now but I'm really excited to learn go programming language.
