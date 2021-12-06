@@ -1,4 +1,4 @@
-![CI](https://github.com/AnhPhan49/togo-1/actions/workflows/<WORKFLOW_FILE>/badge.svg)
+![example workflow](https://github.com/AnhPhan49/togo-1/actions/workflows/<WORKFLOW_FILE>/badge.svg)
 # Manabie
 
 ## Introduction
