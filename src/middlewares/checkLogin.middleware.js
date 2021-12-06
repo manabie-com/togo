@@ -11,7 +11,7 @@ module.exports = (req, res, next) => {
     return res.status(401).json({ message: "Invalid token" });
   }
 
-  const { JWT_SECRET } = process.env;
+  const JWT_SECRET = process.env.JWT_SECRET || "adwkji8ad7w65wa3d1s3adw";
   jwt.verify(token, JWT_SECRET, (err, data) => {
     if (err) {
       return res.status(401).json({ message: "Token has expired or invalid" });

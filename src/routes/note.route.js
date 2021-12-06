@@ -18,6 +18,6 @@ noteRoute.route("/tasks").get(checkLogin, getList);
 
 noteRoute.route("/task/update/:id").put(checkLogin, updateTask)
 
-noteRoute.route("task/delete/:id").delete(checkLogin, deleteTask);
+noteRoute.route("/task/delete/:id").delete(checkLogin, deleteTask);
 
 module.exports = noteRoute;

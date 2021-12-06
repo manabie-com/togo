@@ -3,6 +3,8 @@ const {
   makeTaskCompleted,
   getTaskList,
   checkLimitTask,
+  updateTask,
+  deleteTask,
 } = require("../services/note.service");
 
 
@@ -48,10 +50,11 @@ module.exports.updateTask = async (req, res) => {
   try {
     const { id } = req.params;
     const { content, ticked } = req.body;
+    if(!content) throw new Error("Missing content")
     const userId= req.user.id;
     const taskUpdated = await updateTask(id, userId, content, ticked);
     if (!taskUpdated) throw new Error("Task not found")
-    return res.status(200).json({ message: "Successful", data: data });
+    return res.status(200).json({ message: "Successful", data: taskUpdated });
   } catch (err) {
     return res.status(400).json({ message: err.message });
   }
