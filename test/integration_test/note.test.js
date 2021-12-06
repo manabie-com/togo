@@ -141,7 +141,7 @@ describe("[INTEGRATION TEST]: NOTE", () => {
       expect(res.status).toBe(200);
     });
 
-    it("Tick task Faild: should return message [Opps, something went wrong]", async () => {
+    it("Tick task Failed: should return message [Opps, something went wrong]", async () => {
       const res = await request(app)
         .put("/api/todo/task/tick/123456")
         .set("Authorization", `Bearer ${token}`);
@@ -191,7 +191,7 @@ describe("[INTEGRATION TEST]: NOTE", () => {
       expect(res.status).toBe(200);
     });
 
-    it("update task Faild: should return message [Missing content]", async () => {
+    it("update task Failed: should return message [Missing content]", async () => {
       const user = await userModel.findOne({ userName: "phanducanh" });
       const userId = user._id;
       const dataBody = {
@@ -207,7 +207,7 @@ describe("[INTEGRATION TEST]: NOTE", () => {
       expect(res.body.message).toBe("Missing content");
     });
 
-    it("update task Faild: should return message [ERROR]", async () => {
+    it("update task Failed: should return message [ERROR]", async () => {
       const user = await userModel.findOne({ userName: "phanducanh" });
       const userId = user._id;
       const dataBody = {
