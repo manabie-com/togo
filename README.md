@@ -1,4 +1,4 @@
-![CI](https://github.com/AnhPhan49/togo-1/actions/workflows/workflows/badge.svg)
+![CI](https://github.com/AnhPhan49/togo-1/actions/workflows/node.js.yml/badge.svg)
 # Manabie
 
 ## Introduction
