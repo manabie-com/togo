@@ -17,7 +17,13 @@ This project has been integrated for continuous testing with github CI. Check [s
 	$ docker-compose up
 	```
 
-* Run integration test and unit test
+* Run integration test and unit test:
+	* Install pakages: 	
+	
+	```	
+	$ npm test
+	```
+	* Run test:
 	```	
 	$ npm test
 	```
