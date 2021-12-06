@@ -1,8 +1,5 @@
 <?php
 
-use App\Http\Controllers\CalendarController;
-use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,5 +10,3 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/', [CalendarController::class, 'calendar']);
