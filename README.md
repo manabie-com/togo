@@ -23,6 +23,7 @@ A challenge from manabie, build togo API assignment .
 ## Source code structure
 
 ```
+|-docs
 |-src/
 	|-config/
 	|-controllers/
