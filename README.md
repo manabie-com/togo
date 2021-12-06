@@ -1,8 +1,9 @@
-![example workflow](https://github.com/AnhPhan49/togo-1/actions/workflows/<WORKFLOW_FILE>/badge.svg)
+![CI](https://github.com/AnhPhan49/togo-1/actions/workflows/workflows/badge.svg)
 # Manabie
 
 ## Introduction
-A challenge from manabie, build togo API assignment .
+A challenge from manabie, build togo API assignment.
+
 This project has been integrated for continuous testing with github CI. Check [status](https://github.com/AnhPhan49/togo-1/actions) here.
 
 ## Usage
