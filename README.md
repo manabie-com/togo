@@ -41,7 +41,7 @@ A challenge from manabie, build togo API assignment .
 ```
 
 The application is divided into distribution packages:
-* config: It contains `dataabse.config.js` connect to database.
+* config: It contains `databse.config.js` connect to database.
 
 * controllers: it contains `auth.controller.js`, `note.controller.js`  pakages, this pakages provides functions to handle requests and return repsonses.
 * middlewares: it contain `checkLogin.middleware.js` is a next function, used to check logged.
