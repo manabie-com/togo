@@ -1,0 +1,21 @@
+version: '3'
+services:
+  node:
+    restart: always
+    environment:  
+      PORT: 5000
+      NODE_ENV: production
+      JWT_SECRET: 238748923uwekebchjwajh83728712hkjsaad
+    build: .
+    ports:
+      - 8081:5000
+    volumes:
+      - ./:/code
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb:/data/db
+volumes:
+  mongodb:
