@@ -240,7 +240,7 @@ describe("[INTEGRATION TEST]: NOTE", () => {
       expect(res.status).toBe(200);
     });
 
-    it("delete task Faild: should return message [Successfull]", async () => {
+    it("delete task Faild: should return status 400", async () => {
       const user = await userModel.findOne({ userName: "phanducanh" });
       const userId = user._id;
       await noteModel.create({
