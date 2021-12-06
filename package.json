@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "unit-test": "jest",
+    "test": "jest",
     "integration-test": "jasmine-node spec"
   },
   "keywords": [],
