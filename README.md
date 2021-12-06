@@ -1,29 +1,58 @@
-### Requirements
+# Task API
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+## Requirements
 
-### Notes
+- Docker
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+## Project setup
+```
+docker run --rm \
+    -u "$(id -u):$(id -g)" \
+    -v $(pwd):/var/www/html \
+    -w /var/www/html \
+    laravelsail/php80-composer:latest \
+    composer install --ignore-platform-reqs
 
-### How to submit your solution?
+cp .env.example .env
+./vendor/bin/sail php artisan key:generate
+./vendor/bin/sail php artisan migrate
+```
 
-- Fork this repo and show us your development progress via a PR
+## Usage
 
-### Interesting facts about Manabie
+### Register
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+```
+curl -XPOST -H 'Accept: application/json' -H "Content-type: application/json" -d '{"name": "User", "email": "email@test.com", "password": "password", "password_confirmation": "password"}' 'http://localhost/api/register'
+```
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+### Login
+
+```
+curl -XPOST -H 'Accept: application/json' -H "Content-type: application/json" -d '{"email": "email@test.com", "password": "password"}' 'http://localhost/api/login'
+```
+This will return a token. You need to use at as a Authorization header for api's protected by authentication.
+
+### Logout (Auth protected)
+
+```
+curl -XPOST -H 'Accept: application/json' -H 'Authorization: Bearer 2|q2702K7EybJuvmaFa3uOcEHymOTKS3sbbqt3RUvG' -H "Content-type: application/json" 'http://localhost/api/logout'
+```
+
+### Create Task (Auth protected)
+
+```
+curl -XPOST -H 'Accept: application/json' -H 'Authorization: Bearer 3|wMejWoyjQXgwCqUjlQdajkAFyiLlPwgQLy5Dn8Lr' -H "Content-type: application/json" -d '{"name": "Sample task"}' 'http://localhost/api/tasks'
+```
+
+## Run Test
+
+```
+./vendor/bin/sail php artisan test
+```
+
+## Misc
+
+This solution uses the repository pattern to abstract data access. I love my solution because it is easy to read and adhears to SOLID principle.
+
+I wanted to use golang for this, but I am not yet confident with using the language so I go with my comfort language (PHP) and framework (Laravel) as for now but I'm really excited to learn go programming language.
