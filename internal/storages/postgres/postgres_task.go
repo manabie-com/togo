@@ -78,7 +78,7 @@ func (p *postgresDB) ValidateUser(ctx context.Context, userID string, pwd string
 	return true, nil
 }
 func (p *postgresDB) CountTaskPerDay(ctx context.Context, userID string, createdDate time.Time) (uint8, error) {
-	stmt := `SELECT count(id) FROM tasks WHERE user_id = $1 AND to_char(created_date,'YYYY-MM-DD') = $2`
+	stmt := `SELECT count(id) FROM tasks WHERE user_id = $1 AND to_char(created_date,'YYYY-MM-DD') = $2 FOR UPDATE`
 	row := p.Conn.QueryRowContext(ctx, stmt, userID, createdDate.Format("2006-01-02"))
 	var total uint8
 	err := row.Scan(&total)

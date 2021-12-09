@@ -3,14 +3,15 @@ package transport
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"log"
 	"net/http"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/manabie-com/togo/internal/domain"
 	"github.com/manabie-com/togo/internal/storages"
 	"github.com/manabie-com/togo/internal/usecase"
+	"github.com/manabie-com/togo/internal/utils"
 )
 
 const (
@@ -29,7 +30,7 @@ func NewTaskHandler(us usecase.TaskUsecase) TaskHandler {
 
 func (t *TaskHandler) ListTasks(resp http.ResponseWriter, req *http.Request) error {
 	ctx := req.Context()
-	user_id, _ := userIDFromCtx(ctx)
+	user_id, _ := utils.GetUserIDFromCtx(ctx)
 	created_date := req.FormValue("created_date")
 	created_dateT, _ := time.Parse(LAYOUT, created_date)
 	tasks, err := t.TUsecase.ListTasks(ctx, user_id, created_dateT)
@@ -56,29 +57,13 @@ func (t *TaskHandler) AddTask(resp http.ResponseWriter, req *http.Request) error
 		resp.WriteHeader(http.StatusInternalServerError)
 		return err
 	}
-	userID, _ := userIDFromCtx(req.Context())
-	ctx := req.Context()
-	numTasks, err := t.TUsecase.CountTaskPerDay(ctx, userID, time.Now())
-	if numTasks > 5 {
-		resp.WriteHeader(http.StatusForbidden)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "Number of task exceed",
-		})
-		return errors.New("Exceed number of task today")
-	}
-	if err != nil {
-		resp.WriteHeader(http.StatusForbidden)
-		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
-		})
-		return err
-	}
+	userID, _ := utils.GetUserIDFromCtx(req.Context())
 	task.UserID = userID
 	task.CreatedDate = time.Now()
 	err = t.TUsecase.AddTask(req.Context(), &task)
 	resp.Header().Set("Content-Type", "application/json")
 	if err != nil {
-		resp.WriteHeader(http.StatusInternalServerError)
+		resp.WriteHeader(getStatusCode(err))
 		json.NewEncoder(resp).Encode(map[string]string{
 			"error": err.Error(),
 		})
@@ -98,7 +83,7 @@ func (t *TaskHandler) GetAuthToken(resp http.ResponseWriter, req *http.Request) 
 	if err != nil || !val {
 		resp.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(resp).Encode(map[string]string{
-			"error": "incorrect user_id/pwd",
+			"error": domain.ErrInvalidCredential.Error(),
 		})
 		return err
 	}
@@ -140,14 +125,20 @@ func (t *TaskHandler) ValidateToken(req *http.Request) (*http.Request, bool) {
 		return req, false
 	}
 
-	req = req.WithContext(context.WithValue(req.Context(), userAuthKey(0), id))
+	req = req.WithContext(context.WithValue(req.Context(), utils.UserAuthKey(0), id))
 	return req, true
 }
 
-type userAuthKey int8
-
-func userIDFromCtx(ctx context.Context) (string, bool) {
-	v := ctx.Value(userAuthKey(0))
-	id, ok := v.(string)
-	return id, ok
+func getStatusCode(err error) int {
+	if err == nil {
+		return http.StatusOK
+	}
+	switch err {
+	case domain.ErrInternalServerError:
+		return http.StatusInternalServerError
+	case domain.ErrTooMany:
+		return http.StatusForbidden
+	default:
+		return http.StatusInternalServerError
+	}
 }
