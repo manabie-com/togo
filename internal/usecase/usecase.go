@@ -65,7 +65,7 @@ func(u *usecase) SignUp(user model.User) error {
 }
 
 func(u *usecase) CreateTask(task model.Task, idUser int) error {
-	if maxTodo := u.repo.CountTask(idUser); maxTodo > 10 {
+	if maxTodo := u.repo.CountTask(idUser); maxTodo > 5 {
 		return errors.New("user created task exceeds 10")
 	}
 
