@@ -1,0 +1,13 @@
+server:
+  PortServer: :5000
+
+secretService:
+  JwtSecretKey: secretkey
+
+mysql:
+  MysqlHost:     localhost
+  MysqlPort:     3306
+  MysqlUser:     root
+  MysqlPassword: 1234
+  MysqlDbname:   db
+  MysqlDriver:   mysql
