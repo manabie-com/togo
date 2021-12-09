@@ -11,3 +11,11 @@ mysql:
   MysqlPassword: 1234
   MysqlDbname:   db
   MysqlDriver:   mysql
+
+postgres:
+  PostgresqlHost: localhost
+  PostgresqlPort: 5433
+  PostgresqlUser: postgres
+  PostgresqlPassword: postgres
+  PostgresqlDbname: db
+  PgDriver: pgx

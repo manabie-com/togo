@@ -10,12 +10,23 @@ type Config struct {
 	Server        ServerConfig
 	Mysql         MysqlConfig
 	Secret 		  SecretService
+	Postgres      PostgresConfig
 }
 
 
 type ServerConfig struct {
 	PortServer    string
 	PprofPort     string
+}
+
+type PostgresConfig struct {
+	PostgresqlHost     string
+	PostgresqlPort     string
+	PostgresqlUser     string
+	PostgresqlPassword string
+	PostgresqlDbname   string
+	PostgresqlSSLMode  bool
+	PgDriver           string
 }
 
 type MysqlConfig struct {
