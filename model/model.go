@@ -3,7 +3,7 @@ package model
 import "time"
 
 type User struct {
-	Id 		 int       `json:"id" gorm:"primaryKey"`
+	Id       int       `json:"id" gorm:"primaryKey"`
 	Username string    `json:"username"`
 	Password string    `json:"password"`
 	MaxTodo  int       `json:"max_todo"`
@@ -11,8 +11,8 @@ type User struct {
 }
 
 type Task struct {
-	Id 			string  	`json:"id" gorm:"primaryKey"`
+	Id 	        string  	`json:"id" gorm:"primaryKey"`
 	Content 	string  	`json:"content"`
 	UserId 		int     	`json:"user_id"`
-	CreatedDate time.Time   `json:"created_date"`
+	CreatedDate     time.Time       `json:"created_date"`
 }
