@@ -13,7 +13,6 @@ type Config struct {
 	Postgres      PostgresConfig
 }
 
-
 type ServerConfig struct {
 	PortServer    string
 	PprofPort     string
