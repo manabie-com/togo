@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"github.com/manabie/project/internal/usecase"
 	"github.com/manabie/project/model"
 )
@@ -34,6 +35,7 @@ func(h *http) Login(user model.User) (string , error) {
 }
 
 func(h *http) SignUp(user model.User) error {
+	fmt.Println(user.Username, user.Password , "0000")
 	if err := h.usecase.SignUp(user); err != nil {
 		return err
 	}

@@ -15,6 +15,7 @@ import (
 	"github.com/manabie/project/pkg/jwt"
 	"github.com/manabie/project/pkg/postgres"
 	"github.com/manabie/project/pkg/snowflake"
+	"github.com/manabie/project/pkg/hash"
 	"log"
 	"time"
 )
@@ -40,6 +41,7 @@ func main() {
 	jwt := jwt.NewTokenUser(conf)
 	snowflake := snowflake.NewSnowflake()
 	accessControl := middleware.NewAccessController(jwt)
+	hash := hash.NewHashPassword()
 
 	dsn:=fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai",
 		conf.Postgres.PostgresqlHost,conf.Postgres.PostgresqlUser,conf.Postgres.PostgresqlPassword,
@@ -51,7 +53,7 @@ func main() {
 	}
 
 	todoRepository := todoRepository.NewRepository(postgresConn)
-	todoUsecase := todoUsecase.NewUsecase(todoRepository, jwt)
+	todoUsecase := todoUsecase.NewUsecase(todoRepository, jwt, hash)
 	todoHttp := todoHttp.NewHttp(todoUsecase)
 	todoRouter := todoRouter.NewRouter(todoHttp, snowflake)
 	todoServer := todoServer.NewServer(todoRouter, accessControl, router)

@@ -24,10 +24,11 @@ type Usecase interface {
 	TaskById(id int) (model.Task, error)
 }
 
-func NewUsecase(repo repository.Repository, jwt jwt.TokenUser) Usecase {
+func NewUsecase(repo repository.Repository, jwt jwt.TokenUser, hash hash.Hash) Usecase {
 	return &usecase{
 		repo: repo,
 		jwt: jwt,
+		hash: hash,
 	}
 }
 
@@ -61,7 +62,7 @@ func(u *usecase) SignUp(user model.User) error {
 	if err != nil {
 		return errors.New("create failed")
 	}
-	return errors.New("create success")
+	return nil
 }
 
 func(u *usecase) CreateTask(task model.Task, idUser int) error {
