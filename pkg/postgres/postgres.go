@@ -31,3 +31,9 @@ func NewPostgresConn(dns string) *gorm.DB {
 	return GetMysqlConnInstance(dns).db
 }
 
+func (postgres *PostgresConnect) AutoMigrate(tables ...interface{}) error {
+	for _, table := range tables {
+		return postgres.db.AutoMigrate(&table)
+	}
+	return nil
+}

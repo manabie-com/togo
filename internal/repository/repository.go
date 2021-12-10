@@ -20,6 +20,8 @@ type Repository interface {
 	DeleteTask(id int) error
 	TaskAll() ([]model.Task, error)
 	TaskById(id int) (model.Task, error)
+	TodoUser(id int) int
+	UpdateTodoUser(id int, maxTodo int) error
 }
 
 func NewRepository(db *gorm.DB) Repository {
@@ -33,7 +35,7 @@ func(r *repository) CheckAccount(user model.User) (string, error) {
 	query := r.db.Where("username = ?", user.Username).Limit(1).Find(&result)
 
 	if query.Error != nil{
-		return "", errors.New("Query error")
+		return "", errors.New("query error")
 	}
 
 	if result.Id == 0 {
@@ -49,7 +51,7 @@ func(r *repository) CheckAccountExists(user model.User) error {
 		return errors.New("query error")
 	}
 
-	if result.Id !=0 {
+	if result.Id != 0 {
 		return errors.New("user does exist")
 	}
 	return nil
@@ -111,4 +113,21 @@ func(r *repository) TaskById(id int) (model.Task, error) {
 		return model.Task{}, err
 	}
 	return tag, nil
+}
+
+func(r *repository) TodoUser(id int) int {
+	var user model.User
+	err := r.db.Where("id = ?", id).Find(&user).Error
+	if err != nil {
+		return 0
+	}
+	return user.MaxTodo
+}
+
+func(r *repository) UpdateTodoUser(id int, maxTodo int) error {
+	err := r.db.Model(&model.User{}).Where("id = ?", id).UpdateColumn("max_todo = ?", maxTodo).Error
+	if err != nil {
+		return err
+	}
+	return nil
 }

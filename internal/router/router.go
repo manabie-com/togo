@@ -36,12 +36,14 @@ func(r *router) Login(c *gin.Context) {
 	if err := c.ShouldBind(&user); err != nil {
 		c.JSON(400, gin.H{
 			"message": "get data param failed",
+			"date": time.Now(),
 		})
 	}
 	token, err := r.http.Login(user)
 	if err != nil {
 		c.JSON(500, gin.H{
 			"message" : "create token failed",
+			"date": time.Now(),
 		})
 	}
 	c.JSON(200, gin.H{
@@ -56,6 +58,7 @@ func(r *router) SignUp(c *gin.Context) {
 	if err := c.ShouldBind(&user); err != nil {
 		c.JSON(400, gin.H{
 			"message": "get data param failed",
+			"date": time.Now(),
 		})
 	}
 	userData := model.User{
@@ -67,6 +70,7 @@ func(r *router) SignUp(c *gin.Context) {
 	if err := r.http.SignUp(userData); err != nil {
 		c.JSON(500, gin.H{
 			"message": "signup user failed",
+			"date": time.Now(),
 		})
 	}
 	c.JSON(200, gin.H{
@@ -80,22 +84,32 @@ func(r *router) CreateTask(c *gin.Context) {
 	if err := c.ShouldBind(&task); err != nil {
 		c.JSON(400, gin.H{
 			"message": "get data param failed",
+			"date": time.Now(),
 		})
 	}
 	userId, err := strconv.Atoi(c.Param("user_id"))
 	if err != nil {
 		c.JSON(400, gin.H{
 			"message": "get data param failed",
+			"date": time.Now(),
 		})
 	}
-	task.CreatedDate = time.Now()
-	if err := r.http.CreateTask(task, userId); err != nil {
+	taskTodo := model.Task{
+		Id:          r.snowflake.GearedID(),
+		Content:     task.Content,
+		UserId:      userId,
+		CreatedDate: time.Now(),
+	}
+	if err := r.http.CreateTask(taskTodo, userId); err != nil {
 		c.JSON(500, gin.H{
 			"message": "create task failed",
+			"date": time.Now(),
 		})
 	}
 	c.JSON(200, gin.H{
 		"message": "create task success",
+		"user_id": userId,
+		"date": time.Now(),
 	})
 }
 
@@ -104,23 +118,27 @@ func(r *router) UpdateTask(c *gin.Context) {
 	if err != nil {
 		c.JSON(400, gin.H{
 			"message": "get data param failed",
+			"date": time.Now(),
 		})
 	}
 	var task model.Task
 	if err := c.ShouldBind(&task); err != nil {
 		c.JSON(400, gin.H{
 			"message": "get data param failed",
+			"date": time.Now(),
 		})
 	}
 	if err := r.http.UpdateTask(id, task); err != nil {
 		c.JSON(500, gin.H{
 			"message": "update data failed",
+			"date": time.Now(),
 		})
 	}
 
 	c.JSON(200, gin.H{
 		"message": "update data success",
 		"id": id,
+		"date": time.Now(),
 	})
 }
 
@@ -129,16 +147,19 @@ func(r *router) DeleteTask(c *gin.Context) {
 	if err != nil {
 		c.JSON(400, gin.H{
 			"message": "get data param failed",
+			"date": time.Now(),
 		})
 	}
 	if err := r.http.DeleteTask(id); err != nil {
 		c.JSON(500, gin.H{
 			"message": "delete data task failed",
+			"date": time.Now(),
 		})
 	}
 	c.JSON(200, gin.H{
 		"message": "delete data task success",
 		"id": id,
+		"date": time.Now(),
 	})
 }
 
@@ -147,11 +168,13 @@ func(r *router) TaskAll(c *gin.Context) {
 	if err != nil {
 		c.JSON(500, gin.H{
 			"message": "get data param failed",
+			"date": time.Now(),
 		})
 	}
 
 	c.JSON(200, gin.H{
 		"data": tasks,
+		"date": time.Now(),
 	})
 }
 
@@ -160,16 +183,19 @@ func(r *router) TaskById(c *gin.Context) {
 	if err != nil {
 		c.JSON(400, gin.H{
 			"message": "get data param failed",
+			"date": time.Now(),
 		})
 	}
 	task, err := r.http.TaskById(id)
 	if err != nil {
 		c.JSON(500, gin.H{
 			"message": "get list task no data",
+			"date": time.Now(),
 		})
 	}
 	c.JSON(200, gin.H{
 		"id": id,
 		"data":task,
+		"date": time.Now(),
 	})
 }

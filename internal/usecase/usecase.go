@@ -58,7 +58,7 @@ func(u *usecase) SignUp(user model.User) error {
 		Password:     hashPassword,
 	}
 	err = u.repo.CreateAccount(account)
-	if err!=nil {
+	if err != nil {
 		return errors.New("create failed")
 	}
 	return errors.New("create success")
@@ -67,6 +67,12 @@ func(u *usecase) SignUp(user model.User) error {
 func(u *usecase) CreateTask(task model.Task, idUser int) error {
 	if maxTodo := u.repo.CountTask(idUser); maxTodo > 5 {
 		return errors.New("user created task exceeds 10")
+	}
+
+	maxTodo := u.repo.TodoUser(idUser)
+
+	if err := u.repo.UpdateTodoUser(idUser, maxTodo + 1); err != nil {
+		return err
 	}
 
 	if err := u.repo.CreateTask(task); err != nil {
