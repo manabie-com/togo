@@ -89,9 +89,9 @@ func(r *repository) UpdateTask(id int, task model.Task) error {
 }
 
 func(r *repository) DeleteTask(id int) error {
-	err := r.db.Delete(model.Task{},"id = ?", id).Error
-	if err != nil {
-		return err
+	query := r.db.Delete(model.Task{},"id = ?", id)
+	if query.RowsAffected == 0 {
+		return errors.New("delete task failed")
 	}
 	return nil
 }
