@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 	"github.com/manabie/project/model"
 	"gorm.io/gorm"
 )
@@ -125,6 +126,7 @@ func(r *repository) TodoUser(id int) int {
 	if err != nil {
 		return 0
 	}
+	fmt.Println(user.MaxTodo , ">>>>>>>")
 	return user.MaxTodo
 }
 
