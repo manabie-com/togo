@@ -71,6 +71,7 @@ func(r *repository) CountTask(id int) int {
 	if err != nil {
 		return 0
 	}
+	fmt.Println(result.MaxTodo, ">>>>>")
 	return result.MaxTodo
 }
 
@@ -126,7 +127,6 @@ func(r *repository) TodoUser(id int) int {
 	if err != nil {
 		return 0
 	}
-	fmt.Println(user.MaxTodo , ">>>>>>>")
 	return user.MaxTodo
 }
 
