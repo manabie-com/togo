@@ -2,7 +2,6 @@ package repository
 
 import (
 	"errors"
-	"fmt"
 	"github.com/manabie/project/model"
 	"gorm.io/gorm"
 )
@@ -71,7 +70,6 @@ func(r *repository) CountTask(id int) int {
 	if err != nil {
 		return 0
 	}
-	fmt.Println(result.MaxTodo, ">>>>>")
 	return result.MaxTodo
 }
 
