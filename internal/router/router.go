@@ -196,7 +196,7 @@ func(r *router) TaskById(c *gin.Context) {
 	}
 	task, err := r.http.TaskById(id)
 	if err != nil {
-		c.JSON(500, gin.H{
+		c.JSON(404, gin.H{
 			"message": "get list task no data "+ err.Error(),
 			"date": time.Now(),
 		})

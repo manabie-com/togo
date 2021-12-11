@@ -108,9 +108,13 @@ func(r *repository) TaskAll() ([]model.Task, error) {
 
 func(r *repository) TaskById(id int) (model.Task, error) {
 	var tag model.Task
-	err := r.db.Where("id = ?",id).Find(&tag).Error
-	if err!=nil{
-		return model.Task{}, err
+	result := r.db.Where("id = ?",id).Find(&tag)
+	if result.Error != nil{
+		return model.Task{}, result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return model.Task{}, errors.New("todo task not found")
 	}
 	return tag, nil
 }
@@ -125,7 +129,7 @@ func(r *repository) TodoUser(id int) int {
 }
 
 func(r *repository) UpdateTodoUser(id int, maxTodo int) error {
-	err := r.db.Model(&model.User{}).Where("id = ?", id).UpdateColumn("max_todo = ?", maxTodo).Error
+	err := r.db.Model(&model.User{}).Where("id = ?", id).Update("max_todo", maxTodo).Error
 	if err != nil {
 		return err
 	}
