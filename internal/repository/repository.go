@@ -66,8 +66,8 @@ func(r *repository) CreateAccount(user model.User) error {
 
 func(r *repository) CountTask(id int) int {
 	var result model.User
-	err := r.db.Model(&model.User{}).Select("max_todo").Where("id = ?", id).First(&result)
-	if err != nil {
+	err := r.db.Select("max_todo").Where("id = ?", id).Find(&result)
+	if err.Error != nil {
 		return 0
 	}
 	return result.MaxTodo
