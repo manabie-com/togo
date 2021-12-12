@@ -1,0 +1,32 @@
+version: '3.3'
+
+services:
+  db:
+    container_name: pg_container
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    networks:
+      - backend
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      
+    container_name: app
+    restart: always
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    networks:
+      - backend
+    entrypoint: [ "/app/wait-for.sh", "db:5432", "--", "/app/start.sh" ]
+    command: [ "/app/main" ]
+
+networks:
+  backend:

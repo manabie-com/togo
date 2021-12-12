@@ -14,7 +14,7 @@ mysql:
 
 postgres:
   PostgresqlHost: localhost
-  PostgresqlPort: 5433
+  PostgresqlPort: 5432
   PostgresqlUser: postgres
   PostgresqlPassword: postgres
   PostgresqlDbname: db

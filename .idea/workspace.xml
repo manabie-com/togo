@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ed5746ca-c222-4104-bd4b-4f052bfcb22e" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/api_test/ali_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/usecase/usecase.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/usecase/usecase.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
