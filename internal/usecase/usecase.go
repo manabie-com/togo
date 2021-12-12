@@ -91,6 +91,14 @@ func(u *usecase) UpdateTask(id int, task model.Task) error {
 }
 
 func(u *usecase) DeleteTask(id int) error {
+	task, err := u.repo.TaskById(id)
+	if err != nil {
+		return err
+	}
+	maxTodo := u.repo.TodoUser(task.UserId)
+	if err := u.repo.UpdateTodoUser(task.UserId, maxTodo - 1); err != nil {
+		return err
+	}
 	if err := u.repo.DeleteTask(id); err != nil {
 		return err
 	}
