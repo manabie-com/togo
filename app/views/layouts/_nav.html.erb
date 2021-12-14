@@ -1,0 +1,24 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <h1 class="me-auto mt-2 mb-lg-0"><a href="/">TOGO</a></h1>
+          <div class="my-2 my-lg-0">
+            <% unless current_user %>
+              <%= form_for(User.new, as: :user, url: user_session_path, html: { method: :post }) do |f| %>
+                    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+                    <%= f.password_field :password, autocomplete: "password" %>
+                  <%= f.submit "Login/Register" %>
+                
+              <% end %>
+            <% else %>
+                <div>Hello, <%= current_user.email %></div>
+                <%= link_to 'Add task' , new_task_path %>
+                <%= link_to 'Logout', destroy_user_session_path, :method => :delete %>
+            <% end %>
+          </div>
+      </div>
+  </div>
+</nav>
