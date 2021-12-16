@@ -10,6 +10,7 @@ describe "create task process" do
   it 'should create a task' do
     visit new_task_path
     fill_in "Title",	with: "The first task"
+    fill_in "Description",	with: "The first task's description"
     click_button 'Submit'
     expect(page).to have_content 'Task was successfully created'
   end
