@@ -1,15 +1,14 @@
-# Manabie Application Assignment
-## Simple API for creating new daily tasks
-The detailed description of the assignment can be found [here](https://github.com/manabie-com/togo)  
-### How to run the app locally
-#### Prerequisites:
-- NodeJS
-- 
+# Manabie Application Assignment: A simple API for creating daily tasks
+_The detailed description of the assignment can be found [here](https://github.com/manabie-com/togo)_
+# How to run the app locally
+## Prerequisites:
+- NodeJS. You can download NodeJS runtime [here](https://nodejs.org/en/).
+
 In your terminal, to install all the required dependencies, run:
-```bash
+```console
 npm install
 ```
-#### Schemas
+## Schemas
 Table `users` to store user information.
 ```sql
 CREATE TABLE IF NOT EXISTS users (
@@ -43,12 +42,12 @@ CREATE TABLE IF NOT EXISTS user_tasks (
     task_count INTEGER NOT NULL
 )
 ```
-#### Start the server
-In your terminal, run:\
+## Start the server
+In your terminal, run:
 ```
 npm start
 ```
-#### Create a user
+## Create a user
 In your terminal, to create a user id, run:\
 On Windows:
 ```bash
@@ -63,8 +62,8 @@ Expected output:
 {"id": 1}
 ```
 You have successfully created a user with id (auto generated), name and email.
-#### Add a new task
-In your terminal, to add a new task, run:\
+## Add a new task
+In your terminal, to add a new task, run:
 On Windows:
 ```console
 curl --header "content-type: application/json" --request POST --data "{\"title\": \"get grocery\", \"detail\": \"buy eggs and ham\", \"due_at\": \"2021-12-31 23:59:59\", \"reporter_id\": 1}" http://localhost:3000/tasks
@@ -77,7 +76,8 @@ Expected output:
 ```json
 {"id": 1}
 ```
-To see the task count:\
+## View task count
+In your terminal, to view task count, run:
 ```console
 curl http://localhost:3000/tasks/count | json
 ```
@@ -93,4 +93,4 @@ The `| json` tag is there to make the output more readable. The output should be
   ]
 }
 ```
-#### When you have reached your daily task limit, which is preset to `5`
+## When you have reached your daily task limit, which is preset to `5`
