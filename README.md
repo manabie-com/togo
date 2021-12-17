@@ -59,7 +59,12 @@ curl --header "content-type: application/json" --request POST --data '{"name": "
 ```
 Expected output:
 ```json
-{"id": 1}
+{
+    "id": 10,
+    "name": "frank",
+    "email": "frank@mail.com",
+    "created_at": "2021-12-17 07:21:09"
+}
 ```
 You have successfully created a user with id (auto generated), name and email.
 ## Add a new task
@@ -74,7 +79,15 @@ curl --header "content-type: application/json" --request POST --data '{"title": 
 ```
 Expected output:
 ```json
-{"id": 1}
+{
+    "id": 1,
+    "title": "get grocery",
+    "detail": "buy eggs and ham",
+    "due_at": "2021-12-31 23:59:59",
+    "created_at": "2021-12-17 07:24:21",
+    "reporter_id": 1,
+    "assignee_id": null
+}
 ```
 ## View task count
 In your terminal, to view task count, run:
@@ -93,4 +106,11 @@ The `| json` tag is there to make the output more readable. The output should be
   ]
 }
 ```
-## When you have reached your daily task limit, which is preset to `5`
+## Maximum number of tasks submitted per day by a user: 5
+API returns this response:
+```json
+{
+    "success": false,
+    "message": "Reached task count limit of 5"
+}
+```
