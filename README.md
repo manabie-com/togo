@@ -66,7 +66,7 @@ curl --header "content-type: application/json" --request POST --data '{"name": "
 Expected output:
 ```json
 {
-    "id": 10,
+    "id": 1,
     "name": "frank",
     "email": "frank@mail.com",
     "created_at": "2021-12-17 07:21:09"
