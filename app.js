@@ -11,6 +11,10 @@ app.use(bodyParser.json());
 app.use('/tasks', taskRoutes);
 app.use('/users', userRoutes);
 
+app.get('/', (req, res) => {
+    res.status(200).json({ message: 'API ready' });
+})
+
 // Open app on port 3000
 const port = 3000;
 app.listen(port, () => {
