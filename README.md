@@ -9,8 +9,8 @@ In your terminal, to install all the required dependencies, run:
 ```bash
 npm install
 ```
-#### Create a user
-User schema:
+#### Schemas
+Table `users` to store user information.
 ```sql
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,22 +19,7 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TIMESTAMP DEFAULT (CURRENT_TIMESTAMP)
 )
 ```
-In your terminal, to create a user id, run:\
-On Windows:
-```bash
-curl --header "content-type: application/json" --request POST --data "{\"name\": \"frank\", \"email\": \"frank@mail.com\"}" http://localhost:3000/users
-```
-On Mac:
-```bash
-curl --header "content-type: application/json" --request POST --data '{"name": "frank", "email": "frank@mail.com"}' http://localhost:3000/users
-```
-Expected output:
-```json
-{"id": 1}
-```
-You have successfully created a user with id (auto generated), name and email.
-#### Add a new task
-Task schema:
+Table `tasks` to store daily created tasks.
 ```sql
 CREATE TABLE IF NOT EXISTS tasks (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -50,10 +35,43 @@ CREATE TABLE IF NOT EXISTS tasks (
     REFERENCES users (id)
 )
 ```
+Table `user_tasks` to keep track of the number of tasks a user has created per day.
+```sql
+CREATE TABLE IF NOT EXISTS user_tasks (
+    created_date TEXT NOT NULL,
+    reporter_id INTEGER NOT NULL,
+    task_count INTEGER NOT NULL
+)
+```
+#### Start the server
+In your terminal, run:\
+```
+npm start
+```
+#### Create a user
+In your terminal, to create a user id, run:\
+On Windows:
+```bash
+curl --header "content-type: application/json" --request POST --data "{\"name\": \"frank\", \"email\": \"frank@mail.com\"}" http://localhost:3000/users
+```
+On Mac:
+```bash
+curl --header "content-type: application/json" --request POST --data '{"name": "frank", "email": "frank@mail.com"}' http://localhost:3000/users
+```
+Expected output:
+```json
+{"id": 1}
+```
+You have successfully created a user with id (auto generated), name and email.
+#### Add a new task
 In your terminal, to add a new task, run:\
 On Windows:
 ```console
 curl --header "content-type: application/json" --request POST --data "{\"title\": \"get grocery\", \"detail\": \"buy eggs and ham\", \"due_at\": \"2021-12-31 23:59:59\", \"reporter_id\": 1}" http://localhost:3000/tasks
+```
+On Mac:
+```console
+curl --header "content-type: application/json" --request POST --data '{"title": "get grocery", "detail": "buy eggs and ham", "due_at": "2021-12-31 23:59:59", "reporter_id": 1}' http://localhost:3000/tasks
 ```
 Expected output:
 ```json
