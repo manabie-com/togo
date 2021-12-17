@@ -6,5 +6,6 @@ FactoryBot.define do
 
   factory :task do
     title { 'The first task' }
+    description {'Description of 1st task'}
   end
 end

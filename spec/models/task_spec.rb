@@ -11,7 +11,14 @@ RSpec.describe Task, :type => :model do
     expect(FactoryBot.build(:task).valid?).to be_falsey
   end
 
-  it "is invalid without a link" do
-    expect(FactoryBot.build(:task, link: nil).valid?).to be_falsey
+  it "is invalid without a title" do
+    user = FactoryBot.create(:user)
+    expect(FactoryBot.build(:task, title: nil, user_id: user.id).valid?).to be_falsey
   end
+
+  it "is invalid without a description" do
+    user = FactoryBot.create(:user)
+    expect(FactoryBot.build(:task, description: nil, user_id: user.id).valid?).to be_falsey
+  end
+
 end
