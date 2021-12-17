@@ -47,6 +47,12 @@ In your terminal, run:
 ```
 npm start
 ```
+Your server is ready at: http://localhost:3000/. `curl` at this url will returns:
+```json
+{
+  "message": "API ready"
+}
+```
 ## Create a user
 In your terminal, to create a user id, run:\
 On Windows:
@@ -107,7 +113,7 @@ The `| json` tag is there to make the output more readable. The output should be
 }
 ```
 ## Maximum number of tasks submitted per day by a user: 5
-API returns this response:
+API responded with:
 ```json
 {
     "success": false,
