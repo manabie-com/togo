@@ -1,29 +1,60 @@
-### Requirements
+# TOGO API based on Ruby on Rails
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+### Run the code locally by Docker commands
+```
+docker-compose up -d
+# create and migrate database
+docker-compose run --rm web rake db:create db:migrate
+```
 
-### Notes
+## CURL Calls
+### Login & Signup at the one request
+If user is not existed, auto signup and signin
+```
+curl --request POST \
+  --url http://localhost:3000/api/users/sign_in \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"user": {
+		"email": "test@example.com",
+		"password": "password"
+	}
+}'
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+# Sample response. Copy the token value to make an authorization for each request
+{
+	"user": {
+		"id": 2,
+		"email": "test@example.com",
+		"token": "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MiwiZXhwIjoxNjQ1MDAxNDYxfQ.r_CH4BvjKhdxM1UQscUJ17T7x5_rs1nPGgjD42-eK8g"
+	}
+}
+```
 
-### How to submit your solution?
+### Create task
+```
+curl --request POST \
+  --url http://localhost:3000/api/tasks \
+  --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MiwiZXhwIjoxNjQ1MDAxNDYxfQ.r_CH4BvjKhdxM1UQscUJ17T7x5_rs1nPGgjD42-eK8g' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"task": {
+		"title":"Test task title",
+		"description":"Test task description"
+	}
+}'
+```
+### Run the test
+#### Unit test
+```
+docker-compose run web bundle exec rspec test spec/models/
+```
+#### Integration test
+```
+docker-compose run web bundle exec rspec test spec/requests/
+```
 
-- Fork this repo and show us your development progress via a PR
-
-### Interesting facts about Manabie
-
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
-
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+### About my solution
+- Ruby on Rails: I used Ruby on Rails because this is the most familiarized Framework for me, also ROR supports fast API & Testing implementation
+- Docker: is a must-have for quick deploying the code for everyone's machine without doing many setups. Although I was not used Docker before, I was tried to acquainted with this tool.
+- Login and Signup simultaneously feature: In my opinion, this is a useful feature for a take-home exercise

@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  db:
+    environment:
+      POSTGRES_USER:
+      POSTGRES_PASSWORD:
+    image: postgres
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+
+  web:
+    env_file: .env
+    build: .
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
