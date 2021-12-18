@@ -1,7 +1,7 @@
 # Manabie Application Assignment: A simple API for creating daily tasks
 ## Requirements
 - [x] Implement one single API which accepts a todo task and records it.
-- [x] There is a **maximum limit of 5 tasks per user** that can be added per day.
+- [x] [There is a **maximum limit of 5 tasks per user** that can be added per day](#validateTaskCount).
 - [ ] Write integration (functional) tests.
 - [x] Write unit tests.
 - [x] Choose a suitable architecture to make your code simple, organizable, and maintainable
@@ -13,6 +13,20 @@
   - [x] What else do you want us to know about however you do not have enough time to complete?
 
 _The detailed description of the assignment can be found [here](https://github.com/manabie-com/togo)_
+# Table of contents
+- How to run the app locally
+  - Prerequisites
+  - Start the server
+  - Create a user
+  - Add a new task
+  - View task count
+  - Maximum number of tasks submitted per day by a user: 5
+- Unit test
+
+
+
+
+
 # <a name="runAppLocally"></a> How to run the app locally
 ## Prerequisites:
 - NodeJS ^14.17. You can download NodeJS runtime [here](https://nodejs.org/en/).
@@ -50,7 +64,7 @@ Expected output:
 }
 ```
 You have successfully created a user with `id` (auto generated), `name` and `email`.
-## <a name="curlApi"></a> Add a new task
+## <a name="curlApi">Add a new task</a>
 On Windows:
 ```console
 curl --header "content-type: application/json" --request POST --data "{\"title\": \"get grocery\", \"detail\": \"buy eggs and ham\", \"due_at\": \"2021-12-31 23:59:59\", \"reporter_id\": 1}" http://localhost:3000/tasks | json
@@ -84,7 +98,8 @@ Expected output:
   ]
 }
 ```
-## Maximum number of tasks submitted per day by a user: 5
+**<a name="validateTaskCount">Maximum number of tasks submitted per day by a user: 5</a>**
+
 When you have already created 5 tasks a day, the API responded with:
 ```bash
 > curl --header "content-type: application/json" --request POST --data "{\"title\": \"6th task\", \"detail\": \"this will not work\", \"due_at\": \"2021-12-31 23:59:59\", \"reporter_id\": 1}" http://localhost:3000/tasks | json
@@ -93,3 +108,10 @@ When you have already created 5 tasks a day, the API responded with:
     "message": "Reached task count limit of 5"
 }
 ```
+# Unit test
+Technologies involved:
+- `mocha` to create test framework
+- `chai` assertion library
+- `supertest` to create a mock HTTP request
+
+## /tasks
