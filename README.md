@@ -5,12 +5,21 @@
 - [ ] Write integration (functional) tests.
 - [x] Write unit tests.
 - [x] Choose a suitable architecture to make your code simple, organizable, and maintainable
+  - `express` framework is implemented to structure the API.
 - [x] Write a concise README
   - [x] [How to run your code locally?](#runAppLocally)
   - [x] [A sample “curl” command to call your API](#curlApi)
-  - [x] How to run your unit tests locally?
+  - [x] [How to run your unit tests locally?](#unitTest)
   - [x] What do you love about your solution?
+    - **Express routings** are implemented to keep the codes clean and maintainable. Each file serves (at least) a single purpose so that reading the codes become much easier. Other functions are imported and reused, such as the database models' functions, input validation.
+    - **Middlewares** are a big part of making the HTTP request process functions more human-friendly.
+    - Node package `Joi` is used to extract validation errors easier, keeping the server open without crashing it.
   - [x] What else do you want us to know about however you do not have enough time to complete?
+    - Write some functional testing for the API.
+    - Currently, anyone can create a task without having an existed `user_id`, so implementing a **user identification/authentication** can be considered in the future.
+    - A task reporter can report at most 5 tasks/day, so an assignee can also receive **at most N tasks a day**.
+    - A UI to validate user input more effectively.
+    - Give a user his/her report on the number of tasks assign/assigned in a period of time.
 
 _The detailed description of the assignment can be found [here](https://github.com/manabie-com/togo)_
 # Table of contents
@@ -35,7 +44,10 @@ npm start
 ```
 Your server is ready at: http://localhost:3000.
 ```bash
-> curl http://localhost:3000 | json
+curl http://localhost:3000 | json
+```
+Output
+```json
 {
   "message": "API ready"
 }
@@ -50,7 +62,7 @@ On MacOS:
 ```bash
 curl --header "content-type: application/json" --request POST --data '{"name": "frank", "email": "frank@mail.com"}' http://localhost:3000/users | json
 ```
-Expected output:
+Output:
 ```json
 {
     "id": 1,
@@ -62,14 +74,14 @@ Expected output:
 You have successfully created a user with `id` (auto generated), `name` and `email`.
 ## <a name="curlApi">Add a new task</a>
 On Windows:
-```console
+```bash
 curl --header "content-type: application/json" --request POST --data "{\"title\": \"get grocery\", \"detail\": \"buy eggs and ham\", \"due_at\": \"2021-12-31 23:59:59\", \"reporter_id\": 1}" http://localhost:3000/tasks | json
 ```
 On MacOS:
-```console
+```bash
 curl --header "content-type: application/json" --request POST --data '{"title": "get grocery", "detail": "buy eggs and ham", "due_at": "2021-12-31 23:59:59", "reporter_id": 1}' http://localhost:3000/tasks | json
 ```
-Expected output:
+Output:
 ```json
 {
     "id": 1,
@@ -83,7 +95,10 @@ Expected output:
 ```
 ## <a name="viewTaskCount">View task count</a>
 ```console
-> curl http://localhost:3000/tasks/count | json
+curl http://localhost:3000/tasks/count | json
+```
+Output:
+```json
 {
   "results": [
     {
@@ -98,7 +113,10 @@ Expected output:
 
 When you have already created 5 tasks a day, the API responded with:
 ```bash
-> curl --header "content-type: application/json" --request POST --data "{\"title\": \"6th task\", \"detail\": \"this will not work\", \"due_at\": \"2021-12-31 23:59:59\", \"reporter_id\": 1}" http://localhost:3000/tasks | json
+curl --header "content-type: application/json" --request POST --data "{\"title\": \"6th task\", \"detail\": \"this will not work\", \"due_at\": \"2021-12-31 23:59:59\", \"reporter_id\": 1}" http://localhost:3000/tasks | json
+```
+Output:
+```json
 {
     "success": false,
     "message": "Reached task count limit of 5"
@@ -109,6 +127,11 @@ Technologies involved:
 - `mocha` to create test framework
 - `chai` assertion library
 - `supertest` to create a mock HTTP request
+```bash
+npm test
+```
+... to run the test script with `mocha`.
+
 ![Test results](./test_results.png)
 ## Test cases
 - GET /tasks
