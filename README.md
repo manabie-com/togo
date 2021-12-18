@@ -130,11 +130,11 @@ npm test
   - View all tasks when there is 1 data row.
 - POST /tasks
   - Send POST request with valid body.
-  - Send POST request with body missing property.
-  - Try to create 6 tasks a day.
+  - Send POST request with body missing property. (failed case)
+  - Try to create 6 tasks a day. (validation case)
 - GET /users
   - View all users when there are no data.
   - View all users when there is 1 data row.
 - POST /users
   - Send POST request with valid body.
-  - Create a user with duplicated email, responded with `{ "message": "email duplicated" }`
+  - Create a user with duplicated email, responded with `{ "message": "email duplicated" }` (validation case)
