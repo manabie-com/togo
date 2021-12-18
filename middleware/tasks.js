@@ -1,5 +1,5 @@
-const knex = require('./db/knex').knex;
-const { taskSchema } = require('./schema');
+const knex = require('../db/knex').knex;
+const { taskSchema } = require('../schema');
 
 // Convert datetime string to unix timestamp
 function toUnixTimestamp(datetimeString) {

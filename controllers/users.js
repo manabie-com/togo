@@ -1,4 +1,4 @@
-const knex = require('../db/knex');
+const knex = require('../db/knex').knex;
 
 module.exports.getAllUsers = async (req, res) => {
     const users = await knex('users').select('*');

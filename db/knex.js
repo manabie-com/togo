@@ -10,20 +10,16 @@ const taskCountSQL = fs.readFileSync('./db/models/user_tasks.sql').toString();
 db.serialize(() => {
     db.run(tasksSQL, (err) => {
         if (err) throw err;
-        console.log('Table tasks created successfully!');
     });
 
     db.run(usersSQL, (err) => {
         if (err) throw err;
-        console.log('Table users created successfully!');
     });
 
     db.run(taskCountSQL, (err) => {
         if (err) throw err;
-        console.log('Table user_tasks created successfully!');
     });
 });
-
 
 const options = {
     client: 'sqlite3',
@@ -34,4 +30,8 @@ const options = {
 };
 const knex = require('knex')(options);
 
-module.exports = knex;
+// module.exports = knex
+module.exports = {
+    knex,
+    db
+};

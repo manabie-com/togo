@@ -1,4 +1,4 @@
-const knex = require('../db/knex');
+const knex = require('../db/knex').knex;
 
 module.exports.getAllTasks = async (req, res) => {
     const tasks = await knex('tasks').select('*');
@@ -37,7 +37,8 @@ module.exports.createTask = async (req, res, next) => {
 }
 
 module.exports.updateTask = async (req, res) => {
-    const id = await knex('tasks').where('id', req.params.id).update(req.body);
+    const { id } = req.params;
+    await knex('tasks').where('id', id).update(req.body);
     const newUpdate = await knex('tasks').where('id', id).select('*');
     res.status(200).json(newUpdate);
 }

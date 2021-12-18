@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS tasks (
   detail VARCHAR,
   due_at TIMESTAMP,
   created_at TIMESTAMP DEFAULT (CURRENT_TIMESTAMP),
-  reporter_id INTEGER,
+  reporter_id INTEGER NOT NULL,
   assignee_id INTEGER,
   FOREIGN KEY (reporter_id) REFERENCES users (id),
   FOREIGN KEY (assignee_id) REFERENCES users (id)
