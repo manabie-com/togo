@@ -54,13 +54,8 @@ Output
 ```
 The `| json` tag is there to make the output more readable.
 ## <a name="createUser">Create a user</a>
-On Windows:
 ```bash
 curl --header "content-type: application/json" --request POST --data "{\"name\": \"frank\", \"email\": \"frank@mail.com\"}" http://localhost:3000/users | json
-```
-On MacOS:
-```bash
-curl --header "content-type: application/json" --request POST --data '{"name": "frank", "email": "frank@mail.com"}' http://localhost:3000/users | json
 ```
 Output:
 ```json
@@ -76,10 +71,6 @@ You have successfully created a user with `id` (auto generated), `name` and `ema
 On Windows:
 ```bash
 curl --header "content-type: application/json" --request POST --data "{\"title\": \"get grocery\", \"detail\": \"buy eggs and ham\", \"due_at\": \"2021-12-31 23:59:59\", \"reporter_id\": 1}" http://localhost:3000/tasks | json
-```
-On MacOS:
-```bash
-curl --header "content-type: application/json" --request POST --data '{"title": "get grocery", "detail": "buy eggs and ham", "due_at": "2021-12-31 23:59:59", "reporter_id": 1}' http://localhost:3000/tasks | json
 ```
 Output:
 ```json
