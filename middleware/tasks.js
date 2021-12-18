@@ -1,5 +1,6 @@
 const knex = require('../db/knex').knex;
 const { taskSchema } = require('../schema');
+const { TASK_LIMIT } = require('../config');
 
 // Convert datetime string to unix timestamp
 function toUnixTimestamp(datetimeString) {
@@ -11,7 +12,7 @@ const validateTask = async (req, res, next) => {
     if (req.body.due_at) {
         req.body.due_at = toUnixTimestamp(req.body.due_at);
     }
-    
+
     const { error } = taskSchema.validate(req.body);
     if (error) {
         res.status(400).json(error);
@@ -20,7 +21,7 @@ const validateTask = async (req, res, next) => {
     }
 }
 
-// Validate if the user had created more than 5 tasks per day
+// Validate if the user had created more than TASK_LIMIT tasks per day
 const validateTaskCount = async (req, res, next) => {
     const { reporter_id } = req.body;
 
@@ -30,10 +31,10 @@ const validateTaskCount = async (req, res, next) => {
         'created_date': today.toISOString().split("T")[0],
     }).select('task_count');
 
-    if (countRecord.length > 0 && countRecord[0].task_count >= 5) {
+    if (countRecord.length > 0 && countRecord[0].task_count >= TASK_LIMIT) {
         res.status(403).json({
             success: false,
-            message: "Reached task count limit of 5"
+            message: `Reached task count limit of ${TASK_LIMIT}`
         });
     } else if (countRecord.length === 0) {
         next();

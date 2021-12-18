@@ -1,5 +1,6 @@
 // During the test the env variable is set to "test"
 process.env.NODE_ENV = 'test';
+const { EMAIL_DUPLICATE_ERROR } = require('../../../config');
 
 const expect = require('chai').expect;
 const request = require('supertest');
@@ -35,7 +36,7 @@ describe('POST /users', () => {
         request(app).post('/users').send(validBody)
             .then((res) => {
                 const body = res.body;
-                expect(body.message).to.equal('email duplicated');
+                expect(body.message).to.equal(EMAIL_DUPLICATE_ERROR);
                 done();
             })
             .catch((err) => done(err));

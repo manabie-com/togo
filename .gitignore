@@ -2,3 +2,4 @@ node_modules
 db/data.db
 db/test.db
 middleware.js
+.env

@@ -1,5 +1,6 @@
 const knex = require('../db/knex').knex;
 const { userSchema } = require('../schema');
+const { EMAIL_DUPLICATE_ERROR } = require('../config');
 
 // Check to see if there is already a user with the same email
 const validateUser = async (req, res, next) => {
@@ -14,7 +15,7 @@ const validateUser = async (req, res, next) => {
     if (results.length === 0) {
         next();
     } else {
-        res.status(400).json({ message: 'email duplicated' });
+        res.status(400).json({ message: EMAIL_DUPLICATE_ERROR });
     }
 }
 

@@ -1,5 +1,6 @@
 // During the test the env variable is set to "test"
 process.env.NODE_ENV = 'test';
+const { TASK_LIMIT } = require('../../../config');
 
 const expect = require('chai').expect;
 const request = require('supertest');
@@ -59,13 +60,13 @@ describe('POST /tasks', () => {
         due_at: '2021-12-31'
     };
     function makeTest(times) {
-        var testDesc = times === 6 ? `... failed at ${times} time(s) a day` : `... ${times} time(s) a day`;
+        var testDesc = times === TASK_LIMIT ? `... failed at ${times} time(s) a day` : `... ${times} time(s) a day`;
         it(testDesc, (done) => {
             request(app).post('/tasks').send(newValidBody)
                 .then((res) => {
                     var { message } = res.body;
                     if (message) {
-                        expect(message).to.equal('Reached task count limit of 5');
+                        expect(message).to.equal(`Reached task count limit of ${TASK_LIMIT}`);
                         done();
                     } else {
                         done();
@@ -74,5 +75,5 @@ describe('POST /tasks', () => {
                 .catch((err) => done(err));
         })
     }
-    for (let i = 1; i <= 6; i++) { makeTest(i) };
+    for (let i = 1; i <= TASK_LIMIT + 1; i++) { makeTest(i) };
 })
