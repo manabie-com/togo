@@ -14,25 +14,21 @@
 
 _The detailed description of the assignment can be found [here](https://github.com/manabie-com/togo)_
 # Table of contents
-- How to run the app locally
-  - Prerequisites
-  - Start the server
-  - Create a user
-  - Add a new task
-  - View task count
-  - Maximum number of tasks submitted per day by a user: 5
-- Unit test
+- [How to run the app locally](#runAppLocally)
+  - [Prerequisites](#preReq)
+  - [Start the server](#startServer)
+  - [Create a user](#createUser)
+  - [Add a new task](#curlApi)
+  - [View task count](#viewTaskCount)
+  - [Maximum number of tasks submitted per day by a user: 5](#validateTaskCount)
+- [Unit test](#unitTest)
 
-
-
-
-
-# <a name="runAppLocally"></a> How to run the app locally
-## Prerequisites:
+# <a name="runAppLocally">How to run the app locally</a>
+## <a name="preReq">Prerequisites:</a>
 - NodeJS ^14.17. You can download NodeJS runtime [here](https://nodejs.org/en/).
 
 `npm install` to install all the dependencies.
-## Start the server
+## <a name="startServer">Start the server</a>
 In your terminal, run:
 ```
 npm start
@@ -45,7 +41,7 @@ Your server is ready at: http://localhost:3000.
 }
 ```
 The `| json` tag is there to make the output more readable.
-## Create a user
+## <a name="createUser">Create a user</a>
 On Windows:
 ```bash
 curl --header "content-type: application/json" --request POST --data "{\"name\": \"frank\", \"email\": \"frank@mail.com\"}" http://localhost:3000/users | json
@@ -85,7 +81,7 @@ Expected output:
     "assignee_id": null
 }
 ```
-## View task count
+## <a name="viewTaskCount">View task count</a>
 ```console
 > curl http://localhost:3000/tasks/count | json
 {
@@ -108,10 +104,23 @@ When you have already created 5 tasks a day, the API responded with:
     "message": "Reached task count limit of 5"
 }
 ```
-# Unit test
+# <a name="unitTest">Unit test</a>
 Technologies involved:
 - `mocha` to create test framework
 - `chai` assertion library
 - `supertest` to create a mock HTTP request
-
-## /tasks
+![Test results](./test_results.png)
+## Test cases
+- GET /tasks
+  - View all tasks when there are no data.
+  - View all tasks when there is 1 data row.
+- POST /tasks
+  - Send POST request with valid body.
+  - Send POST request with body missing property.
+  - Try to create 6 tasks a day.
+- GET /users
+  - View all users when there are no data.
+  - View all users when there is 1 data row.
+- POST /users
+  - Send POST request with valid body.
+  - Create a user with duplicated email, responded with `{ "message": "email duplicated" }`
