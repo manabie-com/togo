@@ -118,6 +118,8 @@ Technologies involved:
 - `mocha` to create test framework
 - `chai` assertion library
 - `supertest` to create a mock HTTP request
+
+Make sure you have closed the server before running the test.
 ```bash
 npm test
 ```
