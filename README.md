@@ -15,11 +15,11 @@
     - **Middlewares** are a big part of making the HTTP request process functions more human-friendly.
     - Node package `Joi` is used to extract validation errors easier, keeping the server open without crashing it.
   - [x] What else do you want us to know about however you do not have enough time to complete?
-    - Write some functional testing for the API.
+    - Write some **functional testing** for the API.
     - Currently, anyone can create a task without having an existed `user_id`, so implementing a **user identification/authentication** can be considered in the future.
     - A task reporter can report at most 5 tasks/day, so an assignee can also receive **at most N tasks a day**.
-    - A UI to validate user input more effectively.
-    - Give a user his/her report on the number of tasks assign/assigned in a period of time.
+    - A **UI** to validate user input more effectively.
+    - Give a user his/her **report on the number of tasks assign/assigned** in a period of time.
 
 _The detailed description of the assignment can be found [here](https://github.com/manabie-com/togo)_
 # Table of contents
