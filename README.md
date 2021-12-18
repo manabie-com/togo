@@ -57,12 +57,13 @@ Your server is ready at: http://localhost:3000/. `curl` at this url will returns
 In your terminal, to create a user id, run:\
 On Windows:
 ```bash
-curl --header "content-type: application/json" --request POST --data "{\"name\": \"frank\", \"email\": \"frank@mail.com\"}" http://localhost:3000/users
+curl --header "content-type: application/json" --request POST --data "{\"name\": \"frank\", \"email\": \"frank@mail.com\"}" http://localhost:3000/users | json
 ```
 On Mac:
 ```bash
-curl --header "content-type: application/json" --request POST --data '{"name": "frank", "email": "frank@mail.com"}' http://localhost:3000/users
+curl --header "content-type: application/json" --request POST --data '{"name": "frank", "email": "frank@mail.com"}' http://localhost:3000/users | json
 ```
+The `| json` tag is there to make the output more readable.
 Expected output:
 ```json
 {
@@ -100,7 +101,7 @@ In your terminal, to view task count, run:
 ```console
 curl http://localhost:3000/tasks/count | json
 ```
-The `| json` tag is there to make the output more readable. The output should be:
+The output should be:
 ```json
 {
   "results": [
