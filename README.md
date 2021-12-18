@@ -1,69 +1,45 @@
 # Manabie Application Assignment: A simple API for creating daily tasks
-_The detailed description of the assignment can be found [here](https://github.com/manabie-com/togo)_
-# How to run the app locally
-## Prerequisites:
-- NodeJS. You can download NodeJS runtime [here](https://nodejs.org/en/).
+## Requirements
+- [x] Implement one single API which accepts a todo task and records it.
+- [x] There is a **maximum limit of 5 tasks per user** that can be added per day.
+- [ ] Write integration (functional) tests.
+- [x] Write unit tests.
+- [x] Choose a suitable architecture to make your code simple, organizable, and maintainable
+- [x] Write a concise README
+  - [x] [How to run your code locally?](#runAppLocally)
+  - [x] [A sample “curl” command to call your API](#curlApi)
+  - [x] How to run your unit tests locally?
+  - [x] What do you love about your solution?
+  - [x] What else do you want us to know about however you do not have enough time to complete?
 
-In your terminal, to install all the required dependencies, run:
-```console
-npm install
-```
-## Schemas
-Table `users` to store user information.
-```sql
-CREATE TABLE IF NOT EXISTS users (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  `name` VARCHAR,
-  email VARCHAR NOT NULL,
-  created_at TIMESTAMP DEFAULT (CURRENT_TIMESTAMP)
-)
-```
-Table `tasks` to store daily created tasks.
-```sql
-CREATE TABLE IF NOT EXISTS tasks (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  title VARCHAR NOT NULL,
-  detail VARCHAR,
-  due_at TIMESTAMP,
-  created_at TIMESTAMP DEFAULT (CURRENT_TIMESTAMP),
-  reporter_id INTEGER,
-  assignee_id INTEGER,
-  FOREIGN KEY (reporter_id)
-    REFERENCES users (id),
-  FOREIGN KEY (assignee_id)
-    REFERENCES users (id)
-)
-```
-Table `user_tasks` to keep track of the number of tasks a user has created per day.
-```sql
-CREATE TABLE IF NOT EXISTS user_tasks (
-    created_date TEXT NOT NULL,
-    reporter_id INTEGER NOT NULL,
-    task_count INTEGER NOT NULL
-)
-```
+_The detailed description of the assignment can be found [here](https://github.com/manabie-com/togo)_
+# <a name="runAppLocally"></a> How to run the app locally
+## Prerequisites:
+- NodeJS ^14.17. You can download NodeJS runtime [here](https://nodejs.org/en/).
+
+`npm install` to install all the dependencies.
 ## Start the server
 In your terminal, run:
 ```
 npm start
 ```
-Your server is ready at: http://localhost:3000/. `curl` at this url will returns:
-```json
+Your server is ready at: http://localhost:3000.
+```bash
+> curl http://localhost:3000 | json
 {
   "message": "API ready"
 }
 ```
+The `| json` tag is there to make the output more readable.
 ## Create a user
-In your terminal, to create a user id, run:\
 On Windows:
 ```bash
 curl --header "content-type: application/json" --request POST --data "{\"name\": \"frank\", \"email\": \"frank@mail.com\"}" http://localhost:3000/users | json
 ```
-On Mac:
+On MacOS:
 ```bash
 curl --header "content-type: application/json" --request POST --data '{"name": "frank", "email": "frank@mail.com"}' http://localhost:3000/users | json
 ```
-The `| json` tag is there to make the output more readable.
 Expected output:
 ```json
 {
@@ -73,16 +49,15 @@ Expected output:
     "created_at": "2021-12-17 07:21:09"
 }
 ```
-You have successfully created a user with id (auto generated), name and email.
-## Add a new task
-In your terminal, to add a new task, run:
+You have successfully created a user with `id` (auto generated), `name` and `email`.
+## <a name="curlApi"></a> Add a new task
 On Windows:
 ```console
-curl --header "content-type: application/json" --request POST --data "{\"title\": \"get grocery\", \"detail\": \"buy eggs and ham\", \"due_at\": \"2021-12-31 23:59:59\", \"reporter_id\": 1}" http://localhost:3000/tasks
+curl --header "content-type: application/json" --request POST --data "{\"title\": \"get grocery\", \"detail\": \"buy eggs and ham\", \"due_at\": \"2021-12-31 23:59:59\", \"reporter_id\": 1}" http://localhost:3000/tasks | json
 ```
-On Mac:
+On MacOS:
 ```console
-curl --header "content-type: application/json" --request POST --data '{"title": "get grocery", "detail": "buy eggs and ham", "due_at": "2021-12-31 23:59:59", "reporter_id": 1}' http://localhost:3000/tasks
+curl --header "content-type: application/json" --request POST --data '{"title": "get grocery", "detail": "buy eggs and ham", "due_at": "2021-12-31 23:59:59", "reporter_id": 1}' http://localhost:3000/tasks | json
 ```
 Expected output:
 ```json
@@ -97,12 +72,8 @@ Expected output:
 }
 ```
 ## View task count
-In your terminal, to view task count, run:
 ```console
-curl http://localhost:3000/tasks/count | json
-```
-The output should be:
-```json
+> curl http://localhost:3000/tasks/count | json
 {
   "results": [
     {
@@ -114,8 +85,9 @@ The output should be:
 }
 ```
 ## Maximum number of tasks submitted per day by a user: 5
-API responded with:
-```json
+When you have already created 5 tasks a day, the API responded with:
+```bash
+> curl --header "content-type: application/json" --request POST --data "{\"title\": \"6th task\", \"detail\": \"this will not work\", \"due_at\": \"2021-12-31 23:59:59\", \"reporter_id\": 1}" http://localhost:3000/tasks | json
 {
     "success": false,
     "message": "Reached task count limit of 5"
