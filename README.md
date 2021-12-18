@@ -47,19 +47,31 @@ In your terminal, run:
 ```
 npm start
 ```
+Your server is ready at: http://localhost:3000/. `curl` at this url will returns:
+```json
+{
+  "message": "API ready"
+}
+```
 ## Create a user
 In your terminal, to create a user id, run:\
 On Windows:
 ```bash
-curl --header "content-type: application/json" --request POST --data "{\"name\": \"frank\", \"email\": \"frank@mail.com\"}" http://localhost:3000/users
+curl --header "content-type: application/json" --request POST --data "{\"name\": \"frank\", \"email\": \"frank@mail.com\"}" http://localhost:3000/users | json
 ```
 On Mac:
 ```bash
-curl --header "content-type: application/json" --request POST --data '{"name": "frank", "email": "frank@mail.com"}' http://localhost:3000/users
+curl --header "content-type: application/json" --request POST --data '{"name": "frank", "email": "frank@mail.com"}' http://localhost:3000/users | json
 ```
+The `| json` tag is there to make the output more readable.
 Expected output:
 ```json
-{"id": 1}
+{
+    "id": 1,
+    "name": "frank",
+    "email": "frank@mail.com",
+    "created_at": "2021-12-17 07:21:09"
+}
 ```
 You have successfully created a user with id (auto generated), name and email.
 ## Add a new task
@@ -74,14 +86,22 @@ curl --header "content-type: application/json" --request POST --data '{"title": 
 ```
 Expected output:
 ```json
-{"id": 1}
+{
+    "id": 1,
+    "title": "get grocery",
+    "detail": "buy eggs and ham",
+    "due_at": "2021-12-31 23:59:59",
+    "created_at": "2021-12-17 07:24:21",
+    "reporter_id": 1,
+    "assignee_id": null
+}
 ```
 ## View task count
 In your terminal, to view task count, run:
 ```console
 curl http://localhost:3000/tasks/count | json
 ```
-The `| json` tag is there to make the output more readable. The output should be:
+The output should be:
 ```json
 {
   "results": [
@@ -93,4 +113,11 @@ The `| json` tag is there to make the output more readable. The output should be
   ]
 }
 ```
-## When you have reached your daily task limit, which is preset to `5`
+## Maximum number of tasks submitted per day by a user: 5
+API responded with:
+```json
+{
+    "success": false,
+    "message": "Reached task count limit of 5"
+}
+```
