@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/manabie-com/togo/api/route"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,19 +18,21 @@ func main() {
 	gin.SetMode(mode)
 	r := gin.Default()
 
-	addString := fmt.Sprintf("0.0.0.0:%s", port)
 	log.Printf("Server Start on port: %s", port)
 
-	r.Run(addString)
+	v1 := r.Group("/v1")
+	route.RegisterTodo(v1)
+
+	start(port, r)
+
+}
+
+func start(port string, engine *gin.Engine) {
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%s", port),
-		Handler: r,
+		Handler: engine,
 	}
 
-	go func() {
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatal(err)
-		}
-	}()
+	srv.ListenAndServe()
 }
