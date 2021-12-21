@@ -8,5 +8,5 @@ import (
 )
 
 func RegisterSwagger(r *gin.Engine) {
-	r.GET(swagger, ginSwagger.WrapHandler(swaggerFiles.Handler))
+	r.GET(Swagger, ginSwagger.WrapHandler(swaggerFiles.Handler))
 }

@@ -1,7 +1,7 @@
 package route
 
 const (
-	swagger = "/swagger/*any"
+	Swagger = "/swagger/*any"
 
-	todo = "/todo"
+	Todo = "/todo"
 )

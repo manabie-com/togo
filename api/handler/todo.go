@@ -10,7 +10,7 @@ import (
 	"github.com/manabie-com/togo/internal/service"
 )
 
-const userIdHeader = "x-user-id"
+const UserIdHeader = "x-user-id"
 
 // Handler godoc
 // @Summary endpoint to create todo item
@@ -24,7 +24,7 @@ const userIdHeader = "x-user-id"
 func AddTodo(s service.TodoService) gin.HandlerFunc {
 	return func(context *gin.Context) {
 		var req model.TodoRequest
-		uid := context.Request.Header.Get(userIdHeader)
+		uid := context.Request.Header.Get(UserIdHeader)
 		err := context.BindJSON(&req)
 		if err != nil {
 			log.Println(err)
@@ -64,7 +64,7 @@ func AddTodo(s service.TodoService) gin.HandlerFunc {
 // @Router /v1/todo [GET]
 func GetTodo(s service.TodoService) gin.HandlerFunc {
 	return func(context *gin.Context) {
-		d, err := s.Get(context.Request.Header.Get(userIdHeader))
+		d, err := s.Get(context.Request.Header.Get(UserIdHeader))
 		if err != nil {
 			context.JSON(http.StatusInternalServerError, map[string]interface{}{
 				"message": "Internal Error Encountered",
