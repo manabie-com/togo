@@ -30,8 +30,8 @@ var doc = `{
                 "produces": [
                     "application/json"
                 ],
-                "summary": "endpoint to create todo item",
-                "operationId": "create-todo",
+                "summary": "endpoint to get todo item",
+                "operationId": "get-todo",
                 "parameters": [
                     {
                         "type": "string",
@@ -71,7 +71,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Todo"
+                            "$ref": "#/definitions/model.TodoRequest"
                         }
                     }
                 ],
@@ -90,6 +90,9 @@ var doc = `{
         "model.Todo": {
             "type": "object",
             "properties": {
+                "createdDate": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },
@@ -99,18 +102,18 @@ var doc = `{
                 "title": {
                     "type": "string"
                 },
-                "user": {
-                    "$ref": "#/definitions/model.User"
+                "userId": {
+                    "type": "string"
                 }
             }
         },
-        "model.User": {
+        "model.TodoRequest": {
             "type": "object",
             "properties": {
-                "id": {
+                "description": {
                     "type": "string"
                 },
-                "name": {
+                "title": {
                     "type": "string"
                 }
             }

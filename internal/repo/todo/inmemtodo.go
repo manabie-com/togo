@@ -35,18 +35,7 @@ func GetTodoSchema() *memdb.DBSchema {
 						Name:         "user",
 						AllowMissing: false,
 						Unique:       false,
-						Indexer:      &memdb.StringFieldIndex{Field: "User"},
-					},
-				},
-			},
-			"user": {
-				Name: "user",
-				Indexes: map[string]*memdb.IndexSchema{
-					"id": {
-						Name:         "id",
-						Unique:       true,
-						AllowMissing: false,
-						Indexer:      &memdb.StringFieldIndex{Field: "ID"},
+						Indexer:      &memdb.StringFieldIndex{Field: "UserID"},
 					},
 				},
 			},

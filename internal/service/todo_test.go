@@ -3,6 +3,7 @@ package service_test
 import (
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/google/uuid"
 	"github.com/manabie-com/togo/api/model"
 	"github.com/manabie-com/togo/internal/service"
@@ -63,13 +64,9 @@ func TestAdd(t *testing.T) {
 		res, err := tar.Add(model.Todo{
 			Title:       "Test title",
 			Description: "Test Desc",
-			User: model.User{
-				ID:   "123",
-				Name: "Test Name",
-			},
 		})
 
-		if v.err == nil && res == "" {
+		if v.err == nil && cmp.Equal(res, model.Todo{}) && res.ID != "" {
 			t.Fatal("No generated id has been found")
 		} else if v.err != err {
 			t.Fatalf("Test case failed expected %v but got %v", v.err, err)

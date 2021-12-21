@@ -15,7 +15,7 @@ var (
 )
 
 type TodoService interface {
-	Add(model.Todo) (string, error)
+	Add(model.Todo) (model.Todo, error)
 	Delete(int) (bool, error)
 	Get([]string) ([]model.Todo, error)
 	GetOne(string) (model.Todo, error)
@@ -26,19 +26,20 @@ type DefaultTodo struct {
 	Repo todorepo.TodoCrud
 }
 
-func (d *DefaultTodo) Add(m model.Todo) (string, error) {
+func (d *DefaultTodo) Add(m model.Todo) (model.Todo, error) {
 	u, err := uuid.NewUUID()
 	t := time.Now()
 	if err != nil {
-		return "", ErrUnableToAssignID
+		return model.Todo{}, ErrUnableToAssignID
 	}
 	m.ID = u.String()
 	m.CreatedDate = t.Format("12-12-2006")
+
 	a, err := d.Repo.Add(m)
 	if err != nil {
-		return "", ErrUnableToAddTodo
+		return model.Todo{}, ErrUnableToAddTodo
 	}
-	return a.ID, nil
+	return a, nil
 }
 
 func (d *DefaultTodo) Delete(int) (bool, error) {

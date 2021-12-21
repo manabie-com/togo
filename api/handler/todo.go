@@ -14,13 +14,13 @@ import (
 // @Description API to add an item to todo list
 // @ID create-todo
 // @Param Authorization header string true "Authorization"
-// @Param body body model.Todo true "todo information"
+// @Param body body model.TodoRequest true "todo information"
 // @Produce json
 // @Success 200 {object} model.Todo
 // @Router /v1/todo [POST]
 func AddTodo(s service.TodoService) gin.HandlerFunc {
 	return func(context *gin.Context) {
-		var req model.Todo
+		var req model.TodoRequest
 		err := context.BindJSON(&req)
 		if err != nil {
 			log.Println(err)
@@ -28,14 +28,16 @@ func AddTodo(s service.TodoService) gin.HandlerFunc {
 				"message": "Internal Error Encountered",
 			})
 		}
-		id, err := s.Add(req)
+		res, err := s.Add(model.Todo{
+			Title:       req.Title,
+			Description: req.Description,
+		})
 		if err != nil {
 			context.JSON(http.StatusInternalServerError, map[string]interface{}{
 				"message": "Internal Error Encountered",
 			})
 		} else {
-			req.ID = id
-			context.JSON(http.StatusCreated, req)
+			context.JSON(http.StatusCreated, res)
 		}
 	}
 }
