@@ -37,10 +37,25 @@ func (s *StubTodoRepo) GetOne(ID string) (model.Todo, error) {
 }
 
 func (s *StubTodoRepo) GetByUserAndDate(id, date string) ([]model.Todo, error) {
-	return []model.Todo{}, nil
+	res, _ := s.Get(id)
+	return res, nil
 }
 
 func (s *StubTodoRepo) Get(uid string) ([]model.Todo, error) {
+	if s.Scenario == "OK" {
+		return []model.Todo{
+			{ID: "1", Title: "Title", Description: "Desc", CreatedDate: "12-12-2021", UserID: uid},
+			{ID: "2", Title: "Title", Description: "Desc", CreatedDate: "12-12-2021", UserID: uid},
+		}, nil
+	} else if s.Scenario == "EXCEED" {
+		return []model.Todo{
+			{ID: "1", Title: "Title", Description: "Desc", CreatedDate: "12-12-2021", UserID: uid},
+			{ID: "2", Title: "Title", Description: "Desc", CreatedDate: "12-12-2021", UserID: uid},
+			{ID: "3", Title: "Title", Description: "Desc", CreatedDate: "12-12-2021", UserID: uid},
+			{ID: "4", Title: "Title", Description: "Desc", CreatedDate: "12-12-2021", UserID: uid},
+			{ID: "5", Title: "Title", Description: "Desc", CreatedDate: "12-12-2021", UserID: uid},
+		}, nil
+	}
 	return []model.Todo{}, nil
 }
 
@@ -52,6 +67,7 @@ func TestAdd(t *testing.T) {
 	}{
 		{scenario: "OK", err: nil},
 		{scenario: "ERR", err: service.ErrUnableToAddTodo},
+		{scenario: "EXCEED", err: service.ErrUserExceedDailyTodo},
 	}
 
 	for _, v := range tcs {

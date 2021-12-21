@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"log"
 	"net/http"
 
@@ -37,11 +38,18 @@ func AddTodo(s service.TodoService) gin.HandlerFunc {
 			UserID:      uid,
 		})
 		if err != nil {
-			context.JSON(http.StatusInternalServerError, map[string]interface{}{
-				"message": "Internal Error Encountered",
-			})
+			if errors.Is(err, service.ErrUserExceedDailyTodo) {
+				context.JSON(http.StatusBadRequest, map[string]interface{}{
+					"message": err.Error(),
+				})
+			} else {
+				context.JSON(http.StatusInternalServerError, map[string]interface{}{
+					"message": "Internal Error Encountered",
+				})
+			}
+
 		} else {
-			context.JSON(http.StatusCreated, res)
+			context.JSON(http.StatusOK, res)
 		}
 	}
 }

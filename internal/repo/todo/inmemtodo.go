@@ -74,7 +74,17 @@ func (conn *InmemTodo) GetOne(ID string) (model.Todo, error) {
 }
 
 func (conn *InmemTodo) GetByUserAndDate(ID, date string) ([]model.Todo, error) {
-	return []model.Todo{}, nil
+	res, err := conn.Get(ID)
+	if err != nil {
+		log.Print(err)
+	}
+	ts := []model.Todo{}
+	for _, v := range res {
+		if v.CreatedDate == date {
+			ts = append(ts, v)
+		}
+	}
+	return ts, nil
 }
 
 func (conn *InmemTodo) Get(uid string) ([]model.Todo, error) {

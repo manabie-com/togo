@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"log"
 	"time"
 
 	"github.com/google/uuid"
@@ -10,11 +11,15 @@ import (
 )
 
 var (
-	ErrUnableToAssignID = errors.New("unable to assign id to new todo")
-	ErrUnableToAddTodo  = errors.New("unable to add new todo")
+	ErrUnableToAssignID    = errors.New("unable to assign id to new todo")
+	ErrUnableToAddTodo     = errors.New("unable to add new todo")
+	ErrUserExceedDailyTodo = errors.New("maximum number of todo reached for today")
 )
 
-const dateFormat = "2006-01-02"
+const (
+	dateFormat = "2006-01-02"
+	capPerUser = 5
+)
 
 type TodoService interface {
 	Add(model.Todo) (model.Todo, error)
@@ -29,13 +34,25 @@ type DefaultTodo struct {
 }
 
 func (d *DefaultTodo) Add(m model.Todo) (model.Todo, error) {
-	u, err := uuid.NewUUID()
+
+	//validate user todo for the day
 	t := time.Now()
+	m.CreatedDate = t.Format(dateFormat)
+	tdt, err := d.Repo.GetByUserAndDate(m.UserID, m.CreatedDate)
+	if err != nil {
+		log.Print(err)
+		return model.Todo{}, ErrUnableToAssignID
+	}
+	if len(tdt) >= 5 {
+		return model.Todo{}, ErrUserExceedDailyTodo
+	}
+
+	// Generate todo id
+	u, err := uuid.NewUUID()
 	if err != nil {
 		return model.Todo{}, ErrUnableToAssignID
 	}
 	m.ID = u.String()
-	m.CreatedDate = t.Format(dateFormat)
 
 	a, err := d.Repo.Add(m)
 	if err != nil {
