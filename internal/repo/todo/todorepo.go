@@ -10,5 +10,5 @@ type TodoCrud interface {
 	Delete(string) error
 	GetOne(string) (model.Todo, error)
 	GetByUserAndDate(ID, date string) ([]model.Todo, error)
-	Get([]string) ([]model.Todo, error)
+	Get(string) ([]model.Todo, error)
 }

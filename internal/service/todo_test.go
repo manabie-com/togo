@@ -40,7 +40,7 @@ func (s *StubTodoRepo) GetByUserAndDate(id, date string) ([]model.Todo, error) {
 	return []model.Todo{}, nil
 }
 
-func (s *StubTodoRepo) Get([]string) ([]model.Todo, error) {
+func (s *StubTodoRepo) Get(uid string) ([]model.Todo, error) {
 	return []model.Todo{}, nil
 }
 
@@ -66,7 +66,7 @@ func TestAdd(t *testing.T) {
 			Description: "Test Desc",
 		})
 
-		if v.err == nil && cmp.Equal(res, model.Todo{}) && res.ID != "" {
+		if v.err == nil && cmp.Equal(res, model.Todo{}) && res.ID != "" && res.CreatedDate != "" {
 			t.Fatal("No generated id has been found")
 		} else if v.err != err {
 			t.Fatalf("Test case failed expected %v but got %v", v.err, err)

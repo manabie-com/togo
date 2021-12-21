@@ -35,8 +35,8 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Authorization",
-                        "name": "Authorization",
+                        "description": "intended as identity of the API caller",
+                        "name": "x-user-id",
                         "in": "header",
                         "required": true
                     }
@@ -60,8 +60,8 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Authorization",
-                        "name": "Authorization",
+                        "description": "intended as identity of the API caller",
+                        "name": "x-user-id",
                         "in": "header",
                         "required": true
                     },

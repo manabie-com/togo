@@ -77,13 +77,13 @@ func (conn *InmemTodo) GetByUserAndDate(ID, date string) ([]model.Todo, error) {
 	return []model.Todo{}, nil
 }
 
-func (conn *InmemTodo) Get(ids []string) ([]model.Todo, error) {
+func (conn *InmemTodo) Get(uid string) ([]model.Todo, error) {
 	tx, err := conn.Conn.GetTxn()
 	if err != nil {
 		log.Print(err)
 		return []model.Todo{}, errors.New("unable to get stroage transaction")
 	}
-	r, err := tx.(*memdb.Txn).Get("todo", "id")
+	r, err := tx.(*memdb.Txn).Get("todo", "user", uid)
 	if err != nil {
 		log.Print(err)
 		return []model.Todo{}, errors.New("unable to get todos")

@@ -15,8 +15,8 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Authorization",
-                        "name": "Authorization",
+                        "description": "intended as identity of the API caller",
+                        "name": "x-user-id",
                         "in": "header",
                         "required": true
                     }
@@ -40,8 +40,8 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Authorization",
-                        "name": "Authorization",
+                        "description": "intended as identity of the API caller",
+                        "name": "x-user-id",
                         "in": "header",
                         "required": true
                     },
