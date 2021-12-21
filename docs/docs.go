@@ -25,6 +25,31 @@ var doc = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/v1/todo": {
+            "get": {
+                "description": "API to add an item to todo list",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "endpoint to create todo item",
+                "operationId": "create-todo",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Todo"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "API to add an item to todo list",
                 "produces": [
@@ -69,9 +94,23 @@ var doc = `{
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "title": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/model.User"
+                }
+            }
+        },
+        "model.User": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 }
             }

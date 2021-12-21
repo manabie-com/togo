@@ -4,14 +4,40 @@ definitions:
       description:
         type: string
       id:
-        type: integer
+        type: string
       title:
+        type: string
+      user:
+        $ref: '#/definitions/model.User'
+    type: object
+  model.User:
+    properties:
+      id:
+        type: string
+      name:
         type: string
     type: object
 info:
   contact: {}
 paths:
   /v1/todo:
+    get:
+      description: API to add an item to todo list
+      operationId: create-todo
+      parameters:
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Todo'
+      summary: endpoint to create todo item
     post:
       description: API to add an item to todo list
       operationId: create-todo
