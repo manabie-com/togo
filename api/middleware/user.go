@@ -7,6 +7,7 @@ import (
 	"github.com/manabie-com/togo/api/handler"
 )
 
+// CheckUserId check user id if exist on request. (Intended for token based user/ session)
 func CheckUserId() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		if context.Request.Header.Get(handler.UserIdHeader) == "" {

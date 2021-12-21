@@ -33,6 +33,7 @@ type DefaultTodo struct {
 	Repo todorepo.TodoCrud
 }
 
+// Add implementation of TODO service that creates new todo item with the designated user
 func (d *DefaultTodo) Add(m model.Todo) (model.Todo, error) {
 
 	//validate user todo for the day
@@ -65,6 +66,7 @@ func (d *DefaultTodo) Delete(int) (bool, error) {
 	return false, nil
 }
 
+// Get todo by userid
 func (d *DefaultTodo) Get(uid string) ([]model.Todo, error) {
 	r, err := d.Repo.Get(uid)
 	if err != nil {
