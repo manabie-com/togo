@@ -35,7 +35,11 @@ Create Task
 
 ```
 curl --location --request POST 'http://localhost:8080/api/task' \
---header 'userID: 123456' 
+--header 'userID: 123456' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "content":"todo 1"
+}'
 ```
 
 Delete Task
