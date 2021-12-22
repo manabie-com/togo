@@ -1,0 +1,66 @@
+definitions:
+  model.Todo:
+    properties:
+      createdDate:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+      userId:
+        type: string
+    type: object
+  model.TodoRequest:
+    properties:
+      description:
+        type: string
+      title:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /v1/todo:
+    get:
+      description: API to add an item to todo list
+      operationId: get-todo
+      parameters:
+      - description: intended as identity of the API caller
+        in: header
+        name: x-user-id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Todo'
+      summary: endpoint to get todo item
+    post:
+      description: API to add an item to todo list
+      operationId: create-todo
+      parameters:
+      - description: intended as identity of the API caller
+        in: header
+        name: x-user-id
+        required: true
+        type: string
+      - description: todo information
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.TodoRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Todo'
+      summary: endpoint to create todo item
+swagger: "2.0"
