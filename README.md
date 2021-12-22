@@ -1,29 +1,88 @@
-### Requirements
+# TOGO
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+## Installation
 
-### Notes
+### I. Third Apps
+- [Docker](https://docs.docker.com/engine/install/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+- [Make](https://www.gnu.org/software/make/)
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+### II. Start
+#### - **`${Build}`**
+```sh
+$ make
+```
 
-### How to submit your solution?
+#### - **`${Test}`**
+```sh
+$ make test
+```
 
-- Fork this repo and show us your development progress via a PR
+#### - **`${Start Server}`**
+```sh
+$ make run
+```
 
-### Interesting facts about Manabie
+## How to call API
+<details>
+  <summary>Sign Up</summary>
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+  ### cURL
+  ```sh
+  curl --location --request POST "127.0.0.1:3000/api/v1/signup/" \
+  --header 'Content-Type: application/json; charset=utf-8' \
+  --data-raw '{
+      "Password": "Password",
+      "Username": "Username"
+  }' | json_pp
+  ```
+</details>
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+<details>
+  <summary>Login</summary>
+
+  ### cURL
+  ```sh
+  curl --location --request POST "127.0.0.1:3000/api/v1/login/" \
+  --header 'Content-Type: application/json; charset=utf-8' \
+  --data-raw '{
+      "Password": "Password",
+      "Username": "Username"
+  }' | json_pp
+  ```
+</details>
+
+<details>
+  <summary>Get List Tasks</summary>
+
+  ### cURL
+  ```sh
+  curl --location --request GET "127.0.0.1:3000/api/v1/tasks/" \
+  --header 'Content-Type: application/json; charset=utf-8' \
+  --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJfaWQiOjF9LCJleHAiOjE2NDAwOTU5NDEsImlzcyI6IlNow6FuZW5vaSJ9.lQxr1wD3e4r1EVFmJ-Ir2nr90qC-2H3pR2iwxzd7PvU' | json_pp
+  ```
+</details>
+
+<details>
+  <summary>Create Task</summary>
+
+  ### cURL
+  > Body support various ways with this format `String: String`
+  ```sh
+  curl --location --request POST "127.0.0.1:3000/api/v1/tasks/" \
+  --header 'Content-Type: application/json; charset=utf-8' \
+  --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJfaWQiOjF9LCJleHAiOjE2NDAwOTU5NDEsImlzcyI6IlNow6FuZW5vaSJ9.lQxr1wD3e4r1EVFmJ-Ir2nr90qC-2H3pR2iwxzd7PvU' \
+  --data-raw '{
+    "assignments": "@shanenoi",
+    "tasks": "prepair for a interview in Manabie"
+  }' | json_pp
+  ```
+</details>
+
+### If you are not *familiar* with `Console UI`
+> Open Postman and click `ctrl + O`, then click `raw test` and paste above cURL, Postman will create a request base on this cURL
+
+## Architecture
+> I used to apply this Architecture for various Business Use Case, this one make you are more comfortable when add new logic or apply other database to specify services, this prefer for implementing gRPC dua with HTTP in our services
+
+![](codebase.svg)
