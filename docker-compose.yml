@@ -1,0 +1,43 @@
+version: "3.3"
+services:
+  api:
+    image: togo
+    build: .
+    command: bash -c "./server"
+    restart: always
+    ports:
+      - "${PORT:-3000}:3000"
+    depends_on:
+      - redis
+      - postgres
+    env_file:
+      - .env
+
+  test:
+    image: togo
+    command: bash -c "go test ./... -v"
+    restart: always
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - .env
+
+  redis:
+    image: "redis:alpine"
+    restart: always
+    command: redis-server
+    ports:
+      - "6380:6379"
+
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: togo_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - /var/tmp/postgres_dk:/var/lib/postgres/data

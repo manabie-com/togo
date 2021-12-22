@@ -1,0 +1,24 @@
+name: Flow
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-codebase:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Test
+      run: make test
+
+    - name: Update codebase
+      uses: githubocto/repo-visualizer@0.3.0
+      with:
+        output_file: "codebase.svg"
+        excluded_paths: "test,log,tmp,vendor"
