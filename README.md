@@ -12,18 +12,65 @@
   - What do you love about your solution?
   - What else do you want us to know about however you do not have enough time to complete?
 
-### Notes
+# TOGO
+1. How to run your code locally?
+2. A sample “curl” command to call your API
+3. How to run your unit tests locally?
+4. What do you love about your solution?
+5. What else do you want us to know about however you do not have enough time to complete?
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+## How to run your code locally?
+- Docker: docker build -t todoapp . && docker run -d -p 8080:8080 todoapp
+- Local: setup postgres and set env into .env && go run main.go server
 
-### How to submit your solution?
+## Curl example
+Get List Task
 
-- Fork this repo and show us your development progress via a PR
+```
+curl --location --request GET 'http://localhost:8080/api/task' \
+--header 'userID: 123456' 
+```
 
-### Interesting facts about Manabie
+Create Task
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+```
+curl --location --request POST 'http://localhost:8080/api/task' \
+--header 'userID: 123456' 
+```
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+Delete Task
+
+```
+curl --location --request DELETE 'http://localhost:8080/api/task/2' \
+--header 'userID: 123456' 
+```
+
+Link Postman (https://www.getpostman.com/collections/6d379462a10d0825c40f)
+
+3. Unit tests locally with sqlite
+
+```
+  go test ./...
+```
+
+4. Design DB
+```
+create table tasks (
+    id serial primary key,
+    content text,
+    user_id varchar(36),
+    status smallint default 1,
+    created_at timestamp without time zone default current_timestamp,
+    updated_at timestamp without time zone default current_timestamp,
+    deleted_at timestamp without time zone default NULL
+);
+
+create index idx_tasks_user_id_status on tasks (user_id,status);
+```
+
+- The source structure is simple and clear
+
+5. What else do you want us to know about however you do not have enough time to complete.
+- Use cache to calculate the number of user tasks in 1 day
+- Add monitor service like sentry, prometheus
+- Deploy to cloud
