@@ -1,0 +1,40 @@
+version: '3.9'
+services:
+  mysqldb:
+    container_name: "task_db"
+    platform: linux/x86_64
+    build:
+      context: .
+      dockerfile: db.Dockerfile
+    networks:
+      - default
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "secret"
+      MYSQL_DATABASE: "tasks"
+      MYSQL_USER: "taskUser"
+      MYSQL_PASSWORD: "12345"
+
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+            
+
+  api:
+    container_name: "tasks_api"
+    build:
+      context: .
+      dockerfile: api.Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysqldb
+    volumes:
+      - .:/app/
+networks:
+  default:
+volumes:
+  mysql_data:
+    
