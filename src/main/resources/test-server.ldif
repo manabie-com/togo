@@ -1,0 +1,31 @@
+dn: dc=antulev,dc=com
+objectclass: domain
+objectclass: top
+dc: antulev
+
+dn: ou=Groups,dc=antulev,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: Groups
+
+dn: ou=Users,dc=antulev,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: Users
+
+dn: cn=admin,ou=Users,dc=antulev,dc=com
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+cn: admin
+sn: admin
+uid: admin
+userPassword:: e1NTSEF9VmlkZFpVNndzb2lXeHd1YXNkT0NlWTFUY1BQOURMVEYyUDVJV0E9P
+ Q==
+
+dn: cn=ADMIN,ou=Groups,dc=antulev,dc=com
+objectClass: groupOfUniqueNames
+objectClass: top
+cn: ADMIN
+uniqueMember: cn=admin,ou=Users,dc=antulev,dc=com

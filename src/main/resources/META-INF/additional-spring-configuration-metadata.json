@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "ldap.url",
+    "type": "java.lang.String",
+    "description": "A description for 'ldap.url'"
+  },
+  {
+    "name": "ldap.partition-suffix",
+    "type": "java.lang.String",
+    "description": "A description for 'ldap.partition-suffix'"
+  }
+]}
