@@ -1,6 +1,7 @@
 package grpc_gw_server
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"net/http"
@@ -17,13 +18,16 @@ import (
 )
 
 type gRPCGWServer struct {
-	name string
-	port int
+	name         string
+	port         int
+	registerFunc func(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error
 	*grpc.Server
 	*runtime.ServeMux
 }
 
-func New(name string, port int, opts ...grpc.ServerOption) *gRPCGWServer {
+func New(name string, port int,
+	registerFunc func(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error,
+	opts ...grpc.ServerOption) *gRPCGWServer {
 	opts = append(opts,
 		grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(
 			grpc_ctxtags.StreamServerInterceptor(),
@@ -46,10 +50,11 @@ func New(name string, port int, opts ...grpc.ServerOption) *gRPCGWServer {
 	)
 
 	grpcGWServer := &gRPCGWServer{
-		name:     name,
-		port:     port,
-		ServeMux: runtime.NewServeMux(),
-		Server:   grpc.NewServer(opts...),
+		name:         name,
+		port:         port,
+		registerFunc: registerFunc,
+		ServeMux:     runtime.NewServeMux(),
+		Server:       grpc.NewServer(opts...),
 	}
 
 	grpc_prometheus.Register(grpcGWServer.Server)
@@ -60,13 +65,14 @@ func New(name string, port int, opts ...grpc.ServerOption) *gRPCGWServer {
 }
 
 func (g *gRPCGWServer) Start() error {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", g.port))
+	endpoint := fmt.Sprintf(":%d", g.port)
+	lis, err := net.Listen("tcp", endpoint)
 	if err != nil {
 		return err
 	}
 
 	mux := cmux.New(lis)
-	grpcLis := mux.Match(cmux.HTTP2HeaderField("content-type", "application/grpc"))
+	grpcLis := mux.MatchWithWriters(cmux.HTTP2MatchHeaderFieldSendSettings("content-type", "application/grpc"))
 	httpLis := mux.Match(cmux.HTTP1Fast())
 
 	errGroup := &errgroup.Group{}
@@ -76,6 +82,12 @@ func (g *gRPCGWServer) Start() error {
 	})
 
 	errGroup.Go(func() error {
+		ctx := context.Background()
+		ctx, cancel := context.WithCancel(ctx)
+		defer cancel()
+		if err := g.registerFunc(ctx, g.ServeMux, endpoint, []grpc.DialOption{grpc.WithInsecure()}); err != nil {
+			return err
+		}
 		return http.Serve(httpLis, g.ServeMux)
 	})
 
