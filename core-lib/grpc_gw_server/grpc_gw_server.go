@@ -1,29 +1,29 @@
-package grpc_server
+package grpc_gw_server
 
 import (
 	"fmt"
 	"net"
+	"net/http"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
-
-	//grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
-	//grpc_opentracing "github.com/grpc-ecosystem/go-grpc-middleware/tracing/opentracing"
-	//grpc_opentelemetry "go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
-	//"google.golang.org/grpc/health/grpc_health_v1"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/soheilhy/cmux"
+	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
-type gRPCServer struct {
+type gRPCGWServer struct {
 	name string
 	port int
 	*grpc.Server
+	*runtime.ServeMux
 }
 
-func New(name string, port int, opts ...grpc.ServerOption) *gRPCServer {
+func New(name string, port int, opts ...grpc.ServerOption) *gRPCGWServer {
 	opts = append(opts,
 		grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(
 			grpc_ctxtags.StreamServerInterceptor(),
@@ -45,24 +45,45 @@ func New(name string, port int, opts ...grpc.ServerOption) *gRPCServer {
 		)),
 	)
 
-	grpcServer := &gRPCServer{
-		name:   name,
-		port:   port,
-		Server: grpc.NewServer(opts...),
+	grpcGWServer := &gRPCGWServer{
+		name:     name,
+		port:     port,
+		ServeMux: runtime.NewServeMux(),
+		Server:   grpc.NewServer(opts...),
 	}
 
-	grpc_prometheus.Register(grpcServer.Server)
+	grpc_prometheus.Register(grpcGWServer.Server)
 	grpc_prometheus.EnableHandlingTimeHistogram()
 
-	reflection.Register(grpcServer.Server)
-	return grpcServer
+	reflection.Register(grpcGWServer.Server)
+	return grpcGWServer
 }
 
-func (g *gRPCServer) Start() error {
+func (g *gRPCGWServer) Start() error {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", g.port))
 	if err != nil {
 		return err
 	}
-	defer g.GracefulStop()
-	return g.Serve(lis)
+
+	mux := cmux.New(lis)
+	grpcLis := mux.Match(cmux.HTTP2HeaderField("content-type", "application/grpc"))
+	httpLis := mux.Match(cmux.HTTP1Fast())
+
+	errGroup := &errgroup.Group{}
+
+	errGroup.Go(func() error {
+		return g.Server.Serve(grpcLis)
+	})
+
+	errGroup.Go(func() error {
+		return http.Serve(httpLis, g.ServeMux)
+	})
+
+	errGroup.Go(func() error {
+		return mux.Serve()
+	})
+
+	defer g.Server.GracefulStop()
+
+	return errGroup.Wait()
 }
