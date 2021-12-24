@@ -1,0 +1,9 @@
+[setting]
+  service_name = "togo-internal-service"
+  max_task_created_per_day = 5
+  substr_content_length = 500
+  sonyflake_start_time = "2021-12-20 00:00:00 +0000 UTC" 
+  max_list_task_page_size = 100
+
+[sqlite]
+  dbname = "./togo.db"

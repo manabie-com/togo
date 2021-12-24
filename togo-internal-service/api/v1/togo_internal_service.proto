@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package togo.internal.v1;
+
+option go_package = "/togo-internal-v1;togo_internal_v1";
+
+import "google/protobuf/timestamp.proto";
+import "google/type/date.proto";
+
+service TogoInternalService {
+  rpc ListTask(ListTaskRequest) returns (ListTaskResponse) {};
+  rpc GetTask(GetTaskRequest) returns (Task) {};
+  rpc CreateTask(CreateTaskRequest) returns (Task) {};
+}
+
+message Task {
+  string id = 1;
+  string user_id = 2;
+  string title = 3;
+  string content = 4;
+  google.protobuf.Timestamp created_time = 5;
+}
+
+message ListTaskRequest {
+  string user_id = 1;
+  google.type.Date date = 2;
+  int32 page_size = 3;
+  string page_token = 4;
+}
+
+message ListTaskResponse {
+  repeated Task tasks = 1;
+  string next_page_token = 2;
+}
+
+message GetTaskRequest {
+  string id = 1;
+}
+
+message CreateTaskRequest {
+  string user_id = 1;
+  string title = 2;
+  string content = 3;
+  google.protobuf.Timestamp created_time = 4;
+}
