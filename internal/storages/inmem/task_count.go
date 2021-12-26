@@ -49,7 +49,7 @@ func (s *taskCountStore) Desc(key string) {
 func (s *taskCountStore) gc() {
 	for {
 		currentDate := time.Now().Format("2006-01-02")
-		time.Sleep(1 * time.Minute)
+		time.Sleep(24 * time.Hour)
 		for i := range s.data {
 			if strings.Contains(i, currentDate) {
 				delete(s.data, i)
