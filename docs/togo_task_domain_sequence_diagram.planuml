@@ -1,0 +1,41 @@
+@startuml
+actor User
+participant "togo-public-api"
+participant "togo-internal-service"
+database "task-database"
+
+title "Task Domain"
+
+== CreateTask ==
+User -> "togo-public-api": CreateTask request
+"togo-public-api" -> "togo-public-api": Verify Session
+note left: Verify Session Flow
+alt success
+  "togo-public-api" -> "togo-internal-service": CreateTask request
+  "togo-internal-service" --> "togo-internal-service": Validate request
+  "togo-internal-service" --> "togo-internal-service": Check limit?
+  alt not exceed
+    "togo-internal-service" --> "task-database": CreateTask
+    "task-database" -> "togo-internal-service":
+    "togo-internal-service" -> "togo-public-api": << response >>
+    "togo-public-api" -> User: << response >>
+  else excced daily limit
+    "togo-internal-service" -> "togo-public-api": error
+    "togo-public-api" -> User: error
+  end
+end
+
+== List/Get Task ==
+User -> "togo-public-api": List/Get Task request
+"togo-public-api" -> "togo-public-api": Verify Session
+note left: Verify Session Flow
+alt success
+  "togo-public-api" -> "togo-internal-service": List/Get Task request
+  "togo-internal-service" --> "togo-internal-service": Validate request
+  "togo-internal-service" --> "task-database": List/Get Task
+  "task-database" -> "togo-internal-service":
+  "togo-internal-service" --> "togo-internal-service": generate next page token
+  "togo-internal-service" -> "togo-public-api": << response >>
+  "togo-public-api" -> User: << response >>
+end
+@enduml
