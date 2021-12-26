@@ -1,0 +1,5 @@
+[setting]
+
+[services]
+  togo_internal_service = "localhost:9092"
+  togo_user_session_service = "localhost:9091"
