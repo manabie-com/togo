@@ -1,0 +1,25 @@
+version: "2.0"
+services:
+  mysql-product:
+    image: mysql
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=productdb
+    volumes:
+      - /data:/var/lib/mysql
+  server:
+    build:
+      context: .
+    ports:
+      - 8080:8080
+    environment:
+      - DB_USERNAME=root
+      - DB_PASSWORD=password
+      - DB_HOST=mysql-product
+      - DB_PORT=3306
+      - DB_DATABASE=productdb
+    depends_on: 
+      - mysql-product
