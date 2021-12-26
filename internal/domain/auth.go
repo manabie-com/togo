@@ -40,6 +40,7 @@ func (d *authDomain) Register(ctx context.Context, u *storages.User) error {
 		return err
 	}
 	u.Password = pwd
+	u.MaxTodo = utils.GetNumRandomTask()
 	return d.userStore.Create(ctx, u)
 }
 
