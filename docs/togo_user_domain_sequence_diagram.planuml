@@ -1,0 +1,41 @@
+@startuml
+actor User
+participant "togo-public-api"
+participant "togo-user-session-service"
+database "user-database"
+database "session-database"
+
+title "User Domain"
+
+== RegisterOrLogin ==
+User -> "togo-public-api": RegisterOrLogin request
+
+"togo-public-api" -> "togo-user-session-service": RegisterOrLogin request
+"togo-user-session-service" --> "togo-user-session-service": Validate request
+"togo-user-session-service" --> "user-database": Check user exists, or create new user
+
+alt success
+  "togo-user-session-service" -> "session-database": Create session
+  "session-database" -> "togo-user-session-service": Session key
+  "togo-user-session-service" -> "togo-public-api": << response >>
+  "togo-public-api" -> User: << response >>
+
+else failed
+  "togo-user-session-service" -> "togo-public-api": error
+  "togo-public-api" -> User: error
+end
+
+== Verify Session ==
+User -> "togo-public-api": VerifySession request
+"togo-public-api" -> "togo-user-session-service": Session
+"togo-user-session-service" --> "togo-user-session-service": Check valid session
+"togo-user-session-service" --> "session-database": Verify session exists
+alt exists
+  "session-database" -> "togo-user-session-service": User info
+  "togo-user-session-service" -> "togo-public-api": << response >>
+  "togo-public-api" -> User: << response >>
+else not exists
+  "togo-user-session-service" -> "togo-public-api": error
+  "togo-public-api" -> User: error
+end
+@enduml

@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package togo.public_api.v1;
+
+option go_package = "/togo-public_api-v1;togo_public_api_v1";
+
+import "google/protobuf/timestamp.proto";
+import "google/type/date.proto";
+import "google/api/annotations.proto";
+
+service TogoPublicAPIService {
+  rpc ListTask(ListTaskRequest) returns (ListTaskResponse) {
+    option (google.api.http) = {
+      get: "/v1/tasks"
+    };
+  };
+  rpc GetTask(GetTaskRequest) returns (Task) {
+    option (google.api.http) = {
+      get: "/v1/tasks/{id}"
+    };
+  };
+  rpc CreateTask(CreateTaskRequest) returns (Task) {
+    option (google.api.http) = {
+      post: "/v1/tasks"
+      body: "*"
+    };
+  };
+
+  rpc RegisterOrLogin(RegisterOrLoginRequest) returns (RegisterOrLoginResponse) {
+    option (google.api.http) = {
+      post: "/v1/users"
+      body: "*"
+    };
+  }
+}
+
+message Task {
+  string id = 1;
+  string user_id = 2;
+  string title = 3;
+  string content = 4;
+  google.protobuf.Timestamp created_time = 5;
+}
+
+message ListTaskRequest {
+  google.type.Date date = 1;
+  int32 page_size = 2;
+  string page_token = 3;
+}
+
+message ListTaskResponse {
+  repeated Task tasks = 1;
+  string next_page_token = 2;
+}
+
+message GetTaskRequest {
+  string id = 1;
+}
+
+message CreateTaskRequest {
+  string title = 1;
+  string content = 2;
+}
+
+message RegisterOrLoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message RegisterOrLoginResponse {
+  string token = 1;
+}

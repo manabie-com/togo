@@ -1,0 +1,12 @@
+[setting]
+  token_ttl = "720h"
+  sonyflake_start_time = "2021-12-20 00:00:00 +0000 UTC" 
+  secret_key = "kadfdkadkalskduqwqie22314ksadfk2"
+
+[redis]
+  address = "127.0.0.1:6379"
+  password = ""
+  db = 0
+
+[sqlite]
+  dbname = "./togo.db"
