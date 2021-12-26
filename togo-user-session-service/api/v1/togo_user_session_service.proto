@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package togo.user_session.v1;
+
+option go_package = "/togo-user_session-v1;togo_user_session_v1";
+
+service TogoUserSessionService {
+  rpc RegisterOrLogin(RegisterOrLoginRequest) returns (RegisterOrLoginResponse) {}
+  rpc VerifyToken(VerifyTokenRequest) returns (VerifyTokenResponse) {}
+}
+
+message RegisterOrLoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message RegisterOrLoginResponse {
+  string token = 1;
+}
+
+message VerifyTokenRequest {
+  string token = 1;
+}
+
+message VerifyTokenResponse {
+  string user_id = 1;
+  string username = 2;
+}
