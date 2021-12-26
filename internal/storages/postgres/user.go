@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	CreateUserStmt = `INSERT INTO users (id, password) VALUES ($1, $2)`
+	CreateUserStmt = `INSERT INTO users (id, password, max_todo) VALUES ($1, $2, $3)`
 	FindUserStmt   = `SELECT id, password, max_todo FROM users WHERE id = $1`
 )
 
@@ -19,7 +19,7 @@ type userStore struct {
 }
 
 func (s *userStore) Create(ctx context.Context, u *storages.User) error {
-	if _, err := s.DB.ExecContext(ctx, CreateUserStmt, &u.ID, &u.Password); err != nil {
+	if _, err := s.DB.ExecContext(ctx, CreateUserStmt, &u.ID, &u.Password, &u.MaxTodo); err != nil {
 		return err
 	}
 

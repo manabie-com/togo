@@ -4,10 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"log"
 	"os"
 
-	"github.com/joho/godotenv"
 	"github.com/perfectbuii/togo/configs"
 	"github.com/perfectbuii/togo/internal/storages/postgres"
 	"github.com/perfectbuii/togo/utils"
@@ -31,10 +29,10 @@ func main() {
 }
 
 func loadConfig() {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
+	// err := godotenv.Load(".env")
+	// if err != nil {
+	// log.Fatalf("Error loading .env file")
+	// }
 	cfg = &configs.Config{
 		DBAddress: os.Getenv("DB_ADDRESS"),
 	}
@@ -63,7 +61,7 @@ func loadMigrations() error {
 	stmt = `CREATE TABLE users (
 		id TEXT NOT NULL,
 		password TEXT NOT NULL,
-		max_todo INTEGER DEFAULT 5 NOT NULL,
+		max_todo INTEGER NOT NULL,
 		UNIQUE (id),
 		CONSTRAINT users_PK PRIMARY KEY (id)
 	)`

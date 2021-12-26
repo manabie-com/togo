@@ -43,7 +43,7 @@ func (d *taskDomain) Create(ctx context.Context, content string) (*storages.Task
 	if !ok {
 		return nil, errors.ErrUserIdIsInvalid
 	}
-	
+
 	user, err := d.userStore.FindUser(ctx, userID)
 	if err != nil {
 		return nil, errors.ErrUserDoesNotExist

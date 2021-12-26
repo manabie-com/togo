@@ -8,7 +8,6 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/joho/godotenv"
 	"github.com/perfectbuii/togo/configs"
 	"github.com/perfectbuii/togo/internal/domain"
 	"github.com/perfectbuii/togo/internal/storages"
@@ -53,10 +52,10 @@ func main() {
 }
 
 func loadConfig() error {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
+	// err := godotenv.Load(".env")
+	// if err != nil {
+	// log.Fatalf("Error loading .env file")
+	// }
 
 	pstr := os.Getenv("PORT")
 	p, err := strconv.Atoi(pstr)
@@ -98,7 +97,7 @@ func loadHandler() {
 }
 
 func loadHttpServer() error {
-	srv := transport.NewHttpServer(cfg.JwtKey, authHandler,taskHandler)
+	srv := transport.NewHttpServer(cfg.JwtKey, authHandler, taskHandler)
 	log.Printf("http server listening port %v\n", cfg.Port)
 	return http.ListenAndServe(fmt.Sprintf(":%v", cfg.Port), srv)
 }
