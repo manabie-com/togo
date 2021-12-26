@@ -96,7 +96,9 @@ These services have exported prometheus metrics. To view these metrics you need 
 ![togo_grafana](docs/togo_grafana.png)
 
 ### Thing to be done
+- implement new requirement: `Different users can have **different** maximum daily limit.` (I completed the test before the new requirement was added)
 - [opentracing](https://opentracing.io/) with trace_id for each request across services
+- dockerize them
 - consider using jwt token
 - use protobuf for session storage
 - switch to postgresql instead of sqlite
