@@ -8,11 +8,11 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/go-redis/redis/v8"
 	"github.com/joho/godotenv"
 	"github.com/perfectbuii/togo/configs"
 	"github.com/perfectbuii/togo/internal/domain"
 	"github.com/perfectbuii/togo/internal/storages"
+	"github.com/perfectbuii/togo/internal/storages/inmem"
 	"github.com/perfectbuii/togo/internal/storages/postgres"
 	"github.com/perfectbuii/togo/internal/transport"
 )
@@ -22,19 +22,17 @@ var (
 
 	dbClient *sql.DB
 
-	redisClient *redis.Client
-
 	// store
-	// taskStore      storages.TaskStore
-	// taskCountStore storages.TaskCountStore
-	userStore storages.UserStore
+	userStore      storages.UserStore
+	taskStore      storages.TaskStore
+	taskCountStore storages.TaskCountStore
 
 	// domain
-	// taskDomain domain.TaskDomain
+	taskDomain domain.TaskDomain
 	authDomain domain.AuthDomain
 
 	// handler
-	// taskHandler transport.TaskHandler
+	taskHandler transport.TaskHandler
 	authHandler transport.AuthHandler
 )
 
@@ -43,10 +41,6 @@ func main() {
 		panic(err)
 	}
 	if err := loadDatabase(); err != nil {
-		panic(err)
-	}
-
-	if err := loadRedis(); err != nil {
 		panic(err)
 	}
 
@@ -87,33 +81,24 @@ func loadDatabase() error {
 	return err
 }
 
-func loadRedis() error {
-	var err error
-	// redisClient, err = rd.NewRedisClient(cfg.RedisAddress)
-	if err == nil {
-		fmt.Println("connect redis successful", cfg.RedisAddress)
-	}
-	return err
-}
-
 func loadStores() {
-	// taskStore = postgres.NewTaskStore(dbClient)
-	// taskCountStore = rd.NewTaskCountStore(redisClient)
+	taskStore = postgres.NewTaskStore(dbClient)
+	taskCountStore = inmem.NewTaskCountStore()
 	userStore = postgres.NewUserStore(dbClient)
 }
 
 func loadDomain() {
-	// taskDomain = domain.NewTaskDomain(taskCountStore, taskStore, userStore)
+	taskDomain = domain.NewTaskDomain(taskCountStore, taskStore, userStore)
 	authDomain = domain.NewAuthDomain(userStore, cfg.JwtKey)
 }
 
 func loadHandler() {
-	// taskHandler = transport.NewTaskHandler(taskDomain)
+	taskHandler = transport.NewTaskHandler(taskDomain)
 	authHandler = transport.NewAuthHandler(authDomain)
 }
 
 func loadHttpServer() error {
-	srv := transport.NewHttpServer(cfg.JwtKey, authHandler)
+	srv := transport.NewHttpServer(cfg.JwtKey, authHandler,taskHandler)
 	log.Printf("http server listening port %v\n", cfg.Port)
 	return http.ListenAndServe(fmt.Sprintf(":%v", cfg.Port), srv)
 }
