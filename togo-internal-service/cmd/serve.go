@@ -60,6 +60,7 @@ func run() error {
 
 	go runPrometheus()
 
+	fmt.Println("start serving")
 	if err = s.Start(); err != nil {
 		return err
 	}
@@ -67,6 +68,7 @@ func run() error {
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
+	fmt.Println("catch signal")
 
 	s.Stop()
 

@@ -13,7 +13,7 @@ build:
 	#CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags '-extldflags "-static"'
 
 run:
-	PORT=9090 METRIC_PORT=8080 CONFIG_FILE=./config/dev.toml ./togo-internal-service serve
+	PORT=9092 METRIC_PORT=8082 CONFIG_FILE=./config/dev.toml ./togo-internal-service serve
 
 migrate:
 	go build
