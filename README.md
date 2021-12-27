@@ -2,8 +2,8 @@
 ## Requirements
 - [x] Implement one single API which accepts a todo task and records it.
 - [x] [There is a **maximum limit of 5 tasks per user** that can be added per day](#validateTaskCount).
-- [ ] Write integration (functional) tests.
-- [x] Write unit tests.
+- [x] Write integration (functional) tests.
+- [ ] Write unit tests.
 - [x] Choose a suitable architecture to make your code simple, organizable, and maintainable
   - `express` framework is implemented to structure the API.
 - [x] Write a concise README
