@@ -30,7 +30,7 @@ _The detailed description of the assignment can be found [here](https://github.c
   - [Add a new task](#curlApi)
   - [View task count](#viewTaskCount)
   - [Maximum number of tasks submitted per day by a user: 5](#validateTaskCount)
-- [Unit test](#unitTest)
+- [Integration test](#integrationTest)
 
 # <a name="runAppLocally">How to run the app locally</a>
 ## <a name="preReq">Prerequisites:</a>
@@ -113,7 +113,7 @@ Output:
     "message": "Reached task count limit of 5"
 }
 ```
-# <a name="unitTest">Unit test</a>
+# <a name="integrationTest">Integration Test</a>
 Technologies involved:
 - `mocha` to create test framework
 - `chai` assertion library
