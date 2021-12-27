@@ -1,12 +1,11 @@
 package controller
 
 import (
-	"net/http"
-	"product-api/db"
-	"product-api/form"
-	"product-api/model"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
+	"togo/db"
+	"togo/form"
+	"togo/model"
 )
 
 func Register(c *gin.Context) {
@@ -20,10 +19,18 @@ func Register(c *gin.Context) {
 		input.MaxTodo = 5
 	}
 
+	existedUser := model.User{}
+	db.DB.First(&existedUser, "username = ?", input.Username)
+
+	if existedUser.Id != 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "user existed"})
+		return
+	}
+
 	user := model.User{
 		Username: input.Username,
 		Password: input.Password,
-		MaxTodo: input.MaxTodo,
+		MaxTodo:  input.MaxTodo,
 	}
 	db.DB.Create(&user)
 

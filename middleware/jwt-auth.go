@@ -1,18 +1,20 @@
 package middleware
 
 import (
-	"product-api/db"
-	"product-api/form"
-	"product-api/model"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
+	"log"
+	"togo/db"
+	"togo/form"
+	"togo/model"
 )
 
 var IdentityKey = "username"
 
 func PayloadFunc(data interface{}) jwt.MapClaims {
 	if v, ok := data.(*model.User); ok {
+		log.Println(v)
 		return jwt.MapClaims{
 			IdentityKey: v.Username,
 		}
@@ -36,8 +38,7 @@ func Authenticator(c *gin.Context) (interface{}, error) {
 	password := loginVals.Password
 
 	userVals := model.User{}
-	db.DB.First(&userVals, "username = ? && password = ?", username, password)
-
+	db.DB.First(&userVals, "username = ? AND password = ?", username, password)
 	if username == userVals.Username && password == userVals.Password {
 		return &model.User{
 			Username: username,
@@ -61,4 +62,11 @@ func Unauthorized(c *gin.Context, code int, message string) {
 		"code":    code,
 		"message": message,
 	})
+}
+
+func GetUserFromCtx(c *gin.Context) model.User {
+	claims := jwt.ExtractClaims(c)
+	userVals := model.User{}
+	db.DB.First(&userVals, "username = ?", claims[IdentityKey].(string))
+	return userVals
 }

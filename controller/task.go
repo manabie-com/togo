@@ -1,29 +1,39 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 	"net/http"
-	"product-api/db"
-	"product-api/form"
-	"product-api/model"
+	"strconv"
+	"time"
+	"togo/db"
+	"togo/form"
+	"togo/middleware"
+	"togo/model"
 )
 
-func GetAllTask(c *gin.Context) {
-	var task []model.Task
-	db.DB.Find(&task)
+func ListTask(c *gin.Context)  {
+	createdDate := c.Request.URL.Query()["created_date"][0]
+	user := middleware.GetUserFromCtx(c)
 
-	c.JSON(http.StatusOK, gin.H{"data": task})
-}
+	listTask,err :=GetAllTaskByUser(user.Id,createdDate)
 
-func GetTaskByID(c *gin.Context) {
-	var task model.Task
-	if err := db.DB.Where("id = ?", c.Param("id")).First(&task).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+	if err != nil {
+		c.JSON(http.StatusCreated, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": task})
+	c.JSON(http.StatusCreated, gin.H{"data": listTask})
+}
+
+func GetAllTaskByUser(userId int,createdDate string) ([]*model.Task,error) {
+	var task []*model.Task
+
+	if err := db.DB.Where("user_id = ? AND created_date =?",strconv.Itoa(userId),createdDate).Find(&task).Error; err != nil {
+		return nil,fmt.Errorf("Record not found")
+	}
+
+	return task,nil
 }
 
 func CreateTask(c *gin.Context) {
@@ -33,42 +43,37 @@ func CreateTask(c *gin.Context) {
 		return
 	}
 
-	task := model.Task{
-		Model:   gorm.Model{},
-		Content: input.Content,
-		UserID:  input.UserID,
+	user := middleware.GetUserFromCtx(c)
+
+	task,err := addTask(user,input.Content)
+
+	if err != nil {
+		 c.JSON(http.StatusCreated, gin.H{"error": err.Error()})
+		 return
 	}
+
 	db.DB.Create(&task)
 
 	c.JSON(http.StatusCreated, gin.H{"data": task})
 }
 
-func UpdateTaskByID(c *gin.Context) {
-	var task model.Task
-	if err := db.DB.Where("id = ?", c.Param("id")).First(&task).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
-		return
+func addTask(user model.User,content string) (*model.Task,error) {
+	current := time.Now()
+
+	task := &model.Task{
+		Content:     content,
+		UserID:      user.Id,
+		CreatedDate: current.Format("2006-01-02"),
 	}
 
-	var input form.Task
-	if err := c.BindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+	listTask,err := GetAllTaskByUser(user.Id,task.CreatedDate)
+	if err != nil {
+		return nil,err
 	}
 
-	db.DB.Model(&task).Updates(input)
-
-	c.JSON(http.StatusOK, gin.H{"data": task})
-}
-
-func DeleteTaskByID(c *gin.Context) {
-	var task model.Task
-	if err := db.DB.Where("id = ?", c.Param("id")).First(&task).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
-		return
+	if len(listTask) >=user.MaxTodo {
+		return nil,fmt.Errorf("user reach task limit error")
 	}
 
-	db.DB.Delete(&task)
-
-	c.JSON(http.StatusOK, gin.H{"data": true})
+	return task,nil
 }

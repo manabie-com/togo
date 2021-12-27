@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"product-api/model"
+	"togo/model"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"

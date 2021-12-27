@@ -3,10 +3,10 @@ package main
 import (
 	"log"
 	"os"
-	"product-api/controller"
-	"product-api/db"
-	"product-api/middleware"
 	"time"
+	"togo/controller"
+	"togo/db"
+	"togo/middleware"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
@@ -55,7 +55,7 @@ func main() {
 	auth.Use(authMiddleware.MiddlewareFunc())
 	{
 		auth.POST("/task", controller.CreateTask)
-		auth.GET("/task", controller.GetAllTask)
+		auth.GET("/task", controller.ListTask)
 	}
 
 	log.Fatal(r.Run(":" + port))
