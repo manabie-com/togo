@@ -41,6 +41,14 @@ func (server *Server) setupRouter() {
 	router.POST("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"text": "togo"})
 	})
+	router.POST("/users", server.createUser)
+	router.POST("/users/login", server.loginUser)
+	// Add authentication middleware, using Paseto Token
+	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
+	// These endpoints need authorization, implements in their handlers repsectively
+	authRoutes.GET("/users", server.listUsers)
+	authRoutes.GET("/tasks", server.listTasks)
+	authRoutes.POST("/tasks", server.createTask)
 	server.router = router
 }
 
