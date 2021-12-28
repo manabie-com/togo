@@ -1,5 +1,7 @@
 # Production-ready Simple Todo Service Demo
 
+![ci-test](https://github.com/lavantien/togo/actions/workflows/ci.yml/badge.svg?branch=main)
+
 ## Requirements
 
 1. [ ] User sign up/login with authentication/authorization via Paseto bearer token
