@@ -1,30 +1,64 @@
-### Requirements
+# Manabie
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+## Introduction
 
-### Notes
+A code challenge from manabie.
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+## Usage
 
-### How to submit your solution?
+#### Prerequisite
 
-- Fork this repo and show us your development progress via a PR
+golang and docker must be installed.
 
-### Interesting facts about Manabie
+#### How to run the app
+- Before run program, must run docker-compose file and run db migration files
+  - Run docker-compose
+  ```
+  docker-compose up -d
+  ```
+  - Run database migration files (after docker-compose)
+  ```
+  docker exec -it manabie_postgres bash
+  psql -U postgres
+  \c manabie
+  ```
+  copy two files *.sql and run it into console.
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+- In order to run the app without building the binary file, please run following commands:
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+  - Run with default env
+  ```
+  go run main.go
+- If you want to run the app by building binary file, please run following commands:
+
+```
+go build -o challenge
+./challenge
+```
+
+#### How to test the app
+
+- Access to golang directory and run command go test:
+
+```
+go test ./...
+```
+
+## Source code structure explanation
+
+```
+|-coltroller/
+|-db/
+|-form/
+|-middleware/
+|-model/
+|-main.go 
+```
+## Future
+
+- Create tool to auto-generate SQL simple functions (CRUD)
+- Split middleware and add Claim for all requests.
+- Use redis to handle case MaxTodo.
+- Create tool for log request, sql.
+- Add dependencies injection.
+- Add apis to update MaxTodo.
