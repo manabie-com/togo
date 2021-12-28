@@ -9,7 +9,7 @@ import (
 
 func TestRandomInt(t *testing.T) {
 	randomInt := RandomInt(0, 100)
-	require.True(t, randomInt >= 0 && randomInt < 100)
+	require.True(t, randomInt >= 0 && randomInt <= 100)
 }
 
 func TestRandomString(t *testing.T) {
@@ -24,12 +24,12 @@ func TestRandomName(t *testing.T) {
 
 func TestRandomCost(t *testing.T) {
 	randomCost := RandomCost()
-	require.True(t, randomCost >= 0 && randomCost < 1000)
+	require.True(t, randomCost >= 0 && randomCost <= 1000)
 }
 
 func TestRandomQuantity(t *testing.T) {
 	randomQuantity := RandomQuantity()
-	require.True(t, randomQuantity >= 2 && randomQuantity < 10)
+	require.True(t, randomQuantity >= 2 && randomQuantity <= 10)
 }
 
 func TestRandomEmail(t *testing.T) {

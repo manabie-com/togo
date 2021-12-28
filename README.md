@@ -1,6 +1,6 @@
 # Production-ready Simple Todo Service Demo
 
-![ci-test](https://github.com/lavantien/togo/actions/workflows/ci.yml/badge.svg?branch=main)
+![ci-test](https://github.com/lavantien/togo/actions/workflows/ci.yml/badge.svg?branch=master)
 
 ## Requirements
 
