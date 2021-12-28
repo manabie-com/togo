@@ -19,11 +19,11 @@ func ListTask(c *gin.Context)  {
 	listTask,err :=GetAllTaskByUser(user.Id,createdDate)
 
 	if err != nil {
-		c.JSON(http.StatusCreated, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"data": listTask})
+	c.JSON(http.StatusOK, gin.H{"data": listTask})
 }
 
 func GetAllTaskByUser(userId int,createdDate string) ([]*model.Task,error) {
@@ -48,7 +48,7 @@ func CreateTask(c *gin.Context) {
 	task,err := addTask(user,input.Content)
 
 	if err != nil {
-		 c.JSON(http.StatusCreated, gin.H{"error": err.Error()})
+		 c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		 return
 	}
 

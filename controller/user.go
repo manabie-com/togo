@@ -34,5 +34,5 @@ func Register(c *gin.Context) {
 	}
 	db.DB.Create(&user)
 
-	c.JSON(http.StatusCreated, gin.H{"data": user})
+	c.JSON(http.StatusOK, gin.H{"data": user})
 }

@@ -160,7 +160,7 @@ func setLogin(body *bytes.Buffer) (*http.Request, *httptest.ResponseRecorder, er
 
 func setRegister(body *bytes.Buffer) (*http.Request, *httptest.ResponseRecorder, error) {
 	r := gin.New()
-	r.POST("/register", Register)
+	r.POST("/register", register)
 	req, err := http.NewRequest(http.MethodPost, "/register", body)
 	if err != nil {
 		return req, httptest.NewRecorder(), err
@@ -171,6 +171,36 @@ func setRegister(body *bytes.Buffer) (*http.Request, *httptest.ResponseRecorder,
 	r.ServeHTTP(w, req)
 	return req, w, nil
 }
+
+func register(c *gin.Context) {
+	var input form.User
+	if err := c.BindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if input.MaxTodo == 0 {
+		input.MaxTodo = 5
+	}
+
+	existedUser := model.User{}
+	db.DB.First(&existedUser, "username = ?", input.Username)
+
+	if existedUser.Id != 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "user existed"})
+		return
+	}
+
+	user := model.User{
+		Username: input.Username,
+		Password: input.Password,
+		MaxTodo:  input.MaxTodo,
+	}
+	db.DB.Create(&user)
+
+	c.JSON(http.StatusOK, gin.H{"data": user})
+}
+
 
 func insertUser(db *gorm.DB) (model.User, error) {
 	user := model.User{
