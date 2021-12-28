@@ -22,7 +22,7 @@ func main() {
 
 	r := gin.Default()
 
-	db.SetupDatabaseConnection()
+	db.SetupDatabaseConnection(false)
 
 	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
 		Realm:           "togo-api",
