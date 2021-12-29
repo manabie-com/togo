@@ -1,7 +1,7 @@
-dev:
+run-dev:
 	go run main.go
 
-test:
+run-test:
 	go test ./services/... ./controllers/...
 
 create-mocks:
