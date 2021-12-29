@@ -38,6 +38,8 @@ func (taskController *TaskController) GetAllTask(context *gin.Context) {
 func (taskController *TaskController) CreateTask(context *gin.Context) {
 	var task entities.Task
 
+	//TODO: Add check user exist
+
 	task.CreatedAt = helpers.GetDateNow()
 
 	if err := context.ShouldBindJSON(&task); err != nil {
