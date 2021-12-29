@@ -1,8 +1,9 @@
 package entities
 
 type User struct {
-	ID       uint `json:"id"`
-	UserName uint `json:"userName"`
+	ID        uint64 `gorm:"primary_key:auto_increment" json:"id"`
+	UserName  string `json:"userName"`
+	LimitTask uint   `gorm:"not null" json:"limitTask"`
 }
 
 func (b *User) TableName() string {

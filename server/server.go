@@ -28,6 +28,7 @@ func (server *Server) configRouter() {
 	router := gin.Default()
 
 	router.GET("/tasks", server.Controller.GetAllTask)
+	router.POST("/tasks", server.Controller.CreateTask)
 
 	server.Router = router
 }

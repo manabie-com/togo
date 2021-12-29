@@ -14,7 +14,8 @@ import (
 var (
 	db             *gorm.DB                     = configs.SetupDatabaseConnection()
 	taskRepository repositories.ITaskRepository = repositories.NewTaskRepository(db)
-	taskService    services.ITaskService        = services.NewTaskService(taskRepository)
+	userRepository repositories.IUserRepository = repositories.NewUserRepository(db)
+	taskService    services.ITaskService        = services.NewTaskService(taskRepository, userRepository)
 	taskController controllers.ITaskController  = controllers.NewTaskController(taskService)
 )
 
