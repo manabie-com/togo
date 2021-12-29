@@ -2,29 +2,12 @@ package controller
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"net/http"
 	"strconv"
 	"time"
 	"togo/db"
-	"togo/form"
-	"togo/middleware"
 	"togo/model"
 )
 
-func ListTask(c *gin.Context)  {
-	createdDate := c.Request.URL.Query()["created_date"][0]
-	user := middleware.GetUserFromCtx(c)
-
-	listTask,err :=GetAllTaskByUser(user.Id,createdDate)
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"data": listTask})
-}
 
 func GetAllTaskByUser(userId int,createdDate string) ([]*model.Task,error) {
 	var task []*model.Task
@@ -36,28 +19,7 @@ func GetAllTaskByUser(userId int,createdDate string) ([]*model.Task,error) {
 	return task,nil
 }
 
-func CreateTask(c *gin.Context) {
-	var input form.Task
-	if err := c.BindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	user := middleware.GetUserFromCtx(c)
-
-	task,err := addTask(user,input.Content)
-
-	if err != nil {
-		 c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		 return
-	}
-
-	db.DB.Create(&task)
-
-	c.JSON(http.StatusCreated, gin.H{"data": task})
-}
-
-func addTask(user model.User,content string) (*model.Task,error) {
+func AddTask(user model.User,content string) (*model.Task,error) {
 	current := time.Now()
 
 	task := &model.Task{
@@ -76,4 +38,8 @@ func addTask(user model.User,content string) (*model.Task,error) {
 	}
 
 	return task,nil
+}
+
+func CreateTask(task *model.Task)  {
+	db.DB.Create(task)
 }

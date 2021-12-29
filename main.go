@@ -4,12 +4,13 @@ import (
 	"log"
 	"os"
 	"time"
-	"togo/controller"
+	api2 "togo/handler"
 	"togo/db"
 	"togo/middleware"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
+	_ "github.com/golang/mock/gomock"
 	"github.com/joho/godotenv"
 )
 
@@ -48,14 +49,18 @@ func main() {
 		log.Fatal("authMiddleware.MiddlewareInit() Error:" + errInit.Error())
 	}
 
-	r.POST("/register", controller.Register)
+	api := &api2.APIEnv{
+		DB: db.DB,
+	}
+
+	r.POST("/register", api.Register)
 	r.POST("/login", authMiddleware.LoginHandler)
 
 	auth := r.Group("/auth")
 	auth.Use(authMiddleware.MiddlewareFunc())
 	{
-		auth.POST("/task", controller.CreateTask)
-		auth.GET("/task", controller.ListTask)
+		auth.POST("/task", api.CreateTask)
+		auth.GET("/task", api.GetTask)
 	}
 
 	log.Fatal(r.Run(":" + port))
