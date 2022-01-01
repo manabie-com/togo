@@ -20,7 +20,7 @@ const (
 type User struct {
 	ID             primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
 	Username       string             `json:"username,omitempty" bson:"username,omitempty"`
-	HashedPassword string             `json:"hashed_password,omitempty" bson:"hashed_password,omitempty"`
+	HashedPassword string             `json:"-" bson:"hashed_password,omitempty"`
 	Status         UserStatus         `json:"status,omitempty" bson:"status,omitempty"`
 	// maxTasks max num task of user
 	// note add "omitempty" in bson tag for supprot update to 0
@@ -30,11 +30,9 @@ type User struct {
 	ChangedPasswordAt *time.Time `json:"changed_password_at,omitempty" bson:"changed_password_at,omitempty"`
 	// Tracing
 	UpdatedIP   string     `json:"updated_ip,omitempty" bson:"updated_ip,omitempty"`
-	UpdatedUser int        `json:"updated_user,omitempty" bson:"updated_user,omitempty"`
 	UpdatedDate *time.Time `json:"updated_date,omitempty" bson:"updated_date,omitempty"`
 	//
 	CreatedIP   string     `json:"created_ip,omitempty" bson:"created_ip,omitempty"`
-	CreatedUser int        `json:"created_user,omitempty" bson:"created_user,omitempty"`
 	CreatedDate *time.Time `json:"created_date,omitempty" bson:"created_date,omitempty"`
 }
 
