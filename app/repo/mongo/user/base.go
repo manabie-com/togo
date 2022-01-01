@@ -9,9 +9,8 @@ import (
 
 type Repository interface {
 	Create(ctx context.Context, in CreateReq) (model.User, error)
-	// Update(ctx context.Context, req UpdateReq) (out model.Property, err error)
-	// GetOneByID(ctx context.Context, id primitive.ObjectID) (out model.Property, err error)
-	// All(ctx context.Context, in AllReq) (out []model.Property, err error)
+	GetOneByID(ctx context.Context, id int) (model.User, error)
+	GetOneByUsername(ctx context.Context, username string) (model.User, error)
 }
 
 type repoManager struct {

@@ -2,8 +2,6 @@ package model
 
 import (
 	"time"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // UserStatus contain user's status
@@ -18,10 +16,10 @@ const (
 
 // User contain info of user
 type User struct {
-	ID             primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-	Username       string             `json:"username,omitempty" bson:"username,omitempty"`
-	HashedPassword string             `json:"-" bson:"hashed_password,omitempty"`
-	Status         UserStatus         `json:"status,omitempty" bson:"status,omitempty"`
+	ID             int        `json:"_id,omitempty" bson:"_id,omitempty"`
+	Username       string     `json:"username,omitempty" bson:"username,omitempty"`
+	HashedPassword string     `json:"-" bson:"hashed_password,omitempty"`
+	Status         UserStatus `json:"status,omitempty" bson:"status,omitempty"`
 	// maxTasks max num task of user
 	// note add "omitempty" in bson tag for supprot update to 0
 	MaxTasks int `json:"max_tasks" bson:"max_tasks"`
@@ -38,7 +36,7 @@ type User struct {
 
 // IsExists check user's existed
 func (m *User) IsExists() bool {
-	return !m.ID.IsZero()
+	return m.ID > 0
 }
 
 // IsActive check user's active or not

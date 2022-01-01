@@ -19,7 +19,7 @@ func (s *service) Create(c echo.Context) error {
 	httpCtx := c.Request().Context()
 
 	type myRequest struct {
-		UserName string `json:"username" query:"username" validate:"required,max=50"`
+		Username string `json:"username" query:"username" validate:"required,max=50"`
 		Password string `json:"password" query:"password" validate:"required,max=50"`
 		MaxTasks int    `json:"max_tasks" query:"max_tasks" validate:"required,min=1"`
 	}
@@ -30,6 +30,15 @@ func (s *service) Create(c echo.Context) error {
 	if err := c.Validate(request); err != nil {
 		return gHandler.NewHTTPError(http.StatusBadRequest, err.Error(), gErrcode.UserErrCommon)
 	}
+	// validate
+	// 1. check user existed by username
+	existedUser, err := s.userRepo.GetOneByUsername(httpCtx, request.Username)
+	if err != nil {
+		return gHandler.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("get user [%v]: %s", request.Username, err), gErrcode.ServerErrorCommon)
+	}
+	if existedUser.IsExists() {
+		return gHandler.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("user [%v] is existed", request.Username), gErrcode.ServerErrorCommon)
+	}
 
 	// get hashedPassword
 	hashedPassword, err := utils.HashPassword(request.Password)
@@ -39,7 +48,7 @@ func (s *service) Create(c echo.Context) error {
 
 	// storerage
 	createUserReq := userRepo.CreateReq{
-		Username:       request.UserName,
+		Username:       request.Username,
 		HashedPassword: hashedPassword,
 		MaxTasks:       request.MaxTasks,
 		// tracing
@@ -48,7 +57,7 @@ func (s *service) Create(c echo.Context) error {
 
 	result, err := s.userRepo.Create(httpCtx, createUserReq)
 	if err != nil {
-		return gHandler.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("create user [%v]: %s", request.UserName, err), gErrcode.ServerErrorCommon)
+		return gHandler.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("create user [%v]: %s", request.Username, err), gErrcode.ServerErrorCommon)
 	}
 
 	return c.JSON(gHandler.Success(result))
