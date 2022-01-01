@@ -30,6 +30,7 @@ func (app *apiServer) publicRoute(e *echo.Echo) {
 		publicApiUserGr := publicApi.Group("/user")
 		{
 			publicApiUserGr.POST("/create", app.userSrv.Create)
+			publicApiUserGr.POST("/login", app.userSrv.Login)
 		}
 
 		// publicAuthenTokenApi required token login of enforcer

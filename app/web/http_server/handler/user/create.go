@@ -37,7 +37,7 @@ func (s *service) Create(c echo.Context) error {
 		return gHandler.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("get user [%v]: %s", request.Username, err), gErrcode.ServerErrorCommon)
 	}
 	if existedUser.IsExists() {
-		return gHandler.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("user [%v] is existed", request.Username), gErrcode.ServerErrorCommon)
+		return gHandler.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("user [%v] is existed", request.Username), gErrcode.UserErrCommon)
 	}
 
 	// get hashedPassword

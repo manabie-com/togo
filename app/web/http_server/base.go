@@ -15,6 +15,7 @@ import (
 
 	"github.com/manabie-com/togo/app/common/config"
 	gHandler "github.com/manabie-com/togo/app/common/gstuff/handler"
+	utilsToken "github.com/manabie-com/togo/app/utils/token"
 
 	userRepo "github.com/manabie-com/togo/app/repo/mongo/user"
 
@@ -32,8 +33,18 @@ func Run() {
 	userRepoCollection := userRepo.InitColletion()
 	userRepoInstance := userRepo.NewRepoManager(userRepoCollection)
 
+	// init token maker
+	secretKey := cfg.Other.Get("secret_key")
+	tokenMaker, err := utilsToken.NewJWTMaker(secretKey)
+	if err != nil {
+		panic(err)
+	}
+
 	// init services
-	userSrv := userHandler.NewService(userRepoInstance)
+	userSrv := userHandler.NewService(
+		userRepoInstance,
+		tokenMaker,
+	)
 
 	// init api server
 	server := NewAPIServer(

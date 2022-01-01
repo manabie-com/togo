@@ -29,3 +29,8 @@ func RandomString(n int) string {
 
 	return sb.String()
 }
+
+// RandomOwner generates a random owner name
+func RandomOwner() string {
+	return RandomString(6)
+}
