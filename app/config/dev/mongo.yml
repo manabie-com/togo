@@ -1,7 +1,9 @@
 "app":
   name: "app"
   address:
-    - "127.0.0.1:27017"
+    - "mongo1:27017"
+    - "mongo2:27017"
+    - "mongo3:27017"
   user: ""
   pass: ""
   dbname: "app"

@@ -34,9 +34,14 @@ func (app *apiServer) publicRoute(e *echo.Echo) {
 		}
 
 		// publicAuthenTokenApi required token login of enforcer
-		publicAuthenTokenApi := publicApi.Group("", appMiddleware.NewStaff().ValidateToken)
+		publicAuthenTokenApi := publicApi.Group("", appMiddleware.ValidateToken(app.tokenMaker))
 		{
-			_ = publicAuthenTokenApi
+			// task gr
+			publicApiTaskGr := publicAuthenTokenApi.Group("/task")
+			{
+				publicApiTaskGr.POST("/create", app.taskSrv.Create)
+				publicApiTaskGr.POST("/all", app.taskSrv.All)
+			}
 		}
 	}
 }

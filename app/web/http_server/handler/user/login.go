@@ -3,6 +3,7 @@ package user
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	gErrcode "github.com/manabie-com/togo/app/common/gconstant/errcode"
@@ -48,7 +49,7 @@ func (s *service) Login(c echo.Context) error {
 	accessToken, err := s.tokenMaker.CreateToken(
 		existedUser.ID,
 		existedUser.Username,
-		600,
+		600*time.Second,
 	)
 	if err != nil {
 		return gHandler.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("gen token: %s", err), gErrcode.ServerErrorCommon)

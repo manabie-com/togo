@@ -16,7 +16,7 @@ type CreateReq struct {
 	CreatedIP string
 }
 
-// Create : create new property
+// Create : create new user
 func (r *repoManager) Create(ctx context.Context, req CreateReq) (model.User, error) {
 	// create model insert to db
 	now := time.Now()

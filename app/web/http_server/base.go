@@ -17,8 +17,10 @@ import (
 	gHandler "github.com/manabie-com/togo/app/common/gstuff/handler"
 	utilsToken "github.com/manabie-com/togo/app/utils/token"
 
+	taskRepo "github.com/manabie-com/togo/app/repo/mongo/task"
 	userRepo "github.com/manabie-com/togo/app/repo/mongo/user"
 
+	taskHandler "github.com/manabie-com/togo/app/web/http_server/handler/task"
 	userHandler "github.com/manabie-com/togo/app/web/http_server/handler/user"
 )
 
@@ -28,10 +30,14 @@ var cfg = config.GetConfig()
 func Run() {
 	// mongo client
 	// init mongo
-	cfg.Mongo.Get("app").Init()
+	mongoInstance := cfg.Mongo.Get("app")
+	mongoInstance.Init()
 
 	userRepoCollection := userRepo.InitColletion()
 	userRepoInstance := userRepo.NewRepoManager(userRepoCollection)
+
+	taskRepoCollection := taskRepo.InitColletion()
+	taskRepoInstance := taskRepo.NewRepoManager(taskRepoCollection)
 
 	// init token maker
 	secretKey := cfg.Other.Get("secret_key")
@@ -46,9 +52,17 @@ func Run() {
 		tokenMaker,
 	)
 
+	taskSrv := taskHandler.NewService(
+		userRepoInstance,
+		taskRepoInstance,
+		mongoInstance.GetClient(),
+	)
+
 	// init api server
 	server := NewAPIServer(
 		userSrv,
+		taskSrv,
+		tokenMaker,
 	)
 
 	// start server
@@ -56,15 +70,21 @@ func Run() {
 }
 
 type apiServer struct {
-	userSrv userHandler.Service
+	userSrv    userHandler.Service
+	taskSrv    taskHandler.Service
+	tokenMaker utilsToken.Maker
 }
 
 // NewAPIServer : Tạo mới đối tuợng api server
 func NewAPIServer(
 	userSrv userHandler.Service,
+	taskSrv taskHandler.Service,
+	tokenMaker utilsToken.Maker,
 ) *apiServer {
 	return &apiServer{
-		userSrv: userSrv,
+		userSrv:    userSrv,
+		taskSrv:    taskSrv,
+		tokenMaker: tokenMaker,
 	}
 }
 

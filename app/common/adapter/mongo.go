@@ -151,6 +151,10 @@ func (config *Mongo) Init() {
 	}
 }
 
+func (config *Mongo) GetClient() *mongo.Client {
+	return config.ConClient
+}
+
 //CollectionV2 ..
 type CollectionV2 struct {
 	*mongo.Collection

@@ -1,4 +1,4 @@
-package user
+package task
 
 import (
 	"context"
@@ -8,10 +8,8 @@ import (
 )
 
 type Repository interface {
-	Create(ctx context.Context, in CreateReq) (model.User, error)
-	GetOneByID(ctx context.Context, id int) (model.User, error)
-	GetOneByUsername(ctx context.Context, username string) (model.User, error)
-	IncNumTask(ctx context.Context, in IncNumTaskReq) (model.User, error)
+	Create(ctx context.Context, in CreateReq) (model.Task, error)
+	All(ctx context.Context, in AllReq) ([]model.Task, error)
 }
 
 type repoManager struct {

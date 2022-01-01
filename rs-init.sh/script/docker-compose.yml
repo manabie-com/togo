@@ -1,0 +1,44 @@
+version: "3"
+
+services:
+  mongo1:
+    container_name: mongo1
+    image: mongo:4.2
+    volumes:
+      - ~/mongors/data1:/data/db
+      - ./rs-init.sh:/scripts/rs-init.sh
+    networks:
+      - mongors-network
+    ports:
+      - 27017:27017
+    links:
+      - mongo2
+      - mongo3
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "my-replica-set" ]
+  mongo2:
+    container_name: mongo2
+    image: mongo:4.2
+    volumes:
+      - ~/mongors/data2:/data/db
+    networks:
+      - mongors-network
+    ports:
+      - 27018:27017
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "my-replica-set" ]
+  mongo3:
+    container_name: mongo3
+    image: mongo:4.2
+    volumes:
+      - ~/mongors/data3:/data/db
+    networks:
+      - mongors-network
+    ports:
+      - 27019:27017
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "my-replica-set" ]
+
+networks:
+  mongors-network:
+    driver: bridge
