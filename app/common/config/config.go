@@ -3,6 +3,8 @@ package config
 import (
 	"fmt"
 	"os"
+	"strings"
+	"sync"
 
 	"github.com/manabie-com/togo/app/common/adapter"
 
@@ -27,7 +29,7 @@ type Config struct {
 
 var config *Config
 
-func init() {
+func initConfig() {
 	var folder string
 
 	env := os.Getenv("APPLICATION_ENV")
@@ -39,7 +41,8 @@ func init() {
 		folder = "dev"
 	}
 
-	path := fmt.Sprintf("config/%v", folder)
+	configDir := getConfigDir()
+	path := fmt.Sprintf("%v/%v", configDir, folder)
 
 	//Get base config
 	config = new(Config)
@@ -50,6 +53,20 @@ func init() {
 	fetchDataToConfig(path, "rabbit", &(config.RabbitMQ))
 	fetchDataToConfig(path, "other", &(config.Other))
 	fetchDataToConfig(path, "redis", &(config.Redis))
+}
+
+func getConfigDir() string {
+	workingDir, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
+	temp := strings.Split(workingDir, "/app")
+	if len(temp) < 2 {
+		panic("go mod init invalid")
+	}
+
+	return temp[0] + "/app/config/"
 }
 
 func fetchDataToConfig(configPath, configName string, result interface{}) {
@@ -66,7 +83,13 @@ func fetchDataToConfig(configPath, configName string, result interface{}) {
 	}
 }
 
+var once sync.Once
+
 // GetConfig func
 func GetConfig() *Config {
+	once.Do(func() {
+		initConfig()
+	})
+
 	return config
 }
