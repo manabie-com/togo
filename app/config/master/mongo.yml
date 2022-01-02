@@ -1,0 +1,9 @@
+"app":
+  name: "app"
+  address:
+    - "127.0.0.1:27017"
+  user: ""
+  pass: ""
+  dbname: "app"
+  timeout: 10
+  pool_limit: 100
