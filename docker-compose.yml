@@ -5,8 +5,6 @@ services:
     build: ./app
     image: alpine
     container_name: "web"
-    networks:
-      - mongors-network
     ports:
         - 80:80
     links:
@@ -18,43 +16,34 @@ services:
         - mongo2
         - mongo3
   mongo1:
+    image: mongo:4.2
     container_name: mongo1
-    image: mongo:4.2
+    command: ["--replSet", "my-replica-set", "--bind_ip_all", "--port", "30001"]
     volumes:
-      - ~/mongors/data1:/data/db
-      - ./rs-init.sh:/scripts/rs-init.sh
-    networks:
-      - mongors-network
+      - ./data/mongo-1:/data/db
     ports:
-      - 27017:27017
-    links:
-      - mongo2
-      - mongo3
-    restart: always
-    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "my-replica-set" ]
-  mongo2:
-    container_name: mongo2
-    image: mongo:4.2
-    volumes:
-      - ~/mongors/data2:/data/db
-    networks:
-      - mongors-network
-    ports:
-      - 27018:27017
-    restart: always
-    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "my-replica-set" ]
-  mongo3:
-    container_name: mongo3
-    image: mongo:4.2
-    volumes:
-      - ~/mongors/data3:/data/db
-    networks:
-      - mongors-network
-    ports:
-      - 27019:27017
-    restart: always
-    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "my-replica-set" ]
+      - 30001:30001
+    healthcheck:
+      test: test $$(echo "rs.initiate({_id:'my-replica-set',members:[{_id:0,host:\"mongo1:30001\"},{_id:1,host:\"mongo2:30002\"},{_id:2,host:\"mongo3:30003\"}]}).ok || rs.status().ok" | mongo --port 30001 --quiet) -eq 1
+      interval: 10s
+      start_period: 30s
 
-networks:
-  mongors-network:
-    driver: bridge
+  mongo2:
+    image: mongo:4.2
+    container_name: mongo2
+    command: ["--replSet", "my-replica-set", "--bind_ip_all", "--port", "30002"]
+    volumes:
+      - ./data/mongo-2:/data/db
+    ports:
+      - 30002:30002
+
+  mongo3:
+    image: mongo:4.2
+    container_name: mongo3
+    command: ["--replSet", "my-replica-set", "--bind_ip_all", "--port", "30003"]
+    volumes:
+      - ./data/mongo-3:/data/db
+    ports:
+      - 30003:30003
+      
+  
