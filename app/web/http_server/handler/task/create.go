@@ -20,6 +20,11 @@ import (
 func (s *service) Create(c echo.Context) error {
 	httpCtx := c.Request().Context()
 
+	type myResponse struct {
+		Task            model.Task `json:"task"`
+		CurrentUserTask int        `json:"current_user_task"`
+	}
+
 	type myRequest struct {
 		Name        string `json:"name" query:"name" validate:"required,max=500"`
 		Description string `json:"description" query:"description" validate:"required,max=500"`
@@ -66,7 +71,9 @@ func (s *service) Create(c echo.Context) error {
 	}
 	defer session.EndSession(httpCtx)
 
-	var resultTask model.Task
+	// create response
+	response := myResponse{}
+
 	err = mongo.WithSession(httpCtx, session, func(sessCtx mongo.SessionContext) (err error) {
 		// 1. Create new task
 		createTaskReq := taskRepo.CreateReq{
@@ -76,7 +83,7 @@ func (s *service) Create(c echo.Context) error {
 			// tracing
 			CreatedIP: c.RealIP(),
 		}
-		resultTask, err = s.taskRepo.Create(sessCtx, createTaskReq)
+		response.Task, err = s.taskRepo.Create(sessCtx, createTaskReq)
 		if err != nil {
 			session.AbortTransaction(sessCtx)
 			return fmt.Errorf("create task: %s", err)
@@ -99,6 +106,8 @@ func (s *service) Create(c echo.Context) error {
 			return fmt.Errorf("not adapt current task < mask task")
 		}
 
+		response.CurrentUserTask = updatedUser.CurrentTasks
+
 		session.CommitTransaction(sessCtx)
 		return
 	})
@@ -107,5 +116,5 @@ func (s *service) Create(c echo.Context) error {
 		return gHandler.NewHTTPError(http.StatusInternalServerError, fmt.Sprintf("fail transaction: %s", err), gErrcode.ServerErrorCommon)
 	}
 
-	return c.JSON(gHandler.Success(resultTask))
+	return c.JSON(gHandler.Success(response))
 }
