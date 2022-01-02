@@ -9,7 +9,7 @@ import (
 )
 
 func TestGetUserByID(t *testing.T) {
-	user1 := createRandomUser(t)
+	user1 := CreateRandomUser(t)
 	user2, err := userRepoInstance.GetOneByID(context.Background(), user1.ID)
 	require.NoError(t, err)
 	require.NotEmpty(t, user2)

@@ -26,7 +26,7 @@ func TestIncNumTask(t *testing.T) {
 
 	for _, tc := range testCase {
 		t.Run(tc.name, func(t *testing.T) {
-			user := createRandomUser(t)
+			user := CreateRandomUser(t)
 
 			incTaskReq := userRepo.IncNumTaskReq{
 				UserID:   user.ID,
