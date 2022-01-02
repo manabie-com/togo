@@ -1,30 +1,34 @@
-### Requirements
+# Description
+Program is simple which help user can create / login, after that they can create their's task. They have limit tasks at their configuration
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+# How to run ?
+  1. make run
+  2. Waiting some seconds for mongo replicaSet init and find their mem nodes
+  3. Run test with Postman URL
+    . 3.1 create your user: unit by username, MUST CONFIG "max_tasks" for him
+    . 3.2 login with username, password
+    . 3.3 create task with response JWT token
+    . 3.4 check the task create with jwt token
 
-### Notes
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+# Postman URL
+https://www.getpostman.com/collections/899b3865b7abcd5537f6
 
-### How to submit your solution?
+# Tech points:
+1. Code based on Golang and mongoDB, apply MVC and repo dependency parttern
+  . Apply transaction in mongo, can apply event driven's architect consistency instead for avoid bottleneck create by lock mechanism
+  . Apply JWT authentication, can apply token session based for easy tracing history login, and eviction leak token
 
-- Fork this repo and show us your development progress via a PR
+2. Deploy
+  . Deploy with docker-compose
+    . mongo replicaSet: support transaction, changeStream (If apply event driven)
+    . alpine golang image: apply multistage build docker for minimize size program (~ 10MB)
 
-### Interesting facts about Manabie
+3. Apply cli at main.go:
+  . support easy run, manage Deployment by command, apply in K8s deployment yml
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
-
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+# How can go far ?
+1. Apply event-driven architect support for easily expend micro service system 
+2. Deploy with K8s for easy scale and zero downtime => Increase Scalability, Availability, Reliability
+3. Apply log EFK for tracing log from: Service, Gateway, tracing if need
+4. Apply load manage with Grafana / prometheus
