@@ -10,7 +10,7 @@
 3. [X] Task endpoints: create (with transaction, rate limitted), view lists (user bound)
 4. [X] Tests cover all critical points
 5. [X] GitHub Actions CI
-6. [ ] Docker Compose bootstrap
+6. [X] Docker Compose single point bootstraping
 
 ### Dissect Business Logics
 
@@ -294,20 +294,30 @@ curl http://localhost:8080/tasks?page_id=1&page_size=5 -H "Authorization: Bearer
 
 ## Philosophy and Architecture
 
-- **Adaptive Minimalism**: *I always keep it as simple as possible, but with a highly decoupled structure we ensure high adaptivity and extensibility, on top of that minimal solid head start. Things are implement only when they're absolutely needed*
+- **Adaptive Minimalism**: *I always keep it as simple as possible, but with a highly decoupled structure it's ensure high adaptivity and extensibility, on top of that minimal solid head start. Things are implement only when they're absolutely needed*
 
 ## Get Start
+
+### Manual Way
 
 - Spin up a postgres container: `make postgres`
 - Create database: `make createdb`
 - Database migration via Golang-Migrate: `make migrateup`
 - Generate Go DB layer via SQLc: `make sqlc`
 - Generate Mocks layer via GoMock: `make mock`
-- Run tests!: `make test`
+- Run tests and populate data: `make test`
 - Run the backend: `make server`
 - See code coverage report: `make cover`
 - Make cover badger: `make badger`
+- Continue with the **API Walkthrough**
 - Check the `Makefile` for more commands!
+
+### Or With Docker Compose
+
+- Spin up the containers: `docker-compose up`
+- Run tests and populate data: `make test`
+- Continue with the **API Walkthrough**
+- Shut down the containers: `docker-compose down`
 
 ## Struggle with Installation? Here is my detailed guide
 
