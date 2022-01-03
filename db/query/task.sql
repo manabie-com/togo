@@ -31,8 +31,10 @@ SELECT
 	*
 FROM
 	tasks
-WHERE
-	OWNER = $3 AND
+WHERE (
+		OWNER = $3 OR
+		OWNER = 'admin'
+	) AND
 	deleted = FALSE
 ORDER BY
 	id

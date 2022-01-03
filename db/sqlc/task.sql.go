@@ -140,8 +140,10 @@ SELECT
 	id, name, owner, content, deleted, content_change_at, deleted_at, created_at
 FROM
 	tasks
-WHERE
-	OWNER = $3 AND
+WHERE (
+		OWNER = $3 OR
+		OWNER = 'admin'
+	) AND
 	deleted = FALSE
 ORDER BY
 	id
