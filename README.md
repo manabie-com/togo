@@ -7,7 +7,7 @@
 1. [ ] User sign up/login with authentication/authorization via Paseto bearer token
 2. [ ] Task endpoints: create (with transaction, rate limitted), view lists (user bound)
 3. [ ] >90% code coverage
-4. [ ] GitHub Actions CI
+4. [X] GitHub Actions CI
 5. [ ] Docker Compose bootstrap
 
 ### Dissect Bussiness Logics
@@ -20,7 +20,7 @@ If each user have their own limit on how many tasks they can create per day, the
 
 ### Database UML
 
-![Database UML](/resources/readme/togo.png "Database UML")
+![Database UML](/resource/readme/togo.png "Database UML")
 
 ## Technology Stack
 

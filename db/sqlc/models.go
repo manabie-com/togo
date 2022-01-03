@@ -7,12 +7,13 @@ import (
 )
 
 type Task struct {
-	ID      int64  `json:"id"`
-	Owner   string `json:"owner"`
-	Content string `json:"content"`
-	// must be positive
-	Quantity  int64     `json:"quantity"`
-	CreatedAt time.Time `json:"created_at"`
+	ID int64 `json:"id"`
+	// unique per owner
+	Name            string    `json:"name"`
+	Owner           string    `json:"owner"`
+	Content         string    `json:"content"`
+	ContentChangeAt time.Time `json:"content_change_at"`
+	CreatedAt       time.Time `json:"created_at"`
 }
 
 type User struct {
@@ -21,7 +22,9 @@ type User struct {
 	FullName       string `json:"full_name"`
 	Email          string `json:"email"`
 	// non negative
-	Cap              int64     `json:"cap"`
+	DailyCap int64 `json:"daily_cap"`
+	// non negative
+	DailyQuantity    int64     `json:"daily_quantity"`
 	PasswordChangeAt time.Time `json:"password_change_at"`
 	CreatedAt        time.Time `json:"created_at"`
 }

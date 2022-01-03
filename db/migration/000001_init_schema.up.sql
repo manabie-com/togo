@@ -4,7 +4,8 @@ CREATE TABLE
         "hashed_password" VARCHAR NOT NULL,
         "full_name" VARCHAR NOT NULL,
         "email" VARCHAR UNIQUE NOT NULL,
-        "cap" BIGINT NOT NULL,
+        "daily_cap" BIGINT NOT NULL,
+        "daily_quantity" BIGINT NOT NULL,
         "password_change_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z',
         "created_at" timestamptz NOT NULL DEFAULT (now())
     );
@@ -12,9 +13,10 @@ CREATE TABLE
 CREATE TABLE
     "tasks" (
         "id" bigserial PRIMARY KEY,
+        "name" VARCHAR NOT NULL,
         "owner" VARCHAR NOT NULL,
         "content" VARCHAR NOT NULL,
-        "quantity" BIGINT NOT NULL,
+        "content_change_at" timestamptz NOT NULL DEFAULT '0001-01-01 00:00:00Z',
         "created_at" timestamptz NOT NULL DEFAULT (now())
     );
 
@@ -24,28 +26,37 @@ ADD
     FOREIGN KEY ("owner") REFERENCES "users" ("username");
 
 CREATE INDEX
-ON "users" ("hashed_password");
-
-CREATE INDEX
 ON "users" ("full_name");
 
 CREATE INDEX
-ON "users" ("cap");
+ON "users" ("daily_cap");
+
+CREATE INDEX
+ON "users" ("daily_quantity");
 
 CREATE INDEX
 ON "users" ("password_change_at");
 
 CREATE INDEX
+ON "tasks" ("name");
+
+CREATE INDEX
 ON "tasks" ("owner");
 
 CREATE INDEX
-ON "tasks" ("quantity");
+ON "tasks" ("content");
+
+CREATE INDEX
+ON "tasks" ("content_change_at");
 
 COMMENT
-ON COLUMN "users"."cap" IS 'non negative';
+ON COLUMN "users"."daily_cap" IS 'non negative';
 
 COMMENT
-ON COLUMN "tasks"."quantity" IS 'must be positive';
+ON COLUMN "users"."daily_quantity" IS 'non negative';
+
+COMMENT
+ON COLUMN "tasks"."name" IS 'unique per owner';
 
 -- Generate admin
 INSERT INTO
@@ -54,7 +65,8 @@ INSERT INTO
         hashed_password,
         full_name,
         email,
-        cap,
+        daily_cap,
+        daily_quantity,
         password_change_at,
         created_at
     )
@@ -64,6 +76,7 @@ VALUES (
         'Admin',
         'admin@email.com',
         '10',
+        '0',
         '0001-01-01 07:00:00.000',
         '2021-12-26 22:22:49.644'
     );

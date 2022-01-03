@@ -48,6 +48,7 @@ func (server *Server) setupRouter() {
 	// These endpoints need authorization, implements in their handlers repsectively
 	authRoutes.GET("/users", server.listUsers)
 	authRoutes.GET("/tasks", server.listTasks)
+	authRoutes.PUT("/tasks", server.editTask)
 	authRoutes.POST("/tasks", server.createTask)
 	server.router = router
 }

@@ -7,11 +7,15 @@ import (
 )
 
 type Querier interface {
+	CountTasksCreatedToday(ctx context.Context, owner string) (int64, error)
 	CreateTask(ctx context.Context, arg CreateTaskParams) (Task, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
+	DeleteTaskByName(ctx context.Context, name string) error
 	GetTask(ctx context.Context, id int64) (Task, error)
+	GetTaskByName(ctx context.Context, name string) (Task, error)
 	GetUser(ctx context.Context, username string) (User, error)
 	ListTasksByOwner(ctx context.Context, arg ListTasksByOwnerParams) ([]Task, error)
+	UpdateTaskByName(ctx context.Context, arg UpdateTaskByNameParams) (Task, error)
 }
 
 var _ Querier = (*Queries)(nil)

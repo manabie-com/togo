@@ -3,23 +3,29 @@ package db
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
+	common "togo/common/model"
 )
 
 type Store interface {
 	Querier
+	CreateTaskTx(ctx context.Context, arg CreateTaskTxParams) (CreateTaskTxResult, error)
 }
 
-type SQLStore struct {
+type DBStore struct {
 	db *sql.DB
 	*Queries
 }
 
 func NewStore(db *sql.DB) Store {
-	return &SQLStore{db, New(db)}
+	return &DBStore{
+		db:      db,
+		Queries: New(db),
+	}
 }
 
-func (store *SQLStore) execTx(ctx context.Context, fn func(*Queries) error) error {
+func (store *DBStore) execTx(ctx context.Context, fn func(*Queries) error) error {
 	tx, err := store.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err
@@ -33,4 +39,62 @@ func (store *SQLStore) execTx(ctx context.Context, fn func(*Queries) error) erro
 		return err
 	}
 	return tx.Commit()
+}
+
+// Debugging concurrent transactions
+// var txKey = struct{}{}
+
+type CreateTaskTxParams struct {
+	User    User   `json:"user"`
+	Name    string `json:"name"`
+	Content string `json:"content"`
+}
+
+type CreateTaskTxResult struct {
+	User common.UserResponse `json:"user"`
+	Task Task                `json:"task"`
+}
+
+func (store *DBStore) CreateTaskTx(ctx context.Context, arg CreateTaskTxParams) (CreateTaskTxResult, error) {
+	var result CreateTaskTxResult
+	err := store.execTx(ctx, func(q *Queries) error {
+		// txName := ctx.Value(txKey)
+		user := common.UserResponse{
+			Username:         arg.User.Username,
+			FullName:         arg.User.FullName,
+			Email:            arg.User.Email,
+			DailyCap:         arg.User.DailyCap,
+			DailyQuantity:    arg.User.DailyQuantity,
+			PasswordChangeAt: arg.User.PasswordChangeAt,
+			CreatedAt:        arg.User.CreatedAt,
+		}
+		// check if dailyQuantity+1 > dailyCap?
+		if user.DailyQuantity > user.DailyCap {
+			result = CreateTaskTxResult{
+				User: user,
+				Task: Task{},
+			}
+			return errors.New("daily limit exceed")
+		} else {
+			count, err := q.CountTasksCreatedToday(ctx, user.Username)
+			if err != nil {
+				return err
+			}
+			if user.DailyQuantity != count {
+				user.DailyQuantity = 0
+			}
+			user.DailyQuantity++
+			task, err := q.CreateTask(ctx, CreateTaskParams{
+				Name:    arg.Name,
+				Owner:   arg.User.Username,
+				Content: arg.Content,
+			})
+			result = CreateTaskTxResult{
+				User: user,
+				Task: task,
+			}
+			return err
+		}
+	})
+	return result, err
 }

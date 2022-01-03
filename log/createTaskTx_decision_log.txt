@@ -1,0 +1,46 @@
+a user?
+	username
+	dailyCap
+	dailyQuantity
+
+	> createUser
+	> viewUsers
+	> loginUser
+
+	> createTask
+	> listTasks
+	> editTaskByName
+	> deleteTaskByName
+	> countTasksCreatedToday
+
+a task?
+	id
+	name - unique per owner
+	content
+	owner
+	quantity
+
+problem?
+	a user create some tasks, the number of tasks must be within the user's dailyCap
+
+logic?
+	which user?
+	provide task name
+	provide task content
+	how to check for new day to reset count?
+	check if dailyQuantity+1 > dailyCap?
+			return 403 Fobbiden - "daily limit exceed"
+		else
+			if dailyQuantity != countTasksCreatedToday()?
+				dailyQuantity=0
+			dailyQuantity++
+			return 201 Created
+
+params:
+	userID
+	name
+	content
+
+result:
+	user
+	task

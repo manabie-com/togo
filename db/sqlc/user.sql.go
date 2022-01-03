@@ -9,8 +9,15 @@ import (
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO
-    users (username, hashed_password, full_name, email, cap)
-VALUES ($1, $2, $3, $4, $5) RETURNING username, hashed_password, full_name, email, cap, password_change_at, created_at
+    users (
+        username,
+        hashed_password,
+        full_name,
+        email,
+        daily_cap,
+        daily_quantity
+    )
+VALUES ($1, $2, $3, $4, $5, $6) RETURNING username, hashed_password, full_name, email, daily_cap, daily_quantity, password_change_at, created_at
 `
 
 type CreateUserParams struct {
@@ -18,7 +25,8 @@ type CreateUserParams struct {
 	HashedPassword string `json:"hashed_password"`
 	FullName       string `json:"full_name"`
 	Email          string `json:"email"`
-	Cap            int64  `json:"cap"`
+	DailyCap       int64  `json:"daily_cap"`
+	DailyQuantity  int64  `json:"daily_quantity"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
@@ -27,7 +35,8 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		arg.HashedPassword,
 		arg.FullName,
 		arg.Email,
-		arg.Cap,
+		arg.DailyCap,
+		arg.DailyQuantity,
 	)
 	var i User
 	err := row.Scan(
@@ -35,7 +44,8 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.HashedPassword,
 		&i.FullName,
 		&i.Email,
-		&i.Cap,
+		&i.DailyCap,
+		&i.DailyQuantity,
 		&i.PasswordChangeAt,
 		&i.CreatedAt,
 	)
@@ -44,7 +54,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 
 const getUser = `-- name: GetUser :one
 SELECT
-    username, hashed_password, full_name, email, cap, password_change_at, created_at
+    username, hashed_password, full_name, email, daily_cap, daily_quantity, password_change_at, created_at
 FROM
     users
 WHERE
@@ -61,7 +71,8 @@ func (q *Queries) GetUser(ctx context.Context, username string) (User, error) {
 		&i.HashedPassword,
 		&i.FullName,
 		&i.Email,
-		&i.Cap,
+		&i.DailyCap,
+		&i.DailyQuantity,
 		&i.PasswordChangeAt,
 		&i.CreatedAt,
 	)
