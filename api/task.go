@@ -20,7 +20,6 @@ func (server *Server) listTasks(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-	// Enforce authorization Rule0 and Rule6
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	var tasks []db.Task
 	var err error
@@ -57,7 +56,6 @@ func (server *Server) createTask(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-	// Enforce authorization Rule5
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	user, err := server.store.GetUser(ctx, authPayload.Username)
 	if err != nil {

@@ -14,6 +14,8 @@ a user?
 	(> deleteTaskByName)
 	> countTasksCreatedToday
 
+	> updateUserDailyCap (admin only)
+
 a task?
 	id
 	name - unique per owner
@@ -36,7 +38,7 @@ logic?
 				dailyQuantity=0
 			dailyQuantity++
 			updateUserDailyQuantity()
-			return 201 Created
+			return 200 OK
 	fraud protection?
 		tasks are not really deleted, they only marked as deleted but retains creation day, so we can count based on that day
 

@@ -7,8 +7,8 @@
 
 1. [X] Implement core business logic
 2. [X] User sign up/login with authentication/authorization via Paseto bearer token
-3. [ ] Task endpoints: create (with transaction, rate limitted), view lists (user bound)
-4. [ ] Tests cover all critical points
+3. [X] Task endpoints: create (with transaction, rate limitted), view lists (user bound)
+4. [X] Tests cover all critical points
 5. [X] GitHub Actions CI
 6. [ ] Docker Compose bootstrap
 
@@ -36,6 +36,8 @@ a user?
 	(> deleteTaskByName)
 	> countTasksCreatedToday
 
+	> updateUserDailyCap (admin only)
+
 a task?
 	id
 	name - unique per owner
@@ -58,7 +60,7 @@ logic?
 				dailyQuantity=0
 			dailyQuantity++
 			updateUserDailyQuantity()
-			return 201 Created
+			return 200 OK
 	fraud protection?
 		tasks are not really deleted, they only marked as deleted but retains creation day, so we can count based on that day
 

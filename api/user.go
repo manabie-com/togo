@@ -36,7 +36,6 @@ func (server *Server) listUsers(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-	// Enforce authorization Rule1
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	var users []db.User
 	var err error
