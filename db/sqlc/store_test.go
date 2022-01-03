@@ -50,7 +50,12 @@ func TestCreateTaskTxResult(t *testing.T) {
 		require.Equal(t, name, result.Task.Name)
 		require.Equal(t, content, result.Task.Content)
 		require.NotZero(t, result.Task.CreatedAt)
-		require.Zero(t, result.Task.ContentChangeAt)
+		// Strange behavior of testify/require on local versus github worker
+		// Error:      	Should be zero, but was 0001-01-01 00:00:00 +0000 UTC
+		log.Println("content changed at:", result.Task.ContentChangeAt)
+		// require.Zero(t, result.Task.ContentChangeAt)
+		// Work around
+		require.True(t, result.Task.ContentChangeAt.IsZero())
 		require.NotZero(t, result.Task.ID)
 		_, err = store.GetTask(ctx, result.Task.ID)
 		require.NoError(t, err)

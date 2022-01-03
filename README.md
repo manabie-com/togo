@@ -106,6 +106,7 @@ result:
 - Run tests!: `make test`
 - Run the backend: `make server`
 - See code coverage report: `make cover`
+- Make cover badger: `make badger`
 - Check the `Makefile` for more commands!
 
 ## Struggle with Installation? Here is my detailed guide

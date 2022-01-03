@@ -37,4 +37,7 @@ clean:
 cover:
 	go tool cover -func profile.cov
 
-.PHONY: postgres createmigrate createdb dropdb migrateup migratedown sqlc test server mock clean cover
+badger:
+	gopherbadger -md="README.md,coverage.md"
+
+.PHONY: postgres createmigrate createdb dropdb migrateup migratedown sqlc test server mock clean cover badger
