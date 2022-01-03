@@ -54,7 +54,7 @@ logic?
 	provide task content
 	how to check for new day to reset count?
 	check if dailyQuantity+1 > dailyCap?
-			return 403 Fobbiden - "daily limit exceed"
+			return 500 ISE - "daily limit exceed"
 		else
 			if dailyQuantity != countTasksCreatedToday()?
 				dailyQuantity=0
@@ -72,6 +72,204 @@ params:
 result:
 	user
 	task
+```
+
+</details>
+
+### API Walkthrough
+
+<details>
+	<summary>See details</summary>
+
+![API](/resource/readme/api.png "API")
+
+- Create a user:
+
+```bash
+curl http://localhost:8080/users -H "Content-Type: application/json" -d '{"username":"tienla","full_name":"Tien La","email":"tien@email.com","password":"matkhau"}' | jq
+# Result
+{
+  "username": "tienla",
+  "full_name": "Tien La",
+  "email": "tien@email.com",
+  "daily_cap": 0,
+  "daily_quantity": 0,
+  "password_change_at": "0001-01-01T00:00:00Z",
+  "created_at": "2022-01-03T23:22:09.197164Z"
+}
+```
+
+- Login as admin:
+
+```bash
+curl http://localhost:8080/users/login -H "Content-Type: application/json" -d '{"username":"admin","password":"secret"}' | jq
+# Result
+{
+  "access_token": "v2.local.nvAS-aI1sdsEnexIp3K77Qo0jtXFb_XS9cQUCeYgcAEJzY3nwG97chAFfbsCMygdvxR_Ube3Hp_6kbR96EFrWc1PRu1yunkRvEnhTrjhtmr0Vur-kX_oaFIeMqFYGwz8cHCgT2oX53_PZi_I7_N27iudNA6jE3wiwTpokFd0euaOSefxaAzFYpAwu94bB-30msBqiDgTR6ouDzB42dC1jhMp3rdRsOHDLV_xeiSBHt5UKqtA_aYp51G8dzMTTSdPXqZ0DAc3lNIn5q-T8g.bnVsbA",
+  "user": {
+    "username": "admin",
+    "full_name": "Admin",
+    "email": "admin@email.com",
+    "daily_cap": 10,
+    "daily_quantity": 0,
+    "password_change_at": "0001-01-01T07:00:00Z",
+    "created_at": "2021-12-26T22:22:49.644Z"
+  }
+}
+
+# Save token for later use
+ADMIN_TOKEN='v2.local.nvAS-aI1sdsEnexIp3K77Qo0jtXFb_XS9cQUCeYgcAEJzY3nwG97chAFfbsCMygdvxR_Ube3Hp_6kbR96EFrWc1PRu1yunkRvEnhTrjhtmr0Vur-kX_oaFIeMqFYGwz8cHCgT2oX53_PZi_I7_N27iudNA6jE3wiwTpokFd0euaOSefxaAzFYpAwu94bB-30msBqiDgTR6ouDzB42dC1jhMp3rdRsOHDLV_xeiSBHt5UKqtA_aYp51G8dzMTTSdPXqZ0DAc3lNIn5q-T8g.bnVsbA'
+```
+
+- Update the daily cap of the newly created user to 2:
+
+```bash
+curl http://localhost:8080/admin/setDailyCap -H "Authorization: Bearer $ADMIN_TOKEN" -H "Content-Type: application/json" -d '{"username":"tienla","daily_cap":2}' | jq
+# Result
+{
+  "username": "tienla",
+  "full_name": "Tien La",
+  "email": "tien@email.com",
+  "daily_cap": 2,
+  "daily_quantity": 0,
+  "password_change_at": "0001-01-01T00:00:00Z",
+  "created_at": "2022-01-03T23:22:09.197164Z"
+}
+```
+
+- Now login as the newly create user:
+
+```bash
+curl http://localhost:8080/users/login -H "Content-Type: application/json" -d '{"username":"tienla","password":"matkhau"}' | jq
+# Result
+{
+  "access_token": "v2.local.K5YFZ2P-9cZoN_HtS8olPqHZ88ku1whq3cUS3R88y6qlJJlACtBwhcpEQrW8fgZVxJQlxai-p68gv9vIJuP8K0f111uBh6Mceq2bhP9T64_oS4SbPzKIgXlG_pase7H-QYytWFzdo3rjCRY19GW-Ev3c-NgHlcy9GGlECgrtKU053JxVv54GFUpkovL8oXvtk-BYUOHywJH-na3126GyqT1G9h-EwYMrgV_PrcFfWOVGdSwhzN568Ta9rClUOKlvdTlTikaH-5laih1YKbQ.bnVsbA",
+  "user": {
+    "username": "tienla",
+    "full_name": "Tien La",
+    "email": "tien@email.com",
+    "daily_cap": 2,
+    "daily_quantity": 0,
+    "password_change_at": "0001-01-01T00:00:00Z",
+    "created_at": "2022-01-03T23:22:09.197164Z"
+  }
+}
+
+# Save the token for later use
+TOKEN='v2.local.K5YFZ2P-9cZoN_HtS8olPqHZ88ku1whq3cUS3R88y6qlJJlACtBwhcpEQrW8fgZVxJQlxai-p68gv9vIJuP8K0f111uBh6Mceq2bhP9T64_oS4SbPzKIgXlG_pase7H-QYytWFzdo3rjCRY19GW-Ev3c-NgHlcy9GGlECgrtKU053JxVv54GFUpkovL8oXvtk-BYUOHywJH-na3126GyqT1G9h-EwYMrgV_PrcFfWOVGdSwhzN568Ta9rClUOKlvdTlTikaH-5laih1YKbQ.bnVsbA'
+```
+
+- View user's information (only admin can see all):
+
+```bash
+curl http://localhost:8080/users?page_id=1&page_size=5 -H "Authorization: Bearer $TOKEN" | jq
+# Result
+[
+  {
+    "username": "tienla",
+    "full_name": "Tien La",
+    "email": "tien@email.com",
+    "daily_cap": 2,
+    "daily_quantity": 0,
+    "password_change_at": "0001-01-01T00:00:00Z",
+    "created_at": "2022-01-03T23:22:09.197164Z"
+  }
+]
+```
+
+- Create a task:
+
+```bash
+curl http://localhost:8080/tasks -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"name":"task 1","content":"This is task number 1"}' | jq
+# Result
+{
+  "user": {
+    "username": "tienla",
+    "full_name": "Tien La",
+    "email": "tien@email.com",
+    "daily_cap": 2,
+    "daily_quantity": 1,
+    "password_change_at": "0001-01-01T00:00:00Z",
+    "created_at": "2022-01-03T23:22:09.197164Z"
+  },
+  "task": {
+    "id": 8,
+    "name": "task 1",
+    "owner": "tienla",
+    "content": "This is task number 1",
+    "deleted": false,
+    "content_change_at": "0001-01-01T00:00:00Z",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "created_at": "2022-01-03T23:24:21.546377Z"
+  }
+}
+```
+
+- Create another task:
+
+```bash
+curl http://localhost:8080/tasks -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"name":"task 2","content":"This is task number 2"}' | jq
+# Result
+{
+  "user": {
+    "username": "tienla",
+    "full_name": "Tien La",
+    "email": "tien@email.com",
+    "daily_cap": 2,
+    "daily_quantity": 2,
+    "password_change_at": "0001-01-01T00:00:00Z",
+    "created_at": "2022-01-03T23:22:09.197164Z"
+  },
+  "task": {
+    "id": 9,
+    "name": "task 2",
+    "owner": "tienla",
+    "content": "This is task number 2",
+    "deleted": false,
+    "content_change_at": "0001-01-01T00:00:00Z",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "created_at": "2022-01-03T23:24:46.500126Z"
+  }
+}
+```
+
+- Create yet another task (this time it's over the daily limit):
+
+```bash
+curl http://localhost:8080/tasks -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"name":"task 3","content":"This is task number 3"}' | jq
+# Result
+{
+  "error": "daily limit exceed"
+}
+```
+
+- View all the tasks that you've successfully created (only 2 tasks):
+
+```bash
+curl http://localhost:8080/tasks?page_id=1&page_size=5 -H "Authorization: Bearer $TOKEN" | jq
+# Result
+[
+  {
+    "id": 8,
+    "name": "task 1",
+    "owner": "tienla",
+    "content": "This is task number 1",
+    "deleted": false,
+    "content_change_at": "0001-01-01T00:00:00Z",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "created_at": "2022-01-03T23:24:21.546377Z"
+  },
+  {
+    "id": 9,
+    "name": "task 2",
+    "owner": "tienla",
+    "content": "This is task number 2",
+    "deleted": false,
+    "content_change_at": "0001-01-01T00:00:00Z",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "created_at": "2022-01-03T23:24:46.500126Z"
+  }
+]
 ```
 
 </details>

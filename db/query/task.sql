@@ -65,9 +65,9 @@ WHERE
 
 -- name: CountTasksCreatedToday :one
 SELECT
-	COUNT(content_change_at)
+	COUNT(created_at)
 FROM
 	tasks
 WHERE
 	OWNER = $1 AND
-	content_change_at :: DATE = NOW() :: DATE;
+	created_at :: DATE = NOW() :: DATE;
