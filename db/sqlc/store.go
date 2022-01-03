@@ -69,7 +69,7 @@ func (store *DBStore) CreateTaskTx(ctx context.Context, arg CreateTaskTxParams) 
 			CreatedAt:        arg.User.CreatedAt,
 		}
 		// check if dailyQuantity+1 > dailyCap?
-		if user.DailyQuantity > user.DailyCap {
+		if user.DailyQuantity >= user.DailyCap {
 			result = CreateTaskTxResult{
 				User: user,
 				Task: Task{},
@@ -84,6 +84,13 @@ func (store *DBStore) CreateTaskTx(ctx context.Context, arg CreateTaskTxParams) 
 				user.DailyQuantity = 0
 			}
 			user.DailyQuantity++
+			_, err = q.UpdateUserDailyQuantity(ctx, UpdateUserDailyQuantityParams{
+				Username:      user.Username,
+				DailyQuantity: user.DailyQuantity,
+			})
+			if err != nil {
+				return err
+			}
 			task, err := q.CreateTask(ctx, CreateTaskParams{
 				Name:    arg.Name,
 				Owner:   arg.User.Username,

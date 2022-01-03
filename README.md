@@ -1,22 +1,78 @@
 # Production-ready Simple Todo Service Demo
 
 ![ci-test](https://github.com/lavantien/togo/actions/workflows/ci.yml/badge.svg?branch=master)
+<a href='https://github.com/jpoles1/gopherbadger' target='_blank'>![gopherbadger-tag-do-not-edit](https://img.shields.io/badge/Go%20Coverage-79%25-brightgreen.svg?longCache=true&style=flat)</a>
 
 ## Requirements
 
-1. [ ] User sign up/login with authentication/authorization via Paseto bearer token
-2. [ ] Task endpoints: create (with transaction, rate limitted), view lists (user bound)
-3. [ ] >90% code coverage
-4. [X] GitHub Actions CI
-5. [ ] Docker Compose bootstrap
+1. [X] Implement core business logic
+2. [X] User sign up/login with authentication/authorization via Paseto bearer token
+3. [ ] Task endpoints: create (with transaction, rate limitted), view lists (user bound)
+4. [ ] Tests cover all critical points
+5. [X] GitHub Actions CI
+6. [ ] Docker Compose bootstrap
 
-### Dissect Bussiness Logics
+### Dissect Business Logics
 
-If each user have their own limit on how many tasks they can create per day, then we can account all of the possibilities in just 3 scenarios:
+#### Task Creation
 
-1. If the quantity is already reach their limit, and the created date of the last task is also today, then they've reached their daily limit, and cannot create any more task
-2. If the created date of the last task is not today, then it's is a new day, and we will reset their counter regardless of their quantity, we'll also record their task
-3. After consider those 2 scenarios, we left with the case that if the quantity is not yet reach their limit, regardless of the created date, we will record their task
+<details>
+	<summary>See details</summary>
+
+```txt
+a user?
+	username
+	dailyCap
+	dailyQuantity
+
+	> createUser
+	> viewUsers
+	> loginUser
+	> updateUserDailyQuantity
+
+	> createTask
+	> listTasks
+	(> editTaskByName)
+	(> deleteTaskByName)
+	> countTasksCreatedToday
+
+a task?
+	id
+	name - unique per owner
+	content
+	owner
+	quantity
+
+problem?
+	a user create some tasks, the number of tasks must be within the user's dailyCap
+
+logic?
+	which user?
+	provide task name
+	provide task content
+	how to check for new day to reset count?
+	check if dailyQuantity+1 > dailyCap?
+			return 403 Fobbiden - "daily limit exceed"
+		else
+			if dailyQuantity != countTasksCreatedToday()?
+				dailyQuantity=0
+			dailyQuantity++
+			updateUserDailyQuantity()
+			return 201 Created
+	fraud protection?
+		tasks are not really deleted, they only marked as deleted but retains creation day, so we can count based on that day
+
+params:
+	username
+	name
+	content
+
+result:
+	user
+	task
+```
+
+</details>
 
 ### Database UML
 
@@ -34,6 +90,7 @@ If each user have their own limit on how many tasks they can create per day, the
 - **Paseto Token**: *Better choice than JWT because of enforcing better cryptographic standards and debloated of useless information*
 - **Docker** + **Docker-Compose**: *Containerization, what else to say ...*
 - **Github Actions CI**: *Make sure we don't push trash code into the codebase*
+- **GopherBadger**: *That nice coverage badge in this README*
 
 ## Philosophy and Architecture
 
@@ -48,6 +105,7 @@ If each user have their own limit on how many tasks they can create per day, the
 - Generate Mocks layer via GoMock: `make mock`
 - Run tests!: `make test`
 - Run the backend: `make server`
+- See code coverage report: `make cover`
 - Check the `Makefile` for more commands!
 
 ## Struggle with Installation? Here is my detailed guide
@@ -131,6 +189,7 @@ go install github.com/kyleconroy/sqlc/cmd/sqlc@latest
 
 ```bash
 go install github.com/golang/mock/mockgen@latest
+go get github.com/golang/mock/mockgen
 ```
 
 - [**Viper**](https://github.com/spf13/viper):
@@ -157,6 +216,12 @@ go get -u github.com/o1egl/paseto
 
 ```bash
 go get -u https://github.com/golang-jwt/jwt
+```
+
+- [**GopherBadger**](https://github.com/jpoles1/gopherbadger):
+
+```bash
+go install github.com/jpoles1/gopherbadger@latest
 ```
 
 - [**CURL**](https://curl.se/download.html) + [**JQ**](https://stedolan.github.io/jq/) + [**Chocolatery**](https://docs.chocolatey.org/en-us/choco/setup) + [**Make**](https://community.chocolatey.org/packages/make):

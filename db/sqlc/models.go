@@ -12,7 +12,9 @@ type Task struct {
 	Name            string    `json:"name"`
 	Owner           string    `json:"owner"`
 	Content         string    `json:"content"`
+	Deleted         bool      `json:"deleted"`
 	ContentChangeAt time.Time `json:"content_change_at"`
+	DeletedAt       time.Time `json:"deleted_at"`
 	CreatedAt       time.Time `json:"created_at"`
 }
 

@@ -9,7 +9,8 @@ SELECT
 FROM
 	tasks
 WHERE
-	id = $1
+	id = $1 AND
+	deleted = FALSE
 LIMIT
 	1;
 
@@ -19,7 +20,9 @@ SELECT
 FROM
 	tasks
 WHERE
-	NAME = $1
+	NAME = $1 AND
+	OWNER = $2 AND
+	deleted = FALSE
 LIMIT
 	1;
 
@@ -29,7 +32,8 @@ SELECT
 FROM
 	tasks
 WHERE
-	OWNER = $3
+	OWNER = $3 AND
+	deleted = FALSE
 ORDER BY
 	id
 LIMIT
@@ -44,14 +48,18 @@ SET
 	CONTENT = $2,
 	content_change_at = NOW()
 WHERE
-	NAME = $1 RETURNING *;
+	NAME = $1 AND
+	OWNER = $3 RETURNING *;
 
 -- name: DeleteTaskByName :exec
-DELETE
-FROM
+UPDATE
 	tasks
+SET
+	deleted = TRUE,
+	deleted_at = NOW()
 WHERE
-	NAME = $1;
+	NAME = $1 AND
+	OWNER = $2;
 
 -- name: CountTasksCreatedToday :one
 SELECT

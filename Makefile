@@ -23,7 +23,7 @@ sqlc:
 	docker run --rm -v $(makeFileDir):/src -w /src kjconroy/sqlc generate
 
 test:
-	go test -v -count=1 -race -cover ./...
+	go test -v -count=1 -race -cover -coverprofile=profile.cov ./...
 
 server:
 	go run main.go
@@ -34,4 +34,7 @@ mock:
 clean:
 	docker rm -f $(docker ps -a -q)
 
-.PHONY: postgres createdb dropdb migrateup migratedown sqlc test server mock
+cover:
+	go tool cover -func profile.cov
+
+.PHONY: postgres createmigrate createdb dropdb migrateup migratedown sqlc test server mock clean cover

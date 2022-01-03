@@ -48,8 +48,11 @@ func (server *Server) setupRouter() {
 	// These endpoints need authorization, implements in their handlers repsectively
 	authRoutes.GET("/users", server.listUsers)
 	authRoutes.GET("/tasks", server.listTasks)
-	authRoutes.PUT("/tasks", server.editTask)
 	authRoutes.POST("/tasks", server.createTask)
+	// authRoutes.PUT("/tasks", server.editTask)
+	// authRoutes.DELETE("/tasks", server.deleteTask)
+	// Admin can set cap per user
+	authRoutes.POST("/admin/setDailyCap", server.setDailyCap)
 	server.router = router
 }
 

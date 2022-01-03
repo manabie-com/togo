@@ -6,11 +6,12 @@ a user?
 	> createUser
 	> viewUsers
 	> loginUser
+	> updateUserDailyQuantity
 
 	> createTask
 	> listTasks
-	> editTaskByName
-	> deleteTaskByName
+	(> editTaskByName)
+	(> deleteTaskByName)
 	> countTasksCreatedToday
 
 a task?
@@ -34,10 +35,13 @@ logic?
 			if dailyQuantity != countTasksCreatedToday()?
 				dailyQuantity=0
 			dailyQuantity++
+			updateUserDailyQuantity()
 			return 201 Created
+	fraud protection?
+		tasks are not really deleted, they only marked as deleted but retains creation day, so we can count based on that day
 
 params:
-	userID
+	username
 	name
 	content
 

@@ -9,15 +9,8 @@ import (
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO
-    users (
-        username,
-        hashed_password,
-        full_name,
-        email,
-        daily_cap,
-        daily_quantity
-    )
-VALUES ($1, $2, $3, $4, $5, $6) RETURNING username, hashed_password, full_name, email, daily_cap, daily_quantity, password_change_at, created_at
+	users (username, hashed_password, full_name, email)
+VALUES ($1, $2, $3, $4) RETURNING username, hashed_password, full_name, email, daily_cap, daily_quantity, password_change_at, created_at
 `
 
 type CreateUserParams struct {
@@ -25,8 +18,6 @@ type CreateUserParams struct {
 	HashedPassword string `json:"hashed_password"`
 	FullName       string `json:"full_name"`
 	Email          string `json:"email"`
-	DailyCap       int64  `json:"daily_cap"`
-	DailyQuantity  int64  `json:"daily_quantity"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
@@ -35,8 +26,6 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		arg.HashedPassword,
 		arg.FullName,
 		arg.Email,
-		arg.DailyCap,
-		arg.DailyQuantity,
 	)
 	var i User
 	err := row.Scan(
@@ -54,17 +43,127 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 
 const getUser = `-- name: GetUser :one
 SELECT
-    username, hashed_password, full_name, email, daily_cap, daily_quantity, password_change_at, created_at
+	username, hashed_password, full_name, email, daily_cap, daily_quantity, password_change_at, created_at
 FROM
-    users
+	users
 WHERE
-    username = $1
+	username = $1
 LIMIT
-    1
+	1
 `
 
 func (q *Queries) GetUser(ctx context.Context, username string) (User, error) {
 	row := q.db.QueryRowContext(ctx, getUser, username)
+	var i User
+	err := row.Scan(
+		&i.Username,
+		&i.HashedPassword,
+		&i.FullName,
+		&i.Email,
+		&i.DailyCap,
+		&i.DailyQuantity,
+		&i.PasswordChangeAt,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const listUsers = `-- name: ListUsers :many
+SELECT
+	username, hashed_password, full_name, email, daily_cap, daily_quantity, password_change_at, created_at
+FROM
+	users
+ORDER BY
+	username
+LIMIT
+	$1
+OFFSET
+	$2
+`
+
+type ListUsersParams struct {
+	Limit  int32 `json:"limit"`
+	Offset int32 `json:"offset"`
+}
+
+func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]User, error) {
+	rows, err := q.db.QueryContext(ctx, listUsers, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []User{}
+	for rows.Next() {
+		var i User
+		if err := rows.Scan(
+			&i.Username,
+			&i.HashedPassword,
+			&i.FullName,
+			&i.Email,
+			&i.DailyCap,
+			&i.DailyQuantity,
+			&i.PasswordChangeAt,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const updateUserDailyCap = `-- name: UpdateUserDailyCap :one
+UPDATE
+	users
+SET
+	daily_cap = $2
+WHERE
+	username = $1 RETURNING username, hashed_password, full_name, email, daily_cap, daily_quantity, password_change_at, created_at
+`
+
+type UpdateUserDailyCapParams struct {
+	Username string `json:"username"`
+	DailyCap int64  `json:"daily_cap"`
+}
+
+func (q *Queries) UpdateUserDailyCap(ctx context.Context, arg UpdateUserDailyCapParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, updateUserDailyCap, arg.Username, arg.DailyCap)
+	var i User
+	err := row.Scan(
+		&i.Username,
+		&i.HashedPassword,
+		&i.FullName,
+		&i.Email,
+		&i.DailyCap,
+		&i.DailyQuantity,
+		&i.PasswordChangeAt,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const updateUserDailyQuantity = `-- name: UpdateUserDailyQuantity :one
+UPDATE
+	users
+SET
+	daily_quantity = $2
+WHERE
+	username = $1 RETURNING username, hashed_password, full_name, email, daily_cap, daily_quantity, password_change_at, created_at
+`
+
+type UpdateUserDailyQuantityParams struct {
+	Username      string `json:"username"`
+	DailyQuantity int64  `json:"daily_quantity"`
+}
+
+func (q *Queries) UpdateUserDailyQuantity(ctx context.Context, arg UpdateUserDailyQuantityParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, updateUserDailyQuantity, arg.Username, arg.DailyQuantity)
 	var i User
 	err := row.Scan(
 		&i.Username,

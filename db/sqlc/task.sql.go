@@ -27,7 +27,7 @@ func (q *Queries) CountTasksCreatedToday(ctx context.Context, owner string) (int
 const createTask = `-- name: CreateTask :one
 INSERT INTO
 	tasks (NAME, OWNER, CONTENT)
-VALUES ($1, $2, $3) RETURNING id, name, owner, content, content_change_at, created_at
+VALUES ($1, $2, $3) RETURNING id, name, owner, content, deleted, content_change_at, deleted_at, created_at
 `
 
 type CreateTaskParams struct {
@@ -44,32 +44,43 @@ func (q *Queries) CreateTask(ctx context.Context, arg CreateTaskParams) (Task, e
 		&i.Name,
 		&i.Owner,
 		&i.Content,
+		&i.Deleted,
 		&i.ContentChangeAt,
+		&i.DeletedAt,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
 const deleteTaskByName = `-- name: DeleteTaskByName :exec
-DELETE
-FROM
+UPDATE
 	tasks
+SET
+	deleted = TRUE,
+	deleted_at = NOW()
 WHERE
-	NAME = $1
+	NAME = $1 AND
+	OWNER = $2
 `
 
-func (q *Queries) DeleteTaskByName(ctx context.Context, name string) error {
-	_, err := q.db.ExecContext(ctx, deleteTaskByName, name)
+type DeleteTaskByNameParams struct {
+	Name  string `json:"name"`
+	Owner string `json:"owner"`
+}
+
+func (q *Queries) DeleteTaskByName(ctx context.Context, arg DeleteTaskByNameParams) error {
+	_, err := q.db.ExecContext(ctx, deleteTaskByName, arg.Name, arg.Owner)
 	return err
 }
 
 const getTask = `-- name: GetTask :one
 SELECT
-	id, name, owner, content, content_change_at, created_at
+	id, name, owner, content, deleted, content_change_at, deleted_at, created_at
 FROM
 	tasks
 WHERE
-	id = $1
+	id = $1 AND
+	deleted = FALSE
 LIMIT
 	1
 `
@@ -82,7 +93,9 @@ func (q *Queries) GetTask(ctx context.Context, id int64) (Task, error) {
 		&i.Name,
 		&i.Owner,
 		&i.Content,
+		&i.Deleted,
 		&i.ContentChangeAt,
+		&i.DeletedAt,
 		&i.CreatedAt,
 	)
 	return i, err
@@ -90,24 +103,33 @@ func (q *Queries) GetTask(ctx context.Context, id int64) (Task, error) {
 
 const getTaskByName = `-- name: GetTaskByName :one
 SELECT
-	id, name, owner, content, content_change_at, created_at
+	id, name, owner, content, deleted, content_change_at, deleted_at, created_at
 FROM
 	tasks
 WHERE
-	NAME = $1
+	NAME = $1 AND
+	OWNER = $2 AND
+	deleted = FALSE
 LIMIT
 	1
 `
 
-func (q *Queries) GetTaskByName(ctx context.Context, name string) (Task, error) {
-	row := q.db.QueryRowContext(ctx, getTaskByName, name)
+type GetTaskByNameParams struct {
+	Name  string `json:"name"`
+	Owner string `json:"owner"`
+}
+
+func (q *Queries) GetTaskByName(ctx context.Context, arg GetTaskByNameParams) (Task, error) {
+	row := q.db.QueryRowContext(ctx, getTaskByName, arg.Name, arg.Owner)
 	var i Task
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
 		&i.Owner,
 		&i.Content,
+		&i.Deleted,
 		&i.ContentChangeAt,
+		&i.DeletedAt,
 		&i.CreatedAt,
 	)
 	return i, err
@@ -115,11 +137,12 @@ func (q *Queries) GetTaskByName(ctx context.Context, name string) (Task, error) 
 
 const listTasksByOwner = `-- name: ListTasksByOwner :many
 SELECT
-	id, name, owner, content, content_change_at, created_at
+	id, name, owner, content, deleted, content_change_at, deleted_at, created_at
 FROM
 	tasks
 WHERE
-	OWNER = $3
+	OWNER = $3 AND
+	deleted = FALSE
 ORDER BY
 	id
 LIMIT
@@ -148,7 +171,9 @@ func (q *Queries) ListTasksByOwner(ctx context.Context, arg ListTasksByOwnerPara
 			&i.Name,
 			&i.Owner,
 			&i.Content,
+			&i.Deleted,
 			&i.ContentChangeAt,
+			&i.DeletedAt,
 			&i.CreatedAt,
 		); err != nil {
 			return nil, err
@@ -171,23 +196,27 @@ SET
 	CONTENT = $2,
 	content_change_at = NOW()
 WHERE
-	NAME = $1 RETURNING id, name, owner, content, content_change_at, created_at
+	NAME = $1 AND
+	OWNER = $3 RETURNING id, name, owner, content, deleted, content_change_at, deleted_at, created_at
 `
 
 type UpdateTaskByNameParams struct {
 	Name    string `json:"name"`
 	Content string `json:"content"`
+	Owner   string `json:"owner"`
 }
 
 func (q *Queries) UpdateTaskByName(ctx context.Context, arg UpdateTaskByNameParams) (Task, error) {
-	row := q.db.QueryRowContext(ctx, updateTaskByName, arg.Name, arg.Content)
+	row := q.db.QueryRowContext(ctx, updateTaskByName, arg.Name, arg.Content, arg.Owner)
 	var i Task
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
 		&i.Owner,
 		&i.Content,
+		&i.Deleted,
 		&i.ContentChangeAt,
+		&i.DeletedAt,
 		&i.CreatedAt,
 	)
 	return i, err
