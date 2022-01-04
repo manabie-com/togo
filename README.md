@@ -409,6 +409,10 @@ curl http://localhost:8080/tasks?page_id=1&page_size=5 -H "Authorization: Bearer
 - Continue with the **API Walkthrough**
 - Shut down the containers: `docker-compose down`
 
+## If I have more time?
+
+- Scale the API to support 1 million concurrent transactions, particularly the create task transaction.
+
 ## Struggle with Installation? Here is my detailed guide
 
 <details>
