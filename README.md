@@ -274,6 +274,96 @@ curl http://localhost:8080/tasks?page_id=1&page_size=5 -H "Authorization: Bearer
 
 </details>
 
+### Project Structure
+
+<details>
+	<summary>See details</summary>
+
+```bash
+.
+├── api
+│   ├── admin.go
+│   ├── admin_test.go
+│   ├── main_test.go
+│   ├── middleware.go
+│   ├── middleware_test.go
+│   ├── server.go
+│   ├── task.go
+│   ├── task_test.go
+│   ├── user.go
+│   ├── user_test.go
+│   └── validator.go
+├── common
+│   └── model
+│       └── user_response.go
+├── db
+│   ├── migration
+│   │   ├── 000001_init_schema.down.sql
+│   │   └── 000001_init_schema.up.sql
+│   ├── mock
+│   │   └── store.go
+│   ├── query
+│   │   ├── task.sql
+│   │   └── user.sql
+│   └── sqlc
+│       ├── db.go
+│       ├── main_test.go
+│       ├── models.go
+│       ├── querier.go
+│       ├── store.go
+│       ├── store_test.go
+│       ├── task.sql.go
+│       ├── user.sql.go
+│       └── user_test.go
+├── .github
+│   └── workflows
+│       └── ci.yml
+├── log
+│   └── createTaskTx_decision_log.txt
+├── resource
+│   ├── readme
+│   │   ├── api.png
+│   │   └── togo.png
+│   ├── debug.pgsql
+│   └── togo.sql
+├── token
+│   ├── maker.go
+│   ├── paseto_maker.go
+│   ├── paseto_maker_test.go
+│   └── payload.go
+├── util
+│   ├── config.go
+│   ├── config_test.go
+│   ├── fullname.go
+│   ├── fullname_test.go
+│   ├── password.go
+│   ├── password_test.go
+│   ├── random.go
+│   └── random_test.go
+├── app.env
+├── coverage_badge.png
+├── coverage.md
+├── coverage.out
+├── docker-compose.yml
+├── Dockerfile
+├── .gitignore
+├── go.mod
+├── go.sum
+├── LICENSE
+├── main.go
+├── Makefile
+├── profile.cov
+├── README.md
+├── sqlc.yaml
+├── start.sh
+├── tree.txt
+└── wait-for.sh
+
+15 directories, 62 files
+```
+
+</details>
+
 ### Database UML
 
 ![Database UML](/resource/readme/togo.png "Database UML")
