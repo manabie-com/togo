@@ -30,3 +30,4 @@ curl --location --request POST 'http://localhost:8080/config/'
 ### 5. What else do you want us to know about however you do not have enough time to complete?
 - I only wrote unittest for some basic usage, the others are defined but skipped with reason 
 - I don't check uniqueness of task per user per day
+- Return concise response for add new task when exceed limit per day
