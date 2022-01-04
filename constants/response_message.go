@@ -19,6 +19,7 @@ const (
 	InvalidDate = "date must be in format yyyy-mm-dd"
 
 	ExceedTaskPerDayLimit = "your todo tasks exceed limit per day"
+	CreateNewTaskFail = "create new task fail"
 )
 
 var (

@@ -4,14 +4,24 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/namnhatdoan/togo/constants"
-	"github.com/namnhatdoan/togo/db"
+	"github.com/namnhatdoan/togo/services"
 	"github.com/namnhatdoan/togo/settings"
 	"github.com/namnhatdoan/togo/utils"
 	"strings"
 	"time"
 )
 
-func CreateTask(c *gin.Context) {
+type ToGoHandlerImpl struct {
+	service services.ToGoServiceI
+}
+
+func InitToGoHandler(service services.ToGoServiceI) *ToGoHandlerImpl {
+	return &ToGoHandlerImpl{
+		service: service,
+	}
+}
+
+func (h *ToGoHandlerImpl) CreateTask(c *gin.Context) {
 	// Binding request
 	req := CreateTaskRequest{}
 	if success := bindingBodyData(c, &req); !success {
@@ -25,7 +35,7 @@ func CreateTask(c *gin.Context) {
 	}
 
 	// Get today tasks
-	if task, err := db.AddNewTask(req.Email, req.Task); err != nil {
+	if task, err := h.service.AddNewTask(req.Email, req.Task); err != nil {
 		serverError(c, err.Error())
 	} else {
 		responseSuccess(c, task)
@@ -48,7 +58,7 @@ func normalizeAndValidateCreateTaskReq(req *CreateTaskRequest) error {
 	return nil
 }
 
-func SetConfig(c *gin.Context) {
+func (h *ToGoHandlerImpl) SetConfig(c *gin.Context) {
 	// Binding request
 	req := SetConfigRequest{}
 	if success := bindingBodyData(c, &req); !success {
@@ -62,7 +72,8 @@ func SetConfig(c *gin.Context) {
 	}
 
 	// Get today tasks
-	if conf, err := db.SetConfig(req.Email, req.Limit, req.date); err != nil {
+
+	if conf, err := h.service.SetUserConfig(req.Email, req.Limit, req.date); err != nil {
 		serverError(c, err.Error())
 	} else {
 		responseSuccess(c, conf)
