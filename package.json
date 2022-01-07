@@ -1,0 +1,25 @@
+{
+  "name": "togo",
+  "version": "1.0.0",
+  "description": "togo test",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tienvnz98/togo.git"
+  },
+  "keywords": [
+    "test"
+  ],
+  "author": "tiennm",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tienvnz98/togo/issues"
+  },
+  "homepage": "https://github.com/tienvnz98/togo#readme",
+  "dependencies": {
+    "koa": "^2.13.4"
+  }
+}
