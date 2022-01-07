@@ -12,7 +12,7 @@ export class TaskService {
     return this.taskRepository.create(createTaskDto);
   }
 
-  async getAll(): Promise<Task[]> {
+  async findAll(): Promise<Task[]> {
     return await this.taskRepository.findAll();
   }
 }

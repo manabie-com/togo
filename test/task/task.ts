@@ -10,7 +10,7 @@ export const mockCreateTaskDto = (): CreateTaskDto => ({
   ...createTaskDto
 });
 
-export const mockVideo = (): Task => ({
+export const mockTask = (): Task => ({
   id: 'anyid',
   title: 'anytitle',
   content: 'anycontent',

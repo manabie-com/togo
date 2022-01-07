@@ -1,9 +1,11 @@
 import { Body, Controller, Get, Headers, Post } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CreateTaskDto } from './dto/create-task-dto';
 import { Task } from './schemas/task.schema';
 import { TaskService } from './task.service';
 
-@Controller('task')
+@Controller('tasks')
+@ApiTags('tasks')
 export class TaskController {
 
   constructor(private taskService: TaskService) { }
@@ -18,7 +20,7 @@ export class TaskController {
   @Get()
   //@UsePipes(ValidationPipe)
   //@UsePipes(new EmployeeTierValidationPipe())
-  gettAll(): Promise<Task[]> {
-    return this.taskService.getAll();
+  findAll(): Promise<Task[]> {
+    return this.taskService.findAll();
   }
 }
