@@ -7,10 +7,9 @@ async function bootstrap() {
   //app.useGlobalPipes(new ValidationPipe());
 
   const options = new DocumentBuilder()
-    .setTitle('Videos')
-    .setDescription('The Videos API')
+    .setTitle('Tasks')
+    .setDescription('The Tasks API')
     .setVersion('1.0')
-    .addTag('videos')
     .build();
   
   const document = SwaggerModule.createDocument(app, options);
