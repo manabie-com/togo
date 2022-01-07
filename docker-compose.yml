@@ -1,0 +1,46 @@
+version: "3"
+
+volumes:
+  db: # mount it internally instead of a folder. it avoids file lock problems
+
+services:
+  # erp_app:
+  #   env_file:
+  #     - .env
+  #   container_name: erp_app
+  #   restart: always
+  #   build: .
+  #   ports:
+  #     - "$PORT:$PORT"
+  #   links:
+  #     - mysql
+  #   networks:
+  #     - caddy
+  #   labels:
+  #     caddy: erp_app
+  #     caddy.reverse_proxy: "{{upstreams 8000}}"
+  #   volumes:
+  #     - ./:/app
+  
+  mysql:
+    platform: linux/x86_64
+    image: mysql
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password # 
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db:/var/lib/mysql
+
+  adminer:
+    image: adminer
+    restart: always
+    links:
+      - mysql
+    ports:
+      - "8081:8080" # to avoid conflicting the 8080 default for many cloud providers
