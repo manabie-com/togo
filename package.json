@@ -27,6 +27,7 @@
     "dotenv": "^10.0.0",
     "errorhandler": "^1.5.1",
     "joi": "^17.4.2",
+    "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.4",
     "koa-bodyparser": "^4.3.0",
     "koa-cors": "^0.0.16",
