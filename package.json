@@ -4,7 +4,8 @@
   "description": "togo test",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./src/app.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,17 @@
   },
   "homepage": "https://github.com/tienvnz98/togo#readme",
   "dependencies": {
-    "koa": "^2.13.4"
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "errorhandler": "^1.5.1",
+    "joi": "^17.4.2",
+    "koa": "^2.13.4",
+    "koa-bodyparser": "^4.3.0",
+    "koa-cors": "^0.0.16",
+    "koa-logger": "^3.2.1",
+    "koa-router": "^10.1.1",
+    "lodash": "^4.17.21",
+    "moment-timezone": "^0.5.33"
   }
 }
