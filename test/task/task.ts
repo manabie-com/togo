@@ -12,6 +12,7 @@ export const mockCreateTaskDto = (): CreateTaskDto => ({
 
 export const mockTask = (): Task => ({
   id: 'anyid',
+  userId: 'anyuserid',
   title: 'anytitle',
   content: 'anycontent',
   dateTime: new Date(),

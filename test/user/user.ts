@@ -11,8 +11,7 @@ export const mockCreateUserDto = (): CreateUserDto => ({
 
 export const mockUser = (): User => ({
   id: 'anyid',
-  name: 'anyname',
-  dailyTaskLimit: 5,
+  ...createUserDto,
   dailyTaskCounter: 0,
   dailyTaskDate: new Date(),
   createdAt: new Date(),

@@ -11,6 +11,10 @@ export class CreateTaskDto {
   @ApiProperty()
   content: string;
 
+  @IsNotEmpty()
+  @ApiProperty()
+  userId: string;
+
   @ApiProperty()
   dateTime: Date;
   // constructor(task: TaskEntity) {

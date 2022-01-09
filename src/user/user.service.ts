@@ -12,6 +12,10 @@ export class UserService {
     return this.userRepository.create(createUserDto);
   }
 
+  async incrementTask(userId: string): Promise<Boolean> {
+    return this.userRepository.incrementTask(userId);
+  }
+
   async findAll(): Promise<User[]> {
     return await this.userRepository.findAll();
   }

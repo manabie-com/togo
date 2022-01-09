@@ -10,6 +10,7 @@ describe('UserService', () => {
   let mockRepository = {
     create: jest.fn(),
     findAll: jest.fn(),
+    incrementTask: jest.fn()
   };
 
   beforeEach(async () => {
@@ -68,6 +69,26 @@ describe('UserService', () => {
       const mockReturn = [mockUser()]
       jest.spyOn(repository, 'findAll').mockResolvedValueOnce(mockReturn);
       const response = await service.findAll();
+      expect(response).toEqual(mockReturn);
+    })
+  })
+
+  describe('incrementTask()', () => {
+    it('should call UserRepository incrementTask', async () => {
+      const findSpy = jest.spyOn(repository, 'incrementTask');
+      await service.incrementTask('anyuserid');
+      expect(findSpy).toHaveBeenCalled();
+    })
+
+    it('should throw if UserRepository incrementTask throws', async () => {
+      jest.spyOn(repository, 'incrementTask').mockRejectedValueOnce(new Error());
+      await expect(service.incrementTask('anyuserid')).rejects.toThrow(new Error())
+    })
+
+    it('should return Users on success', async () => {
+      const mockReturn = true;
+      jest.spyOn(repository, 'incrementTask').mockResolvedValueOnce(mockReturn);
+      const response = await service.incrementTask('anyuserid');
       expect(response).toEqual(mockReturn);
     })
   })
