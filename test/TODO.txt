@@ -1,0 +1,11 @@
+Task: 
+    Create: correct data, wrong data, wrong type, blabla payload
+    Update: Update success, update with wrong data, update with payload blabla, update wih not exists id. update with not owner id.
+    Delete: Delete exists id, delete not exists id. update with not 256 sha id.
+    List: List all. List delted. List todo. List deleted
+
+User: 
+    Create User: Not exists user. Exists user. < minimum string.
+    Login: 
+    Sign JWT:
+    Verify JWT.
