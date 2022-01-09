@@ -35,8 +35,8 @@ describe("[INTEGRATION TEST]: AUTH API.", () => {
     await mockDB.stop();
   });
 
-  describe("[INTEGRATION TEST]: SIGN-UP API.", () => {
-    describe("[POST] - /api/public/auth/sign-up", () => {
+  describe("[INTEGRATION TEST]: AUTH API.", () => {
+    describe("SIGN UP API", () => {
       // Case 01: Correct data
       it("Sign-up with correct username and password. Then login with username and password.", () => {
         supertest(server)
@@ -46,7 +46,6 @@ describe("[INTEGRATION TEST]: AUTH API.", () => {
             password: 'my_passWord'
           })
           .end((err, res) => {
-            if (err) return done(err);
             expect(res.status).equals(200);
             expect(res.body.code).equals(201);
             expect(res?.body?.success).equals(true);
@@ -119,11 +118,11 @@ describe("[INTEGRATION TEST]: AUTH API.", () => {
           .end((err, res) => {
             expect(res.status).equals(200);
             expect(res.body.code).equals(409);
-            expect(res?.body?.message).includes('duplicate key error');
+            expect(res?.body?.message).includes('username already exists!');
           });
       });
 
-      it("Sign-up with blank username", async () => {
+      it("Sign-up with blank username", () => {
         supertest(server)
           .post(`/api/public/auth/sign-up`)
           .send({
@@ -136,7 +135,7 @@ describe("[INTEGRATION TEST]: AUTH API.", () => {
           });
       });
 
-      it("Sign-up with blank password", async () => {
+      it("Sign-up with blank password", () => {
         supertest(server)
           .post(`/api/public/auth/sign-up`)
           .send({
@@ -149,7 +148,7 @@ describe("[INTEGRATION TEST]: AUTH API.", () => {
           });
       });
 
-      it("Sign-up with a number password", async () => {
+      it("Sign-up with a number password", () => {
         supertest(server)
           .post(`/api/public/auth/sign-up`)
           .send({
@@ -163,7 +162,7 @@ describe("[INTEGRATION TEST]: AUTH API.", () => {
           });
       });
 
-      it("Sign-up with a number username", async () => {
+      it("Sign-up with a number username", () => {
         supertest(server)
           .post(`/api/public/auth/sign-up`)
           .send({
@@ -174,6 +173,23 @@ describe("[INTEGRATION TEST]: AUTH API.", () => {
             expect(res.status).equals(200);
             expect(res.body.code).equals(400);
             expect(res?.body?.message).includes('"username" must be a string');
+          });
+      });
+    });
+
+    describe("SIGN IN API", () => {
+      it("Login with username does not exists.", () => {
+        supertest(server)
+          .post(`/api/public/auth/sign-in`)
+          .send({
+            username: 'tiennm_001',
+            password: 'my_password'
+          })
+          .end((err, res) => {
+            expect(res.status).equals(200);
+            expect(res.body.code).equals(404);
+            expect(res?.body?.success).equals(false);
+           //  expect(res?.body?.message).equals('Not found user!');
           });
       });
     });

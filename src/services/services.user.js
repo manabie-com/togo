@@ -68,8 +68,10 @@ async function createUser(user = {}) {
     .catch(err => {
       if (err.message.includes('duplicate')) {
         result.code = 409;
+        result.message = `username already exists!`;
+      } else {
+        result.message = err.message;
       }
-      result.message = err.message;
     });
 
   return result;
@@ -106,7 +108,7 @@ async function login(username, rawPassword) {
   const valid = await comparePassword(rawPassword, user.password);
 
   if (!valid) {
-    result.code = 404;
+    result.code = 400;
     result.message = 'Invalid username or password!';
     return result;
   }

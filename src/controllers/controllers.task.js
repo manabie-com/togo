@@ -2,7 +2,7 @@
 const moment = require('moment-timezone');
 const taskService = require('../services/services.task');
 
-// GET: /api/me/task?date=abcd&deleted=false
+// GET: /api/me/task?from=YYYY-MM-DD&to=YYYY-MM-DD&deleted=false
 module.exports.listTask = async (ctx) => {
   const userId = ctx.user.sub || '';
   const isDelete = ctx.query.deleted === 'true';
