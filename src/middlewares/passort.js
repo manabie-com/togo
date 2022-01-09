@@ -27,7 +27,7 @@ module.exports.passport = () => {
         }
       }
       ctx.user = {
-        sub: verify.sub
+        sub: valid.sub
       }
     }
 

@@ -20,7 +20,10 @@ class DBConn extends Event {
   }
 
   async connect() {
+
     while (!this._conn) {
+      console.log(`[INFO]: ${new Date()} Wait for database connection...`);
+
       await mongoose.connect(this._mongoURI).then(res => {
         this._conn = true;
         console.log(`Connect DB Success!`);

@@ -8,8 +8,13 @@ const userSchema = new mongoose.Schema({
         type: 'string',
         unique: true
     },
-    password: 'string',
-    limit: 'number'
+    password: {
+        type: 'string'
+    },
+    limit: {
+        type: 'number',
+        default: 10
+    }
 }, { timestamps: true });
 
 module.exports.userModel = mongoose.model('USER', userSchema);
