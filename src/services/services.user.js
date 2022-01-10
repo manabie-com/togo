@@ -91,7 +91,7 @@ async function login(username, rawPassword) {
     typeof (rawPassword) !== 'string') {
 
     result.code = 400;
-    result.message = 'Invalid payload!';
+    result.message = `Invalid input username or password!`;
     return result;
   }
 
@@ -127,5 +127,6 @@ async function login(username, rawPassword) {
 module.exports = {
   createUser,
   login,
-  verifyToken
+  verifyToken,
+  hashPassword
 }
