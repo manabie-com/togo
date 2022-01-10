@@ -3,11 +3,10 @@ import { v1 as uuid } from 'uuid'
 
 import { CreateUserDto } from './dto/create-user-dto';
 import { User } from './schemas/user.schema';
-import { mockUsersList } from './user';
 
 @Injectable()
 export class UserRepository {
-  private users = mockUsersList();
+  private users = [];
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const { name,
@@ -28,6 +27,10 @@ export class UserRepository {
 
   async findAll(): Promise<User[]> {
     return this.users;
+  }
+
+  async setUsers(users: User[]): Promise<void> {
+    this.users =users;
   }
 
   async update(userId: string, user: User): Promise<User[]> {
