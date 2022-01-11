@@ -3480,6 +3480,12 @@ log-symbols@^4.1.0:
     chalk "^4.1.0"
     is-unicode-supported "^0.1.0"
 
+"lowdb@github:dankreiger/lowdb#chore/esm-cjs-hybrid-WITH-LIB":
+  version "2.1.0"
+  resolved "https://codeload.github.com/dankreiger/lowdb/tar.gz/55501007f52ca06ef682aa34f4809d320f1a4e48"
+  dependencies:
+    steno "^1.0.0"
+
 lru-cache@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-6.0.0.tgz#6d6fe6570ebd96aaf90fcad1dafa3b2566db3a94"
@@ -4344,6 +4350,11 @@ stack-utils@^2.0.3:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/statuses/-/statuses-1.5.0.tgz#161c7dac177659fd9811f43771fa99381478628c"
   integrity sha1-Fhx9rBd2Wf2YEfQ3cfqZOBR4Yow=
+
+steno@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/steno/-/steno-1.0.0.tgz#475e32c6066ec9760229eaaf1550601764fbecba"
+  integrity sha512-C/KgCvEa1yWnpHmaPjAXrz1yWxh6hs+HvhqqPa71euaQmNi1wr4+WFo57VQxjKKuFl2KqS7gtlrN0oxj2noQLw==
 
 streamsearch@0.1.2:
   version "0.1.2"
