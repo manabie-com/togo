@@ -1,284 +1,318 @@
-
-const mongoose = require("mongoose");
-const supertest = require('supertest');
-const { expect } = require("chai");
+const request = require('supertest');
 const { MongoMemoryServer } = require("mongodb-memory-server");
-const { hashPassword } = require('../../src/services/services.user');
+const dbConn = require('../../src/utils/db');
+const { userModel } = require('../../src/models/model.user');
 const app = require('../../src/app');
-const { userModel } = require("../../src/models/model.user");
-const port = 9001;
-const url = `http://localhost:${port}`;
+const mongoose = require('mongoose');
 
-describe("[INTEGRATION TEST]: AUTH API.", () => {
-  const mockDB = new MongoMemoryServer();
-  let server = app.listen(port);
+describe("[INTEGRATION TEST]: AUTH TEST.", () => {
+  const mongoMock = new MongoMemoryServer();
 
   beforeAll(async () => {
-    await mockDB.start();
-    const mongoUri = mockDB.getUri();
-    await mongoose.connect(mongoUri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoMock.start();
+    await dbConn.init(mongoMock.getUri());
   });
 
   afterEach(async () => {
+    console.log('This action running after each.')
     const collections = mongoose.connection.collections;
-    for (const key in collections) {
-      const collection = collections[key];
+    for (const item in collections) {
+      const collection = collections[item];
       await collection.deleteMany({});
     }
   });
 
   afterAll(async () => {
     await mongoose.connection.dropDatabase();
-    // await mongoose.connection.close();
+    await mongoose.connection.close();
+    await mongoMock.stop();
   });
 
-  describe("SIGN UP API", () => {
-    // Case 01: Correct data
-    it("Sign-up with correct username and password. Then login with username and password.", () => {
-      supertest(server)
-        .post(`/api/public/auth/sign-up`)
+  describe('SIGN-UP API TEST', () => {
+    // =================== CASE 01 ===================
+    it('Sign up with exists user.', async () => {
+      await userModel.create({
+        username: 'tiennm',
+        password: 'hashedPassword'
+      });
+      await request(app.callback())
+        .post('/api/public/auth/sign-up')
         .send({
-          username: 'tiennm_001',
-          password: 'my_passWord'
+          username: 'tiennm',
+          password: '123456789'
+        }).then((res) => {
+          expect(res.status).toBe(200); // HTTP API services always return 200 status code. Broswer not throw error.
+          expect(res.body.code).toBe(409);
+          expect(res.body.message).toBe('username already exists!');
         })
-        .end((err, res) => {
-          expect(res.status).equals(200);
-          expect(res.body.code).equals(201);
-          expect(res?.body?.success).equals(true);
-        });
     });
 
-    // Case 02: Input username and password is numebr
-    it("Sign-up with in username and password is a number.", () => {
-      supertest(server)
-        .post(`/api/public/auth/sign-up`)
+    // =================== CASE 02 ===================
+    it('Input username is number.', async () => {
+      await request(app.callback())
+        .post('/api/public/auth/sign-up')
         .send({
           username: 12345678,
-          password: 12345678
+          password: 'password'
+        }).then((res) => {
+          expect(res.status).toBe(200);
+          expect(res.body.code).toBe(400);
+          expect(res.body.message).toEqual(`"username" must be a string`);
         })
-        .end((err, res) => {
-          expect(res.status).equals(200);
-          expect(res.body.code).equals(400);
-          expect(res?.body?.message).includes('must be a string');
-        });
     });
 
-    // Case 03: Input a correct field
-    it("Sign-up with correct payload.", () => {
-      supertest(server)
-        .post(`/api/public/auth/sign-up`)
+    // =================== CASE 03 ===================
+    it('Input password is number.', async () => {
+      await request(app.callback())
+        .post('/api/public/auth/sign-up')
+        .send({
+          username: 'username',
+          password: 12345678
+        }).then((res) => {
+          expect(res.status).toBe(200);
+          expect(res.body.code).toBe(400);
+          expect(res.body.message).toEqual(`"password" must be a string`);
+        })
+    });
+
+    // =================== CASE 04 ===================
+    it('Both username and password are number.', async () => {
+      await request(app.callback())
+        .post('/api/public/auth/sign-up')
+        .send({
+          username: 1234568,
+          password: 12345678
+        }).then((res) => {
+          expect(res.status).toBe(200);
+          expect(res.body.code).toBe(400);
+          expect(res.body.message).toEqual(`"username" must be a string`);
+        })
+    });
+
+    // =================== CASE 05 ===================
+    it('Input a incorrect field.', async () => {
+      await request(app.callback())
+        .post('/api/public/auth/sign-up')
         .send({
           username: "username",
           password: "password",
-          otherField: 'ACBD'
+          field: 'my_field'
+        }).then((res) => {
+          expect(res.status).toBe(200);
+          expect(res.body.code).toBe(400);
+          expect(res.body.message).toEqual(`"field" is not allowed`);
         })
-        .end((err, res) => {
-          expect(res.status).equals(200);
-          expect(res.body.code).equals(400);
-          expect(res?.body?.message).includes('is not allowed');
-        });
     });
 
-    // Case 4: Input length in-correct
-    it("Sign-up with less than string length.", () => {
-      supertest(server)
-        .post(`/api/public/auth/sign-up`)
+    // =================== CASE 06 ===================
+    it('Sign up with blank username.', async () => {
+      await request(app.callback())
+        .post('/api/public/auth/sign-up')
         .send({
-          username: "u",
-          password: "p"
-        })
-        .end((err, res) => {
-          expect(res.status).equals(200);
-          expect(res.body.code).equals(400);
-          expect(res?.body?.message).includes('length must be at least');
-        });
-    });
-
-    // Case 5: Input username already exists.
-
-    it("Sign-up with exists accout.", async () => {
-      await userModel.create({
-        username: 'exists_account',
-        password: '232y78dyS&*ADY*&D^SA'
-      });
-
-      supertest(server)
-        .post(`/api/public/auth/sign-up`)
-        .send({
-          username: "exists_account",
-          password: "123456"
-        })
-        .end((err, res) => {
-          expect(res.status).equals(200);
-          expect(res.body.code).equals(409);
-          expect(res?.body?.message).includes('username already exists!');
-        });
-    });
-
-    it("Sign-up with blank username", () => {
-      supertest(server)
-        .post(`/api/public/auth/sign-up`)
-        .send({
+          username: '',
           password: '12345678'
+        }).then((res) => {
+          expect(res.status).toBe(200);
+          expect(res.body.code).toBe(400);
+          expect(res.body.message).toEqual(`"username" is not allowed to be empty`);
         })
-        .end((err, res) => {
-          expect(res.status).equals(200);
-          expect(res.body.code).equals(400);
-          expect(res?.body?.message).includes('"username" is required');
-        });
     });
 
-    it("Sign-up with blank password", () => {
-      supertest(server)
-        .post(`/api/public/auth/sign-up`)
-        .send({
-          username: 'username'
-        })
-        .end((err, res) => {
-          expect(res.status).equals(200);
-          expect(res.body.code).equals(400);
-          expect(res?.body?.message).includes('"password" is required');
-        });
-    });
-
-    it("Sign-up with a number password", () => {
-      supertest(server)
-        .post(`/api/public/auth/sign-up`)
+    // =================== CASE 07 ===================
+    it('Sign up with blank password.', async () => {
+      await request(app.callback())
+        .post('/api/public/auth/sign-up')
         .send({
           username: 'username',
-          password: 12345678
+          password: ''
+        }).then((res) => {
+          expect(res.status).toBe(200);
+          expect(res.body.code).toBe(400);
+          expect(res.body.message).toEqual(`"password" is not allowed to be empty`);
         })
-        .end((err, res) => {
-          expect(res.status).equals(200);
-          expect(res.body.code).equals(400);
-          expect(res?.body?.message).includes('"password" must be a string');
-        });
     });
 
-    it("Sign-up with a number username", () => {
-      supertest(server)
-        .post(`/api/public/auth/sign-up`)
+    // =================== CASE 07 ===================
+    it('Sign up with correct username and password.', async () => {
+      await request(app.callback())
+        .post('/api/public/auth/sign-up')
         .send({
-          username: 12345678,
-          password: "12345678"
+          username: 'username',
+          password: 'my_password'
+        }).then((res) => {
+          expect(res.status).toBe(200);
+          expect(res.body.code).toBe(201);
         })
-        .end((err, res) => {
-          expect(res.status).equals(200);
-          expect(res.body.code).equals(400);
-          expect(res?.body?.message).includes('"username" must be a string');
-        });
     });
   });
 
-  describe("SIGN IN API", () => {
-    // Case 01: Login with not exists user.
-    it("Login with username does not exists.", () => {
-      supertest(server)
-        .post(`/api/public/auth/sign-in`)
-        .send({
-          username: 'tiennm_001',
-          password: 'my_password'
-        })
-        .end((err, res) => {
-          expect(res.status).equals(200);
-          expect(res.body.code).equals(404);
-          expect(res?.body?.success).equals(false);
-          expect(res?.body?.message).equals('Not found user!');
-        });
-    });
-
-    // Case 02: Login with invalid input type (input a number)
-    it("Login with username wrong datatype", () => {
-      supertest(server)
-        .post(`/api/public/auth/sign-in`)
-        .send({
-          username: 50000000,
-          password: 'my_password'
-        })
-        .end((err, res) => {
-          expect(res.status).equals(200);
-          expect(res.body.code).equals(400);
-          expect(res?.body?.success).equals(false);
-          expect(res?.body?.message).equals('Invalid input username or password!');
-        });
-    });
-
-    // Case 03: Login with invalid password input type (input a number)
-    it("Login with password wrong datatype", () => {
-      supertest(server)
-        .post(`/api/public/auth/sign-in`)
-        .send({
-          username: 'username',
-          password: 1234567
-        })
-        .end((err, res) => {
-          expect(res.status).equals(200);
-          expect(res.body.code).equals(400);
-          expect(res?.body?.success).equals(false);
-          expect(res?.body?.message).equals('Invalid input username or password!');
-        });
-    });
-
-    // Case 04. Login with a list username and a password.
-    it("Login with a list username and a password.", () => {
-      supertest(server)
-        .post(`/api/public/auth/sign-in`)
-        .send({
-          username: ['username_001', 'username_002', 'username_003'],
-          password: '1234567'
-        })
-        .end((err, res) => {
-          expect(res.status).equals(200);
-          expect(res.body.code).equals(400);
-          expect(res?.body?.success).equals(false);
-          expect(res?.body?.message).equals('Invalid input username or password!');
-        });
-    });
-
-    // Case 05. Login with a username and a list password.
-    it("Login with a list username and a password.", () => {
-      supertest(server)
-        .post(`/api/public/auth/sign-in`)
-        .send({
-          username: 'username',
-          password: ['password_1', 'password_2', 'password_3']
-        })
-        .end((err, res) => {
-          expect(res.status).equals(200);
-          expect(res.body.code).equals(400);
-          expect(res?.body?.success).equals(false);
-          expect(res?.body?.message).equals('Invalid input username or password!');
-        });
-    });
-
-
-    // Case 06. Login with correct username and password.
-    it("Login with correct username and password.", async () => {
+  describe('SIGN-IN API TEST', () => {
+    // =================== CASE 01 ===================
+    it('Sign-up then sign-in', async () => {
       const user = {
         username: 'tiennm',
-        password: await hashPassword('my_password')
+        password: 'my_pass_word'
       }
-      
-      console.log(user);
-      const res = await userModel.create(user);
-      console.log(res);
 
-      supertest(server)
-        .post(`/api/public/auth/sign-in`)
-        .send({
-          username: user.username,
-          password: 'my_password'
-        })
-        .end((err, res) => {
-          expect(res.status).equals(200);
-          expect(res.body.code).equals(200);
-          expect(res?.body?.success).equals(true);
+      await request(app.callback())
+        .post('/api/public/auth/sign-up')
+        .send(user)
+        .then(res => {
+          expect(res.status).toBe(200);
+          expect(res.body.code).toBe(201);
+        });
+      await request(app.callback())
+        .post('/api/public/auth/sign-in')
+        .send(user)
+        .then(res => {
+          expect(res.status).toBe(200);
+          expect(res.body.code).toBe(200);
+          expect(res.body.success).toBe(true);
+          expect(true).toBe(typeof (res.body.data) === 'string');
         });
     });
 
-  });
+    // =================== CASE 02 ===================
+    it('Sign-in with not exists user.', async () => {
+      const user = {
+        username: 'tiennm',
+        password: 'my_pass_word'
+      }
 
-});
+      await request(app.callback())
+        .post('/api/public/auth/sign-in')
+        .send(user)
+        .then(res => {
+          expect(res.status).toBe(200);
+          expect(res.body.code).toBe(404);
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('Not found user!');
+        });
+    });
+
+    // =================== CASE 03 ===================
+    it('Sign-in with exists user and wrong password.', async () => {
+      const user = {
+        username: 'tiennm',
+        password: 'my_pass_word'
+      }
+
+      await request(app.callback())
+        .post('/api/public/auth/sign-up')
+        .send(user)
+        .then(res => {
+          expect(res.status).toBe(200);
+          expect(res.body.code).toBe(201);
+        });
+      await request(app.callback())
+        .post('/api/public/auth/sign-in')
+        .send({
+          username: 'tiennm',
+          password: 'wrong_password'
+        })
+        .then(res => {
+          expect(res.status).toBe(200);
+          expect(res.body.code).toBe(400);
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('Invalid username or password!');
+        });
+    });
+
+    // =================== CASE 04 ===================
+    it('Sign-in with an array username.', async () => {
+      await request(app.callback())
+        .post('/api/public/auth/sign-in')
+        .send({
+          username: ['tiennm', 'tiennm01', 'tiennm02'],
+          password: 'password'
+        })
+        .then(res => {
+          expect(res.status).toBe(200);
+          expect(res.body.code).toBe(400);
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('Invalid input username or password!');
+        });
+    });
+
+    // =================== CASE 05 ===================
+    it('Sign-in with an array password.', async () => {
+      await request(app.callback())
+        .post('/api/public/auth/sign-in')
+        .send({
+          username: 'tiennm',
+          password: ['password01', 'password02']
+        })
+        .then(res => {
+          expect(res.status).toBe(200);
+          expect(res.body.code).toBe(400);
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('Invalid input username or password!');
+        });
+    });
+
+    // =================== CASE 06 ===================
+    it('Sign-in with a number username', async () => {
+      await request(app.callback())
+        .post('/api/public/auth/sign-in')
+        .send({
+          username: 123456,
+          password: 'password'
+        })
+        .then(res => {
+          expect(res.status).toBe(200);
+          expect(res.body.code).toBe(400);
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('Invalid input username or password!');
+        });
+    });
+
+    // =================== CASE 07 ===================
+    it('Sign-in with a number password', async () => {
+      await request(app.callback())
+        .post('/api/public/auth/sign-in')
+        .send({
+          username: 123456,
+          password: 'password'
+        })
+        .then(res => {
+          expect(res.status).toBe(200);
+          expect(res.body.code).toBe(400);
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('Invalid input username or password!');
+        });
+    });
+
+    // =================== CASE 08 ===================
+    it('Sign-in with blank username', async () => {
+      await request(app.callback())
+        .post('/api/public/auth/sign-in')
+        .send({
+          username: '',
+          password: 'password'
+        })
+        .then(res => {
+          expect(res.status).toBe(200);
+          expect(res.body.code).toBe(400);
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('Invalid input username or password!');
+        });
+    });
+
+    // =================== CASE 09 ===================
+    it('Sign-in with blank passoword', async () => {
+      await request(app.callback())
+        .post('/api/public/auth/sign-in')
+        .send({
+          username: 'username',
+          password: ''
+        })
+        .then(res => {
+          expect(res.status).toBe(200);
+          expect(res.body.code).toBe(400);
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('Invalid input username or password!');
+        });
+    });
+  })
+
+})

@@ -1,21 +1,31 @@
-
-const supertest = require('supertest');
-const { expect } = require("chai");
 const app = require('../../src/app');
-const port = 9002;
+const request = require('supertest');
+const { before } = require('lodash');
 
 
-describe("[INTEGRATION TEST]: Home Info", () => {
-  describe("[GET] - /api/public/home", () => {
-    it("Successfull receive message includes 'REST API VERSION'", (done) => {
-      supertest(app.listen(port))
-        .get("/api/public/home")
-        .end((err, res) => {
-          if (err) return done(err);
-          expect(res.status).equals(200);
-          expect(res.body?.data?.message).includes('REST API VERSION');
-          done();
-        });
+describe("[INTEGRATION TEST]: HOME PAGE TEST.", () => {
+    // Test base running
+    beforeAll(async () => {
+        console.log('This action running on before all.')
     });
-  });
-});
+
+    afterEach(async () => {
+        console.log('This action running after each.')
+    });
+
+    afterAll(async () => {
+        console.log('This action running after all.')
+    });
+
+    describe('Group test 01', () => {
+        test('Homepage info private', async () => {
+            const response = await request(app.callback()).get('/');
+            expect(response.status).toBe(401);
+        });
+
+        test('Homepage info public', async () => {
+            const response = await request(app.callback()).get('/api/public/home');
+            expect(response.status).toBe(200);
+        });
+    })
+})

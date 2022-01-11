@@ -12,19 +12,19 @@ class DBConn extends Event {
     this._retryTime = 1000;
   }
 
-  async init() {
+  async init(uri) {
     // Already initialized
     if (this._initialized === true) return;
     this._initialized = true;
-    await this.connect();
+    await this.connect(uri);
   }
 
-  async connect() {
+  async connect(uri) {
 
     while (!this._conn) {
       console.log(`[INFO]: ${new Date()} Wait for database connection...`);
 
-      await mongoose.connect(this._mongoURI).then(res => {
+      await mongoose.connect(uri || this._mongoURI).then(res => {
         this._conn = true;
         console.log(`Connect DB Success!`);
       }).catch(err => {

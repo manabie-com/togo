@@ -23,12 +23,9 @@
   "dependencies": {
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
-    "chai": "^4.3.4",
-    "chai-http": "^4.3.0",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
-    "errorhandler": "^1.5.1",
-    "jest": "^27.4.7",
+    "jest": "27.4.3",
     "joi": "^17.4.2",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.4",
