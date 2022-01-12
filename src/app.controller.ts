@@ -6,7 +6,10 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Post(':userId/task')
-  async takeTask(@Body() tasks: any): Promise<any> {
-    return this.appService.takeTask(tasks)
+  async takeTask(
+    @Param('userId') userId,
+    @Body() input: any
+  ): Promise<any> {
+    return this.appService.takeTask(userId, input)
   }
 }

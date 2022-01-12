@@ -16,8 +16,7 @@ export class AppService {
     this.userDB = new Low(userAdapter)
   }
 
-  async takeTask(task = ''): Promise<any> {
-    const userId = 2
+  async takeTask(userId = 2, input = ''): Promise<any> {
     const tasksCount = await this.getUserTasksCount(userId)
     const user = await this.getUser(userId)
     return { tasksCount, user }
@@ -33,7 +32,9 @@ export class AppService {
   async getUser(userId = 0) {
     await this.userDB.read()
     this.userDB.chain = chain(this.userDB.data)
-    const user = this.userDB.chain.find({ id: userId }).value()
+    const user = this.userDB.chain
+      .find({ id: userId })
+      .value()
     return user
   }
 }
