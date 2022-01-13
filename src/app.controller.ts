@@ -1,7 +1,7 @@
 import { Body, Controller, Param, ParseIntPipe, Post } from '@nestjs/common'
 import { AppService } from './app.service'
 
-import { TakeTaskDTO } from 'src/dto/dto'
+import { TakeTaskDTO } from './dto/dto'
 
 @Controller('user')
 export class AppController {
