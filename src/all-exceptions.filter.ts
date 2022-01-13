@@ -12,8 +12,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       : HttpStatus.INTERNAL_SERVER_ERROR
 
     const exceptionResponse = exception.response || {}
-    Logger.error(exception)
-
+    Logger.error(exception.stack)
     response
       .status(status)
       .json({

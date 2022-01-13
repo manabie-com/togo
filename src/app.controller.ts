@@ -1,5 +1,7 @@
-import { Body, Controller, Param, Post } from '@nestjs/common'
+import { Body, Controller, Param, ParseIntPipe, Post } from '@nestjs/common'
 import { AppService } from './app.service'
+
+import { TakeTaskDTO } from 'src/dto/dto'
 
 @Controller('user')
 export class AppController {
@@ -7,9 +9,9 @@ export class AppController {
 
   @Post(':userId/task')
   async takeTask(
-    @Param('userId') userId,
-    @Body() input: any
+    @Param('userId', ParseIntPipe) userId: number,
+    @Body() input: TakeTaskDTO,
   ): Promise<any> {
-    return this.appService.takeTask(userId, input)
+    return await this.appService.takeTask(userId, input)
   }
 }
