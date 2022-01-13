@@ -1,0 +1,126 @@
+service: togo
+frameworkVersion: '2'
+
+
+plugins:
+  - serverless-iam-roles-per-function
+
+
+custom:
+  defaultStage: dev
+  currentStage: ${opt:stage, self:custom.defaultStage}
+  projectEnvironment:
+    PORT:
+      dev: 6379
+      prod: 6379
+    REDIS_HOST:
+      dev: 
+      prod: 
+    AUTH:
+      dev: 
+      prod:
+    securityGroupIds:
+      dev: 
+      prod:
+    subnetId1:
+      dev: 
+      prod:
+    subnetId2:
+      dev: 
+      prod:
+      
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: eu-west-1
+  lambdaHashingVersion: 20201221
+  vpc:
+      securityGroupIds:
+        - ${self:custom.projectEnvironment.securityGroupIds.${self:custom.currentStage}}
+      subnetIds:
+        - ${self:custom.projectEnvironment.subnetId1.${self:custom.currentStage}}
+        - ${self:custom.projectEnvironment.subnetId2.${self:custom.currentStage}}
+
+
+functions:
+  create-user:
+    handler: user.createUser
+    events:
+      - http:
+          path: /create-user
+          method: POST
+    environment:
+      PORT: ${self:custom.projectEnvironment.PORT.${self:custom.currentStage}}
+      REDIS_HOST: ${self:custom.projectEnvironment.REDIS_HOST.${self:custom.currentStage}}
+      AUTH: ${self:custom.projectEnvironment.AUTH.${self:custom.currentStage}}
+    iamRoleStatements:
+      - Effect: 'Allow'
+        Action:
+          - 'elasticache:*'
+        Resource: '*'
+  
+  get-user:
+    handler: user.getUser
+    events:
+      - http:
+          path: /get-user
+          method: POST
+    environment:
+      PORT: ${self:custom.projectEnvironment.PORT.${self:custom.currentStage}}
+      REDIS_HOST: ${self:custom.projectEnvironment.REDIS_HOST.${self:custom.currentStage}}
+      AUTH: ${self:custom.projectEnvironment.AUTH.${self:custom.currentStage}}
+    iamRoleStatements:
+      - Effect: 'Allow'
+        Action:
+          - 'elasticache:*'
+        Resource: '*'
+  
+  create-task:
+    handler: task.createTask
+    events:
+      - http:
+          path: /create-task
+          method: POST
+    environment:
+      PORT: ${self:custom.projectEnvironment.PORT.${self:custom.currentStage}}
+      REDIS_HOST: ${self:custom.projectEnvironment.REDIS_HOST.${self:custom.currentStage}}
+      AUTH: ${self:custom.projectEnvironment.AUTH.${self:custom.currentStage}}
+    iamRoleStatements:
+      - Effect: 'Allow'
+        Action:
+          - 'elasticache:*'
+        Resource: '*'
+  
+  delete-task:
+    handler: task.deleteTask
+    events:
+      - http:
+          path: /delete-task
+          method: POST
+    environment:
+      PORT: ${self:custom.projectEnvironment.PORT.${self:custom.currentStage}}
+      REDIS_HOST: ${self:custom.projectEnvironment.REDIS_HOST.${self:custom.currentStage}}
+      AUTH: ${self:custom.projectEnvironment.AUTH.${self:custom.currentStage}}
+    iamRoleStatements:
+      - Effect: 'Allow'
+        Action:
+          - 'elasticache:*'
+        Resource: '*'
+  
+
+  reset-limit:
+    handler: user.resetLimit
+    events:
+      - http:
+          path: /reset-limit
+          method: GET
+    environment:
+      PORT: ${self:custom.projectEnvironment.PORT.${self:custom.currentStage}}
+      REDIS_HOST: ${self:custom.projectEnvironment.REDIS_HOST.${self:custom.currentStage}}
+      AUTH: ${self:custom.projectEnvironment.AUTH.${self:custom.currentStage}}
+    iamRoleStatements:
+      - Effect: 'Allow'
+        Action:
+          - 'elasticache:*'
+        Resource: '*'
