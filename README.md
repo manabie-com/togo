@@ -171,9 +171,9 @@ I was gonna fire some classic ExpressJS and some DB, and then I remember serverl
 Serverless reduces the complicated of any backend, plus reduce the complication of integration test. It also minimize coupling, which is nice when code base grow and any changes can break others.
 
 There are a few downside of serverless, some which related to this particular tasks:
-    - To test the function you need to mock events for the aws lambda.
-    - Require aws to run true locally. Can always mock event as an input object through.
-    - Require some network knowledge.
+    -   To test the function you need to mock events for the aws lambda.
+    -   Require aws to run true locally. Can always mock event as an input object through.
+    -   Require some network knowledge.
     
 However, I think serverless is much better than traditional method in this case.
 
