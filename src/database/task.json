@@ -24,8 +24,8 @@
     "id": 4,
     "name": "task04",
     "isFinished": 0,
-    "assignedUserId": 1,
-    "assignedDate": 1642073970935
+    "assignedUserId": 0,
+    "assignedDate": 0
   },
   {
     "id": 5,

@@ -1,12 +1,14 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
-import { join } from 'path'
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common'
 import { Low, JSONFile } from 'lowdb'
 import { chain } from 'lodash'
 import { TakeTaskDTO } from './dto/dto'
 import { TTask, TUser } from './typing'
 
-const TASK_FILE_PATH = join('src/database/task.json')
-const USER_FILE_PATH = join('src/database/user.json')
+import {
+  TASK_FILE_PATH,
+  USER_FILE_PATH,
+} from './utils/constant'
+
 @Injectable()
 export class AppService {
   private readonly taskDB
@@ -42,7 +44,7 @@ export class AppService {
     }
 
     if (userTasksCount >= user.limitTask) {
-      throw new BadRequestException('Over limit task per day')
+      throw new ForbiddenException('Over limit task per day')
     }
 
   }
@@ -97,8 +99,7 @@ export class AppService {
       acc = task
       return acc
     }, {})
-    this.taskDB.write()
-
+    await this.taskDB.write()
     return assignTask
   }
 }
