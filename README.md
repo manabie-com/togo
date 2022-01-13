@@ -2,7 +2,7 @@
 - How to run your code locally?
 - A sample “curl” command to call your API
 ```
-curl -d '{"key1":"value1", "key2":"value2"}' -H "Content-Type: application/json" -X POST localhost:3000/user/:userId/task
+curl -d "{\"taskId\": 1}" -H "Content-Type: application/json" -X POST localhost:3000/user/2/task
 ```
 
 - How to run your unit tests locally?
