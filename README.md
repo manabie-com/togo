@@ -1,6 +1,16 @@
-### Start-End date: 12/01/2022 01:45:12 - 14/01/2022 01:21:20
+### Start-End date: 12/01/2022 01:45:12 - 14/01/2022 01:34:20
 ## How to run your code locally?
+**Prerequisite**
+  - Installed yarn
+https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable
+
+
+**Run code locally**
+
+Go to code folder and run commands
+
 ```
+yarn
 yarn start
 ```
 ## A sample “curl” command to call your API
