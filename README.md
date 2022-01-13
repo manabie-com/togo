@@ -6,11 +6,14 @@ Node, Redis, AWS, Serverless
 ## PATHS
 
 endpoints:
-  POST - https://{URL}/dev/create-user
-  POST - https://{URL}/dev/get-user
-  POST - https://{URL}/dev/create-task
-  POST - https://{URL}/dev/delete-task
-  GET - https://{URL}/dev/reset-limit
+  - POST - https://{URL}/dev/create-user
+  - POST - https://{URL}/dev/get-user
+  - POST - https://{URL}/dev/create-task
+  - POST - https://{URL}/dev/delete-task
+  - GET - https://{URL}/dev/reset-limit
+
+
+  
 
 ## AUTH
 Header
