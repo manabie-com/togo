@@ -18,6 +18,13 @@ namespace akaru.dailytask.api.Controllers
         {
 			return Json(_db.Users.ToList());
         }
+		[HttpPost]
+		public IActionResult Add([FromBody]User user)
+        {
+			var addedUser = _db.Add(user).Entity;
+            _db.SaveChanges();
+            return Json(addedUser);
+        }
 
         public IActionResult Generate(int num)
         {
