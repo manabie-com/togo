@@ -1,11 +1,12 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace akaru.dailytask.api.Models
 {
-    [BindProperties]
+	[BindProperties]
 	public class TodoItem
 	{
 		public int TodoItemId { get; set; }
@@ -14,8 +15,6 @@ namespace akaru.dailytask.api.Models
 		public DateTime TimeStamp { get; set; }
 		[Required]
 		public int UserId { get; set; }
-		[JsonIgnore] // Ignore the User, this causes self referencing loops
-		public User User { get; set; }	
 	}
 }
 

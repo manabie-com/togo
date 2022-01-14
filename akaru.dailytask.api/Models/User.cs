@@ -13,8 +13,6 @@ namespace akaru.dailytask.api.Models
 		public string Name { get; set; }
 		[Required]
 		public int DailyTaskLimit { get; set; }
-		[JsonIgnore] // Ignore the User, this causes self referencing loops
-		public List<TodoItem> TodoItems { get; set; } = new List<TodoItem>();
 	}
 }
 

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using akaru.dailytask.api.Database;
 
@@ -10,9 +11,10 @@ using akaru.dailytask.api.Database;
 namespace akaru.dailytask.api.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20220114151127_UpdateTable")]
+    partial class UpdateTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.1");
@@ -35,6 +37,8 @@ namespace akaru.dailytask.api.Migrations
 
                     b.HasKey("TodoItemId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("TodoItems");
                 });
 
@@ -54,6 +58,22 @@ namespace akaru.dailytask.api.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("akaru.dailytask.api.Models.TodoItem", b =>
+                {
+                    b.HasOne("akaru.dailytask.api.Models.User", "User")
+                        .WithMany("TodoItems")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("akaru.dailytask.api.Models.User", b =>
+                {
+                    b.Navigation("TodoItems");
                 });
 #pragma warning restore 612, 618
         }

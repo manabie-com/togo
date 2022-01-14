@@ -18,14 +18,21 @@ namespace akaru.dailytask.api.Controllers
         {
 			return Json(_db.Users.ToList());
         }
+
+		[Route("User/{id}")]
+		[Route("User/Index/{id}")]
+		public IActionResult Index(int id)
+		{
+			return Json(_db.Users.Find(id));
+		}
 		[HttpPost]
 		public IActionResult Add([FromBody]User user)
         {
 			var addedUser = _db.Add(user).Entity;
             _db.SaveChanges();
-            return Json(addedUser);
+			return Json(user);
         }
-
+		[Route("User/Generate/{num}")]
         public IActionResult Generate(int num)
         {
 			var users = Enumerable.Range(0, num).Select(x => GenerateRandomUser());
