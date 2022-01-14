@@ -1,7 +1,12 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using akaru.dailytask.api.Database;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Inject Database in the Services for dependency injection
+builder.Services.AddDbContext<DatabaseContext>();
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -18,7 +23,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=User}/{action=Index}/{id?}");
 
 app.Run();
 
