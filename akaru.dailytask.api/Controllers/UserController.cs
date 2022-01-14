@@ -46,7 +46,7 @@ namespace akaru.dailytask.api.Controllers
         {
 			_db.Users.RemoveRange(_db.Users);
 			_db.SaveChanges();
-			return Redirect("/User");
+			return Json(_db.Users.ToList());
         }
 
         private User GenerateRandomUser()
