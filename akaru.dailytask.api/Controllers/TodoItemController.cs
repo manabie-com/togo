@@ -48,13 +48,6 @@ namespace akaru.dailytask.api.Controllers
 			_db.SaveChanges();
 			return Redirect("/TodoItem"); 
         }
-
-		private JsonResult CreateMessage(bool status, string description)
-        {
-			var message = new Message { Success = status, Description = description };
-			var json = Json(message);
-			return json;
-        }
 	}
 }
 
