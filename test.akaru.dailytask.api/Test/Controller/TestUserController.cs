@@ -36,7 +36,7 @@ namespace test.akaru.dailytask.api.Test.Controller
 		[TestMethod]
 		public void ShouldReturnEmptyUsers()
         {
-			var users = GetUserFromResult(sut.Index());
+			var users = GetUsersFromResult(sut.Index());
 			Assert.AreEqual(0, users.Count());
         }
 
@@ -44,15 +44,15 @@ namespace test.akaru.dailytask.api.Test.Controller
 		public void ShouldGenerateUsers()
         {
 			var count = 5;
-			var users = GetUserFromResult(sut.Generate(count));
+			var users = GetUsersFromResult(sut.Generate(count));
 			Assert.AreEqual(count, users.Count());
 
 			for (int x = 0; x < 10; x++)
             {
-				users = GetUserFromResult(sut.Generate(count));
+				users = GetUsersFromResult(sut.Generate(count));
 			}
 
-			users = GetUserFromResult(sut.Generate(count));
+			users = GetUsersFromResult(sut.Generate(count));
 			Assert.AreEqual(60, users.Count());
 		}
 
@@ -60,10 +60,10 @@ namespace test.akaru.dailytask.api.Test.Controller
 		public void ShouldClearUsers()
         {
 			var count = 5;
-			var users = GetUserFromResult(sut.Generate(count));
+			var users = GetUsersFromResult(sut.Generate(count));
 			Assert.AreEqual(count, users.Count());
 
-			users = GetUserFromResult(sut.Clear());
+			users = GetUsersFromResult(sut.Clear());
 			Assert.AreEqual(0, users.Count());
 		}
 
@@ -75,20 +75,16 @@ namespace test.akaru.dailytask.api.Test.Controller
 
 			sut.Add(user);
 			sut.Generate(10);
-			var users = GetUserFromResult(sut.Index());
+			var users = GetUsersFromResult(sut.Index());
 			Assert.AreEqual(11, users.Count());
         }
 
-		private IEnumerable<User> GetUserFromResult(IActionResult result)
+		private IEnumerable<User> GetUsersFromResult(IActionResult result)
         {
 			var value = ((JsonResult)result).Value;
 			if (value is IEnumerable<User>)
             {
 				return (IEnumerable<User>)value;
-            }
-			if (value is User)
-            {
-				return new List<User> { (User)value };
             }
 			return new List<User>();
 		}
