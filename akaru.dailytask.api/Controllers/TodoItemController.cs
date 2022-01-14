@@ -29,13 +29,13 @@ namespace akaru.dailytask.api.Controllers
 				return NotFound($"UserId : {userId} not found");
             }
 
-			var currentTaskToday = _db.TodoItems.Where(t => t.UserId == user.UserId && t.TimeStamp == DateTime.Today).ToList().Count();
+			var currentTasksToday = _db.TodoItems.Count(i => i.UserId == userId && i.TimeStamp == DateTime.Today);
 
-			if (currentTaskToday >= user.DailyTaskLimit)
+			if (currentTasksToday >= user.DailyTaskLimit)
 			{
 				return BadRequest($"UserId : {user.UserId} has reached Daily Task Limit of {user.DailyTaskLimit}");
 			}
-			todoItem.TimeStamp = DateTime.Now;
+			todoItem.TimeStamp = DateTime.Today;
 			_db.TodoItems.Add(todoItem);
 			_db.SaveChanges();
 

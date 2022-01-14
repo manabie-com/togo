@@ -32,6 +32,7 @@ namespace akaru.dailytask.api.Controllers
             _db.SaveChanges();
 			return Json(user);
         }
+
 		[Route("User/Generate/{num}")]
         public IActionResult Generate(int num)
         {
@@ -40,6 +41,7 @@ namespace akaru.dailytask.api.Controllers
 			_db.SaveChanges();
 			return Json(_db.Users.ToList());
         }
+
 		public IActionResult Clear()
         {
 			_db.Users.RemoveRange(_db.Users);
