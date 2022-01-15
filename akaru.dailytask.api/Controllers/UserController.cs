@@ -30,7 +30,7 @@ namespace akaru.dailytask.api.Controllers
         {
 			var addedUser = _db.Add(user).Entity;
             _db.SaveChanges();
-			return Json(user);
+			return Json(addedUser);
         }
 
 		[Route("User/Generate/{num}")]

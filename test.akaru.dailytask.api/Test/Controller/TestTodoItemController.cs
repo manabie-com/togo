@@ -23,6 +23,9 @@ namespace test.akaru.dailytask.api.Test.Controller
 			dummyUser = new User { DailyTaskLimit = 5, Name = "Test" };
 		}
 
+		// Created and Destroy the Database on each Test
+		// This is to ensure test cases are not related and do not depend
+		// on the previous test case in order to pass
 		[TestInitialize]
 		public void CreateDatabase()
 		{
@@ -38,14 +41,14 @@ namespace test.akaru.dailytask.api.Test.Controller
 		}
 
 		[TestMethod]
-		public void ShouldReturnEmptyItems()
+		public void ShouldReturnEmptyItemWhenNothingIsAdded()
 		{
 			var items = GetItemsFromResult(sut.Index());
 			Assert.AreEqual(0, items.Count());
 		}
 
 		[TestMethod]
-		public void ShouldReturnNotFoundError()
+		public void ShouldReturnNotFoundErrorWhenUserDoesNotExist()
         {
 			var item = new TodoItem { UserId = 234 };
 			Assert.IsTrue(sut.Add(item) is NotFoundObjectResult);
@@ -87,6 +90,7 @@ namespace test.akaru.dailytask.api.Test.Controller
 
 		}
 
+		// This is used the parse the JsonResult object we got from the controller
 		private IEnumerable<TodoItem> GetItemsFromResult(IActionResult result)
 		{
 			var value = ((JsonResult)result).Value;

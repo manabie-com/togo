@@ -5,6 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Inject Database in the Services for dependency injection
 builder.Services.AddDbContext<DatabaseContext>();
 
+// Get the Database and create it if not existing
 var context = builder.Services.BuildServiceProvider().GetService<DatabaseContext>();
 context.Database.EnsureCreated();
 

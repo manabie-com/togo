@@ -21,6 +21,9 @@ namespace test.akaru.dailytask.api.Test.Controller
 			sut = new UserController(db);
 		}
 
+		// Created and Destroy the Database on each Test
+		// This is to ensure test cases are not related and do not depend
+		// on the previous test case in order to pass
 		[TestInitialize]
 		public void CreateDatabase()
         {
@@ -34,14 +37,14 @@ namespace test.akaru.dailytask.api.Test.Controller
         }
 
 		[TestMethod]
-		public void ShouldReturnEmptyUsers()
+		public void ShouldReturnEmptyUsersWhenNothingIsAdded()
         {
 			var users = GetUsersFromResult(sut.Index());
 			Assert.AreEqual(0, users.Count());
         }
 
 		[TestMethod]
-		public void ShouldGenerateUsers()
+		public void ShouldGenerateCorrectNumOfUsers()
         {
 			var count = 5;
 			var users = GetUsersFromResult(sut.Generate(count));
@@ -79,6 +82,7 @@ namespace test.akaru.dailytask.api.Test.Controller
 			Assert.AreEqual(11, users.Count());
         }
 
+		// This is used the parse the JsonResult object we got from the controller
 		private IEnumerable<User> GetUsersFromResult(IActionResult result)
         {
 			var value = ((JsonResult)result).Value;

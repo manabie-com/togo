@@ -22,6 +22,7 @@ namespace akaru.dailytask.api.Controllers
 		[HttpPost]
 		public IActionResult Add([FromBody]TodoItem todoItem)
         {
+			// Check first if the User exist
 			var userId = todoItem.UserId;
 			var user = _db.Users.Find(userId);
 			if (user is null)
@@ -29,12 +30,16 @@ namespace akaru.dailytask.api.Controllers
 				return NotFound($"UserId : {userId} not found");
             }
 
+			// Get the number of Tasks of User for Today
 			var currentTasksToday = _db.TodoItems.Count(i => i.UserId == userId && i.TimeStamp == DateTime.Today);
 
+			// Send an error when the limit was reached
 			if (currentTasksToday >= user.DailyTaskLimit)
 			{
 				return BadRequest($"UserId : {user.UserId} has reached Daily Task Limit of {user.DailyTaskLimit}");
 			}
+
+			// Otherwise add the Task TodoItem
 			todoItem.TimeStamp = DateTime.Today;
 			_db.TodoItems.Add(todoItem);
 			_db.SaveChanges();
