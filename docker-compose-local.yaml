@@ -1,0 +1,18 @@
+version: '3.7'
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports: 
+      - "3000:3000"
+    command: /togo/tools/bringup.sh
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - HOST=server
+    links:
+      - "server:server"
+    command: /togo/tools/test.py
