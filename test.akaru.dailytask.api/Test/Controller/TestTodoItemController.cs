@@ -74,13 +74,16 @@ namespace test.akaru.dailytask.api.Test.Controller
 		[TestMethod]
 		public void ShouldNotAddWhenDailyLimitReached()
         {
-			var item = new TodoItem { UserId = 1, Description = "Test Description" };
-			for (int x = 0; x < dummyUser.DailyTaskLimit; x++)
+			var user = db.Users.First();
+			for (int x = 0; x < user.DailyTaskLimit; x++)
             {
+				var item = new TodoItem { UserId = user.UserId, Description = "Test Description" };
 				sut.Add(item);
             }
+			var newItem = new TodoItem { UserId = user.UserId, Description = "Test Description" };
+
 			Assert.AreEqual(dummyUser.DailyTaskLimit, GetItemsFromResult(sut.Index()).Count());
-			Assert.IsTrue(sut.Add(item) is BadRequestObjectResult);
+			Assert.IsTrue(sut.Add(newItem) is BadRequestObjectResult);
 
 		}
 

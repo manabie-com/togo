@@ -7,10 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.2.7" />
     <PackageReference Include="MSTest.TestFramework" Version="2.2.7" />
     <PackageReference Include="coverlet.collector" Version="3.1.0" />
+    <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Handles" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,6 +23,8 @@
     <None Remove="Test\Models\" />
     <None Remove="Test\Database\" />
     <None Remove="Test\Controller\" />
+    <None Remove="System.IO.FileSystem.Primitives" />
+    <None Remove="System.Runtime.Handles" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Test\" />
