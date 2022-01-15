@@ -1,0 +1,69 @@
+How to run the application
+    1. Go the Publish/src/{platform}/ folder. I built an executable for linux-x64, osx-x64, osx.12-arm64 and win-x64.
+       Feel free to contact me if you need an executable for a specific platform.
+    2. Run the application by calling "./akaru.dailytask.api" executable.
+    3. The Application should run on http://localhost:5000/
+
+How to run the tests
+    1. To run the test, go the Publish/test/{platform}/ folder.
+    2. Run this command "dotnet vstest test.akaru.dailytask.api.dll".
+       I publish the as a self contained application which should include the .NET runtime and libraries
+
+How to build the application
+    1. You need the .NET runtime in order to build the application.
+       I will the specification of the machine where developed the application.
+    2. If you have Visual Studio installed, you can try to open the solution and just click the build button
+       You can select which project to build(src or test) and run them.
+    3. If you want to build the application from the command line, go the directory of the project.
+        Go to akaru.dailytask.api/akaru.dailytask.api to build the application
+        Go to akaru.dailytask.api/test.akaru.dailytask.api build the test.
+    4. Run the command "dotnet build" to compile the project.
+    5. Run the command "dotnet run" to run the application.
+
+I have added some endpoints for the application
+    Get All Users : curl --location --request GET 'http://localhost:5220/user'
+    Get User by ID : curl --location --request GET 'http://localhost:5220/user/{id}'
+    Generate random user :  curl --location --request GET 'http://localhost:5220/user/generate/{num}'
+    To Add a new Todo Item Task : curl --location --request POST 'http://localhost:5220/todoitem/add' --header 'Content-Type: application/json' --data-raw '{"description" : "File a new bug", "userId" : 1}'
+    You can remove the database.db file to clear the database
+
+I also uploaded Akaru.DailyTask.postman_collection.json which can be imported to postman which contains the request I created for testing
+
+Development machine specification:
+Visual Studio Community 2022 for Mac Preview
+Version 17.0 Preview (17.0 build 5186)
+Installation UUID: 758a8dff-2c0a-40b6-be05-e0467cde05c5
+	GTK+ 2.24.23
+
+Mono Framework MDK
+Runtime:
+	Mono 6.12.0 (2020-02/5ce143a1a88) (64-bit)
+	Package version: 612000158
+
+Roslyn (Language Service)
+4.1.0-1.21511.14+c09d760509f00afadf0fa9b6ee7d0c53b70943ca
+
+NuGet
+Version: 6.0.0.262
+
+.NET SDK (Arm64)
+SDK: /usr/local/share/dotnet/sdk/6.0.101/Sdks
+SDK Version: 6.0.101
+MSBuild SDKs: /Applications/Visual Studio (Preview).app/Contents/MonoBundle/MSBuild/Current/bin/Sdks
+
+.NET Core Runtime
+Runtime: /usr/local/share/dotnet/dotnet
+Runtime Version: 6.0.1
+
+Build Information
+Release ID: 1700005186
+Git revision: af62eedc3c792b28d8a6764132fe9b25922712af
+Build date: 2021-12-14 07:51:33-05
+Build branch: release-17.0
+
+Operating System
+Mac OS X 12.1.0
+Darwin 21.2.0 Darwin Kernel Version 21.2.0
+    Sun Nov 28 20:29:10 PST 2021
+    root:xnu-8019.61.5~1/RELEASE_ARM64_T8101 x86_64
+

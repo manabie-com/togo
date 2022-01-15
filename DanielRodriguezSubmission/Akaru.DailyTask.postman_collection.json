@@ -1,0 +1,155 @@
+{
+	"info": {
+		"_postman_id": "232b918a-755e-45cd-ab1b-100cfb7e39bf",
+		"name": "Akaru.DailyTask",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get User",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": null
+			},
+			"response": []
+		},
+		{
+			"name": "Get Users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5220/user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5220",
+					"path": [
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Test Name\",\n    \"dailyTaskLimit\": 6\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5220/user/add",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5220",
+					"path": [
+						"user",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Generate Users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5220/user/generate/10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5220",
+					"path": [
+						"user",
+						"generate",
+						"10"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Clear Users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5220/user/clear",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5220",
+					"path": [
+						"user",
+						"clear"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add TodoItem",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"description\" : \"File a new bug\",\n    \"userId\" : 4\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5220/todoitem/add",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5220",
+					"path": [
+						"todoitem",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get TodoItems",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5220/todoitem",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5220",
+					"path": [
+						"todoitem"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
