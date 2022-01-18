@@ -11,6 +11,15 @@ models.Base.metadata.create_all(bind=engine)
 client = TestClient(app)
 
 
+def test_class():
+    user = models.User(limit=1)
+    assert user.limit == 1
+    task = models.Task(user_id=1, name='todo')
+    assert task.user_id == 1
+    assert task.name == 'todo'
+    assert task.create_date is None
+
+
 def test_database_create_data():
     db.query(models.User).delete()
     db.query(models.Task).delete()
