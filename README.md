@@ -1,3 +1,19 @@
+### Run code  
+uvicorn main:app
+### CURL command  
+curl -X 'POST' \
+  'http://127.0.0.1:8000/tasks/' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "name": "todo",
+  "user_id": 1
+}'
+### Run test  
+pytest
+### Results  
+
+
 ### Requirements
 
 - Implement one single API which accepts a todo task and records it

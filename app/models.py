@@ -1,7 +1,7 @@
 from sqlalchemy import Date, Column, ForeignKey, Integer, String, func
 from sqlalchemy.orm import relationship
 
-from database import Base
+from app.database import Base
 
 
 class User(Base):
@@ -17,7 +17,8 @@ class Task(Base):
     __tablename__ = "tasks"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    text = Column(String, nullable=False)
+    name = Column(String, nullable=False)
     create_date = Column(Date, server_default=func.current_date())
     user_id = Column(Integer, ForeignKey("users.id"))
+
     owner = relationship("User", back_populates="tasks")

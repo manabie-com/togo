@@ -4,7 +4,7 @@ from datetime import date
 
 
 class TaskBase(BaseModel):
-    text: str
+    name: str
     user_id: int
 
 
@@ -22,10 +22,6 @@ class Task(TaskBase):
 
 class UserBase(BaseModel):
     limit: int
-
-
-class UserCreate(UserBase):
-    pass
 
 
 class User(UserBase):
