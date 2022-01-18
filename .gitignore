@@ -17,3 +17,8 @@
 out/
 
 .idea
+
+# Python & Django files
+.venv/
+*.sqlite3
+__pycache__/
