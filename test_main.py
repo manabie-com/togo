@@ -1,8 +1,9 @@
 from fastapi.testclient import TestClient
 from datetime import date, timedelta
 from main import app
-from app import models, crud
-from app.database import SessionLocal, engine
+import crud
+import models
+from database import SessionLocal, engine
 
 db = SessionLocal()
 models.Base.metadata.create_all(bind=engine)
