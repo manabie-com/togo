@@ -20,12 +20,9 @@ class Task(TaskBase):
         orm_mode = True
 
 
-class UserBase(BaseModel):
-    limit: int
-
-
-class User(UserBase):
+class User(BaseModel):
     id: int
+    limit: int
     tasks: List[Task] = []
 
     class Config:

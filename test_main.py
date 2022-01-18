@@ -1,5 +1,6 @@
 from fastapi.testclient import TestClient
 from datetime import date, timedelta
+import pytest
 from main import app
 import crud
 import models
@@ -8,10 +9,24 @@ from database import SessionLocal, engine
 db = SessionLocal()
 models.Base.metadata.create_all(bind=engine)
 
+# Create data for test
+db.query(models.User).delete()
+db.query(models.Task).delete()
+db.add(models.User(limit=1))
+db.add(models.User(limit=10))
+db.commit()
+yesterday = date.today() - timedelta(days=1)
+db.add(models.Task(name='todo', user_id=1, create_date=yesterday))
+db.add(models.Task(name='todo1', user_id=2, create_date=yesterday))
+db.add(models.Task(name='todo2', user_id=2, create_date=yesterday))
+db.add(models.Task(name='todo3', user_id=2, create_date=date.today()))
+db.commit()
+
 
 client = TestClient(app)
 
 
+@pytest.mark.unit
 def test_class():
     user = models.User(limit=1)
     assert user.limit == 1
@@ -21,39 +36,20 @@ def test_class():
     assert task.create_date is None
 
 
-def test_database_create_data():
-    db.query(models.User).delete()
-    db.query(models.Task).delete()
-    db.add(models.User(limit=1))
-    db.add(models.User(limit=3))
-    db.commit()
-    yesterday = date.today() - timedelta(days=1)
-    db.add(models.Task(name='todo', user_id=1, create_date=yesterday))
-    db.add(models.Task(name='todo1', user_id=2, create_date=yesterday))
-    db.add(models.Task(name='todo2', user_id=2, create_date=yesterday))
-    db.add(models.Task(name='todo3', user_id=2, create_date=date.today()))
-    db.commit()
-
-    users = db.query(models.User).all()
-    assert users[0].id == 1
-    assert users[0].limit == 1
-    assert users[0].tasks[0].name == 'todo'
-    assert users[0].tasks[0].create_date == yesterday
-    assert users[1].id == 2
-    assert users[1].limit == 3
-
-
+@pytest.mark.unit
 def test_crud_get_user():
     user = crud.get_user(db, 2)
     assert user.id == 2
-    assert user.limit == 3
+    assert user.limit == 10
 
 
+@pytest.mark.unit
 def test_crud_create_task():
     task = crud.create_task(db, models.Task(user_id=2, name='todo4'))
     assert task.create_date == date.today()
 
 
+@pytest.mark.unit
 def test_crud_count_task():
     count = crud.count_task(db, 1)
     assert count == 0
@@ -61,6 +57,7 @@ def test_crud_count_task():
     assert count == 2
 
 
+@pytest.mark.integration
 def test_validate():
     data = {
         'name': 'todo1',
@@ -75,6 +72,7 @@ def test_validate():
     assert response.status_code == 422
 
 
+@pytest.mark.integration
 def test_create_task_success():
     data = {
         'name': 'todo1',
@@ -88,6 +86,7 @@ def test_create_task_success():
     assert res_data['create_date'] == str(date.today())
 
 
+@pytest.mark.integration
 def test_create_task_user_not_exist():
     data = {
         'name': 'todo',
@@ -98,6 +97,7 @@ def test_create_task_user_not_exist():
     assert response.json() == {'detail': 'user not exist'}
 
 
+@pytest.mark.integration
 def test_create_task_over_limit():
     data = {
         'name': 'todo2',
