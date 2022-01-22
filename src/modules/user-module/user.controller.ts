@@ -4,6 +4,7 @@ import { Request } from 'express';
 import { JSONResponse } from 'src/interfaces/response.interface';
 import { Constants } from '../../utils/constants';
 import { handleChecker } from '../../utils/helpers';
+import { ConfigureMaxTaskDTO } from './dto/configure_max_task.dto';
 import { FindUserDTO } from './dto/find.dto';
 import { LoginDTO } from './dto/login.dto';
 import { RegisterDTO } from './dto/register.dto';
@@ -39,6 +40,14 @@ export class UserController {
     @ApiBearerAuth("access-token")
     async addTask(@Req() req: Request, @Body() data: TaskDTO): Promise<JSONResponse> {
         const result = await this.userService.addTask(req.user.id, data);
+        return handleChecker(result);
+    }
+
+    @Post("configure-max-task")
+    @ApiBearerAuth("access-token")
+    @Roles(Constants.ADMIN_ROLE)
+    async configureMaxTask(@Body() data: ConfigureMaxTaskDTO): Promise<JSONResponse> {
+        const result = await this.userService.configureMaxTask(data);
         return handleChecker(result);
     }
 }

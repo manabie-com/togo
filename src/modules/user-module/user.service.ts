@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { compareSync } from 'bcrypt';
 import { Checker } from 'src/interfaces/checker.interface';
 import { Constants } from '../../utils/constants';
+import { ConfigureMaxTaskDTO } from './dto/configure_max_task.dto';
 import { FindUserDTO } from './dto/find.dto';
 import { LoginDTO } from './dto/login.dto';
 import { RegisterDTO } from './dto/register.dto';
@@ -97,8 +98,15 @@ export class UserService {
     }
 
     async addTask(userId: number, task: TaskDTO): Promise<Checker> {
-        // Decrease task
         let res = await this.userRepository.addNewTask(userId, task);
+        if (res) {
+            return Constants.SUCCESS_CHECK;
+        }
+        return Constants.FAIL_CHECK;
+    }
+
+    async configureMaxTask(config: ConfigureMaxTaskDTO): Promise<Checker>{
+        let res = await this.userRepository.configureMaxTask(config);
         if (res) {
             return Constants.SUCCESS_CHECK;
         }

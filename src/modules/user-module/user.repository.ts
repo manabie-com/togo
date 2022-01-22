@@ -8,6 +8,7 @@ import { FindUserDTO } from './dto/find.dto';
 import { ListUser } from './interfaces/listUser.interface';
 import { TaskEntity } from './entities/task.entity';
 import { TaskDTO } from './dto/task.dto';
+import { ConfigureMaxTaskDTO } from './dto/configure_max_task.dto';
 
 
 @Injectable()
@@ -91,6 +92,35 @@ export class UserRepository {
         } catch (e) {
             console.log(e);
             return false
+        }
+    }
+
+    private async _getTotalTaskToday(userId: number): Promise<number> {
+        const date = new Date();
+        const dateString = date.toISOString().split('T')[0]
+        return await this.taskRepository.createQueryBuilder()
+            .where("ownerId = :userId", { userId })
+            .andWhere("DATE(created_at) = :dateString", {
+                dateString
+            })
+            .getCount();
+    }
+    async configureMaxTask(config: ConfigureMaxTaskDTO): Promise<boolean> {
+        try {
+            // Get total task in this day
+            const totalTaskToday = await this._getTotalTaskToday(config.id);
+            const taskLeft = Math.max(config.maxTask - totalTaskToday, 0);
+            await this.userRepository.createQueryBuilder()
+                .update(UserEntity)
+                .set({
+                    task_left: taskLeft,
+                    max_task_per_day: config.maxTask
+                })
+                .where("id = :id", { id: config.id })
+                .execute();
+            return true;
+        } catch (e) {
+            return false;
         }
     }
 }
