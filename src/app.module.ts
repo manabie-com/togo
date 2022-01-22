@@ -1,10 +1,13 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { UserData } from './interfaces/user_data.interface';
 import { UserModule } from './modules/user-module/user.module';
+import { AuthMiddleware } from './middlewares/auth.middleware';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './role.guard';
 
 declare module "express" {
   export interface Request {
@@ -30,6 +33,16 @@ declare module "express" {
     UserModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, {
+    provide: APP_GUARD,
+    useClass: RolesGuard
+  }],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consume: MiddlewareConsumer) {
+    consume.apply(AuthMiddleware).exclude(
+      "user/login",
+      "user/register",
+    ).forRoutes("*")
+  }
+}

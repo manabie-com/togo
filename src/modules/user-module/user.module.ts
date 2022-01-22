@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { TaskEntity } from './entities/task.entity';
 import { UserEntity } from './entities/user.entity';
 import { UserController } from './user.controller';
 import { UserRepository } from './user.repository';
@@ -10,7 +11,7 @@ import { UserSubscribe } from './user.subscribe';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([UserEntity]),
+        TypeOrmModule.forFeature([UserEntity, TaskEntity]),
         JwtModule.registerAsync({
             imports: [ConfigModule],
             useFactory: (config: ConfigService) => {

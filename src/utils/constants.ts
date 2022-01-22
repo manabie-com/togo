@@ -20,4 +20,6 @@ export class Constants {
     static USER_ROLE = "USER";
 
     static ADMIN_ROLE = "ADMIN";
+
+    static MAX_TASK_PER_DAY_DEFAULT = 3;
 }

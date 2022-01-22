@@ -3,8 +3,10 @@ import { JwtService } from '@nestjs/jwt';
 import { compareSync } from 'bcrypt';
 import { Checker } from 'src/interfaces/checker.interface';
 import { Constants } from '../../utils/constants';
+import { FindUserDTO } from './dto/find.dto';
 import { LoginDTO } from './dto/login.dto';
 import { RegisterDTO } from './dto/register.dto';
+import { TaskDTO } from './dto/task.dto';
 import { UserRepository } from './user.repository';
 
 @Injectable()
@@ -76,4 +78,30 @@ export class UserService {
         return Constants.FAIL_CHECK
     }
 
+    async find(query: FindUserDTO): Promise<Checker> {
+        const defaultValue = {
+            pageIndex: 1,
+            perPage: 10
+        }
+        const result = await this.userRepository.find({
+            ...defaultValue,
+            ...query
+        });
+        if (result) {
+            return {
+                isSuccess: true,
+                data: result
+            };
+        }
+        return Constants.FAIL_CHECK
+    }
+
+    async addTask(userId: number, task: TaskDTO): Promise<Checker> {
+        // Decrease task
+        let res = await this.userRepository.addNewTask(userId, task);
+        if (res) {
+            return Constants.SUCCESS_CHECK;
+        }
+        return Constants.FAIL_CHECK;
+    }
 }
