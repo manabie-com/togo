@@ -1,0 +1,12 @@
+version: '3'
+services: 
+    db:
+        image: mysql:8.0.26
+        environment: 
+            MYSQL_ROOT_PASSWORD: "1"
+        command: mysqld --sql_mode='' --max_allowed_packet=32505856
+        ports: 
+            - "3306:3306"
+        volumes: 
+            - ../mysql:/var/lib/mysql
+
