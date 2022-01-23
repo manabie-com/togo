@@ -1,0 +1,56 @@
+syntax = "proto3";
+option go_package = "./;proto";
+package proto;
+
+enum TodoStatus {
+    OPEN = 0;
+    IN_PROGRESS = 1;
+    CLOSED = 2;
+    RESOLVED = 3;
+  }
+
+message CreateTodoRequest {
+    string title = 1;
+    string description = 2;
+    TodoStatus status = 3;
+}
+
+message CreateTodoResponse {
+    bool success = 1;
+    string todoId = 2;
+}
+
+message GetTodoRequest {
+    string todoId = 1;
+}
+
+message GetTodoResponse {
+    bool success = 1;
+}
+
+message UpdateTodoRequest {
+    string title = 1;
+    string description = 2;
+    TodoStatus status = 3;
+    string todoId = 4;
+}
+
+message UpdateTodoResponse {
+    bool success = 1;
+}
+
+message DeleteTodoRequest {
+    string todoId = 1;
+}
+
+message DeleteTodoResponse {
+    bool success = 1;
+}
+
+// Define Todo Service
+service SessionService {
+    rpc CreateTodo (CreateTodoRequest) returns (CreateTodoResponse);
+    rpc GetTodo (GetTodoRequest) returns (GetTodoResponse);
+    rpc UpdateTodo (UpdateTodoRequest) returns (UpdateTodoResponse);
+    rpc DeleteTodo (DeleteTodoRequest) returns (DeleteTodoResponse);
+}

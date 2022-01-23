@@ -1,0 +1,63 @@
+syntax = "proto3";
+option go_package = "./;proto";
+package proto;
+
+message LoginRequest {
+    string username = 1;
+    string password = 2;
+}
+
+message LoginResponse {
+    string token = 1;
+}
+
+message LogoutRequest {
+    string token = 1;
+}
+
+message LogoutResponse {
+    string token = 1;
+}
+
+message CreateRequest {
+    string username = 1;
+    string password = 2;
+    string name = 3;
+    string email = 4;
+}
+
+message CreateResponse {
+    bool isCreated = 1;
+}
+
+message UpdateRequest {
+    string token = 1;
+    string name = 2;
+    string email = 3;
+    string avatar = 4;
+    string password = 5;
+}
+
+message UpdateResponse {
+    bool isUpdated = 1;
+}
+
+message ShowRequest {
+    string token = 1;
+}
+
+message ShowResponse {
+    string name = 1;
+    string email = 2;
+    string avatar = 3;
+    int64 diamond = 4;
+}
+
+// Define Account Service
+service AccountService {
+    rpc Login(LoginRequest) returns (LoginResponse);
+    rpc Logout(LogoutRequest) returns (LogoutResponse);
+    rpc Create(CreateRequest) returns (CreateResponse);
+    rpc Update(UpdateRequest) returns (UpdateResponse);
+    rpc Show(ShowRequest) returns (ShowResponse);
+}
