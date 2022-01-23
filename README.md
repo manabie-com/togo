@@ -50,7 +50,9 @@ http://localhost:3000/api
 ## Solution for this task
 Because of user only has maximum limit task can be added per day and diffrent users can have different maximum daily limit, I will create role for user, each of users register has default max task can add per day (3) and admin can modify it.
 To prevent race condition(user can add more then their maximum task per date), I designed 
+<br />
 Column `task_left`(number of task left user can add) with type: `unsigned` and decrease it before add task in table task 
+<br />
 Column: `lasted_date_task`: record the last task date
 ## Improvement
 Because not enough time, this Back-end have some missing:
@@ -61,4 +63,8 @@ Because not enough time, this Back-end have some missing:
 If you have some error when start this app, you can use my server
 ```sh
 http://54.179.70.143:3000/api
+```
+## Demo video
+```sh
+https://drive.google.com/file/d/1CKkprpdQyYroXvRMQ7OtroOtO7kj1WTi/view?usp=sharing
 ```
