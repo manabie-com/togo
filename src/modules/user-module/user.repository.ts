@@ -105,6 +105,7 @@ export class UserRepository {
             })
             .getCount();
     }
+    
     async configureMaxTask(config: ConfigureMaxTaskDTO): Promise<boolean> {
         try {
             // Get total task in this day
