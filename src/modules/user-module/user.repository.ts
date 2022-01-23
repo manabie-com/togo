@@ -51,7 +51,7 @@ export class UserRepository {
             queryBuilder.getCount(),
             queryBuilder.take(query.perPage)
                 .skip(query.perPage * (query.pageIndex - 1))
-                .orderBy("user.id", "ASC")
+                .orderBy("user.id", "DESC")
                 .getMany()
         ]);
         return {
