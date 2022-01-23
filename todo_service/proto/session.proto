@@ -1,0 +1,40 @@
+syntax = "proto3";
+option go_package = "./;proto";
+package proto;
+
+message TokenString {
+    string token = 1;
+}
+
+message AccountID {
+    uint64 id = 1;
+}
+
+enum Type {
+    STANDARD = 0;
+    PREMIUM = 1;
+    ADMIN = 2;
+}
+
+message AccountType {
+    Type type = 1;
+}
+
+message AccountInfo {
+    uint64 id = 1;
+    Type type = 2;
+}
+
+message Status {
+    bool success = 1;
+}
+
+// Define Session Service
+service SessionService {
+    rpc GetAccountIDFromToken (TokenString) returns (AccountID);
+    rpc GetAccountTypeFromToken (TokenString) returns (AccountType);
+    rpc CreateToken (AccountInfo) returns (TokenString);
+    rpc RefreshToken (TokenString) returns (TokenString);
+    rpc DeleteToken (TokenString) returns (Status);
+    rpc CheckToken (TokenString) returns (Status);
+}

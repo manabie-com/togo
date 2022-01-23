@@ -44,7 +44,7 @@ func DialToAccountServiceServer() *ServiceConnection {
 	}
 }
 
-//DialToAccountServiceServer ...
+//DialToTodoServiceServer ...
 func DialToTodoServiceServer() *ServiceConnection {
 
 	port := os.Getenv("TODO_SERVICE_PORT")
