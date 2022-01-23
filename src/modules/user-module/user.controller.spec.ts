@@ -128,7 +128,7 @@ describe('UserController', () => {
                 totalPage: 1
             }
             jest.spyOn(userRepository, 'find').mockImplementation(() => Promise.resolve(result));
-            expect((await userService.find({
+            expect((await userController.findUser({
                 pageIndex: 1,
                 perPage: 10,
             })).data).toBe(result)
