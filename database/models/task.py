@@ -12,4 +12,4 @@ class Task(BaseEntityModel):
     assignment_id = Column(Integer, ForeignKey("assignment.id"))
 
     def __repr__(self):
-        return f"{self.title} - {self.description}"
+        return f"{self.id} - {self.title}"

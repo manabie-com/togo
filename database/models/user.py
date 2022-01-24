@@ -11,7 +11,7 @@ class User(BaseEntityModel):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(250))
     ability = Column(Integer)
-    assignments: InstrumentedList = relationship("assignmet", lazy="select", cascade="all, delete-orphan")
+    assignments: InstrumentedList = relationship("Assignment", lazy="select", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"{self.name}"
