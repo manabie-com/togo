@@ -1,0 +1,8 @@
+bin
+.dockerignore
+.vscode
+.git
+.gitignore
+Dockerfile*
+LICENSE
+README.md

@@ -16,4 +16,8 @@
 
 out/
 
+bin/
+
 .idea
+
+.vscode
