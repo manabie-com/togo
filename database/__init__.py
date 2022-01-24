@@ -1,9 +1,8 @@
-from .models.base import Base, engine
-from .models.user import User
-from .models.task import Task
 from .models.assignment import Assignment
-from .models.user_date import DateOfUser
+from .models.base import Base, engine
 from .models.calender import Calender
+from .models.task import Task
+from .models.user import User
 
 
 def init_databases():
