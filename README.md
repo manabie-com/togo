@@ -1,30 +1,77 @@
-### Requirements
+### Q&A
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+#### What do you love about your solution?
+- The reasons:
+  - Independent Layer (Transport, Repository, Storage)
+  - Flexible to change as Storage (MySQL, MongoDB, ...) and Transport (Rest, GRPC)
+  - Easy to maintain
+  - Easy to reusable
+  - Cause Independent Layer so it's easy to unit test 
 
-### Notes
+### How to run project
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+#### Setup Database
+- Install MySQL
+- Set MySQL's URI (MYSQL_URI) in .env file
 
-### How to submit your solution?
+#### Build
+```sh
+go build
+```
 
-- Fork this repo and show us your development progress via a PR
+#### Auto migration (Create Relevant Table To Adding Data)
+```sh
+./togo auto-migration
+```
 
-### Interesting facts about Manabie
+#### Start server
+```sh
+./togo server
+```
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+#### Run unit-test
+```sh
+cd ./test/${FuncName}
+go test
+```
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+### Curl
+
+- Create User:
+```sh
+curl --location --request POST 'http://localhost:8080/users' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name": "User Test 2",
+    "email": "usertest2@gmail.com"
+}'
+```
+
+- Update User Config:
+```sh
+curl --location --request PUT 'http://localhost:8080/users/6/tasks/update' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "max_task": 7
+}'
+```
+
+- Create Task for User:
+```sh
+curl --location --request POST 'http://localhost:8080/users/tasks/add' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "user_id": 6,
+    "tasks": [
+        {
+            "name": "Task 1"
+        },
+        {
+            "name": "Task 2"
+        },
+        {
+            "name": "Task 3"
+        }
+    ]
+}'
+```
