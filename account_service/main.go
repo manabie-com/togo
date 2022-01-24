@@ -43,6 +43,14 @@ func main() {
 		return
 	}
 
+	// // Test block
+	// insert, err := db.Query("INSERT INTO Account (Name, Email, Username, Password) VALUES ('hoang', 'hoang@gmail.com', 'hoanguser', '123')")
+	// if err != nil {
+	// 	log.Println("Fail insert", err)
+	// }
+	// defer insert.Close()
+	// log.Println("Insert complete")
+
 	// Register service
 	srv := grpc.NewServer()
 	service := service.NewAccountServiceServer(db)

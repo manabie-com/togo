@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"api_service/handler"
+	"api_service/middleware"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -27,7 +28,7 @@ func main() {
 	router.POST("/account/create", handler.Create)
 
 	authorized := router.Group("/")
-	// authorized.Use(middleware.TokenAuth)
+	authorized.Use(middleware.TokenAuth)
 	{
 		authorized.POST("/logout", handler.Logout)
 		authorized.GET("/account/show", handler.Show)
