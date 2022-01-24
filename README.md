@@ -1,30 +1,83 @@
-### Requirements
+# Run code locally ubuntu
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+- Run this code is easier with pycharm IDE
 
-### Notes
+- Install docker to run postgresql
+>$ sudo apt-get install docker-ce docker-ce-cli containerd.io
+- Check docker is installed yet
+>$ docker --version
+- Run postgresql
+>$ sudo docker run -d --name postgres -e POSTGRES_HOST_AUTH_METHOD='trust' -e POSTGRES_PASSWORD='1234' -e POSTGRES_DB= -p 5432:5432 postgres
+- Check docker container is running
+>$ sudo docker ps -a
+- Install python 3.8
+>$ sudo apt update
+>$ sudo apt install python3.8 python3.8-dev python3.8-venv
+- CD into the project
+- Create virtual environment:
+>$ python3.8 -m venv venv
+- Activate virtual environment:
+>$ source ./venv/bin/activate
+- Install required libraries:
+>$ cd <-path-to-project->
+> 
+>$ pip install -r requirements.txt 
+- To start the code run:
+>$ python app.py
+```
+  database loading...
+  database loaded
+   * Serving Flask app 'app' (lazy loading)
+   * Environment: production
+     WARNING: This is a development server. Do not use it in a production deployment.
+     Use a production WSGI server instead.
+   * Debug mode: on
+   * Restarting with stat
+   * Debugger is active!
+   * Debugger PIN: 316-686-129
+   * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+```
+- Verify that you run successfully at <http://localhost:5000>
+- Can use file data_sample.json to import the sample data into database with curl:
+>$ cd <-path-to-project>
+> 
+>$ curl -X POST http://localhost:5000/api/api/demo
+>   -H 'Content-Type: application/json'
+>   -d @data_sample.json
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+## A sample “curl” command to call your API
 
-### How to submit your solution?
+>$ curl -X POST http://localhost:5000/api/task/add
+>   -H 'Content-Type: application/json'
+>   -d '{
+	"title": <-title->,
+	"description": <-description->,
+	"user_id": <-user_id->,
+	"date": <-date->"
+}'
 
-- Fork this repo and show us your development progress via a PR
+## How to run your unit tests locally
+- Install requirement
+> $ cd test
 
-### Interesting facts about Manabie
+> $ pip install -r requirements-test.txt
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+- From project run command
+> $ coverage run -m pytest .\test\
+- Report the coverage of test on the code
+> $ coverage report -m
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+## Error
+- Not matching distribution found for psycopg2
+  - open requirements.txt, find and replace psycopg2 with psycopg2-binary
+
+## What do you love about your solution?
+- I think this project should be upgraded to be better.
+- In this case, I think the database can easy to add more queries if we need without writing the raw SQL query.
+- Python is a good support with many libraries
+
+## What else do you want us to know about however you do not have enough time to complete?
+- I think should add swagger to this assignment in order to easier to use the API.
+- I think should add a formatting check as the black library
+- I think should add an API folder to route more professional
+- I think should add a logger to check and write the log for the trace error process
