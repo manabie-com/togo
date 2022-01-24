@@ -16,7 +16,7 @@ message LogoutRequest {
 }
 
 message LogoutResponse {
-    string token = 1;
+    bool isLoggedOut = 1;
 }
 
 message CreateRequest {
