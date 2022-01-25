@@ -622,6 +622,8 @@ type UserMutation struct {
 	id               *int
 	username         *string
 	password         *string
+	task_limit       *int
+	addtask_limit    *int
 	clearedFields    map[string]struct{}
 	user_task        *int
 	cleareduser_task bool
@@ -800,6 +802,62 @@ func (m *UserMutation) ResetPassword() {
 	m.password = nil
 }
 
+// SetTaskLimit sets the "task_limit" field.
+func (m *UserMutation) SetTaskLimit(i int) {
+	m.task_limit = &i
+	m.addtask_limit = nil
+}
+
+// TaskLimit returns the value of the "task_limit" field in the mutation.
+func (m *UserMutation) TaskLimit() (r int, exists bool) {
+	v := m.task_limit
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTaskLimit returns the old "task_limit" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldTaskLimit(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTaskLimit is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTaskLimit requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTaskLimit: %w", err)
+	}
+	return oldValue.TaskLimit, nil
+}
+
+// AddTaskLimit adds i to the "task_limit" field.
+func (m *UserMutation) AddTaskLimit(i int) {
+	if m.addtask_limit != nil {
+		*m.addtask_limit += i
+	} else {
+		m.addtask_limit = &i
+	}
+}
+
+// AddedTaskLimit returns the value that was added to the "task_limit" field in this mutation.
+func (m *UserMutation) AddedTaskLimit() (r int, exists bool) {
+	v := m.addtask_limit
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTaskLimit resets all changes to the "task_limit" field.
+func (m *UserMutation) ResetTaskLimit() {
+	m.task_limit = nil
+	m.addtask_limit = nil
+}
+
 // SetUserTaskID sets the "user_task" edge to the Task entity by id.
 func (m *UserMutation) SetUserTaskID(id int) {
 	m.user_task = &id
@@ -858,12 +916,15 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 3)
 	if m.username != nil {
 		fields = append(fields, user.FieldUsername)
 	}
 	if m.password != nil {
 		fields = append(fields, user.FieldPassword)
+	}
+	if m.task_limit != nil {
+		fields = append(fields, user.FieldTaskLimit)
 	}
 	return fields
 }
@@ -877,6 +938,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Username()
 	case user.FieldPassword:
 		return m.Password()
+	case user.FieldTaskLimit:
+		return m.TaskLimit()
 	}
 	return nil, false
 }
@@ -890,6 +953,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldUsername(ctx)
 	case user.FieldPassword:
 		return m.OldPassword(ctx)
+	case user.FieldTaskLimit:
+		return m.OldTaskLimit(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -913,6 +978,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPassword(v)
 		return nil
+	case user.FieldTaskLimit:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTaskLimit(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -920,13 +992,21 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *UserMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addtask_limit != nil {
+		fields = append(fields, user.FieldTaskLimit)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *UserMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case user.FieldTaskLimit:
+		return m.AddedTaskLimit()
+	}
 	return nil, false
 }
 
@@ -935,6 +1015,13 @@ func (m *UserMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *UserMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case user.FieldTaskLimit:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTaskLimit(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User numeric field %s", name)
 }
@@ -967,6 +1054,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldPassword:
 		m.ResetPassword()
+		return nil
+	case user.FieldTaskLimit:
+		m.ResetTaskLimit()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

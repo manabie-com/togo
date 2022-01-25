@@ -20,6 +20,8 @@ type User struct {
 	Username string `json:"username,omitempty"`
 	// Password holds the value of the "password" field.
 	Password string `json:"password,omitempty"`
+	// TaskLimit holds the value of the "task_limit" field.
+	TaskLimit int `json:"task_limit,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges UserEdges `json:"edges"`
@@ -53,7 +55,7 @@ func (*User) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldID:
+		case user.FieldID, user.FieldTaskLimit:
 			values[i] = new(sql.NullInt64)
 		case user.FieldUsername, user.FieldPassword:
 			values[i] = new(sql.NullString)
@@ -89,6 +91,12 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field password", values[i])
 			} else if value.Valid {
 				u.Password = value.String
+			}
+		case user.FieldTaskLimit:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field task_limit", values[i])
+			} else if value.Valid {
+				u.TaskLimit = int(value.Int64)
 			}
 		}
 	}
@@ -127,6 +135,8 @@ func (u *User) String() string {
 	builder.WriteString(u.Username)
 	builder.WriteString(", password=")
 	builder.WriteString(u.Password)
+	builder.WriteString(", task_limit=")
+	builder.WriteString(fmt.Sprintf("%v", u.TaskLimit))
 	builder.WriteByte(')')
 	return builder.String()
 }

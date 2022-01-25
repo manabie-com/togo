@@ -1,0 +1,20 @@
+###
+### Login
+POST http://localhost:8080/api/v1/login
+Content-Type: application/json
+
+{
+  "username": "daiphuc",
+  "password": "password"
+}
+
+###
+### Create task
+POST http://localhost:8080/api/v1/tasks
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsInVzZXJuYW1lIjoiZGFpcGh1YyJ9.4719zKucOk5xvrkRSol8hRAg85WPZCeS5luuki-N6m4
+
+{
+  "name": "Task 1",
+  "content": "To do task 1"
+}

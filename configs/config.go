@@ -17,7 +17,6 @@ type Config struct {
 }
 
 func NewConfig() (*Config, error) {
-
 	cfg := &Config{}
 	if err := env_config.EnvStruct(cfg); err != nil {
 		return nil, err

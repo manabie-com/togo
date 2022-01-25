@@ -5,9 +5,9 @@
 package mock
 
 import (
+	context "context"
 	reflect "reflect"
 
-	fiber "github.com/gofiber/fiber/v2"
 	gomock "github.com/golang/mock/gomock"
 	entities "github.com/trinhdaiphuc/togo/internal/entities"
 )
@@ -36,7 +36,7 @@ func (m *MockTaskRepository) EXPECT() *MockTaskRepositoryMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockTaskRepository) Create(ctx *fiber.Ctx, task *entities.Task) (*entities.Task, error) {
+func (m *MockTaskRepository) Create(ctx context.Context, task *entities.Task) (*entities.Task, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", ctx, task)
 	ret0, _ := ret[0].(*entities.Task)

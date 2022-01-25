@@ -1,17 +1,17 @@
 version: '3.7'
 services:
-  togo:
-    container_name: togo
-    build:
-      context: .
-    environment:
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_USER: root
-      DB_PASS: root
-      JWT_SECRET: k99VlF72sX
-    ports:
-      - "8080:8080"
+#  togo:
+#    container_name: togo
+#    build:
+#      context: .
+#    environment:
+#      DB_HOST: mysql
+#      DB_PORT: 3306
+#      DB_USER: root
+#      DB_PASS: root
+#      JWT_SECRET: k99VlF72sX
+#    ports:
+#      - "8080:8080"
 
   redis:
     image: 'redis:alpine'
@@ -31,4 +31,4 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./scripts/initdb:/docker-entrypoint-initdb.d
+      - ./scripts/init-db:/docker-entrypoint-initdb.d

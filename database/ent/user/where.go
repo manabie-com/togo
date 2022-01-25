@@ -105,6 +105,13 @@ func Password(v string) predicate.User {
 	})
 }
 
+// TaskLimit applies equality check predicate on the "task_limit" field. It's identical to TaskLimitEQ.
+func TaskLimit(v int) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTaskLimit), v))
+	})
+}
+
 // UsernameEQ applies the EQ predicate on the "username" field.
 func UsernameEQ(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
@@ -324,6 +331,82 @@ func PasswordEqualFold(v string) predicate.User {
 func PasswordContainsFold(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldPassword), v))
+	})
+}
+
+// TaskLimitEQ applies the EQ predicate on the "task_limit" field.
+func TaskLimitEQ(v int) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTaskLimit), v))
+	})
+}
+
+// TaskLimitNEQ applies the NEQ predicate on the "task_limit" field.
+func TaskLimitNEQ(v int) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldTaskLimit), v))
+	})
+}
+
+// TaskLimitIn applies the In predicate on the "task_limit" field.
+func TaskLimitIn(vs ...int) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldTaskLimit), v...))
+	})
+}
+
+// TaskLimitNotIn applies the NotIn predicate on the "task_limit" field.
+func TaskLimitNotIn(vs ...int) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldTaskLimit), v...))
+	})
+}
+
+// TaskLimitGT applies the GT predicate on the "task_limit" field.
+func TaskLimitGT(v int) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldTaskLimit), v))
+	})
+}
+
+// TaskLimitGTE applies the GTE predicate on the "task_limit" field.
+func TaskLimitGTE(v int) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldTaskLimit), v))
+	})
+}
+
+// TaskLimitLT applies the LT predicate on the "task_limit" field.
+func TaskLimitLT(v int) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldTaskLimit), v))
+	})
+}
+
+// TaskLimitLTE applies the LTE predicate on the "task_limit" field.
+func TaskLimitLTE(v int) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldTaskLimit), v))
 	})
 }
 

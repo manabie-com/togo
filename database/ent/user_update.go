@@ -40,6 +40,27 @@ func (uu *UserUpdate) SetPassword(s string) *UserUpdate {
 	return uu
 }
 
+// SetTaskLimit sets the "task_limit" field.
+func (uu *UserUpdate) SetTaskLimit(i int) *UserUpdate {
+	uu.mutation.ResetTaskLimit()
+	uu.mutation.SetTaskLimit(i)
+	return uu
+}
+
+// SetNillableTaskLimit sets the "task_limit" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableTaskLimit(i *int) *UserUpdate {
+	if i != nil {
+		uu.SetTaskLimit(*i)
+	}
+	return uu
+}
+
+// AddTaskLimit adds i to the "task_limit" field.
+func (uu *UserUpdate) AddTaskLimit(i int) *UserUpdate {
+	uu.mutation.AddTaskLimit(i)
+	return uu
+}
+
 // SetUserTaskID sets the "user_task" edge to the Task entity by ID.
 func (uu *UserUpdate) SetUserTaskID(id int) *UserUpdate {
 	uu.mutation.SetUserTaskID(id)
@@ -156,6 +177,20 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: user.FieldPassword,
 		})
 	}
+	if value, ok := uu.mutation.TaskLimit(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: user.FieldTaskLimit,
+		})
+	}
+	if value, ok := uu.mutation.AddedTaskLimit(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: user.FieldTaskLimit,
+		})
+	}
 	if uu.mutation.UserTaskCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
@@ -219,6 +254,27 @@ func (uuo *UserUpdateOne) SetUsername(s string) *UserUpdateOne {
 // SetPassword sets the "password" field.
 func (uuo *UserUpdateOne) SetPassword(s string) *UserUpdateOne {
 	uuo.mutation.SetPassword(s)
+	return uuo
+}
+
+// SetTaskLimit sets the "task_limit" field.
+func (uuo *UserUpdateOne) SetTaskLimit(i int) *UserUpdateOne {
+	uuo.mutation.ResetTaskLimit()
+	uuo.mutation.SetTaskLimit(i)
+	return uuo
+}
+
+// SetNillableTaskLimit sets the "task_limit" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableTaskLimit(i *int) *UserUpdateOne {
+	if i != nil {
+		uuo.SetTaskLimit(*i)
+	}
+	return uuo
+}
+
+// AddTaskLimit adds i to the "task_limit" field.
+func (uuo *UserUpdateOne) AddTaskLimit(i int) *UserUpdateOne {
+	uuo.mutation.AddTaskLimit(i)
 	return uuo
 }
 
@@ -360,6 +416,20 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Type:   field.TypeString,
 			Value:  value,
 			Column: user.FieldPassword,
+		})
+	}
+	if value, ok := uuo.mutation.TaskLimit(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: user.FieldTaskLimit,
+		})
+	}
+	if value, ok := uuo.mutation.AddedTaskLimit(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt,
+			Value:  value,
+			Column: user.FieldTaskLimit,
 		})
 	}
 	if uuo.mutation.UserTaskCleared() {

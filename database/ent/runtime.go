@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/trinhdaiphuc/togo/database/ent/task"
+	"github.com/trinhdaiphuc/togo/database/ent/user"
 	"github.com/trinhdaiphuc/togo/database/schema"
 )
 
@@ -25,4 +26,10 @@ func init() {
 	task.DefaultUpdatedAt = taskDescUpdatedAt.Default.(func() time.Time)
 	// task.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	task.UpdateDefaultUpdatedAt = taskDescUpdatedAt.UpdateDefault.(func() time.Time)
+	userFields := schema.User{}.Fields()
+	_ = userFields
+	// userDescTaskLimit is the schema descriptor for task_limit field.
+	userDescTaskLimit := userFields[2].Descriptor()
+	// user.DefaultTaskLimit holds the default value on creation for the task_limit field.
+	user.DefaultTaskLimit = userDescTaskLimit.Default.(int)
 }

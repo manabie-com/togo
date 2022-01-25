@@ -29,7 +29,7 @@ func InitializeServer() (*api.Server, func(), error) {
 		return nil, nil, err
 	}
 	userRepository := repository.NewUserRepository(db)
-	userService := userservice.NewUserService(userRepository)
+	userService := userservice.NewUserService(userRepository, config)
 	taskRepository := repository.NewTaskRepository(db)
 	taskService := taskservice.NewTaskService(taskRepository)
 	serviceService := service.NewService(userService, taskService)

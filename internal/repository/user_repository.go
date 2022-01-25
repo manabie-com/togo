@@ -3,13 +3,14 @@ package repository
 //go:generate mockgen -destination=./mock/mock_$GOFILE -source=$GOFILE -package=mock
 
 import (
-	"github.com/gofiber/fiber/v2"
+	"context"
+	"github.com/trinhdaiphuc/togo/database/ent/user"
 	"github.com/trinhdaiphuc/togo/internal/entities"
 	"github.com/trinhdaiphuc/togo/internal/infrastructure"
 )
 
 type UserRepository interface {
-	GetUser(ctx *fiber.Ctx, userName string) (*entities.User, error)
+	GetUserByName(ctx context.Context, username string) (*entities.User, error)
 }
 
 type userRepositoryImpl struct {
@@ -22,6 +23,15 @@ func NewUserRepository(db infrastructure.DB) UserRepository {
 	}
 }
 
-func (u userRepositoryImpl) GetUser(ctx *fiber.Ctx, userName string) (*entities.User, error) {
-	panic("implement me")
+func (u *userRepositoryImpl) GetUserByName(ctx context.Context, username string) (*entities.User, error) {
+	resp, err := u.db.User.Query().Where(user.UsernameEQ(username)).Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &entities.User{
+		ID:        resp.ID,
+		Username:  resp.Username,
+		Password:  resp.Password,
+		TaskLimit: resp.TaskLimit,
+	}, nil
 }

@@ -5,9 +5,9 @@
 package mock
 
 import (
+	context "context"
 	reflect "reflect"
 
-	fiber "github.com/gofiber/fiber/v2"
 	gomock "github.com/golang/mock/gomock"
 	entities "github.com/trinhdaiphuc/togo/internal/entities"
 )
@@ -35,17 +35,17 @@ func (m *MockUserRepository) EXPECT() *MockUserRepositoryMockRecorder {
 	return m.recorder
 }
 
-// GetUser mocks base method.
-func (m *MockUserRepository) GetUser(ctx *fiber.Ctx, userName string) (*entities.User, error) {
+// GetUserByName mocks base method.
+func (m *MockUserRepository) GetUserByName(ctx context.Context, username string) (*entities.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetUser", ctx, userName)
+	ret := m.ctrl.Call(m, "GetUserByName", ctx, username)
 	ret0, _ := ret[0].(*entities.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetUser indicates an expected call of GetUser.
-func (mr *MockUserRepositoryMockRecorder) GetUser(ctx, userName interface{}) *gomock.Call {
+// GetUserByName indicates an expected call of GetUserByName.
+func (mr *MockUserRepositoryMockRecorder) GetUserByName(ctx, username interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUser", reflect.TypeOf((*MockUserRepository)(nil).GetUser), ctx, userName)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByName", reflect.TypeOf((*MockUserRepository)(nil).GetUserByName), ctx, username)
 }

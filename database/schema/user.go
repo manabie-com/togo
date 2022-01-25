@@ -16,6 +16,7 @@ func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("username"),
 		field.String("password"),
+		field.Int("task_limit").Default(0),
 	}
 }
 

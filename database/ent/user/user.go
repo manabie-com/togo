@@ -11,6 +11,8 @@ const (
 	FieldUsername = "username"
 	// FieldPassword holds the string denoting the password field in the database.
 	FieldPassword = "password"
+	// FieldTaskLimit holds the string denoting the task_limit field in the database.
+	FieldTaskLimit = "task_limit"
 	// EdgeUserTask holds the string denoting the user_task edge name in mutations.
 	EdgeUserTask = "user_task"
 	// Table holds the table name of the user in the database.
@@ -29,6 +31,7 @@ var Columns = []string{
 	FieldID,
 	FieldUsername,
 	FieldPassword,
+	FieldTaskLimit,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -40,3 +43,8 @@ func ValidColumn(column string) bool {
 	}
 	return false
 }
+
+var (
+	// DefaultTaskLimit holds the default value on creation for the "task_limit" field.
+	DefaultTaskLimit int
+)

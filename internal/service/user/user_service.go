@@ -4,6 +4,7 @@ package userservice
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/trinhdaiphuc/togo/configs"
 	"github.com/trinhdaiphuc/togo/internal/entities"
 	"github.com/trinhdaiphuc/togo/internal/repository"
 )
@@ -14,10 +15,12 @@ type UserService interface {
 
 type userService struct {
 	userRepo repository.UserRepository
+	cfg      *configs.Config
 }
 
-func NewUserService(userRepo repository.UserRepository) UserService {
+func NewUserService(userRepo repository.UserRepository, cfg *configs.Config) UserService {
 	return &userService{
 		userRepo: userRepo,
+		cfg:      cfg,
 	}
 }
