@@ -12,17 +12,20 @@ import (
 	"time"
 )
 
-type DB *ent.Client
+type DB struct {
+	*ent.Client
+}
 
 const (
 	mysqlConnStrFmt = "%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&collation=utf8mb4_general_ci&loc=%s"
 )
 
-func NewDB(cfg *configs.Config) (DB, func(), error) {
+func NewDB(cfg *configs.Config) (*DB, func(), error) {
 	client, err := ent.Open(dialect.MySQL, fmt.Sprintf(mysqlConnStrFmt, cfg.DBUser, cfg.DBPassword, cfg.DBHost, cfg.DBPort, cfg.DBName, "Asia%2fBangkok&parseTime=true"))
 	if err != nil {
 		return nil, nil, err
 	}
+
 	cleanup := func() {
 		if err := client.Close(); err != nil {
 			logrus.Error(err)
@@ -43,5 +46,5 @@ func NewDB(cfg *configs.Config) (DB, func(), error) {
 	if err := client.Schema.Create(context.Background()); err != nil {
 		return nil, cleanup, err
 	}
-	return client, cleanup, nil
+	return &DB{client}, cleanup, nil
 }

@@ -2,8 +2,10 @@ package userservice
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/trinhdaiphuc/togo/internal/entities"
 	"github.com/trinhdaiphuc/togo/pkg/helper"
+	"time"
 )
 
 func (u *userService) Login(ctx *fiber.Ctx, user *entities.User) (*entities.User, error) {
@@ -19,6 +21,9 @@ func (u *userService) Login(ctx *fiber.Ctx, user *entities.User) (*entities.User
 	jwtClaim := helper.JwtClaims{
 		UserID:   userResp.ID,
 		UserName: userResp.Username,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 1)),
+		},
 	}
 	userResp.Jwt, err = helper.SignToken(jwtClaim, u.cfg.JwtSecret)
 	if err != nil {

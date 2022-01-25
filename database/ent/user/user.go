@@ -47,4 +47,6 @@ func ValidColumn(column string) bool {
 var (
 	// DefaultTaskLimit holds the default value on creation for the "task_limit" field.
 	DefaultTaskLimit int
+	// TaskLimitValidator is a validator for the "task_limit" field. It is called by the builders before save.
+	TaskLimitValidator func(int) error
 )

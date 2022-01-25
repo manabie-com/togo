@@ -32,4 +32,6 @@ func init() {
 	userDescTaskLimit := userFields[2].Descriptor()
 	// user.DefaultTaskLimit holds the default value on creation for the task_limit field.
 	user.DefaultTaskLimit = userDescTaskLimit.Default.(int)
+	// user.TaskLimitValidator is a validator for the "task_limit" field. It is called by the builders before save.
+	user.TaskLimitValidator = userDescTaskLimit.Validators[0].(func(int) error)
 }

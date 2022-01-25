@@ -16,13 +16,13 @@ func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("username"),
 		field.String("password"),
-		field.Int("task_limit").Default(0),
+		field.Int("task_limit").Default(0).NonNegative(),
 	}
 }
 
 // Edges of the User.
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("user_task", Task.Type).Unique(),
+		edge.To("user_task", Task.Type),
 	}
 }

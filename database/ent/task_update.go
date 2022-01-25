@@ -47,6 +47,20 @@ func (tu *TaskUpdate) SetUserID(i int) *TaskUpdate {
 	return tu
 }
 
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableUserID(i *int) *TaskUpdate {
+	if i != nil {
+		tu.SetUserID(*i)
+	}
+	return tu
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (tu *TaskUpdate) ClearUserID() *TaskUpdate {
+	tu.mutation.ClearUserID()
+	return tu
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (tu *TaskUpdate) SetCreatedAt(t time.Time) *TaskUpdate {
 	tu.mutation.SetCreatedAt(t)
@@ -91,18 +105,12 @@ func (tu *TaskUpdate) Save(ctx context.Context) (int, error) {
 	)
 	tu.defaults()
 	if len(tu.hooks) == 0 {
-		if err = tu.check(); err != nil {
-			return 0, err
-		}
 		affected, err = tu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*TaskMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = tu.check(); err != nil {
-				return 0, err
 			}
 			tu.mutation = mutation
 			affected, err = tu.sqlSave(ctx)
@@ -150,14 +158,6 @@ func (tu *TaskUpdate) defaults() {
 		v := task.UpdateDefaultUpdatedAt()
 		tu.mutation.SetUpdatedAt(v)
 	}
-}
-
-// check runs all checks and user-defined validators on the builder.
-func (tu *TaskUpdate) check() error {
-	if _, ok := tu.mutation.UserID(); tu.mutation.UserCleared() && !ok {
-		return errors.New(`ent: clearing a required unique edge "Task.user"`)
-	}
-	return nil
 }
 
 func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -208,7 +208,7 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if tu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   task.UserTable,
 			Columns: []string{task.UserColumn},
@@ -224,7 +224,7 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if nodes := tu.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   task.UserTable,
 			Columns: []string{task.UserColumn},
@@ -275,6 +275,20 @@ func (tuo *TaskUpdateOne) SetContent(s string) *TaskUpdateOne {
 // SetUserID sets the "user_id" field.
 func (tuo *TaskUpdateOne) SetUserID(i int) *TaskUpdateOne {
 	tuo.mutation.SetUserID(i)
+	return tuo
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableUserID(i *int) *TaskUpdateOne {
+	if i != nil {
+		tuo.SetUserID(*i)
+	}
+	return tuo
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (tuo *TaskUpdateOne) ClearUserID() *TaskUpdateOne {
+	tuo.mutation.ClearUserID()
 	return tuo
 }
 
@@ -329,18 +343,12 @@ func (tuo *TaskUpdateOne) Save(ctx context.Context) (*Task, error) {
 	)
 	tuo.defaults()
 	if len(tuo.hooks) == 0 {
-		if err = tuo.check(); err != nil {
-			return nil, err
-		}
 		node, err = tuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*TaskMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
-			}
-			if err = tuo.check(); err != nil {
-				return nil, err
 			}
 			tuo.mutation = mutation
 			node, err = tuo.sqlSave(ctx)
@@ -388,14 +396,6 @@ func (tuo *TaskUpdateOne) defaults() {
 		v := task.UpdateDefaultUpdatedAt()
 		tuo.mutation.SetUpdatedAt(v)
 	}
-}
-
-// check runs all checks and user-defined validators on the builder.
-func (tuo *TaskUpdateOne) check() error {
-	if _, ok := tuo.mutation.UserID(); tuo.mutation.UserCleared() && !ok {
-		return errors.New(`ent: clearing a required unique edge "Task.user"`)
-	}
-	return nil
 }
 
 func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) {
@@ -463,7 +463,7 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	}
 	if tuo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   task.UserTable,
 			Columns: []string{task.UserColumn},
@@ -479,7 +479,7 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	}
 	if nodes := tuo.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   task.UserTable,
 			Columns: []string{task.UserColumn},

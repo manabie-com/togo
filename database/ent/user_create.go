@@ -46,23 +46,19 @@ func (uc *UserCreate) SetNillableTaskLimit(i *int) *UserCreate {
 	return uc
 }
 
-// SetUserTaskID sets the "user_task" edge to the Task entity by ID.
-func (uc *UserCreate) SetUserTaskID(id int) *UserCreate {
-	uc.mutation.SetUserTaskID(id)
+// AddUserTaskIDs adds the "user_task" edge to the Task entity by IDs.
+func (uc *UserCreate) AddUserTaskIDs(ids ...int) *UserCreate {
+	uc.mutation.AddUserTaskIDs(ids...)
 	return uc
 }
 
-// SetNillableUserTaskID sets the "user_task" edge to the Task entity by ID if the given value is not nil.
-func (uc *UserCreate) SetNillableUserTaskID(id *int) *UserCreate {
-	if id != nil {
-		uc = uc.SetUserTaskID(*id)
+// AddUserTask adds the "user_task" edges to the Task entity.
+func (uc *UserCreate) AddUserTask(t ...*Task) *UserCreate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
 	}
-	return uc
-}
-
-// SetUserTask sets the "user_task" edge to the Task entity.
-func (uc *UserCreate) SetUserTask(t *Task) *UserCreate {
-	return uc.SetUserTaskID(t.ID)
+	return uc.AddUserTaskIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -153,6 +149,11 @@ func (uc *UserCreate) check() error {
 	if _, ok := uc.mutation.TaskLimit(); !ok {
 		return &ValidationError{Name: "task_limit", err: errors.New(`ent: missing required field "User.task_limit"`)}
 	}
+	if v, ok := uc.mutation.TaskLimit(); ok {
+		if err := user.TaskLimitValidator(v); err != nil {
+			return &ValidationError{Name: "task_limit", err: fmt.Errorf(`ent: validator failed for field "User.task_limit": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -206,7 +207,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	}
 	if nodes := uc.mutation.UserTaskIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   user.UserTaskTable,
 			Columns: []string{user.UserTaskColumn},

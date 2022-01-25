@@ -14,6 +14,11 @@ type JwtClaims struct {
 	jwt.RegisteredClaims
 }
 
+var (
+	ErrUserNotFound      = fmt.Errorf("user not found in context")
+	ErrUserClaimNotFound = fmt.Errorf("user claims not found in context")
+)
+
 func SignToken(claims JwtClaims, secret string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(secret))
@@ -23,12 +28,12 @@ func UserFromContext(c *fiber.Ctx) (*entities.User, error) {
 	// Get userID from the previous route.
 	jwtData, ok := c.Locals("user").(*jwt.Token)
 	if !ok {
-		return nil, fmt.Errorf("user not found in context")
+		return nil, ErrUserNotFound
 	}
 
 	claims, ok := jwtData.Claims.(*JwtClaims)
 	if !ok {
-		return nil, fmt.Errorf("user claim not found in context")
+		return nil, ErrUserClaimNotFound
 	}
 
 	return &entities.User{

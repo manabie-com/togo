@@ -61,23 +61,19 @@ func (uu *UserUpdate) AddTaskLimit(i int) *UserUpdate {
 	return uu
 }
 
-// SetUserTaskID sets the "user_task" edge to the Task entity by ID.
-func (uu *UserUpdate) SetUserTaskID(id int) *UserUpdate {
-	uu.mutation.SetUserTaskID(id)
+// AddUserTaskIDs adds the "user_task" edge to the Task entity by IDs.
+func (uu *UserUpdate) AddUserTaskIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddUserTaskIDs(ids...)
 	return uu
 }
 
-// SetNillableUserTaskID sets the "user_task" edge to the Task entity by ID if the given value is not nil.
-func (uu *UserUpdate) SetNillableUserTaskID(id *int) *UserUpdate {
-	if id != nil {
-		uu = uu.SetUserTaskID(*id)
+// AddUserTask adds the "user_task" edges to the Task entity.
+func (uu *UserUpdate) AddUserTask(t ...*Task) *UserUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
 	}
-	return uu
-}
-
-// SetUserTask sets the "user_task" edge to the Task entity.
-func (uu *UserUpdate) SetUserTask(t *Task) *UserUpdate {
-	return uu.SetUserTaskID(t.ID)
+	return uu.AddUserTaskIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -85,10 +81,25 @@ func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
 }
 
-// ClearUserTask clears the "user_task" edge to the Task entity.
+// ClearUserTask clears all "user_task" edges to the Task entity.
 func (uu *UserUpdate) ClearUserTask() *UserUpdate {
 	uu.mutation.ClearUserTask()
 	return uu
+}
+
+// RemoveUserTaskIDs removes the "user_task" edge to Task entities by IDs.
+func (uu *UserUpdate) RemoveUserTaskIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveUserTaskIDs(ids...)
+	return uu
+}
+
+// RemoveUserTask removes "user_task" edges to Task entities.
+func (uu *UserUpdate) RemoveUserTask(t ...*Task) *UserUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uu.RemoveUserTaskIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -98,12 +109,18 @@ func (uu *UserUpdate) Save(ctx context.Context) (int, error) {
 		affected int
 	)
 	if len(uu.hooks) == 0 {
+		if err = uu.check(); err != nil {
+			return 0, err
+		}
 		affected, err = uu.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*UserMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = uu.check(); err != nil {
+				return 0, err
 			}
 			uu.mutation = mutation
 			affected, err = uu.sqlSave(ctx)
@@ -143,6 +160,16 @@ func (uu *UserUpdate) ExecX(ctx context.Context) {
 	if err := uu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (uu *UserUpdate) check() error {
+	if v, ok := uu.mutation.TaskLimit(); ok {
+		if err := user.TaskLimitValidator(v); err != nil {
+			return &ValidationError{Name: "task_limit", err: fmt.Errorf(`ent: validator failed for field "User.task_limit": %w`, err)}
+		}
+	}
+	return nil
 }
 
 func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -193,7 +220,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.UserTaskCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   user.UserTaskTable,
 			Columns: []string{user.UserTaskColumn},
@@ -207,9 +234,28 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
+	if nodes := uu.mutation.RemovedUserTaskIDs(); len(nodes) > 0 && !uu.mutation.UserTaskCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UserTaskTable,
+			Columns: []string{user.UserTaskColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: task.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
 	if nodes := uu.mutation.UserTaskIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   user.UserTaskTable,
 			Columns: []string{user.UserTaskColumn},
@@ -278,23 +324,19 @@ func (uuo *UserUpdateOne) AddTaskLimit(i int) *UserUpdateOne {
 	return uuo
 }
 
-// SetUserTaskID sets the "user_task" edge to the Task entity by ID.
-func (uuo *UserUpdateOne) SetUserTaskID(id int) *UserUpdateOne {
-	uuo.mutation.SetUserTaskID(id)
+// AddUserTaskIDs adds the "user_task" edge to the Task entity by IDs.
+func (uuo *UserUpdateOne) AddUserTaskIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddUserTaskIDs(ids...)
 	return uuo
 }
 
-// SetNillableUserTaskID sets the "user_task" edge to the Task entity by ID if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableUserTaskID(id *int) *UserUpdateOne {
-	if id != nil {
-		uuo = uuo.SetUserTaskID(*id)
+// AddUserTask adds the "user_task" edges to the Task entity.
+func (uuo *UserUpdateOne) AddUserTask(t ...*Task) *UserUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
 	}
-	return uuo
-}
-
-// SetUserTask sets the "user_task" edge to the Task entity.
-func (uuo *UserUpdateOne) SetUserTask(t *Task) *UserUpdateOne {
-	return uuo.SetUserTaskID(t.ID)
+	return uuo.AddUserTaskIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -302,10 +344,25 @@ func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
 }
 
-// ClearUserTask clears the "user_task" edge to the Task entity.
+// ClearUserTask clears all "user_task" edges to the Task entity.
 func (uuo *UserUpdateOne) ClearUserTask() *UserUpdateOne {
 	uuo.mutation.ClearUserTask()
 	return uuo
+}
+
+// RemoveUserTaskIDs removes the "user_task" edge to Task entities by IDs.
+func (uuo *UserUpdateOne) RemoveUserTaskIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveUserTaskIDs(ids...)
+	return uuo
+}
+
+// RemoveUserTask removes "user_task" edges to Task entities.
+func (uuo *UserUpdateOne) RemoveUserTask(t ...*Task) *UserUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uuo.RemoveUserTaskIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -322,12 +379,18 @@ func (uuo *UserUpdateOne) Save(ctx context.Context) (*User, error) {
 		node *User
 	)
 	if len(uuo.hooks) == 0 {
+		if err = uuo.check(); err != nil {
+			return nil, err
+		}
 		node, err = uuo.sqlSave(ctx)
 	} else {
 		var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 			mutation, ok := m.(*UserMutation)
 			if !ok {
 				return nil, fmt.Errorf("unexpected mutation type %T", m)
+			}
+			if err = uuo.check(); err != nil {
+				return nil, err
 			}
 			uuo.mutation = mutation
 			node, err = uuo.sqlSave(ctx)
@@ -367,6 +430,16 @@ func (uuo *UserUpdateOne) ExecX(ctx context.Context) {
 	if err := uuo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// check runs all checks and user-defined validators on the builder.
+func (uuo *UserUpdateOne) check() error {
+	if v, ok := uuo.mutation.TaskLimit(); ok {
+		if err := user.TaskLimitValidator(v); err != nil {
+			return &ValidationError{Name: "task_limit", err: fmt.Errorf(`ent: validator failed for field "User.task_limit": %w`, err)}
+		}
+	}
+	return nil
 }
 
 func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
@@ -434,7 +507,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.UserTaskCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   user.UserTaskTable,
 			Columns: []string{user.UserTaskColumn},
@@ -448,9 +521,28 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
+	if nodes := uuo.mutation.RemovedUserTaskIDs(); len(nodes) > 0 && !uuo.mutation.UserTaskCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.UserTaskTable,
+			Columns: []string{user.UserTaskColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: task.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
 	if nodes := uuo.mutation.UserTaskIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   user.UserTaskTable,
 			Columns: []string{user.UserTaskColumn},

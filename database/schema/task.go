@@ -17,7 +17,7 @@ func (Task) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name"),
 		field.String("content"),
-		field.Int("user_id"),
+		field.Int("user_id").Optional(),
 		field.Time("created_at").Default(time.Now),
 		field.Time("updated_at").Default(time.Now).UpdateDefault(time.Now),
 	}
@@ -26,6 +26,6 @@ func (Task) Fields() []ent.Field {
 // Edges of the Task.
 func (Task) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("user", User.Type).Ref("user_task").Unique().Required().Field("user_id"),
+		edge.From("user", User.Type).Ref("user_task").Unique().Field("user_id"),
 	}
 }

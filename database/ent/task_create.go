@@ -39,6 +39,14 @@ func (tc *TaskCreate) SetUserID(i int) *TaskCreate {
 	return tc
 }
 
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableUserID(i *int) *TaskCreate {
+	if i != nil {
+		tc.SetUserID(*i)
+	}
+	return tc
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (tc *TaskCreate) SetCreatedAt(t time.Time) *TaskCreate {
 	tc.mutation.SetCreatedAt(t)
@@ -161,17 +169,11 @@ func (tc *TaskCreate) check() error {
 	if _, ok := tc.mutation.Content(); !ok {
 		return &ValidationError{Name: "content", err: errors.New(`ent: missing required field "Task.content"`)}
 	}
-	if _, ok := tc.mutation.UserID(); !ok {
-		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "Task.user_id"`)}
-	}
 	if _, ok := tc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Task.created_at"`)}
 	}
 	if _, ok := tc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Task.updated_at"`)}
-	}
-	if _, ok := tc.mutation.UserID(); !ok {
-		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Task.user"`)}
 	}
 	return nil
 }
@@ -234,7 +236,7 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 	}
 	if nodes := tc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   task.UserTable,
 			Columns: []string{task.UserColumn},

@@ -223,7 +223,7 @@ func (c *TaskClient) QueryUser(t *Task) *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(task.Table, task.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, task.UserTable, task.UserColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, task.UserTable, task.UserColumn),
 		)
 		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
 		return fromV, nil
@@ -329,7 +329,7 @@ func (c *UserClient) QueryUserTask(u *User) *TaskQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(task.Table, task.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, user.UserTaskTable, user.UserTaskColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.UserTaskTable, user.UserTaskColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil

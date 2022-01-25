@@ -46,3 +46,6 @@ gen-constructors:
 
 gen-schema:
 	go run entgo.io/ent/cmd/ent generate ./database/schema --target database/ent
+
+dev-up:
+	docker-compose up -d

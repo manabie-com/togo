@@ -1,25 +1,20 @@
 version: '3.7'
 services:
-#  togo:
-#    container_name: togo
-#    build:
-#      context: .
-#    environment:
-#      DB_HOST: mysql
-#      DB_PORT: 3306
-#      DB_USER: root
-#      DB_PASS: root
-#      JWT_SECRET: k99VlF72sX
-#    ports:
-#      - "8080:8080"
-
-  redis:
-    image: 'redis:alpine'
-    container_name: redis
+  togo:
+    container_name: togo
+    build:
+      context: .
+    restart: on-failure
     environment:
-      - ALLOW_EMPTY_PASSWORD=yes
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASS: root
+      JWT_SECRET: k99VlF72sX
+    depends_on:
+      - mysql
     ports:
-      - '6379:6379'
+      - "8080:8080"
 
   mysql:
     container_name: mysql

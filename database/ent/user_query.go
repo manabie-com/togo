@@ -78,7 +78,7 @@ func (uq *UserQuery) QueryUserTask() *TaskQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(task.Table, task.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, user.UserTaskTable, user.UserTaskColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.UserTaskTable, user.UserTaskColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -380,6 +380,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 		for i := range nodes {
 			fks = append(fks, nodes[i].ID)
 			nodeids[nodes[i].ID] = nodes[i]
+			nodes[i].Edges.UserTask = []*Task{}
 		}
 		query.Where(predicate.Task(func(s *sql.Selector) {
 			s.Where(sql.InValues(user.UserTaskColumn, fks...))
@@ -394,7 +395,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 			if !ok {
 				return nil, fmt.Errorf(`unexpected foreign-key "user_id" returned %v for node %v`, fk, n.ID)
 			}
-			node.Edges.UserTask = n
+			node.Edges.UserTask = append(node.Edges.UserTask, n)
 		}
 	}
 

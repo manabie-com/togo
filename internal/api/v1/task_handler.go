@@ -25,7 +25,7 @@ func (t *TaskHandler) CreateTask(ctx *fiber.Ctx) error {
 		log.Error(err)
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Invalid request body",
-			"err":     err,
+			"error":     err.Error(),
 		})
 	}
 
@@ -34,7 +34,7 @@ func (t *TaskHandler) CreateTask(ctx *fiber.Ctx) error {
 		log.Error(err)
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Internal server error",
-			"err":     err,
+			"error":     err.Error(),
 		})
 	}
 	return ctx.Status(fiber.StatusOK).JSON(taskResponse)

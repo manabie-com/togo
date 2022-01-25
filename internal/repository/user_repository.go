@@ -14,10 +14,10 @@ type UserRepository interface {
 }
 
 type userRepositoryImpl struct {
-	db infrastructure.DB
+	db *infrastructure.DB
 }
 
-func NewUserRepository(db infrastructure.DB) UserRepository {
+func NewUserRepository(db *infrastructure.DB) UserRepository {
 	return &userRepositoryImpl{
 		db: db,
 	}

@@ -12,7 +12,7 @@ Content-Type: application/json
 ### Create task
 POST http://localhost:8080/api/v1/tasks
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsInVzZXJuYW1lIjoiZGFpcGh1YyJ9.4719zKucOk5xvrkRSol8hRAg85WPZCeS5luuki-N6m4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsInVzZXJuYW1lIjoiZGFpcGh1YyIsImV4cCI6MTY0MzExMDkzMH0.eCV9a9iSiSYEWYU5Npaj5_u1R9KRV9gaRfx1wE5qSI8
 
 {
   "name": "Task 1",

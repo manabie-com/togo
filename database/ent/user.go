@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/trinhdaiphuc/togo/database/ent/task"
 	"github.com/trinhdaiphuc/togo/database/ent/user"
 )
 
@@ -30,21 +29,16 @@ type User struct {
 // UserEdges holds the relations/edges for other nodes in the graph.
 type UserEdges struct {
 	// UserTask holds the value of the user_task edge.
-	UserTask *Task `json:"user_task,omitempty"`
+	UserTask []*Task `json:"user_task,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 }
 
 // UserTaskOrErr returns the UserTask value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e UserEdges) UserTaskOrErr() (*Task, error) {
+// was not loaded in eager-loading.
+func (e UserEdges) UserTaskOrErr() ([]*Task, error) {
 	if e.loadedTypes[0] {
-		if e.UserTask == nil {
-			// The edge user_task was loaded in eager-loading,
-			// but was not found.
-			return nil, &NotFoundError{label: task.Label}
-		}
 		return e.UserTask, nil
 	}
 	return nil, &NotLoadedError{edge: "user_task"}

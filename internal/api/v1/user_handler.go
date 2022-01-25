@@ -25,7 +25,7 @@ func (h *UserHandler) Login(ctx *fiber.Ctx) error {
 		log.Error(err)
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Invalid request body",
-			"error":   err,
+			"error":   err.Error(),
 		})
 	}
 
@@ -34,7 +34,7 @@ func (h *UserHandler) Login(ctx *fiber.Ctx) error {
 		log.Error(err)
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Internal server error",
-			"error":   err,
+			"error":   err.Error(),
 		})
 	}
 	return ctx.Status(fiber.StatusOK).JSON(userResponse)

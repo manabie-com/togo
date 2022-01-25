@@ -4,6 +4,8 @@ package repository
 
 import (
 	"context"
+	"fmt"
+	taskent "github.com/trinhdaiphuc/togo/database/ent/task"
 	"github.com/trinhdaiphuc/togo/internal/entities"
 	"github.com/trinhdaiphuc/togo/internal/infrastructure"
 	"time"
@@ -14,17 +16,46 @@ type TaskRepository interface {
 }
 
 type taskRepositoryImpl struct {
-	db infrastructure.DB
+	db *infrastructure.DB
 }
 
-func NewTaskRepository(db infrastructure.DB) TaskRepository {
+var ErrTaskLimit = fmt.Errorf("task limit exceeded")
+
+func NewTaskRepository(db *infrastructure.DB) TaskRepository {
 	return &taskRepositoryImpl{
 		db: db,
 	}
 }
 
 func (t *taskRepositoryImpl) Create(ctx context.Context, task *entities.Task) (*entities.Task, error) {
-	resp, err := t.db.Task.Create().
+	tx, err := t.db.Tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	user, err := tx.User.Get(ctx, task.UserID)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+		} else {
+			tx.Commit()
+		}
+	}()
+	timeNow := time.Now().Local()
+	currentDate := time.Date(timeNow.Year(), timeNow.Month(), timeNow.Day(), 0, 0, 0, 0, timeNow.Location())
+	count, err := tx.Task.Query().
+		Where(taskent.UserIDEQ(user.ID), taskent.CreatedAtGTE(currentDate)).
+		Count(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if count >= user.TaskLimit {
+		err = ErrTaskLimit
+		return nil, err
+	}
+	resp, err := tx.Task.Create().
 		SetName(task.Name).
 		SetContent(task.Content).
 		SetUserID(task.UserID).
@@ -32,6 +63,7 @@ func (t *taskRepositoryImpl) Create(ctx context.Context, task *entities.Task) (*
 	if err != nil {
 		return nil, err
 	}
+
 	return &entities.Task{
 		ID:        resp.ID,
 		Name:      resp.Name,
