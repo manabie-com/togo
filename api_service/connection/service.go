@@ -55,6 +55,6 @@ func DialToTodoServiceServer() *ServiceConnection {
 	}
 
 	return &ServiceConnection{
-		ClientAccountService: proto.NewAccountServiceClient(conn),
+		ClientTodoService: proto.NewTodoServiceClient(conn),
 	}
 }

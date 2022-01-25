@@ -3,6 +3,7 @@ package handler
 import (
 	"log"
 	"net/http"
+	"strconv"
 
 	"api_service/connection"
 	"api_service/proto"
@@ -34,7 +35,11 @@ func CreateTodo(ctx *gin.Context) {
 func GetTodo(ctx *gin.Context) {
 
 	var getTodoRequest proto.GetTodoRequest
-	todoId := ctx.Param("id")
+	todoId, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusUnprocessableEntity, err)
+		return
+	}
 	getTodoRequest.TodoId = todoId
 
 	sc := connection.DialToTodoServiceServer()
@@ -45,14 +50,18 @@ func GetTodo(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, response)
+	ctx.JSON(http.StatusOK, gin.H{"title": response.Title, "description": response.Description, "Status": response.Status})
 }
 
 //UpdateTodo ...
 func UpdateTodo(ctx *gin.Context) {
 
 	var updateTodoRequest proto.UpdateTodoRequest
-	todoId := ctx.Param("id")
+	todoId, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusUnprocessableEntity, err)
+		return
+	}
 	updateTodoRequest.TodoId = todoId
 	if err := ctx.ShouldBindJSON(&updateTodoRequest); err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, err)
@@ -74,7 +83,12 @@ func UpdateTodo(ctx *gin.Context) {
 func DeleteTodo(ctx *gin.Context) {
 
 	var deleteTodoRequest proto.DeleteTodoRequest
-	todoId := ctx.Param("id")
+	todoId, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusUnprocessableEntity, err)
+		return
+	}
+
 	deleteTodoRequest.TodoId = todoId
 	if err := ctx.ShouldBindJSON(&deleteTodoRequest); err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, err)

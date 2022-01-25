@@ -13,26 +13,30 @@ message CreateTodoRequest {
     string title = 1;
     string description = 2;
     TodoStatus status = 3;
+    string token = 4;
 }
 
 message CreateTodoResponse {
     bool success = 1;
-    string todoId = 2;
+    int64 todoId = 2;
 }
 
 message GetTodoRequest {
-    string todoId = 1;
+    int64 todoId = 1;
 }
 
 message GetTodoResponse {
-    bool success = 1;
+    string title = 1;
+    string description = 2;
+    TodoStatus status = 3;
 }
 
 message UpdateTodoRequest {
     string title = 1;
     string description = 2;
     TodoStatus status = 3;
-    string todoId = 4;
+    int64 todoId = 4;
+    string token = 5;
 }
 
 message UpdateTodoResponse {
@@ -40,7 +44,8 @@ message UpdateTodoResponse {
 }
 
 message DeleteTodoRequest {
-    string todoId = 1;
+    int64 todoId = 1;
+    string token = 2;
 }
 
 message DeleteTodoResponse {
