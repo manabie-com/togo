@@ -19,7 +19,6 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SessionServiceClient interface {
 	GetAccountIDFromToken(ctx context.Context, in *TokenString, opts ...grpc.CallOption) (*AccountID, error)
-	GetAccountTypeFromToken(ctx context.Context, in *TokenString, opts ...grpc.CallOption) (*AccountType, error)
 	CreateToken(ctx context.Context, in *AccountInfo, opts ...grpc.CallOption) (*TokenString, error)
 	RefreshToken(ctx context.Context, in *TokenString, opts ...grpc.CallOption) (*TokenString, error)
 	DeleteToken(ctx context.Context, in *TokenString, opts ...grpc.CallOption) (*Status, error)
@@ -37,15 +36,6 @@ func NewSessionServiceClient(cc grpc.ClientConnInterface) SessionServiceClient {
 func (c *sessionServiceClient) GetAccountIDFromToken(ctx context.Context, in *TokenString, opts ...grpc.CallOption) (*AccountID, error) {
 	out := new(AccountID)
 	err := c.cc.Invoke(ctx, "/proto.SessionService/GetAccountIDFromToken", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *sessionServiceClient) GetAccountTypeFromToken(ctx context.Context, in *TokenString, opts ...grpc.CallOption) (*AccountType, error) {
-	out := new(AccountType)
-	err := c.cc.Invoke(ctx, "/proto.SessionService/GetAccountTypeFromToken", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +83,6 @@ func (c *sessionServiceClient) CheckToken(ctx context.Context, in *TokenString, 
 // for forward compatibility
 type SessionServiceServer interface {
 	GetAccountIDFromToken(context.Context, *TokenString) (*AccountID, error)
-	GetAccountTypeFromToken(context.Context, *TokenString) (*AccountType, error)
 	CreateToken(context.Context, *AccountInfo) (*TokenString, error)
 	RefreshToken(context.Context, *TokenString) (*TokenString, error)
 	DeleteToken(context.Context, *TokenString) (*Status, error)
@@ -107,9 +96,6 @@ type UnimplementedSessionServiceServer struct {
 
 func (UnimplementedSessionServiceServer) GetAccountIDFromToken(context.Context, *TokenString) (*AccountID, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccountIDFromToken not implemented")
-}
-func (UnimplementedSessionServiceServer) GetAccountTypeFromToken(context.Context, *TokenString) (*AccountType, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAccountTypeFromToken not implemented")
 }
 func (UnimplementedSessionServiceServer) CreateToken(context.Context, *AccountInfo) (*TokenString, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateToken not implemented")
@@ -150,24 +136,6 @@ func _SessionService_GetAccountIDFromToken_Handler(srv interface{}, ctx context.
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SessionServiceServer).GetAccountIDFromToken(ctx, req.(*TokenString))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _SessionService_GetAccountTypeFromToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TokenString)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SessionServiceServer).GetAccountTypeFromToken(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/proto.SessionService/GetAccountTypeFromToken",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SessionServiceServer).GetAccountTypeFromToken(ctx, req.(*TokenString))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -254,10 +222,6 @@ var SessionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAccountIDFromToken",
 			Handler:    _SessionService_GetAccountIDFromToken_Handler,
-		},
-		{
-			MethodName: "GetAccountTypeFromToken",
-			Handler:    _SessionService_GetAccountTypeFromToken_Handler,
 		},
 		{
 			MethodName: "CreateToken",

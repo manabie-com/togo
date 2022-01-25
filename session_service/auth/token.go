@@ -36,9 +36,8 @@ type TokenDetails struct {
 }
 
 type AccessDetails struct {
-	AccessUUID  string
-	AccountID   uint64
-	AccountType proto.Type
+	AccessUUID string
+	AccountID  uint64
 }
 
 //GenerateToken ...
@@ -54,7 +53,6 @@ func GenerateToken(accInfo *proto.AccountInfo) (*TokenDetails, error) {
 	atClaims["authorized"] = true
 	atClaims["access_uuid"] = td.AccessUUID
 	atClaims["account_id"] = accInfo.GetId()
-	atClaims["account_type"] = proto.Type_value[string(accInfo.GetType())]
 	atClaims["exp"] = td.AtExpires
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	td.AccessToken, err = at.SignedString([]byte(os.Getenv("ACCESS_SECRET")))
@@ -125,15 +123,9 @@ func ExtractTokenMetadata(tokenString string) (*AccessDetails, error) {
 		return nil, err
 	}
 
-	accountType, err := strconv.ParseInt(fmt.Sprintf("%.f", claims["account_id"]), 10, 32)
-	if err != nil {
-		return nil, err
-	}
-
 	return &AccessDetails{
-		AccessUUID:  accessUUID,
-		AccountID:   accountID,
-		AccountType: proto.Type(accountType),
+		AccessUUID: accessUUID,
+		AccountID:  accountID,
 	}, nil
 }
 

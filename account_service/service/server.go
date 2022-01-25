@@ -70,7 +70,7 @@ func (s *serviceServer) Login(ctx context.Context, request *proto.LoginRequest) 
 	}
 	defer conn.Close()
 
-	rows, err := conn.QueryContext(ctx, "SELECT Password, Id, Type FROM Account WHERE Username = ?", request.GetUsername())
+	rows, err := conn.QueryContext(ctx, "SELECT Password, Id FROM Account WHERE Username = ?", request.GetUsername())
 	if err != nil {
 		return nil, status.Error(codes.Unknown, "Failed to select Username from Account-> "+err.Error())
 	}
@@ -78,10 +78,9 @@ func (s *serviceServer) Login(ctx context.Context, request *proto.LoginRequest) 
 
 	var hashedPassoword string
 	var id uint64
-	var accType []uint8
 
 	for rows.Next() {
-		err = rows.Scan(&hashedPassoword, &id, &accType)
+		err = rows.Scan(&hashedPassoword, &id)
 		if err != nil {
 			return nil, err
 		}
@@ -94,8 +93,7 @@ func (s *serviceServer) Login(ctx context.Context, request *proto.LoginRequest) 
 
 	sc := connection.DialToSessionServiceServer()
 	tokenString, err := sc.ClientSessionService.CreateToken(ctx, &proto.AccountInfo{
-		Id:   id,
-		Type: proto.Type(proto.Type_value[string(accType)]),
+		Id: id,
 	})
 
 	return &proto.LoginResponse{

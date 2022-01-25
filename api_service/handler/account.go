@@ -11,7 +11,7 @@ import (
 )
 
 //Create ...
-func Create(ctx *gin.Context) {
+func CreateAccount(ctx *gin.Context) {
 
 	var createRequest proto.CreateRequest
 	if err := ctx.ShouldBindJSON(&createRequest); err != nil {
@@ -31,7 +31,7 @@ func Create(ctx *gin.Context) {
 }
 
 //Login ...
-func Login(ctx *gin.Context) {
+func LoginAccount(ctx *gin.Context) {
 
 	var loginRequest proto.LoginRequest
 	if err := ctx.ShouldBindJSON(&loginRequest); err != nil {
@@ -57,7 +57,7 @@ func Login(ctx *gin.Context) {
 }
 
 //Logout ...
-func Logout(ctx *gin.Context) {
+func LogoutAccount(ctx *gin.Context) {
 
 	var logoutRequest proto.LogoutRequest
 	if err := ctx.ShouldBindJSON(&logoutRequest); err != nil {
@@ -82,10 +82,10 @@ func Logout(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-func Update(ctx *gin.Context) {
+func UpdateAccount(ctx *gin.Context) {
 
 }
 
-func Show(ctx *gin.Context) {
+func ShowAccount(ctx *gin.Context) {
 
 }

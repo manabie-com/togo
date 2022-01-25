@@ -21,10 +21,6 @@ func (s *serviceServer) GetAccountIDFromToken(ctx context.Context, request *prot
 	return nil, nil
 }
 
-func (s *serviceServer) GetAccountTypeFromToken(ctx context.Context, request *proto.TokenString) (*proto.AccountType, error) {
-	return nil, nil
-}
-
 func (s *serviceServer) CreateToken(ctx context.Context, request *proto.AccountInfo) (*proto.TokenString, error) {
 
 	td, err := auth.GenerateToken(request)
@@ -57,8 +53,7 @@ func (s *serviceServer) RefreshToken(ctx context.Context, request *proto.TokenSt
 
 	//Create new Access token
 	td, createErr := auth.GenerateToken(&proto.AccountInfo{
-		Id:   tokenMetadata.AccountID,
-		Type: tokenMetadata.AccountType,
+		Id: tokenMetadata.AccountID,
 	})
 	if createErr != nil {
 		return nil, createErr

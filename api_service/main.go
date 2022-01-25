@@ -24,15 +24,20 @@ func main() {
 
 	router := gin.Default()
 
-	router.POST("/login", handler.Login)
-	router.POST("/account/create", handler.Create)
+	router.POST("/login", handler.LoginAccount)
+	router.POST("/account/create", handler.CreateAccount)
 
 	authorized := router.Group("/")
 	authorized.Use(middleware.TokenAuth)
 	{
-		authorized.POST("/logout", handler.Logout)
-		authorized.GET("/account/show", handler.Show)
-		authorized.PUT("/account/update", handler.Update)
+		authorized.POST("/logout", handler.LogoutAccount)
+		authorized.GET("/account/show", handler.ShowAccount)
+		authorized.PUT("/account/update", handler.UpdateAccount)
+
+		authorized.POST("todo/create", handler.CreateTodo)
+		authorized.GET("todo/get/:id", handler.GetTodo)
+		authorized.PUT("todo/update/:id", handler.UpdateTodo)
+		authorized.DELETE("todo/delete/:id", handler.DeleteTodo)
 	}
 
 	log.Fatal(router.Run(":" + os.Getenv("REST_API_PORT")))
