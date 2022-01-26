@@ -18,7 +18,20 @@ func NewSessionServiceServer() proto.SessionServiceServer {
 }
 
 func (s *serviceServer) GetAccountIDFromToken(ctx context.Context, request *proto.TokenString) (*proto.AccountID, error) {
-	return nil, nil
+
+	tokenMetadata, err := auth.ExtractTokenMetadata(request.GetToken())
+	if err != nil {
+		return nil, err
+	}
+
+	_, authErr := auth.FetchAuth(tokenMetadata)
+	if authErr != nil {
+		return nil, authErr
+	}
+
+	return &proto.AccountID{
+		Id: tokenMetadata.AccountID,
+	}, nil
 }
 
 func (s *serviceServer) CreateToken(ctx context.Context, request *proto.AccountInfo) (*proto.TokenString, error) {

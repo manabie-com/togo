@@ -31,6 +31,13 @@ func (s *serviceServer) CreateTodo(ctx context.Context, request *proto.CreateTod
 	if err != nil {
 		return nil, err
 	}
+	accountID, err := sc.ClientSessionService.GetAccountIDFromToken(ctx, &proto.TokenString{
+		Token: request.GetToken(),
+	})
+	if err != nil {
+		return nil, err
+	}
+	accId := &accountID.Id
 
 	conn, err := s.db.Conn(ctx)
 	if err != nil {
@@ -38,21 +45,21 @@ func (s *serviceServer) CreateTodo(ctx context.Context, request *proto.CreateTod
 	}
 	defer conn.Close()
 
-	res, err := conn.ExecContext(ctx, "INSERT INTO Todo (Title, Description, Status) VALUES (?, ?, ?)",
-		request.GetTitle(), request.GetDescription(), request.GetStatus())
+	res, err := conn.ExecContext(ctx, "INSERT INTO Todo (Title, Description, Status, AccountId) VALUES (?, ?, ?, ?)",
+		request.GetTitle(), request.GetDescription(), request.GetStatus(), accId)
 
 	if err != nil {
 		return nil, status.Error(codes.Unknown, "Failed to insert into Todo-> "+err.Error())
 	}
 
-	id, err := res.LastInsertId()
+	insertedId, err := res.LastInsertId()
 	if err != nil {
 		return nil, status.Error(codes.Unknown, "Failed to retrieve id for created Todo-> "+err.Error())
 	}
 
 	return &proto.CreateTodoResponse{
 		Success: stat.Success,
-		TodoId:  id,
+		TodoId:  insertedId,
 	}, nil
 }
 
