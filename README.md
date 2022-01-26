@@ -2,6 +2,7 @@
 Golang, Redis must be installed
 
 ### Source code structure
+```
 |-api_service/
 |-account_service/
 |-session_service/
@@ -10,6 +11,7 @@ Golang, Redis must be installed
     |-api_references.md
 |-db/
     |-schema.sql
+```
 
 Explaination:
 - **api_service**: Root service, contains all API methods.
