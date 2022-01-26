@@ -24,7 +24,9 @@ Explaination:
   - schema.sql: database schema
 
 ### How to run
-1. Run sql schema (MySql)
+1. Run sql schema using db/schema.sql (MySql)
 2. Config enviroment ```.env``` file based on ```.env.example```
+  - Same service must have the same port. Ex: api_service/.env ```ACCOUNT_SERVICE_PORT``` and account_service/.env ```ACCOUNT_SERVICE_PORT``` must be identical
+  - session_service/.env ```ACCESS_SECRET``` is arbitrary
 3. Go to all services folder, use command ```go run main.go```
 4. Follow api_references.md to call APIs
