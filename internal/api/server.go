@@ -3,9 +3,9 @@ package api
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/sirupsen/logrus"
-	"github.com/trinhdaiphuc/logger"
 	"github.com/trinhdaiphuc/togo/configs"
 	v1 "github.com/trinhdaiphuc/togo/internal/api/v1"
 	"os"
@@ -31,7 +31,12 @@ func (s *Server) Run() {
 	app := fiber.New(fiber.Config{
 		IdleTimeout: s.cfg.IdleTimeout,
 	})
-	app.Use(logger.FiberMiddleware(), recover.New())
+	app.Use(
+		logger.New(logger.Config{
+			Format: "[${ip}]:${port} ${pid} ${locals:requestid} ${status} - ${method} ${path}\n",
+		}),
+		recover.New(),
+	)
 	v1.MapRoutes(app, s.cfg, s.userHandler, s.taskHandler)
 
 	// Listen from a different goroutine

@@ -1,19 +1,23 @@
 package userservice
 
 import (
+	"context"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/sirupsen/logrus"
 	"github.com/trinhdaiphuc/togo/internal/entities"
 	"github.com/trinhdaiphuc/togo/pkg/helper"
 	"time"
 )
 
-func (u *userService) Login(ctx *fiber.Ctx, user *entities.User) (*entities.User, error) {
-	userResp, err := u.userRepo.GetUserByName(ctx.Context(), user.Username)
+func (u *userService) Login(ctx context.Context, user *entities.User) (*entities.User, error) {
+	logrus.Info("Login")
+	userResp, err := u.userRepo.GetUserByName(ctx, user.Username)
 	if err != nil {
+		logrus.Errorf("GetUserByName err %v", err)
 		return nil, err
 	}
-	if userResp.Username != user.Username || userResp.Password != user.Password {
+	if userResp.Password != user.Password {
 		return nil, fiber.ErrUnauthorized
 	}
 
@@ -27,7 +31,8 @@ func (u *userService) Login(ctx *fiber.Ctx, user *entities.User) (*entities.User
 	}
 	userResp.Jwt, err = helper.SignToken(jwtClaim, u.cfg.JwtSecret)
 	if err != nil {
-		return nil, err
+		logrus.Errorf("SignToken err %v", err)
+		return nil, fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 	userResp.Password = ""
 	return userResp, nil

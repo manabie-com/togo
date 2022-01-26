@@ -2,7 +2,6 @@ package v1
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/trinhdaiphuc/logger"
 	"github.com/trinhdaiphuc/togo/internal/entities"
 	"github.com/trinhdaiphuc/togo/internal/service"
 )
@@ -16,26 +15,15 @@ func NewUserHandler(service *service.Service) *UserHandler {
 }
 
 func (h *UserHandler) Login(ctx *fiber.Ctx) error {
-	var (
-		user = &entities.User{}
-		log  = logger.GetLogger(ctx.Context())
-	)
+	user := &entities.User{}
 	err := ctx.BodyParser(user)
 	if err != nil {
-		log.Error(err)
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Invalid request body",
-			"error":   err.Error(),
-		})
+		return err
 	}
 
-	userResponse, err := h.service.UserService.Login(ctx, user)
+	userResponse, err := h.service.UserService.Login(ctx.Context(), user)
 	if err != nil {
-		log.Error(err)
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "Internal server error",
-			"error":   err.Error(),
-		})
+		return err
 	}
 	return ctx.Status(fiber.StatusOK).JSON(userResponse)
 }

@@ -20,4 +20,6 @@ bin/
 
 .idea
 
-.vscode
+.vscode/
+
+coverage/

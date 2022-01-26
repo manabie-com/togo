@@ -1,7 +1,7 @@
 package helper
 
 import (
-	"fmt"
+	"context"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/trinhdaiphuc/togo/internal/entities"
@@ -15,8 +15,8 @@ type JwtClaims struct {
 }
 
 var (
-	ErrUserNotFound      = fmt.Errorf("user not found in context")
-	ErrUserClaimNotFound = fmt.Errorf("user claims not found in context")
+	ErrClaimsNotfound = fiber.NewError(fiber.StatusUnauthorized, "User claims not found in context")
+	ErrUserNotFound   = fiber.NewError(fiber.StatusUnauthorized, "User not found in context")
 )
 
 func SignToken(claims JwtClaims, secret string) (string, error) {
@@ -24,16 +24,16 @@ func SignToken(claims JwtClaims, secret string) (string, error) {
 	return token.SignedString([]byte(secret))
 }
 
-func UserFromContext(c *fiber.Ctx) (*entities.User, error) {
+func UserFromContext(c context.Context) (*entities.User, error) {
 	// Get userID from the previous route.
-	jwtData, ok := c.Locals("user").(*jwt.Token)
+	jwtData, ok := c.Value("user").(*jwt.Token)
 	if !ok {
 		return nil, ErrUserNotFound
 	}
 
 	claims, ok := jwtData.Claims.(*JwtClaims)
 	if !ok {
-		return nil, ErrUserClaimNotFound
+		return nil, ErrClaimsNotfound
 	}
 
 	return &entities.User{

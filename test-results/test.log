@@ -1,0 +1,54 @@
+?   	github.com/trinhdaiphuc/togo/cmd/togo	[no test files]
+?   	github.com/trinhdaiphuc/togo/configs	[no test files]
+?   	github.com/trinhdaiphuc/togo/database/ent	[no test files]
+?   	github.com/trinhdaiphuc/togo/database/ent/enttest	[no test files]
+?   	github.com/trinhdaiphuc/togo/database/ent/hook	[no test files]
+?   	github.com/trinhdaiphuc/togo/database/ent/migrate	[no test files]
+?   	github.com/trinhdaiphuc/togo/database/ent/predicate	[no test files]
+?   	github.com/trinhdaiphuc/togo/database/ent/runtime	[no test files]
+?   	github.com/trinhdaiphuc/togo/database/ent/task	[no test files]
+?   	github.com/trinhdaiphuc/togo/database/ent/user	[no test files]
+?   	github.com/trinhdaiphuc/togo/database/schema	[no test files]
+?   	github.com/trinhdaiphuc/togo/internal	[no test files]
+?   	github.com/trinhdaiphuc/togo/internal/api	[no test files]
+?   	github.com/trinhdaiphuc/togo/internal/api/middleware	[no test files]
+?   	github.com/trinhdaiphuc/togo/internal/api/v1	[no test files]
+?   	github.com/trinhdaiphuc/togo/internal/entities	[no test files]
+?   	github.com/trinhdaiphuc/togo/internal/infrastructure	[no test files]
+?   	github.com/trinhdaiphuc/togo/internal/repository	[no test files]
+?   	github.com/trinhdaiphuc/togo/internal/repository/mock	[no test files]
+?   	github.com/trinhdaiphuc/togo/internal/service	[no test files]
+=== RUN   Test_TaskServiceCreateTask
+=== RUN   Test_TaskServiceCreateTask/get_user_from_context_failed
+time="2022-01-26T09:25:30+07:00" level=info msg=CreateTask
+time="2022-01-26T09:25:30+07:00" level=error msg="UserFromContext err User not found in context"
+=== RUN   Test_TaskServiceCreateTask/create_task_failed
+time="2022-01-26T09:25:30+07:00" level=info msg=CreateTask
+=== RUN   Test_TaskServiceCreateTask/create_task_success
+time="2022-01-26T09:25:30+07:00" level=info msg=CreateTask
+time="2022-01-26T09:25:30+07:00" level=error msg="Create task repo err got error"
+--- PASS: Test_TaskServiceCreateTask (0.00s)
+    --- PASS: Test_TaskServiceCreateTask/get_user_from_context_failed (0.00s)
+    --- PASS: Test_TaskServiceCreateTask/create_task_failed (0.00s)
+    --- PASS: Test_TaskServiceCreateTask/create_task_success (0.00s)
+PASS
+coverage: 91.7% of statements
+ok  	github.com/trinhdaiphuc/togo/internal/service/task	0.738s	coverage: 91.7% of statements
+?   	github.com/trinhdaiphuc/togo/internal/service/task/mock	[no test files]
+=== RUN   Test_UserServiceLogin
+=== RUN   Test_UserServiceLogin/get_user_failed
+time="2022-01-26T09:25:31+07:00" level=info msg=Login
+time="2022-01-26T09:25:31+07:00" level=error msg="GetUserByName err got error"
+=== RUN   Test_UserServiceLogin/get_user_success_but_password_not_match
+time="2022-01-26T09:25:31+07:00" level=info msg=Login
+=== RUN   Test_UserServiceLogin/login_user_success
+time="2022-01-26T09:25:31+07:00" level=info msg=Login
+--- PASS: Test_UserServiceLogin (0.00s)
+    --- PASS: Test_UserServiceLogin/get_user_failed (0.00s)
+    --- PASS: Test_UserServiceLogin/get_user_success_but_password_not_match (0.00s)
+    --- PASS: Test_UserServiceLogin/login_user_success (0.00s)
+PASS
+coverage: 80.0% of statements
+ok  	github.com/trinhdaiphuc/togo/internal/service/user	1.153s	coverage: 80.0% of statements
+?   	github.com/trinhdaiphuc/togo/internal/service/user/mock	[no test files]
+?   	github.com/trinhdaiphuc/togo/pkg/helper	[no test files]

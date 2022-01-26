@@ -2,7 +2,6 @@ package v1
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/trinhdaiphuc/logger"
 	"github.com/trinhdaiphuc/togo/internal/entities"
 	"github.com/trinhdaiphuc/togo/internal/service"
 )
@@ -16,26 +15,15 @@ func NewTaskHandler(service *service.Service) *TaskHandler {
 }
 
 func (t *TaskHandler) CreateTask(ctx *fiber.Ctx) error {
-	var (
-		task = &entities.Task{}
-		log  = logger.GetLogger(ctx.Context())
-	)
+	task := &entities.Task{}
 	err := ctx.BodyParser(task)
 	if err != nil {
-		log.Error(err)
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Invalid request body",
-			"error":     err.Error(),
-		})
+		return err
 	}
 
-	taskResponse, err := t.service.TaskService.CreateTask(ctx, task)
+	taskResponse, err := t.service.TaskService.CreateTask(ctx.Context(), task)
 	if err != nil {
-		log.Error(err)
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "Internal server error",
-			"error":     err.Error(),
-		})
+		return err
 	}
-	return ctx.Status(fiber.StatusOK).JSON(taskResponse)
+	return ctx.Status(fiber.StatusCreated).JSON(taskResponse)
 }

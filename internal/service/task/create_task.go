@@ -1,19 +1,23 @@
 package taskservice
 
 import (
-	"github.com/gofiber/fiber/v2"
+	"context"
+	"github.com/sirupsen/logrus"
 	"github.com/trinhdaiphuc/togo/internal/entities"
 	"github.com/trinhdaiphuc/togo/pkg/helper"
 )
 
-func (t *taskService) CreateTask(ctx *fiber.Ctx, task *entities.Task) (*entities.Task, error) {
+func (t *taskService) CreateTask(ctx context.Context, task *entities.Task) (*entities.Task, error) {
+	logrus.Info("CreateTask")
 	user, err := helper.UserFromContext(ctx)
 	if err != nil {
+		logrus.Errorf("UserFromContext err %v", err)
 		return nil, err
 	}
 	task.UserID = user.ID
-	taskResp, err := t.taskRepo.Create(ctx.Context(), task)
+	taskResp, err := t.taskRepo.Create(ctx, task)
 	if err != nil {
+		logrus.Errorf("Create task repo err %v", err)
 		return nil, err
 	}
 	return taskResp, nil

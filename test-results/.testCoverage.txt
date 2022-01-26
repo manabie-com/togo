@@ -1,0 +1,15 @@
+mode: count
+github.com/trinhdaiphuc/togo/internal/service/task/create_task.go:10.100,13.16 3 3
+github.com/trinhdaiphuc/togo/internal/service/task/create_task.go:17.2,19.16 3 2
+github.com/trinhdaiphuc/togo/internal/service/task/create_task.go:23.2,23.22 1 1
+github.com/trinhdaiphuc/togo/internal/service/task/create_task.go:13.16,16.3 2 1
+github.com/trinhdaiphuc/togo/internal/service/task/create_task.go:19.16,22.3 2 1
+github.com/trinhdaiphuc/togo/internal/service/task/task_service.go:19.69,23.2 1 0
+github.com/trinhdaiphuc/togo/internal/service/user/login.go:13.95,16.16 3 3
+github.com/trinhdaiphuc/togo/internal/service/user/login.go:20.2,20.40 1 2
+github.com/trinhdaiphuc/togo/internal/service/user/login.go:25.2,33.16 3 1
+github.com/trinhdaiphuc/togo/internal/service/user/login.go:37.2,38.22 2 1
+github.com/trinhdaiphuc/togo/internal/service/user/login.go:16.16,19.3 2 1
+github.com/trinhdaiphuc/togo/internal/service/user/login.go:20.40,22.3 1 1
+github.com/trinhdaiphuc/togo/internal/service/user/login.go:33.16,36.3 2 0
+github.com/trinhdaiphuc/togo/internal/service/user/user_service.go:21.90,26.2 1 0

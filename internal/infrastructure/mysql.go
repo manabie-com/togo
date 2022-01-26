@@ -17,11 +17,11 @@ type DB struct {
 }
 
 const (
-	mysqlConnStrFmt = "%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&collation=utf8mb4_general_ci&loc=%s"
+	MysqlConnStrFmt = "%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&collation=utf8mb4_general_ci&loc=%s"
 )
 
 func NewDB(cfg *configs.Config) (*DB, func(), error) {
-	client, err := ent.Open(dialect.MySQL, fmt.Sprintf(mysqlConnStrFmt, cfg.DBUser, cfg.DBPassword, cfg.DBHost, cfg.DBPort, cfg.DBName, "Asia%2fBangkok&parseTime=true"))
+	client, err := ent.Open(dialect.MySQL, fmt.Sprintf(MysqlConnStrFmt, cfg.DBUser, cfg.DBPassword, cfg.DBHost, cfg.DBPort, cfg.DBName, "Asia%2fBangkok&parseTime=true"))
 	if err != nil {
 		return nil, nil, err
 	}

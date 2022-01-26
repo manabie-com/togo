@@ -4,7 +4,8 @@ package repository
 
 import (
 	"context"
-	"fmt"
+	"github.com/gofiber/fiber/v2"
+	"github.com/trinhdaiphuc/togo/database/ent"
 	taskent "github.com/trinhdaiphuc/togo/database/ent/task"
 	"github.com/trinhdaiphuc/togo/internal/entities"
 	"github.com/trinhdaiphuc/togo/internal/infrastructure"
@@ -19,8 +20,6 @@ type taskRepositoryImpl struct {
 	db *infrastructure.DB
 }
 
-var ErrTaskLimit = fmt.Errorf("task limit exceeded")
-
 func NewTaskRepository(db *infrastructure.DB) TaskRepository {
 	return &taskRepositoryImpl{
 		db: db,
@@ -34,6 +33,9 @@ func (t *taskRepositoryImpl) Create(ctx context.Context, task *entities.Task) (*
 	}
 	user, err := tx.User.Get(ctx, task.UserID)
 	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, fiber.NewError(fiber.StatusNotFound, "User not found")
+		}
 		return nil, err
 	}
 	defer func() {
@@ -52,8 +54,7 @@ func (t *taskRepositoryImpl) Create(ctx context.Context, task *entities.Task) (*
 		return nil, err
 	}
 	if count >= user.TaskLimit {
-		err = ErrTaskLimit
-		return nil, err
+		return nil, fiber.NewError(fiber.StatusBadRequest, "Task limit exceeded")
 	}
 	resp, err := tx.Task.Create().
 		SetName(task.Name).

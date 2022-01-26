@@ -3,13 +3,13 @@ package taskservice
 //go:generate mockgen -destination=./mock/mock_$GOFILE -source=$GOFILE -package=mock
 
 import (
-	"github.com/gofiber/fiber/v2"
+	"context"
 	"github.com/trinhdaiphuc/togo/internal/entities"
 	"github.com/trinhdaiphuc/togo/internal/repository"
 )
 
 type TaskService interface {
-	CreateTask(ctx *fiber.Ctx, task *entities.Task) (*entities.Task, error)
+	CreateTask(ctx context.Context, task *entities.Task) (*entities.Task, error)
 }
 
 type taskService struct {

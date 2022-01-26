@@ -4,6 +4,8 @@ package repository
 
 import (
 	"context"
+	"github.com/gofiber/fiber/v2"
+	"github.com/trinhdaiphuc/togo/database/ent"
 	"github.com/trinhdaiphuc/togo/database/ent/user"
 	"github.com/trinhdaiphuc/togo/internal/entities"
 	"github.com/trinhdaiphuc/togo/internal/infrastructure"
@@ -26,6 +28,9 @@ func NewUserRepository(db *infrastructure.DB) UserRepository {
 func (u *userRepositoryImpl) GetUserByName(ctx context.Context, username string) (*entities.User, error) {
 	resp, err := u.db.User.Query().Where(user.UsernameEQ(username)).Only(ctx)
 	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, fiber.NewError(fiber.StatusNotFound, "User not found, login again")
+		}
 		return nil, err
 	}
 	return &entities.User{
