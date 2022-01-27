@@ -24,9 +24,10 @@ Explaination:
   - schema.sql: database schema
 
 ### How to run
-1. Run sql schema using db/schema.sql (MySql)
-2. Config enviroment ```.env``` file based on ```.env.example```
+1. Run ```docker-compose -f docker-compose.yaml up``` pull MySql image and start the container
+2. Run sql schema using db/schema.sql (MySql)
+3. Config enviroment ```.env``` file based on ```.env.example```
   - Same service must have the same port. Ex: api_service/.env ```ACCOUNT_SERVICE_PORT``` and account_service/.env ```ACCOUNT_SERVICE_PORT``` must be identical
   - session_service/.env ```ACCESS_SECRET``` is arbitrary
-3. Go to all services folder, use command ```go run main.go```
-4. Follow api_references.md to call APIs
+4. Go to all services folder, use command ```go run main.go``` or pre-build with ```go build main.go``` and ```./main```
+5. Follow api_references.md to call APIs
