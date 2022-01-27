@@ -25,7 +25,7 @@ Explaination:
   - schema.sql: database schema.
 
 ### How to run
-1. Run ```docker-compose -f docker-compose.yaml up``` to start MySql and Redis container.
+1. Run ```docker-compose -f docker-compose.yaml up``` to start MySql and Redis containers.
 2. Go to each services folder, use command ```cp .env.example .env``` to generate ```.env``` file for each services.
   - Same service must have the same port. Ex: api_service/.env ```ACCOUNT_SERVICE_PORT``` and account_service/.env ```ACCOUNT_SERVICE_PORT``` must be identical.
   - session_service/.env ```ACCESS_SECRET``` is arbitrary.
