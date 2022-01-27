@@ -1,0 +1,12 @@
+version: '3'
+services:
+  todo_db:
+    image: mysql:latest
+    volumes:
+      - "./.mysql-data/db:/var/lib/mysql"
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: todo
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
