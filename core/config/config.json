@@ -1,0 +1,13 @@
+{
+  "databases":{
+    "postgres_db": {
+      "host":"localhost",
+      "port":5431,
+      "username":"postgres",
+      "password":"postgres",
+      "database":"manabie_postgres",
+      "sslmode": "disable",
+      "timeout": 15
+    }
+  }
+}
