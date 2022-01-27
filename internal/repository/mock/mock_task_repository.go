@@ -49,3 +49,62 @@ func (mr *MockTaskRepositoryMockRecorder) Create(ctx, task interface{}) *gomock.
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockTaskRepository)(nil).Create), ctx, task)
 }
+
+// DeleteTask mocks base method.
+func (m *MockTaskRepository) DeleteTask(ctx context.Context, id int) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteTask", ctx, id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteTask indicates an expected call of DeleteTask.
+func (mr *MockTaskRepositoryMockRecorder) DeleteTask(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTask", reflect.TypeOf((*MockTaskRepository)(nil).DeleteTask), ctx, id)
+}
+
+// GetTask mocks base method.
+func (m *MockTaskRepository) GetTask(ctx context.Context, id int) (*entities.Task, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTask", ctx, id)
+	ret0, _ := ret[0].(*entities.Task)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTask indicates an expected call of GetTask.
+func (mr *MockTaskRepositoryMockRecorder) GetTask(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTask", reflect.TypeOf((*MockTaskRepository)(nil).GetTask), ctx, id)
+}
+
+// GetTasks mocks base method.
+func (m *MockTaskRepository) GetTasks(ctx context.Context, filter *entities.TaskFilter) (*entities.Tasks, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTasks", ctx, filter)
+	ret0, _ := ret[0].(*entities.Tasks)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTasks indicates an expected call of GetTasks.
+func (mr *MockTaskRepositoryMockRecorder) GetTasks(ctx, filter interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTasks", reflect.TypeOf((*MockTaskRepository)(nil).GetTasks), ctx, filter)
+}
+
+// UpdateTask mocks base method.
+func (m *MockTaskRepository) UpdateTask(ctx context.Context, task *entities.Task) (*entities.Task, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateTask", ctx, task)
+	ret0, _ := ret[0].(*entities.Task)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateTask indicates an expected call of UpdateTask.
+func (mr *MockTaskRepositoryMockRecorder) UpdateTask(ctx, task interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTask", reflect.TypeOf((*MockTaskRepository)(nil).UpdateTask), ctx, task)
+}

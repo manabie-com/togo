@@ -23,3 +23,5 @@ bin/
 .vscode/
 
 coverage/
+
+test-results/

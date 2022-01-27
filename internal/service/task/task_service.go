@@ -10,6 +10,10 @@ import (
 
 type TaskService interface {
 	CreateTask(ctx context.Context, task *entities.Task) (*entities.Task, error)
+	GetTask(ctx context.Context, id int) (*entities.Task, error)
+	GetTasks(ctx context.Context, filter *entities.TaskFilter) (*entities.Tasks, error)
+	UpdateTask(ctx context.Context, task *entities.Task) (*entities.Task, error)
+	DeleteTask(ctx context.Context, id int) error
 }
 
 type taskService struct {

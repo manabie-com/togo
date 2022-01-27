@@ -27,3 +27,17 @@ func (h *UserHandler) Login(ctx *fiber.Ctx) error {
 	}
 	return ctx.Status(fiber.StatusOK).JSON(userResponse)
 }
+
+func (h *UserHandler) SignUp(ctx *fiber.Ctx) error {
+	user := &entities.User{}
+	err := ctx.BodyParser(user)
+	if err != nil {
+		return err
+	}
+
+	userResponse, err := h.service.UserService.SignUp(ctx.Context(), user)
+	if err != nil {
+		return err
+	}
+	return ctx.Status(fiber.StatusOK).JSON(userResponse)
+}

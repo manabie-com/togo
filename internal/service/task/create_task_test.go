@@ -3,9 +3,9 @@ package taskservice
 import (
 	"context"
 	"errors"
-	"github.com/bmizerany/assert"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
 	"github.com/trinhdaiphuc/togo/configs"
 	"github.com/trinhdaiphuc/togo/internal/entities"
 	"github.com/trinhdaiphuc/togo/internal/repository"
@@ -34,8 +34,8 @@ func Test_TaskServiceCreateTask(t *testing.T) {
 				UserName: "daiphuc",
 			},
 		})
-		err = errors.New("got error")
-		req = &entities.Task{ID: 1, Name: "Task 1", Content: "Content 1", UserID: 1}
+		err  = errors.New("got error")
+		req  = &entities.Task{ID: 1, Name: "Task 1", Content: "Content 1", UserID: 1}
 		resp = &entities.Task{ID: 1, Name: "Task 1", Content: "Content 1", UserID: 1}
 	)
 
@@ -62,7 +62,7 @@ func Test_TaskServiceCreateTask(t *testing.T) {
 				req: req,
 				ctx: ctxUser,
 			},
-			fields:  fields{
+			fields: fields{
 				taskRepo: func() *mock.MockTaskRepository {
 					mockRepo := mock.NewMockTaskRepository(mockCtrl)
 					mockRepo.EXPECT().Create(ctxUser, req).Return(resp, nil)
@@ -78,7 +78,7 @@ func Test_TaskServiceCreateTask(t *testing.T) {
 				req: req,
 				ctx: ctxUser,
 			},
-			fields:  fields{
+			fields: fields{
 				taskRepo: func() *mock.MockTaskRepository {
 					mockRepo := mock.NewMockTaskRepository(mockCtrl)
 					mockRepo.EXPECT().Create(ctxUser, req).Return(nil, err)
@@ -92,9 +92,7 @@ func Test_TaskServiceCreateTask(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ts := &taskService{
-				taskRepo: tt.fields.taskRepo,
-			}
+			ts := NewTaskService(tt.fields.taskRepo)
 			got, errOut := ts.CreateTask(tt.args.ctx, tt.args.req)
 			assert.Equal(t, tt.errResp, errOut)
 			if !reflect.DeepEqual(got, tt.want) {

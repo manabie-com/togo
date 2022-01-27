@@ -6,7 +6,9 @@ import (
 	"context"
 	"github.com/gofiber/fiber/v2"
 	"github.com/trinhdaiphuc/togo/database/ent"
+	"github.com/trinhdaiphuc/togo/database/ent/predicate"
 	taskent "github.com/trinhdaiphuc/togo/database/ent/task"
+	"github.com/trinhdaiphuc/togo/internal/dto"
 	"github.com/trinhdaiphuc/togo/internal/entities"
 	"github.com/trinhdaiphuc/togo/internal/infrastructure"
 	"time"
@@ -14,11 +16,20 @@ import (
 
 type TaskRepository interface {
 	Create(ctx context.Context, task *entities.Task) (*entities.Task, error)
+	GetTask(ctx context.Context, id int) (*entities.Task, error)
+	GetTasks(ctx context.Context, filter *entities.TaskFilter) (*entities.Tasks, error)
+	UpdateTask(ctx context.Context, task *entities.Task) (*entities.Task, error)
+	DeleteTask(ctx context.Context, id int) error
 }
 
 type taskRepositoryImpl struct {
 	db *infrastructure.DB
 }
+
+var (
+	ErrTaskNotFound = fiber.NewError(fiber.StatusNotFound, "Task not found")
+	ErrTaskLimit    = fiber.NewError(fiber.StatusBadRequest, "Task limit exceeded")
+)
 
 func NewTaskRepository(db *infrastructure.DB) TaskRepository {
 	return &taskRepositoryImpl{
@@ -34,7 +45,7 @@ func (t *taskRepositoryImpl) Create(ctx context.Context, task *entities.Task) (*
 	user, err := tx.User.Get(ctx, task.UserID)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, fiber.NewError(fiber.StatusNotFound, "User not found")
+			return nil, ErrUserNotFound
 		}
 		return nil, err
 	}
@@ -54,7 +65,7 @@ func (t *taskRepositoryImpl) Create(ctx context.Context, task *entities.Task) (*
 		return nil, err
 	}
 	if count >= user.TaskLimit {
-		return nil, fiber.NewError(fiber.StatusBadRequest, "Task limit exceeded")
+		return nil, ErrTaskLimit
 	}
 	resp, err := tx.Task.Create().
 		SetName(task.Name).
@@ -65,12 +76,78 @@ func (t *taskRepositoryImpl) Create(ctx context.Context, task *entities.Task) (*
 		return nil, err
 	}
 
-	return &entities.Task{
-		ID:        resp.ID,
-		Name:      resp.Name,
-		Content:   resp.Content,
-		UserID:    resp.UserID,
-		CreatedAt: resp.CreatedAt.Format(time.RFC3339),
-		UpdatedAt: resp.UpdatedAt.Format(time.RFC3339),
+	return dto.Task2TaskEntity(resp), nil
+}
+
+func (t *taskRepositoryImpl) GetTask(ctx context.Context, id int) (*entities.Task, error) {
+	task, err := t.db.Task.Get(ctx, id)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, ErrTaskNotFound
+		}
+		return nil, err
+	}
+	return dto.Task2TaskEntity(task), nil
+}
+
+func (t *taskRepositoryImpl) GetTasks(ctx context.Context, filter *entities.TaskFilter) (*entities.Tasks, error) {
+	var (
+		condition []predicate.Task
+	)
+	if filter.UserID != 0 {
+		condition = append(condition, taskent.UserIDEQ(filter.UserID))
+	}
+	if filter.Page < 0 {
+		filter.Page = 1
+	}
+	if filter.Limit < 10 {
+		filter.Limit = 10
+	}
+	offset := (filter.Page - 1) * filter.Limit
+	resp, err := t.db.Task.Query().
+		Where(condition...).
+		Offset(offset).
+		Limit(filter.Limit).All(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	total, err := t.db.Task.Query().
+		Where(condition...).
+		Offset(offset).
+		Limit(filter.Limit).Count(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &entities.Tasks{
+		Tasks: dto.Tasks2TasksEntity(resp),
+		Total: total,
+		Page:  filter.Page,
 	}, nil
+}
+
+func (t *taskRepositoryImpl) UpdateTask(ctx context.Context, task *entities.Task) (*entities.Task, error) {
+	resp, err := t.db.Task.UpdateOneID(task.ID).
+		SetName(task.Name).
+		SetContent(task.Content).
+		SetUpdatedAt(time.Now()).Save(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, ErrTaskNotFound
+		}
+		return nil, err
+	}
+	return dto.Task2TaskEntity(resp), nil
+}
+
+func (t *taskRepositoryImpl) DeleteTask(ctx context.Context, id int) error {
+	err := t.db.Task.DeleteOneID(id).Exec(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return ErrTaskNotFound
+		}
+		return err
+	}
+	return nil
 }

@@ -5,9 +5,9 @@
 package mock
 
 import (
+	context "context"
 	reflect "reflect"
 
-	fiber "github.com/gofiber/fiber/v2"
 	gomock "github.com/golang/mock/gomock"
 	entities "github.com/trinhdaiphuc/togo/internal/entities"
 )
@@ -36,7 +36,7 @@ func (m *MockUserService) EXPECT() *MockUserServiceMockRecorder {
 }
 
 // Login mocks base method.
-func (m *MockUserService) Login(ctx *fiber.Ctx, user *entities.User) (*entities.User, error) {
+func (m *MockUserService) Login(ctx context.Context, user *entities.User) (*entities.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Login", ctx, user)
 	ret0, _ := ret[0].(*entities.User)
@@ -48,4 +48,19 @@ func (m *MockUserService) Login(ctx *fiber.Ctx, user *entities.User) (*entities.
 func (mr *MockUserServiceMockRecorder) Login(ctx, user interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Login", reflect.TypeOf((*MockUserService)(nil).Login), ctx, user)
+}
+
+// SignUp mocks base method.
+func (m *MockUserService) SignUp(ctx context.Context, user *entities.User) (*entities.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SignUp", ctx, user)
+	ret0, _ := ret[0].(*entities.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SignUp indicates an expected call of SignUp.
+func (mr *MockUserServiceMockRecorder) SignUp(ctx, user interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignUp", reflect.TypeOf((*MockUserService)(nil).SignUp), ctx, user)
 }

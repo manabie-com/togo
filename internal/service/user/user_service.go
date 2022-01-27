@@ -11,6 +11,7 @@ import (
 
 type UserService interface {
 	Login(ctx context.Context, user *entities.User) (*entities.User, error)
+	SignUp(ctx context.Context, user *entities.User) (*entities.User, error)
 }
 
 type userService struct {

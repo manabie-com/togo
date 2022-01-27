@@ -1,20 +1,46 @@
 ###
+### Signup
+POST http://localhost:8080/api/v1/signup
+Content-Type: application/json
+
+{
+  "username": "daiphuc",
+  "password": "123456",
+  "taskLimit": 5
+}
+
+###
 ### Login
 POST http://localhost:8080/api/v1/login
 Content-Type: application/json
 
 {
   "username": "daiphuc",
-  "password": "password"
+  "password": "123456"
 }
+
+###
+### Get task
+GET http://localhost:8080/api/v1/tasks/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsInVzZXJuYW1lIjoiZGFpcGh1YyIsImV4cCI6MTY0MzI1OTQ1MX0.8O3lmDHl3vxRCNYGGD4SrZ502-Cl0nX_e_ny_n5sMn0
+
+###
+### Get tasks
+GET http://localhost:8080/api/v1/tasks?page=1&limit=10
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsInVzZXJuYW1lIjoiZGFpcGh1YyIsImV4cCI6MTY0MzI1OTQ1MX0.8O3lmDHl3vxRCNYGGD4SrZ502-Cl0nX_e_ny_n5sMn0
 
 ###
 ### Create task
 POST http://localhost:8080/api/v1/tasks
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsInVzZXJuYW1lIjoiZGFpcGh1YyIsImV4cCI6MTY0MzE2Nzk1Mn0.t5YQx5u5HapEnzFwQWfNwd8W40mC5l9ffKoBsNmb6o8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsInVzZXJuYW1lIjoiZGFpcGh1YyIsImV4cCI6MTY0MzI1OTQ1MX0.8O3lmDHl3vxRCNYGGD4SrZ502-Cl0nX_e_ny_n5sMn0
 
 {
   "name": "Task 1",
   "content": "To do task 1"
 }
+
+###
+### Delete tasks
+DELETE http://localhost:8080/api/v1/tasks/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsInVzZXJuYW1lIjoiZGFpcGh1YyIsImV4cCI6MTY0MzI1OTQ1MX0.8O3lmDHl3vxRCNYGGD4SrZ502-Cl0nX_e_ny_n5sMn0

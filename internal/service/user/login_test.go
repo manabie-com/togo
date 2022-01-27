@@ -3,9 +3,9 @@ package userservice
 import (
 	"context"
 	"errors"
-	"github.com/bmizerany/assert"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
 	"github.com/trinhdaiphuc/togo/configs"
 	"github.com/trinhdaiphuc/togo/internal/entities"
 	"github.com/trinhdaiphuc/togo/internal/repository"
@@ -89,10 +89,7 @@ func Test_UserServiceLogin(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			u := &userService{
-				userRepo: tt.fields.userRepo,
-				cfg:      tt.fields.cfg,
-			}
+			u := NewUserService(tt.fields.userRepo, tt.fields.cfg)
 			got, errOut := u.Login(ctx, tt.args.req)
 			assert.Equal(t, tt.errResp, errOut)
 			if got != nil && tt.want != nil {

@@ -8,3 +8,15 @@ type Task struct {
 	CreatedAt string `json:"createdAt"`
 	UpdatedAt string `json:"updatedAt"`
 }
+
+type Tasks struct {
+	Tasks []*Task `json:"tasks"`
+	Total int    `json:"total"`
+	Page  int    `json:"page"`
+}
+
+type TaskFilter struct {
+	UserID int `json:"userId"`
+	Page   int `json:"page"`
+	Limit  int `json:"limit"`
+}

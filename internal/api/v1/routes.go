@@ -13,7 +13,12 @@ func MapRoutes(app *fiber.App, cfg *configs.Config, userHandler *UserHandler, ta
 	task.Use(middleware.JWTMiddleware(cfg.JwtSecret))
 	{
 		task.Post("/", taskHandler.CreateTask)
+		task.Get("/:id", taskHandler.GetTask)
+		task.Get("/", taskHandler.GetTasks)
+		task.Put("/:id", taskHandler.UpdateTask)
+		task.Delete("/:id", taskHandler.DeleteTask)
 	}
 
 	v1.Post("/login", userHandler.Login)
+	v1.Post("/signup", userHandler.SignUp)
 }

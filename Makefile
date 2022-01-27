@@ -20,19 +20,6 @@ build_local:
 build:
 	@GOOS=$(TARGETOS) CGO_ENABLED=0 go build $(LDFLAGS) -o bin/togo ./cmd/togo
 
-clean:
-	@rm -f bin/server
-
-docker: clean build
-	docker build -t ztp-repo-sandbox.zpapps.vn/test/server:latest -f Dockerfile .
-
-deploy: docker
-	docker push ztp-repo-sandbox.zpapps.vn/test/server:latest
-	kubectl rollout restart deployment server -n kafka
-
-test:
-	go test ./... -cover
-
 install:
 	go get github.com/google/wire/cmd/wire && \
 	go get entgo.io/ent/cmd/ent

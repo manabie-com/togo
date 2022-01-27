@@ -17,7 +17,7 @@ func (u *userService) Login(ctx context.Context, user *entities.User) (*entities
 		logrus.Errorf("GetUserByName err %v", err)
 		return nil, err
 	}
-	if userResp.Password != user.Password {
+	if helper.CheckPasswordHash(userResp.Password, user.Password) {
 		return nil, fiber.ErrUnauthorized
 	}
 
