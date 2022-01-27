@@ -17,4 +17,6 @@
 out/
 
 .idea
+
+/mysql-data
 *.env
