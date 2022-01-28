@@ -5,6 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.util.Date;
 
 @Entity
@@ -21,18 +25,22 @@ public class Task {
     @Column(name = "status")
     private String status;
 
-    @Column(name = "created_date")
-    private Date createdDate;
-
     @Column(name = "user_id")
     private Long userId;
 
+    @CreationTimestamp
+    @Column(name = "created_at")
+    private Date createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private Date updatedAt;
+
     public Task() {}
 
-    public Task(String content, String status, Date createdDate, Long userId) {
+    public Task(String content, String status, Long userId) {
         this.content = content;
         this.status = status;
-        this.createdDate = createdDate;
         this.userId = userId;
     }
 
@@ -45,7 +53,7 @@ public class Task {
     }
 
     public String getContent() {
-        return content;
+        return this.content;
     }
 
     public void setContent(String content) {
@@ -53,19 +61,27 @@ public class Task {
     }
 
     public String getStatus() {
-        return status;
+        return this.status;
     }
 
     public void setStatus(String status) {
         this.status = status;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
+    public Date getCreatedAt() {
+        return this.createdAt;
     }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return this.updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public Long getUserId() {
@@ -82,8 +98,9 @@ public class Task {
                 "id=" + id +
                 ", content='" + content + '\'' +
                 ", status='" + status + '\'' +
-                ", createdDate=" + createdDate +
                 ", userId=" + userId +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
                 '}';
     }
 }
