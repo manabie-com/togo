@@ -19,4 +19,6 @@ var (
 	ErrInvalidAccessToken = Error("8", 401, "invalid_access_token", "Access token không hợp lệ")
 	// ErrRefreshTokenExpired ...
 	ErrAccessTokenExpired = Error("9", 401, "access_token_expired", "Access token hết hạn")
+	ErrTaskNotFound       = Error("9", 404, "task_not_found", "Không tìm thấy task")
+	ErrUserNotFound       = Error("9", 404, "user_not_found", "Không tìm thấy người dùng")
 )

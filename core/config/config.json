@@ -5,7 +5,7 @@
       "port":5431,
       "username":"postgres",
       "password":"postgres",
-      "database":"manabie_postgres",
+      "database":"postgres",
       "sslmode": "disable",
       "timeout": 15
     }
