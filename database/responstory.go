@@ -15,7 +15,7 @@ type responstory struct {
 	table  interface{}
 }
 
-func Init(client *gorm.DB) Responstory {
+func InitResponstory(client *gorm.DB) Responstory {
 	newresponstory := responstory{client: client}
 	return newresponstory
 }
