@@ -1,9 +1,10 @@
 package tasks
 
 type Tasks struct {
-	ID          uint `gorm:"primaryKey"`
-	ISACTIVE    bool
-	TITLE       string
-	DESCRIPTION string
-	CREATETIME  int64 `gorm:"autoCreateTime;index"`
+	Id         uint   `json:"id" gorm:"primaryKey"`
+	IsActive   bool   `json:"isActive" gorm:"default:true"`
+	Title      string `json:"title"`
+	Desciption string `json:"description"`
+	CreatedAt  int64  `json:"createdAt" gorm:"autoCreateTime;index"`
+	UpdatedAt  int64  `json:"updatedAt" gorm:"autoUpdateTime"`
 }
