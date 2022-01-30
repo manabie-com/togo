@@ -12,10 +12,10 @@ func main() {
 	app := fiber.New()
 
 	mysqlClient, _ := database.Initmysql(&tasks.Tasks{})
-	tasksresponstory := database.InitResponstory(mysqlClient)
+	tasksresponstory := database.InitResponstory(mysqlClient, "tasks")
 	tasksController := tasks.InitTaskController(tasksresponstory)
 	fmt.Println(mysqlClient)
-	app.Get("/", tasksController.Get)
+	app.Get("/:id", tasksController.Get)
 	app.Post("/", tasksController.Create)
 
 	app.Listen(":5000")

@@ -2,6 +2,7 @@ package tasks
 
 import (
 	"fmt"
+	"strconv"
 	"todo/database"
 
 	"github.com/gofiber/fiber/v2"
@@ -27,10 +28,26 @@ func InitTaskController(responstory database.Responstory) TaskController {
 }
 
 func (control taskController) Get(c *fiber.Ctx) error {
+	id := c.Params("id")
+	_, err := strconv.ParseUint(id, 10, 32)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Cannot find task",
+		})
+	}
+	var task Tasks
+	if err := control.responstory.Get(&task, id); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Cannot find task",
+		})
+	}
+	fmt.Println(task)
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
 		"data": fiber.Map{
-			"todos": "",
+			"task": task,
 		},
 	})
 }
@@ -49,12 +66,12 @@ func (control taskController) Create(c *fiber.Ctx) error {
 		})
 	}
 
-	task := &Tasks{
+	task := Tasks{
 		Title:      body.Title,
 		Desciption: body.Discription,
 	}
 
-	if err := control.responstory.Insert(task); err != nil {
+	if err := control.responstory.Insert(&task); err != nil {
 		fmt.Println(err)
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
@@ -65,7 +82,7 @@ func (control taskController) Create(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"success": true,
 		"data": fiber.Map{
-			"todo": task,
+			"task": task,
 		},
 	})
 }
