@@ -1,7 +1,7 @@
 {
   "databases":{
     "postgres_db": {
-      "host":"localhost",
+      "host":"host.docker.internal",
       "port":5431,
       "username":"postgres",
       "password":"postgres",

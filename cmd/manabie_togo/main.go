@@ -33,6 +33,7 @@ func main() {
 	}
 	errs := make(chan error, 1)
 	go func() {
+		fmt.Println("HTTP server content management listening on 8080")
 		errs <- http.ListenAndServe(fmt.Sprintf(":%s", "8080"), server.New(r))
 	}()
 	log.Println(fmt.Sprintf("exiting (%v)", <-errs))

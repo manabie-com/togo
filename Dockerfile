@@ -16,11 +16,7 @@ RUN go mod download
 COPY . .
 
 # Build the Go app
-
-#RUN go get -v -u github.com/swaggo/swag/cmd/swag
-#RUN swag init ./cmd/hapo-backend
-RUN go build -o main ./cmd/manabie_togo
-RUN rm -rf /tmp/*
+RUN go build -o main ./cmd/manabie_togo/main.go
 
 # Expose port 8080 to the outside world
 EXPOSE 8080

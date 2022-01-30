@@ -1,8 +1,11 @@
 package server
 
 import (
+	"fmt"
 	"net/http"
 	"time"
+
+	"github.com/manabie-com/togo/pkg/httpx"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -25,6 +28,7 @@ func New(r *registry.Registry) *Server {
 
 func (s *Server) router() chi.Router {
 	r := chi.NewRouter()
+	r.Use(APILoggingMiddleware)
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
@@ -49,4 +53,14 @@ func (s *Server) router() chi.Router {
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.router().ServeHTTP(w, r)
+}
+
+func APILoggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		lrw := httpx.NewLoggingResponseWriter(w)
+		defer func() {
+			fmt.Printf(fmt.Sprintf("API infomation: %v [%v] [%v]", r.RequestURI, r.Method, lrw.StatusCode))
+		}()
+		next.ServeHTTP(lrw, r)
+	})
 }
