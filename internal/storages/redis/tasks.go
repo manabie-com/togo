@@ -2,14 +2,15 @@ package redis
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/shanenoi/togo/config"
 	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type TaskRedis interface {
-	RetrieveUserSlotAvailable(uid float64) (int, bool)
+	GetSlotByUid(uid float64) (int, error)
+	UpdateSlotByUid(uid float64, value interface{}, expiration time.Duration) error
 }
 
 type taskRedis struct {
@@ -20,29 +21,19 @@ func NewTaskRedis(ctx *gin.Context) TaskRedis {
 	return &taskRedis{ctx}
 }
 
-func (trs *taskRedis) RetrieveUserSlotAvailable(uid float64) (int, bool) {
+func (trs *taskRedis) GetSlotByUid(uid float64) (int, error) {
 	redis, _ := GetRedis(trs.ctx)
-
-	userSlot := 0
 	rawData, err := redis.Database.Get(*redis.Contexy, fmt.Sprintf("%f", uid)).Result()
+	userSlot := 0
 
-	if err != nil {
-		userSlot = 0
-	} else {
+	if err == nil {
 		userSlot, err = strconv.Atoi(rawData)
 	}
 
-	if userSlot >= config.MAX_TASK_PER_DAY {
-		return 0, false
-	}
+	return userSlot, err
+}
 
-	userSlot += 1
-	duration, _ := time.ParseDuration(config.LIMIT_DURATION)
-	err = redis.Database.Set(*redis.Contexy, fmt.Sprintf("%f", uid), userSlot, duration).Err()
-
-	if err != nil {
-		panic(err)
-	}
-
-	return userSlot, true
+func (trs *taskRedis) UpdateSlotByUid(uid float64, value interface{}, expiration time.Duration) error {
+	redis, _ := GetRedis(trs.ctx)
+	return redis.Database.Set(*redis.Contexy, fmt.Sprintf("%f", uid), value, expiration).Err()
 }

@@ -4,7 +4,7 @@ build:
 	docker-compose build
 
 start-storage-services:
-	docker-compose up redis postgres -d
+	docker-compose up -d redis postgres
 
 stop-storage-services:
 	docker-compose down redis postgres
