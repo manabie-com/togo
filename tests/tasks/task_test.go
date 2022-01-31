@@ -47,6 +47,11 @@ func (mock mockresponstory) GetAll(data interface{}) error {
 	return nil
 }
 
+func (mock mockresponstory) Find(data interface{}, query string, args string) error {
+	data = mock.tasks
+	return nil
+}
+
 func TestGet(t *testing.T) {
 	tasksdata := []tasks.Tasks{{
 		Id:         1,
@@ -74,7 +79,7 @@ func TestGet(t *testing.T) {
 
 	body, err := ioutil.ReadAll(resp.Body)
 	utils.AssertEqual(t, nil, err)
-	utils.AssertEqual(t, `{"data":{"task":{"id":1,"isActive":false,"title":"test get","description":"test get","createdAt":0,"updatedAt":0}},"success":true}`, string(body))
+	utils.AssertEqual(t, `{"data":{"task":{"id":1,"isActive":false,"title":"test get","description":"test get","createdAt":0,"createdBy":0,"updatedAt":0,"updatedBy":0}},"success":true}`, string(body))
 }
 
 func TestInsert(t *testing.T) {
@@ -108,5 +113,5 @@ func TestInsert(t *testing.T) {
 
 	bodyRes, err := ioutil.ReadAll(resp.Body)
 	utils.AssertEqual(t, nil, err)
-	utils.AssertEqual(t, `{"data":{"task":{"id":0,"isActive":false,"title":"test insert","description":"test insert","createdAt":0,"updatedAt":0}},"success":true}`, string(bodyRes))
+	utils.AssertEqual(t, `{"data":{"task":{"id":0,"isActive":false,"title":"test insert","description":"test insert","createdAt":0,"createdBy":0,"updatedAt":0,"updatedBy":0}},"success":true}`, string(bodyRes))
 }
