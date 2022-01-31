@@ -7,7 +7,7 @@ type Responstory interface {
 	// Inserts(datas []interface{}) error
 	// Delete(id string) error
 	Get(data interface{}, id string) error
-	Find(data interface{}, query string, args string) error
+	Find(data interface{}, query string, args ...interface{}) error
 	GetAll(data interface{}) error
 }
 
@@ -36,8 +36,8 @@ func (res responstory) Get(data interface{}, id string) error {
 	return nil
 }
 
-func (res responstory) Find(data interface{}, query string, args string) error {
-	result := res.table.Where(query, args).Scan(data)
+func (res responstory) Find(data interface{}, query string, args ...interface{}) error {
+	result := res.table.Where(query, args...).Scan(data)
 	if result.Error != nil {
 		return result.Error
 	}

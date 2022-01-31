@@ -3,7 +3,6 @@ package users
 import (
 	"fmt"
 	"strconv"
-	"time"
 	"todo/database"
 	"todo/utils"
 
@@ -24,6 +23,7 @@ type userController struct {
 type UserCreate struct {
 	Name     string `json:"name"`
 	Password string `json:"password"`
+	Limit    uint   `json:"limit"`
 }
 
 type UserLogin struct {
@@ -74,10 +74,25 @@ func (control userController) Create(c *fiber.Ctx) error {
 			"message": "Cannot parse JSON",
 		})
 	}
+	var exitsUser []Users
+	if err := control.responstory.Find(&exitsUser, "name = ?", body.Name); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Server error",
+		})
+	}
+	if len(exitsUser) > 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "User name exsits",
+		})
+	}
+
 	hashedPassword, _ := utils.HashPassword(body.Password)
 	user := Users{
 		Name:     body.Name,
 		Password: hashedPassword,
+		Limit:    body.Limit,
 	}
 
 	if err := control.responstory.Insert(&user); err != nil {
@@ -118,9 +133,10 @@ func (control userController) Login(c *fiber.Ctx) error {
 	}
 	// Create the Claims
 	claims := jwt.MapClaims{
-		"name": user.Name,
-		"id":   user.Id,
-		"exp":  time.Now().Add(time.Hour * 72).Unix(),
+		"name":  user.Name,
+		"id":    user.Id,
+		"limit": user.Limit,
+		// "exp":   time.Now().Add(time.Hour * 72).Unix(),
 	}
 
 	// Create token
