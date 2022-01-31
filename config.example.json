@@ -1,0 +1,4 @@
+{
+	"Port":   5000,
+	"MySqlUri": "user_testdb:password@tcp(localhost:3307)/testdb"
+}
