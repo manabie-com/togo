@@ -31,13 +31,6 @@ func InitTaskController(responstory database.Responstory) TaskController {
 }
 
 func (control taskController) Get(c *fiber.Ctx) error {
-	user := c.Locals("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userid := uint(claims["id"].(float64))
-	userlimit := uint(claims["limit"].(float64))
-
-	fmt.Println(userid, userlimit)
-
 	id := c.Params("id")
 	_, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
@@ -68,7 +61,6 @@ func (control taskController) Create(c *fiber.Ctx) error {
 	userid := strconv.Itoa(int(claims["id"].(float64)))
 	userlimit := int(claims["limit"].(float64))
 
-	fmt.Println(userid, userlimit)
 	now := time.Now()
 	start := strconv.Itoa(int(utils.StartOfDay(now).Unix()))
 	end := strconv.Itoa(int(utils.EndOfDay(now).Unix()))

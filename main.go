@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"todo/config"
 	"todo/database"
 	"todo/modules/tasks"
 	"todo/modules/users"
@@ -32,5 +34,6 @@ func main() {
 	app.Get("/:id", tasksController.Get)
 	app.Post("/", tasksController.Create)
 
-	app.Listen(":5000")
+	configvalue := config.GetConfig()
+	app.Listen(fmt.Sprintf(":%v", configvalue.Port))
 }

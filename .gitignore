@@ -16,5 +16,6 @@
 
 out/
 
+config.json
 .idea
 .vscode
