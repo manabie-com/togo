@@ -4,14 +4,14 @@ import (
 	"context"
 	"errors"
 
+	repository2 "github.com/manabie-com/togo/internal/user/repository"
+
 	"github.com/manabie-com/togo/pkg/errorx"
 
 	"gorm.io/gorm"
 
-	"github.com/manabie-com/togo/model"
-	intCtx "github.com/manabie-com/togo/pkg/ctx"
-
 	"github.com/manabie-com/togo/internal/task/repository"
+	"github.com/manabie-com/togo/model"
 )
 
 type TaskService interface {
@@ -25,20 +25,27 @@ type TaskService interface {
 type taskService struct {
 	db       *gorm.DB
 	taskRepo repository.TaskRepository
+	userRepo repository2.UserRepository
 }
 
-func NewTaskService(taskRepo repository.TaskRepository, db *gorm.DB) TaskService {
+func NewTaskService(userRepo repository2.UserRepository, taskRepo repository.TaskRepository, db *gorm.DB) TaskService {
 	return &taskService{
 		db:       db,
 		taskRepo: taskRepo,
+		userRepo: userRepo,
 	}
 }
 
 func (t *taskService) GetTasks(ctx context.Context, args *GetTasksArgs) ([]*Task, error) {
-	currentUser := intCtx.Get(ctx, intCtx.UserKey).(*model.User)
+	user, err := t.userRepo.GetUser(ctx, &model.User{
+		ID: args.UserID,
+	})
+	if err != nil {
+		return nil, err
+	}
 
 	tasks, err := t.taskRepo.GetTasks(ctx, &repository.GetTasksQuery{
-		UserID: currentUser.ID,
+		UserID: user.ID,
 		Limit:  args.Limit,
 		Offset: args.Offset,
 	})
@@ -49,10 +56,15 @@ func (t *taskService) GetTasks(ctx context.Context, args *GetTasksArgs) ([]*Task
 }
 
 func (t *taskService) GetTask(ctx context.Context, args *GetTaskArgs) (*Task, error) {
-	currentUser := intCtx.Get(ctx, intCtx.UserKey).(*model.User)
+	user, err := t.userRepo.GetUser(ctx, &model.User{
+		ID: args.UserID,
+	})
+	if err != nil {
+		return nil, err
+	}
 	task, err := t.taskRepo.GetTask(ctx, &model.Task{
 		ID:     args.ID,
-		UserID: currentUser.ID,
+		UserID: user.ID,
 	})
 	if err != nil {
 		return nil, err
@@ -61,10 +73,15 @@ func (t *taskService) GetTask(ctx context.Context, args *GetTaskArgs) (*Task, er
 }
 
 func (t *taskService) DeleteTask(ctx context.Context, args *DeleteTaskArgs) error {
-	currentUser := intCtx.Get(ctx, intCtx.UserKey).(*model.User)
+	user, err := t.userRepo.GetUser(ctx, &model.User{
+		ID: args.UserID,
+	})
+	if err != nil {
+		return err
+	}
 	task, err := t.taskRepo.GetTask(ctx, &model.Task{
 		ID:     args.ID,
-		UserID: currentUser.ID,
+		UserID: user.ID,
 	})
 	if err != nil {
 		return err
@@ -79,18 +96,26 @@ func (t *taskService) DeleteTask(ctx context.Context, args *DeleteTaskArgs) erro
 }
 
 func (t *taskService) CreateTask(ctx context.Context, args *CreateTaskArgs) error {
-	currentUser := intCtx.Get(ctx, intCtx.UserKey).(*model.User)
-	taskCount, err := t.taskRepo.CountByUserID(ctx, currentUser.ID)
+	if args.Content == "" || args.UserID == 0 {
+		return errorx.ErrInvalidParameter(errors.New("Missing arguments"))
+	}
+	user, err := t.userRepo.GetUser(ctx, &model.User{
+		ID: args.UserID,
+	})
 	if err != nil {
 		return err
 	}
-	if int(taskCount) >= currentUser.LimitTask {
-		return errorx.ErrInternal(errors.New("Can not reach out task limit"))
+	taskCount, err := t.taskRepo.CountByUserID(ctx, user.ID)
+	if err != nil {
+		return err
+	}
+	if int(taskCount) >= user.TaskLimit {
+		return errorx.ErrInternal(errors.New("Can not reach out task limit today"))
 	}
 	tx := t.db.Begin()
 	if err := t.taskRepo.SaveTask(tx, &model.Task{
 		Content: args.Content,
-		UserID:  currentUser.ID,
+		UserID:  args.UserID,
 	}); err != nil {
 		tx.Rollback()
 		return err
@@ -100,10 +125,15 @@ func (t *taskService) CreateTask(ctx context.Context, args *CreateTaskArgs) erro
 }
 
 func (t *taskService) UpdateTask(ctx context.Context, args *UpdateTaskArgs) error {
-	currentUser := intCtx.Get(ctx, intCtx.UserKey).(*model.User)
+	user, err := t.userRepo.GetUser(ctx, &model.User{
+		ID: args.UserID,
+	})
+	if err != nil {
+		return err
+	}
 	task, err := t.taskRepo.GetTask(ctx, &model.Task{
 		ID:     args.TaskID,
-		UserID: currentUser.ID,
+		UserID: user.ID,
 	})
 	if err != nil {
 		return err

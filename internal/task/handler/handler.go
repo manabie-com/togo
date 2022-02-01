@@ -7,6 +7,9 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/manabie-com/togo/model"
+	intCtx "github.com/manabie-com/togo/pkg/ctx"
+
 	"github.com/manabie-com/togo/pkg/errorx"
 
 	"github.com/go-chi/chi"
@@ -45,8 +48,10 @@ func (h *TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	currentUser := intCtx.Get(r.Context(), intCtx.UserKey).(*model.User)
 	err = h.taskService.CreateTask(r.Context(), &service.CreateTaskArgs{
 		Content: req.Content,
+		UserID:  currentUser.ID,
 	})
 	if err != nil {
 		httpx.WriteError(w, err)

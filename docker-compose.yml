@@ -1,18 +1,6 @@
 version: '3.3'
 
 services:
-  manabie_server:
-    container_name: manabie_server
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - 8080:8080
-    depends_on:
-      - manabie_postgres
-    env_file: .env
-    networks:
-      - manabie_network
   manabie_postgres:
     container_name: manabie_postgres
     image: postgres:12
@@ -27,5 +15,20 @@ services:
     restart: always
     volumes:
       - ./script:/docker-entrypoint-initdb.d/
+  test_manabie_postgres:
+    container_name: test_manabie_postgres
+    image: postgres:12
+    environment:
+      - POSTGRES_DB=testpostgres
+      - POSTGRES_USER=testpostgres
+      - POSTGRES_PASSWORD=testpostgres
+    ports:
+      - 5430:5432
+    networks:
+      - manabie_network
+    restart: always
+    volumes:
+      - ./script:/docker-entrypoint-initdb.d/
 networks:
   manabie_network:
+    external: false

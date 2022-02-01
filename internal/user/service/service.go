@@ -30,13 +30,13 @@ type userService struct {
 }
 
 func (u *userService) GetUser(ctx context.Context, args *GetUserArgs) (*User, error) {
-	task, err := u.userRepo.GetUser(ctx, &model.User{
+	user, err := u.userRepo.GetUser(ctx, &model.User{
 		ID: args.UserID,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return convertModelUserToServiceUser(task), nil
+	return convertModelUserToServiceUser(user), nil
 }
 
 func NewUserService(userRepo repository.UserRepository, taskRepo taskrepository.TaskRepository, db *gorm.DB) UserService {
@@ -48,8 +48,11 @@ func NewUserService(userRepo repository.UserRepository, taskRepo taskrepository.
 }
 
 func (u *userService) Login(ctx context.Context, args *LoginUserArgs) (*LoginUserResponse, error) {
+	if args.Username == "" {
+		return nil, errorx.ErrInvalidParameter(errors.New("Missing username"))
+	}
 	user, err := u.userRepo.GetUser(ctx, &model.User{
-		ID: args.UserID,
+		Username: args.Username,
 	})
 	if err != nil {
 		return nil, err
@@ -69,6 +72,15 @@ func (u *userService) Login(ctx context.Context, args *LoginUserArgs) (*LoginUse
 }
 
 func (u *userService) CreateUser(ctx context.Context, args *CreateUserArgs) error {
+	if args.Password == "" || args.TaskLimit == 0 || args.Username == "" {
+		return errorx.ErrInvalidParameter(errors.New("Missing arguments"))
+	}
+	user, err := u.userRepo.GetUser(ctx, &model.User{
+		Username: args.Username,
+	})
+	if user != nil {
+		return errorx.ErrInvalidParameter(errors.New("Username existed"))
+	}
 	hashedPassword, err := auth.HashPassword(args.Password)
 	if err != nil {
 		return errorx.ErrInternal(err)
@@ -76,7 +88,8 @@ func (u *userService) CreateUser(ctx context.Context, args *CreateUserArgs) erro
 	tx := u.db.Begin()
 	if err = u.userRepo.SaveUser(tx, &model.User{
 		Password:  hashedPassword,
-		LimitTask: args.LimitTask,
+		TaskLimit: args.TaskLimit,
+		Username:  args.Username,
 	}); err != nil {
 		tx.Rollback()
 		return err
@@ -100,7 +113,7 @@ func (u *userService) UpdateUser(ctx context.Context, args *UpdateUserArgs) erro
 		if *args.TaskLimit < int(taskCount) {
 			return errorx.ErrInvalidParameter(errors.New("New task limit  must be bigger current task limit "))
 		}
-		user.LimitTask = *args.TaskLimit
+		user.TaskLimit = *args.TaskLimit
 	}
 
 	if args.Password != "" {
@@ -112,7 +125,7 @@ func (u *userService) UpdateUser(ctx context.Context, args *UpdateUserArgs) erro
 	}
 
 	tx := u.db.Begin()
-	if err = u.userRepo.SaveUser(tx, user); err != nil {
+	if err = u.userRepo.UpdateUser(tx, user); err != nil {
 		tx.Rollback()
 		return err
 	}

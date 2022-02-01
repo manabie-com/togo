@@ -7,7 +7,8 @@ import (
 )
 
 type GetTaskArgs struct {
-	ID int
+	ID     int
+	UserID int
 }
 
 type Task struct {
@@ -20,20 +21,25 @@ type Task struct {
 
 type CreateTaskArgs struct {
 	Content string
+	UserID  int
 }
 
 type UpdateTaskArgs struct {
 	TaskID  int
 	Content string
+	UserID  int
 }
 
 type DeleteTaskArgs struct {
-	ID int
+	ID     int
+	UserID int
 }
 
 type GetTasksArgs struct {
 	Limit  int
 	Offset int
+
+	UserID int
 }
 
 func convertModelTaskToServiceTask(args *model.Task) *Task {

@@ -15,8 +15,9 @@ type User struct {
 }
 
 type CreateUserArgs struct {
+	Username  string
 	Password  string
-	LimitTask int
+	TaskLimit int
 }
 
 type UpdateUserArgs struct {
@@ -28,6 +29,7 @@ type UpdateUserArgs struct {
 type LoginUserArgs struct {
 	UserID   int
 	Password string
+	Username string
 }
 
 type LoginUserResponse struct {
@@ -45,7 +47,8 @@ func convertModelUserToServiceUser(args *model.User) *User {
 	}
 	return &User{
 		ID:        args.ID,
-		TaskLimit: args.LimitTask,
+		TaskLimit: args.TaskLimit,
+		Password:  args.Password,
 		CreatedAt: args.CreatedAt,
 		UpdatedAt: args.UpdatedAt,
 	}

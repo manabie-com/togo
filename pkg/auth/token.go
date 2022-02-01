@@ -15,7 +15,7 @@ import (
 const (
 	AuthorizationHeader  = "Authorization"
 	AuthorizationScheme  = "Bearer"
-	TokenExpiresDuration = 60
+	TokenExpiresDuration = 6000000
 )
 
 type TokenDetails struct {

@@ -18,29 +18,22 @@ golang and docker must be installed.
   ```
 - In order to run the app without building the binary file, please run following commands:
 
-  - Run with default config
-  ```
-  go run ./cmd/main.go
-  ```
-  - Run with config file
+  - Run without binary file
   ```
   go run ./cmd/manabie_togo/main.go
   ```  
   - If you want to run the app by building binary file, please run following commands:
-
   ```
-  go build -o main ./cmd/manabie_togo
+  go build -o main ./cmd/manabie_togo/main.go
   ./main
   ```
 
 #### How to run unit tests locally
 
 - Access to golang directory and run command go test:
-
-```
-go test ./.
-..
-```
+  ```
+  go test ./...
+  ```
 ## Sample “curl” command to call API
 
 - Create-User CURL command:
@@ -50,6 +43,7 @@ go test ./.
       --url http://localhost:8080/api/user \
       --header 'Content-Type: application/json' \
       --data '{
+        "username": "example",
         "password": "123456",
         "limit_task": 3
     }'
@@ -78,4 +72,4 @@ go test ./.
 
 - Improve unit/integration tests
 - Add swagger feature
-- Add APIs about User domain
+- Add APIs about admin user domain

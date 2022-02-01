@@ -6,8 +6,9 @@ import (
 )
 
 type CreateUserRequest struct {
+	Username  string `json:"username"  validate:"required"`
 	Password  string `json:"password" validate:"required"`
-	LimitTask int    `json:"limit_task" validate:"required"`
+	TaskLimit int    `json:"task_limit" validate:"required"`
 }
 
 func (p *CreateUserRequest) Validate() error {
@@ -26,6 +27,7 @@ type UpdateUserRequest struct {
 
 type LoginRequest struct {
 	ID       int    `json:"id" validate:"required"`
+	Username string `json:"username" validate:"required"`
 	Password string `json:"password" validate:"required"`
 }
 

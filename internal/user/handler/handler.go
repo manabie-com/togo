@@ -46,8 +46,9 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = h.userService.CreateUser(r.Context(), &service.CreateUserArgs{
+		Username:  req.Username,
 		Password:  req.Password,
-		LimitTask: req.LimitTask,
+		TaskLimit: req.TaskLimit,
 	})
 	if err != nil {
 		httpx.WriteError(w, err)
@@ -107,12 +108,13 @@ func (h *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
 	loginRes, err := h.userService.Login(r.Context(), &service.LoginUserArgs{
 		UserID:   req.ID,
 		Password: req.Password,
+		Username: req.Username,
 	})
 	if err != nil {
 		httpx.WriteError(w, err)
 		return
 	}
-	httpx.WriteReponse(r.Context(), w, http.StatusCreated, LoginUserResponse{
+	httpx.WriteReponse(r.Context(), w, http.StatusOK, LoginUserResponse{
 		AccessToken: loginRes.AccessToken,
 		AtExpires:   loginRes.AtExpires,
 	})

@@ -12,6 +12,7 @@ import (
 type UserRepository interface {
 	GetUser(context.Context, *model.User) (*model.User, error)
 	SaveUser(*gorm.DB, *model.User) error
+	UpdateUser(*gorm.DB, *model.User) error
 }
 
 type userRepository struct {
@@ -36,7 +37,14 @@ func (r *userRepository) GetUser(ctx context.Context, u *model.User) (*model.Use
 }
 
 func (r *userRepository) SaveUser(tx *gorm.DB, user *model.User) error {
-	if err := tx.Save(user).Error; err != nil {
+	if err := tx.Create(user).Error; err != nil {
+		return errorx.ErrDatabase(err)
+	}
+	return nil
+}
+
+func (r *userRepository) UpdateUser(tx *gorm.DB, user *model.User) error {
+	if err := tx.Updates(user).Error; err != nil {
 		return errorx.ErrDatabase(err)
 	}
 	return nil

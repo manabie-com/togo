@@ -14,6 +14,6 @@ type Registry struct {
 func New(c config.Config) (*Registry, error) {
 	return &Registry{
 		Config: c,
-		DB:     database.New(c),
+		DB:     database.New(c.Databases),
 	}, nil
 }

@@ -21,7 +21,8 @@ func Asset(name string) ([]byte, error) {
 }
 
 type DBConfig struct {
-	PostgresDB PostgresConfig `json:"postgres_db"`
+	PostgresDB      *PostgresConfig `json:"postgres_db"`
+	Test_PostgresDB *PostgresConfig `json:"test_postgres_db"`
 }
 
 type PostgresConfig struct {

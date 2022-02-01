@@ -4,8 +4,9 @@ import "time"
 
 type User struct {
 	ID        int
+	Username  string
 	Password  string
-	LimitTask int
+	TaskLimit int
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt *time.Time

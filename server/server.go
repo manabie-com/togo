@@ -28,11 +28,11 @@ func New(r *registry.Registry) *Server {
 
 func (s *Server) router() chi.Router {
 	r := chi.NewRouter()
-	r.Use(APILoggingMiddleware)
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use(APILoggingMiddleware)
 	r.Use(middleware.Timeout(60 * time.Second))
 	r.Use(cors.New(cors.Options{
 		AllowedOrigins: []string{

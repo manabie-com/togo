@@ -28,7 +28,22 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	db, err := r.DB.ManabieDB.DB()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	testDB, err := r.DB.TestManabieDB.DB()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer testDB.Close()
+
 	if err = r.DB.Migrate(); err != nil {
+		log.Fatal(err)
+	}
+	if err = r.DB.MigrateTestDB(); err != nil {
 		log.Fatal(err)
 	}
 	errs := make(chan error, 1)

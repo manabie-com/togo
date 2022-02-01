@@ -1,18 +1,20 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TABLE users (
+CREATE TABLE tasks (
                        id SERIAL NOT NULL,
-                       username TEXT NOT NULL,
-                       password TEXT NOT NULL,
-                       task_limit INT8 DEFAULT 3 NOT NULL,
+                       content TEXT NOT NULL,
+                       user_id INT NOT NULL,
                        created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
                        updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
                        deleted_at timestamp,
-                       PRIMARY KEY(id)
+                       PRIMARY KEY(id),
+                       CONSTRAINT fk_user
+                           FOREIGN KEY(user_id)
+                               REFERENCES users(id)
 );
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE users;
+DROP TABLE tasks;
 -- +goose StatementEnd
