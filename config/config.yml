@@ -1,4 +1,4 @@
 APP:
-  host: 0.0.0.0
+  host: "localhost"
   debug: false
   port: 6000
