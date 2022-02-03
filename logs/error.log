@@ -1,0 +1,28 @@
+2022-02-04 01:40:53 - [ERROR] : 500 Internal Server Error: Expected a string value
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 30, in auth_route_sign_in
+    result = validate_credential(email, password)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/controller/auth.py", line 55, in validate_credential
+    return create_token({
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/controller/auth.py", line 93, in create_token
+    return encode(
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/jwt/api_jwt.py", line 63, in encode
+    return api_jws.encode(json_payload, key, algorithm, headers, json_encoder)
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/jwt/api_jws.py", line 113, in encode
+    key = alg_obj.prepare_key(key)
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/jwt/algorithms.py", line 184, in prepare_key
+    key = force_bytes(key)
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/jwt/utils.py", line 21, in force_bytes
+    raise TypeError("Expected a string value")
+TypeError: Expected a string value
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 36, in auth_route_sign_in
+    raise HTTPError(500, str(e))
+src.main.api.error.basic.HTTPError: 500 Internal Server Error: Expected a string value
