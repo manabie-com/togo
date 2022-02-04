@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"log"
 
 	customError "github.com/kozloz/togo/internal/errors"
 )
@@ -15,9 +14,15 @@ type Error struct {
 
 // Converts the error to our JSON Error type
 func CustomErrorToJSON(err error) Error {
-	var cerr *customError.Error
+	var cerr customError.Error
 	if errors.As(err, &cerr) {
-		log.Println(cerr.ErrorCode)
+		return Error{
+			ErrorCode: cerr.ErrorCode,
+			ErrorDesc: cerr.ErrorDesc,
+		}
 	}
-	return Error{}
+	return Error{
+		ErrorCode: customError.InternalError.ErrorCode,
+		ErrorDesc: customError.InternalError.ErrorDesc,
+	}
 }

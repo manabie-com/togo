@@ -12,3 +12,4 @@ func (e Error) Error() string {
 
 var Success Error = Error{ErrorCode: 0, ErrorDesc: "Success"}
 var MaxLimit Error = Error{ErrorCode: 1, ErrorDesc: "Max daily limit reached"}
+var InternalError Error = Error{ErrorCode: 9999, ErrorDesc: "Internal Server Error"}
