@@ -1,19 +1,36 @@
-Make env file using the .env.example
+# ToDo Application
 
-Type `source .env` to your terminal
 
-Type the following commands:
-1. make db_start
-2. make createdb
-3. make migrateup
-4. make run
-5. curl -XPOST -H "Content-type: application/json" -d '{
+## Setup instructions
+
+Create a new .env file based on the given `.env.example`. Load the created env to your shell:
+
+```
+source .env
+```
+
+Afterwards, initialize the database by doing:
+
+```
+make db_start
+make createdb
+make migrateup
+make run
+```
+
+Run the curl command to test the application:
+
+```
+curl -XPOST -H "Content-type: application/json" -d '{
 	"title": "Test Task",
 	"content": "This is the exam",
 	"is_complete": false,
 	"fullname": "Roan Dino"
 }' 'http://localhost:8080/api/tasks'
+```
 
+## Testing
 To test the application run `make test_app`
 
+## Delete Database
 To delete database run `make migratedown`
