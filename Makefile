@@ -13,4 +13,7 @@ migratedown:
 sqlc:
 	sqlc generate
 
-PHONY: postgres createdb migrateup migratedown sqlc
+test:
+	go test ./api/
+
+PHONY: postgres createdb migrateup migratedown sqlc test
