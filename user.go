@@ -8,6 +8,7 @@ type User struct {
 	Username   string // Username is just for display purposes
 	Tasks      []Task
 	DailyLimit int
+	DailyCount int
 }
 
 func (u *User) String() string {
