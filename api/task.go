@@ -80,12 +80,12 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if tc < int64(un.Maximum) {
-		ts, err := task.CreateOneTask(int64(un.ID))
+		_, err := task.CreateOneTask(int64(un.ID))
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		json.NewEncoder(w).Encode(&ts)
+		json.NewEncoder(w).Encode(&task)
 	} else {
 		w.Write([]byte("You have reached the maximum allowed tasks for today!"))
 	}
