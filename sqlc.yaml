@@ -1,0 +1,8 @@
+version: 1
+packages:
+  - path: "./db/sqlc"
+    name: "db"
+    engine: "postgresql"
+    schema: "./db/migrations"
+    queries: "./db/query/query.sql"
+    emit_json_tags: true
