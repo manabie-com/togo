@@ -1,0 +1,1 @@
+DELETE FROM users WHERE full_name = "Roan Dino";

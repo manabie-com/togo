@@ -26,24 +26,6 @@ func cors(handler http.Handler) http.Handler {
 }
 
 func main() {
-	// Seed user
-	// conn, err := sql.Open("postgres", "user=postgres password=postgres dbname=todo_app sslmode=disable")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// db := sqlc.New(conn)
-
-	// user, err := db.CreateUser(context.Background(), sqlc.CreateUserParams{
-	// 	FullName: "Roan Dino",
-	// 	Maximum:  5,
-	// })
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// fmt.Println(user)
-
 	// API routes
 	r := mux.NewRouter()
 	r.Use(cors)

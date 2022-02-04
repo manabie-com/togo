@@ -1,0 +1,1 @@
+INSERT INTO users ("full_name", "maximum") VALUES ('Roan Dino', 5);
