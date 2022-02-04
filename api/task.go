@@ -90,6 +90,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 			log.Fatal(err)
 		}
 		fmt.Println(ts)
+		json.NewEncoder(w).Encode(&task)
 	} else {
 		log.Println("You have reached the maximum allowed tasks for today! You can only add task count of ", un.Maximum)
 		os.Exit(1)
