@@ -58,3 +58,9 @@ def task_route_get_task_by_id(task_id):
 @credentials_validation
 def task_route_update_task_by_id(task_id):
     return {}
+
+# TODO: update task infomation
+# TODO: delete task
+# TODO: create subscription allow user change pricing level
+# TODO: write TEST
+# TODO: write document
