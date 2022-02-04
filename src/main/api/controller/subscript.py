@@ -62,13 +62,15 @@ def get_pricing_level():
         raise Exception("Fail to connect to database!")
     engine = create_engine(connect_string)
     with Session(engine) as session, session.begin():
-
         tasks = session.query(
             Pricing.id, Pricing.name, Pricing.unit_price, Pricing.daily_limit
         ).where(and_(
-            (Task.deleted == False)
+            (Pricing.deleted == False)
         ))
         data = []
+        i =0
         for task in tasks:
+            print(i)
+            i+=1
             data.append(task._asdict())
     return data
