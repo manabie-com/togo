@@ -8,6 +8,7 @@ from typing import List
 from datetime import datetime, timedelta
 from uuid import uuid4
 from ..error.basic import HTTPError
+from .subscript import get_pricing_level_by
 
 
 # Base.metadata.create_all(engine, checkfirst=True)
@@ -54,7 +55,7 @@ def daily_task_check(user_id: str):
             (Task.deleted == False)
         )).count()
         user = session.query(User).where(User.id == user_id).first()
-        pricing_info = get_pricing_level(id=user.pricing)
+        pricing_info = get_pricing_level_by(id=user.pricing)
         if pricing_info is None:
             raise HTTPError(404, f"Pricing Level of {user_id} is not existed!")
         if no_created_task < int(pricing_info.get("daily_limit")):
@@ -71,36 +72,32 @@ def get_task_of(user_id) -> List[dict]:
         tasks = session.query(
             Task.id, Task.summary, Task.description, Task.finish, Task.created, Task.last_modified
         ).where(and_(
-            (Task.user_id == user_id)),
+            (Task.user_id == user_id),
             (Task.deleted == False)
-        )
+        ))
         data = []
         for task in tasks:
             data.append(task._asdict())
     return data
 
 
-def get_pricing_level(id: str = None, name: str = None) -> dict:
+def get_task_by(task_id: str, user_id: str) -> dict:
     connect_string = load_config().get("DATABASE", {}).get("connection", None)
     if connect_string is None:
         raise Exception("Fail to connect to database!")
     engine = create_engine(connect_string)
-    with Session(engine) as session, session.begin():
-        if name is not None:
-            pricing = session.query(Pricing).where(Pricing.name == name).first()
-        elif id is not None:
-            pricing = session.query(Pricing).where(Pricing.id == id).first()
-        else:
-            pricing = None
-        if pricing is None:
-            return None
-        data = {
-            "id": pricing.id,
-            "name": pricing.name,
-            "unit_price": pricing.unit_price,
-            "daily_limit": pricing.daily_limit
-        }
-    return data
+    try:
+        with Session(engine) as session, session.begin():
+            task = session.query(
+                Task.id, Task.summary, Task.description, Task.finish, Task.created, Task.last_modified
+            ).where(and_(
+                (Task.id == task_id),
+                (Task.user_id == user_id),
+                (Task.deleted == False)
+            )).first()
+            return task._asdict()
+    except Exception:
+        return {}
 
 
 def create_task(user_id, task_data: dict):
@@ -124,27 +121,26 @@ def create_task(user_id, task_data: dict):
         raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
 
 
-def update_task(task_id, task_data):
+def update_task(task_id: str, user_id, task_data: dict) -> bool:
     connect_string = load_config().get("DATABASE", {}).get("connection", None)
     if connect_string is None:
         raise Exception("Fail to connect to database!")
     engine = create_engine(connect_string)
+
     with Session(engine) as session, session.begin():
-        session.execute(
-            update(Task).where(Task.id == task_id).values(
-                **task_data
-            ))
-    pass
+        try:
+            session.execute(
+                update(Task).where(and_(
+                    (Task.id == task_id),
+                    (Task.user_id == user_id)
+                )).values(
+                    **task_data,
+                    last_modified=datetime.now()
+                ))
+            return True
+        except Exception:
+            return False
 
 
-def delete_task(task_id):
-    connect_string = load_config().get("DATABASE", {}).get("connection", None)
-    if connect_string is None:
-        raise Exception("Fail to connect to database!")
-    engine = create_engine(connect_string)
-    with Session(engine) as session, session.begin():
-        session.execute(
-            update(Task).where(Task.id == task_id).values(
-                deleted=True
-            ))
-    pass
+def delete_task(task_id, user_id):
+    return update_task(task_id, user_id, {"deleted": True})

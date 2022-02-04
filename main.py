@@ -11,3 +11,6 @@ if __name__ == '__main__':
         port=app_config.get('port', 5500),
         debug=app_config.get('debug', True)
     )
+
+# TODO: write TEST
+# TODO: write document

@@ -4,7 +4,7 @@ from sqlalchemy.orm.session import Session
 from src.main.model import User
 from uuid import uuid4
 from ..services import create_token
-from .task import get_pricing_level
+from .subscript import get_pricing_level_by
 import bcrypt
 
 
@@ -18,7 +18,7 @@ def create_user(email: str, password: str, fullname: str, **kwargs):
     user_id = uuid4().hex
     salt = bcrypt.gensalt(10)
     hashed = bcrypt.hashpw(password, salt)
-    basic_id = get_pricing_level("Basic")
+    basic_id = get_pricing_level_by(name="Basic")
     user_dict = {
         "id": user_id,
         "username": user_id,
