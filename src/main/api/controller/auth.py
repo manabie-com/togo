@@ -4,6 +4,7 @@ from sqlalchemy.orm.session import Session
 from src.main.model import User
 from uuid import uuid4
 from ..services import create_token
+from .task import get_pricing_level
 import bcrypt
 
 
@@ -17,13 +18,15 @@ def create_user(email: str, password: str, fullname: str, **kwargs):
     user_id = uuid4().hex
     salt = bcrypt.gensalt(10)
     hashed = bcrypt.hashpw(password, salt)
+    basic_id = get_pricing_level("Basic")
     user_dict = {
         "id": user_id,
         "username": user_id,
         "email": email,
         "salt": salt,
         "hashed": hashed,
-        "name": fullname
+        "name": fullname,
+        "pricing": basic_id
     }
     user = User.from_dict(user_dict)
     with Session(engine) as session, session.begin():
@@ -38,7 +41,7 @@ def check_email(email: str) -> bool:
     engine = create_engine(connect_string)
     with Session(engine) as session, session.begin():
         no_email = session.query(User).where(User.email == email).count()
-        return no_email == 1
+        return no_email < 1
 
 
 def validate_credential(email: str, password: str) -> str:

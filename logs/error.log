@@ -26,3 +26,228 @@ Traceback (most recent call last):
   File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 36, in auth_route_sign_in
     raise HTTPError(500, str(e))
 src.main.api.error.basic.HTTPError: 500 Internal Server Error: Expected a string value
+2022-02-04 16:52:20 - [ERROR] : 500 Internal Server Error: 'NoneType' object has no attribute 'salt'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 30, in auth_route_sign_in
+    result = validate_credential(email, password)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/controller/auth.py", line 55, in validate_credential
+    hashed = bcrypt.hashpw(password, user.salt)
+AttributeError: 'NoneType' object has no attribute 'salt'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 36, in auth_route_sign_in
+    raise HTTPError(500, str(e))
+src.main.api.error.basic.HTTPError: 500 Internal Server Error: 'NoneType' object has no attribute 'salt'
+2022-02-04 16:52:49 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/controller/auth.py", line 17, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.main.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-04 16:55:03 - [ERROR] : 500 Internal Server Error: Instance <Pricing at 0x7fe7a6a85340> is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/14/bhk3)
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/controller/auth.py", line 30, in create_user
+    print(pricing_info.id)
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/attributes.py", line 481, in __get__
+    return self.impl.get(state, dict_)
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/attributes.py", line 941, in get
+    value = self._fire_loader_callables(state, key, passive)
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/attributes.py", line 972, in _fire_loader_callables
+    return state._load_expired(state, passive)
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/state.py", line 710, in _load_expired
+    self.manager.expired_attribute_loader(self, toload, passive)
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/loading.py", line 1369, in load_scalar_attributes
+    raise orm_exc.DetachedInstanceError(
+sqlalchemy.orm.exc.DetachedInstanceError: Instance <Pricing at 0x7fe7a6a85340> is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/14/bhk3)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.main.api.error.basic.HTTPError: 500 Internal Server Error: Instance <Pricing at 0x7fe7a6a85340> is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/14/bhk3)
+2022-02-04 16:55:24 - [ERROR] : 500 Internal Server Error: Instance <Pricing at 0x7fe7a6a40820> is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/14/bhk3)
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/controller/auth.py", line 30, in create_user
+    print(pricing_info.id)
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/attributes.py", line 481, in __get__
+    return self.impl.get(state, dict_)
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/attributes.py", line 941, in get
+    value = self._fire_loader_callables(state, key, passive)
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/attributes.py", line 972, in _fire_loader_callables
+    return state._load_expired(state, passive)
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/state.py", line 710, in _load_expired
+    self.manager.expired_attribute_loader(self, toload, passive)
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/loading.py", line 1369, in load_scalar_attributes
+    raise orm_exc.DetachedInstanceError(
+sqlalchemy.orm.exc.DetachedInstanceError: Instance <Pricing at 0x7fe7a6a40820> is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/14/bhk3)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.main.api.error.basic.HTTPError: 500 Internal Server Error: Instance <Pricing at 0x7fe7a6a40820> is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/14/bhk3)
+2022-02-04 16:57:23 - [ERROR] : 500 Internal Server Error: 'Pricing' object is not iterable
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/controller/auth.py", line 29, in create_user
+    get_pricing_level("Basic")
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/controller/task.py", line 63, in get_pricing_level
+    print(dict(pricing))
+TypeError: 'Pricing' object is not iterable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.main.api.error.basic.HTTPError: 500 Internal Server Error: 'Pricing' object is not iterable
+2022-02-04 17:00:40 - [ERROR] : 500 Internal Server Error: Instance <Pricing at 0x7fe20f2a1340> is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/14/bhk3)
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/controller/auth.py", line 29, in create_user
+    get_pricing_level("Basic")
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/controller/task.py", line 64, in get_pricing_level
+    print(pricing.id)
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/attributes.py", line 481, in __get__
+    return self.impl.get(state, dict_)
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/attributes.py", line 941, in get
+    value = self._fire_loader_callables(state, key, passive)
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/attributes.py", line 972, in _fire_loader_callables
+    return state._load_expired(state, passive)
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/state.py", line 710, in _load_expired
+    self.manager.expired_attribute_loader(self, toload, passive)
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/loading.py", line 1369, in load_scalar_attributes
+    raise orm_exc.DetachedInstanceError(
+sqlalchemy.orm.exc.DetachedInstanceError: Instance <Pricing at 0x7fe20f2a1340> is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/14/bhk3)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.main.api.error.basic.HTTPError: 500 Internal Server Error: Instance <Pricing at 0x7fe20f2a1340> is not bound to a Session; attribute refresh operation cannot proceed (Background on this error at: https://sqlalche.me/e/14/bhk3)
+2022-02-04 17:03:40 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/controller/auth.py", line 17, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.main.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-04 17:51:27 - [ERROR] : 500 Internal Server Error: 429 Too Many Requests: Daily limit for f7f069bb02004453aeacb91eada456c1 exceed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/task.py", line 34, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/controller/task.py", line 110, in create_task
+    raise HTTPError(429, f"Daily limit for {user_id} exceed!")
+src.main.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for f7f069bb02004453aeacb91eada456c1 exceed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/task.py", line 39, in task_route_create_task
+    raise HTTPError(500, str(e))
+src.main.api.error.basic.HTTPError: 500 Internal Server Error: 429 Too Many Requests: Daily limit for f7f069bb02004453aeacb91eada456c1 exceed!
+2022-02-04 17:52:04 - [ERROR] : 429 Too Many Requests: Daily limit for f7f069bb02004453aeacb91eada456c1 exceed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/task.py", line 39, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/task.py", line 34, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/controller/task.py", line 110, in create_task
+    raise HTTPError(429, f"Daily limit for {user_id} exceed!")
+src.main.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for f7f069bb02004453aeacb91eada456c1 exceed!
+2022-02-04 17:52:06 - [ERROR] : 429 Too Many Requests: Daily limit for f7f069bb02004453aeacb91eada456c1 exceed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/task.py", line 39, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/task.py", line 34, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/controller/task.py", line 110, in create_task
+    raise HTTPError(429, f"Daily limit for {user_id} exceed!")
+src.main.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for f7f069bb02004453aeacb91eada456c1 exceed!
+2022-02-04 17:52:45 - [ERROR] : 429 Too Many Requests: Daily limit for user 'f7f069bb02004453aeacb91eada456c1' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/task.py", line 39, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/task.py", line 34, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/controller/task.py", line 110, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.main.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user 'f7f069bb02004453aeacb91eada456c1' exceed! Please upgrade to higher pricing options.
