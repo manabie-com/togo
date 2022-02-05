@@ -16,8 +16,8 @@ type Task struct {
 }
 
 type User struct {
-	ID        int32     `json:"id"`
-	FullName  string    `json:"full_name"`
-	Maximum   int32     `json:"maximum"`
-	CreatedAt time.Time `json:"created_at"`
+	ID             int32     `json:"id"`
+	Username       string    `json:"username"`
+	DailyTaskLimit int32     `json:"daily_task_limit"`
+	CreatedAt      time.Time `json:"created_at"`
 }

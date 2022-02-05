@@ -1,9 +1,11 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	api "github.com/roandayne/togo/api"
 )
@@ -25,6 +27,11 @@ func cors(handler http.Handler) http.Handler {
 }
 
 func main() {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	// API routes
 	r := mux.NewRouter()
 	r.Use(cors)

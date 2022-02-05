@@ -1,22 +1,27 @@
-db_start:
-	docker run --name todopostgres -p 5432:5432 -e POSTGRES_USER=postgres -e  POSTGRES_PASSWORD=postgres -d postgres
+build:
+	docker-compose build
 
-db_stop:
-	docker stop todopostgres
+serve:
+	docker-compose up
 
-createdb:
-	docker exec -it todopostgres createdb --username=postgres --owner=postgres todo_app
+down:
+	docker-compose down
 
-migrateup:
-	migrate -database ${POSTGRESQL_URL} -path db/migrations up
+run_test:
+	docker-compose run --rm api go test /api/api
 
-migratedown:
-	migrate -database ${POSTGRESQL_URL} -path db/migrations down
+# database commands
 
-test_app:
-	go test ./api/
+sql_generate:
+	docker-compose exec api sqlc generate
 
-run:
-	go run main.go
+create_migration:
+	docker-compose run --rm migrate create -ext sql -dir /migrations $(name)
+	sudo chown -R "$(id -u):$(id -g)" db/migrations
 
-PHONY: db_start createdb migrateup migratedown sqlc test_app
+migrate_up:
+	docker-compose run --rm migrate -path /migrations -database postgres://postgres:postgres@db:5432/todo_app?sslmode=disable up
+
+migrate_down:
+	docker-compose run --rm migrate -path /migrations -database postgres://postgres:postgres@db:5432/todo_app?sslmode=disable down
+

@@ -1,7 +1,7 @@
 CREATE TABLE "users" (
   "id" SERIAL PRIMARY KEY,
-  "full_name" varchar NOT NULL UNIQUE,
-  "maximum" int NOT NULL,
+  "username" varchar NOT NULL UNIQUE,
+  "daily_task_limit" int NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 

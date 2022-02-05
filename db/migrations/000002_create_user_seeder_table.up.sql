@@ -1,1 +1,1 @@
-INSERT INTO users ("full_name", "maximum") VALUES ('Roan Dino', 5);
+INSERT INTO users ("username", "daily_task_limit") VALUES ('roandayne', 5);

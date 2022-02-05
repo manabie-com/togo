@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:14
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: todo_app
+  api:
+    build:
+      context: .
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/api
+  migrate:
+    image: migrate/migrate
+    volumes:
+      - ./db/migrations:/migrations
+
+volumes:
+  pgdata:

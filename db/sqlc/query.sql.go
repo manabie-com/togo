@@ -7,12 +7,12 @@ import (
 	"context"
 )
 
-const countTasks = `-- name: CountTasks :one
-SELECT count(*) FROM tasks WHERE user_id = $1
+const countUserTasks = `-- name: CountUserTasks :one
+SELECT count(*) FROM tasks WHERE user_id = $1 AND created_at BETWEEN NOW() - INTERVAL '24 HOURS' AND NOW()
 `
 
-func (q *Queries) CountTasks(ctx context.Context, userID int64) (int64, error) {
-	row := q.db.QueryRowContext(ctx, countTasks, userID)
+func (q *Queries) CountUserTasks(ctx context.Context, userID int64) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countUserTasks, userID)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
@@ -49,37 +49,37 @@ func (q *Queries) CreateTask(ctx context.Context, arg CreateTaskParams) (Task, e
 }
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (full_name, maximum) VALUES ($1, $2) RETURNING id, full_name, maximum, created_at
+INSERT INTO users (username, daily_task_limit) VALUES ($1, $2) RETURNING id, username, daily_task_limit, created_at
 `
 
 type CreateUserParams struct {
-	FullName string `json:"full_name"`
-	Maximum  int32  `json:"maximum"`
+	Username       string `json:"username"`
+	DailyTaskLimit int32  `json:"daily_task_limit"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, createUser, arg.FullName, arg.Maximum)
+	row := q.db.QueryRowContext(ctx, createUser, arg.Username, arg.DailyTaskLimit)
 	var i User
 	err := row.Scan(
 		&i.ID,
-		&i.FullName,
-		&i.Maximum,
+		&i.Username,
+		&i.DailyTaskLimit,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
 const getUserByName = `-- name: GetUserByName :one
-SELECT id, full_name, maximum, created_at FROM users WHERE full_name = $1 LIMIT 1
+SELECT id, username, daily_task_limit, created_at FROM users WHERE username = $1 LIMIT 1
 `
 
-func (q *Queries) GetUserByName(ctx context.Context, fullName string) (User, error) {
-	row := q.db.QueryRowContext(ctx, getUserByName, fullName)
+func (q *Queries) GetUserByName(ctx context.Context, username string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByName, username)
 	var i User
 	err := row.Scan(
 		&i.ID,
-		&i.FullName,
-		&i.Maximum,
+		&i.Username,
+		&i.DailyTaskLimit,
 		&i.CreatedAt,
 	)
 	return i, err

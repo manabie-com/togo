@@ -13,9 +13,10 @@ import (
 var testQueries *sqlc.Queries
 
 func TestMain(m *testing.M) {
-	conn, err := sql.Open("postgres", "user=postgres password=postgres dbname=todo_app sslmode=disable")
+	database_url := "postgres://postgres:postgres@db:5432/todo_app?sslmode=disable"
+	conn, err := sql.Open("postgres", database_url)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Error: ", err)
 	}
 	testQueries = sqlc.New(conn)
 	os.Exit(m.Run())

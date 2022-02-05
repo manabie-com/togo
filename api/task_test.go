@@ -3,9 +3,9 @@ package api
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	sqlc "github.com/roandayne/togo/db/sqlc"
@@ -13,74 +13,69 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func initialize() *httptest.ResponseRecorder {
+func Init() *httptest.ResponseRecorder {
+	database_url := "postgres://postgres:postgres@db:5432/todo_app?sslmode=disable"
+	os.Setenv("DATABASE_URL", database_url)
 	w := httptest.NewRecorder()
-	var jsonString = []byte(`{"title": "Test","content": "API Test","is_complete": true,"fullname": "Roan Dino"}`)
+	var jsonString = []byte(`{"title": "Test","content": "API Test","is_complete": true,"username": "testaccount"}`)
 	r := httptest.NewRequest(http.MethodPost, "/api/tasks", bytes.NewBuffer(jsonString))
 	r.Header.Set("Content-Type", "application/json")
-	fmt.Println(w.Body.String())
+
+	arg := sqlc.CreateUserParams{
+		Username:       "testaccount",
+		DailyTaskLimit: 3,
+	}
+	testQueries.CreateUser(context.Background(), arg)
 
 	handler := http.HandlerFunc(CreateTask)
 	handler.ServeHTTP(w, r)
-
 	return w
 }
 
 func TestCreateTaskHandler(t *testing.T) {
-	w := initialize()
-	if status := w.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v",
-			status, http.StatusOK)
-	}
+	w := Init()
 
-	expected := `{"title":"Test","content":"API Test","is_complete":true,"fullname":"Roan Dino"}`
+	expected := `{"title":"Test","content":"API Test","is_complete":true,"username":"testaccount"}`
 	assert.Contains(t, w.Body.String(), expected, "it should contain expected")
 }
 
 func TestMaximumNumberOfTask(t *testing.T) {
-	arg := sqlc.CreateUserParams{
-		FullName: "Test Account",
-		Maximum:  3,
-	}
-
-	testQueries.CreateUser(context.Background(), arg)
-
-	user, err := testQueries.GetUserByName(context.Background(), "Test Account")
+	user, err := testQueries.GetUserByName(context.Background(), "testaccount")
 
 	require.NoError(t, err)
 	require.NotEmpty(t, user)
-	assert.Equal(t, int32(3), user.Maximum)
+	assert.Equal(t, int32(3), user.DailyTaskLimit)
 
-	tArg := sqlc.CreateTaskParams{
+	ta := sqlc.CreateTaskParams{
 		Title:      "test title",
 		Content:    "test content",
 		IsComplete: false,
 		UserID:     int64(user.ID),
 	}
-	tArg2 := sqlc.CreateTaskParams{
+	ta2 := sqlc.CreateTaskParams{
 		Title:      "test title",
 		Content:    "test content",
 		IsComplete: false,
 		UserID:     int64(user.ID),
 	}
-	tArg3 := sqlc.CreateTaskParams{
+	ta3 := sqlc.CreateTaskParams{
 		Title:      "test title",
 		Content:    "test content",
 		IsComplete: false,
 		UserID:     int64(user.ID),
 	}
 
-	testQueries.CreateTask(context.Background(), tArg)
-	testQueries.CreateTask(context.Background(), tArg2)
-	testQueries.CreateTask(context.Background(), tArg3)
+	testQueries.CreateTask(context.Background(), ta)
+	testQueries.CreateTask(context.Background(), ta2)
+	testQueries.CreateTask(context.Background(), ta3)
 
-	w := initialize()
-	expected := "You have reached the maximum allowed tasks for today!"
+	w := Init()
+	expected := "You have reached the maximum limit of tasks today!"
 	assert.Contains(t, w.Body.String(), expected, "it should contain expected")
 }
 
 func TestCreateTask(t *testing.T) {
-	user, _ := testQueries.GetUserByName(context.Background(), "Test Account")
+	user, _ := testQueries.GetUserByName(context.Background(), "testaccount")
 
 	tArg := sqlc.CreateTaskParams{
 		Title:      "test title",
