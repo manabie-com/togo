@@ -16,9 +16,9 @@ type Store struct {
 	db *sql.DB
 }
 
-func NewStore(dbName string, user string, pass string) (*Store, error) {
+func NewStore(dbName string, host string, port string, user string, pass string) (*Store, error) {
 	log.Println("Creating mysql store")
-	login := fmt.Sprintf("%s:%s@tcp(db:3306)/%s", user, pass, dbName)
+	login := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, pass, host, port, dbName)
 	db, err := sql.Open("mysql", login)
 	if err != nil {
 		return nil, err
@@ -125,12 +125,12 @@ func (s *Store) GetUser(userID int64) (*togo.User, error) {
 
 	return user, nil
 }
-func (s *Store) CreateUser() (*togo.User, error) {
+func (s *Store) CreateUser(userID int64) (*togo.User, error) {
 	log.Println("Creating user in database")
 	query := `
-		INSERT INTO users (daily_limit) values(0)
+		INSERT INTO users (id, daily_limit) values(?,0)
 	`
-	res, err := s.db.Exec(query)
+	res, err := s.db.Exec(query, userID)
 	if err != nil {
 		log.Printf("Failed to create user with error: '%v'.", err)
 		return nil, err

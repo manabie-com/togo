@@ -35,17 +35,19 @@ func (o *Operation) Create(userID int64, taskName string) (*togo.Task, error) {
 
 	// Create user if doesnt exist yet
 	if user == nil {
-		user, err = o.userOperation.Create()
+		user, err = o.userOperation.Create(userID)
 		if err != nil {
 			return nil, err
 		}
 	}
 	// Check if can still create tasks. Consider 0 as unlimited.
+	counterYear, counterDay := 0, 0
+	var counterMonth time.Month
+	todayYear, todayMonth, todayDay := time.Now().Date()
 	if user.DailyCounter != nil && user.DailyLimit > 0 {
-		counterYear, counterMonth, counterDay := user.DailyCounter.LastUpdated.Date()
-		todayYear, todayMonth, todayDay := time.Now().Date()
+		counterYear, counterMonth, counterDay = user.DailyCounter.LastUpdated.Date()
 		if counterYear == todayYear && counterMonth == todayMonth && counterDay == todayDay &&
-			user.DailyCounter.DailyCount > user.DailyLimit {
+			user.DailyCounter.DailyCount >= user.DailyLimit {
 			log.Printf("Max daily limit reached for today")
 			return nil, errors.MaxLimit
 		}
@@ -58,17 +60,31 @@ func (o *Operation) Create(userID int64, taskName string) (*togo.Task, error) {
 	}
 
 	// Update user attributes
-	// Create counter only if a limit exists for the user
-	if user.DailyCounter == nil && user.DailyLimit > 0 {
-		user.DailyCounter = &togo.DailyCounter{}
+	if user.DailyLimit > 0 {
+		if user.DailyCounter == nil {
+			user.DailyCounter = &togo.DailyCounter{
+				UserID: user.ID,
+			}
+		}
+
+		// Reset the daily counter if last recorded was a different day
+		if !(counterYear == todayYear && counterMonth == todayMonth && counterDay == todayDay) {
+			user.DailyCounter.DailyCount = 0
+			user.DailyCounter.LastUpdated = time.Now()
+		}
+
 		user.DailyCounter.DailyCount++
-		user.DailyCounter.LastUpdated = time.Now()
+		log.Printf("Current counter: %v", user.DailyCounter)
 	}
+	// Create counter only if a limit exists for the user
+
 	user.Tasks = append(user.Tasks, task)
 	_, err = o.userOperation.Update(user)
 	if err != nil {
 		return nil, err
 	}
+
+	log.Printf("Successfully created task '%v'", task)
 
 	return task, nil
 }

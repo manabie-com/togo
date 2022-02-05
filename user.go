@@ -20,6 +20,10 @@ type DailyCounter struct {
 }
 
 func (u *User) String() string {
-	return fmt.Sprintf("ID: '%d',  DailyLimit: '%d', Tasks: '%v'",
-		u.ID, u.DailyLimit, u.Tasks)
+	dailyCounter := 0
+	if u.DailyCounter != nil {
+		dailyCounter = u.DailyCounter.DailyCount
+	}
+	return fmt.Sprintf("ID: '%d', DailyCounter: '%d', DailyLimit: '%d', Tasks: '%v'",
+		u.ID, dailyCounter, u.DailyLimit, u.Tasks)
 }

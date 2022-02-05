@@ -13,7 +13,7 @@ import (
 func InitializeServer() {
 	// Setup storage
 	//	store := &test.Store{}
-	store, err := mysql.NewStore("togo", "togo", "togo")
+	store, err := mysql.NewStore("togo", "db", "3306", "togo", "togo")
 	if err != nil {
 		panic(err)
 	}

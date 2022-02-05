@@ -8,7 +8,7 @@ import (
 
 type UserStore interface {
 	GetUser(userID int64) (*togo.User, error)
-	CreateUser() (*togo.User, error)
+	CreateUser(userID int64) (*togo.User, error)
 	UpdateUser(user *togo.User) (*togo.User, error)
 }
 type Operation struct {
@@ -34,9 +34,9 @@ func (o *Operation) Get(userID int64) (*togo.User, error) {
 }
 
 // Create creates a user
-func (o *Operation) Create() (*togo.User, error) {
+func (o *Operation) Create(userID int64) (*togo.User, error) {
 	// Create user object
-	user, err := o.store.CreateUser()
+	user, err := o.store.CreateUser(userID)
 	if err != nil {
 		return nil, err
 	}
