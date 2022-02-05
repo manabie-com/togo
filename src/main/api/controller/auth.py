@@ -18,7 +18,8 @@ def create_user(email: str, password: str, fullname: str, **kwargs):
     user_id = uuid4().hex
     salt = bcrypt.gensalt(10)
     hashed = bcrypt.hashpw(password, salt)
-    basic_id = get_pricing_level_by(name="Basic")
+    basic_pricing_level_info = get_pricing_level_by(name="Basic")
+    basic_pricing_id = basic_pricing_level_info.get("id")
     user_dict = {
         "id": user_id,
         "username": user_id,
@@ -26,7 +27,7 @@ def create_user(email: str, password: str, fullname: str, **kwargs):
         "salt": salt,
         "hashed": hashed,
         "name": fullname,
-        "pricing": basic_id
+        "pricing": basic_pricing_id
     }
     user = User.from_dict(user_dict)
     with Session(engine) as session, session.begin():

@@ -3200,3 +3200,191 @@ Traceback (most recent call last):
   File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/controller/task.py", line 121, in create_task
     raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
 src.main.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user 'f7f069bb02004453aeacb91eada456c1' exceed! Please upgrade to higher pricing options.
+2022-02-05 12:57:35 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/controller/auth.py", line 17, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.main.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-05 12:57:40 - [ERROR] : 500 Internal Server Error: (sqlite3.InterfaceError) Error binding parameter 6 - probably unsupported type.
+[SQL: INSERT INTO user (id, username, email, salt, hashed, fullname, pricing_id, deleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('85e7d36b08b24a9b8db0cccd0877109e', '85e7d36b08b24a9b8db0cccd0877109e', 'demo-sonlh-3@gmail.com', '$2a$10$B.KdyAhuVyLITHYFD1Qch.', '$2a$10$B.KdyAhuVyLITHYFD1Qch.wQmAPznxZy8Sbezp6efH3F1ZmExObu2', 'Luu Hoang Son', {'id': 'ff06fc09202143dbb311ab19fde3096b', 'name': 'Basic', 'unit_price': Decimal('0.00'), 'daily_limit': 5}, 0)]
+(Background on this error at: https://sqlalche.me/e/14/rvf5)
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/engine/base.py", line 1802, in _execute_context
+    self.dialect.do_execute(
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/engine/default.py", line 732, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.InterfaceError: Error binding parameter 6 - probably unsupported type.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/controller/auth.py", line 33, in create_user
+    session.add(user)
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/engine/util.py", line 237, in __exit__
+    self.rollback()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/util/langhelpers.py", line 70, in __exit__
+    compat.raise_(
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/util/compat.py", line 207, in raise_
+    raise exception
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/engine/util.py", line 233, in __exit__
+    self.commit()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/session.py", line 829, in commit
+    self._prepare_impl()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/session.py", line 808, in _prepare_impl
+    self.session.flush()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/session.py", line 3363, in flush
+    self._flush(objects)
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/session.py", line 3503, in _flush
+    transaction.rollback(_capture_exception=True)
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/util/langhelpers.py", line 70, in __exit__
+    compat.raise_(
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/util/compat.py", line 207, in raise_
+    raise exception
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/session.py", line 3463, in _flush
+    flush_context.execute()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/unitofwork.py", line 456, in execute
+    rec.execute(self)
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/unitofwork.py", line 630, in execute
+    util.preloaded.orm_persistence.save_obj(
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/persistence.py", line 244, in save_obj
+    _emit_insert_statements(
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/persistence.py", line 1096, in _emit_insert_statements
+    c = connection._execute_20(
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/engine/base.py", line 1614, in _execute_20
+    return meth(self, args_10style, kwargs_10style, execution_options)
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/sql/elements.py", line 325, in _execute_on_connection
+    return connection._execute_clauseelement(
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/engine/base.py", line 1481, in _execute_clauseelement
+    ret = self._execute_context(
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/engine/base.py", line 1845, in _execute_context
+    self._handle_dbapi_exception(
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/engine/base.py", line 2026, in _handle_dbapi_exception
+    util.raise_(
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/util/compat.py", line 207, in raise_
+    raise exception
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/engine/base.py", line 1802, in _execute_context
+    self.dialect.do_execute(
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/engine/default.py", line 732, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.InterfaceError: (sqlite3.InterfaceError) Error binding parameter 6 - probably unsupported type.
+[SQL: INSERT INTO user (id, username, email, salt, hashed, fullname, pricing_id, deleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('85e7d36b08b24a9b8db0cccd0877109e', '85e7d36b08b24a9b8db0cccd0877109e', 'demo-sonlh-3@gmail.com', '$2a$10$B.KdyAhuVyLITHYFD1Qch.', '$2a$10$B.KdyAhuVyLITHYFD1Qch.wQmAPznxZy8Sbezp6efH3F1ZmExObu2', 'Luu Hoang Son', {'id': 'ff06fc09202143dbb311ab19fde3096b', 'name': 'Basic', 'unit_price': Decimal('0.00'), 'daily_limit': 5}, 0)]
+(Background on this error at: https://sqlalche.me/e/14/rvf5)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.main.api.error.basic.HTTPError: 500 Internal Server Error: (sqlite3.InterfaceError) Error binding parameter 6 - probably unsupported type.
+[SQL: INSERT INTO user (id, username, email, salt, hashed, fullname, pricing_id, deleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('85e7d36b08b24a9b8db0cccd0877109e', '85e7d36b08b24a9b8db0cccd0877109e', 'demo-sonlh-3@gmail.com', '$2a$10$B.KdyAhuVyLITHYFD1Qch.', '$2a$10$B.KdyAhuVyLITHYFD1Qch.wQmAPznxZy8Sbezp6efH3F1ZmExObu2', 'Luu Hoang Son', {'id': 'ff06fc09202143dbb311ab19fde3096b', 'name': 'Basic', 'unit_price': Decimal('0.00'), 'daily_limit': 5}, 0)]
+(Background on this error at: https://sqlalche.me/e/14/rvf5)
+2022-02-05 13:01:02 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/controller/auth.py", line 17, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.main.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-05 13:04:06 - [ERROR] : 500 Internal Server Error: Expecting property name enclosed in double quotes: line 4 column 1 (char 76)
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 27, in auth_route_sign_in
+    body = json.loads(request.data)
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/json/__init__.py", line 357, in loads
+    return _default_decoder.decode(s)
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/json/decoder.py", line 353, in raw_decode
+    obj, end = self.scan_once(s, idx)
+json.decoder.JSONDecodeError: Expecting property name enclosed in double quotes: line 4 column 1 (char 76)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 36, in auth_route_sign_in
+    raise HTTPError(500, str(e))
+src.main.api.error.basic.HTTPError: 500 Internal Server Error: Expecting property name enclosed in double quotes: line 4 column 1 (char 76)
+2022-02-05 13:04:45 - [ERROR] : 401 Unauthorized: Authentication Failed
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/auth.py", line 38, in auth_route_sign_in
+    raise HTTPError(401, "Authentication Failed")
+src.main.api.error.basic.HTTPError: 401 Unauthorized: Authentication Failed
+2022-02-05 13:24:50 - [ERROR] : 429 Too Many Requests: Daily limit for user 'f7f069bb02004453aeacb91eada456c1' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/task.py", line 44, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/task.py", line 39, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/controller/task.py", line 121, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.main.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user 'f7f069bb02004453aeacb91eada456c1' exceed! Please upgrade to higher pricing options.
+2022-02-05 13:36:44 - [ERROR] : 500 Internal Server Error: Expecting property name enclosed in double quotes: line 4 column 1 (char 86)
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/task.py", line 70, in task_route_update_task_by_id
+    body = json.loads(request.data)
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/json/__init__.py", line 357, in loads
+    return _default_decoder.decode(s)
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/json/decoder.py", line 353, in raw_decode
+    obj, end = self.scan_once(s, idx)
+json.decoder.JSONDecodeError: Expecting property name enclosed in double quotes: line 4 column 1 (char 86)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/task.py", line 75, in task_route_update_task_by_id
+    raise HTTPError(500, str(e))
+src.main.api.error.basic.HTTPError: 500 Internal Server Error: Expecting property name enclosed in double quotes: line 4 column 1 (char 86)

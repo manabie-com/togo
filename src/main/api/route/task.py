@@ -84,7 +84,7 @@ def task_route_delete_task_by_id(task_id, **kwargs):
         user_id = payload.get("userId")
         result = delete_task(task_id, user_id)
         if result:
-            return {"message": f"Task '{task_id}' deledted!"}, 200
+            return {"message": f"Task '{task_id}' deleted!"}, 200
     except HTTPError as e:
         raise e
     except Exception as e:
