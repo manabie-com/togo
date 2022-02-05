@@ -9,7 +9,6 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/kozloz/togo"
-	"github.com/kozloz/togo/internal/errors"
 	"github.com/kozloz/togo/internal/tasks"
 )
 
@@ -52,7 +51,7 @@ func (t *TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	userIDStr := vars["id"]
 	userID, err := strconv.ParseInt(userIDStr, 10, 0)
 	if err != nil {
-		resErr := CustomErrorToJSON(errors.InternalError)
+		resErr := CustomErrorToJSON(err)
 		res.Error = resErr
 		resBody, _ := json.Marshal(res)
 		w.Write(resBody)
@@ -60,7 +59,7 @@ func (t *TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	}
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		resErr := CustomErrorToJSON(errors.InternalError)
+		resErr := CustomErrorToJSON(err)
 		res.Error = resErr
 		resBody, _ := json.Marshal(res)
 		w.Write(resBody)
@@ -71,7 +70,7 @@ func (t *TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	createTaskReq := CreateTaskRequest{}
 	err = json.Unmarshal(body, &createTaskReq)
 	if err != nil {
-		resErr := CustomErrorToJSON(errors.InternalError)
+		resErr := CustomErrorToJSON(err)
 		res.Error = resErr
 		resBody, _ := json.Marshal(res)
 		w.Write(resBody)
@@ -86,7 +85,6 @@ func (t *TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println(task)
 	res.Task = TaskToJSON(task)
 	resBody, _ := json.Marshal(res)
 	w.Write(resBody)

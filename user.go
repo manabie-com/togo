@@ -1,17 +1,25 @@
 package togo
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 // User represents a user
 type User struct {
 	ID         int64
-	Username   string // Username is just for display purposes
-	Tasks      []Task
+	Tasks      []*Task
 	DailyLimit int
-	DailyCount int
+	*DailyCounter
+}
+
+type DailyCounter struct {
+	UserID      int64
+	DailyCount  int
+	LastUpdated time.Time
 }
 
 func (u *User) String() string {
-	return fmt.Sprintf("ID: '%d', Username: '%s', DailyLimit: '%d', Tasks: '%v'",
-		u.ID, u.Username, u.DailyLimit, u.Tasks)
+	return fmt.Sprintf("ID: '%d',  DailyLimit: '%d', Tasks: '%v'",
+		u.ID, u.DailyLimit, u.Tasks)
 }

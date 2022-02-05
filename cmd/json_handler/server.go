@@ -5,14 +5,18 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/kozloz/togo/internal/store/test"
+	"github.com/kozloz/togo/internal/store/mysql"
 	"github.com/kozloz/togo/internal/tasks"
 	"github.com/kozloz/togo/internal/users"
 )
 
 func InitializeServer() {
 	// Setup storage
-	store := &test.Store{}
+	//	store := &test.Store{}
+	store, err := mysql.NewStore("togo", "togo", "togo")
+	if err != nil {
+		panic(err)
+	}
 	userOp := users.NewOperation(store)
 	taskOp := tasks.NewOperation(store, userOp)
 	// Create the server

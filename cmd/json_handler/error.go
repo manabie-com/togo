@@ -23,6 +23,6 @@ func CustomErrorToJSON(err error) Error {
 	}
 	return Error{
 		ErrorCode: customError.InternalError.ErrorCode,
-		ErrorDesc: customError.InternalError.ErrorDesc,
+		ErrorDesc: err.Error(),
 	}
 }
