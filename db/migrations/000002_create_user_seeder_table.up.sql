@@ -1,0 +1,1 @@
+INSERT INTO users ("username", "daily_task_limit") VALUES ('roandayne', 5);
