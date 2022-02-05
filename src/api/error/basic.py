@@ -1,5 +1,5 @@
 from werkzeug.exceptions import HTTPException
-from src.main.util import logger
+from src.util import logger
 
 
 class HTTPError(HTTPException):

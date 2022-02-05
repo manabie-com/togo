@@ -1,6 +1,6 @@
 import datetime
 from jwt import encode, decode, get_unverified_header, DecodeError
-from src.main.util import load_config
+from src.util import load_config
 
 
 def extract_token(token: str) -> dict:

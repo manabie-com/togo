@@ -2,7 +2,7 @@ from flask import Blueprint
 
 from ..middleware import credentials_validation
 from ..controller.subscript import subscript, get_pricing_level
-
+from src.util import logger
 subscription_route = Blueprint('subscription-route', __name__, url_prefix='/subscription')
 
 
@@ -16,9 +16,10 @@ def subscription_route_charge(pricing_id, **kwargs):
 
 
 @subscription_route.route("/", methods=["GET"])
-@credentials_validation
-def subscription_route_get_pricing( **kwargs):
-    payload = kwargs.get("payload")
-    levels = get_pricing_level()
-    print(levels)
-    return {"data": levels}
+# @credentials_validation
+def subscription_route_get_pricing(**kwargs):
+    try:
+        levels = get_pricing_level()
+        return {"data": levels}
+    except Exception as e:
+        logger.error(e,exc_info=e)

@@ -1,14 +1,15 @@
-from src.main.util import load_config
+from src.util import load_config, logger
 from sqlalchemy import create_engine
 from sqlalchemy.orm.session import Session
-from src.main.model import User
+from src.model import User
 from uuid import uuid4
 from ..services import create_token
 from .subscript import get_pricing_level_by
 import bcrypt
 
 
-def create_user(email: str, password: str, fullname: str, **kwargs):
+def create_user(email: str, password: str, **kwargs) -> dict:
+    fullname = kwargs.get("fullname")
     connect_string = load_config().get("DATABASE", {}).get("connection", None)
     if connect_string is None:
         raise Exception("Fail to connect to database!")
@@ -32,7 +33,7 @@ def create_user(email: str, password: str, fullname: str, **kwargs):
     user = User.from_dict(user_dict)
     with Session(engine) as session, session.begin():
         session.add(user)
-    return "User created"
+    return user_dict
 
 
 def check_email(email: str) -> bool:
@@ -46,6 +47,8 @@ def check_email(email: str) -> bool:
 
 
 def validate_credential(email: str, password: str) -> str:
+    logger.info(email)
+    logger.info(password)
     connect_string = load_config().get("DATABASE", {}).get("connection", None)
     if connect_string is None:
         raise Exception("Fail to connect to database!")

@@ -8,7 +8,8 @@ def load_config() -> dict:
     """
     Load configuration from config/config.toml file
     """
-    config_path = os.path.join(os.getcwd(), 'config', 'config.yml')
+    config_fp = os.getenv('config_file', default='config/config.yml')
+    config_path = os.path.join(os.getcwd(), config_fp)
     try:
         with open(config_path, "r") as reader:
             CONFIG = safe_load(reader.read())

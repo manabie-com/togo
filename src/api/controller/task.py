@@ -1,8 +1,8 @@
-from src.main.util import load_config
+from src.util import load_config
 from sqlalchemy import create_engine
 from sqlalchemy.orm.session import Session
-from src.main.model import Task, Pricing, User
-from sqlalchemy.sql.expression import select, update
+from src.model import Task, User
+from sqlalchemy.sql.expression import update
 from sqlalchemy import and_
 from typing import List
 from datetime import datetime, timedelta
@@ -11,31 +11,6 @@ from ..error.basic import HTTPError
 from .subscript import get_pricing_level_by
 
 
-# Base.metadata.create_all(engine, checkfirst=True)
-# session.add(Pricing.from_dict({
-#     "id": uuid4().hex,
-#     "name": "Basic",
-#     "unit_price": 0,
-#     "daily_limit": 5,
-# }))
-# session.add(Pricing.from_dict({
-#     "id": uuid4().hex,
-#     "name": "Standard",
-#     "unit_price": 2.99,
-#     "daily_limit": 10,
-# }))
-# session.add(Pricing.from_dict({
-#     "id": uuid4().hex,
-#     "name": "Premium",
-#     "unit_price": 4.99,
-#     "daily_limit": 40,
-# }))
-# session.add(Pricing.from_dict({
-#     "id": uuid4().hex,
-#     "name": "Enterprise",
-#     "unit_price": 9.99,
-#     "daily_limit": 80,
-# }))
 
 
 def daily_task_check(user_id: str):

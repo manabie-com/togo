@@ -35,7 +35,7 @@ $ make start
 
 5. Run the test
 ```shell
-$ make test 
+$ make run-test 
 ```
 
 6. Note: I also prepare a script to automate install step.

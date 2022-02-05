@@ -6,7 +6,7 @@ from ..services import extract_token
 from functools import wraps
 from typing import Callable
 from jwt import DecodeError
-from src.main.api.error import HTTPError
+from src.api.error import HTTPError
 
 
 def credentials_validation(func: Callable) -> Callable:

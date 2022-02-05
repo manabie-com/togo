@@ -1,8 +1,8 @@
-from src.main.util import load_config
+from src.util import load_config
 from sqlalchemy import create_engine, and_
 from sqlalchemy.sql import update
 from sqlalchemy.orm.session import Session
-from src.main.model import Task, Pricing, Base, Invoice, User
+from src.model import Pricing, Base, Invoice, User
 from uuid import uuid4
 from datetime import datetime
 
@@ -68,9 +68,6 @@ def get_pricing_level():
             (Pricing.deleted == False)
         ))
         data = []
-        i =0
         for task in tasks:
-            print(i)
-            i+=1
             data.append(task._asdict())
     return data

@@ -3388,3 +3388,1919 @@ Traceback (most recent call last):
   File "/Users/sonlh/sonlh/private/projects/togo/src/main/api/route/task.py", line 75, in task_route_update_task_by_id
     raise HTTPError(500, str(e))
 src.main.api.error.basic.HTTPError: 500 Internal Server Error: Expecting property name enclosed in double quotes: line 4 column 1 (char 86)
+2022-02-05 22:34:49 - [ERROR] : (sqlite3.OperationalError) no such table: pricing
+[SQL: SELECT pricing.id AS pricing_id, pricing.name AS pricing_name, pricing.unit_price AS pricing_unit_price, pricing.daily_limit AS pricing_daily_limit 
+FROM pricing 
+WHERE pricing.deleted = 0]
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/engine/base.py", line 1802, in _execute_context
+    self.dialect.do_execute(
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/engine/default.py", line 732, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: no such table: pricing
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/subscript.py", line 22, in subscription_route_get_pricing
+    levels = get_pricing_level()
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/subscript.py", line 71, in get_pricing_level
+    for task in tasks:
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/query.py", line 2887, in __iter__
+    return self._iter().__iter__()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/query.py", line 2894, in _iter
+    result = self.session.execute(
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/orm/session.py", line 1692, in execute
+    result = conn._execute_20(statement, params or {}, execution_options)
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/engine/base.py", line 1614, in _execute_20
+    return meth(self, args_10style, kwargs_10style, execution_options)
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/sql/elements.py", line 325, in _execute_on_connection
+    return connection._execute_clauseelement(
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/engine/base.py", line 1481, in _execute_clauseelement
+    ret = self._execute_context(
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/engine/base.py", line 1845, in _execute_context
+    self._handle_dbapi_exception(
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/engine/base.py", line 2026, in _handle_dbapi_exception
+    util.raise_(
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/util/compat.py", line 207, in raise_
+    raise exception
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/engine/base.py", line 1802, in _execute_context
+    self.dialect.do_execute(
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/sqlalchemy/engine/default.py", line 732, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: pricing
+[SQL: SELECT pricing.id AS pricing_id, pricing.name AS pricing_name, pricing.unit_price AS pricing_unit_price, pricing.daily_limit AS pricing_daily_limit 
+FROM pricing 
+WHERE pricing.deleted = 0]
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+2022-02-05 22:55:06 - [ERROR] : 500 Internal Server Error: Expecting value: line 1 column 1 (char 0)
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 17, in auth_route_sign_up
+    body = json.loads(request.data)
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/json/__init__.py", line 357, in loads
+    return _default_decoder.decode(s)
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: Expecting value: line 1 column 1 (char 0)
+2022-02-05 22:57:03 - [ERROR] : 500 Internal Server Error: Expecting value: line 1 column 1 (char 0)
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 17, in auth_route_sign_up
+    body = json.loads(request.data)
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/json/__init__.py", line 357, in loads
+    return _default_decoder.decode(s)
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: Expecting value: line 1 column 1 (char 0)
+2022-02-05 22:59:50 - [ERROR] : 500 Internal Server Error: create_user() missing 1 required positional argument: 'fullname'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+TypeError: create_user() missing 1 required positional argument: 'fullname'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: create_user() missing 1 required positional argument: 'fullname'
+2022-02-05 23:01:44 - [ERROR] : 500 Internal Server Error: create_user() missing 1 required positional argument: 'fullname'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+TypeError: create_user() missing 1 required positional argument: 'fullname'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: create_user() missing 1 required positional argument: 'fullname'
+2022-02-05 23:01:59 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 17, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-05 23:02:20 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 17, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-05 23:02:41 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 17, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-05 23:32:55 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 17, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-05 23:32:55 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 17, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-05 23:32:55 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 17, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-05 23:35:22 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 17, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-05 23:35:22 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 17, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-05 23:35:22 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 17, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-05 23:35:22 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 17, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-05 23:39:29 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 17, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-05 23:39:29 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 17, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-05 23:39:29 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 17, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-05 23:49:06 - [ERROR] : 500 Internal Server Error: hashpw() argument 2 must be str, not None
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 30, in auth_route_sign_in
+    result = validate_credential(email, password)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 55, in validate_credential
+    hashed = bcrypt.hashpw(password, user.salt)
+TypeError: hashpw() argument 2 must be str, not None
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 36, in auth_route_sign_in
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: hashpw() argument 2 must be str, not None
+2022-02-05 23:49:06 - [ERROR] : 500 Internal Server Error: hashpw() argument 2 must be str, not None
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 30, in auth_route_sign_in
+    result = validate_credential(email, password)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 55, in validate_credential
+    hashed = bcrypt.hashpw(password, user.salt)
+TypeError: hashpw() argument 2 must be str, not None
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 36, in auth_route_sign_in
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: hashpw() argument 2 must be str, not None
+2022-02-05 23:49:06 - [ERROR] : 500 Internal Server Error: hashpw() argument 2 must be str, not None
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 30, in auth_route_sign_in
+    result = validate_credential(email, password)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 55, in validate_credential
+    hashed = bcrypt.hashpw(password, user.salt)
+TypeError: hashpw() argument 2 must be str, not None
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 36, in auth_route_sign_in
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: hashpw() argument 2 must be str, not None
+2022-02-05 23:51:02 - [ERROR] : 500 Internal Server Error: hashpw() argument 2 must be str, not None
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 30, in auth_route_sign_in
+    result = validate_credential(email, password)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 57, in validate_credential
+    hashed = bcrypt.hashpw(password, user.salt)
+TypeError: hashpw() argument 2 must be str, not None
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 36, in auth_route_sign_in
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: hashpw() argument 2 must be str, not None
+2022-02-05 23:51:02 - [ERROR] : 500 Internal Server Error: hashpw() argument 2 must be str, not None
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 30, in auth_route_sign_in
+    result = validate_credential(email, password)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 57, in validate_credential
+    hashed = bcrypt.hashpw(password, user.salt)
+TypeError: hashpw() argument 2 must be str, not None
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 36, in auth_route_sign_in
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: hashpw() argument 2 must be str, not None
+2022-02-05 23:51:02 - [ERROR] : 500 Internal Server Error: hashpw() argument 2 must be str, not None
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 30, in auth_route_sign_in
+    result = validate_credential(email, password)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 57, in validate_credential
+    hashed = bcrypt.hashpw(password, user.salt)
+TypeError: hashpw() argument 2 must be str, not None
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 36, in auth_route_sign_in
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: hashpw() argument 2 must be str, not None
+2022-02-05 23:53:58 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 17, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-05 23:53:58 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 17, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-05 23:53:58 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 17, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-05 23:53:58 - [ERROR] : 500 Internal Server Error: 'NoneType' object has no attribute 'salt'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 30, in auth_route_sign_in
+    result = validate_credential(email, password)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 57, in validate_credential
+    hashed = bcrypt.hashpw(password, user.salt)
+AttributeError: 'NoneType' object has no attribute 'salt'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 36, in auth_route_sign_in
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: 'NoneType' object has no attribute 'salt'
+2022-02-05 23:53:58 - [ERROR] : 500 Internal Server Error: 'NoneType' object has no attribute 'salt'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 30, in auth_route_sign_in
+    result = validate_credential(email, password)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 57, in validate_credential
+    hashed = bcrypt.hashpw(password, user.salt)
+AttributeError: 'NoneType' object has no attribute 'salt'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 36, in auth_route_sign_in
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: 'NoneType' object has no attribute 'salt'
+2022-02-05 23:53:58 - [ERROR] : 500 Internal Server Error: 'NoneType' object has no attribute 'salt'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 30, in auth_route_sign_in
+    result = validate_credential(email, password)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 57, in validate_credential
+    hashed = bcrypt.hashpw(password, user.salt)
+AttributeError: 'NoneType' object has no attribute 'salt'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 36, in auth_route_sign_in
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: 'NoneType' object has no attribute 'salt'
+2022-02-06 00:00:52 - [ERROR] : 500 Internal Server Error: create_user() missing 2 required positional arguments: 'password' and 'fullname'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+TypeError: create_user() missing 2 required positional arguments: 'password' and 'fullname'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: create_user() missing 2 required positional arguments: 'password' and 'fullname'
+2022-02-06 00:00:52 - [ERROR] : 500 Internal Server Error: create_user() missing 2 required positional arguments: 'password' and 'fullname'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+TypeError: create_user() missing 2 required positional arguments: 'password' and 'fullname'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: create_user() missing 2 required positional arguments: 'password' and 'fullname'
+2022-02-06 00:00:52 - [ERROR] : 500 Internal Server Error: create_user() missing 2 required positional arguments: 'password' and 'fullname'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+TypeError: create_user() missing 2 required positional arguments: 'password' and 'fullname'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: create_user() missing 2 required positional arguments: 'password' and 'fullname'
+2022-02-06 00:02:35 - [ERROR] : 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+TypeError: create_user() missing 1 required positional argument: 'password'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+2022-02-06 00:02:35 - [ERROR] : 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+TypeError: create_user() missing 1 required positional argument: 'password'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+2022-02-06 00:02:35 - [ERROR] : 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+TypeError: create_user() missing 1 required positional argument: 'password'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+2022-02-06 00:05:45 - [ERROR] : 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+TypeError: create_user() missing 1 required positional argument: 'password'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+2022-02-06 00:05:45 - [ERROR] : 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+TypeError: create_user() missing 1 required positional argument: 'password'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+2022-02-06 00:05:45 - [ERROR] : 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+TypeError: create_user() missing 1 required positional argument: 'password'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+2022-02-06 00:07:01 - [ERROR] : 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+TypeError: create_user() missing 1 required positional argument: 'password'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+2022-02-06 00:07:01 - [ERROR] : 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+TypeError: create_user() missing 1 required positional argument: 'password'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+2022-02-06 00:07:01 - [ERROR] : 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+TypeError: create_user() missing 1 required positional argument: 'password'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+2022-02-06 00:07:48 - [ERROR] : 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+TypeError: create_user() missing 1 required positional argument: 'password'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+2022-02-06 00:07:48 - [ERROR] : 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+TypeError: create_user() missing 1 required positional argument: 'password'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+2022-02-06 00:07:48 - [ERROR] : 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+TypeError: create_user() missing 1 required positional argument: 'password'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+2022-02-06 00:08:06 - [ERROR] : 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+TypeError: create_user() missing 1 required positional argument: 'password'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+2022-02-06 00:08:06 - [ERROR] : 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+TypeError: create_user() missing 1 required positional argument: 'password'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+2022-02-06 00:08:06 - [ERROR] : 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+TypeError: create_user() missing 1 required positional argument: 'password'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+2022-02-06 00:08:18 - [ERROR] : 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+TypeError: create_user() missing 1 required positional argument: 'password'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+2022-02-06 00:08:18 - [ERROR] : 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+TypeError: create_user() missing 1 required positional argument: 'password'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+2022-02-06 00:08:18 - [ERROR] : 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+TypeError: create_user() missing 1 required positional argument: 'password'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: create_user() missing 1 required positional argument: 'password'
+2022-02-06 00:11:16 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:11:16 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:11:16 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:11:46 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:11:46 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:11:46 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:19:04 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:19:04 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:19:04 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:19:25 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:19:25 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:19:25 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:20:48 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:20:48 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:20:48 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:20:49 - [ERROR] : 429 Too Many Requests: Daily limit for user '50c422dc89f145098260760746f39f8a' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 44, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 39, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/task.py", line 96, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user '50c422dc89f145098260760746f39f8a' exceed! Please upgrade to higher pricing options.
+2022-02-06 00:20:49 - [ERROR] : 429 Too Many Requests: Daily limit for user 'a16223c9e17b4e39a0023097d84c031d' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 44, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 39, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/task.py", line 96, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user 'a16223c9e17b4e39a0023097d84c031d' exceed! Please upgrade to higher pricing options.
+2022-02-06 00:20:49 - [ERROR] : 429 Too Many Requests: Daily limit for user 'd21602b8913a4155a317f41c186e3f9d' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 44, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 39, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/task.py", line 96, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user 'd21602b8913a4155a317f41c186e3f9d' exceed! Please upgrade to higher pricing options.
+2022-02-06 00:21:55 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:21:55 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:21:55 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:21:56 - [ERROR] : 429 Too Many Requests: Daily limit for user '8b41ebde899b4d5abab0605611110b44' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 44, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 39, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/task.py", line 96, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user '8b41ebde899b4d5abab0605611110b44' exceed! Please upgrade to higher pricing options.
+2022-02-06 00:21:56 - [ERROR] : 429 Too Many Requests: Daily limit for user 'b8937303b4024783a066dabc8f2cdb5c' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 44, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 39, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/task.py", line 96, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user 'b8937303b4024783a066dabc8f2cdb5c' exceed! Please upgrade to higher pricing options.
+2022-02-06 00:21:56 - [ERROR] : 429 Too Many Requests: Daily limit for user '5ec6a1112c414788bed9f4afc2f76b13' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 44, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 39, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/task.py", line 96, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user '5ec6a1112c414788bed9f4afc2f76b13' exceed! Please upgrade to higher pricing options.
+2022-02-06 00:22:07 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:22:07 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:22:07 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:22:08 - [ERROR] : 429 Too Many Requests: Daily limit for user '725cab2831a643138aff87c84f67916e' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 44, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 39, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/task.py", line 96, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user '725cab2831a643138aff87c84f67916e' exceed! Please upgrade to higher pricing options.
+2022-02-06 00:22:08 - [ERROR] : 429 Too Many Requests: Daily limit for user 'be162c06bdf445958a297120253eedda' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 44, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 39, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/task.py", line 96, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user 'be162c06bdf445958a297120253eedda' exceed! Please upgrade to higher pricing options.
+2022-02-06 00:22:08 - [ERROR] : 429 Too Many Requests: Daily limit for user '1b4f5f4ca3a94e4d981578ff010f1ae5' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 44, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 39, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/task.py", line 96, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user '1b4f5f4ca3a94e4d981578ff010f1ae5' exceed! Please upgrade to higher pricing options.
+2022-02-06 00:23:58 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:23:58 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:23:58 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:23:59 - [ERROR] : 429 Too Many Requests: Daily limit for user 'b26d12da686e41d08d7155ff61cf2e07' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 44, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 39, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/task.py", line 96, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user 'b26d12da686e41d08d7155ff61cf2e07' exceed! Please upgrade to higher pricing options.
+2022-02-06 00:23:59 - [ERROR] : 429 Too Many Requests: Daily limit for user 'a2b3e4adacf94edfa5920808808f214e' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 44, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 39, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/task.py", line 96, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user 'a2b3e4adacf94edfa5920808808f214e' exceed! Please upgrade to higher pricing options.
+2022-02-06 00:23:59 - [ERROR] : 429 Too Many Requests: Daily limit for user '41786493b2d84f95b04f87bf165c1685' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 44, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 39, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/task.py", line 96, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user '41786493b2d84f95b04f87bf165c1685' exceed! Please upgrade to higher pricing options.
+2022-02-06 00:24:45 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:24:45 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:24:45 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:24:47 - [ERROR] : 429 Too Many Requests: Daily limit for user 'b446b083db2e4c9880aaaad9dd3c4d80' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 44, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 39, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/task.py", line 96, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user 'b446b083db2e4c9880aaaad9dd3c4d80' exceed! Please upgrade to higher pricing options.
+2022-02-06 00:24:47 - [ERROR] : 429 Too Many Requests: Daily limit for user '9e06671d4d0a437aa3241cca25239789' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 44, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 39, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/task.py", line 96, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user '9e06671d4d0a437aa3241cca25239789' exceed! Please upgrade to higher pricing options.
+2022-02-06 00:24:47 - [ERROR] : 429 Too Many Requests: Daily limit for user '5afc4e76f51b44fca6df8a6afbaccf0a' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 44, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 39, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/task.py", line 96, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user '5afc4e76f51b44fca6df8a6afbaccf0a' exceed! Please upgrade to higher pricing options.
+2022-02-06 00:25:28 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:25:28 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:25:28 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:25:29 - [ERROR] : 429 Too Many Requests: Daily limit for user 'd38080eccada4fd58bef572a7fc30334' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 44, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 39, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/task.py", line 96, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user 'd38080eccada4fd58bef572a7fc30334' exceed! Please upgrade to higher pricing options.
+2022-02-06 00:25:29 - [ERROR] : 429 Too Many Requests: Daily limit for user '77fc265199fe4d6a88aa1e54cd20e3f4' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 44, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 39, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/task.py", line 96, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user '77fc265199fe4d6a88aa1e54cd20e3f4' exceed! Please upgrade to higher pricing options.
+2022-02-06 00:25:30 - [ERROR] : 429 Too Many Requests: Daily limit for user '3c4a0bc9fdc743fe92f8b74f81791eb5' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 44, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 39, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/task.py", line 96, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user '3c4a0bc9fdc743fe92f8b74f81791eb5' exceed! Please upgrade to higher pricing options.
+2022-02-06 00:26:43 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:26:44 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:26:44 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:26:45 - [ERROR] : 429 Too Many Requests: Daily limit for user '5eca98be2e924b09b2d16466d12cdbd1' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 44, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 39, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/task.py", line 96, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user '5eca98be2e924b09b2d16466d12cdbd1' exceed! Please upgrade to higher pricing options.
+2022-02-06 00:26:45 - [ERROR] : 429 Too Many Requests: Daily limit for user 'f7d96ea41c384a9eaa7eb033c777fdef' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 44, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 39, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/task.py", line 96, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user 'f7d96ea41c384a9eaa7eb033c777fdef' exceed! Please upgrade to higher pricing options.
+2022-02-06 00:26:45 - [ERROR] : 429 Too Many Requests: Daily limit for user 'c7cfb2e4fe704f21bb30be1ee77cbfc7' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 44, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 39, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/task.py", line 96, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user 'c7cfb2e4fe704f21bb30be1ee77cbfc7' exceed! Please upgrade to higher pricing options.
+2022-02-06 00:27:21 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:27:21 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:27:21 - [ERROR] : 500 Internal Server Error: An user with email already existed!
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 18, in auth_route_sign_up
+    result = create_user(**body)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/auth.py", line 18, in create_user
+    raise Exception("An user with email already existed!")
+Exception: An user with email already existed!
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/auth.py", line 21, in auth_route_sign_up
+    raise HTTPError(500, str(e))
+src.api.error.basic.HTTPError: 500 Internal Server Error: An user with email already existed!
+2022-02-06 00:27:22 - [ERROR] : 429 Too Many Requests: Daily limit for user '8569c42d82354305a4c0f351d7b6a13c' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 44, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 39, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/task.py", line 96, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user '8569c42d82354305a4c0f351d7b6a13c' exceed! Please upgrade to higher pricing options.
+2022-02-06 00:27:22 - [ERROR] : 429 Too Many Requests: Daily limit for user '5d97d5ac2a364964b615ce46d852e668' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 44, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 39, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/task.py", line 96, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user '5d97d5ac2a364964b615ce46d852e668' exceed! Please upgrade to higher pricing options.
+2022-02-06 00:27:23 - [ERROR] : 429 Too Many Requests: Daily limit for user '3ccec9ca8b98428cbe68f67364bae480' exceed! Please upgrade to higher pricing options.
+Traceback (most recent call last):
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/sonlh/sonlh/private/projects/togo/venv/lib/python3.8/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/middleware/credential.py", line 32, in decorated
+    return func(*args, payload=payload, token=auth_token, **kwargs)
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 44, in task_route_create_task
+    raise e
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/route/task.py", line 39, in task_route_create_task
+    task_id = create_task(user_id, {
+  File "/Users/sonlh/sonlh/private/projects/togo/src/api/controller/task.py", line 96, in create_task
+    raise HTTPError(429, f"Daily limit for user '{user_id}' exceed! Please upgrade to higher pricing options.")
+src.api.error.basic.HTTPError: 429 Too Many Requests: Daily limit for user '3ccec9ca8b98428cbe68f67364bae480' exceed! Please upgrade to higher pricing options.

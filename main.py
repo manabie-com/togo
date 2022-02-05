@@ -1,5 +1,5 @@
-from src.main.util import load_config
-from src.main import create_app
+from src.util import load_config
+from src import create_app
 
 if __name__ == '__main__':
     app_name = 'manabie-togo'
@@ -12,5 +12,4 @@ if __name__ == '__main__':
         debug=app_config.get('debug', True)
     )
 
-# TODO: write TEST
-# TODO: write document
+

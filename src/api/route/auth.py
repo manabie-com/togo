@@ -16,7 +16,7 @@ def auth_route_sign_up(**kwargs):
     try:
         body = json.loads(request.data)
         result = create_user(**body)
-        return {"message": result}
+        return {"message": "User created!"}, 201
     except Exception as e:
         raise HTTPError(500, str(e))
 
@@ -30,8 +30,8 @@ def auth_route_sign_in(**kwargs):
         result = validate_credential(email, password)
         if result != "":
             return {
-                "token": result
-            }
+                       "token": result
+                   }, 200
     except Exception as e:
         raise HTTPError(500, str(e))
 
