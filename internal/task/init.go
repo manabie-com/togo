@@ -13,7 +13,7 @@ type task struct {
 
 func Initalize(ctx context.Context) task {
 	userID := ctx.Value("userID").(int)
-	db := ctx.Value("gorm").(*gorm.DB)
+	db := ctx.Value("db").(*gorm.DB)
 
 	return task{
 		userID: userID,

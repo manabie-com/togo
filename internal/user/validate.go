@@ -17,7 +17,7 @@ func (u user) CanUserInsert() bool {
 	numberOfTasks := u.getRemainingTasksForTheDay(int(userRecord.ID))
 
 	//compare the numbers
-	if numberOfTasks > userRecord.Limit {
+	if numberOfTasks >= userRecord.Limit {
 		return false
 	}
 

@@ -11,20 +11,40 @@ import (
 func TestCanUserInsertSuccess(t *testing.T) {
 	db := test.InitTestDB()
 	username := "jmramos"
-	limit := 2
 
 	ctx := context.TODO()
 	ctx = context.WithValue(ctx, "db", db)
 	ctx = context.WithValue(ctx, "username", username)
 
-	userModel := test.CreateUserTestData(db, username, limit)
-	taskModel1 := test.CreateTaskTestData(db, int(userModel.ID), "Clean the house")
+	testCases := []struct {
+		Limit           int
+		ExepectedResult bool
+		Description     string
+	}{
+		{
+			Limit:           2,
+			ExepectedResult: true,
+			Description:     "Should be able to insert",
+		},
+		{
+			Limit:           1,
+			ExepectedResult: false,
+			Description:     "Should not be able to insert",
+		},
+	}
 
-	user := Initialize(ctx)
+	for _, tc := range testCases {
 
-	result := user.CanUserInsert()
-	assert.Equal(t, true, result, "Should be able to insert")
+		userModel := test.CreateUserTestData(db, username, tc.Limit)
+		taskModel1 := test.CreateTaskTestData(db, int(userModel.ID), "Clean the house")
 
-	db.Delete(&taskModel1)
-	db.Delete(&userModel)
+		user := Initialize(ctx)
+
+		result := user.CanUserInsert()
+		assert.Equal(t, result, tc.ExepectedResult, tc.Description)
+
+		db.Delete(&taskModel1)
+		db.Delete(&userModel)
+	}
+
 }

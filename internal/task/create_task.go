@@ -1,12 +1,20 @@
 package task
 
-import "github.com/jmramos02/akaru/internal/model"
+import (
+	"errors"
 
-func (t task) CreateTask(name string) {
-	task := model.Task{
+	"github.com/jmramos02/akaru/internal/model"
+)
+
+func (t task) CreateTask(name string) (task model.Task, err error) {
+	task = model.Task{
 		Name:   name,
 		UserID: t.userID,
 	}
 
-	t.db.Save(&task)
+	if err = t.db.Save(&task).Error; err != nil {
+		return task, errors.New("error saving task")
+	}
+
+	return task, nil
 }

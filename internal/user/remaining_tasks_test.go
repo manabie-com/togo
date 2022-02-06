@@ -21,7 +21,7 @@ func TestRemainingTasksForTheDay(t *testing.T) {
 	task := test.CreateTaskTestData(db, userID, "Buy Milk")
 
 	user := Initialize(ctx)
-	numberOfTasks := user.GetRemainingTasksForTheDay(userID)
+	numberOfTasks := user.getRemainingTasksForTheDay(userID)
 
 	//Expect it to be one
 	assert.Equal(t, 1, numberOfTasks, "Should get one for the current number of task")
