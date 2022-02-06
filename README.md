@@ -19,7 +19,7 @@ To setup the database:
 
 ### Running tests
 
-```go test -v ./...```
+```go test ./...```
 
 
 ### Notes

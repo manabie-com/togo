@@ -104,6 +104,8 @@ func (t *TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res.Task = TaskToJSON(task)
+	resErr := CustomErrorToJSON(errors.Success)
+	res.Error = resErr
 	resBody, _ := json.Marshal(res)
 	w.Write(resBody)
 }
