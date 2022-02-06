@@ -1,30 +1,35 @@
-### Requirements
+### Prerequisites
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+- docker, docker-compose
+- go 1.17
+- mysql(client)
+
+### Setup
+To build and start the server:
+
+```docker-compose up --build togo```
+
+To setup the database: 
+
+```mysql -h localhost -P3001 --protocol=tcp -utogo --password=togo togo  < togo.sql```
+
+### Sample API 
+
+```curl -v http://localhost:8000/users/1/tasks -X "POST" -d "{\"name\":\"tests\"}"```
+
+### Running tests
+
+```go test -v ./...```
+
 
 ### Notes
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+For quick setup, docker and docker-compose is used to handle dependencies.
 
-### How to submit your solution?
+For this project, I setup the structure to follow MVC principles. The structure is also loosely based on https://github.com/katzien/go-structure-examples/tree/master/domain-hex. 
 
-- Fork this repo and show us your development progress via a PR
+The idea is to be able to replace the API layer(implemented JSON here, but can be swapped to SOAP, gRPC, etc), and database layer(implemented MySQL and mock test here) any time, without affecting the core logic.
 
-### Interesting facts about Manabie
+For tests I used golang's native test framework for both unit tests and integration tests. The integration test verifies the API result and the MySQL database entries. 
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
-
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+Since the requirement is to only have 1 API endpoint, the user resource is created automatically if the user doesn't exist yet. Otherwise I would have created a separate controller/logic for the user resource. A few values also hard coded to skip config management. Some errors aren't checked because they are assumed to not fail, this isn't production grade and otherwise would've been checked for completeness.
