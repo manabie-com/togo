@@ -13,6 +13,7 @@ var op *Operation
 func TestMain(m *testing.M) {
 	store := &test.Store{}
 	op = NewOperation(store)
+	m.Run()
 }
 func TestGet(t *testing.T) {
 	userID := 1

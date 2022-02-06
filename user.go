@@ -13,12 +13,6 @@ type User struct {
 	*DailyCounter
 }
 
-type DailyCounter struct {
-	UserID      int64
-	DailyCount  int
-	LastUpdated time.Time
-}
-
 func (u *User) String() string {
 	dailyCounter := 0
 	if u.DailyCounter != nil {
@@ -26,4 +20,15 @@ func (u *User) String() string {
 	}
 	return fmt.Sprintf("ID: '%d', DailyCounter: '%d', DailyLimit: '%d', Tasks: '%v'",
 		u.ID, dailyCounter, u.DailyLimit, u.Tasks)
+}
+
+type DailyCounter struct {
+	UserID      int64
+	DailyCount  int
+	LastUpdated time.Time
+}
+
+func (d *DailyCounter) String() string {
+	return fmt.Sprintf("UserID: '%d', DailyCount: '%d', LastUpdated: '%v'",
+		d.UserID, d.DailyCount, d.LastUpdated)
 }

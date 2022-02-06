@@ -9,13 +9,14 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/kozloz/togo"
+	"github.com/kozloz/togo/internal/errors"
 	"github.com/kozloz/togo/internal/tasks"
 )
 
 type Task struct {
 	ID     int64  `json:"id"`
 	UserID int64  `json:"user_id"`
-	Name   string `json:"desc"`
+	Name   string `json:"name"`
 }
 
 // CreateTaskResult is a JSON object needed to create a task
@@ -46,6 +47,7 @@ func TaskToJSON(task *togo.Task) *Task {
 // CreateTask is a handler that creates the task for the user
 func (t *TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 
+	// Parse request
 	res := CreateTaskResult{}
 	vars := mux.Vars(r)
 	userIDStr := vars["id"]
@@ -54,6 +56,7 @@ func (t *TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 		resErr := CustomErrorToJSON(err)
 		res.Error = resErr
 		resBody, _ := json.Marshal(res)
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write(resBody)
 		return
 	}
@@ -62,6 +65,7 @@ func (t *TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 		resErr := CustomErrorToJSON(err)
 		res.Error = resErr
 		resBody, _ := json.Marshal(res)
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write(resBody)
 		return
 	}
@@ -73,9 +77,23 @@ func (t *TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 		resErr := CustomErrorToJSON(err)
 		res.Error = resErr
 		resBody, _ := json.Marshal(res)
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write(resBody)
 		return
 	}
+
+	// Request validation
+	if createTaskReq.Name == "" {
+		log.Printf("Error: Empty task name provided")
+		resErr := CustomErrorToJSON(errors.InvalidTaskName)
+		res.Error = resErr
+		w.WriteHeader(http.StatusBadRequest)
+		resBody, _ := json.Marshal(res)
+		w.Write(resBody)
+		return
+	}
+
+	// Create the task via operation class
 	task, err := t.op.Create(userID, createTaskReq.Name)
 	if err != nil {
 		resErr := CustomErrorToJSON(err)

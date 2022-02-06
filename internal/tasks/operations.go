@@ -9,14 +9,19 @@ import (
 	"github.com/kozloz/togo/internal/users"
 )
 
+// TaskStore defines the interface needed to store the Task resource.
 type TaskStore interface {
 	CreateTask(userID int64, task string) (*togo.Task, error)
 }
+
+// Operation is meant to be a reusable class to handle the Task resource and logic.
+// Attach it to any type of controller(JSON, SOAP, gRPC, etc)
 type Operation struct {
 	store         TaskStore
 	userOperation *users.Operation
 }
 
+// NewOperation is a helper function to create a new Operation
 func NewOperation(store TaskStore, userOp *users.Operation) *Operation {
 	return &Operation{
 		store:         store,
@@ -35,6 +40,7 @@ func (o *Operation) Create(userID int64, taskName string) (*togo.Task, error) {
 
 	// Create user if doesnt exist yet
 	if user == nil {
+		log.Printf("User '%d' doesn't exist, creating it", userID)
 		user, err = o.userOperation.Create(userID)
 		if err != nil {
 			return nil, err
@@ -48,7 +54,7 @@ func (o *Operation) Create(userID int64, taskName string) (*togo.Task, error) {
 		counterYear, counterMonth, counterDay = user.DailyCounter.LastUpdated.Date()
 		if counterYear == todayYear && counterMonth == todayMonth && counterDay == todayDay &&
 			user.DailyCounter.DailyCount >= user.DailyLimit {
-			log.Printf("Max daily limit reached for today")
+			log.Printf("Max daily limit of '%d' reached for today", user.DailyLimit)
 			return nil, errors.MaxLimit
 		}
 	}
@@ -59,7 +65,7 @@ func (o *Operation) Create(userID int64, taskName string) (*togo.Task, error) {
 		return nil, err
 	}
 
-	// Update user attributes
+	// Check counter logic only if a limit exists for the user
 	if user.DailyLimit > 0 {
 		if user.DailyCounter == nil {
 			user.DailyCounter = &togo.DailyCounter{
@@ -76,15 +82,15 @@ func (o *Operation) Create(userID int64, taskName string) (*togo.Task, error) {
 		user.DailyCounter.DailyCount++
 		log.Printf("Current counter: %v", user.DailyCounter)
 	}
-	// Create counter only if a limit exists for the user
 
+	// Update user attributes
 	user.Tasks = append(user.Tasks, task)
 	_, err = o.userOperation.Update(user)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Printf("Successfully created task '%v'", task)
+	log.Printf("Successfully created task '%v' for user '%v'", task, user)
 
 	return task, nil
 }

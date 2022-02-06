@@ -12,4 +12,5 @@ func (e Error) Error() string {
 
 var Success Error = Error{ErrorCode: 0, ErrorDesc: "Success"}
 var MaxLimit Error = Error{ErrorCode: 1, ErrorDesc: "Max daily limit reached"}
+var InvalidTaskName Error = Error{ErrorCode: 2, ErrorDesc: "Invalid task name provided in request"}
 var InternalError Error = Error{ErrorCode: 9999, ErrorDesc: "Internal Server Error"}
