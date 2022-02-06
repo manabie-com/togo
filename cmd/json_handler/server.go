@@ -12,13 +12,16 @@ import (
 
 func InitializeServer() {
 	// Setup storage
-	//	store := &test.Store{}
+	// Hard code db connection parameters for now
 	store, err := mysql.NewStore("togo", "db", "3306", "togo", "togo")
 	if err != nil {
 		panic(err)
 	}
+
+	// Initialize operation classes
 	userOp := users.NewOperation(store)
 	taskOp := tasks.NewOperation(store, userOp)
+
 	// Create the server
 	taskHandler := TaskHandler{
 		op: taskOp,

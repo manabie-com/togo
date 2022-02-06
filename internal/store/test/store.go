@@ -7,6 +7,7 @@ import (
 	"github.com/kozloz/togo"
 )
 
+// Store is a test implementation of the app's storage functions. Primarily used for unit tests.
 type Store struct {
 }
 

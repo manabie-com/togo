@@ -12,6 +12,7 @@ import (
 
 const TimeFormat = "2006-01-02 15:04:05"
 
+// Store is a MySQL implementation of the app's storage functions
 type Store struct {
 	db *sql.DB
 }
