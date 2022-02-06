@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmramos02/akaru/internal/database"
+	"github.com/jmramos02/akaru/internal/task"
 	"github.com/jmramos02/akaru/internal/user"
 )
 
@@ -21,24 +22,36 @@ func CreateTask(c *gin.Context) {
 
 	ctx := context.TODO()
 	ctx = context.WithValue(ctx, "db", db)
-	ctx = context.WithValue(ctx, "username", "username")
+	ctx = context.WithValue(ctx, "username", request.Username)
 
 	//validation first
 	userService := user.Initialize(ctx)
 	canUserInsert := userService.CanUserInsert()
 
+	//get user id
+	id := userService.GetUserID()
+	ctx = context.WithValue(ctx, "userID", id)
+
 	if canUserInsert {
-		//insert user
+		//insert task
+
+		taskService := task.Initalize(ctx)
+		task, err := taskService.CreateTask(request.Name)
+
+		if err != nil {
+			c.JSON(500, map[string]interface{}{
+				"error": "Something went wrong",
+			})
+		}
 
 		c.JSON(200, map[string]interface{}{
-			"success": true,
+			"task": task,
 		})
 
 		return
 	}
 
 	c.JSON(400, map[string]interface{}{
-		"success": false,
-		"error":   "User has reached max limit for the day",
+		"error": "User has reached max limit for the day",
 	})
 }

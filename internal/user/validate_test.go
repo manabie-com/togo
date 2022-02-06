@@ -34,7 +34,6 @@ func TestCanUserInsertSuccess(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-
 		userModel := test.CreateUserTestData(db, username, tc.Limit)
 		taskModel1 := test.CreateTaskTestData(db, int(userModel.ID), "Clean the house")
 
