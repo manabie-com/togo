@@ -21,3 +21,12 @@ curl --request POST \
 ### How to run the tests locally
 * Update the `internal/test/util` to your own directory. the db and db for unit tests are in `databases` directory
 * Run `go test ./...` in the project directory to run all tests
+
+### What do i like about my solution?
+* Using SQLite would not require the reviewers to install databases on their local
+* Easy testing of functions using tests
+* Seperation of concerns
+
+### What else do you want us to know about however you do not have enough time to complete?
+* I could have created an endpoint for creating users.
+* Add test on the handler (controller level test)
