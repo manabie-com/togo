@@ -9,7 +9,7 @@ func (u user) GetUserID() int {
 	err := u.db.Where("username= ?", u.username).First(&userRecord).Error
 
 	if err != nil {
-		panic(err)
+		return 0
 	}
 
 	return int(userRecord.ID)
