@@ -1,9 +1,12 @@
-import path from 'path'
-import express from 'express'
-import dotenv from 'dotenv'
-import colors from 'colors'
-import morgan from 'morgan'
-import connectDB from './data/config/db.js'
+// Packages and initializing the application
+const express = require('express');
+const cors = require('cors');
+const morgan = require('morgan')
+const colors = require('colors')
+const dotenv = require('dotenv')
+const { notFound, errorHandler } = require('./middlewares/error')
+const connectDB = require('./data/config/db')
+const userRoutes = require('./routes/userRoutes')
 
 dotenv.config()
 
@@ -19,11 +22,15 @@ if (process.env.NODE_ENV === 'development') {
 app.use(express.json())
 app.use(express.urlencoded({extended:true}));
 
+app.use(cors());
+
 // Route
-// app.use('/users', userRoutes)
+app.use('/api', userRoutes)
 
+app.use(notFound)
+app.use(errorHandler)
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 3000;
 
 app.listen(
   PORT,

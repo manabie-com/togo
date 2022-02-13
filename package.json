@@ -1,12 +1,12 @@
 {
   "dependencies": {
-    "app-module-path": "^2.2.0",
     "bcrypt": "^5.0.1",
     "colors": "^1.4.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "express": "^4.17.2",
     "express-async-handler": "^1.2.0",
+    "express-rate-limit": "^6.2.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.2.1",
     "mongoose-unique-validator": "^3.0.0",
@@ -16,7 +16,6 @@
   "description": "- Implement one single API which accepts a todo task and records it\r   - There is a maximum **limit of N tasks per user** that can be added **per day**.\r   - Different users can have **different** maximum daily limit.\r - Write integration (functional) tests\r - Write unit tests\r - Choose a suitable architecture to make your code simple, organizable, and maintainable\r - Write a concise README\r   - How to run your code locally?\r   - A sample “curl” command to call your API\r   - How to run your unit tests locally?\r   - What do you love about your solution?\r   - What else do you want us to know about however you do not have enough time to complete?",
   "version": "1.0.0",
   "main": "server.js",
-  "type": "module",
   "devDependencies": {
     "jest": "^27.5.1",
     "nodemon": "^2.0.15",
