@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
 
-const schema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
     name:{
         type: String,
         required: [true, 'Name is required']
@@ -15,16 +14,25 @@ const schema = new mongoose.Schema({
         type: String,
         required: [true, 'Password is required']
     },
-    task: [
+    isPremium:{
+        type: Boolean,
+        default: false,
+    },
+    task:[
         {
-            type: String,
-            required: [true, 'Task is required']
+            description: {
+                type: String,
+                required: [true, 'Description is required']
+            },
+            added:{
+                type: Date,
+                default: new Date()
+            }
         }
     ]
 },{
         timestamps: true
 });
 
-schema.plugin(uniqueValidator);
-module.exports = mongoose.model('User', schema);
+module.exports = mongoose.model('User', userSchema);
 
