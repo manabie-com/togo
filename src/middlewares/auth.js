@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
+// For access token creation
 module.exports.createAccessToken = (user) => {
     const data = {
         id: user._id,
@@ -10,6 +11,7 @@ module.exports.createAccessToken = (user) => {
     return jwt.sign(data, process.env.JWT_SECRET, {});
 }
 
+// For identity verification
 module.exports.verify = (req, res, next) => {
     let token = req.headers.authorization;
 
