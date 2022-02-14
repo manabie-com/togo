@@ -16,7 +16,7 @@ module.exports.login = async (req, res) => {
             res.send({ access: auth.createAccessToken(user.toObject()) });
         }
         else{
-            res.send({ auth: 'Login failed' });
+            res.send({ auth: 'failed' });
         }
     }
 }
@@ -32,11 +32,11 @@ module.exports.register = async (req, res) => {
 
     user.save().then((user, error) => {
         if(error){
-            res.send(error);
+            res.send({ auth: 'User already exist'});
         }
         else{
             user.password = undefined;
-            res.send(user);
+            res.send({ isAdded: true });
         }
     })
 }
