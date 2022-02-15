@@ -26,6 +26,14 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+## Prerequisite
+
+```bash
+install nodejs (https://nodejs.org/en/download/)
+
+install mongodb (https://docs.mongodb.com/manual/installation/)
+```
+
 ## Installation
 
 ```bash
