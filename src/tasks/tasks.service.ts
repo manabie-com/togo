@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { TaskInterface } from './interfaces/task.interface';
 import { Task, TaskDocument } from './schemas/task.schema';
 import * as moment from 'moment';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class TasksService {
