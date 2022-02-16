@@ -5,16 +5,18 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/kier1021/togo/db"
 )
 
 type APIServer struct {
 	router     *gin.Engine
 	httpServer *http.Server
+	dbs        *db.DB
 }
 
-func NewAPIServer() *APIServer {
+func NewAPIServer(dbs *db.DB) *APIServer {
 
-	routes := NewAPIRoutes()
+	routes := NewAPIRoutes(dbs)
 	routes.SetRoutes()
 
 	httpServer := &http.Server{

@@ -9,14 +9,29 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
+	"github.com/kier1021/togo/db"
 	"github.com/kier1021/togo/server"
 )
 
 func main() {
 	godotenv.Load(".env")
 
+	// Connect to MongoDB
+	mongoDB := db.NewMongoDB()
+	if err := mongoDB.Connect(); err != nil {
+		log.Fatal(err)
+	}
+
+	// Defer the disconnection from MongoDB
+	defer func() {
+		log.Println("Disconnecting from MongoDB")
+		if err := mongoDB.GetClient().Disconnect(context.TODO()); err != nil {
+			panic(err)
+		}
+	}()
+
 	// Run the API server
-	srv := server.NewAPIServer()
+	srv := server.NewAPIServer(&db.DB{MongoDB: mongoDB})
 	go func() {
 		if err := srv.Run(); err != nil {
 			log.Fatal("Error when starting the server:", err)
