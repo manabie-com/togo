@@ -21,47 +21,6 @@ func NewUserTaskController(taskSrv *services.UserTaskService) *UserTaskControlle
 	}
 }
 
-func (ctrl *UserTaskController) CreateUser() gin.HandlerFunc {
-
-	return func(c *gin.Context) {
-
-		// Bind the body param to CreateUserDTO
-		var createUserDto dto.CreateUserDTO
-		if err := c.Bind(&createUserDto); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{
-				"message": "Bad Request",
-				"error":   err.Error(),
-			})
-			return
-		}
-
-		// Request the task service
-		results, err := ctrl.taskSrv.CreateUser(createUserDto)
-		if err != nil {
-
-			// Check if the error is UserAlreadyExists
-			if errors.Is(err, apierrors.UserAlreadyExists) {
-				c.AbortWithStatusJSON(422, map[string]interface{}{
-					"message": "Error in data input",
-					"error":   err.Error(),
-				})
-				return
-			}
-
-			c.AbortWithStatusJSON(500, map[string]interface{}{
-				"message": "Internal server error occurred.",
-				"error":   err.Error(),
-			})
-			return
-		}
-
-		c.JSON(201, map[string]interface{}{
-			"message": "User created successfully.",
-			"data":    results,
-		})
-	}
-}
-
 func (ctrl *UserTaskController) AddTaskToUser() gin.HandlerFunc {
 
 	return func(c *gin.Context) {

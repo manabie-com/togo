@@ -26,8 +26,14 @@ func (routes *APIRoutes) GetEngine() *gin.Engine {
 
 func (routes *APIRoutes) SetRoutes() {
 
+	// Init user dependencies
+	userRepo := repositories.NewUserRepository(routes.dbs.MongoDB)
+	userSrv := services.NewUserService(userRepo)
+	userCtrl := controllers.NewUserController(userSrv)
+
+	// Init user task dependencies
 	userTaskRepo := repositories.NewUserTaskRepository(routes.dbs.MongoDB)
-	userTaskSrv := services.NewUserTaskService(userTaskRepo)
+	userTaskSrv := services.NewUserTaskService(userTaskRepo, userRepo)
 	userTaskCtrl := controllers.NewUserTaskController(userTaskSrv)
 
 	routes.engine.GET(
@@ -41,7 +47,12 @@ func (routes *APIRoutes) SetRoutes() {
 
 	routes.engine.POST(
 		"/user",
-		userTaskCtrl.CreateUser(),
+		userCtrl.CreateUser(),
+	)
+
+	routes.engine.GET(
+		"/users",
+		userCtrl.GetUsers(),
 	)
 
 	routes.engine.PUT(

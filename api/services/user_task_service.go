@@ -11,50 +11,20 @@ import (
 
 type UserTaskService struct {
 	userTaskRepo repositories.IUserTaskRepository
+	userRepo     repositories.IUserRepository
 }
 
-func NewUserTaskService(userTaskRepo repositories.IUserTaskRepository) *UserTaskService {
+func NewUserTaskService(userTaskRepo repositories.IUserTaskRepository, userRepo repositories.IUserRepository) *UserTaskService {
 	return &UserTaskService{
 		userTaskRepo: userTaskRepo,
+		userRepo:     userRepo,
 	}
-}
-
-func (srv *UserTaskService) CreateUser(userDto dto.CreateUserDTO) (map[string]interface{}, error) {
-
-	// Check if user already exists
-	existingUser, err := srv.userTaskRepo.GetUser(map[string]interface{}{"user_name": userDto.UserName})
-	if err != nil {
-		return nil, err
-	}
-
-	if existingUser != nil {
-		return nil, apierrors.UserAlreadyExists
-	}
-
-	// Create the user
-	lastInsertID, err := srv.userTaskRepo.CreateUser(
-		models.User{
-			UserName: userDto.UserName,
-			MaxTasks: userDto.MaxTasks,
-		},
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	return map[string]interface{}{
-		"info": map[string]interface{}{
-			"_id":       lastInsertID,
-			"user_name": userDto.UserName,
-			"max_tasks": userDto.MaxTasks,
-		},
-	}, nil
 }
 
 func (srv *UserTaskService) AddTaskToUser(taskDto dto.CreateTaskDTO) (map[string]interface{}, error) {
 
 	// Get the existing user
-	existingUser, err := srv.userTaskRepo.GetUser(map[string]interface{}{
+	existingUser, err := srv.userRepo.GetUser(map[string]interface{}{
 		"user_name": taskDto.UserName,
 	})
 
@@ -116,7 +86,7 @@ func (srv *UserTaskService) GetTasksOfUser(getTaskDto dto.GetTaskOfUserDTO) (map
 	}
 
 	// Get the existing user
-	existingUser, err := srv.userTaskRepo.GetUser(map[string]interface{}{
+	existingUser, err := srv.userRepo.GetUser(map[string]interface{}{
 		"user_name": getTaskDto.UserName,
 	})
 	if err != nil {
