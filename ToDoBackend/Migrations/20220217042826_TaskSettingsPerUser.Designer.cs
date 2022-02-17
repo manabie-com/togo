@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ToDoBackend;
 
 namespace ToDoBackend.Migrations
 {
     [DbContext(typeof(ToDoContext))]
-    partial class ToDoContextModelSnapshot : ModelSnapshot
+    [Migration("20220217042826_TaskSettingsPerUser")]
+    partial class TaskSettingsPerUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,20 +56,6 @@ namespace ToDoBackend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "firstuser",
-                            FirstName = "Ha",
-                            LastName = "Nguyen"
-                        },
-                        new
-                        {
-                            Id = "seconduser",
-                            FirstName = "Ha",
-                            LastName = "Thanh Nguyen"
-                        });
                 });
 
             modelBuilder.Entity("ToDoBackend.Models.UserSettings", b =>
@@ -81,18 +69,6 @@ namespace ToDoBackend.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("UserSettings");
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = "firstuser",
-                            MaxTasksPerDay = 5
-                        },
-                        new
-                        {
-                            UserId = "seconduser",
-                            MaxTasksPerDay = 15
-                        });
                 });
 
             modelBuilder.Entity("ToDoBackend.Models.Task", b =>
