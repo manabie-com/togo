@@ -4,6 +4,7 @@ type CreateTaskDTO struct {
 	UserName    string `json:"user_name"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
+	InsDay      string `json:"ins_day"`
 }
 
 type CreateUserDTO struct {

@@ -1,7 +1,6 @@
 package services
 
 import (
-	"encoding/json"
 	"time"
 
 	"github.com/kier1021/togo/api/apierrors.go"
@@ -22,8 +21,6 @@ func NewUserTaskService(userTaskRepo repositories.IUserTaskRepository) *UserTask
 
 func (srv *UserTaskService) CreateUser(userDto dto.CreateUserDTO) (map[string]interface{}, error) {
 
-	dateToday := time.Now().Format("2006-01-02")
-
 	// Check if user already exists
 	existingUser, err := srv.userTaskRepo.GetUser(map[string]interface{}{"user_name": userDto.UserName})
 	if err != nil {
@@ -35,13 +32,12 @@ func (srv *UserTaskService) CreateUser(userDto dto.CreateUserDTO) (map[string]in
 	}
 
 	// Create the user
-	user := models.User{
-		UserName: userDto.UserName,
-		MaxTasks: userDto.MaxTasks,
-		InsDay:   dateToday,
-	}
-
-	lastInsertID, err := srv.userTaskRepo.CreateUser(user)
+	lastInsertID, err := srv.userTaskRepo.CreateUser(
+		models.User{
+			UserName: userDto.UserName,
+			MaxTasks: userDto.MaxTasks,
+		},
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -57,37 +53,49 @@ func (srv *UserTaskService) CreateUser(userDto dto.CreateUserDTO) (map[string]in
 
 func (srv *UserTaskService) AddTaskToUser(taskDto dto.CreateTaskDTO) (map[string]interface{}, error) {
 
-	dateToday := time.Now().Format("2006-01-02")
-
-	// Get the user
+	// Get the existing user
 	existingUser, err := srv.userTaskRepo.GetUser(map[string]interface{}{
 		"user_name": taskDto.UserName,
 	})
+
 	if err != nil {
 		return nil, err
 	}
 
+	// Check if user exists
 	if existingUser == nil {
 		return nil, apierrors.UserDoesNotExists
 	}
 
-	if len(existingUser.Tasks) >= existingUser.MaxTasks {
-		return nil, apierrors.MaxTasksReached
+	// Get the user tasks
+	existingUserTask, err := srv.userTaskRepo.GetUserTask(map[string]interface{}{
+		"user_name": taskDto.UserName,
+		"ins_day":   taskDto.InsDay,
+	})
+
+	if err != nil {
+		return nil, err
 	}
 
-	userTask := models.UserTask{
-		User: models.User{
-			UserName: taskDto.UserName,
-			InsDay:   dateToday,
-			MaxTasks: existingUser.MaxTasks,
+	// If there is an existing task, check if the maximum tasks has already been reached
+	if existingUserTask != nil {
+		if len(existingUserTask.Tasks) >= existingUser.MaxTasks {
+			return nil, apierrors.MaxTasksReached
+		}
+	}
+
+	// Upsert the user task
+	if err := srv.userTaskRepo.AddTaskToUser(
+		models.User{
+			ID:       existingUser.ID,
+			UserName: existingUser.UserName,
 		},
-		Task: models.Task{
+		models.Task{
 			Title:       taskDto.Title,
 			Description: taskDto.Description,
 		},
-	}
-
-	if err := srv.userTaskRepo.AddTaskToUser(userTask); err != nil {
+		taskDto.InsDay,
+	); err != nil {
 		return nil, err
 	}
 
@@ -102,10 +110,12 @@ func (srv *UserTaskService) AddTaskToUser(taskDto dto.CreateTaskDTO) (map[string
 
 func (srv *UserTaskService) GetTasksOfUser(getTaskDto dto.GetTaskOfUserDTO) (map[string]interface{}, error) {
 
+	// Set the default ins_day to the current date
 	if getTaskDto.InsDay == "" {
 		getTaskDto.InsDay = time.Now().Format("2006-01-02")
 	}
 
+	// Get the existing user
 	existingUser, err := srv.userTaskRepo.GetUser(map[string]interface{}{
 		"user_name": getTaskDto.UserName,
 	})
@@ -113,39 +123,42 @@ func (srv *UserTaskService) GetTasksOfUser(getTaskDto dto.GetTaskOfUserDTO) (map
 		return nil, err
 	}
 
+	// Check if user exists
 	if existingUser == nil {
 		return nil, apierrors.UserDoesNotExists
 	}
 
-	currentUserTask, err := srv.userTaskRepo.GetUser(map[string]interface{}{
+	// Get the current user task
+	currentUserTask, err := srv.userTaskRepo.GetUserTask(map[string]interface{}{
 		"user_name": getTaskDto.UserName,
+		"user_id":   existingUser.ID,
 		"ins_day":   getTaskDto.InsDay,
 	})
+
 	if err != nil {
 		return nil, err
 	}
 
-	if currentUserTask == nil {
-
-		// Set the ins_day to the given ins_day
-		// Set the tasks to empty tasks
-		existingUser.InsDay = getTaskDto.InsDay
-		existingUser.Tasks = []models.Task{}
-
-		var userTask map[string]interface{}
-		jsonByte, _ := json.Marshal(existingUser)
-		json.Unmarshal(jsonByte, &userTask)
-
-		return map[string]interface{}{
-			"user_task": userTask,
-		}, nil
+	// Set the tasks.
+	// If there are no current task, the tasks will be empty.
+	// Otherwise, tasks will be set
+	tasks := []map[string]interface{}{}
+	if currentUserTask != nil {
+		for _, task := range currentUserTask.Tasks {
+			tasks = append(tasks, map[string]interface{}{
+				"title":       task.Title,
+				"description": task.Description,
+			})
+		}
 	}
 
-	var userTask map[string]interface{}
-	jsonByte, _ := json.Marshal(currentUserTask)
-	json.Unmarshal(jsonByte, &userTask)
-
 	return map[string]interface{}{
-		"user_task": userTask,
+		"user_task": map[string]interface{}{
+			"user_id":   existingUser.ID,
+			"user_name": existingUser.UserName,
+			"max_tasks": existingUser.MaxTasks,
+			"ins_day":   getTaskDto.InsDay,
+			"tasks":     tasks,
+		},
 	}, nil
 }

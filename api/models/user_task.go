@@ -6,13 +6,14 @@ type Task struct {
 }
 
 type User struct {
+	ID       string `bson:"_id" json:"_id"`
 	UserName string `bson:"user_name" json:"user_name"`
 	MaxTasks int    `bson:"max_tasks" json:"max_tasks"`
-	InsDay   string `bson:"ins_day" json:"ins_day"`
-	Tasks    []Task `bson:"tasks" json:"tasks"`
 }
 
 type UserTask struct {
 	User
-	Task
+	UserID string `bson:"user_id" json:"user_id"`
+	Tasks  []Task `bson:"tasks" json:"tasks"`
+	InsDay string `bson:"ins_day" json:"ins_day"`
 }
