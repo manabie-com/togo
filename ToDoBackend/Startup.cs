@@ -19,6 +19,11 @@ namespace ToDoBackend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+                options.AddDefaultPolicy(builder => builder
+                    .WithOrigins(Configuration.GetValue<string>("AllowedOrigins"))
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()));
             services.AddControllers();
             services.AddDbContext<ToDoContext>(options => options.UseSqlite(Configuration.GetValue<string>("DefaultConnection")));
         }
@@ -37,7 +42,7 @@ namespace ToDoBackend
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            app.UseCors();
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
