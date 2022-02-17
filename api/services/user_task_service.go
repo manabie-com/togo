@@ -3,10 +3,11 @@ package services
 import (
 	"time"
 
-	"github.com/kier1021/togo/api/apierrors.go"
+	"github.com/kier1021/togo/api/apierrors"
 	"github.com/kier1021/togo/api/dto"
 	"github.com/kier1021/togo/api/models"
 	"github.com/kier1021/togo/api/repositories"
+	"github.com/kier1021/togo/api/validation"
 )
 
 type UserTaskService struct {
@@ -23,6 +24,13 @@ func NewUserTaskService(userTaskRepo repositories.IUserTaskRepository, userRepo 
 
 func (srv *UserTaskService) AddTaskToUser(taskDto dto.CreateTaskDTO) (map[string]interface{}, error) {
 
+	// Validate the data
+	v := validation.NewValidator()
+	err := v.Struct(taskDto)
+	if err != nil {
+		return nil, err
+	}
+
 	// Get the existing user
 	existingUser, err := srv.userRepo.GetUser(map[string]interface{}{
 		"user_name": taskDto.UserName,
@@ -34,7 +42,7 @@ func (srv *UserTaskService) AddTaskToUser(taskDto dto.CreateTaskDTO) (map[string
 
 	// Check if user exists
 	if existingUser == nil {
-		return nil, apierrors.UserDoesNotExists
+		return nil, apierrors.NewUserDoesNotExistsError("user_name", taskDto.UserName)
 	}
 
 	// Get the user tasks
@@ -50,7 +58,7 @@ func (srv *UserTaskService) AddTaskToUser(taskDto dto.CreateTaskDTO) (map[string
 	// If there is an existing task, check if the maximum tasks has already been reached
 	if existingUserTask != nil {
 		if len(existingUserTask.Tasks) >= existingUser.MaxTasks {
-			return nil, apierrors.MaxTasksReached
+			return nil, apierrors.NewMaxTasksReachedError(existingUser.MaxTasks)
 		}
 	}
 
@@ -80,6 +88,13 @@ func (srv *UserTaskService) AddTaskToUser(taskDto dto.CreateTaskDTO) (map[string
 
 func (srv *UserTaskService) GetTasksOfUser(getTaskDto dto.GetTaskOfUserDTO) (map[string]interface{}, error) {
 
+	// Validate the data
+	v := validation.NewValidator()
+	err := v.Struct(getTaskDto)
+	if err != nil {
+		return nil, err
+	}
+
 	// Set the default ins_day to the current date
 	if getTaskDto.InsDay == "" {
 		getTaskDto.InsDay = time.Now().Format("2006-01-02")
@@ -95,7 +110,7 @@ func (srv *UserTaskService) GetTasksOfUser(getTaskDto dto.GetTaskOfUserDTO) (map
 
 	// Check if user exists
 	if existingUser == nil {
-		return nil, apierrors.UserDoesNotExists
+		return nil, apierrors.NewUserDoesNotExistsError("user_name", getTaskDto.UserName)
 	}
 
 	// Get the current user task

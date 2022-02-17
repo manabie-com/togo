@@ -1,12 +1,10 @@
 package controllers
 
 import (
-	"errors"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/kier1021/togo/api/apierrors.go"
 	"github.com/kier1021/togo/api/dto"
 	"github.com/kier1021/togo/api/services"
 )
@@ -40,20 +38,7 @@ func (ctrl *UserTaskController) AddTaskToUser() gin.HandlerFunc {
 		// Request the task service
 		results, err := ctrl.taskSrv.AddTaskToUser(createTaskDto)
 		if err != nil {
-
-			// Check if the error is UserDoesNotExists or MaxTasksReached
-			if errors.Is(err, apierrors.UserDoesNotExists) || errors.Is(err, apierrors.MaxTasksReached) {
-				c.AbortWithStatusJSON(422, map[string]interface{}{
-					"message": "Error in data input",
-					"error":   err.Error(),
-				})
-				return
-			}
-
-			c.AbortWithStatusJSON(500, map[string]interface{}{
-				"message": "Internal server error occurred.",
-				"error":   err.Error(),
-			})
+			makeErrResponse(err, c)
 			return
 		}
 
@@ -77,20 +62,7 @@ func (ctrl *UserTaskController) GetTasksOfUser() gin.HandlerFunc {
 		// Request the task service
 		results, err := ctrl.taskSrv.GetTasksOfUser(getTaskDto)
 		if err != nil {
-
-			// Check if the error is UserDoesNotExists
-			if errors.Is(err, apierrors.UserDoesNotExists) {
-				c.AbortWithStatusJSON(422, map[string]interface{}{
-					"message": "Error in data input",
-					"error":   err.Error(),
-				})
-				return
-			}
-
-			c.AbortWithStatusJSON(500, map[string]interface{}{
-				"message": "Internal server error occurred.",
-				"error":   err.Error(),
-			})
+			makeErrResponse(err, c)
 			return
 		}
 

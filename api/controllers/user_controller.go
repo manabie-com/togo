@@ -1,14 +1,17 @@
 package controllers
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/kier1021/togo/api/apierrors.go"
 	"github.com/kier1021/togo/api/dto"
 	"github.com/kier1021/togo/api/services"
 )
+
+type ApiError struct {
+	Param        string `json:"param"`
+	ErrorMessage string `json:"error_message"`
+}
 
 type UserController struct {
 	userSrv *services.UserService
@@ -37,20 +40,7 @@ func (ctrl *UserController) CreateUser() gin.HandlerFunc {
 		// Request the user service
 		results, err := ctrl.userSrv.CreateUser(createUserDto)
 		if err != nil {
-
-			// Check if the error is UserAlreadyExists
-			if errors.Is(err, apierrors.UserAlreadyExists) {
-				c.AbortWithStatusJSON(422, map[string]interface{}{
-					"message": "Error in data input",
-					"error":   err.Error(),
-				})
-				return
-			}
-
-			c.AbortWithStatusJSON(500, map[string]interface{}{
-				"message": "Internal server error occurred.",
-				"error":   err.Error(),
-			})
+			makeErrResponse(err, c)
 			return
 		}
 
@@ -68,10 +58,7 @@ func (ctrl *UserController) GetUsers() gin.HandlerFunc {
 		// Request the user service
 		results, err := ctrl.userSrv.GetUsers()
 		if err != nil {
-			c.AbortWithStatusJSON(500, map[string]interface{}{
-				"message": "Internal server error occurred.",
-				"error":   err.Error(),
-			})
+			makeErrResponse(err, c)
 			return
 		}
 
