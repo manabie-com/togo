@@ -2,10 +2,12 @@ package repositories
 
 import "github.com/kier1021/togo/api/models"
 
+// UserTaskMockRepository is the mock user task repository used in unit testing
 type UserTaskMockRepository struct {
 	userTask []models.UserTask
 }
 
+// NewUserTaskMockRepository is the constructor for UserTaskMockRepository
 func NewUserTaskMockRepository() *UserTaskMockRepository {
 
 	userTask := []models.UserTask{
@@ -77,10 +79,12 @@ func NewUserTaskMockRepository() *UserTaskMockRepository {
 	}
 }
 
+// AddTaskToUser just returns a nil error for testing
 func (repo *UserTaskMockRepository) AddTaskToUser(user models.User, userTask models.Task, insDay string) error {
 	return nil
 }
 
+// GetUserTask return the first user task that matched the filter
 func (repo *UserTaskMockRepository) GetUserTask(filter map[string]interface{}) (userTask *models.UserTask, err error) {
 	users := repo.filterUserTasks(filter)
 
@@ -91,7 +95,13 @@ func (repo *UserTaskMockRepository) GetUserTask(filter map[string]interface{}) (
 	return userTask, nil
 }
 
+// filterUserTasks filter the static user tasks based on the given filter
 func (repo *UserTaskMockRepository) filterUserTasks(filter map[string]interface{}) (users []models.UserTask) {
+
+	if len(filter) == 0 {
+		return repo.userTask
+	}
+
 	for _, u := range repo.userTask {
 
 		isEqual := false

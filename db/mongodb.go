@@ -10,18 +10,22 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
+// MongoDB holds the client for mongo
 type MongoDB struct {
 	client *mongo.Client
 }
 
+// NewMongoDB is the constructor for MongoDB
 func NewMongoDB() *MongoDB {
 	return &MongoDB{}
 }
 
+// GetClient returns the mongo client
 func (db *MongoDB) GetClient() *mongo.Client {
 	return db.client
 }
 
+// Connect connects the application to MongoDB
 func (db *MongoDB) Connect() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

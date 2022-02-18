@@ -18,6 +18,7 @@ func validationBLMessage(bl apierrors.BLError) []ApiError {
 	}
 }
 
+// validationMessageForTag sets the validation message depending on the validate struct tag value
 func validationMessageForTag(fe validator.FieldError) string {
 	switch fe.Tag() {
 	case "required":
@@ -33,17 +34,17 @@ func validationMessageForTag(fe validator.FieldError) string {
 	}
 }
 
-func collectValidationError(ve validator.ValidationErrors) (errs []ApiError) {
-	for _, fe := range ve {
-		errs = append(errs, ApiError{fe.Field(), validationMessageForTag(fe)})
-	}
-	return errs
-}
-
+// makeErrResponse set the error response to context
 func makeErrResponse(err error, c *gin.Context) {
+
+	// Check if the err as validator.ValidationErrors
 	var ve validator.ValidationErrors
 	if errors.As(err, &ve) {
-		errs := collectValidationError(ve)
+		errs := make([]ApiError, len(ve))
+		for i, fe := range ve {
+			errs[i] = ApiError{fe.Field(), validationMessageForTag(fe)}
+		}
+
 		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, map[string]interface{}{
 			"message": "Validation Error.",
 			"errors":  errs,
@@ -51,6 +52,7 @@ func makeErrResponse(err error, c *gin.Context) {
 		return
 	}
 
+	// Check if the err is apierrors.BLError
 	var bl apierrors.BLError
 	if errors.As(err, &bl) {
 		errs := validationBLMessage(bl)
@@ -61,6 +63,7 @@ func makeErrResponse(err error, c *gin.Context) {
 		return
 	}
 
+	// Set the error as internal server error
 	c.AbortWithStatusJSON(http.StatusInternalServerError, map[string]interface{}{
 		"message": "Internal server error occurred.",
 		"error":   err.Error(),

@@ -2,10 +2,12 @@ package repositories
 
 import "github.com/kier1021/togo/api/models"
 
+// UserMockRepository is the mock user repository used in unit testing
 type UserMockRepository struct {
 	users []models.User
 }
 
+// NewUserMockRepository is the constructor for UserMockRepository
 func NewUserMockRepository() *UserMockRepository {
 
 	users := []models.User{
@@ -31,10 +33,12 @@ func NewUserMockRepository() *UserMockRepository {
 	}
 }
 
+// CreateUser returns a static ID for testing
 func (repo *UserMockRepository) CreateUser(user models.User) (string, error) {
 	return "620e6baff70a3fd2fc8811a0", nil
 }
 
+// GetUser return the first user that matched the filter
 func (repo *UserMockRepository) GetUser(filter map[string]interface{}) (user *models.User, err error) {
 
 	users := repo.filterUsers(filter)
@@ -46,10 +50,12 @@ func (repo *UserMockRepository) GetUser(filter map[string]interface{}) (user *mo
 	return user, nil
 }
 
+// GetUsers returns the filtered static users
 func (repo *UserMockRepository) GetUsers(filter map[string]interface{}) (users []models.User, err error) {
 	return repo.filterUsers(filter), nil
 }
 
+// filterUsers filter the static users based on the given filter
 func (repo *UserMockRepository) filterUsers(filter map[string]interface{}) (users []models.User) {
 
 	if len(filter) == 0 {

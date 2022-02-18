@@ -14,6 +14,8 @@ import (
 )
 
 func main() {
+
+	// Load the env from .env file
 	godotenv.Load(".env")
 
 	// Connect to MongoDB

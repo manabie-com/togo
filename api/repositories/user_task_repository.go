@@ -14,11 +14,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// UserTaskRepository is the implementation of IUserTaskRepository that uses MongoDB as data store
 type UserTaskRepository struct {
 	mongoDB            *db.MongoDB
 	userTaskCollection *mongo.Collection
 }
 
+// NewUserTaskRepository is the constructor for UserTaskRepository
 func NewUserTaskRepository(mongoDB *db.MongoDB) *UserTaskRepository {
 
 	client := mongoDB.GetClient()
@@ -30,10 +32,12 @@ func NewUserTaskRepository(mongoDB *db.MongoDB) *UserTaskRepository {
 	}
 }
 
+// AddTaskToUser adds a task to user in user_task collection
 func (repo *UserTaskRepository) AddTaskToUser(user models.User, userTask models.Task, insDay string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
+	// Convert the userID from string to ObjectID
 	userIDPrimitive, err := primitive.ObjectIDFromHex(user.ID)
 	if err != nil {
 		return err
@@ -44,6 +48,8 @@ func (repo *UserTaskRepository) AddTaskToUser(user models.User, userTask models.
 		"description": userTask.Description,
 	}
 
+	// Upsert the tasks.
+	// If the user does not have tasks for the given ins_day, it will insert the task as well as the user details to user_task collection
 	_, err = repo.userTaskCollection.UpdateOne(
 		ctx,
 		bson.M{"user_name": user.UserName, "ins_day": insDay},
@@ -71,14 +77,17 @@ func (repo *UserTaskRepository) AddTaskToUser(user models.User, userTask models.
 	return nil
 }
 
+// GetUserTask fetched the user task from user_task collection using the filter
 func (repo *UserTaskRepository) GetUserTask(filter map[string]interface{}) (*models.UserTask, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
+	// Set the filter value to ObjectID if the the key is in the slice of keys
 	if err := filterToObjectID(filter, "_id", "user_id"); err != nil {
 		return nil, err
 	}
 
+	// Find one user task using the filter
 	var userTask models.UserTask
 	res := repo.userTaskCollection.FindOne(ctx, filter)
 

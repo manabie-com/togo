@@ -2,6 +2,7 @@ package services
 
 import (
 	"testing"
+	"time"
 
 	"github.com/kier1021/togo/api/dto"
 	"github.com/kier1021/togo/api/repositories"
@@ -159,6 +160,22 @@ func TestGetTasksOfUser(t *testing.T) {
 					"max_tasks": 3,
 					"ins_day":   "2022-02-18",
 					"tasks":     []map[string]interface{}{},
+				},
+			},
+		},
+		{
+			name: "If the there is no given InsDay, the default InsDay should be the date today",
+			getTaskOfUserDTO: dto.GetTaskOfUserDTO{
+				UserName: "Test User 1",
+				InsDay:   "", // InsDay is empty
+			},
+			expected: map[string]interface{}{
+				"user_task": map[string]interface{}{
+					"user_id":   "620e6b6e20bdcb887326931a",
+					"user_name": "Test User 1",
+					"max_tasks": 3,
+					"ins_day":   time.Now().Format("2006-01-02"),
+					"tasks":     []map[string]interface{}{}, // Empty because there are no tasks set for Test User 1 today
 				},
 			},
 		},

@@ -10,11 +10,13 @@ import (
 	"github.com/kier1021/togo/api/validation"
 )
 
+// UserTaskService holds the business logic for user task entity
 type UserTaskService struct {
 	userTaskRepo repositories.IUserTaskRepository
 	userRepo     repositories.IUserRepository
 }
 
+// NewUserTaskService is the constructor for UserTaskService
 func NewUserTaskService(userTaskRepo repositories.IUserTaskRepository, userRepo repositories.IUserRepository) *UserTaskService {
 	return &UserTaskService{
 		userTaskRepo: userTaskRepo,
@@ -22,6 +24,7 @@ func NewUserTaskService(userTaskRepo repositories.IUserTaskRepository, userRepo 
 	}
 }
 
+// AddTaskToUser add a task to a user
 func (srv *UserTaskService) AddTaskToUser(taskDto dto.CreateTaskDTO) (map[string]interface{}, error) {
 
 	// Validate the data
@@ -86,6 +89,7 @@ func (srv *UserTaskService) AddTaskToUser(taskDto dto.CreateTaskDTO) (map[string
 	}, nil
 }
 
+// GetTasksOfUser return all the tasks of a user
 func (srv *UserTaskService) GetTasksOfUser(getTaskDto dto.GetTaskOfUserDTO) (map[string]interface{}, error) {
 
 	// Validate the data

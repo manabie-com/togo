@@ -7,6 +7,7 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+// NewValidator returns the *validator.Validate type with preset configurations
 func NewValidator() *validator.Validate {
 	v := validator.New()
 

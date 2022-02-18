@@ -9,16 +9,19 @@ import (
 	"github.com/kier1021/togo/api/services"
 )
 
+// UserTaskController handles the user task handlers
 type UserTaskController struct {
 	taskSrv *services.UserTaskService
 }
 
+// NewUserTaskController is the contructor for UserTaskController
 func NewUserTaskController(taskSrv *services.UserTaskService) *UserTaskController {
 	return &UserTaskController{
 		taskSrv: taskSrv,
 	}
 }
 
+// AddTaskToUser is the http handler for adding a task to user
 func (ctrl *UserTaskController) AddTaskToUser() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
@@ -49,6 +52,7 @@ func (ctrl *UserTaskController) AddTaskToUser() gin.HandlerFunc {
 	}
 }
 
+// GetTasksOfUser is the http handler for getching the tasks of a user
 func (ctrl *UserTaskController) GetTasksOfUser() gin.HandlerFunc {
 
 	return func(c *gin.Context) {

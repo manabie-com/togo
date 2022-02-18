@@ -8,21 +8,25 @@ import (
 	"github.com/kier1021/togo/api/services"
 )
 
+// ApiError is the response for validation errors
 type ApiError struct {
 	Param        string `json:"param"`
 	ErrorMessage string `json:"error_message"`
 }
 
+// UserController handles the handler for users
 type UserController struct {
 	userSrv *services.UserService
 }
 
+// NewUserController is the constructor for UserController struct
 func NewUserController(userSrv *services.UserService) *UserController {
 	return &UserController{
 		userSrv: userSrv,
 	}
 }
 
+// CreateUser is the http handler for creation of user
 func (ctrl *UserController) CreateUser() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
@@ -51,6 +55,7 @@ func (ctrl *UserController) CreateUser() gin.HandlerFunc {
 	}
 }
 
+// GetUsers is the http handler for fetching users
 func (ctrl *UserController) GetUsers() gin.HandlerFunc {
 
 	return func(c *gin.Context) {

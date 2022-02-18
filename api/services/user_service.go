@@ -8,16 +8,19 @@ import (
 	"github.com/kier1021/togo/api/validation"
 )
 
+// UserService holds the business logic for user entity
 type UserService struct {
 	userRepo repositories.IUserRepository
 }
 
+// NewUserService is the constructor for UserService
 func NewUserService(userRepo repositories.IUserRepository) *UserService {
 	return &UserService{
 		userRepo: userRepo,
 	}
 }
 
+// CreateUser creates a user
 func (srv *UserService) CreateUser(userDto dto.CreateUserDTO) (map[string]interface{}, error) {
 
 	// Validate the data
@@ -57,7 +60,10 @@ func (srv *UserService) CreateUser(userDto dto.CreateUserDTO) (map[string]interf
 	}, nil
 }
 
+// GetUsers return all the users
 func (srv *UserService) GetUsers() (map[string]interface{}, error) {
+
+	// Get the users from repository
 	users, err := srv.userRepo.GetUsers(map[string]interface{}{})
 	if err != nil {
 		return nil, err

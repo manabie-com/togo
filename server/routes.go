@@ -8,11 +8,13 @@ import (
 	"github.com/kier1021/togo/db"
 )
 
+// APIRoutes holds the routes of API
 type APIRoutes struct {
 	dbs    *db.DB
 	engine *gin.Engine
 }
 
+// NewAPIRoutes is the constructor for APIRoutes
 func NewAPIRoutes(dbs *db.DB) *APIRoutes {
 	return &APIRoutes{
 		dbs:    dbs,
@@ -20,10 +22,12 @@ func NewAPIRoutes(dbs *db.DB) *APIRoutes {
 	}
 }
 
+// GetEngine returns the gin engine
 func (routes *APIRoutes) GetEngine() *gin.Engine {
 	return routes.engine
 }
 
+// SetRoutes set the endpoints of API
 func (routes *APIRoutes) SetRoutes() {
 
 	// Init user dependencies
@@ -36,15 +40,7 @@ func (routes *APIRoutes) SetRoutes() {
 	userTaskSrv := services.NewUserTaskService(userTaskRepo, userRepo)
 	userTaskCtrl := controllers.NewUserTaskController(userTaskSrv)
 
-	routes.engine.GET(
-		"/",
-		func() gin.HandlerFunc {
-			return func(c *gin.Context) {
-				c.JSON(200, map[string]interface{}{"message": "Hello World!!"})
-			}
-		}(),
-	)
-
+	// Set the endpoints
 	routes.engine.POST(
 		"/user",
 		userCtrl.CreateUser(),
