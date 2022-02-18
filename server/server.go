@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/kier1021/togo/db"
@@ -21,9 +22,14 @@ func NewAPIServer(dbs *db.DB) *APIServer {
 	routes := NewAPIRoutes(dbs)
 	routes.SetRoutes()
 
+	port := os.Getenv("APPS_PORT")
+	if port == "" {
+		port = "8080"
+	}
+
 	// Set the server config
 	httpServer := &http.Server{
-		Addr:    ":8080",
+		Addr:    ":" + port,
 		Handler: routes.GetEngine(),
 	}
 
