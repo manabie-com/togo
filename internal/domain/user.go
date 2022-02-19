@@ -16,10 +16,10 @@ var (
 
 // User model
 type User struct {
-	ID       uint    `json:"id,omitempty" gorm:"primarykey"`
-	FullName *string `json:"fullName,omitempty"`
-	Username string  `json:"username,omitempty"`
-	Password string  `json:"password,omitempty"`
+	ID       uint   `json:"id,omitempty" gorm:"primarykey"`
+	FullName string `json:"fullName,omitempty"`
+	Username string `json:"username,omitempty"`
+	Password string `json:"password,omitempty"`
 }
 
 // UserService service interface
