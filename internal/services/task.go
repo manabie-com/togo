@@ -36,8 +36,8 @@ func (s taskService) Create(ctx context.Context, task *domain.Task) (*domain.Tas
 	}
 	return s.taskRepo.Create(ctx, task)
 }
-func (s taskService) UpdateByID(ctx context.Context, id uint, update *domain.Task) (*domain.Task, error) {
-	task, err := s.taskRepo.UpdateByID(ctx, id, update)
+func (s taskService) Update(ctx context.Context, filter, update *domain.Task) (*domain.Task, error) {
+	task, err := s.taskRepo.Update(ctx, filter, update)
 	if err != nil {
 		return nil, fmt.Errorf("taskService:UpdateByID: %w", err)
 	}

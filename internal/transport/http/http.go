@@ -40,6 +40,8 @@ func (s *httpServer) Load(_ context.Context) error {
 	s.echo.GET("/users/:id", s.GetUser, s.authGuard)
 	s.echo.PATCH("/users/:id", s.UpdateUser, s.authGuard)
 	s.echo.POST("/tasks", s.AddTask, s.authGuard)
+	s.echo.GET("/tasks", s.GetTasks, s.authGuard)
+	s.echo.PATCH("/tasks/:id", s.UpdateTask, s.authGuard)
 	return nil
 }
 

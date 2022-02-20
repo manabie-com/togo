@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	currentUserKey = "currentUser"
+	currentUserKey2 = "CURRENT_USER"
 )
 
 func (s *httpServer) authGuard(next echo.HandlerFunc) echo.HandlerFunc {
@@ -27,9 +27,17 @@ func (s *httpServer) authGuard(next echo.HandlerFunc) echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusUnauthorized, domain.ErrUnauthorized.Error())
 		}
 		// Attach auth user
-		c.Set(currentUserKey, result.Payload)
+		c.Set(currentUserKey2, result.Payload)
 		return next(c)
 	}
+}
+
+func (s *httpServer) getCurrentUser(c echo.Context) (*domain.User, error) {
+	user, ok := c.Get(currentUserKey2).(*domain.User)
+	if !ok {
+		return nil, domain.ErrUnauthorized
+	}
+	return user, nil
 }
 
 type registerDTO struct {

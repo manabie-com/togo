@@ -28,6 +28,7 @@ func Test_authService_Login(t *testing.T) {
 	fullName := faker.Name()
 	username := faker.Username()
 	password := faker.Password()
+	password2 := faker.Password()
 	passwordHash := faker.Password()
 	user := &domain.User{
 		ID:          userID,
@@ -38,18 +39,16 @@ func Test_authService_Login(t *testing.T) {
 	}
 	jwtToken := faker.Jwt()
 	userRepo := new(mockUserRepository)
-	userRepo.On("FindOne", mock.Anything).Return(user, nil)
-	userRepoUserNotFound := new(mockUserRepository)
-	userRepoUserNotFound.On("FindOne", mock.Anything).Return(nil, domain.ErrUserNotFound)
+	userRepo.On("FindOne", &domain.User{Username: username}).Return(user, nil)
+	userRepo.On("FindOne", mock.Anything).Return(nil, domain.ErrUserNotFound)
 	passwordHashProvider := new(mockPasswordHashProvider)
 	passwordHashProvider.On("HashPassword", mock.Anything).Return(passwordHash, nil)
 	passwordHashProvider.On("ComparePassword", password, passwordHash).Return(nil)
-	passwordHashProviderComparePasswordFailed := new(mockPasswordHashProvider)
-	passwordHashProviderComparePasswordFailed.On("ComparePassword", password, passwordHash).Return(errors.New("error"))
+	passwordHashProvider.On("ComparePassword", password2, passwordHash).Return(errors.New("error"))
 	tokenProvider := new(mockTokenProvider)
 	tokenProvider.On("GenerateToken", user).Return(jwtToken, nil)
-	tokenProviderGenerateTokenFailed := new(mockTokenProvider)
-	tokenProviderGenerateTokenFailed.On("GenerateToken", user).Return("", errors.New("error"))
+	brokenTokenProvider := new(mockTokenProvider)
+	brokenTokenProvider.On("GenerateToken", mock.Anything).Return("", errors.New("error"))
 	// Test cases
 	tests := []struct {
 		name    string
@@ -59,10 +58,26 @@ func Test_authService_Login(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "user not exists",
-			fields: fields{
-				userRepo: userRepoUserNotFound,
+			name:   "user not exists",
+			fields: fields{passwordHashProvider, tokenProvider, userRepo},
+			args: args{
+				context.Background(),
+				&domain.LoginCredential{Username: faker.Username(), Password: faker.Password()},
 			},
+			wantErr: true,
+		},
+		{
+			name:   "password incorrect",
+			fields: fields{passwordHashProvider, tokenProvider, userRepo},
+			args: args{
+				context.Background(),
+				&domain.LoginCredential{Username: username, Password: password2},
+			},
+			wantErr: true,
+		},
+		{
+			name:   "generate token failed",
+			fields: fields{passwordHashProvider, brokenTokenProvider, userRepo},
 			args: args{
 				context.Background(),
 				&domain.LoginCredential{Username: username, Password: password},
@@ -70,37 +85,8 @@ func Test_authService_Login(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "password incorrect",
-			fields: fields{
-				userRepo:             userRepo,
-				passwordHashProvider: passwordHashProviderComparePasswordFailed,
-			},
-			args: args{
-				context.Background(),
-				&domain.LoginCredential{Username: username, Password: password},
-			},
-			wantErr: true,
-		},
-		{
-			name: "generate token failed",
-			fields: fields{
-				userRepo:             userRepo,
-				passwordHashProvider: passwordHashProvider,
-				tokenProvider:        tokenProviderGenerateTokenFailed,
-			},
-			args: args{
-				context.Background(),
-				&domain.LoginCredential{Username: username, Password: password},
-			},
-			wantErr: true,
-		},
-		{
-			name: "login successfully",
-			fields: fields{
-				userRepo:             userRepo,
-				passwordHashProvider: passwordHashProvider,
-				tokenProvider:        tokenProvider,
-			},
+			name:   "login successfully",
+			fields: fields{passwordHashProvider, tokenProvider, userRepo},
 			args: args{
 				context.Background(),
 				&domain.LoginCredential{Username: username, Password: password},
@@ -141,6 +127,8 @@ func Test_authService_VerifyToken(t *testing.T) {
 		token string
 	}
 	// Mocks
+	invalidToken := faker.Jwt()
+	token := faker.Jwt()
 	userID := uint(1)
 	payload := &domain.User{ID: userID}
 	user := &domain.User{
@@ -150,15 +138,20 @@ func Test_authService_VerifyToken(t *testing.T) {
 		Password:    faker.Password(),
 		TasksPerDay: 1,
 	}
-	token := faker.Jwt()
+	token2 := faker.Jwt()
+	userID2 := uint(2)
+	payload2 := &domain.User{ID: userID2}
 	userRepo := new(mockUserRepository)
-	userRepo.On("FindOne", mock.Anything).Return(user, nil)
-	userRepoUserNotFound := new(mockUserRepository)
-	userRepoUserNotFound.On("FindOne", mock.Anything).Return(nil, domain.ErrUserNotFound)
+	userRepo.On("FindOne", mock.MatchedBy(func(entity *domain.User) bool {
+		return entity.ID == userID
+	})).Return(user, nil)
+	userRepo.On("FindOne", mock.MatchedBy(func(entity *domain.User) bool {
+		return entity.ID == userID2
+	})).Return(nil, domain.ErrUserNotFound)
 	tokenProvider := new(mockTokenProvider)
-	tokenProvider.On("VerifyToken", mock.Anything).Return(payload, nil)
-	tokenProviderVerifyTokenFailed := new(mockTokenProvider)
-	tokenProviderVerifyTokenFailed.On("VerifyToken", mock.Anything).Return(nil, errors.New("error"))
+	tokenProvider.On("VerifyToken", token).Return(payload, nil)
+	tokenProvider.On("VerifyToken", token2).Return(payload2, nil)
+	tokenProvider.On("VerifyToken", invalidToken).Return(nil, errors.New("error"))
 	// Test cases
 	tests := []struct {
 		name    string
@@ -168,13 +161,11 @@ func Test_authService_VerifyToken(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "token invalid",
-			fields: fields{
-				tokenProvider: tokenProviderVerifyTokenFailed,
-			},
+			name:   "token invalid",
+			fields: fields{tokenProvider: tokenProvider},
 			args: args{
 				context.Background(),
-				token,
+				invalidToken,
 			},
 			wantErr: true,
 		},
@@ -182,11 +173,11 @@ func Test_authService_VerifyToken(t *testing.T) {
 			name: "user not found",
 			fields: fields{
 				tokenProvider: tokenProvider,
-				userRepo:      userRepoUserNotFound,
+				userRepo:      userRepo,
 			},
 			args: args{
 				context.Background(),
-				token,
+				token2,
 			},
 			wantErr: true,
 		},

@@ -23,6 +23,6 @@ type Task struct {
 // TaskService service interface
 type TaskService interface {
 	Create(ctx context.Context, task *Task) (*Task, error)
-	UpdateByID(ctx context.Context, id uint, update *Task) (*Task, error)
+	Update(ctx context.Context, filter, update *Task) (*Task, error)
 	FindByUserID(ctx context.Context, userID uint) ([]*Task, error)
 }
