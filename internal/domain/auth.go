@@ -6,6 +6,8 @@ import (
 )
 
 var (
+	// ErrUnauthorized unauthorized request error
+	ErrUnauthorized = errors.New("UNAUTHORIZED")
 	// ErrLoginFailed failed to login error
 	ErrLoginFailed = errors.New("LOGIN_FAILED")
 	// ErrCredentialInvalid invalid login request error

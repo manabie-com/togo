@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"fmt"
 	"togo/internal/domain"
 	"togo/internal/provider"
 	"togo/internal/repository"
@@ -23,18 +24,40 @@ func NewUserService(
 	}
 }
 
-// CreateUser method for create new User
-func (s userService) CreateUser(ctx context.Context, user *domain.User) (*domain.User, error) {
-	// Hash the password
-	pwd, err := s.passwordHashProvider.HashPassword(user.Password)
-	if err != nil {
-		return nil, err
+func (s userService) CreateUser(ctx context.Context, input *domain.User) (*domain.User, error) {
+	// Existing check
+	userExists, err := s.userRepo.FindOne(ctx, &domain.User{Username: input.Username})
+	if err != nil && err != domain.ErrUserNotFound {
+		return nil, fmt.Errorf("userService:CreateUser: %w", err)
 	}
-	user.Password = pwd
-	return s.userRepo.Create(ctx, user)
+	if userExists != nil {
+		return nil, domain.ErrDuplicatedUsername
+	}
+	// Hash the password
+	pwd, err := s.passwordHashProvider.HashPassword(input.Password)
+	if err != nil {
+		return nil, fmt.Errorf("userService:CreateUser: %w", err)
+	}
+	input.Password = pwd
+	user, err := s.userRepo.Create(ctx, input)
+	if err != nil {
+		return nil, fmt.Errorf("userService:CreateUser: %w", err)
+	}
+	return user, nil
 }
 
-// GetUserByID method for get one User
 func (s userService) GetUserByID(ctx context.Context, id uint) (*domain.User, error) {
-	return s.userRepo.FindOne(ctx, &domain.User{ID: id})
+	user, err := s.userRepo.FindOne(ctx, &domain.User{ID: id})
+	if err != nil {
+		return nil, fmt.Errorf("userService:GetUserByID: %w", err)
+	}
+	return user, nil
+}
+
+func (s userService) UpdateByID(ctx context.Context, id uint, update *domain.User) (*domain.User, error) {
+	user, err := s.userRepo.UpdateByID(ctx, id, update)
+	if err != nil {
+		return nil, fmt.Errorf("userService:UpdateByID: %w", err)
+	}
+	return user, nil
 }

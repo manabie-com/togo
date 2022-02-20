@@ -23,8 +23,9 @@ func addClaims(target jwt.MapClaims, data interface{}) {
 
 func extractClaims(data jwt.Claims) interface{} {
 	mapClaims := data.(jwt.MapClaims)
+	userID := mapClaims["user_id"].(float64)
 	user := &domain.User{
-		ID: mapClaims["user_id"].(uint),
+		ID: uint(userID),
 	}
 	return user
 }

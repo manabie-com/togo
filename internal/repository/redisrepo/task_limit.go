@@ -34,10 +34,12 @@ func (r taskLimitRepository) Increase(ctx context.Context, userID uint, limit in
 	// Check the current tasks submitted
 	val, err := r.rdb.Get(ctx, key).Result()
 	if err != nil && err != redis.Nil {
-		return 0, err
+		return 0, fmt.Errorf("taskLimitRepository:Increase: %w", err)
 	}
-	if count, err = strconv.Atoi(val); err != nil {
-		return 0, err
+	if val != "" {
+		if count, err = strconv.Atoi(val); err != nil {
+			return 0, fmt.Errorf("taskLimitRepository:Increase: %w", err)
+		}
 	}
 	if count >= limit {
 		return count, domain.ErrTaskLimitExceed
@@ -47,7 +49,7 @@ func (r taskLimitRepository) Increase(ctx context.Context, userID uint, limit in
 	incrOp := pipe.Incr(ctx, key)
 	pipe.ExpireAt(ctx, key, exp)
 	if _, err := pipe.Exec(ctx); err != nil {
-		return 0, err
+		return 0, fmt.Errorf("taskLimitRepository:Increase: %w", err)
 	}
 	return int(incrOp.Val()), nil
 }

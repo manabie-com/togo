@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"fmt"
 	"togo/internal/domain"
 	"togo/internal/provider"
 	"togo/internal/repository"
@@ -49,7 +50,7 @@ func (s authService) Login(ctx context.Context, credential *domain.LoginCredenti
 func (s authService) VerifyToken(ctx context.Context, token string) (*domain.VerifyTokenResult, error) {
 	payload, err := s.tokenProvider.VerifyToken(token)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("authService:VerifyToken: %w", err)
 	}
 	user, err := s.userRepo.FindOne(ctx, &domain.User{ID: payload.(*domain.User).ID})
 	if err != nil {

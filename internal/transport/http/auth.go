@@ -2,22 +2,57 @@ package http
 
 import (
 	"net/http"
+	"strings"
 	"togo/internal/domain"
 
 	"github.com/labstack/echo/v4"
 )
 
+const (
+	currentUserKey = "currentUser"
+)
+
+func (s *httpServer) authGuard(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		// Extract auth token from request
+		authHeader := c.Request().Header.Get("Authorization")
+		// Validate and verify token
+		authHeader = strings.Trim(authHeader, " ")
+		if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
+			return echo.NewHTTPError(http.StatusUnauthorized, domain.ErrUnauthorized.Error())
+		}
+		token := strings.TrimPrefix(authHeader, "Bearer ")
+		result, err := s.authService.VerifyToken(c.Request().Context(), token)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusUnauthorized, domain.ErrUnauthorized.Error())
+		}
+		// Attach auth user
+		c.Set(currentUserKey, result.Payload)
+		return next(c)
+	}
+}
+
+type registerDTO struct {
+	FullName    string `json:"fullName,required"`
+	Username    string `json:"username,required"`
+	Password    string `json:"password,required"`
+	TasksPerDay int    `json:"tasksPerDay,required"`
+}
+
 func (s *httpServer) Register(c echo.Context) (err error) {
-	u := new(domain.User)
+	u := new(registerDTO)
 	if err = c.Bind(u); err != nil {
 		return err
 	}
-	s.userService.CreateUser(c.Request().Context(), &domain.User{
-		FullName: u.FullName,
-		Username: u.Username,
-		Password: u.Password,
-	})
-	return nil
+	if _, err = s.userService.CreateUser(c.Request().Context(), &domain.User{
+		FullName:    u.FullName,
+		Username:    u.Username,
+		Password:    u.Password,
+		TasksPerDay: u.TasksPerDay,
+	}); err != nil {
+		return
+	}
+	return c.String(http.StatusCreated, "")
 }
 
 func (s *httpServer) Login(c echo.Context) (err error) {
@@ -27,7 +62,7 @@ func (s *httpServer) Login(c echo.Context) (err error) {
 	}
 	result, err := s.authService.Login(c.Request().Context(), u)
 	if err != nil {
-		return err
+		return
 	}
 	return c.JSON(http.StatusOK, result)
 }

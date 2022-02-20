@@ -74,7 +74,7 @@ func initServices() {
 }
 
 func initTransport(ctx context.Context) error {
-	server = http.NewHTTPServer(userService, authService)
+	server = http.NewHTTPServer(userService, authService, taskService)
 	if err := server.Load(ctx); err != nil {
 		return err
 	}

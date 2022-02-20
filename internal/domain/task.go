@@ -8,6 +8,8 @@ import (
 var (
 	// ErrTaskLimitExceed task limit exceed error
 	ErrTaskLimitExceed = errors.New("TASK_LIMIT_EXCEED")
+	// ErrTaskNotFound task not found error
+	ErrTaskNotFound = errors.New("TASK_NOT_FOUND")
 )
 
 // Task model
