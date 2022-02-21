@@ -20,11 +20,6 @@
 - I use docker test to create database automatically. So, You have to run Docker successfully
 - Run: `./gotest.sh`
 
-# Run on the local
-In Mac: set env by run command
-- create a postgres db
-`export BLOG_TEST_DB_URL="username:password@/dbName?parseTime=true"`
-
 ### Run with curl command
 
 - With Invalid user
