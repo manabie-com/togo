@@ -22,7 +22,6 @@ func main() {
 	viper.AutomaticEnv()
 	dbURL := viper.GetString("DB_URL")
 
-	log.Info().Str("DB_URL", dbURL).Msg("DB_URL")
 	logrus.Info("DB_URL: ", dbURL)
 
 	db, err := sqlx.Connect("postgres", dbURL)
