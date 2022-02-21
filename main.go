@@ -5,6 +5,9 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/joho/godotenv/autoload"
 	"os"
+	"togo/infrastructure/database"
+	"togo/infrastructure/routes"
+	"togo/registry"
 )
 
 var Mode = os.Getenv("MODE")
@@ -15,20 +18,18 @@ var dbDatabase = os.Getenv("DB_DATABASE")
 var dbUsername = os.Getenv("DB_USERNAME")
 var dbPassword = os.Getenv("DB_PASSWORD")
 
+var db *database.DbGormStruct
+
 func init() {
 	gin.SetMode(Mode)
 	dbInfo := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", dbUsername, dbPassword, dbHost, dbPort, dbDatabase)
-	fmt.Println(dbInfo)
+	db = database.Init(dbInfo)
 }
 
 func main() {
 	router := gin.Default()
-	router.GET("/health-check", func(context *gin.Context) {
-		context.JSON(200, map[string]interface{}{
-			"service": "API Todo",
-			"status":  1,
-		})
-	})
+	reg := registry.NewRegistry(db)
+	router = routes.NewRouter(router, reg.NewAppController())
 
 	router.Run(":" + port)
 }
