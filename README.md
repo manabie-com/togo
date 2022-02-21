@@ -13,6 +13,7 @@
 - User can create a task when total daily tasks is less than setting on the DB
 
 # Architecture: Clean Architecture + SOLID principle + Dependency Injection
+- [Project layout](https://github.com/golang-standards/project-layout)
 - All values should be injected from main
 - We have 3 main layers: handler -> service -> repo
 
