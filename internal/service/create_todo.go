@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
-	"github.com/google/uuid"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
 
 	"github.com/chi07/todo/internal/model"

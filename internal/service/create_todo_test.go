@@ -3,13 +3,15 @@ package service_test
 import (
 	"context"
 	"errors"
-	"github.com/google/uuid"
+	"testing"
+
 	"github.com/chi07/todo/internal/model"
 	"github.com/chi07/todo/internal/service"
-	mocks2 "github.com/chi07/todo/tests/mocks"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"testing"
+
+	mocks2 "github.com/chi07/todo/tests/mocks"
 )
 
 func TestCreateTaskService_Create(t *testing.T) {
