@@ -43,7 +43,7 @@ func NewConfig() *Config {
 		jwtAccessTokenDuration = defaultJwtAccessTokenDuration
 	}
 	// Get database configs
-	databaseURI := os.Getenv("DB_URL")
+	databaseURI := os.Getenv("DB_URI")
 	if databaseURI == "" {
 		databaseURI = defaultDatabaseURI
 	}

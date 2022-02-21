@@ -1,0 +1,39 @@
+version: '3'
+services:
+  redis:
+    image: redis
+    container_name: "redis"
+    ports:
+      - 56379:6379
+    networks:
+      - internal
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=togo
+    ports:
+      - 55432:5432
+    networks:
+      - internal
+    volumes:
+      - postgresvol:/data
+  togo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 4000:4000
+    networks:
+      - internal
+    depends_on:
+      - redis
+      - postgres
+    restart: always
+networks:
+  internal:
+    driver: bridge
+volumes:
+  postgresvol:
