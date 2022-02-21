@@ -4,9 +4,9 @@ package dbutils
 import (
 	"context"
 	"fmt"
+	"github.com/chi07/todo/db"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
-	"github.com/chi07/todo/db"
 	"github.com/sirupsen/logrus"
 	"time"
 
@@ -80,28 +80,26 @@ func (util *TestUtil) bootstrapDB() error {
 
 func (util *TestUtil) connectDB(pool *dockertest.Pool, containerResource *dockertest.Resource) error {
 	address := containerResource.GetHostPort("5432/tcp")
-	DBURL := fmt.Sprintf("postgres://postgres:postgres@%s/todos?sslmode=disable", address)
-	util.DBURL = DBURL
+	dbURL := fmt.Sprintf("postgres://postgres:postgres@%s/todos?sslmode=disable", address)
+	util.DBURL = dbURL
 	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
 	pool.MaxWait = dbPoolMaxWait
 	return pool.Retry(func() error {
-		dbopts, err := pg.ParseURL(DBURL)
-		dbopts.PoolSize = dbPoolSize
-		dbopts.PoolTimeout = dbPoolTimeout
+		dbOptions, err := pg.ParseURL(dbURL)
+		dbOptions.PoolSize = dbPoolSize
+		dbOptions.PoolTimeout = dbPoolTimeout
 		if err != nil {
 			return err
 		}
 
-		util.DB = pg.Connect(dbopts)
+		util.DB = pg.Connect(dbOptions)
 		if err := util.DB.Ping(util.Context); err != nil {
 			return err
 		}
 
-		db, err := sqlx.Connect("postgres", DBURL)
+		db, err := sqlx.Connect("postgres", dbURL)
 		if err != nil {
-			fmt.Println("Could not connect. abcd..", err.Error())
-		} else {
-			fmt.Println("Sucess...")
+			logrus.Fatal("could not connect to db")
 		}
 		util.PostgresDB = db
 
