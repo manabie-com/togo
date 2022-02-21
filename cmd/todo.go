@@ -18,7 +18,7 @@ import (
 )
 
 func main() {
-	viper.SetEnvPrefix("BLOG")
+	viper.SetEnvPrefix("TODO")
 	viper.AutomaticEnv()
 	dbURL := viper.GetString("DB_URL")
 
