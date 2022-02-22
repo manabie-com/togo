@@ -57,7 +57,7 @@ func Test_taskRepository_Create_Successful(t *testing.T) {
 	mock.ExpectCommit()
 	r := taskRepository{gdb}
 	task, err := r.Create(context.Background(), taskInput)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, eTask, task)
 }
 
@@ -106,7 +106,7 @@ func Test_taskRepository_Update_Successful(t *testing.T) {
 	mock.ExpectCommit()
 	r := taskRepository{gdb}
 	task, err := r.Update(context.Background(), filter, update)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, eTask, task)
 }
 
@@ -124,7 +124,7 @@ func Test_taskRepository_Find_NotFound(t *testing.T) {
 	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM \"tasks\"")).WillReturnRows(rows)
 	r := taskRepository{gdb}
 	tasks, err := r.Find(context.Background(), filter)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, eTasks, tasks)
 }
 
@@ -161,6 +161,6 @@ func Test_taskRepository_Find_Successful(t *testing.T) {
 	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM \"tasks\"")).WillReturnRows(rows)
 	r := taskRepository{gdb}
 	tasks, err := r.Find(context.Background(), filter)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, eTasks, tasks)
 }

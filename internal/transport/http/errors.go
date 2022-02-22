@@ -15,6 +15,7 @@ var errorStatusMap = map[error]int{
 	domain.ErrLoginFailed:        http.StatusServiceUnavailable,
 	// User error statuses
 	domain.ErrUserNotFound: http.StatusBadRequest,
+	domain.ErrInvalidUser:  http.StatusBadRequest,
 	// Task error satuses
 	domain.ErrTaskLimitExceed: http.StatusTooManyRequests,
 	domain.ErrTaskNotFound:    http.StatusBadRequest,

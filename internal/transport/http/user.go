@@ -7,16 +7,12 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type getUserDTO struct {
-	ID uint `param:"id"`
-}
-
-func (s *httpServer) GetUser(c echo.Context) error {
-	u := new(getUserDTO)
-	if err := c.Bind(u); err != nil {
+func (s *httpServer) GetMe(c echo.Context) error {
+	currentUser, err := s.getCurrentUser(c)
+	if err != nil {
 		return err
 	}
-	user, err := s.userService.GetUserByID(c.Request().Context(), u.ID)
+	user, err := s.userService.GetUserByID(c.Request().Context(), currentUser.ID)
 	if err != nil {
 		return err
 	}
@@ -24,17 +20,20 @@ func (s *httpServer) GetUser(c echo.Context) error {
 }
 
 type updateUserDTO struct {
-	ID          uint   `param:"id"`
 	FullName    string `json:"fullName"`
 	TasksPerDay int    `json:"tasksPerDay"`
 }
 
-func (s *httpServer) UpdateUser(c echo.Context) error {
+func (s *httpServer) UpdateMe(c echo.Context) error {
 	u := new(updateUserDTO)
 	if err := c.Bind(u); err != nil {
 		return err
 	}
-	user, err := s.userService.UpdateByID(c.Request().Context(), u.ID, &domain.User{
+	currentUser, err := s.getCurrentUser(c)
+	if err != nil {
+		return err
+	}
+	user, err := s.userService.UpdateByID(c.Request().Context(), currentUser.ID, &domain.User{
 		FullName:    u.FullName,
 		TasksPerDay: u.TasksPerDay,
 	})

@@ -56,7 +56,7 @@ func Test_userRepository_Create_Successful(t *testing.T) {
 	mock.ExpectCommit()
 	r := userRepository{gdb}
 	user, err := r.Create(context.Background(), userInput)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, &domain.User{
 		ID:          1,
 		FullName:    fullName,
@@ -105,6 +105,6 @@ func Test_userRepository_FindOne_Successful(t *testing.T) {
 	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM")).WillReturnRows(rows)
 	r := userRepository{gdb}
 	user, err := r.FindOne(context.Background(), filter)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, eUser, user)
 }

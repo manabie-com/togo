@@ -25,6 +25,9 @@ func NewUserService(
 }
 
 func (s userService) CreateUser(ctx context.Context, input *domain.User) (*domain.User, error) {
+	if err := input.Validate(); err != nil {
+		return nil, err
+	}
 	// Existing check
 	userExists, err := s.userRepo.FindOne(ctx, &domain.User{Username: input.Username})
 	if err != nil && err != domain.ErrUserNotFound {

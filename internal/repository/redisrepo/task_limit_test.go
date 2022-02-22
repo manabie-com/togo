@@ -32,7 +32,7 @@ func Test_taskLimitRepository_Increase_FirstInTheDay(t *testing.T) {
 	mock.ExpectTxPipelineExec()
 	currentTasksSubmitted, err := r.Increase(context.Background(), user.ID, user.TasksPerDay)
 	assert.Equal(t, 1, currentTasksSubmitted)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 }
 
 func Test_taskLimitRepository_Increase_LimitExceed(t *testing.T) {

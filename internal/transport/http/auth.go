@@ -53,8 +53,8 @@ func (s *httpServer) Register(c echo.Context) (err error) {
 		return err
 	}
 	if _, err = s.userService.CreateUser(c.Request().Context(), &domain.User{
-		FullName:    u.FullName,
-		Username:    u.Username,
+		FullName:    strings.Trim(u.FullName, " "),
+		Username:    strings.Trim(u.Username, " "),
 		Password:    u.Password,
 		TasksPerDay: u.TasksPerDay,
 	}); err != nil {
