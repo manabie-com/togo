@@ -6,9 +6,13 @@ import (
 )
 
 func (r *registry) NewTodoController() controllers.TodoControllerInterface {
-	return controllers.NewTodoController(r.NewTodoUsecase())
+	return controllers.NewTodoController(r.NewTodoUsecase(), r.NewTodoLimitUsecase())
 }
 
 func (r *registry) NewTodoUsecase() usecase.TodoUsecaseInterface {
 	return usecase.NewTodoUsecase(r.db)
+}
+
+func (r *registry) NewTodoLimitUsecase() usecase.TodoLimitUsecaseInterface {
+	return usecase.NewTodoLimitUsecase(r.db)
 }

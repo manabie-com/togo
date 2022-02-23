@@ -5,5 +5,6 @@ import (
 )
 
 type TodoControllerInterface interface {
+	CreateTodoUser(c *gin.Context)
 	GetAllTodoUser(c *gin.Context)
 }

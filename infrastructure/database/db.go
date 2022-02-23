@@ -38,18 +38,45 @@ func Init(dbInfo string) *DbGormStruct {
 	return &dbGorm
 }
 
+func (receiver DbGormStruct) Create(createStruct structs.CreateStruct) structs.CreateResultStruct {
+	var createResultStruct structs.CreateResultStruct
+
+	createResultStruct.TableName = createStruct.TableName
+	createResultStruct.Error = nil
+	createResultStruct.Status = "init"
+	createResultStruct.Message = "init result"
+	createResultStruct.Data = types.Interface{}
+
+	result := dbGorm.Table(createStruct.TableName).Create(createStruct.Data)
+	if result.Error != nil {
+		createResultStruct.Error = result.Error
+		createResultStruct.Status = "error"
+		createResultStruct.Message = result.Error.Error()
+
+		return createResultStruct
+	}
+
+	createResultStruct.Status = "success"
+	createResultStruct.Message = "success result"
+	createResultStruct.Data = createStruct.Data
+
+	return createResultStruct
+}
+
 func (receiver DbGormStruct) Get(getStruct structs.GetStruct) structs.GetResultStruct {
 	var getResultStruct structs.GetResultStruct
-	model := initModelMapTable(getStruct.TableName)
+	_, models := initModelMapTable(getStruct.TableName)
 
 	getResultStruct.TableName = getStruct.TableName
 	getResultStruct.Error = nil
 	getResultStruct.Status = "init"
 	getResultStruct.Message = "init result"
 	getResultStruct.Conditions = getStruct.Conditions
-	getResultStruct.Data = types.Interface{}
+	getResultStruct.Data.RowsAffected = 0
+	getResultStruct.Data.Result = types.Interface{}
 
-	result := dbGorm.Table(getStruct.TableName).Where(getStruct.Conditions).Scan(&model)
+	result := dbGorm.Table(getStruct.TableName).Where(getStruct.Conditions).Find(models)
+
 	if result.Error != nil {
 		getResultStruct.Error = result.Error
 		getResultStruct.Status = "error"
@@ -60,18 +87,20 @@ func (receiver DbGormStruct) Get(getStruct structs.GetStruct) structs.GetResultS
 
 	getResultStruct.Status = "success"
 	getResultStruct.Message = "success result"
-	getResultStruct.Data = model
+	getResultStruct.Data.RowsAffected = result.RowsAffected
+	getResultStruct.Data.Result = models
 
 	return getResultStruct
 }
 
-func initModelMapTable(tableName string) interface{} {
+func initModelMapTable(tableName string) (interface{}, interface{}) {
 	switch tableName {
 	case "users":
-		return new(domain.User)
+		return new(domain.User), new([]domain.User)
 	case "todos":
-		return new(domain.Todo)
+		return new(domain.Todo), new([]domain.Todo)
+	case "todo_limit":
+		return new(domain.TodoLimit), new([]domain.TodoLimit)
 	}
-
-	return types.Interface{}
+	return types.Interface{}, types.Interface{}
 }

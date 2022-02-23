@@ -9,18 +9,21 @@ type GetResultStruct struct {
 	Error      error
 	Status     string
 	Message    string
-	Conditions map[string]interface{}
-	Data       interface{}
+	Conditions interface{}
+	Data       struct {
+		RowsAffected int64
+		Result       interface{}
+	}
 }
 
 func (receiver GetResultStruct) ConvertGetResultUsecaseToInterface(getResultStructInfra structs.GetResultStruct) GetResultStruct {
-	var getResultStructRepo GetResultStruct
+	var getResultStructInterface GetResultStruct
 
-	getResultStructRepo.Error = getResultStructInfra.Error
-	getResultStructRepo.Status = getResultStructInfra.Status
-	getResultStructRepo.Message = getResultStructInfra.Message
-	getResultStructRepo.Conditions = getResultStructInfra.Conditions
-	getResultStructRepo.Data = getResultStructInfra.Data
+	getResultStructInterface.Error = getResultStructInfra.Error
+	getResultStructInterface.Status = getResultStructInfra.Status
+	getResultStructInterface.Message = getResultStructInfra.Message
+	getResultStructInterface.Conditions = getResultStructInfra.Conditions
+	getResultStructInterface.Data = getResultStructInfra.Data
 
-	return getResultStructRepo
+	return getResultStructInterface
 }

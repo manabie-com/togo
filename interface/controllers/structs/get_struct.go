@@ -6,7 +6,7 @@ import (
 
 type GetStruct struct {
 	TableName  string
-	Conditions map[string]interface{}
+	Conditions interface{}
 }
 
 func (receiver GetStruct) ConvertGetInterfaceToUsecase() structs.GetStruct {

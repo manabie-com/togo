@@ -11,8 +11,8 @@ services:
       MYSQL_DATABASE: togo
       MYSQL_USER: togo
       MYSQL_PASSWORD: a87fc4993@
-    volumes:
-      - ./togo-db.sql:/docker-entrypoint-initdb.d/dump.sql
+#    volumes:
+#      - ./togo-db.sql:/docker-entrypoint-initdb.d/dump.sql
     networks:
       - togo-net
   togo-redis:
@@ -29,6 +29,7 @@ services:
       - "9999:9999"
     depends_on:
       - togo-mysql
+      - togo-redis
     volumes:
       - ./:/go/src/project
     networks:

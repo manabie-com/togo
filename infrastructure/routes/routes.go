@@ -16,6 +16,7 @@ func NewRouter(router *gin.Engine, ctl controllers.AppController) *gin.Engine {
 
 	todoGroup := router.Group("api/v1/todo")
 	{
+		todoGroup.POST("/user", ctl.CreateTodoUser)
 		todoGroup.GET("/user", ctl.GetAllTodoUser)
 	}
 

@@ -9,8 +9,11 @@ type GetResultStruct struct {
 	Error      error
 	Status     string
 	Message    string
-	Conditions map[string]interface{}
-	Data       interface{}
+	Conditions interface{}
+	Data       struct {
+		RowsAffected int64
+		Result       interface{}
+	}
 }
 
 func (receiver GetResultStruct) ConvertGetResultInfraToUsecase(getResultStructInfra structs.GetResultStruct) GetResultStruct {

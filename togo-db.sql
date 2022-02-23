@@ -11,6 +11,16 @@ CREATE TABLE `todos` (
   UNIQUE KEY `id_UNIQUE` (`id`)
 );
 
+CREATE TABLE `todo_limit` (
+  `id` varchar(45) NOT NULL,
+  `user_id` varchar(45) NOT NULL,
+  `limit` int DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+);
+
 CREATE TABLE `users` (
   `id` varchar(45) NOT NULL,
   `username` varchar(45) DEFAULT NULL,

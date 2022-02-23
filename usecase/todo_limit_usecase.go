@@ -5,19 +5,19 @@ import (
 	"togo/usecase/structs"
 )
 
-const TABLENAMETODOS = "todos"
+const TABLENAMETODOLIMIT = "todo_limit"
 
-type TodoUsecase struct {
+type TodoLimitUsecase struct {
 	database.DbInterface
 }
 
-func NewTodoUsecase(database database.DbInterface) TodoUsecase {
-	return TodoUsecase{database}
+func NewTodoLimitUsecase(database database.DbInterface) TodoLimitUsecase {
+	return TodoLimitUsecase{database}
 }
 
-func (receiver TodoUsecase) Create(createStructUsecase structs.CreateStruct) structs.CreateResultStruct {
+func (receiver TodoLimitUsecase) Create(createStructUsecase structs.CreateStruct) structs.CreateResultStruct {
 	var createResultStructUsecase structs.CreateResultStruct
-	createStructUsecase.TableName = TABLENAMETODOS
+	createStructUsecase.TableName = TABLENAMETODOLIMIT
 	createStructInfra := createStructUsecase.ConvertCreateUsecaseToInfra()
 	createResultStructInfra := receiver.DbInterface.Create(createStructInfra)
 	createResultStructUsecase = createResultStructUsecase.ConvertCreateResultInfraToUsecase(createResultStructInfra)
@@ -25,9 +25,9 @@ func (receiver TodoUsecase) Create(createStructUsecase structs.CreateStruct) str
 	return createResultStructUsecase
 }
 
-func (receiver TodoUsecase) Get(getStructUsecase structs.GetStruct) structs.GetResultStruct {
+func (receiver TodoLimitUsecase) Get(getStructUsecase structs.GetStruct) structs.GetResultStruct {
 	var getResultStructUsecase structs.GetResultStruct
-	getStructUsecase.TableName = TABLENAMETODOS
+	getStructUsecase.TableName = TABLENAMETODOLIMIT
 	getStructInfra := getStructUsecase.ConvertGetUsecaseToInfra()
 	getResultStructInfra := receiver.DbInterface.Get(getStructInfra)
 	getResultStructUsecase = getResultStructUsecase.ConvertGetResultInfraToUsecase(getResultStructInfra)

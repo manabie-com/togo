@@ -4,7 +4,7 @@ import (
 	"togo/usecase/structs"
 )
 
-type TodoUsecaseInterface interface {
+type TodoLimitUsecaseInterface interface {
 	Create(createStruct structs.CreateStruct) structs.CreateResultStruct
 	Get(getStruct structs.GetStruct) structs.GetResultStruct
 }
