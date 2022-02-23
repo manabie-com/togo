@@ -7,6 +7,7 @@ Manabie Togo code challenge
   - Infrastructure layer: `provider`, `repository`
 - Unit tests for domain functionalities.
 - Unit tests for repository functionalities.
+- Integration tests for auth and task APIs.
 
 ## Project Structure
 
@@ -91,6 +92,12 @@ make start
 - `Redis` will available on `127.0.0.1:56379`
 - `PostgreSQL` will available on `127.0.0.1:55432`
 
+To stop the server
+
+```sh
+make stop
+```
+
 <br/>
 
 ## Run Unit Tests
@@ -108,7 +115,7 @@ make run-unit-test
 Make sure Togo server build and start successfully then use the command bellow to run integration tests.
 
 ```sh
-make run-unit-test
+make run-integration-test
 ```
 
 <br/>
