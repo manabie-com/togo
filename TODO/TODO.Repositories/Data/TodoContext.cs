@@ -23,6 +23,7 @@ namespace TODO.Repositories.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
         }
     }
 }

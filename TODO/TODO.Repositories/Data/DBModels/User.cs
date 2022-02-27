@@ -14,5 +14,6 @@ namespace TODO.Repositories.Data.DBModels
         public string MiddleName { get; set; }
 
         public virtual ICollection<Todo> Todos { get; set; }
+        public virtual UserTodoConfig UserTodoConfig { get; set; }
     }
 }
