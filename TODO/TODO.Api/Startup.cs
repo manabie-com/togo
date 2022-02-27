@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TODO.Repositories.Data;
+using TODO.Repositories.Interfaces;
+using TODO.Repositories.Repositories;
 
 namespace TODO.Api
 {
@@ -28,10 +30,13 @@ namespace TODO.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddDbContext<TodoContext>
                 (options => options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
+
+            // scoped services
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ITodoRepository, TodoRepository>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

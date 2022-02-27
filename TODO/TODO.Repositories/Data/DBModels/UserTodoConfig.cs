@@ -12,7 +12,5 @@ namespace TODO.Repositories.Data.DBModels
         [Key]
         public int UserId { get; set; }
         public int DailyTaskLimit { get; set; }
-
-        public virtual User User { get; set; }
     }
 }
