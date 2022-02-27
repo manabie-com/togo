@@ -39,7 +39,8 @@ namespace TODO.Api.Controllers
 
                 var result = await _todoRepo.CreateTodo(request);
 
-                var url = $"{Request.Protocol}://{Request.Host}/api/todos/{result.TodoId}";
+                var baseUrl = "https://localhost:5001";
+                var url = $"{baseUrl}/api/todos/{result.TodoId}";
                 return Created(url, result);
             }
             catch (Exception e)
