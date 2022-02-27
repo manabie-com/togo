@@ -11,8 +11,7 @@ namespace TODO.Repositories.Migrations
                 name: "TodoStatus",
                 columns: table => new
                 {
-                    TodoStatusId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TodoStatusId = table.Column<int>(type: "int", nullable: false),
                     StatusName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     StatusDescription = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -84,6 +83,35 @@ namespace TODO.Repositories.Migrations
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "TodoStatus",
+                columns: new[] { "TodoStatusId", "StatusDescription", "StatusName" },
+                values: new object[,]
+                {
+                    { 0, null, "TO DO" },
+                    { 1, null, "DONE" },
+                    { 2, null, "IN PROGRESS" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "User",
+                columns: new[] { "UserId", "FirstName", "LastName", "MiddleName" },
+                values: new object[,]
+                {
+                    { 1, "Michael", "Jordan", null },
+                    { 2, "Isiah", "Thomas", null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "UserTodoConfig",
+                columns: new[] { "UserId", "DailyTaskLimit" },
+                values: new object[] { 1, 10 });
+
+            migrationBuilder.InsertData(
+                table: "UserTodoConfig",
+                columns: new[] { "UserId", "DailyTaskLimit" },
+                values: new object[] { 2, 5 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Todo_StatusId",

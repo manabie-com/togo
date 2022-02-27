@@ -10,7 +10,7 @@ using TODO.Repositories.Data;
 namespace TODO.Repositories.Migrations
 {
     [DbContext(typeof(TodoContext))]
-    [Migration("20220227113530_init")]
+    [Migration("20220227164453_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -61,9 +61,7 @@ namespace TODO.Repositories.Migrations
             modelBuilder.Entity("TODO.Repositories.Data.DBModels.TodoStatus", b =>
                 {
                     b.Property<int>("TodoStatusId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<string>("StatusDescription")
                         .HasColumnType("nvarchar(max)");
@@ -74,6 +72,23 @@ namespace TODO.Repositories.Migrations
                     b.HasKey("TodoStatusId");
 
                     b.ToTable("TodoStatus");
+
+                    b.HasData(
+                        new
+                        {
+                            TodoStatusId = 0,
+                            StatusName = "TO DO"
+                        },
+                        new
+                        {
+                            TodoStatusId = 1,
+                            StatusName = "DONE"
+                        },
+                        new
+                        {
+                            TodoStatusId = 2,
+                            StatusName = "IN PROGRESS"
+                        });
                 });
 
             modelBuilder.Entity("TODO.Repositories.Data.DBModels.User", b =>
@@ -95,6 +110,20 @@ namespace TODO.Repositories.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("User");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            FirstName = "Michael",
+                            LastName = "Jordan"
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            FirstName = "Isiah",
+                            LastName = "Thomas"
+                        });
                 });
 
             modelBuilder.Entity("TODO.Repositories.Data.DBModels.UserTodoConfig", b =>
@@ -108,6 +137,18 @@ namespace TODO.Repositories.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("UserTodoConfig");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            DailyTaskLimit = 10
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            DailyTaskLimit = 5
+                        });
                 });
 
             modelBuilder.Entity("TODO.Repositories.Data.DBModels.Todo", b =>
@@ -118,26 +159,22 @@ namespace TODO.Repositories.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TODO.Repositories.Data.DBModels.User", "User")
+                    b.HasOne("TODO.Repositories.Data.DBModels.User", null)
                         .WithMany("Todos")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Status");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TODO.Repositories.Data.DBModels.UserTodoConfig", b =>
                 {
-                    b.HasOne("TODO.Repositories.Data.DBModels.User", "User")
+                    b.HasOne("TODO.Repositories.Data.DBModels.User", null)
                         .WithOne("UserTodoConfig")
                         .HasForeignKey("TODO.Repositories.Data.DBModels.UserTodoConfig", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TODO.Repositories.Data.DBModels.User", b =>

@@ -32,7 +32,8 @@ namespace TODO.Api
         {
             services.AddDbContext<TodoContext>
                 (options => options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                    Configuration.GetConnectionString("DefaultConnection"),
+                    b => b.MigrationsAssembly("TODO.Repositories")));
 
             // scoped services
             services.AddScoped<IUserRepository, UserRepository>();

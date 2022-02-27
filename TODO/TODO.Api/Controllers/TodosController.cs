@@ -35,7 +35,7 @@ namespace TODO.Api.Controllers
                 var taskCount = user.Todos.Count(t => t.DateCreated.Value.Date == DateTime.UtcNow.Date);
 
                 if (taskCount >= taskLimit)
-                    return BadRequest("Unable to creat TODO: User has exceeded daily TODOs.");
+                    return BadRequest("Unable to create TODO: User has exceeded daily TODOs.");
 
                 var result = await _todoRepo.CreateTodo(request);
 

@@ -23,7 +23,20 @@ namespace TODO.Repositories.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<User>()
+                .HasData(new User { UserId = 1, LastName = "Jordan", FirstName = "Michael" }, new { UserId = 2, LastName = "Thomas", FirstName = "Isiah"});
 
+            modelBuilder.Entity<UserTodoConfig>()
+                .HasData(new UserTodoConfig { UserId = 1, DailyTaskLimit = 10 }, new UserTodoConfig { UserId = 2, DailyTaskLimit = 5 });
+
+            modelBuilder.Entity<TodoStatus>()
+                .Property(o => o.TodoStatusId)
+                .ValueGeneratedNever();
+
+            modelBuilder.Entity<TodoStatus>()
+                .HasData(new TodoStatus { TodoStatusId = 0, StatusName = "TO DO" }, new TodoStatus { TodoStatusId = 1, StatusName = "DONE" }, new TodoStatus { TodoStatusId = 2, StatusName = "IN PROGRESS" });
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
