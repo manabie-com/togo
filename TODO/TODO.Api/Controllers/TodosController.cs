@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -7,27 +8,26 @@ using System.Threading.Tasks;
 
 namespace TODO.Api.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
-    [Route("[controller]")]
-    public class WeatherForecastController : ControllerBase
+    public class TodosController : ControllerBase
     {
-        private readonly ILogger<WeatherForecastController> _logger;
+        private readonly ILogger<TodosController> _logger;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public TodosController(ILogger<TodosController> logger)
         {
             _logger = logger;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetSomething()
+        [HttpPost]
+        public async Task<IActionResult> CreateTodo()
         {
             try
             {
-                return Ok();
+                throw new NotImplementedException();
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message);
                 return StatusCode(500, e.Message);
             }
         }
