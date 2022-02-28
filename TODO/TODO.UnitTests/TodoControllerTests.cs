@@ -98,5 +98,30 @@ namespace TODO.UnitTests
             // Assert
             Assert.AreEqual(400, result.StatusCode);
         }
+
+
+        [TestMethod]
+        public async Task CreateTodo_ReturnsCreated_IfTodosAreGreaterThanLimitButDifferentDate()
+        {
+            // Arrange
+            _user.Todos = new List<Todo>
+            {
+                new Todo { TodoId = 1, UserId = 1, StatusId = 1, TodoName = "Test", TodoDescription = "Test", DateCreated = DateTime.UtcNow.AddDays(-1), DateModified = null },
+                new Todo { TodoId = 2, UserId = 1, StatusId = 1, TodoName = "Test", TodoDescription = "Test", DateCreated = DateTime.UtcNow, DateModified = null },
+                new Todo { TodoId = 2, UserId = 1, StatusId = 1, TodoName = "Test", TodoDescription = "Test", DateCreated = DateTime.UtcNow, DateModified = null },
+            };
+
+            var userList = new List<User>();
+            userList.Add(_user);
+
+            Mock.Get(_userRepoMock).Setup(x => x.GetUsers(1)).ReturnsAsync(userList);
+            Mock.Get(_todoRepoMock).Setup(x => x.CreateTodo(_request)).ReturnsAsync(new Todo { TodoId = 3 });
+
+            // Act
+            var result = (IStatusCodeActionResult)await _sut.CreateTodo(_request);
+
+            // Assert
+            Assert.AreEqual(201, result.StatusCode);
+        }
     }
 }
