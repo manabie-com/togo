@@ -123,5 +123,66 @@ namespace TODO.UnitTests
             // Assert
             Assert.AreEqual(201, result.StatusCode);
         }
+
+        [TestMethod]
+        public async Task CreateTodo_ReturnsBadRequest_IfInvalidUserId()
+        {
+            // Arrange
+            _request.UserId = 0;
+
+            // Act
+            var result = (IStatusCodeActionResult)await _sut.CreateTodo(_request);
+
+            Assert.AreEqual(400, result.StatusCode);
+        }
+
+        [TestMethod]
+        public async Task CreateTodo_ReturnsBadRequest_IfEmptyName()
+        {
+            // Arrange
+            _request.TodoName = "";
+
+            // Act
+            var result = (IStatusCodeActionResult)await _sut.CreateTodo(_request);
+
+            Assert.AreEqual(400, result.StatusCode);
+        }
+
+        [TestMethod]
+        public async Task CreateTodo_ReturnsBadRequest_IfInvalidStatusGT()
+        {
+            // Arrange
+            _request.StatusId = 3;
+
+            // Act
+            var result = (IStatusCodeActionResult)await _sut.CreateTodo(_request);
+
+            Assert.AreEqual(400, result.StatusCode);
+        }
+
+        [TestMethod]
+        public async Task CreateTodo_ReturnsBadRequest_IfInvalidStatusLT()
+        {
+            // Arrange
+            _request.StatusId = -1;
+
+            // Act
+            var result = (IStatusCodeActionResult)await _sut.CreateTodo(_request);
+
+            Assert.AreEqual(400, result.StatusCode);
+        }
+
+        [TestMethod]
+        public async Task CreateTodo_ReturnsNotFound_IfUserNotExists()
+        {
+            // Arrange
+            var userList = new List<User>();
+            Mock.Get(_userRepoMock).Setup(x => x.GetUsers(1)).ReturnsAsync(userList);
+
+            // Act
+            var result = (IStatusCodeActionResult)await _sut.CreateTodo(_request);
+
+            Assert.AreEqual(404, result.StatusCode);
+        }
     }
 }

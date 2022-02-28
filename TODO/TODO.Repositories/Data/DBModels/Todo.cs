@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace TODO.Repositories.Data.DBModels
@@ -18,6 +19,7 @@ namespace TODO.Repositories.Data.DBModels
         public DateTime? DateModified { get; set; }
 
         // navigation props
+        [JsonIgnore]
         public virtual TodoStatus Status { get; set; }
     }
 }

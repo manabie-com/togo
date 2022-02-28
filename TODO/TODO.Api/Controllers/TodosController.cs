@@ -30,7 +30,20 @@ namespace TODO.Api.Controllers
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(request.TodoName))
+                    return BadRequest("Todo name cannot be empty.");
+
+                if (request.UserId == 0)
+                    return BadRequest("Invalid userId.");
+
+                if (request.StatusId > 2 || request.StatusId < 0)
+                    return BadRequest("Invalid statusId.");
+
                 var user = (await _userRepo.GetUsers(request.UserId)).SingleOrDefault();
+
+                if (user == null)
+                    return NotFound("User does not exist.");
+
                 var taskLimit = user.UserTodoConfig.DailyTaskLimit;
                 var taskCount = user.Todos.Count(t => t.DateCreated.Value.Date == DateTime.UtcNow.Date);
 
