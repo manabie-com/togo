@@ -1,11 +1,5 @@
-import {AuthenticationComponent} from '@loopback/authentication';
-import {
-  JWTAuthenticationComponent,
-  MyUserService,
-  UserServiceBindings,
-} from '@loopback/authentication-jwt';
 import {BootMixin} from '@loopback/boot';
-import {ApplicationConfig, createBindingFromClass} from '@loopback/core';
+import {ApplicationConfig} from '@loopback/core';
 import {RepositoryMixin} from '@loopback/repository';
 import {RestApplication} from '@loopback/rest';
 import {
@@ -13,21 +7,24 @@ import {
   RestExplorerComponent,
 } from '@loopback/rest-explorer';
 import {ServiceMixin} from '@loopback/service-proxy';
-import { ConsumersBooter, MessageHandlerErrorBehavior, QueueComponent, RabbitmqBindings, RabbitmqComponent, RabbitmqComponentConfig } from 'loopback-rabbitmq';
+import {
+  ConsumersBooter,
+  MessageHandlerErrorBehavior,
+  QueueComponent,
+  RabbitmqBindings,
+  RabbitmqComponent,
+  RabbitmqComponentConfig,
+} from 'loopback-rabbitmq';
 import path from 'path';
-// import {DbDataSource} from './datasources';
-import {MongodbDataSource} from './datasources';
-import { AccessLoggerHandlerMiddlewareProvider } from './middlewares';
 import {MySequence} from './sequence';
+
 export {ApplicationConfig};
 
-export class TodoListApplication extends BootMixin(
+export class AccessLoggerApplication extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
 ) {
   constructor(options: ApplicationConfig = {}) {
     super(options);
-    // add middleware
-    this.add(createBindingFromClass(AccessLoggerHandlerMiddlewareProvider));
 
     // Set up the custom sequence
     this.sequence(MySequence);
@@ -41,36 +38,6 @@ export class TodoListApplication extends BootMixin(
     });
     this.component(RestExplorerComponent);
 
-    this.projectRoot = __dirname;
-    // Customize @loopback/boot Booter Conventions here
-    this.bootOptions = {
-      controllers: {
-        // Customize ControllerBooter Conventions here
-        dirs: ['controllers'],
-        extensions: ['.controller.js'],
-        nested: true,
-      },
-    };
-
-    this.configRabbitmq();
-
-    // ------ ADD SNIPPET AT THE BOTTOM ---------
-    // Mount authentication system
-    this.component(AuthenticationComponent);
-    // Mount jwt component
-    this.component(JWTAuthenticationComponent);
-    // Bind datasource
-    // this.dataSource(DbDataSource, UserServiceBindings.DATASOURCE_NAME);
-    this.dataSource(MongodbDataSource, UserServiceBindings.DATASOURCE_NAME);
-    // ------------- END OF SNIPPET -------------
-
-    //new
-    this.bind(UserServiceBindings.USER_SERVICE).toClass(MyUserService);
-
-    //
-  }
-
-  configRabbitmq() {
     this.configure<RabbitmqComponentConfig>(RabbitmqBindings.COMPONENT).to({
       options: {
         protocol: process.env.RABBITMQ_PROTOCOL ?? 'amqp',
@@ -91,7 +58,7 @@ export class TodoListApplication extends BootMixin(
         retries: 0, // number of retries, 0 is forever
         interval: 1500, // retry interval in ms
       },
-      defaultConsumerErrorBehavior: MessageHandlerErrorBehavior.ACK,
+      defaultConsumerErrorBehavior: MessageHandlerErrorBehavior.NACK,
       prefetchCount: 10,
       exchanges: [
         {
@@ -108,5 +75,21 @@ export class TodoListApplication extends BootMixin(
     this.component(RabbitmqComponent);
     this.booters(ConsumersBooter);
     this.component(QueueComponent);
+
+    this.projectRoot = __dirname;
+    // Customize @loopback/boot Booter Conventions here
+    this.bootOptions = {
+      consumers: {
+        dirs: ['consumers'],
+        extensions: ['.consumer.js'],
+        nested: true,
+      },
+      controllers: {
+        // Customize ControllerBooter Conventions here
+        dirs: ['controllers'],
+        extensions: ['.controller.js'],
+        nested: true,
+      },
+    };
   }
 }

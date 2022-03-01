@@ -30,7 +30,6 @@ services:
     volumes:
       - "mongodb-data:/data/db"
   todo_svc:
-    image: sp-todo_svc
     build:
       context: ./apps/todo_svc
       dockerfile: Dockerfile.local
@@ -56,6 +55,28 @@ services:
       - "./apps/todo_svc:/home/node/app"
       - /home/node/app/node_modules
 
+  access_logger:
+    build:
+      context: ./apps/access_logger
+      dockerfile: Dockerfile.local
+    restart: always
+    networks:
+      - simple_app_net
+    depends_on:
+      - rabbitmq
+      - mongodb
+    environment:
+      - MONGO_HOST
+      - MONGO_PORT
+      - MONGO_USER
+      - MONGO_PASS
+      - RABBITMQ_HOST
+      - RABBITMQ_PROTOCOL
+      - RABBITMQ_USER
+      - RABBITMQ_PASS
+    volumes:
+      - "./apps/access_logger:/home/node/app"
+      - /home/node/app/node_modules
 networks:
   simple_app_net:
     driver: bridge
