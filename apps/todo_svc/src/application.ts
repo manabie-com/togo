@@ -24,7 +24,8 @@ import {
 import path from 'path';
 // import {DbDataSource} from './datasources';
 import {MongodbDataSource} from './datasources';
-import {AccessLoggerHandlerMiddlewareProvider} from './middlewares';
+import { ValidateTodoLimitInterceptor } from './interceptor';
+import { AccessLoggerHandlerMiddlewareProvider } from './middlewares';
 import {MySequence} from './sequence';
 export {ApplicationConfig};
 
@@ -75,6 +76,7 @@ export class TodoListApplication extends BootMixin(
     this.bind(UserServiceBindings.USER_SERVICE).toClass(MyUserService);
 
     //
+    this.add(createBindingFromClass(ValidateTodoLimitInterceptor));
   }
 
   configRabbitmq() {

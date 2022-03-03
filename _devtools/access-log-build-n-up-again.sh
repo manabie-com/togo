@@ -13,8 +13,8 @@ export RABBITMQ_HOST=rabbitmq
 export RABBITMQ_PROTOCOL=amqp
 export RABBITMQ_PORT=5672
 
-docker stop togo_todo_svc_1
-docker rm stop togo_todo_svc_1
+docker stop togo_access_logger_1
+docker rm stop togo_access_logger_1
 
 
-docker-compose -f ./docker-compose-dev.yml up -d --build todo_svc
+docker-compose -f ./docker-compose-dev.yml up -d --build access_logger

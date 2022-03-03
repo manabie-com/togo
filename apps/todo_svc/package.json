@@ -54,6 +54,7 @@
     "@loopback/service-proxy": "^4.1.1",
     "@types/bcryptjs": "^2.4.2",
     "bcryptjs": "^2.4.3",
+    "date-fns": "^2.28.0",
     "dotenv": "^16.0.0",
     "loopback-connector-mongodb": "^5.6.0",
     "loopback-connector-rest": "^4.0.1",

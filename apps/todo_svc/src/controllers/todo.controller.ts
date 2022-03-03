@@ -1,4 +1,5 @@
 import {authenticate} from '@loopback/authentication';
+import { intercept } from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -17,10 +18,12 @@ import {
   put,
   requestBody,
 } from '@loopback/rest';
+import { ValidateTodoLimitInterceptor } from '../interceptor';
 import {Todo} from '../models';
 import {TodoRepository} from '../repositories';
 
 @authenticate('jwt')
+@intercept(ValidateTodoLimitInterceptor.BINDING_KEY)
 export class TodoController {
   constructor(
     @repository(TodoRepository)
@@ -41,12 +44,12 @@ export class TodoController {
         'application/json': {
           schema: getModelSchemaRef(Todo, {
             title: 'NewTodo',
-            exclude: ['id'],
+            // exclude: ['id'],
           }),
         },
       },
     })
-    todo: Omit<Todo, 'id'>,
+    todo: Todo,
   ): Promise<Todo> {
     return this.todoRepository.create(todo);
   }
