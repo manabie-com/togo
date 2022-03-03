@@ -13,11 +13,18 @@ import {
   RestExplorerComponent,
 } from '@loopback/rest-explorer';
 import {ServiceMixin} from '@loopback/service-proxy';
-import { ConsumersBooter, MessageHandlerErrorBehavior, QueueComponent, RabbitmqBindings, RabbitmqComponent, RabbitmqComponentConfig } from 'loopback-rabbitmq';
+import {
+  ConsumersBooter,
+  MessageHandlerErrorBehavior,
+  QueueComponent,
+  RabbitmqBindings,
+  RabbitmqComponent,
+  RabbitmqComponentConfig,
+} from 'loopback-rabbitmq';
 import path from 'path';
 // import {DbDataSource} from './datasources';
 import {MongodbDataSource} from './datasources';
-import { AccessLoggerHandlerMiddlewareProvider } from './middlewares';
+import {AccessLoggerHandlerMiddlewareProvider} from './middlewares';
 import {MySequence} from './sequence';
 export {ApplicationConfig};
 

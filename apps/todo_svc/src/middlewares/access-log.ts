@@ -30,7 +30,6 @@ export class AccessLoggerHandlerMiddlewareProvider
       next: Next,
     ) => {
       const {request} = ctx;
-      console.log('messageData');
       try {
         const messageData = {
           serviceName: 'product_svc',
@@ -44,8 +43,6 @@ export class AccessLoggerHandlerMiddlewareProvider
           'access-log',
           Buffer.from(JSON.stringify(messageData)),
         );
-        console.log('messageData');
-        console.log(messageData);
 
         return await next();
       } catch (err) {
