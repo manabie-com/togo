@@ -35,3 +35,7 @@ export function givenTodo(todo?: Partial<Todo>) {
   );
   return new Todo(data);
 }
+
+export function givenTodoWithoutId(product?: Partial<Todo>): Omit<Todo, 'id'> {
+  return givenTodo(product);
+}

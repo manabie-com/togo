@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import {Client} from '@loopback/testlab';
 import {TodoListApplication} from '../..';
 import {setupApplication} from './test-helper';
 
-describe('TodoApplication', () => {
+describe('SimpleApp', () => {
   let client: Client;
   let app: TodoListApplication;
   let token: string;
