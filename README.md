@@ -1,4 +1,4 @@
-# simple-shopping
+# simple-app
 This is just a simple demo for demonstration concepts of microservices.
 
 ## Setup development environment
