@@ -1,0 +1,56 @@
+version: '3.5'
+services:
+  rabbitmq:
+    build: ./other-services/rabbitmq
+    restart: always
+    environment:
+        - RABBITMQ_DEFAULT_USER=admin
+        - RABBITMQ_DEFAULT_PASS=admin
+    networks:
+      - simple_app_net
+    expose:
+      - "5672"
+    volumes:
+      - "rabbitmq-data:/var/lib/rabbitmq"
+
+  mongodb:
+    build: ./other-services/mongodb
+    restart: always
+    networks:
+      - simple_app_net
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD
+    volumes:
+      - "mongodb-data:/data/db"
+
+  access_logger:
+    build:
+      context: ./apps/access_logger
+      dockerfile: Dockerfile
+    restart: always
+    networks:
+      - simple_app_net
+    depends_on:
+      - rabbitmq
+      - mongodb
+    environment:
+      - MONGO_HOST
+      - MONGO_PORT
+      - MONGO_USER
+      - MONGO_PASS
+      - RABBITMQ_HOST
+      - RABBITMQ_PROTOCOL
+      - RABBITMQ_USER
+      - RABBITMQ_PASS
+networks:
+  simple_app_net:
+    driver: bridge
+    name: simple_app_net_test
+volumes:
+  rabbitmq-data:
+    driver: local
+  mongodb-data:
+    driver: local
