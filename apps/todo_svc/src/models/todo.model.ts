@@ -1,4 +1,4 @@
-import { User, UserWithRelations } from '@loopback/authentication-jwt';
+import {User, UserWithRelations} from '@loopback/authentication-jwt';
 import {belongsTo, Entity, model, property} from '@loopback/repository';
 
 @model()
@@ -37,14 +37,12 @@ export class Todo extends Entity {
 
   @property({
     type: 'date',
-    defaultFn: "now",
+    defaultFn: 'now',
   })
   createdAt?: Date;
 
-
   @belongsTo(() => User)
   userId: string;
-
 
   constructor(data?: Partial<Todo>) {
     super(data);

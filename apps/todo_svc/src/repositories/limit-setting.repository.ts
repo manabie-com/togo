@@ -8,9 +8,7 @@ export class LimitSettingRepository extends DefaultCrudRepository<
   typeof LimitSetting.prototype.name,
   LimitSettingRelations
 > {
-  constructor(
-    @inject('datasources.mongodb') dataSource: MongodbDataSource,
-  ) {
+  constructor(@inject('datasources.mongodb') dataSource: MongodbDataSource) {
     super(LimitSetting, dataSource);
   }
 }

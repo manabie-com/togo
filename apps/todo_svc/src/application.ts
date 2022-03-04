@@ -24,8 +24,8 @@ import {
 import path from 'path';
 // import {DbDataSource} from './datasources';
 import {MongodbDataSource} from './datasources';
-import { ValidateTodoLimitInterceptor } from './interceptor';
-import { AccessLoggerHandlerMiddlewareProvider } from './middlewares';
+import {ValidateTodoLimitInterceptor} from './interceptor';
+import {AccessLoggerHandlerMiddlewareProvider} from './middlewares';
 import {MySequence} from './sequence';
 export {ApplicationConfig};
 

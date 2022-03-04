@@ -1,5 +1,5 @@
 import {authenticate} from '@loopback/authentication';
-import { intercept } from '@loopback/core';
+import {intercept} from '@loopback/core';
 import {
   Count,
   CountSchema,
@@ -18,7 +18,7 @@ import {
   put,
   requestBody,
 } from '@loopback/rest';
-import { ValidateTodoLimitInterceptor } from '../interceptor';
+import {ValidateTodoLimitInterceptor} from '../interceptor';
 import {Todo} from '../models';
 import {TodoRepository} from '../repositories';
 

@@ -23,7 +23,7 @@ import {LimitSettingRepository} from '../repositories';
 export class LimitSettingController {
   constructor(
     @repository(LimitSettingRepository)
-    public limitSettingRepository : LimitSettingRepository,
+    public limitSettingRepository: LimitSettingRepository,
   ) {}
 
   @post('/limit-settings')
@@ -106,7 +106,8 @@ export class LimitSettingController {
   })
   async findById(
     @param.path.string('id') id: string,
-    @param.filter(LimitSetting, {exclude: 'where'}) filter?: FilterExcludingWhere<LimitSetting>
+    @param.filter(LimitSetting, {exclude: 'where'})
+    filter?: FilterExcludingWhere<LimitSetting>,
   ): Promise<LimitSetting> {
     return this.limitSettingRepository.findById(id, filter);
   }

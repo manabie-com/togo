@@ -1,4 +1,4 @@
-import { User, UserWithRelations } from '@loopback/authentication-jwt';
+import {User, UserWithRelations} from '@loopback/authentication-jwt';
 import {belongsTo, Entity, model, property} from '@loopback/repository';
 
 export enum SettingType {
