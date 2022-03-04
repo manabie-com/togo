@@ -20,6 +20,7 @@ curl --location --request POST 'http://localhost:3000/todos' \
 }'
 echo ''
 
+echo 'If we already invoked create-todo the two below requests will respond with error. Otherwise only last request will fail.'
 curl --location --request POST 'http://localhost:3000/todos' \
 --header 'Content-Type: application/json' \
 --header "Authorization: Bearer $ACCESS_TOKEN" \
