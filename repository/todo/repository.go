@@ -8,10 +8,10 @@ import (
 )
 
 type Repository interface {
-	Create(ctx context.Context, channel *model.Todo) error
+	Create(ctx context.Context, todo *model.Todo) error
 	GetByID(ctx context.Context, id int64) (*model.Todo, error)
-	Update(ctx context.Context, channel *model.Todo) error
-	Delete(ctx context.Context, channel *model.Todo) error
+	Update(ctx context.Context, todo *model.Todo) error
+	DeleteByID(ctx context.Context, id int64, unscoped bool) error
 
 	GetList(
 		ctx context.Context,

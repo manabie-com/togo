@@ -18,8 +18,8 @@ type pgRepository struct {
 	getDB func(ctx context.Context) *gorm.DB
 }
 
-func (p pgRepository) Create(ctx context.Context, channel *model.Todo) error {
-	return p.getDB(ctx).Create(channel).Error
+func (p pgRepository) Create(ctx context.Context, todo *model.Todo) error {
+	return p.getDB(ctx).Create(todo).Error
 }
 
 func (p pgRepository) GetByID(ctx context.Context, id int64) (*model.Todo, error) {
@@ -33,12 +33,18 @@ func (p pgRepository) GetByID(ctx context.Context, id int64) (*model.Todo, error
 	return &data, nil
 }
 
-func (p pgRepository) Update(ctx context.Context, channel *model.Todo) error {
-	return p.getDB(ctx).Save(channel).Error
+func (p pgRepository) Update(ctx context.Context, todo *model.Todo) error {
+	return p.getDB(ctx).Save(todo).Error
 }
 
-func (p pgRepository) Delete(ctx context.Context, channel *model.Todo) error {
-	return p.getDB(ctx).Delete(channel).Error
+func (p pgRepository) DeleteByID(ctx context.Context, id int64, unscoped bool) error {
+	db := p.getDB(ctx)
+
+	if unscoped {
+		db = db.Unscoped()
+	}
+
+	return db.Where("id = ?", id).Delete(&model.Todo{}).Error
 }
 
 func (p pgRepository) GetList(

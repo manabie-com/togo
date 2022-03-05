@@ -11,6 +11,7 @@ type IUseCase interface {
 	Update(ctx context.Context, req *UpdateRequest) (*ResponseWrapper, error)
 	GetByID(ctx context.Context, id int64) (*ResponseWrapper, error)
 	GetList(ctx context.Context, req *GetListRequest) (*ResponseListWrapper, error)
+	Delete(ctx context.Context, id int64) error
 }
 
 type ResponseWrapper struct {
