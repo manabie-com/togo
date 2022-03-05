@@ -71,9 +71,9 @@ func ErrDelete(err error) MyError {
 	}
 }
 
-func ErrNotFound(err error) MyError {
+func ErrNotFound() MyError {
 	return MyError{
-		Raw:       err,
+		Raw:       nil,
 		HTTPCode:  http.StatusNotFound,
 		ErrorCode: "000007",
 		Message:   "Not found.",
