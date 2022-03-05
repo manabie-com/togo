@@ -1,3 +1,8 @@
+
+# Created by https://www.gitignore.io/api/go
+# Edit at https://www.gitignore.io/?templates=go
+
+### Go ###
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -14,6 +19,21 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
-out/
+### Go Patch ###
+/vendor/
+/Godeps/
 
+/bin/
+/tmp/
+/coverage/
+
+.env
 .idea
+
+### macOS ###
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# End of https://www.gitignore.io/api/go

@@ -1,0 +1,45 @@
+linters:
+  enable-all: true
+  disable:
+    - maligned
+    - gochecknoglobals
+    - gochecknoinits
+    - gomnd
+    - exhaustivestruct
+    - interfacer
+    - wrapcheck
+    - errorlint
+    - noctx
+    - forcetypeassert
+    - scopelint
+    - golint
+    - ireturn
+
+linters-settings:
+  varnamelen:
+    min-name-length: 1
+  funlen:
+    lines: 300
+    statements: 170
+  gocyclo:
+    min-complexity: 70
+  gocognit:
+    min-complexity: 70
+  cyclop:
+    max-complexity: 50
+  nestif:
+    min-complexity: 50
+  tagliatelle:
+    case:
+      use-field-name: true
+      rules:
+        # any struct tag type can be used.
+        # support string case: `camel`, `pascal`, `kebab`, `snake`, `goCamel`, `goPascal`, `goKebab`, `goSnake`, `upper`, `lower`
+        json: snake
+  gci:
+    local-prefixes: github.com/khangjig/togo
+run:
+  timeout: 3m
+
+issues:
+  exclude-use-default: true

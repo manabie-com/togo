@@ -1,0 +1,37 @@
+version: "3"
+services:
+  mysql:
+    container_name: mysql
+    image: mysql:8.0.21
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+      MYSQL_ROOT_PASSWORD: ${DB_PASS}
+      # MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    ports:
+      - ${DB_PORT}:3306
+    volumes:
+      - mysql_volume:/var/lib/mysql
+    command:
+      [
+          "mysqld",
+          "--character-set-server=utf8mb4",
+          "--collation-server=utf8mb4_unicode_ci",
+          "--default-authentication-plugin=mysql_native_password"
+      ]
+
+  redis:
+    container_name: redis
+    image: bitnami/redis:6.0.9
+    restart: on-failure
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASS}
+    ports:
+      - ${REDIS_PORT}:6379
+    volumes:
+      - redis_volume:/data
+
+volumes:
+  mysql_volume:
+  redis_volume:
