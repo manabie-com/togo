@@ -1,6 +1,9 @@
 package job
 
-import "github.com/khangjig/togo/config"
+import (
+	"github.com/khangjig/togo/config"
+	"github.com/khangjig/togo/repository"
+)
 
 type IJob interface {
 	Run()
@@ -14,8 +17,9 @@ func (js Jobs) Run() {
 	}
 }
 
-func New() Jobs {
+func New(repo *repository.Repository) Jobs {
 	return Jobs{
 		NewHealthChecks(config.GetConfig().HealthCheck.EndPoint),
+		NewResetMaxDailyLimit(repo),
 	}
 }

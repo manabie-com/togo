@@ -14,4 +14,5 @@ type Repository interface {
 type CacheRepository interface {
 	GetTotalTodoByUserID(ctx context.Context, userID int64) (int, error)
 	SetTotalTodoByUserID(ctx context.Context, userID int64, totalRequest int) error
+	ResetTotalTodo(ctx context.Context) error
 }

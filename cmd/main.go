@@ -58,9 +58,8 @@ func main() {
 func executeServer(useCase *usecase.UseCase, repo *repository.Repository) {
 	cfg := config.GetConfig()
 
-	if len(cfg.HealthCheck.EndPoint) > 0 {
-		job.New().Run()
-	}
+	// cron jobs
+	job.New(repo).Run()
 
 	l, err := net.Listen("tcp", ":"+cfg.Port)
 	if err != nil {

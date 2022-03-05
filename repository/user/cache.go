@@ -64,3 +64,17 @@ func (cr *cacheRepository) SetTotalTodoByUserID(ctx context.Context, userID int6
 
 	return nil
 }
+
+func (cr *cacheRepository) ResetTotalTodo(ctx context.Context) error {
+	rdb := cr.getClient(ctx)
+	keys := rdb.Keys(ctx, fmt.Sprintf("%v:*", cr.totalTodo)).Val()
+
+	for _, key := range keys {
+		err := rdb.Set(ctx, key, 0, -1).Err()
+		if err != nil {
+			return errors.Wrap(err, "reset total todo")
+		}
+	}
+
+	return nil
+}
