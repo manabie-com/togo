@@ -23,7 +23,7 @@ func New(
 ) *Repository {
 	return &Repository{
 		User:      user.NewPG(getSQLClient),
-		UserCache: user.NewCacheRepository(getRedisClient),
+		UserCache: user.NewCacheRepository(getRedisClient, getSQLClient),
 		Todo:      todo.NewPG(getSQLClient),
 		TodoCache: todo.NewCacheRepository(getRedisClient),
 	}

@@ -9,6 +9,7 @@ import (
 
 type UseCase struct {
 	UserRepo      user.Repository
+	UserCacheRepo user.CacheRepository
 	TodoRepo      todo.Repository
 	TodoCacheRepo todo.CacheRepository
 	Config        *config.Config
@@ -17,6 +18,7 @@ type UseCase struct {
 func New(repo *repository.Repository) IUseCase {
 	return &UseCase{
 		UserRepo:      repo.User,
+		UserCacheRepo: repo.UserCache,
 		TodoRepo:      repo.Todo,
 		TodoCacheRepo: repo.TodoCache,
 		Config:        config.GetConfig(),

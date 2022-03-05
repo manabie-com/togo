@@ -24,7 +24,16 @@ func ErrTodoStatusInvalid() MyError {
 	return MyError{
 		Raw:       nil,
 		HTTPCode:  http.StatusBadRequest,
-		ErrorCode: "200002",
+		ErrorCode: "200003",
 		Message:   "Invalid status",
+	}
+}
+
+func ErrTodoMaxLimit() MyError {
+	return MyError{
+		Raw:       nil,
+		HTTPCode:  http.StatusNotAcceptable,
+		ErrorCode: "200004",
+		Message:   "Maximum daily limit.",
 	}
 }

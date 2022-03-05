@@ -48,6 +48,15 @@ func (u *UseCase) Create(ctx context.Context, req *CreateRequest) (*ResponseWrap
 		return nil, err
 	}
 
+	totalTodo, err := u.UserCacheRepo.GetTotalTodoByUserID(ctx, myUser.ID)
+	if err != nil {
+		return nil, myerror.ErrGetRedis(err)
+	}
+
+	if totalTodo >= myUser.MaxTodo {
+		return nil, myerror.ErrTodoMaxLimit()
+	}
+
 	myTodo := model.Todo{
 		UserID:  myUser.ID,
 		Title:   req.Title,
@@ -58,6 +67,13 @@ func (u *UseCase) Create(ctx context.Context, req *CreateRequest) (*ResponseWrap
 	err = u.TodoRepo.Create(ctx, &myTodo)
 	if err != nil {
 		return nil, myerror.ErrCreate(err)
+	}
+
+	totalTodo++
+
+	err = u.UserCacheRepo.SetTotalTodoByUserID(ctx, myUser.ID, totalTodo)
+	if err != nil {
+		return nil, myerror.ErrSetRedis(err)
 	}
 
 	return &ResponseWrapper{Todo: &myTodo}, nil

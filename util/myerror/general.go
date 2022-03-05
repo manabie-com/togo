@@ -79,3 +79,21 @@ func ErrNotFound() MyError {
 		Message:   "Not found.",
 	}
 }
+
+func ErrGetRedis(err error) MyError {
+	return MyError{
+		Raw:       err,
+		HTTPCode:  http.StatusInternalServerError,
+		ErrorCode: "000008",
+		Message:   "Failed to get redis.",
+	}
+}
+
+func ErrSetRedis(err error) MyError {
+	return MyError{
+		Raw:       err,
+		HTTPCode:  http.StatusInternalServerError,
+		ErrorCode: "000009",
+		Message:   "Failed to set redis.",
+	}
+}

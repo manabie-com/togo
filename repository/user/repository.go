@@ -11,4 +11,7 @@ type Repository interface {
 	GetByEmail(ctx context.Context, email string) (*model.User, error)
 }
 
-type CacheRepository interface{}
+type CacheRepository interface {
+	GetTotalTodoByUserID(ctx context.Context, userID int64) (int, error)
+	SetTotalTodoByUserID(ctx context.Context, userID int64, totalRequest int) error
+}
