@@ -16,3 +16,7 @@ func (ts *TodoStatus) IsValid() bool {
 		return false
 	}
 }
+
+func (ts TodoStatus) GetPointer() *TodoStatus {
+	return &ts
+}

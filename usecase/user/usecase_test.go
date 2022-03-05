@@ -6,31 +6,31 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
+	"github.com/khangjig/togo/model"
 	userRepo "github.com/khangjig/togo/repository/user"
 	userUC "github.com/khangjig/togo/usecase/user"
 	"github.com/khangjig/togo/util/jwt"
 )
 
-type ClaimTest string
-
 type TestSuite struct {
 	suite.Suite
 
-	ctx       context.Context
-	claimTest ClaimTest
-	useCase   *userUC.UseCase
+	ctx        context.Context
+	userClaims *model.User
+	useCase    *userUC.UseCase
 
 	mockUserRepo *userRepo.MockRepository
 }
 
 func (suite *TestSuite) SetupTest() {
-	userClaims := jwt.DataClaim{
-		UserID: 1,
+	suite.userClaims = &model.User{
+		ID:      1,
+		MaxTodo: 10,
 	}
 
 	suite.ctx = context.Background()
-	suite.claimTest = "MyUserClaimTest"
-	suite.ctx = context.WithValue(suite.ctx, suite.claimTest, &userClaims)
+	// nolint:staticcheck
+	suite.ctx = context.WithValue(suite.ctx, jwt.MyUserClaim, suite.userClaims)
 
 	suite.mockUserRepo = &userRepo.MockRepository{}
 

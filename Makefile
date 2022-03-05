@@ -1,4 +1,4 @@
-.PHONY: local-db build proto gen-mock run gci lint lint-consistent sec
+.PHONY: local-db build proto gen-mock run unit-test coverage gci lint lint-consistent sec
 
 local-db:
 	@docker-compose down
@@ -13,6 +13,9 @@ proto:
 gen-mock:
 	# repository
 	@mockery --inpackage --name=Repository --dir=./repository/user
+	@mockery --inpackage --name=CacheRepository --dir=./repository/user
+	@mockery --inpackage --name=Repository --dir=./repository/todo
+	@mockery --inpackage --name=CacheRepository --dir=./repository/todo
 
 run:
 	@GO111MODULE=off go get -u github.com/cosmtrek/air
@@ -24,6 +27,9 @@ unit-test:
 	@cat coverage/coverage.txt.tmp | grep -v "mock_" > coverage/coverage.txt
 	@go tool cover -func=coverage/coverage.txt
 	@go tool cover -html=coverage/coverage.txt -o coverage/index.html
+
+coverage:
+	@open coverage/index.html
 
 gci:
 	@GO111MODULE=off go get github.com/daixiang0/gci
