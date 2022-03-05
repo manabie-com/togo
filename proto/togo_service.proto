@@ -2,4 +2,21 @@ syntax = "proto3";
 
 option go_package = "github.com/khangjig/togo/proto";
 
-service TogoService {}
+service TogoService {
+    rpc GetTodoByID(GetByIDRequest) returns (Todo);
+}
+
+message GetByIDRequest {
+    int64 id = 1;
+}
+
+message Todo {
+    int64 id = 1;
+    int64 user_id = 2;
+    string title = 3;
+    string content = 4;
+    uint32 status = 5;
+    optional string edited_at = 6;
+    string created_at = 7;
+    string updated_at = 8;
+}

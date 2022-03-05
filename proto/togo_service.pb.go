@@ -9,9 +9,12 @@ package proto
 import (
 	context "context"
 	reflect "reflect"
+	sync "sync"
 
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
@@ -27,20 +30,207 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
+type GetByIDRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (x *GetByIDRequest) Reset() {
+	*x = GetByIDRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_togo_service_proto_msgTypes[0]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetByIDRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetByIDRequest) ProtoMessage() {}
+
+func (x *GetByIDRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_togo_service_proto_msgTypes[0]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetByIDRequest.ProtoReflect.Descriptor instead.
+func (*GetByIDRequest) Descriptor() ([]byte, []int) {
+	return file_togo_service_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *GetByIDRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type Todo struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id        int64   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	UserId    int64   `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Title     string  `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
+	Content   string  `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty"`
+	Status    uint32  `protobuf:"varint,5,opt,name=status,proto3" json:"status,omitempty"`
+	EditedAt  *string `protobuf:"bytes,6,opt,name=edited_at,json=editedAt,proto3,oneof" json:"edited_at,omitempty"`
+	CreatedAt string  `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt string  `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+}
+
+func (x *Todo) Reset() {
+	*x = Todo{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_togo_service_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Todo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Todo) ProtoMessage() {}
+
+func (x *Todo) ProtoReflect() protoreflect.Message {
+	mi := &file_togo_service_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Todo.ProtoReflect.Descriptor instead.
+func (*Todo) Descriptor() ([]byte, []int) {
+	return file_togo_service_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *Todo) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *Todo) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *Todo) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *Todo) GetContent() string {
+	if x != nil {
+		return x.Content
+	}
+	return ""
+}
+
+func (x *Todo) GetStatus() uint32 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+func (x *Todo) GetEditedAt() string {
+	if x != nil && x.EditedAt != nil {
+		return *x.EditedAt
+	}
+	return ""
+}
+
+func (x *Todo) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *Todo) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
 var File_togo_service_proto protoreflect.FileDescriptor
 
 var file_togo_service_proto_rawDesc = []byte{
 	0x0a, 0x12, 0x74, 0x6f, 0x67, 0x6f, 0x5f, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x32, 0x0d, 0x0a, 0x0b, 0x54, 0x6f, 0x67, 0x6f, 0x53, 0x65, 0x72, 0x76,
-	0x69, 0x63, 0x65, 0x42, 0x20, 0x5a, 0x1e, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f,
-	0x6d, 0x2f, 0x6b, 0x68, 0x61, 0x6e, 0x67, 0x6a, 0x69, 0x67, 0x2f, 0x74, 0x6f, 0x67, 0x6f, 0x2f,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x72, 0x6f, 0x74, 0x6f, 0x22, 0x20, 0x0a, 0x0e, 0x47, 0x65, 0x74, 0x42, 0x79, 0x49, 0x44, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x22, 0xe5, 0x01, 0x0a, 0x04, 0x54, 0x6f, 0x64, 0x6f, 0x12,
+	0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x12,
+	0x17, 0x0a, 0x07, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03,
+	0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x69, 0x74, 0x6c,
+	0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x12, 0x18,
+	0x0a, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74,
+	0x75, 0x73, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73,
+	0x12, 0x20, 0x0a, 0x09, 0x65, 0x64, 0x69, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x06, 0x20,
+	0x01, 0x28, 0x09, 0x48, 0x00, 0x52, 0x08, 0x65, 0x64, 0x69, 0x74, 0x65, 0x64, 0x41, 0x74, 0x88,
+	0x01, 0x01, 0x12, 0x1d, 0x0a, 0x0a, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74,
+	0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x41,
+	0x74, 0x12, 0x1d, 0x0a, 0x0a, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18,
+	0x08, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74,
+	0x42, 0x0c, 0x0a, 0x0a, 0x5f, 0x65, 0x64, 0x69, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x32, 0x34,
+	0x0a, 0x0b, 0x54, 0x6f, 0x67, 0x6f, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x25, 0x0a,
+	0x0b, 0x47, 0x65, 0x74, 0x54, 0x6f, 0x64, 0x6f, 0x42, 0x79, 0x49, 0x44, 0x12, 0x0f, 0x2e, 0x47,
+	0x65, 0x74, 0x42, 0x79, 0x49, 0x44, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x05, 0x2e,
+	0x54, 0x6f, 0x64, 0x6f, 0x42, 0x20, 0x5a, 0x1e, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63,
+	0x6f, 0x6d, 0x2f, 0x6b, 0x68, 0x61, 0x6e, 0x67, 0x6a, 0x69, 0x67, 0x2f, 0x74, 0x6f, 0x67, 0x6f,
+	0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
-var file_togo_service_proto_goTypes = []interface{}{}
+var (
+	file_togo_service_proto_rawDescOnce sync.Once
+	file_togo_service_proto_rawDescData = file_togo_service_proto_rawDesc
+)
+
+func file_togo_service_proto_rawDescGZIP() []byte {
+	file_togo_service_proto_rawDescOnce.Do(func() {
+		file_togo_service_proto_rawDescData = protoimpl.X.CompressGZIP(file_togo_service_proto_rawDescData)
+	})
+	return file_togo_service_proto_rawDescData
+}
+
+var file_togo_service_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_togo_service_proto_goTypes = []interface{}{
+	(*GetByIDRequest)(nil), // 0: GetByIDRequest
+	(*Todo)(nil),           // 1: Todo
+}
 var file_togo_service_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
+	0, // 0: TogoService.GetTodoByID:input_type -> GetByIDRequest
+	1, // 1: TogoService.GetTodoByID:output_type -> Todo
+	1, // [1:2] is the sub-list for method output_type
+	0, // [0:1] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -51,18 +241,46 @@ func file_togo_service_proto_init() {
 	if File_togo_service_proto != nil {
 		return
 	}
+	if !protoimpl.UnsafeEnabled {
+		file_togo_service_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetByIDRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_togo_service_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Todo); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+	}
+	file_togo_service_proto_msgTypes[1].OneofWrappers = []interface{}{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_togo_service_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   0,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_togo_service_proto_goTypes,
 		DependencyIndexes: file_togo_service_proto_depIdxs,
+		MessageInfos:      file_togo_service_proto_msgTypes,
 	}.Build()
 	File_togo_service_proto = out.File
 	file_togo_service_proto_rawDesc = nil
@@ -82,6 +300,7 @@ const _ = grpc.SupportPackageIsVersion6
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type TogoServiceClient interface {
+	GetTodoByID(ctx context.Context, in *GetByIDRequest, opts ...grpc.CallOption) (*Todo, error)
 }
 
 type togoServiceClient struct {
@@ -92,22 +311,59 @@ func NewTogoServiceClient(cc grpc.ClientConnInterface) TogoServiceClient {
 	return &togoServiceClient{cc}
 }
 
+func (c *togoServiceClient) GetTodoByID(ctx context.Context, in *GetByIDRequest, opts ...grpc.CallOption) (*Todo, error) {
+	out := new(Todo)
+	err := c.cc.Invoke(ctx, "/TogoService/GetTodoByID", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TogoServiceServer is the server API for TogoService service.
 type TogoServiceServer interface {
+	GetTodoByID(context.Context, *GetByIDRequest) (*Todo, error)
 }
 
 // UnimplementedTogoServiceServer can be embedded to have forward compatible implementations.
 type UnimplementedTogoServiceServer struct {
 }
 
+func (*UnimplementedTogoServiceServer) GetTodoByID(context.Context, *GetByIDRequest) (*Todo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTodoByID not implemented")
+}
+
 func RegisterTogoServiceServer(s *grpc.Server, srv TogoServiceServer) {
 	s.RegisterService(&_TogoService_serviceDesc, srv)
+}
+
+func _TogoService_GetTodoByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetByIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TogoServiceServer).GetTodoByID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/TogoService/GetTodoByID",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TogoServiceServer).GetTodoByID(ctx, req.(*GetByIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 var _TogoService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "TogoService",
 	HandlerType: (*TogoServiceServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "togo_service.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetTodoByID",
+			Handler:    _TogoService_GetTodoByID_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "togo_service.proto",
 }
