@@ -15,4 +15,5 @@ func Init(group *echo.Group, useCase *usecase.UseCase) {
 
 	group.POST("", r.create)
 	group.PUT("/:id", r.update)
+	group.GET("/:id", r.getByID)
 }
