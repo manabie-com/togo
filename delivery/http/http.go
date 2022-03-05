@@ -8,6 +8,7 @@ import (
 
 	"github.com/khangjig/togo/delivery/http/auth"
 	"github.com/khangjig/togo/delivery/http/healthcheck"
+	"github.com/khangjig/togo/delivery/http/todo"
 	"github.com/khangjig/togo/delivery/http/user"
 	md "github.com/khangjig/togo/middleware"
 	"github.com/khangjig/togo/repository"
@@ -47,6 +48,7 @@ func NewHTTPHandler(useCase *usecase.UseCase, repo *repository.Repository) *echo
 	api := e.Group("/api")
 	api.Use(md.Auth(repo))
 	user.Init(api.Group("/users"), useCase)
+	todo.Init(api.Group("/todos"), useCase)
 
 	return e
 }

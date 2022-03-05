@@ -28,21 +28,3 @@ func ErrRegexp(err error) MyError {
 		Message:   err.Error(),
 	}
 }
-
-func ErrGetTotalRequest(err error) MyError {
-	return MyError{
-		Raw:       err,
-		HTTPCode:  http.StatusInternalServerError,
-		ErrorCode: "100004",
-		Message:   err.Error(),
-	}
-}
-
-func ErrSetTotalRequest(err error) MyError {
-	return MyError{
-		Raw:       err,
-		HTTPCode:  http.StatusInternalServerError,
-		ErrorCode: "100005",
-		Message:   err.Error(),
-	}
-}

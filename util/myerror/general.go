@@ -26,29 +26,56 @@ func ErrUnauthorized() MyError {
 	}
 }
 
-func ErrMaxTodo() MyError {
-	return MyError{
-		Raw:       nil,
-		HTTPCode:  http.StatusExpectationFailed,
-		ErrorCode: "000002",
-		Message:   "Too many requests.",
-	}
-}
-
 func ErrInvalidParams(err error) MyError {
 	return MyError{
 		Raw:       err,
 		HTTPCode:  http.StatusBadRequest,
-		ErrorCode: "000003",
+		ErrorCode: "000002",
 		Message:   "Invalid params.",
 	}
 }
 
-func ErrGetUser(err error) MyError {
+func ErrGet(err error) MyError {
 	return MyError{
 		Raw:       err,
-		HTTPCode:  http.StatusUnauthorized,
+		HTTPCode:  http.StatusInternalServerError,
 		ErrorCode: "000003",
-		Message:   "Failed to get user.",
+		Message:   "Failed to get.",
+	}
+}
+
+func ErrCreate(err error) MyError {
+	return MyError{
+		Raw:       err,
+		HTTPCode:  http.StatusInternalServerError,
+		ErrorCode: "000004",
+		Message:   "Failed to create.",
+	}
+}
+
+func ErrUpdate(err error) MyError {
+	return MyError{
+		Raw:       err,
+		HTTPCode:  http.StatusInternalServerError,
+		ErrorCode: "000005",
+		Message:   "Failed to update.",
+	}
+}
+
+func ErrDelete(err error) MyError {
+	return MyError{
+		Raw:       err,
+		HTTPCode:  http.StatusInternalServerError,
+		ErrorCode: "000006",
+		Message:   "Failed to delete.",
+	}
+}
+
+func ErrNotFound(err error) MyError {
+	return MyError{
+		Raw:       err,
+		HTTPCode:  http.StatusNotFound,
+		ErrorCode: "000007",
+		Message:   "Not found.",
 	}
 }

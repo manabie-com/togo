@@ -1,6 +1,6 @@
 package codetype
 
-type Gender int
+type Gender uint8
 
 const (
 	GenderFemale Gender = 0

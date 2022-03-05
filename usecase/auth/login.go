@@ -38,7 +38,7 @@ func (u *UseCase) Login(ctx context.Context, req *LoginRequest) (*ResponseWrappe
 			return nil, myerror.ErrInvalidEmailPassword()
 		}
 
-		return nil, myerror.ErrGetUser(err)
+		return nil, myerror.ErrGet(err)
 	}
 
 	if !util.ComparePassword(req.Password, myUser.Password) {

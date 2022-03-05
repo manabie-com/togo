@@ -6,12 +6,15 @@ import (
 	"github.com/go-redis/redis/v8"
 	"gorm.io/gorm"
 
+	"github.com/khangjig/togo/repository/todo"
 	"github.com/khangjig/togo/repository/user"
 )
 
 type Repository struct {
 	User      user.Repository
 	UserCache user.CacheRepository
+	Todo      todo.Repository
+	TodoCache todo.CacheRepository
 }
 
 func New(
@@ -21,5 +24,7 @@ func New(
 	return &Repository{
 		User:      user.NewPG(getSQLClient),
 		UserCache: user.NewCacheRepository(getRedisClient),
+		Todo:      todo.NewPG(getSQLClient),
+		TodoCache: todo.NewCacheRepository(getRedisClient),
 	}
 }

@@ -88,7 +88,7 @@ func (suite *TestSuite) TestLogin_ErrorQuery() {
 
 	// execute
 	_, err := suite.useCase.Login(suite.ctx, req)
-	expectErr := myerror.ErrGetUser(err)
+	expectErr := myerror.ErrGet(err)
 	myErr := err.(myerror.MyError)
 
 	suite.Equal(expectErr.ErrorCode, myErr.ErrorCode)

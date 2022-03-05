@@ -2,6 +2,8 @@ package middleware
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/pkg/errors"
+	"gorm.io/gorm"
 
 	"github.com/khangjig/togo/config"
 	"github.com/khangjig/togo/repository"
@@ -25,7 +27,11 @@ func Auth(repo *repository.Repository) func(next echo.HandlerFunc) echo.HandlerF
 
 			myUser, err := repo.User.GetByID(ctx, claims.UserID)
 			if err != nil {
-				return util.Response.Error(c, myerror.ErrUnauthorized())
+				if errors.Is(err, gorm.ErrRecordNotFound) {
+					return util.Response.Error(c, myerror.ErrUnauthorized())
+				}
+
+				return util.Response.Error(c, myerror.ErrGet(err))
 			}
 
 			c.Set(jwt.MyUserClaim, myUser)
