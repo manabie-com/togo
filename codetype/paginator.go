@@ -19,6 +19,7 @@ type GetListRequest struct {
 func (g *GetListRequest) Format() {
 	g.Paginator.Format()
 	g.SortBy.Format()
+	g.OrderBy = strings.ToLower(strings.TrimSpace(g.OrderBy))
 	g.Search = strings.TrimSpace(g.Search)
 }
 

@@ -3,6 +3,8 @@ package model
 import (
 	"time"
 
+	"gorm.io/gorm"
+
 	"github.com/khangjig/togo/codetype"
 )
 
@@ -15,5 +17,5 @@ type Todo struct {
 	EditedAt  *time.Time          `json:"edited_at"`
 	CreatedAt time.Time           `json:"created_at"`
 	UpdatedAt time.Time           `json:"updated_at"`
-	DeletedAt *time.Time          `json:"-"`
+	DeletedAt *gorm.DeletedAt     `json:"-"`
 }
