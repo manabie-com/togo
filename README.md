@@ -1,30 +1,121 @@
-### Requirements
+### Setup environment
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+- Create .env file
 
-### Notes
+```shell
+cp example.env .env
+```
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+- Create your DB with Docker compose
 
-### How to submit your solution?
+```makefile
+make local-db
+```
 
-- Fork this repo and show us your development progress via a PR
+### Run
 
-### Interesting facts about Manabie
+- Run
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+```makefile
+make run
+```
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+- Build
+
+```makefile
+make build
+```
+
+- Run unit tests
+
+```makefile
+make unit-test
+```
+
+- Open code coverage
+
+```makefile
+make coverage
+```
+
+### APIs
+
+Import the Postman collection below:
+
+```
+https://www.getpostman.com/collections/a9f85c675250678256ca
+```
+
+- **API Login:**
+
+Request
+
+| Name | Method | Content-Type | Authorization |
+|:-----------|:-----------:|:-----------:| :-----------: |
+| /auth/login | `POST` | application/json | - |
+
+Parameters:
+
+| Name | Data Type | Required/Optional |
+|:-----------|:-----------:|:-----------:|
+| email | string | required |
+| password | string | required |
+
+cURL
+
+```shell
+curl -i -X POST -H 'Content-Type: application/json' -d '{"email": "user1@gmail.com", "password": "12345678"}' <your_localhost>/auth/login
+```
+
+- **API Get Me:**
+
+Request
+
+| Name | Method | Content-Type | Authorization |
+|:-----------|:-----------:|:-----------:| :-----------: |
+| api/users/me | `GET` | - | <your_token> |
+
+cURL
+
+```shell
+curl -i -X GET -H 'Authorization: <your_token>' <your_localhost>/api/users/me
+```
+
+- **API Create TODO:**
+
+Request
+
+| Name | Method | Content-Type | Authorization |
+|:-----------|:-----------:|:-----------:| :-----------: |
+| api/todos | `POST` | application/json | <your_token> |
+
+Parameters:
+
+| Name | Data Type | Required/Optional | Default |Description |
+|:-----------|:-----------:|:-----------:| :----: |:----: |
+| title | string | required | - | | 
+| content | string | optional | "" | |
+| status | number | optional | 0 | 0 `Open` 1 `InProgress` 2 `Resolved` |
+
+cURL
+
+```shell
+curl -i -X POST -H 'Authorization: <your_token>' -H 'Content-Type: application/json' -d '{"title": "title", "content": "content", "status": 0}' <your_localhost>/api/todos
+```
+
+- **Other APIs:**
+
+Get list Todos: `GET` `api/todos`
+
+Edit Todo: `PUT` `api/todos/:id`
+
+Get Todo By ID: `GET` `api/todos/:id`
+
+Delete Todo By ID: `DEL` `api/todos/:id`
+
+### What do you love about your solution?
+
+My solution is using Redis to save total of records TODO tasks per users and using a Cronjob to run every day at
+mid-night reset that totals. So we don't need to query in DB to get total records which is created at the same day for
+each creating request.
+
