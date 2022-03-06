@@ -1,6 +1,10 @@
 package codetype
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/khangjig/togo/util"
+)
 
 const PageSizeDefault = 20
 
@@ -20,7 +24,7 @@ func (g *GetListRequest) Format() {
 	g.Paginator.Format()
 	g.SortBy.Format()
 	g.OrderBy = strings.ToLower(strings.TrimSpace(g.OrderBy))
-	g.Search = strings.TrimSpace(g.Search)
+	g.Search = util.SQLEscapeString(strings.TrimSpace(g.Search))
 }
 
 func (p *Paginator) Format() {

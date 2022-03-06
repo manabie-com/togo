@@ -69,3 +69,15 @@ func TestComparePassword(t *testing.T) {
 		}
 	})
 }
+
+func TestSQLEscapeString(t *testing.T) {
+	t.Parallel()
+
+	t.Run("SQLEscapeString", func(t *testing.T) {
+		t.Parallel()
+		result := util.SQLEscapeString("12345678\n")
+		if result != "12345678\\n" {
+			t.Errorf("current %v, want %v", result, "12345678\\n")
+		}
+	})
+}

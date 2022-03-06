@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS todos
     `deleted_at` TIMESTAMP             DEFAULT NULL,
 
     PRIMARY KEY (`id`),
+    FULLTEXT `idx_fulltext_title_content` (`title`, `content`),
     CONSTRAINT `todos_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4

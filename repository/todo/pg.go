@@ -68,7 +68,7 @@ func (p pgRepository) GetList(
 	}
 
 	if search != "" {
-		db.Where("title LIKE ?", "%"+search+"%")
+		db.Where("MATCH (title, content) AGAINST (? IN NATURAL LANGUAGE MODE)", search)
 	}
 
 	if order != "" {
