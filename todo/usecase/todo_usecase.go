@@ -6,7 +6,7 @@ import (
 	"github.com/triet-truong/todo/todo"
 	"github.com/triet-truong/todo/todo/dto"
 	"github.com/triet-truong/todo/todo/model"
-	"github.com/triet-truong/todo/todo/utils"
+	"github.com/triet-truong/todo/utils"
 )
 
 type TodoUseCase struct {

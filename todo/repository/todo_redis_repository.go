@@ -9,7 +9,7 @@ import (
 
 	"github.com/go-redis/redis/v8"
 	"github.com/triet-truong/todo/todo/model"
-	"github.com/triet-truong/todo/todo/utils"
+	"github.com/triet-truong/todo/utils"
 )
 
 type TodoRedisRepository struct {

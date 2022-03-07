@@ -2,7 +2,7 @@ package repository
 
 import (
 	"github.com/triet-truong/todo/todo/model"
-	"github.com/triet-truong/todo/todo/utils"
+	"github.com/triet-truong/todo/utils"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
