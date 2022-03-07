@@ -6,7 +6,7 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"togo/pkg/e"
+	"github.com/khoale193/togo/pkg/e"
 )
 
 func VerifyPassword(password string, hash string, cryptType string) bool {

@@ -33,3 +33,5 @@ Password =
 Host =
 Name =
 TablePrefix =
+
+# cp conf/app.ini ~/Documents/mygo/bin/conf/app.ini

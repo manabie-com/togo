@@ -1,7 +1,7 @@
 package util
 
 import (
-	"togo/pkg/setting"
+	"github.com/khoale193/togo/pkg/setting"
 )
 
 // Setup Initialize the util

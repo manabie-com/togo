@@ -1,4 +1,4 @@
-module togo
+module github.com/khoale193/togo
 
 go 1.17
 

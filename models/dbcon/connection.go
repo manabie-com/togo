@@ -8,7 +8,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
-	"togo/pkg/setting"
+	"github.com/khoale193/togo/pkg/setting"
 )
 
 var sqlXDB *sqlx.DB

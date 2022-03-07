@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/khoale193/togo/pkg/e"
 )
 
 type Gin struct {
@@ -26,7 +27,7 @@ func (g *Gin) Response(c *gin.Context, httpCode int, status string, errCode int,
 		Code:    httpCode,
 		Data:    data,
 		Error:   message,
-		Message: message,
+		Message: e.Msg[errCode],
 		Status:  status,
 	})
 	return

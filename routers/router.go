@@ -3,8 +3,8 @@ package routers
 import (
 	"github.com/gin-gonic/gin"
 
-	"togo/modules/member"
-	"togo/modules/task"
+	"github.com/khoale193/togo/modules/member"
+	"github.com/khoale193/togo/modules/task"
 )
 
 // InitRouter initialize routing information

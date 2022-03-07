@@ -17,6 +17,7 @@ func ExtractUsername(token string) string {
 }
 
 func ExtractMemberID(token string) int {
+	token = token[7:]
 	parse, err := ParseToken(token)
 	if err != nil {
 		return 0

@@ -1,7 +1,7 @@
 package migration
 
 import (
-	"togo/pkg/e"
+	"github.com/khoale193/togo/pkg/e"
 )
 
 type Migration struct {

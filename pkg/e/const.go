@@ -7,4 +7,6 @@ const (
 	AuthenticationTypeBcrypt = "bcrypt"
 
 	AppRoleMember = "member"
+
+	LayoutISO = "2006-01-02"
 )

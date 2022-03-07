@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"log"
 	"reflect"
-	"togo/models"
 
 	"gorm.io/gorm"
 
-	"togo/models/dbcon"
+	"github.com/khoale193/togo/models"
+	"github.com/khoale193/togo/models/dbcon"
 )
 
 func Migrate() {

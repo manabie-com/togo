@@ -3,7 +3,7 @@ package member
 import (
 	"github.com/gin-gonic/gin"
 
-	"togo/modules/member/handler"
+	"github.com/khoale193/togo/modules/member/handler"
 )
 
 func MemberRouter(router *gin.RouterGroup) {

@@ -8,12 +8,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"togo/cron"
-	"togo/models/dbcon"
-	"togo/models/migration"
-	"togo/pkg/setting"
-	"togo/pkg/util"
-	"togo/routers"
+	"github.com/khoale193/togo/cron"
+	"github.com/khoale193/togo/models/dbcon"
+	"github.com/khoale193/togo/models/migration"
+	"github.com/khoale193/togo/pkg/setting"
+	"github.com/khoale193/togo/pkg/util"
+	"github.com/khoale193/togo/routers"
 )
 
 func init() {

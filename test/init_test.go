@@ -3,21 +3,22 @@ package test
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
-	"togo/models/dbcon"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 
-	"togo/models"
-	"togo/pkg/setting"
-	"togo/pkg/util"
-	"togo/routers"
+	"github.com/khoale193/togo/models/dbcon"
+	"github.com/khoale193/togo/models/migration"
+	"github.com/khoale193/togo/pkg/app"
+	"github.com/khoale193/togo/pkg/e"
+	"github.com/khoale193/togo/pkg/setting"
+	"github.com/khoale193/togo/pkg/util"
+	"github.com/khoale193/togo/routers"
 )
 
 // https://semaphoreci.com/community/tutorials/test-driven-development-of-go-web-applications-with-gin
@@ -26,7 +27,7 @@ func init() {
 	setting.Setup()
 
 	dbcon.Setup()
-	models.Migrate()
+	migration.Migrate()
 
 	util.Setup()
 }
@@ -42,50 +43,89 @@ func TestMain(m *testing.M) {
 	os.Exit(exitVal)
 }
 
-// EnRSA Encrypt
-func TestEnRSA(t *testing.T) {
-	// Setup
-	gin.SetMode(gin.TestMode)
+func TestSignIn(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		// a response recorder for getting written http response
-		rr := httptest.NewRecorder()
-		router := routers.InitRouter()
-
-		var body struct {
-			Text string `json:"text"`
-		}
-		body.Text = "password"
-		byte, _ := json.Marshal(body)
-		request, _ := http.NewRequest(http.MethodPost, "/api/dev/en_rsa", bytes.NewBuffer(byte))
-		//assert.NoError(t, err)
-		router.ServeHTTP(rr, request)
-		//fmt.Print(rr.Body)
-		var resp struct {
-			Data string `json:"data"`
-		}
-		json.Unmarshal(rr.Body.Bytes(), &resp)
-		//fmt.Print(resp.Data)
-
-		var loginBody struct {
+		loginBody := []struct {
 			Username string `json:"username"`
 			Password string `json:"password"`
+		}{{Username: "test1", Password: "123456"}, {Username: "test2", Password: "123456"}}
+		for _, i := range loginBody {
+			// a response recorder for getting written http response
+			rr := httptest.NewRecorder()
+			router := routers.InitRouter()
+			byte, _ := json.Marshal(i)
+			requestLogin, _ := http.NewRequest(http.MethodPost, "/api/sign-in", bytes.NewBuffer(byte))
+			router.ServeHTTP(rr, requestLogin)
+			var response app.Response
+			json.Unmarshal(rr.Body.Bytes(), &response)
+			assert.Equal(t, http.StatusOK, rr.Code)
+			assert.Equal(t, "success", response.Status)
 		}
-		loginBody.Username = "dev"
-		loginBody.Password = resp.Data
-		byte, _ = json.Marshal(loginBody)
-		fmt.Print(string(byte))
-		requestLogin, _ := http.NewRequest(http.MethodPost, "/api/admin/sign-in", bytes.NewBuffer(byte))
-		router.ServeHTTP(rr, requestLogin)
-		fmt.Print(rr.Body)
-		//respBody, err := json.Marshal(gin.H{
-		//	"data": "encryptRSA(form.Text)",
-		//})
-		//assert.NoError(t, err)
-
-		assert.Equal(t, 200, rr.Code)
-		//assert.Equal(t, respBody, rr.Body.Bytes())
-		fmt.Print(t)
-		//fmt.Print(rr.Body.Bytes())
-		//mockUserService.AssertExpectations(t) // assert that UserService.Get was called
+	})
+	t.Run("Error", func(t *testing.T) {
+		loginBody := []struct {
+			Username string `json:"username"`
+			Password string `json:"password"`
+		}{{Username: "test", Password: "123456"}, {Username: "test1", Password: "12345"}}
+		for _, i := range loginBody {
+			// a response recorder for getting written http response
+			rr := httptest.NewRecorder()
+			router := routers.InitRouter()
+			byte, _ := json.Marshal(i)
+			requestLogin, _ := http.NewRequest(http.MethodPost, "/api/sign-in", bytes.NewBuffer(byte))
+			router.ServeHTTP(rr, requestLogin)
+			var response app.Response
+			json.Unmarshal(rr.Body.Bytes(), &response)
+			assert.Equal(t, http.StatusBadRequest, rr.Code)
+			assert.Equal(t, "error", response.Status)
+			assert.Equal(t, e.Msg[e.ERROR_AUTH], response.Message)
+		}
+	})
+	t.Run("Validate", func(t *testing.T) {
+		loginBody := []struct {
+			Data struct {
+				Username string `json:"username"`
+				Password string `json:"password"`
+			}
+			Expected struct {
+				Status  string
+				Message string
+			}
+		}{
+			{Data: struct {
+				Username string `json:"username"`
+				Password string `json:"password"`
+			}{Username: "", Password: "123456"}, Expected: struct {
+				Status  string
+				Message string
+			}{Status: "error", Message: "Username is a required field"}},
+			{Data: struct {
+				Username string `json:"username"`
+				Password string `json:"password"`
+			}{Username: "test", Password: ""}, Expected: struct {
+				Status  string
+				Message string
+			}{Status: "error", Message: "Password is a required field"}},
+			{Data: struct {
+				Username string `json:"username"`
+				Password string `json:"password"`
+			}{Username: "", Password: ""}, Expected: struct {
+				Status  string
+				Message string
+			}{Status: "error", Message: "Username is a required field"}},
+		}
+		for _, i := range loginBody {
+			// a response recorder for getting written http response
+			rr := httptest.NewRecorder()
+			router := routers.InitRouter()
+			byte, _ := json.Marshal(i.Data)
+			requestLogin, _ := http.NewRequest(http.MethodPost, "/api/sign-in", bytes.NewBuffer(byte))
+			router.ServeHTTP(rr, requestLogin)
+			var response app.Response
+			json.Unmarshal(rr.Body.Bytes(), &response)
+			assert.Equal(t, http.StatusBadRequest, rr.Code)
+			assert.Equal(t, i.Expected.Status, response.Status)
+			assert.Equal(t, i.Expected.Message, response.Message)
+		}
 	})
 }

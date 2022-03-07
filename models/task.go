@@ -2,15 +2,17 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 
-	"togo/pkg/e"
+	"github.com/khoale193/togo/models/dbcon"
+	"github.com/khoale193/togo/pkg/e"
 )
 
 type Task struct {
 	ID        int64         `gorm:"column:id;primary_key;auto_increment" db:"id"`
 	Name      string        `gorm:"column:name" db:"name"`
-	UserID    int           `gorm:"column:member_id" db:"member_id"`
+	MemberID  int           `gorm:"column:member_id" db:"member_id"`
 	Status    int           `gorm:"column:status" db:"status"`
 	CreatedAt time.Time     `gorm:"column:created_at" db:"created_at"`
 	CreatedBy sql.NullInt64 `gorm:"column:created_by;default:null" db:"created_by"`
@@ -22,4 +24,22 @@ type Task struct {
 
 func (Task) TableName() string {
 	return e.TaskTable
+}
+
+func (a *Task) CreateTask() (int64, error) {
+	model := []Task{
+		{Name: a.Name, MemberID: a.MemberID, CreatedAt: time.Now()},
+	}
+	columnName := []string{"Name", "MemberID", "CreatedAt"}
+	if result, err := dbcon.GetSqlXDB().NamedExec(fmt.Sprintf("insert into %s (%s) values (%s)",
+		(Task{}).TableName(),
+		ColumnsName((Task{}).TableName(), &Task{}, columnName),
+		ColumnsNameValueList(&Task{}, columnName),
+	), model); err != nil {
+		return 0, err
+	} else if lastInsertId, err := result.LastInsertId(); lastInsertId != 0 && err == nil {
+		return lastInsertId, nil
+	} else {
+		return 0, err
+	}
 }

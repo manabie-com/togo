@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 	"time"
-	"togo/models/dbcon"
 
-	"togo/pkg/e"
+	"github.com/khoale193/togo/models/dbcon"
+	"github.com/khoale193/togo/pkg/e"
 )
 
 type Member struct {
@@ -27,12 +27,27 @@ func (Member) TableName() string {
 	return e.MemberTable
 }
 
+func (a *Member) IsExceedLimitTaskPerDay() bool {
+	selectSQLInit := `select if(count(%[1]s.id) >= %[2]s.max_task, true, false) as is_exceed
+	from %[1]s
+	left join %[2]s on %[2]s.id = %[1]s.member_id
+	where %[1]s.member_id = 1
+	and date(%[1]s.created_at) = date(?);`
+	selectSQL := fmt.Sprintf(selectSQLInit, (Task{}).TableName(), (Member{}).TableName())
+	var data struct {
+		IsExceed bool `db:"is_exceed"`
+	}
+	if err := dbcon.GetSqlXDB().Select(&data, selectSQL, time.Now().Format(e.LayoutISO)); err != nil {
+		return true
+	}
+	return data.IsExceed
+}
+
 func (a Member) FindByUsername(username string) (*Member, error) {
-	sqlXDB := dbcon.GetSqlXDB()
 	selectSQLInit := "select * from %[1]s where binary %[1]s.%[2]s = binary ?;"
 	selectSQL := fmt.Sprintf(selectSQLInit, (Member{}).TableName(), ColName(&Member{}, "Username"))
 	var model Member
-	if err := sqlXDB.Get(&model, selectSQL, username); err != nil {
+	if err := dbcon.GetSqlXDB().Get(&model, selectSQL, username); err != nil {
 		return nil, err
 	}
 	return &model, nil
