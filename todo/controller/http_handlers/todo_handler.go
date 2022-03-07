@@ -5,15 +5,15 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/sirupsen/logrus"
-	"github.com/triet-truong/todo/domain"
+	"github.com/triet-truong/todo/todo"
 	"github.com/triet-truong/todo/todo/dto"
 )
 
 type TodoHandler struct {
-	usecase domain.TodoUseCase
+	usecase todo.TodoUseCase
 }
 
-func NewTodoHandler(usecase domain.TodoUseCase) TodoHandler {
+func NewTodoHandler(usecase todo.TodoUseCase) TodoHandler {
 	return TodoHandler{
 		usecase: usecase,
 	}

@@ -1,13 +1,8 @@
-package domain
+package todo
 
 import (
-	"github.com/triet-truong/todo/todo/dto"
 	"github.com/triet-truong/todo/todo/model"
 )
-
-type TodoUseCase interface {
-	AddTodo(newAlert dto.TodoDto) error
-}
 
 type TodoRepository interface {
 	InsertItem(item model.TodoItemModel) error

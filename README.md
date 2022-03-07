@@ -13,7 +13,9 @@ The user's daily usage is stored in a cache storage, specifically Redis, with TT
 
 ### Backend structure:
 ![alt text](./images/clean-arch.png)
-Reference: https://github.com/bxcodec/go-clean-arch
+References: 
+- https://github.com/bxcodec/go-clean-arch
+- https://github.com/arielizuardi/golang-backend-blog
 
 
 ## How to run

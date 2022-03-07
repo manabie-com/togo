@@ -7,7 +7,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/labstack/echo"
-	"github.com/triet-truong/todo/todo/delivery/http_handlers"
+	"github.com/triet-truong/todo/todo/controller/http_handlers"
 	"github.com/triet-truong/todo/todo/repository"
 	"github.com/triet-truong/todo/todo/usecase"
 )
