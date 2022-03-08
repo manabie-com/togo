@@ -27,5 +27,6 @@ func (h *TodoHandler) Add(ctx echo.Context) error {
 		ctx.Error(err)
 		return err
 	}
-	return h.usecase.AddTodo(bodyObject)
+	err = h.usecase.AddTodo(bodyObject)
+	return err
 }

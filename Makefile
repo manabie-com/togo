@@ -1,10 +1,10 @@
 BINARY=engine
+export ENVIRONMENT=LOCAL
 test: 
 	go test -v -cover -covermode=atomic ./...
 
 engine:
 	go build -o ${BINARY} app/*.go
-
 
 unittest:
 	go test -short  ./...
@@ -12,14 +12,16 @@ unittest:
 clean:
 	if [ -f ${BINARY} ] ; then rm ${BINARY} ; fi
 
-docker:
-	docker build -t go-clean-arch .
+app.run:
+	go run ./app/main.go
 
-run:
-	docker-compose up --build -d
+docker.start:
+		docker-compose up -d;
 
-stop:
-	docker-compose down
+docker.stop:
+		docker-compose down;
+
+docker.restart: docker.stop docker.start
 
 lint-prepare:
 	@echo "Installing golangci-lint" 

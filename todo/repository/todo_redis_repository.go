@@ -17,8 +17,11 @@ type TodoRedisRepository struct {
 }
 
 func NewTodoRedisRepository(opts redis.Options) *TodoRedisRepository {
+	client := redis.NewClient(&opts)
+	err := client.Ping(context.TODO()).Err()
+	utils.FatalLog(err)
 	return &TodoRedisRepository{
-		rdb: redis.NewClient(&opts),
+		rdb: client,
 	}
 }
 

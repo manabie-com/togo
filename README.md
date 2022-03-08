@@ -27,6 +27,7 @@ References:
 ## How to run
 
 - `docker-compose up -d` to deploy local MySQL (port 3306) and Redis (port 6379).
+- `export ENVIRONMENT=LOCAL`: make application read configs from .env file.
 - `go run ./app/main.go` to start running back-end application (port 9090).
 - Try sample request:
 

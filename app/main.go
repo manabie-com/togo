@@ -2,15 +2,22 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 
 	"github.com/go-redis/redis/v8"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/labstack/echo"
+	"github.com/triet-truong/todo/config"
 	"github.com/triet-truong/todo/todo/controller/http_handlers"
 	"github.com/triet-truong/todo/todo/repository"
 	"github.com/triet-truong/todo/todo/usecase"
 )
+
+func init() {
+	// Load env vars
+	config.Load()
+}
 
 func main() {
 	e := echo.New()
@@ -21,18 +28,18 @@ func main() {
 		return nil
 	})
 
-	repo := repository.NewTodoMysqlRepository("triet_truong:pw@tcp/todo?allowNativePasswords=True&parseTime=True")
+	e.Debug = true
+	repo := repository.NewTodoMysqlRepository(config.DBConnectionURL())
 	cacheStore := repository.NewTodoRedisRepository(redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     config.CacheConnectioURL(),
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
 
-	e.Debug = true
 	usecase := usecase.NewTodoUseCase(repo, cacheStore)
 	handler := http_handlers.NewTodoHandler(usecase)
 	e.POST("/user/todo", handler.Add)
 
-	log.Fatal(e.Start(":9090"))
+	log.Fatal(e.Start(fmt.Sprintf(":%v", config.Port())))
 
 }

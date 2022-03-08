@@ -13,7 +13,7 @@ type TodoMysqlRepository struct {
 
 func NewTodoMysqlRepository(dsn string) *TodoMysqlRepository {
 	mysqlGorm, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	utils.ErrorLog(err)
+	utils.FatalLog(err)
 	return &TodoMysqlRepository{
 		db: mysqlGorm,
 	}
