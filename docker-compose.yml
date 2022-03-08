@@ -1,0 +1,47 @@
+version: '2'
+services:
+
+  #MySQL Service
+  mysql:
+    image: mysql:8.0
+    platform: linux/amd64
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./images/mysql/data/:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    networks:
+      - app-network
+
+  #PHP Service
+  php:
+    build: ./service
+    ports:
+        - "9099:9000"
+    volumes:
+        - ./images/php/custom.ini:/usr/local/etc/php/php.ini
+        - ./service/:/var/www/html
+    links:
+        - mysql
+    networks:
+        - app-network
+
+  #Nginx Service
+  webserver:
+    image: nginx:latest
+    ports:
+        - 8099:80
+    volumes:
+        - ./images/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    links:
+        - php
+    networks:
+        - app-network
+#Docker Networks
+networks:
+  app-network:
+    driver: bridge        
