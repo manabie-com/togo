@@ -12,6 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/khoale193/togo/models"
 	"github.com/khoale193/togo/models/dbcon"
 	"github.com/khoale193/togo/models/migration"
 	"github.com/khoale193/togo/pkg/app"
@@ -126,6 +127,74 @@ func TestSignIn(t *testing.T) {
 			assert.Equal(t, http.StatusBadRequest, rr.Code)
 			assert.Equal(t, i.Expected.Status, response.Status)
 			assert.Equal(t, i.Expected.Message, response.Message)
+		}
+	})
+}
+
+func TestAddTask(t *testing.T) {
+	loginBody := struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}{Username: "test1", Password: "123456"}
+	// a response recorder for getting written http response
+	rr := httptest.NewRecorder()
+	router := routers.InitRouter()
+	byte, _ := json.Marshal(loginBody)
+	requestLogin, _ := http.NewRequest(http.MethodPost, "/api/sign-in", bytes.NewBuffer(byte))
+	router.ServeHTTP(rr, requestLogin)
+	var response app.Response
+	json.Unmarshal(rr.Body.Bytes(), &response)
+	bar := response.Data
+	foo := bar.(map[string]interface{})
+	token := "Bearer " + foo["access_token"].(string)
+	t.Run("Success", func(t *testing.T) {
+		_ = models.DeleteTaskByMemberID(1)
+		addTaskBody := []struct {
+			Data struct {
+				Name string `json:"name"`
+			}
+			Expected struct {
+				Message, Status string
+				ResponseCode    int
+			}
+		}{
+			{Data: struct {
+				Name string `json:"name"`
+			}{Name: "Task Name"}, Expected: struct {
+				Message, Status string
+				ResponseCode    int
+			}{Message: "success", Status: "success", ResponseCode: http.StatusOK}},
+			{Data: struct {
+				Name string `json:"name"`
+			}{Name: "Task Name"}, Expected: struct {
+				Message, Status string
+				ResponseCode    int
+			}{Message: "success", Status: "success", ResponseCode: http.StatusOK}},
+			{Data: struct {
+				Name string `json:"name"`
+			}{Name: "Task Name"}, Expected: struct {
+				Message, Status string
+				ResponseCode    int
+			}{Message: "success", Status: "success", ResponseCode: http.StatusOK}},
+			{Data: struct {
+				Name string `json:"name"`
+			}{Name: "Task Name"}, Expected: struct {
+				Message, Status string
+				ResponseCode    int
+			}{Message: "You had exceeded the limit task added per day. Please try again later.", Status: "error", ResponseCode: http.StatusBadRequest}},
+		}
+		for _, i := range addTaskBody {
+			// a response recorder for getting written http response
+			rr := httptest.NewRecorder()
+			router := routers.InitRouter()
+			byte, _ := json.Marshal(i.Data)
+			addTaskRequest, _ := http.NewRequest(http.MethodPost, "/api/task", bytes.NewBuffer(byte))
+			addTaskRequest.Header.Set(e.UserAuth, token)
+			router.ServeHTTP(rr, addTaskRequest)
+			var response app.Response
+			json.Unmarshal(rr.Body.Bytes(), &response)
+			assert.Equal(t, i.Expected.ResponseCode, rr.Code)
+			assert.Equal(t, i.Expected.Status, response.Status)
 		}
 	})
 }

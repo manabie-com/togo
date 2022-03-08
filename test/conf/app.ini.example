@@ -34,26 +34,4 @@ Host =
 Name =
 TablePrefix =
 
-[redis]
-Host = 127.0.0.1:6379
-Password =
-MaxIdle = 30
-MaxActive = 30
-IdleTimeout = 200
-
-[external]
-BonusURL = http://vkidsbns.securelayers.clao:8003/
-
-[path]
-ResourcePath = "http://std-member.securelayers.cloud/resources"
-MemberResourcePath = "http://std-member.securelayers.cloud/resources"
-MemberURL = "http://localhost:4300"
-# MemberURL = "https://oral-member.securelayers.cloud"
-
-[billplz]
-Collection = "roc2oquq"
-APIKey = "8b6a27e7-024a-4dc8-aea3-cadb8fd10103"
-XSignature = "S-tf_xxlEdQI5gB5J7l_BtkA"
-URL = "https://www.billplz-sandbox.com/api/v3/bills"
-
 # cp conf/app.ini ~/Documents/mygo/bin/conf/app.ini

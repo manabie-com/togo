@@ -13,7 +13,6 @@ type Task struct {
 	ID        int64         `gorm:"column:id;primary_key;auto_increment" db:"id"`
 	Name      string        `gorm:"column:name" db:"name"`
 	MemberID  int           `gorm:"column:member_id" db:"member_id"`
-	Status    int           `gorm:"column:status" db:"status"`
 	CreatedAt time.Time     `gorm:"column:created_at" db:"created_at"`
 	CreatedBy sql.NullInt64 `gorm:"column:created_by;default:null" db:"created_by"`
 	UpdatedAt sql.NullTime  `gorm:"column:updated_at;default:null" db:"updated_at"`
@@ -42,4 +41,28 @@ func (a *Task) CreateTask() (int64, error) {
 	} else {
 		return 0, err
 	}
+}
+
+func DeleteTaskByMemberID(memberID int) error {
+	updateSQLInit := `delete from %[1]s where %[1]s.member_id = ?;`
+	updateSQL := fmt.Sprintf(updateSQLInit, (Task{}).TableName())
+	if result, err := dbcon.GetSqlXDB().Exec(updateSQL, memberID); err != nil {
+		return err
+	} else if affectedRows, err := result.RowsAffected(); err != nil {
+		fmt.Printf("get affected failed, err:%v\n", err)
+		return err
+	} else {
+		fmt.Printf("update data success, affected rows:%d\n", affectedRows)
+	}
+	return nil
+}
+
+func (Task) GetLatestInserted() (*Task, error) {
+	selectSQLInit := `select * from %[1]s order by %[1]s.id desc limit 1;`
+	selectSQL := fmt.Sprintf(selectSQLInit, (Task{}).TableName())
+	var data Task
+	if err := dbcon.GetSqlXDB().Get(&data, selectSQL); err != nil {
+		return nil, err
+	}
+	return &data, nil
 }

@@ -21,4 +21,12 @@ func TestIsCorrectUser(t *testing.T) {
 		t.Logf("Expected: Username: test2 and Password: 123456 was right.")
 		t.Fail()
 	}
+	if is, _ := isCorrectUser("test", "123456"); is == true {
+		t.Logf("Expected: Username: test and Password: 123456 was wrong.")
+		t.Fail()
+	}
+	if is, _ := isCorrectUser("test1", "123"); is == true {
+		t.Logf("Expected: Username: test1 and Password: 123 was right.")
+		t.Fail()
+	}
 }

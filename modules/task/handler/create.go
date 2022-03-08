@@ -2,11 +2,11 @@ package handler
 
 import (
 	"errors"
-	"github.com/khoale193/togo/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/khoale193/togo/models"
 	"github.com/khoale193/togo/modules/task/service"
 	"github.com/khoale193/togo/pkg/app"
 	"github.com/khoale193/togo/pkg/e"
@@ -25,7 +25,7 @@ func CreateTask(c *gin.Context) {
 		return
 	}
 	if err := form.service.CreateTask(); err != nil {
-		appG.Response(c, http.StatusOK, e.Msg[e.ERROR], e.ERROR, nil)
+		appG.Response(c, http.StatusBadRequest, e.Msg[e.ERROR], e.ERROR, nil)
 		return
 	}
 	appG.Response(c, http.StatusOK, e.GetMsg(e.SUCCESS), e.SUCCESS, nil)
@@ -39,10 +39,10 @@ type CreateTaskFormValidator struct {
 func (v *CreateTaskFormValidator) BindAndValid(c *gin.Context) (int, error) {
 	err := app.BindAndValid(c, &v.TaskForm)
 	if err != nil {
-		return http.StatusOK, err
+		return http.StatusBadRequest, err
 	}
 	if (&models.Member{ID: int64(GetCurrentUserID(c))}).IsExceedLimitTaskPerDay() {
-		return http.StatusOK, errors.New(e.Msg[e.ERROR_IN_EXCEED_LIMIT_TASK_ADD_PER_DAY])
+		return http.StatusBadRequest, errors.New(e.Msg[e.ERROR_IN_EXCEED_LIMIT_TASK_ADD_PER_DAY])
 	}
 	v.service.Name = v.Name
 	v.service.MemberID = GetCurrentUserID(c)

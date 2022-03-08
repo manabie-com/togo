@@ -37,7 +37,7 @@ func (a *Member) IsExceedLimitTaskPerDay() bool {
 	var data struct {
 		IsExceed bool `db:"is_exceed"`
 	}
-	if err := dbcon.GetSqlXDB().Select(&data, selectSQL, time.Now().Format(e.LayoutISO)); err != nil {
+	if err := dbcon.GetSqlXDB().Get(&data, selectSQL, time.Now().Format(e.LayoutISO)); err != nil {
 		return true
 	}
 	return data.IsExceed
