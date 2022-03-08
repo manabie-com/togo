@@ -68,5 +68,5 @@ go test
 ```
 
 ### Things else
-- I have try to make 
+- First, this source was arranged by layer, I have tried to make the separated feature like modules: router, handler, service, model. 
 - The test case that exceeded the limit of added tasks per day was just suitable for my prepared data. I think the best should cover for any setting of limitation.
