@@ -20,6 +20,19 @@ func Setup() {
 	setupGormDB()
 }
 
+func SetupTest() {
+	setting.DatabaseSetting = &setting.Database{
+		Type:        "mysql",
+		User:        "root",
+		Password:    "root",
+		Host:        "127.0.0.1",
+		Name:        "db_togo_test",
+		TablePrefix: "",
+	}
+	setupSQLXDB()
+	setupGormDB()
+}
+
 func GetGormDB() *gorm.DB {
 	return gormDB
 }
