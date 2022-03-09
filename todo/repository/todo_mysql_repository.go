@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"github.com/triet-truong/todo/todo"
 	"github.com/triet-truong/todo/todo/model"
 	"github.com/triet-truong/todo/utils"
 	"gorm.io/driver/mysql"
@@ -11,7 +12,7 @@ type TodoMysqlRepository struct {
 	db *gorm.DB
 }
 
-func NewTodoMysqlRepository(dsn string) *TodoMysqlRepository {
+func NewTodoMysqlRepository(dsn string) todo.TodoRepository {
 	mysqlGorm, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	utils.FatalLog(err)
 	return &TodoMysqlRepository{

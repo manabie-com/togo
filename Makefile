@@ -1,19 +1,11 @@
 BINARY=engine
 export ENVIRONMENT=LOCAL
-test: 
-	go test -v -cover -covermode=atomic ./...
-
-engine:
-	go build -o ${BINARY} app/*.go
-
-unittest:
-	go test -short  ./...
-
-clean:
-	if [ -f ${BINARY} ] ; then rm ${BINARY} ; fi
 
 app.run:
 	go run ./app/main.go
+
+app.unittest:
+	go test -race -covermode=atomic -cover ./...
 
 docker.start:
 		docker-compose up -d;

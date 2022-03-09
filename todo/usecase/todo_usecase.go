@@ -22,20 +22,9 @@ func NewTodoUseCase(repo todo.TodoRepository, cacheStore todo.TodoCacheRepositor
 }
 
 func (u *TodoUseCase) AddTodo(todoDto dto.TodoDto) error {
-	cachedUser, err := u.cacheStore.GetCachedUser(todoDto.UserId)
-	user := model.UserModel{}
+	cachedUser, err := u.getCachedUser(todoDto)
 	if err != nil {
-		utils.ErrorLog(err)
-		user, err = u.repository.SelectUser(todoDto.UserId)
-		if err != nil {
-			utils.ErrorLog(err)
-			return fmt.Errorf("user not found")
-		}
-		cachedUser = model.UserRedisModel{
-			ID:               user.ID,
-			DailyRecordLimit: user.DailyRecordLimit,
-			CurrentUsage:     0,
-		}
+		return err
 	}
 
 	cachedUser.CurrentUsage++
@@ -43,16 +32,34 @@ func (u *TodoUseCase) AddTodo(todoDto dto.TodoDto) error {
 		return fmt.Errorf("exceeded daily limit")
 	}
 
-	err = u.repository.InsertItem(model.TodoItemModel{
+	if err = u.repository.InsertItem(model.TodoItemModel{
 		Content: todoDto.Content,
 		UserID:  todoDto.UserId,
 		IsDone:  false,
-	})
-	if err != nil {
+	}); err != nil {
 		utils.ErrorLog(err)
 		return err
 	}
 
 	u.cacheStore.SetUser(cachedUser)
 	return nil
+}
+
+func (u *TodoUseCase) getCachedUser(todoDto dto.TodoDto) (model.UserRedisModel, error) {
+	cachedUser, err := u.cacheStore.GetCachedUser(todoDto.UserId)
+	user := model.UserModel{}
+	if err != nil {
+		utils.ErrorLog(err)
+		user, err = u.repository.SelectUser(todoDto.UserId)
+		if err != nil {
+			utils.ErrorLog(err)
+			return model.UserRedisModel{}, fmt.Errorf("user not found")
+		}
+		cachedUser = model.UserRedisModel{
+			ID:               user.ID,
+			DailyRecordLimit: user.DailyRecordLimit,
+			CurrentUsage:     0,
+		}
+	}
+	return cachedUser, nil
 }

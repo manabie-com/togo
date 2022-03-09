@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
+	"github.com/triet-truong/todo/todo"
 	"github.com/triet-truong/todo/todo/model"
 	"github.com/triet-truong/todo/utils"
 )
@@ -16,7 +17,7 @@ type TodoRedisRepository struct {
 	rdb *redis.Client
 }
 
-func NewTodoRedisRepository(opts redis.Options) *TodoRedisRepository {
+func NewTodoRedisRepository(opts redis.Options) todo.TodoCacheRepository {
 	client := redis.NewClient(&opts)
 	err := client.Ping(context.TODO()).Err()
 	utils.FatalLog(err)
@@ -27,10 +28,9 @@ func NewTodoRedisRepository(opts redis.Options) *TodoRedisRepository {
 
 func (r *TodoRedisRepository) SetUser(user model.UserRedisModel) error {
 	json, _ := json.Marshal(user)
-
 	return r.rdb.Set(context.TODO(), fmt.Sprint(user.ID), string(json), time.Until(utils.EndOfCurrentDate())).Err()
-
 }
+
 func (r *TodoRedisRepository) GetCachedUser(id uint) (model.UserRedisModel, error) {
 	var res model.UserRedisModel
 	val, err := r.rdb.Get(context.TODO(), fmt.Sprint(id)).Result()

@@ -41,11 +41,9 @@ curl --location --request POST 'localhost:9090/user/todo' \
 ```
 
 ## Unit test
-
-TBD
+Run `make app.unittest`
 
 ## Integration test
-
 TBD
 
 ## [Database Schema](./scripts/database.sql)
