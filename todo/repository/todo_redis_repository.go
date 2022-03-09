@@ -28,7 +28,7 @@ func NewTodoRedisRepository(opts redis.Options) todo.TodoCacheRepository {
 
 func (r *TodoRedisRepository) SetUser(user model.UserRedisModel) error {
 	json, _ := json.Marshal(user)
-	return r.rdb.Set(context.TODO(), fmt.Sprint(user.ID), string(json), time.Until(utils.EndOfCurrentDate())).Err()
+	return r.rdb.Set(context.TODO(), fmt.Sprint(user.ID), string(json), time.Until(utils.EndOfCurrentDate(time.Now()))).Err()
 }
 
 func (r *TodoRedisRepository) GetCachedUser(id uint) (model.UserRedisModel, error) {
