@@ -1,6 +1,8 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, Repository } from 'typeorm';
+import bcrypt from 'bcrypt';
+import { saltRounds } from '../auth/constants.js';
 import { User } from './users.entity.js';
 import { Todo } from '../todo/todo.entity.js';
 
@@ -18,8 +20,10 @@ export class UserService {
         status: HttpStatus.BAD_REQUEST,
         error: 'Username already existed',
       }, HttpStatus.BAD_REQUEST);
-    else
+    else {
+      user.password = await bcrypt.hash(user.password, saltRounds);
       await this.usersRepository.save(user);
+    }
   }
 
   async createTodo(username: string, content: string, todoCount: number): Promise<Todo> {
