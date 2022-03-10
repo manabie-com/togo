@@ -2,9 +2,12 @@ import {
   Entity,
   Column,
   PrimaryColumn,
+  OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Todo } from '../todo/todo.entity.js';
+
 @Entity()
 export class User {
   @PrimaryColumn()
@@ -15,6 +18,9 @@ export class User {
 
   @Column('int')
   limitPerDay: number;
+
+  @OneToMany('Todo', 'user', { cascade: true })
+  todos: Todo[];
 
   @CreateDateColumn()
   createAt: Date;

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller.js';
+import { TodoModule } from './todo/todo.module.js';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { getConnectionOptions } from 'typeorm';
 import { AuthModule } from './auth/auth.module.js';
@@ -15,6 +16,7 @@ TypeOrmModule.forRootAsync({
 @Module({
   imports: [
     TypeOrmModule.forRoot(),
+    TodoModule,
     AuthModule,
     UserModule
   ],

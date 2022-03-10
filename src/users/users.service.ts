@@ -2,6 +2,8 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, Repository } from 'typeorm';
 import { User } from './users.entity.js';
+import { Todo } from '../todo/todo.entity.js';
+
 @Injectable()
 export class UserService {
   constructor(
@@ -18,6 +20,22 @@ export class UserService {
       }, HttpStatus.BAD_REQUEST);
     else
       await this.usersRepository.save(user);
+  }
+
+  async createTodo(username: string, content: string, todoCount: number): Promise<Todo> {
+    const user = await this.findOne(username);
+
+    if (todoCount >= user.limitPerDay)
+      throw new HttpException({
+        status: HttpStatus.BAD_REQUEST,
+        error: "Daily todo's limit exceeded",
+      }, HttpStatus.BAD_REQUEST);
+
+    const todo = new Todo();
+    todo.content = content;
+    user.todos.push(todo);
+    await this.usersRepository.save(user);
+    return todo;
   }
 
   async findOne(username: string): Promise<User> {
