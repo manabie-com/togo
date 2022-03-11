@@ -6,7 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Todo } from '../todo/todo.entity.js';
+import { Todo } from '../todo/todo.entity';
 
 @Entity()
 export class User {

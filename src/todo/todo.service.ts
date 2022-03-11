@@ -2,7 +2,7 @@ import { startOfToday, endOfToday } from 'date-fns';
 import { Injectable, Options } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, Repository, Between, In } from 'typeorm';
-import { Todo, TodoStatus } from './todo.entity.js';
+import { Todo, TodoStatus } from './todo.entity';
 
 @Injectable()
 export class TodoService {

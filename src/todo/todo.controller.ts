@@ -10,10 +10,10 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
-import { Todo, TodoStatus } from './todo.entity.js';
-import { TodoService } from './todo.service.js';
-import { UserService } from '../users/users.service.js';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { Todo, TodoStatus } from './todo.entity';
+import { TodoService } from './todo.service';
+import { UserService } from '../users/users.service';
 
 @Controller()
 export class TodoController {

@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller.js';
-import { TodoModule } from './todo/todo.module.js';
+import { AppController } from './app.controller';
+import { TodoModule } from './todo/todo.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { getConnectionOptions } from 'typeorm';
-import { AuthModule } from './auth/auth.module.js';
-import { UserModule } from './users/users.module.js';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './users/users.module';
 
 TypeOrmModule.forRootAsync({
   useFactory: async () =>

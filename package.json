@@ -5,7 +5,6 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
-  "type": "module",
   "exports": "./index.js",
   "scripts": {
     "prebuild": "rimraf dist",

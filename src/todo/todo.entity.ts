@@ -6,7 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from '../users/users.entity.js';
+import { User } from '../users/users.entity';
 
 export enum TodoStatus {
   ACTIVE = 'ACTIVE',

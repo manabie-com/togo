@@ -2,9 +2,9 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, Repository } from 'typeorm';
 import bcrypt from 'bcrypt';
-import { saltRounds } from '../auth/constants.js';
-import { User } from './users.entity.js';
-import { Todo } from '../todo/todo.entity.js';
+import { saltRounds } from '../auth/constants';
+import { User } from './users.entity';
+import { Todo } from '../todo/todo.entity';
 
 @Injectable()
 export class UserService {
