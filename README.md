@@ -28,3 +28,117 @@
 - We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
 
 Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+
+### Run code locally
+
+```sh
+~ git clone https://github.com/Legacy107/togo.git
+~ cd togo
+~ npm i
+~ npm run start
+```
+
+### Sample usage
+
+#### create a new user
+```sh
+~ curl --location --request POST 'localhost:5050/user' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "username": "firstUser",
+    "password": "example",
+    "limitPerDay": 5
+}'
+```
+
+#### login
+```sh
+~ curl --location --request POST 'localhost:5050/auth/login' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "username": "firstUser",
+    "password": "example"
+}'
+# response:
+{"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZpcnN0VXNlciIsImlhdCI6MTY0NzA5MzEzNSwiZXhwIjoxNjQ3MTA3NTM1fQ.5Xn8breH_VuidyagX9iLbgXpYNrDqHZjtmMwTH-s1SM"}
+```
+
+#### create todo
+```sh
+curl --location --request POST 'localhost:5050/tasks' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZpcnN0VXNlciIsImlhdCI6MTY0NzA5MzEzNSwiZXhwIjoxNjQ3MTA3NTM1fQ.5Xn8breH_VuidyagX9iLbgXpYNrDqHZjtmMwTH-s1SM' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "content": "first todo"
+}'
+# response
+{"data":{"content":"first todo","id":"303fade2-ea8c-4259-87a5-d7dff27d4844","status":"ACTIVE","createAt":"2022-03-12T13:54:56.036Z","updateAt":"2022-03-12T13:54:56.036Z"}}
+```
+
+#### get user's todos
+```sh
+curl --location --request GET 'localhost:5050/tasks' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZpcnN0VXNlciIsImlhdCI6MTY0NzA5MzEzNSwiZXhwIjoxNjQ3MTA3NTM1fQ.5Xn8breH_VuidyagX9iLbgXpYNrDqHZjtmMwTH-s1SM'
+# response
+{"data":[{"id":"303fade2-ea8c-4259-87a5-d7dff27d4844","content":"first todo","status":"ACTIVE","createAt":"2022-03-12T13:54:56.036Z","updateAt":"2022-03-12T13:54:56.036Z"}]}
+```
+
+#### get user's todos with status
+```sh
+curl --location --request GET 'localhost:5050/tasks?status=completed' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZpcnN0VXNlciIsImlhdCI6MTY0NzA5MzEzNSwiZXhwIjoxNjQ3MTA3NTM1fQ.5Xn8breH_VuidyagX9iLbgXpYNrDqHZjtmMwTH-s1SM'
+# response
+{"data":[]}
+```
+
+#### update todo's status
+```sh
+curl --location --request PUT 'localhost:5050/tasks' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZpcnN0VXNlciIsImlhdCI6MTY0NzA5MzEzNSwiZXhwIjoxNjQ3MTA3NTM1fQ.5Xn8breH_VuidyagX9iLbgXpYNrDqHZjtmMwTH-s1SM' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "id": "303fade2-ea8c-4259-87a5-d7dff27d4844",
+    "status": "COMPLETED"
+}'
+```
+
+#### update many todos' status
+```sh
+curl --location --request PUT 'localhost:5050/many-tasks' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZpcnN0VXNlciIsImlhdCI6MTY0NzA5MzEzNSwiZXhwIjoxNjQ3MTA3NTM1fQ.5Xn8breH_VuidyagX9iLbgXpYNrDqHZjtmMwTH-s1SM' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "ids": [
+        "303fade2-ea8c-4259-87a5-d7dff27d4844"
+    ],
+    "status": "COMPLETED"
+}'
+```
+
+#### delete todo by Id
+```sh
+curl --location --request DELETE 'localhost:5050/tasks' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZpcnN0VXNlciIsImlhdCI6MTY0NzA5MzEzNSwiZXhwIjoxNjQ3MTA3NTM1fQ.5Xn8breH_VuidyagX9iLbgXpYNrDqHZjtmMwTH-s1SM' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "id": "303fade2-ea8c-4259-87a5-d7dff27d4844"
+}'
+```
+
+#### delete all user's todos
+```sh
+curl --location --request DELETE 'localhost:5050/tasks' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZpcnN0VXNlciIsImlhdCI6MTY0NzA5MzEzNSwiZXhwIjoxNjQ3MTA3NTM1fQ.5Xn8breH_VuidyagX9iLbgXpYNrDqHZjtmMwTH-s1SM'
+```
+
+### Run test locally
+
+#### unit test
+```sh
+~ npm run test
+```
+
+#### e2e test
+```sh
+~ npm run test:e2e
+```
