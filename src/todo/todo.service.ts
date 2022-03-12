@@ -1,13 +1,12 @@
 import { startOfToday, endOfToday } from 'date-fns';
-import { Injectable, Options } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, Repository, Between, In } from 'typeorm';
+import { Repository, Between, In } from 'typeorm';
 import { Todo, TodoStatus } from './todo.entity';
 
 @Injectable()
 export class TodoService {
   constructor(
-    private connection: Connection,
     @InjectRepository(Todo)
     private todosRepository: Repository<Todo>,
   ) {}

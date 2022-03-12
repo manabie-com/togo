@@ -1,20 +1,20 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import bcrypt from 'bcrypt';
 import { saltRounds } from '../auth/constants';
 import { User } from './users.entity';
 import { Todo } from '../todo/todo.entity';
+import { CreateUserDto } from '../dto/create-user.dto';
 
 @Injectable()
 export class UserService {
   constructor(
-    private connection: Connection,
     @InjectRepository(User)
     private usersRepository: Repository<User>,
   ) {}
 
-  async createUser(user: User) {
+  async createUser(user: CreateUserDto) {
     if (await this.usersRepository.findOne(user.username))
       throw new HttpException({
         status: HttpStatus.BAD_REQUEST,
@@ -22,12 +22,13 @@ export class UserService {
       }, HttpStatus.BAD_REQUEST);
     else {
       user.password = await bcrypt.hash(user.password, saltRounds);
+      user = this.usersRepository.create(user);
       await this.usersRepository.save(user);
     }
   }
 
   async createTodo(username: string, content: string, todoCount: number): Promise<Todo> {
-    const user = await this.findOne(username);
+    const user = await this.findUser(username);
 
     if (todoCount >= user.limitPerDay)
       throw new HttpException({
@@ -42,7 +43,7 @@ export class UserService {
     return todo;
   }
 
-  async findOne(username: string): Promise<User> {
+  async findUser(username: string): Promise<User> {
     return this.usersRepository.findOne({
       where: { username: username },
       relations: ['todos'],
