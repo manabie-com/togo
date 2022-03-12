@@ -1,0 +1,20 @@
+{
+    "Server": {
+        "Env": "Debug",
+        "Host": "localhost",
+        "Port": ":9099"
+    },
+    "Log": {
+        "Path": "./log/",
+        "FileName": "todo.log"
+    },
+    "Postgres": {
+        "Name": "todo",
+        "DSN": "postgres://postgres:fUaECg4SIei7@localhost:5432/postgres?search_path=public&sslmode=disable",
+        "MaxOpenConnections": 100,
+        "MaxIdleConnections": 100,
+        "Active": 50,
+        "Idle": 50,
+        "Lifetime": 60
+    }
+}
