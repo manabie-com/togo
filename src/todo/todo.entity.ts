@@ -22,7 +22,7 @@ export class Todo {
   content: string;
 
   @Column({
-    type: "enum",
+    type: 'enum',
     enum: TodoStatus,
     default: TodoStatus.ACTIVE,
   })

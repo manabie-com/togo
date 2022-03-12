@@ -26,7 +26,7 @@ export class TodoController {
   @Get('tasks?')
   async getAllTodo(
     @Request() req,
-    @Query('status') status: TodoStatus
+    @Query('status') status: TodoStatus,
   ): Promise<{ data: Todo[] }> {
     return { data: await this.todoService.getTodos(req.user.username, status) };
   }
@@ -35,22 +35,24 @@ export class TodoController {
   @Post('tasks')
   async createTodo(
     @Request() req,
-    @Body('content') content: string
+    @Body('content') content: string,
   ): Promise<{ data: Todo }> {
     const username = req.user.username;
     const todoCount = await this.todoService.countTodoDaily(username);
-    return { data: await this.userService.createTodo(username, content, todoCount) };
+    return {
+      data: await this.userService.createTodo(username, content, todoCount),
+    };
   }
 
   @UseGuards(JwtAuthGuard)
   @Put('tasks')
-  async updateStatus(@Body() body: {id: string, status: TodoStatus}) {
+  async updateStatus(@Body() body: { id: string; status: TodoStatus }) {
     await this.todoService.setTodoStatus(body.id, body.status);
   }
 
   @UseGuards(JwtAuthGuard)
   @Put('many-tasks')
-  async updateManyStatus(@Body() body: {ids: string[], status: TodoStatus}) {
+  async updateManyStatus(@Body() body: { ids: string[]; status: TodoStatus }) {
     await this.todoService.setManyTodoStatus(body.ids, body.status);
   }
 

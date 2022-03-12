@@ -11,12 +11,19 @@ export class TodoService {
     private todosRepository: Repository<Todo>,
   ) {}
 
-  async getTodos(username: string, status?: TodoStatus | undefined): Promise<Todo[]> {
-    let options: { user: { username: string }, status?: TodoStatus | undefined } = {
-      user: { username: username }
+  async getTodos(
+    username: string,
+    status?: TodoStatus | undefined,
+  ): Promise<Todo[]> {
+    const options: {
+      user: { username: string };
+      status?: TodoStatus | undefined;
+    } = {
+      user: { username: username },
     };
-    if (status)
+    if (status) {
       options.status = status;
+    }
 
     return await this.todosRepository.find({
       where: options,
@@ -31,7 +38,7 @@ export class TodoService {
       where: {
         user: { username: username },
         createAt: Between(startOfToday(), endOfToday()),
-      }
+      },
     });
   }
 
@@ -40,10 +47,7 @@ export class TodoService {
   }
 
   async setManyTodoStatus(ids: string[], status: TodoStatus) {
-    await this.todosRepository.update(
-      { id: In(ids) },
-      { status },
-    );
+    await this.todosRepository.update({ id: In(ids) }, { status });
   }
 
   async deleteTodoById(id: string) {
@@ -54,7 +58,7 @@ export class TodoService {
     await this.todosRepository.delete({
       user: {
         username: username,
-      }
+      },
     });
   }
 }

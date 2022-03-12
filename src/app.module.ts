@@ -14,12 +14,7 @@ TypeOrmModule.forRootAsync({
 });
 
 @Module({
-  imports: [
-    TypeOrmModule.forRoot(),
-    TodoModule,
-    AuthModule,
-    UserModule
-  ],
+  imports: [TypeOrmModule.forRoot(), TodoModule, AuthModule, UserModule],
   controllers: [AppController],
 })
 export class AppModule {}

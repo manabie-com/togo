@@ -16,10 +16,13 @@ export class UserService {
 
   async createUser(user: CreateUserDto) {
     if (await this.usersRepository.findOne(user.username))
-      throw new HttpException({
-        status: HttpStatus.BAD_REQUEST,
-        error: 'Username already existed',
-      }, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Username already existed',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     else {
       user.password = await bcrypt.hash(user.password, saltRounds);
       user = this.usersRepository.create(user);
@@ -27,14 +30,21 @@ export class UserService {
     }
   }
 
-  async createTodo(username: string, content: string, todoCount: number): Promise<Todo> {
+  async createTodo(
+    username: string,
+    content: string,
+    todoCount: number,
+  ): Promise<Todo> {
     const user = await this.findUser(username);
 
     if (todoCount >= user.limitPerDay)
-      throw new HttpException({
-        status: HttpStatus.BAD_REQUEST,
-        error: "Daily todo's limit exceeded",
-      }, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: "Daily todo's limit exceeded",
+        },
+        HttpStatus.BAD_REQUEST,
+      );
 
     const todo = new Todo();
     todo.content = content;
