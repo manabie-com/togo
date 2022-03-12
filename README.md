@@ -31,10 +31,28 @@ Thank you for spending time to read and attempt our take-home assessment. We are
 
 ### Run code locally
 
+- Clone and install package
 ```sh
 ~ git clone https://github.com/Legacy107/togo.git
 ~ cd togo
 ~ npm i
+```
+
+- Setup a local mysql database
+
+- Add .env file following the example bellow
+```sh
+JWT_SECRET="mysecret"
+SALT_ROUND="10"
+DB_HOST="localhost"
+DB_PORT="3306"
+DB_USERNAME="root"
+DB_PASSWORD="root"
+DB_DATABASE="manadb"
+```
+
+- Run
+```sh
 ~ npm run start
 ```
 
