@@ -1,4 +1,4 @@
-package todo
+package domain
 
 import (
 	"github.com/triet-truong/todo/todo/model"

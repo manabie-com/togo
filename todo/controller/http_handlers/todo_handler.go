@@ -2,18 +2,19 @@ package http_handlers
 
 import (
 	"encoding/json"
+	"errors"
 
 	"github.com/labstack/echo"
-	"github.com/sirupsen/logrus"
-	"github.com/triet-truong/todo/todo"
+	"github.com/triet-truong/todo/domain"
 	"github.com/triet-truong/todo/todo/dto"
+	"github.com/triet-truong/todo/utils"
 )
 
 type TodoHandler struct {
-	usecase todo.TodoUseCase
+	usecase domain.TodoUseCase
 }
 
-func NewTodoHandler(usecase todo.TodoUseCase) TodoHandler {
+func NewTodoHandler(usecase domain.TodoUseCase) TodoHandler {
 	return TodoHandler{
 		usecase: usecase,
 	}
@@ -23,7 +24,7 @@ func (h *TodoHandler) Add(ctx echo.Context) error {
 	var bodyObject dto.TodoDto
 	err := json.NewDecoder(ctx.Request().Body).Decode(&bodyObject)
 	if err != nil {
-		logrus.Error("malformed JSON body")
+		utils.ErrorLog(errors.New("malformed JSON body"))
 		ctx.Error(err)
 		return err
 	}

@@ -3,18 +3,18 @@ package usecase
 import (
 	"fmt"
 
-	"github.com/triet-truong/todo/todo"
+	"github.com/triet-truong/todo/domain"
 	"github.com/triet-truong/todo/todo/dto"
 	"github.com/triet-truong/todo/todo/model"
 	"github.com/triet-truong/todo/utils"
 )
 
 type TodoUseCase struct {
-	repository todo.TodoRepository
-	cacheStore todo.TodoCacheRepository
+	repository domain.TodoRepository
+	cacheStore domain.TodoCacheRepository
 }
 
-func NewTodoUseCase(repo todo.TodoRepository, cacheStore todo.TodoCacheRepository) *TodoUseCase {
+func NewTodoUseCase(repo domain.TodoRepository, cacheStore domain.TodoCacheRepository) *TodoUseCase {
 	return &TodoUseCase{
 		repository: repo,
 		cacheStore: cacheStore,

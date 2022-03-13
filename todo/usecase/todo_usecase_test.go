@@ -17,6 +17,10 @@ type TodoUsecaseTestSuite struct {
 	suite.Suite
 }
 
+func TestUsecaseTestSuite(t *testing.T) {
+	suite.Run(t, new(TodoUsecaseTestSuite))
+}
+
 func (s *TodoUsecaseTestSuite) TestGivenUserFoundInCache_WhenAddingItem_ShouldReturnNoError() {
 	userId := uint(1)
 	t := s.T()
@@ -125,8 +129,4 @@ func (s *TodoUsecaseTestSuite) TestGivenCannotInsertItemToDB_WhenAddingItem_Shou
 
 	mockRepo.AssertNumberOfCalls(t, "InsertItem", 1)
 	mockCacheRepo.AssertNumberOfCalls(t, "SetUser", 0)
-}
-
-func TestUsecaseTestSuite(t *testing.T) {
-	suite.Run(t, new(TodoUsecaseTestSuite))
 }

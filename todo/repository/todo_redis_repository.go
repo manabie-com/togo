@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/triet-truong/todo/todo"
+	"github.com/triet-truong/todo/domain"
 	"github.com/triet-truong/todo/todo/model"
 	"github.com/triet-truong/todo/utils"
 )
@@ -17,7 +17,7 @@ type TodoRedisRepository struct {
 	rdb *redis.Client
 }
 
-func NewTodoRedisRepository(opts redis.Options) todo.TodoCacheRepository {
+func NewTodoRedisRepository(opts redis.Options) domain.TodoCacheRepository {
 	client := redis.NewClient(&opts)
 	err := client.Ping(context.TODO()).Err()
 	utils.FatalLog(err)

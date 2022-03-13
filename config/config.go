@@ -23,10 +23,10 @@ type config struct {
 }
 
 // Load load config
-func Load() error {
+func Load() {
 	env := os.Getenv("ENVIRONMENT")
 	if env == "LOCAL" {
-		// fmt.Println(env)
+		fmt.Println(env)
 		viper.SetConfigFile(".env")
 		err := viper.ReadInConfig()
 		utils.FatalLog(err)
@@ -43,12 +43,9 @@ func Load() error {
 		cacheHost:  viper.GetString("CACHE_HOST"),
 		cachePort:  viper.GetInt("CACHE_PORT"),
 	}
-
-	return nil
 }
 
-// DBConnectionURL returns db connection url
-func DBConnectionURL() string {
+func DatabaseDSN() string {
 	return fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?allowNativePasswords=True&parseTime=True", appConfig.dbUsername, appConfig.dbPassword, appConfig.dbHost, appConfig.dbPort, appConfig.dbName)
 }
 

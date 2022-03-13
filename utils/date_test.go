@@ -1,7 +1,6 @@
 package utils_test
 
 import (
-	"fmt"
 	"math/rand"
 	"testing"
 	"time"
@@ -31,10 +30,8 @@ func initTests() []test {
 }
 func TestEndOfCurrentDate(t *testing.T) {
 	tests := initTests()
-	format := "2006-01-02T15:04:05"
 	for _, v := range tests {
 		got := utils.EndOfCurrentDate(v.input)
-		fmt.Printf("Input: %v, got: %v\n", v.input.Format(format), got.Format(format))
 
 		//Same day with input's day
 		assert.Equal(t, v.input.Format("2006-01-02"), got.Format("2006-01-02"))
