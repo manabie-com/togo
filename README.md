@@ -31,7 +31,7 @@ Thank you for spending time to read and attempt our take-home assessment. We are
 
 ### Run code locally
 
-- Clone and install package
+- Clone and install packages
 ```sh
 ~ git clone https://github.com/Legacy107/togo.git
 ~ cd togo
@@ -40,7 +40,7 @@ Thank you for spending time to read and attempt our take-home assessment. We are
 
 - Setup a local mysql database
 
-- Add .env file following the example bellow
+- Add .env file following the example below
 ```sh
 JWT_SECRET="mysecret"
 SALT_ROUND="10"
