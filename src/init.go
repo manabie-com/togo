@@ -27,7 +27,8 @@ func (sv *ApiServer) Run() error {
 	app := fiber.New()
 	app.Use(cors.New())
 
-	route.Init(app)
+	r := route.New()
+	r.Install(app)
 
 	return app.Listen(sv.conf.Port)
 }

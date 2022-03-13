@@ -1,19 +1,25 @@
 package route
 
 import (
+	"github.com/HoangMV/togo/src/biz"
 	"github.com/gofiber/fiber/v2"
 )
 
 type Route struct {
+	biz *biz.Biz
 }
 
-func Init(app *fiber.App) {
+func New() *Route {
+	return &Route{biz.New()}
+}
 
-	// v1 := app.Group("/api/v1")
-	// v1.Get("/healthcheck/status")
+func (r *Route) Install(app *fiber.App) {
 
-	// v1.Post("/register")
-	// v1.Post("/login")
+	v1 := app.Group("/api/v1")
+	v1.Get("/healthcheck/status")
 
-	// v1.Post("/todo")
+	v1.Post("/register")
+	v1.Post("/login")
+
+	v1.Post("/todo")
 }

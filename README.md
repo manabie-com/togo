@@ -1,15 +1,20 @@
 
-# Bee's To-do
+# Bee's Todo
 Backend APIs for simple todo app
 
 ## How to run it locally?
 ### Requirements
 - Golang 1.7+
-- PostgreSQL
+- PostgreSQL (in ./env/postgres)
 
 ### Setting config.json file
 >```
 >./config.json
+>```
+
+### Run Script Create or Update table
+>```go
+>go run .\env\postgres\create_db_scripts\main.go 
 >```
 
 ### Run
