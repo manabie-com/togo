@@ -1,0 +1,51 @@
+{
+  "name": "manabie_interview",
+  "version": "1.0.0",
+  "description": "Manabile Assignment Backend Engineer",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./bin/www",
+    "dev": "nodemon ./bin/www",
+    "lint": "./node_modules/.bin/eslint --ext .js ./controllers ./helpers ./routes ./libs ./middlewares ./models --fix",
+    "test": "mocha --timeout 10000"
+  },
+  "author": "luongquocdinh",
+  "license": "ISC",
+  "keywords": [
+    "NodeJS",
+    "MySQL"
+  ],
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "body-parser": "^1.19.0",
+    "config": "^3.1.0",
+    "cookie-parser": "^1.4.4",
+    "cors": "^2.8.5",
+    "debug": "^4.1.1",
+    "dotenv": "^8.0.0",
+    "express": "^4.16.4",
+    "express-session": "^1.16.1",
+    "express-useragent": "^1.0.12",
+    "express-validator": "^5.3.1",
+    "fs": "0.0.1-security",
+    "http-errors": "^1.7.2",
+    "https": "^1.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "morgan": "^1.9.1",
+    "mysql2": "^2.3.2",
+    "node-fetch": "^3.2.2",
+    "sequelize": "^6.7.0",
+    "serverless-http": "^2.7.0",
+    "util": "^0.12.4",
+    "validatorjs": "^3.22.1"
+  },
+  "devDependencies": {
+    "chai": "^4.3.6",
+    "chai-http": "^4.3.0",
+    "eslint": "^5.16.0",
+    "eslint-config-google": "^0.12.0",
+    "mocha": "^9.2.2",
+    "nodemon": "^1.19.0",
+    "sequelize-cli": "^6.4.1"
+  }
+}

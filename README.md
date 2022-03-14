@@ -1,30 +1,110 @@
-### Requirements
+# NodeJS API
+This is a nodejs API (MVC)
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+## Installation
 
-### Notes
+Install the packages
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+```bash
+npm install
+```
 
-### How to submit your solution?
+Run migration and seeder
+```bash
+cd db
+```
+```bash
+npx sequelize-cli db:migrate
+```
+```bash
+npx sequelize-cli db:seed:all
+```
 
-- Fork this repo and show us your development progress via a PR
 
-### Interesting facts about Manabie
+Run the program - dev env
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+```bash
+npm run dev
+```
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+## Run API
+
+You can import link https://www.getpostman.com/collections/8c5a8007b02e6d9f147e into Postman
+* Login API http://localhost:8000/login
+    * Method: POST
+    * Header: 
+        ```json
+        {
+          "Content-Type": "application/json"
+        }
+        ```
+    * Body content
+        ```json
+        {
+          "email": "admin@gmail.com",
+          "password": "admin123"
+        }
+        ```
+* Tasks API http://localhost:8000/tasks
+  * Method: POST
+  * Header: 
+    ```json
+    {
+      "Content-Type": "application/json",
+      "authorization": "Bearer {TOKEN}"
+    }
+    ```
+  * Body content
+      ```json
+      {
+        "error": false,
+        "message": "",
+        "data": [
+            {
+                "id": 2,
+                "name": "Task 1",
+                "description": "Write API",
+                "status": "in-process",
+                "estimated_time": 1647047902,
+                "due_date": 1647047902,
+                "user_id": 2,
+                "created_at": 1646961402,
+                "updated_at": 1646961402
+            }
+        ]
+      }
+      ```
+* Users API http://localhost:8000/users
+  * Method: POST
+  * Header: 
+    ```json
+    {
+      "Content-Type": "application/json",
+      "authorization": "Bearer {TOKEN}"
+    }
+    ```
+  * Body content
+      ```json
+      {
+        "error": false,
+        "message": "",
+        "data": [
+            {
+                "id": 1,
+                "name": "Admin",
+                "email": "admin@gmail.com",
+                "password": "$2b$10$N.XayDSVMF5FKYedKRofgOI7vxVwjqLz90A9V8ibyzsIpZV0hGePm",
+                "status": "active",
+                "role": "admin",
+                "created_at": 1646873640,
+                "updated_at": 1646873640
+            }
+        ]
+      }
+      ```
+## Unit Test
+Run the program
+
+```bash
+npm run test
+```
