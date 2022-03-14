@@ -1,30 +1,51 @@
-### Requirements
+# To do API server
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+## Requirements
 
-### Notes
+Implement one single API which accepts a todo task and records it
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+- There is a maximum limit of N tasks per user that can be added per day.
+- Different users can have different maximum daily limit.
 
-### How to submit your solution?
+## Solution
 
-- Fork this repo and show us your development progress via a PR
+Before inserting any user's to-do item to DB, check if their daily usage have exceeded limit or not. When an item is sucessfully added, their daily usage will increment by one (daily_usage++).
+The user's daily usage is stored in a cache storage, specifically Redis, with TTL until the end of the current day, before resetting back to 0.
 
-### Interesting facts about Manabie
+### System Design
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+![alt text](./images/manabie.jpeg)
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+### Backend structure
+
+![alt text](./images/clean-arch.png)
+References:
+
+- <https://github.com/bxcodec/go-clean-arch>
+- <https://github.com/arielizuardi/golang-backend-blog>
+
+## How to run
+
+- `docker-compose up -d` to deploy local MySQL (port 3306) and Redis (port 6379).
+- `export ENVIRONMENT=LOCAL`: make application read configs from .env file.
+- `go run ./app/main.go` to start running back-end application (port 9090).
+- Try sample request:
+
+```bash
+curl --location --request POST 'localhost:9090/user/todo' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "content": "Hello world",
+    "user_id": 1
+}'
+```
+
+## Unit test
+Run `make app.unittest`
+
+## Integration test
+TBD
+
+## [Database Schema](./scripts/database.sql)
+
+## [External storages](./docker-compose.yaml)
