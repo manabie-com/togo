@@ -1,6 +1,8 @@
 package dao
 
 import (
+	"database/sql"
+
 	"github.com/HoangMV/togo/lib/pgsql"
 	"github.com/HoangMV/togo/src/models/entity"
 )
@@ -58,7 +60,7 @@ func (dao *DAO) UpdateTodo(obj *entity.Todo) error {
 	WHERE
 		id=$3;`
 
-	_, err := dao.db.ExecContext(ctx, query, obj.UserID, obj.Content, obj.Status)
+	_, err := dao.db.ExecContext(ctx, query, obj.Content, obj.Status, obj.ID)
 	return err
 }
 
@@ -68,14 +70,14 @@ func (dao *DAO) GetUserByUsername(username string) (*entity.User, error) {
 
 	query := `
 	SELECT 
-		id, username, password, created_at, updated_at
+		id, username, password, created_at, updated_at 
 	FROM 
-		users
-	WHERE
-		username = $1; 
+		users 
+	WHERE 
+		username LIKE $1; 
 	`
 	user := &entity.User{}
-	err := dao.db.GetContext(ctx, &user, query, username)
+	err := dao.db.GetContext(ctx, user, query, username)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +85,7 @@ func (dao *DAO) GetUserByUsername(username string) (*entity.User, error) {
 	return user, nil
 }
 
-func (dao *DAO) SelectTodoByUserID(userID int64) (*entity.Todo, error) {
+func (dao *DAO) SelectTodosByUserID(userID int, size, index int) ([]entity.Todo, error) {
 	ctx, cancel := pgsql.GetDefaultContext()
 	defer cancel()
 
@@ -93,19 +95,22 @@ func (dao *DAO) SelectTodoByUserID(userID int64) (*entity.Todo, error) {
 	FROM
 		todos
 	WHERE
-		user_id = $1;
+		user_id = $1
+	ORDER BY 
+		created_at DESC
+	LIMIT $2 OFFSET $3;
 	`
 
-	todo := &entity.Todo{}
-	err := dao.db.SelectContext(ctx, &todo, query, userID)
+	listTodo := make([]entity.Todo, 0)
+	err := dao.db.SelectContext(ctx, &listTodo, query, userID, size, index*size)
 	if err != nil {
 		return nil, err
 	}
 
-	return todo, nil
+	return listTodo, nil
 }
 
-func (dao *DAO) CountUserTodoInCurrentDay(userID int64) (int, error) {
+func (dao *DAO) CountUserTodoInCurrentDay(userID int) (int, error) {
 	ctx, cancel := pgsql.GetDefaultContext()
 	defer cancel()
 
@@ -117,18 +122,21 @@ func (dao *DAO) CountUserTodoInCurrentDay(userID int64) (int, error) {
 	WHERE
 		user_id = $1 
 		AND created_at <  date_trunc('day', now()) + interval '1 day'
-		AND created_ad >= date_trunc('day', now()); 
+		AND created_at >= date_trunc('day', now()); 
 	`
 	var count int
 	err := dao.db.GetContext(ctx, &count, query, userID)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return 0, nil
+		}
 		return -1, err
 	}
 
 	return count, nil
 }
 
-func (dao *DAO) GetMaxUserTodoOneDay(userID int64) (int, error) {
+func (dao *DAO) GetMaxUserTodoOneDay(userID int) (int, error) {
 	ctx, cancel := pgsql.GetDefaultContext()
 	defer cancel()
 

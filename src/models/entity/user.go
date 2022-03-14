@@ -3,9 +3,9 @@ package entity
 import "time"
 
 type User struct {
-	ID        int64
-	Username  string
-	Password  string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID        int       `db:"id"`
+	Username  string    `db:"username"`
+	Password  string    `db:"password"`
+	CreatedAt time.Time `db:"created_at"`
+	UpdatedAt time.Time `db:"updated_at"`
 }

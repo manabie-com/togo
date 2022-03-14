@@ -32,7 +32,7 @@ func WriteSuccessEmptyContent(c *fiber.Ctx) error {
 func WriteError(c *fiber.Ctx, status int, err error) error {
 	res := Response{
 		Message: "Error",
-		Data:    err,
+		Data:    err.Error(),
 		Status:  status,
 	}
 

@@ -204,6 +204,14 @@ var createTables = map[string]string{
 			FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 		);
 
+		CREATE INDEX "todos_created_at_idx" ON "public"."todos" USING btree (
+			"created_at" "pg_catalog"."timestamptz_ops" DESC NULLS LAST
+		);
+		  
+		CREATE INDEX "todos_user_id_idx" ON "public"."todos" USING btree (
+			"user_id" "pg_catalog"."int4_ops" ASC NULLS LAST
+		);
+
 		CREATE TRIGGER tg_todos_updated_at
 		BEFORE UPDATE
 		ON  todos
@@ -213,7 +221,7 @@ var createTables = map[string]string{
 
 		CREATE TABLE user_todo_config (
 			user_id INT PRIMARY KEY NOT NULL, 
-			max_todo INT NOT NULL,
+			max_todo INT NOT NULL DEFAULT 10,
 
 			created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
 			updated_at TIMESTAMP WITH TIME ZONE NOT NULL  DEFAULT CURRENT_TIMESTAMP,
