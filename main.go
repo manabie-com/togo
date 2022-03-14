@@ -31,7 +31,7 @@ func main() {
 	}()
 	repo := repository.NewRepository(db)
 	taskUc := usecase.NewTaskUseCase(repo)
-	userUc := usecase.NewUserUseCase(repo)
-	delivery.HttpHandel(e, taskUc, userUc)
+	authorizeUc := usecase.NewAuthorizeUseCase(repo)
+	delivery.HttpHandel(e, taskUc, authorizeUc)
 	e.Logger.Fatal(e.Start(cf.ServerPort()))
 }

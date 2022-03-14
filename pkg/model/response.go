@@ -23,7 +23,7 @@ func ResponseSuccess(c echo.Context, data interface{}) error {
 func ResponseWithError(c echo.Context, err interface{}) error {
 	return c.JSON(http.StatusOK, Response{
 		Status:  http.StatusBadRequest,
-		Message: "Error",
+		Message: err.(string),
 		Error:   err,
 	})
 }
