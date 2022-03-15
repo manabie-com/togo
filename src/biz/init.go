@@ -1,21 +1,17 @@
 package biz
 
 import (
-	"time"
-
-	"github.com/HoangMV/togo/src/dao"
-
-	"github.com/patrickmn/go-cache"
+	"github.com/HoangMV/todo/src/dao"
 )
 
 type Biz struct {
-	dao   *dao.DAO
-	cache *cache.Cache
+	dao dao.IDAO
 }
 
 func New() *Biz {
-	return &Biz{
-		dao:   dao.New(),
-		cache: cache.New(1*time.Hour, 1*time.Hour+5*time.Minute),
-	}
+	return &Biz{dao: dao.New()}
+}
+
+func NewWithDao(obj dao.IDAO) *Biz {
+	return &Biz{dao: obj}
 }

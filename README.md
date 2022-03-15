@@ -22,20 +22,30 @@ Backend APIs for simple todo app
 >go run main.go
 >```
 
+## Test
 ### "Curl” command to call your API
 >```
->./curl_test.sh
+>./curl_test.cmd
 >```
 
-### Run unit tests
+### Run unit test
 >```go
->go test ./..
+>go test .\src\biz\biz_todo_test.go -v
+>```
+
+### Run integration test
+>```go
+>go test -tags=integration .\integration_test -v -count=1
 >```
 
 ## Question
 - What do you love about your solution?
-- What else do you want us to know about however you do not have enough time to complete?
+=> Everything is clean, easy to extend.
 
+- What else do you want us to know about however you do not have enough time to complete?
+=> Smooth things out, optimize performance, and write documents
+
+## Docs
 >```
 > See directory ./docs
 >```

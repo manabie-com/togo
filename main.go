@@ -1,7 +1,7 @@
 package main
 
 import (
-	server "github.com/HoangMV/togo/src"
+	server "github.com/HoangMV/todo/src"
 	"github.com/spf13/viper"
 )
 

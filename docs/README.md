@@ -1,3 +1,3 @@
 # Docs
 
-Nơi chứa tài liệu về dự án
+Tài liệu về dự án

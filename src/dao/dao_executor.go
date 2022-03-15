@@ -3,8 +3,8 @@ package dao
 import (
 	"database/sql"
 
-	"github.com/HoangMV/togo/lib/pgsql"
-	"github.com/HoangMV/togo/src/models/entity"
+	"github.com/HoangMV/todo/lib/pgsql"
+	"github.com/HoangMV/todo/src/models/entity"
 )
 
 func (dao *DAO) InsertUser(obj *entity.User) error {

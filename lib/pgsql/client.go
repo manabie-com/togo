@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/HoangMV/togo/lib/log"
+	"github.com/HoangMV/todo/lib/log"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq" // import your used driver
 )

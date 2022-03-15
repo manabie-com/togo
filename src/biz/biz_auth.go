@@ -5,12 +5,11 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/HoangMV/togo/lib/log"
-	"github.com/HoangMV/togo/src/models/entity"
-	"github.com/HoangMV/togo/src/models/request"
-	"github.com/HoangMV/togo/src/models/response"
+	"github.com/HoangMV/todo/lib/log"
+	"github.com/HoangMV/todo/src/models/entity"
+	"github.com/HoangMV/todo/src/models/request"
+	"github.com/HoangMV/todo/src/models/response"
 	"github.com/google/uuid"
-	"github.com/patrickmn/go-cache"
 )
 
 func (biz *Biz) Register(req *request.LoginReq) error {
@@ -54,7 +53,7 @@ func (biz *Biz) Login(req *request.LoginReq) (*response.LoginResp, error) {
 
 	// create token
 	token := uuid.NewString()
-	biz.SetTokenToCache(token, user.ID)
+	biz.dao.SetTokenToCache(token, user.ID)
 
 	resp := &response.LoginResp{
 		UserID: user.ID,
@@ -64,14 +63,6 @@ func (biz *Biz) Login(req *request.LoginReq) (*response.LoginResp, error) {
 	return resp, nil
 }
 
-func (biz *Biz) GetTokenInCache(username string) int {
-	if tokenInCache, found := biz.cache.Get("auth:" + username); found {
-		token := tokenInCache.(int)
-		return token
-	}
-	return -1
-}
-
-func (biz *Biz) SetTokenToCache(token string, userID int) {
-	biz.cache.Set("auth:"+token, userID, cache.DefaultExpiration)
+func (biz *Biz) CheckAuth(token string) int {
+	return biz.dao.GetTokenInCache(token)
 }

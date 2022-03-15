@@ -7,9 +7,7 @@
   - Different users can have **different** maximum daily limit.
 
 **=> Keyword:**
-- **One single API**: 
-  Chỉ 1 api cho việc tạo todo task
-
+- **One single API**
 - **Todo task**: 
   - Có những loại todo task nào?
     - **Any.do** (free/premium options)
@@ -42,11 +40,10 @@
 - **Max task/user/day**:
   - Phải có API tạo user, login
   - Tạo giới hạn task trong ngày
-  - Tạo bộ đếm task trong ngày
-  - Tạo 1 worker reset số lượng task hiện tại của user trong DB mỗi ngày (phương án khác là dùng redis cache, ko dùng mem-cache vì đây là dữ liệu quan trọng)
+  - task trong ngày bằng sql query
 
 - **Different Users-Different Limit**:
-  -  Lưu limit Task của user trong bảng thông tin user
+  -  Config max Task của user trong liên quan tới user
 
 - **Records**:
   - Dùng PostgreSQL

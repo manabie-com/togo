@@ -16,5 +16,8 @@
         "Active": 50,
         "Idle": 50,
         "Lifetime": 60
+    },
+    "Test":{
+        "Token": "c6snbx7zi71Mp8Ug"
     }
 }

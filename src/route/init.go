@@ -1,8 +1,8 @@
 package route
 
 import (
-	"github.com/HoangMV/togo/lib/utils"
-	"github.com/HoangMV/togo/src/biz"
+	"github.com/HoangMV/todo/lib/utils"
+	"github.com/HoangMV/todo/src/biz"
 	"github.com/gofiber/fiber/v2"
 )
 

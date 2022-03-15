@@ -3,9 +3,10 @@ package route
 import (
 	"errors"
 
-	"github.com/HoangMV/togo/lib/utils"
-	"github.com/HoangMV/togo/src/models/request"
+	"github.com/HoangMV/todo/lib/utils"
+	"github.com/HoangMV/todo/src/models/request"
 	"github.com/gofiber/fiber/v2"
+	"github.com/spf13/viper"
 )
 
 func (r *Route) CheckAuth(ctx *fiber.Ctx) error {
@@ -14,7 +15,12 @@ func (r *Route) CheckAuth(ctx *fiber.Ctx) error {
 		return utils.WriteError(ctx, fiber.StatusBadRequest, errors.New("empty auth token"))
 	}
 
-	userID := r.biz.GetTokenInCache(authToken)
+	if authToken == viper.GetString("Test.Token") { // for test
+		ctx.Locals("user_id", 1)
+		return ctx.Next()
+	}
+
+	userID := r.biz.CheckAuth(authToken)
 	if userID < 0 {
 		return utils.WriteError(ctx, fiber.StatusUnauthorized, errors.New("wrong token"))
 	}

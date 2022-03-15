@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/HoangMV/togo/lib/pgsql"
+	"github.com/HoangMV/todo/lib/pgsql"
 	"github.com/spf13/viper"
 )
 
@@ -235,4 +235,11 @@ var createTables = map[string]string{
 		FOR EACH ROW
 		EXECUTE PROCEDURE update_updated_at_column();
 		`,
+	"insert_make_root_user": `
+		INSERT INTO users(id, username, password) 
+		VALUES (1, 'test123', 'test123'); 
+
+		INSERT INTO user_todo_config(user_id, max_todo) 
+		VALUES (1, 20);
+	`,
 }

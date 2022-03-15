@@ -3,9 +3,9 @@ package server
 import (
 	"strings"
 
-	"github.com/HoangMV/togo/lib/log"
-	"github.com/HoangMV/togo/lib/pgsql"
-	"github.com/HoangMV/togo/src/route"
+	"github.com/HoangMV/todo/lib/log"
+	"github.com/HoangMV/todo/lib/pgsql"
+	"github.com/HoangMV/todo/src/route"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"

@@ -3,8 +3,8 @@ package route
 import (
 	"errors"
 
-	"github.com/HoangMV/togo/lib/utils"
-	"github.com/HoangMV/togo/src/models/request"
+	"github.com/HoangMV/todo/lib/utils"
+	"github.com/HoangMV/todo/src/models/request"
 	"github.com/gofiber/fiber/v2"
 )
 

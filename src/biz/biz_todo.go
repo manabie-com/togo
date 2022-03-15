@@ -4,9 +4,9 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/HoangMV/togo/lib/log"
-	"github.com/HoangMV/togo/src/models/entity"
-	"github.com/HoangMV/togo/src/models/request"
+	"github.com/HoangMV/todo/lib/log"
+	"github.com/HoangMV/todo/src/models/entity"
+	"github.com/HoangMV/todo/src/models/request"
 )
 
 func (biz *Biz) CreateTodo(req *request.CreateTodoReq) error {
@@ -34,16 +34,13 @@ func (biz *Biz) CreateTodo(req *request.CreateTodoReq) error {
 	wg.Wait()
 
 	if err1 != nil {
-		log.Get().Errorf("Biz::CreateTodo GetMaxUserTodoOneDay err:%v, data:%+v", err1, req)
 		return errors.New("retrieve max todo failed")
 	}
 	if err2 != nil {
-		log.Get().Errorf("Biz::CreateTodo CountUserTodoInCurrentDay err:%v, data:%+v", err2, req)
 		return errors.New("retrieve current todo failed")
 	}
 
 	if cur >= max {
-		log.Get().Warnf("Biz::CreateTodo current:%d >= max:%d, data:%+v", cur, max, req)
 		return errors.New("your todo count has reached its maximum")
 	}
 
@@ -55,7 +52,6 @@ func (biz *Biz) CreateTodo(req *request.CreateTodoReq) error {
 
 	// Insert
 	if err := biz.dao.InsertTodo(todo); err != nil {
-		log.Get().Errorf("Biz::CreateTodo InsertTodo err:%v, data:%+v", err, todo)
 		return errors.New("insert todo failed")
 	}
 
