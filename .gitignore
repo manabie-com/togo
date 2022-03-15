@@ -17,3 +17,10 @@
 out/
 
 .idea
+
+# Remove bin/obj
+bin/
+obj/
+
+# Remove .vscode
+.vscode/
