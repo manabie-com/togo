@@ -1,0 +1,39 @@
+version: '3'
+services:
+  togo-mysql:
+    container_name: togo-mysql
+    image: mysql:8.0.28
+    ports:
+      - "33306:3306"
+    command: mysqld --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: 8f55ea2b0cd4@
+      MYSQL_DATABASE: togo
+      MYSQL_USER: togo
+      MYSQL_PASSWORD: a87fc4993@
+    volumes:
+      - ./togo-db.sql:/docker-entrypoint-initdb.d/dump.sql
+    networks:
+      - togo-net
+  togo-redis:
+    container_name: togo-redis
+    image: redis:6.2
+    ports:
+      - "60001:6379"
+    networks:
+      - togo-net
+  togo:
+    container_name: togo
+    build: .
+    ports:
+      - "9999:9999"
+    depends_on:
+      - togo-mysql
+      - togo-redis
+    volumes:
+      - ./:/go/src/project
+    networks:
+      - togo-net
+networks:
+  togo-net:
+    driver: bridge

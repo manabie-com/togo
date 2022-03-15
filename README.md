@@ -1,30 +1,33 @@
-### Requirements
+### How to run
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+1. Run command ```go mod vendor```
+2. Run command ```cp .\.env.example .\.env``` (if running on window) or copy data from .env.example to new .env file 
+3. Run command ```docker compose up -d --build```
+4. Run command ```docker compose up -d```
+5. Run command ```docker compose restart```
 
-### Notes
+### Sample curl command to call API
+1. API get todo list user:
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+    ```
+    curl --location --request GET 'http://localhost:9999/api/v1/todo/user?user_id=6ac34862-4322-4437-9f98-e87fb6e8371b'
+    ```
+2. API create todo
+    
+   ```
+   curl --location --request POST 'http://localhost:9999/api/v1/todo/user' --header 'Content-Type: application/json' --data-raw '{
+    "user_id": "6ac34862-4322-4437-9f98-e87fb6e8371b",
+    "description": "Complete API login user"
+    }'
+   ```
 
-### How to submit your solution?
+### Benefits of this solution
+- An effective testing
+- Frameworks are isolated in individual modules
 
-- Fork this repo and show us your development progress via a PR
-
-### Interesting facts about Manabie
-
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
-
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+### What is need upgrade
+- Init database with docker compose is delay
+- Valid data input API
+- Relationship database
+- More business rule
+- More unit test & function test
