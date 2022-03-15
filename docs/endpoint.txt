@@ -1,0 +1,37 @@
+1) Login
+curl --location --request POST 'http://127.0.0.1:8011/api/v1/login' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "username": "longntv",
+    "password": "123456"
+}'
+
+2) Create Task
+curl --location --request POST 'http://127.0.0.1:8011/api/v1/task' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6ZmFsc2UsImV4cCI6MTY0NzUxNzYzMCwidXNlcmlkIjoyfQ.Z5dF1nOuKyvbB9D3kDraVWpgJMZ5oJe1DCUA7-WDl0c' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name": "test",
+    "description": "some desc"
+}'
+
+3) Update Task
+curl --location --request PUT 'http://127.0.0.1:8011/api/v1/task/12' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6ZmFsc2UsImV4cCI6MTY0NzUyNzAyMSwidXNlcmlkIjozfQ.6oqZx6lXrhUEOxFd7Kl6Y-kyj6TNcs9PIJuP9r1D2hg' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name": "test",
+    "description": "some desc1"
+}'
+
+4) Delete Task
+curl --location --request DELETE 'http://127.0.0.1:8011/api/v1/task/12' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6ZmFsc2UsImV4cCI6MTY0NzUyNzAyMSwidXNlcmlkIjozfQ.6oqZx6lXrhUEOxFd7Kl6Y-kyj6TNcs9PIJuP9r1D2hg'
+
+5) Get tasks
+curl --location --request GET 'http://127.0.0.1:8011/api/v1/task' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6ZmFsc2UsImV4cCI6MTY0NzUxNzYzMCwidXNlcmlkIjoyfQ.Z5dF1nOuKyvbB9D3kDraVWpgJMZ5oJe1DCUA7-WDl0c' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "limit": 5
+}'
