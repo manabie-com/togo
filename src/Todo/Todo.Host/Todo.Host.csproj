@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Todo.Contract\Todo.Contract.csproj" />
+    <ProjectReference Include="..\Todo.Domain\Todo.Domain.csproj" />
+    <ProjectReference Include="..\Todo.Storage.Sql\Todo.Storage.Sql.csproj" />
+  </ItemGroup>
+
+</Project>
