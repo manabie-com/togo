@@ -1,30 +1,223 @@
-### Requirements
+## Description
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+This repository for testing interview with Manabie.
 
-### Notes
+### Prerequisites
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+This is an example of how to list things you need to use the software and how to install them.
 
-### How to submit your solution?
+- NodeJS (version 12.6 or higher, I'm using v17.0.1)
 
-- Fork this repo and show us your development progress via a PR
+- Postgres
 
-### Interesting facts about Manabie
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+## Installation environment
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+```bash
+# Install npx
+$ npm install npx
+
+# Install yarn
+$ npm install --global yarn
+
+# Invoke the Prisma CLI by prefixing it with npx
+$ npx prisma
+```
+
+## Setting up
+Follow all step bellow to setup your dev environment
+1. Start your Postgres (I'm using docker-compose for environment setup)
+```bash
+$ docker-compose up -d
+```
+
+2. Setup environment variables.
+```bash
+$ cp .env.example .env
+```
+
+3. Install NPM packages
+
+```bash
+yarn install
+```
+
+## Running the app
+
+```bash
+# To map your data model to the database schema, you need to use the prisma migrate CLI commands
+$ yarn migrate
+
+# development
+$ yarn start
+
+# watch mode
+$ yarn start:dev
+```
+
+## Test
+
+```bash
+# Unit tests: Let's remove all rows in table "Task", "User" on your local Database Postgres, then run test
+$ yarn test
+```
+
+## Sample API
+- After start app, let's connect this link on your browser: http://localhost:3000/graphql
+
+```bash
+# Signup
+mutation signup($createUserInput: CreateUserInput!) {
+  signup(createUserInput: $createUserInput) {
+    id
+    email
+    name
+    maxJob
+    token
+  }
+}
+----------------------------------------------
+# Query Variables:
+{
+  "createUserInput": {
+    "email": "vu.nguyen@gmail.com",
+    "name": "vu nguyen",
+    "password": "123456",
+    "maxJob": 5
+  }
+}
+```
+
+```bash
+# Login
+mutation login(
+$loginUserInput: LoginUserInput!
+) {
+  login(loginUserInput: $loginUserInput) {
+    id
+    email
+    name
+    maxJob
+    token
+  }
+}
+----------------------------------------------
+# Query Variables:
+{
+  "loginUserInput": {
+    "email": "vu.nguyen@gmail.com",
+    "password": "123456"
+  }
+}
+```
+
+```bash
+# createTask
+mutation createTask(
+$createTaskInput: CreateTaskInput!
+) {
+  createTask(createTaskInput: $createTaskInput) {
+    id
+    createdAt
+    updatedAt
+    title
+    content
+    userId
+    user {
+      id
+      name
+      email
+      maxJob
+    }
+  }
+}
+----------------------------------------------
+# Query Variables:
+{
+  "createTaskInput": {
+    "title": "task1",
+    "content": "this is content of task1"
+  }
+}
+# HTTP HEADERS:
+{
+  "Authorization": "replace with token get from login API"
+}
+```
+
+```bash
+# taskById
+query taskById(
+$id: Float!
+) {
+  taskById(id: $id) {
+    id
+    createdAt
+    updatedAt
+    title
+    content
+    userId
+    user {
+      id
+      name
+      email
+      maxJob
+    }
+  }
+}
+----------------------------------------------
+# Query Variables:
+{
+  "id": 1
+}
+# HTTP HEADERS:
+{
+  "Authorization": "replace with token get from login API"
+}
+```
+
+```bash
+# tasks
+query tasks(
+$searchString: String
+$skip: Float
+$take: Float
+$orderBy: TaskOrderByUpdatedAtInput
+) {
+  tasks(searchString: $searchString, skip: $skip, take: $take, orderBy: $orderBy) {
+    id
+    createdAt
+    updatedAt
+    title
+    content
+    user {
+      id
+      email
+      name
+      maxJob
+    }
+    userId
+  }
+}
+----------------------------------------------
+# Query Variables:
+{
+  "searchString": "task",
+  "skip": 0,
+  "take": 3,
+  "orderBy": {
+    "updatedAt": "desc"
+  }
+}
+# HTTP HEADERS:
+{
+  "Authorization": "replace with token get from login API"
+}
+```
+
+## Passion
+- I love new architect, and I see the prisma is simple to buid faster app and it's good connect with PostgreSQL and other.
+- I'm learning NestJS, so I've just apply in this project
+- I think NestJS is new, reliable, scalable framework NodeJS.
+- NestJS support for strongtyped like TypeScript.
+- Especially, I love graphql, a query language for APIs.

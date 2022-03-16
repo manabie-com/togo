@@ -1,0 +1,70 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  id: Int!
+  email: String!
+  name: String
+  maxJob: Int!
+}
+
+type UserToken {
+  id: Int
+  email: String
+  name: String
+  maxJob: Int
+  token: String
+}
+
+type Task {
+  id: Int!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  title: String!
+  content: String!
+  user: User
+  userId: Int
+}
+
+"""
+`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
+
+type Query {
+  taskById(id: Float!): Task
+  tasks(searchString: String, skip: Float, take: Float, orderBy: TaskOrderByUpdatedAtInput): [Task!]!
+}
+
+input TaskOrderByUpdatedAtInput {
+  updatedAt: SortOrder!
+}
+
+enum SortOrder {
+  asc
+  desc
+}
+
+type Mutation {
+  signup(createUserInput: CreateUserInput!): UserToken!
+  login(loginUserInput: LoginUserInput!): UserToken!
+  createTask(createTaskInput: CreateTaskInput!): Task!
+}
+
+input CreateUserInput {
+  email: String!
+  password: String!
+  name: String
+  maxJob: Float!
+}
+
+input LoginUserInput {
+  email: String!
+  password: String!
+}
+
+input CreateTaskInput {
+  title: String!
+  content: String!
+}
