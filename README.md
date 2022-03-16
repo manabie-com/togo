@@ -15,7 +15,7 @@
   - How to run your unit tests locally?
   - What do you love about your solution?
   - What else do you want us to know about however you do not have enough time to complete?
-
+---
 #### DB Schema
 ```sql
 -- users definition
@@ -63,7 +63,7 @@ make test.integration
 ```
 ## A sample “curl” command to call API
 - Need login to get token.
-```http request
+```
 curl --location --request POST 'localhost:8001/login' \
 --header 'Content-Type: application/json' \
 --data-raw '{
@@ -72,7 +72,7 @@ curl --location --request POST 'localhost:8001/login' \
 }'
 ```
 - Creat task by user.
-```http request
+```
 curl --location --request POST 'localhost:8001/task' \
 --header 'Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZmlyc3RVc2VyIiwiYWRtaW4iOnRydWUsImV4cCI6MTY0NzQ1NzMyMH0.O4gPacbAAB5QMet0JSxk1zHbKIeyl3l2pPzVkxey-jI' \
 --header 'Content-Type: application/json' \
@@ -82,7 +82,7 @@ curl --location --request POST 'localhost:8001/task' \
 ```
 
 - Get the user task.
-```http request
+```
 curl --location --request GET 'localhost:8001/task?create_date=2022-03-14' \
 --header 'Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZmlyc3RVc2VyIiwiYWRtaW4iOnRydWUsImV4cCI6MTY0NzQ1NzMyMH0.O4gPacbAAB5QMet0JSxk1zHbKIeyl3l2pPzVkxey-jI'
 ```
