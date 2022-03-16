@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import { DateTime } from 'luxon';
 import {
   Resolver,
   Query,
@@ -108,11 +109,19 @@ export class TaskResolver {
 
     const listTasks =
       (await this.prismaService.task.findMany({
-        where: { userId },
+        where: {
+          userId,
+          createdAt: {
+            gte: DateTime.fromJSDate(new Date())
+              .startOf('day')
+              .toUTC()
+              .toFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"),
+          },
+        },
       })) ?? [];
 
     if (listTasks?.length >= findMaxJob?.maxJob) {
-      throw new Error('User reach task limit error.');
+      throw new Error('User reach task daily limit error.');
     }
 
     return this.prismaService.task.create({
