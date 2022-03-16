@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 	_ "github.com/lib/pq"
 	"log"
+	"os"
 	"togo.com/config"
 	"togo.com/pkg/delivery"
 	"togo.com/pkg/repository"
@@ -15,9 +16,13 @@ import (
 func main() {
 	e := echo.New()
 	//init config env
-	cf, err := config.LoadConfig("./")
+	args := os.Args
+	if len(args) < 2 {
+		log.Fatal("Error load config")
+	}
+	cf, err := config.LoadConfig(args[1])
 	if err != nil {
-		log.Fatal("Load config error: ", err)
+		log.Fatal("Error valid file path", err)
 	}
 	db, err := sqlx.Connect("postgres", cf.PsqlInfo())
 	if err != nil {

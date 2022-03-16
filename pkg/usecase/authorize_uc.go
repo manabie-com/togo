@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt"
 	"time"
@@ -29,14 +30,17 @@ func (a authorizeUseCase) Login(ctx context.Context, request model.LoginRequest)
 	//validate  user
 	id, err := a.repo.GetUser(ctx, request)
 	if err != nil {
-		fmt.Printf("GetUser error %s", err)
+		return model.LoginResponse{}, err
+	}
+	if id == "" {
+		return model.LoginResponse{}, errors.New("invalid user")
 	}
 	// Set custom claims
 	claims := &model.JwtCustomClaims{
 		Name:  id,
 		Admin: true,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
+			ExpiresAt: time.Now().Add(time.Hour * 3).Unix(),
 		},
 	}
 	// Create token with claims
@@ -59,25 +63,12 @@ func ValidateToken(tokenString string) (userId string, errString string) {
 		return []byte(Signature), nil
 	})
 	if token == nil || err != nil {
-		return "", "Parse token error"
+		fmt.Printf("Error %s", err)
+		return "", "Unauthenticated"
 	}
-
-	claims := token.Claims.(*model.JwtCustomClaims)
-	fmt.Println(claims.Name)
-	if token.Valid {
-		fmt.Println("You look nice today")
+	if claims, ok := token.Claims.(*model.JwtCustomClaims); ok && token.Valid {
 		return claims.Name, ""
-	} else if ve, ok := err.(*jwt.ValidationError); ok {
-		if ve.Errors&jwt.ValidationErrorMalformed != 0 {
-			return "", "That's not even a token"
-		} else if ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0 {
-			// Token is either expired or not active yet
-			return "", "Timing is everything"
-		} else {
-			return "", fmt.Sprintf("Couldn't handle this token:%s", err)
-		}
-	} else {
-		return "", fmt.Sprintf("Couldn't handle this token:%s", err)
 	}
+	return "", "Unauthenticated"
 
 }

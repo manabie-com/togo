@@ -1,3 +1,6 @@
+### Notes
+- This is a simple backend for a todo service, right now this service can handle login/list/create simple tasks.
+
 ### Requirements
 
 - Implement one single API which accepts a todo task and records it
@@ -13,18 +16,74 @@
   - What do you love about your solution?
   - What else do you want us to know about however you do not have enough time to complete?
 
-### Notes
+#### DB Schema
+```sql
+-- users definition
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+CREATE TABLE users (
+	id TEXT NOT NULL,
+	password TEXT NOT NULL,
+	max_todo INTEGER DEFAULT 5 NOT NULL,
+	CONSTRAINT users_PK PRIMARY KEY (id)
+);
 
-### How to submit your solution?
+INSERT INTO users (id, password, max_todo) VALUES('firstUser', 'example', 5);
 
-- Fork this repo and show us your development progress via a PR
+-- tasks definition
 
-### Interesting facts about Manabie
+CREATE TABLE tasks (
+	id TEXT NOT NULL,
+	content TEXT NOT NULL,
+	user_id TEXT NOT NULL,
+    created_date TEXT NOT NULL,
+	CONSTRAINT tasks_PK PRIMARY KEY (id),
+	CONSTRAINT tasks_FK FOREIGN KEY (user_id) REFERENCES users(id)
+);
+```
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+---
+## How to run project
+### Step 1:
+```shell
+make dev.up
+```
+### Step 2:
+```shell
+make run
+```
+---
+## How to run unit test
+```shell
+make test.unit
+```
+---
+## How to run integration test
+```shell
+make test.integration
+```
+## A sample “curl” command to call API
+- Need login to get token.
+```http request
+curl --location --request POST 'localhost:8001/login' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "username": "firstUser",
+    "password": "example"
+}'
+```
+- Creat task by user.
+```http request
+curl --location --request POST 'localhost:8001/task' \
+--header 'Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZmlyc3RVc2VyIiwiYWRtaW4iOnRydWUsImV4cCI6MTY0NzQ1NzMyMH0.O4gPacbAAB5QMet0JSxk1zHbKIeyl3l2pPzVkxey-jI' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "content":"content task"
+}'
+```
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+- Get the user task.
+```http request
+curl --location --request GET 'localhost:8001/task?create_date=2022-03-14' \
+--header 'Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZmlyc3RVc2VyIiwiYWRtaW4iOnRydWUsImV4cCI6MTY0NzQ1NzMyMH0.O4gPacbAAB5QMet0JSxk1zHbKIeyl3l2pPzVkxey-jI'
+```
+![alt text](docs/flow.png)

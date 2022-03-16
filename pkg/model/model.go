@@ -7,14 +7,24 @@ type LoginRequest struct {
 	Password string `json:"password" query:"password"`
 }
 
+type GetTaskRequest struct {
+	CreateDate string `json:"create_date" query:"create_date"`
+}
+
 type AddTaskRequest struct {
 	Content string `json:"content" query:"content"`
 }
 type AddTaskParams struct {
-	Id         string
 	UserId     string
 	CreateDate string
 	Content    string
+}
+
+type Task struct {
+	ID          string `json:"id"`
+	Content     string `json:"content"`
+	UserID      string `json:"user_id"`
+	CreatedDate string `json:"created_date"`
 }
 
 type AddTaskResponse struct {

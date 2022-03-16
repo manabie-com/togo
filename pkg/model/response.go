@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"github.com/labstack/echo/v4"
 	"net/http"
 )
@@ -23,7 +24,7 @@ func ResponseSuccess(c echo.Context, data interface{}) error {
 func ResponseWithError(c echo.Context, err interface{}) error {
 	return c.JSON(http.StatusOK, Response{
 		Status:  http.StatusBadRequest,
-		Message: err.(string),
+		Message: fmt.Sprintf("Error :%s", err),
 		Error:   err,
 	})
 }

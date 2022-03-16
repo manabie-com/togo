@@ -1,0 +1,100 @@
+{
+	"info": {
+		"_postman_id": "04e96d88-42a2-4fbc-9f9f-f70191eef991",
+		"name": "togo service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "localhost:8001/login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"firstUser\",\n    \"password\": \"example\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8001/login",
+					"host": [
+						"localhost"
+					],
+					"port": "8001",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8001/task   add task",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZmlyc3RVc2VyIiwiYWRtaW4iOnRydWUsImV4cCI6MTY0NzQyNTYyNX0.EBdw6nYJhQcJPG42f7gadA85nXcm_rNsSOH8s_hq2oQ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"content\":\"new content task2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8001/task",
+					"host": [
+						"localhost"
+					],
+					"port": "8001",
+					"path": [
+						"task"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8001/task?create_date=2022-03-14",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZmlyc3RVc2VyIiwiYWRtaW4iOnRydWUsImV4cCI6MTY0NzQ1NzMyMH0.O4gPacbAAB5QMet0JSxk1zHbKIeyl3l2pPzVkxey-jI",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:8001/task?create_date=2022-03-14",
+					"host": [
+						"localhost"
+					],
+					"port": "8001",
+					"path": [
+						"task"
+					],
+					"query": [
+						{
+							"key": "create_date",
+							"value": "2022-03-14"
+						}
+					]
+				},
+				"description": "get task by user"
+			},
+			"response": []
+		}
+	]
+}
