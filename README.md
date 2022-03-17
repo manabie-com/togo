@@ -1,30 +1,83 @@
-### Requirements
+## Requirements
+- Go 1.17
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+## How to run the code locally
 
-### Notes
+### Set the env variables in a .env file
+This is an example of the needed environment variables
+```
+APPS_PORT=8080
+DB_MONGO_URI=mongodb://localhost:27017
+DB_MONGODB_NAME=test
+```
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+### Run this commands
+##### Clone the repository
+####
+```bash
+git clone https://github.com/kier1021/togo.git
+```
+##### Change the directory 
+####
+```bash
+cd togo
+``` 
+##### Run the go run command to run the server
+####
+```bash
+go run main.go
+```
 
-### How to submit your solution?
+## Sample "curl" commands
+### Create User
+```
+curl -X POST http://localhost:8080/user \
+    -H "Content-Type: application/json" \
+    -d "{ \"user_name\": \"Test\", \"max_tasks\": 3 }"
+```
 
-- Fork this repo and show us your development progress via a PR
+### Get Users
+```
+curl -X GET http://localhost:8080/users 
+```
 
-### Interesting facts about Manabie
+### Add Task To User
+```
+curl -X PUT http://localhost:8080/user/task \
+    -H "Content-Type: application/json" \
+    -d "{ \"user_name\": \"Test\", \"title\": \"Task 1\", \"description\": \"My first task\" }"
+```
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+### Get Task Of User
+##### With given ins_day
+#### 
+```
+curl -X GET "http://localhost:8080/user/task?user_name=Test&ins_day=2022-02-18"
+```
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+##### Without given ins_day, the default is date today
+#### 
+```
+curl -X GET "http://localhost:8080/user/task?user_name=Test"
+```
+
+## How to run unit test
+
+```
+go test -v ./api/services
+```
+
+## What do I love about my solution
+- The separation of concerns of each functionalities
+    - Controller for handling the http requests
+    - Service for handling the business logic
+    - Repository for handling the database transactions
+    - Models for representing the entities
+- Adding a repository interface makes the unit testing easy using mock data
+- Dependencies were injected to unit test the services
+- I used the table-driven pattern in unit test
+- Used some libraries that can be useful for other future projects
+
+## What to improve?
+- Add an integration test
+- The modelling of entities may be improved
