@@ -1,30 +1,75 @@
-### Requirements
+# Manabie
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+## Introduction
 
-### Notes
+A to-do project from manabie challenge
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+## Usage
 
-### How to submit your solution?
+#### Prerequisite
 
-- Fork this repo and show us your development progress via a PR
+golang and docker must be installed.
 
-### Interesting facts about Manabie
+#### How to run code locally
+- After running program by docker-compose file, automatically run database mirgration files
+  - Run docker-compose
+  ```
+  docker-compose up -d
+  ```
+- In order to run the app without building the binary file, please run following commands:
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+  - Run without binary file
+  ```
+  go run ./cmd/manabie_togo/main.go
+  ```  
+  - If you want to run the app by building binary file, please run following commands:
+  ```
+  go build -o main ./cmd/manabie_togo/main.go
+  ./main
+  ```
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+#### How to run unit tests locally
+
+- Access to golang directory and run command go test:
+  ```
+  go test ./...
+  ```
+## Sample “curl” command to call API
+
+- Create-User CURL command:
+
+    ```
+    curl --request POST \
+      --url http://localhost:8080/api/user \
+      --header 'Content-Type: application/json' \
+      --data '{
+        "username": "example",
+        "password": "123456",
+        "limit_task": 3
+    }'
+    ```
+
+- Create-Task CURL command:
+
+    ```
+    curl --request POST \
+        --url http://localhost:8080/api/task \
+        --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJleHAiOjE2NDM1NjU2Nzd9.ESVv1A-nMACuVAfl2mKb4MwFaXw-FMn2ZqS_HpjwqYc' \
+        --header 'Content-Type: application/json' \
+        --data '{
+        "content": "Quét nhà"
+    }'
+    ```
+
+## What i love
+
+- Good, quiet clean, maintainable architecture
+- Meet the requirements
+- Having useful tools (ex: migration tool, api request logging, ...)
+- Nice Reademe file
+
+## Improve
+
+- Improve unit/integration tests
+- Add swagger feature
+- Add APIs about admin user domain

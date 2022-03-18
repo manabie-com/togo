@@ -1,0 +1,22 @@
+{
+  "databases":{
+    "postgres_db": {
+      "host":"localhost",
+      "port":5431,
+      "username":"postgres",
+      "password":"postgres",
+      "database":"postgres",
+      "sslmode": "disable",
+      "timeout": 15
+    },
+    "test_postgres_db": {
+      "host":"localhost",
+      "port":5430,
+      "username":"testpostgres",
+      "password":"testpostgres",
+      "database":"testpostgres",
+      "sslmode": "disable",
+      "timeout": 15
+    }
+  }
+}
