@@ -1,3 +1,9 @@
+### How to run
+
+- open terminal at source project
+- run cmd `docker-compose up -d` to start MySQL server
+- run cmd `./gradlew bootRun` to start the application
+
 ### Requirements
 
 - Implement one single API which accepts a todo task and records it

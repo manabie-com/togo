@@ -1,0 +1,7 @@
+CREATE TABLE tasks (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    content varchar(2048) NOT NULL,
+    `status` varchar(255) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP
+);
