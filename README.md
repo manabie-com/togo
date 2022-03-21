@@ -13,6 +13,10 @@
   - What do you love about your solution?
   - What else do you want us to know about however you do not have enough time to complete?
 
+- I'm using swagger, so it's easy to test api.
+- I haven't written unit test/integration test.
+- I'm using clean architecture and CQRS.  
+
 ### Notes
 
 - We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.

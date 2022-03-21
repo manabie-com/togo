@@ -1,0 +1,23 @@
+version: '3.9'
+services:
+  ms-sql-server:
+    image: mcr.microsoft.com/mssql/server
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Str0ngPa$$w0rd"
+      MSSQL_PID: Express
+    ports:
+      - "1433:1433"
+  todo-app:
+    build: 
+      context: .
+      args:
+        buildnbinfo: 1
+    environment:
+      DbServer: "ms-sql-server"
+      DbPort: "1433"
+      DbUser: "SA"
+      Password: "Str0ngPa$$w0rd"
+      Database: "ToDoDb"
+    ports: 
+      - "8090:80"
