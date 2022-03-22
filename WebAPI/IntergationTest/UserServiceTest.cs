@@ -29,20 +29,20 @@ namespace IntergationTest
             Assert.True(result);
         }
 
-        [Fact]
-        public void Should_Register_Exception()
-        {
-            var userRegister = new UserRegister()
-            {
-                Username = "TestUser1",
-                Password = "123456789",
-                TaskPerDay = 10
-            };
+        //[Fact]
+        //public void Should_Register_Exception()
+        //{
+        //    var userRegister = new UserRegister()
+        //    {
+        //        Username = "TestUser1",
+        //        Password = "123456789",
+        //        TaskPerDay = 10
+        //    };
 
-            var result = _userService.Register(userRegister);
+        //    var result = _userService.Register(userRegister);
 
-            Assert.False(result);
-        }
+        //    Assert.False(result);
+        //}
 
         [Fact]
         public void Should_Authenticate_Success()
