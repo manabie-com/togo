@@ -1,30 +1,49 @@
-### Requirements
+### To run code locally
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+- Run sql script
+- Download and install .NET SDK (link below).
+	- https://dotnet.microsoft.com/en-us/download/dotnet/5.0
+- Clone source code.
+- Change the connection string in the appSetting.json.
+- Open terminal in folder contains WebAPI.csproj and run the command: dotnet run .\WebAPI.csproj
 
-### Notes
+### Sample “curl” command to call API
+- register api
+	- curl --location --request POST 'http://localhost:5000/api/users/register' \
+			--header 'Content-Type: application/json' \
+			--data-raw '{
+				"Username": "Admin",
+				"Password": "12345678",
+				"TaskPerDay": 10
+			}'
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+- login api
+	- curl --location --request POST 'http://localhost:5000/api/users/login' \
+			--header 'Content-Type: application/json' \
+			--data-raw '{
+				"Username": "Admin",
+				"Password": "12345678"
+			}'
 
-### How to submit your solution?
+- create task api
+	- curl --location --request POST 'http://localhost:5000/api/tasks/create' \
+			--header 'Content-Type: application/json' \
+			--header 'Authorization: Bearer <accessToken from login api>' \
+			--data-raw '{
+				"Content": "Task Content"
+			}'
+			
+### Run unit tests locally
+- Open terminal in folder contains UnitTests.csproj and run the command: dotnet test .\UnitTests.csproj
 
-- Fork this repo and show us your development progress via a PR
+### What do i love about my solution?
+- The first time, I build a project from scratch.
+- Generate RSA access token.
+- The structure of the project.
 
-### Interesting facts about Manabie
-
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
-
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+### What else do you want us to know about however you do not have enough time to complete?
+- I will make a better response (Error Code, Message,...)
+- Seperate security code into another service.
+- Update security code to generate refresh token and more information.
+- Design a better database with more information.
+- Use an api gateway (ocelot) to implement microservice.
