@@ -1,30 +1,49 @@
-### Requirements
+### Document
+Please read here : https://docs.google.com/document/d/1uMVX5KGPF9Vjc9VqGP50PmkcWhI0vhlBf5rsDL4BIY4/
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+### API
 
-### Notes
+- GET /userid/date/taskname
+  - 200 = success.
+- PUT /userid/date/taskname
+  - Block. 201 = written and 204 = overwritten, anything else = probably not create.
+- DELETE /userid/date/taskname
+  - Lock. 204 = deleted, anything else = probably not deleted.
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+### Usage
 
-### How to submit your solution?
+```
+# put "onyou" in key "userid/20210101/taskname" (will 403 if it already exists)
+curl -v -L -X PUT -d onyou localhost:3000/userid/20210101/taskname
 
-- Fork this repo and show us your development progress via a PR
+# get key "userid/20210101/taskname" (should be "taskcontent")
+curl -v -L localhost:3000/userid/20210101/taskname
 
-### Interesting facts about Manabie
+# delete key "userid/20210101/taskname"
+curl -v -L -X DELETE localhost:3000/userid/20210101/taskname
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+# put file in key "file.txt"
+curl -v -L -X PUT -T /path/to/local/file.txt localhost:3000/userid/20210101/taskname
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+# get file in key "file.txt"
+curl -v -L -o /path/to/local/file.txt localhost:3000/userid/20210101/taskname
+```
+
+### Local starting
+```
+docker-compose -f docker-compose-local.yaml up --build
+```
+### Intergration testing
+```
+docker-compose -f docker-compose-local.yaml run test
+```
+
+### Benchmark testing
+```
+go run ./tools/thrasher.go
+```
+
+### Unit testing
+```
+go test src/*.go
+```
