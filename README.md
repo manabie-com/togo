@@ -1,3 +1,34 @@
+### How to run the code locally?
+On the root folder of the project, run the command below in a command line
+
+`
+gradlew bootRun
+`
+
+### Sample “curl” command to call the API
+
+`
+curl http://localhost:8080/todo/add \
+--include \
+--header "Content-Type: application/json" \
+--request "POST" \
+--data '{"userId": "1111","title": "Test 1","description": "Test Desc","toDoDate": "2022-01-01"}'`
+
+### How to run the unit tests locally?
+On the root folder of the project, run the command below in a command line
+
+`
+gradlew test
+`
+
+### What do you love about your solution?
+My code is easy to understand and maintainable
+
+### What else do you want us to know about however you do not have enough time to complete?
+I'ts not on the requirements but I plan to add APIs for adding new 
+users, getting all to do tasks for a user and getting all to do tasks 
+for a user on a certain date
+
 ### Requirements
 
 - Implement one single API which accepts a todo task and records it
