@@ -1,0 +1,37 @@
+version: '3'
+services:
+  togo:
+    build: 
+      context: docker/app
+      dockerfile: Dockerfile
+    container_name: togo
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    volumes:
+      - .:/var/www/src
+    depends_on:
+      - db
+    networks:
+      - khxingn
+  
+  db:
+    image: postgres
+    container_name: db
+    restart: unless-stopped
+    ports: 
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - ./postgresdata:/docker-entrypoint-initdb.d
+    networks:
+      - khxingn
+
+networks:
+  khxingn:
+    driver: bridge
