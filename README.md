@@ -1,3 +1,12 @@
+# Togo
+Time start: 2022-03-25 20:04
+
+### Testing
+
+```go
+go test ./...
+```
+
 ### Requirements
 
 - Implement one single API which accepts a todo task and records it
