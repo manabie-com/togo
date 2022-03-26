@@ -1,10 +1,25 @@
 # Togo
 Time start: 2022-03-25 20:04
 
+## How to start
+
+1. Run migration with
+    ```go
+    go run ./cmd/migrate
+    ```
+
 ### Testing
+
+#### Unit testing
 
 ```go
 go test ./...
+```
+
+#### Integration testing
+
+```go
+go test -tags=integration ./...
 ```
 
 ### Requirements
