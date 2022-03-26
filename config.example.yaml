@@ -1,0 +1,14 @@
+server:
+  host: "127.0.0.1"
+  port: 8080
+
+mysql:
+  host: "127.0.0.1"
+  port: 3306
+  name: "db"
+  user: "user"
+  pass: "password"
+
+redis:
+  host: "127.0.0.1"
+  port: 6379
