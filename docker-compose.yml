@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - redis-data:/data
+    restart: always
+    networks:
+      - default
+  
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql-data:/var/lib/mysql
+    restart: always
+    environment:
+      - MYSQL_DATABASE=db
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=password
+    networks:
+      - default
+
+networks:
+  default:
+    driver: bridge
+
+volumes:
+  mysql-data:
+  redis-data:
+  
