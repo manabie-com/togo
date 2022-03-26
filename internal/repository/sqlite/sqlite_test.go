@@ -1,4 +1,4 @@
-package postgres
+package sqlite
 
 import (
 	"context"
@@ -25,7 +25,7 @@ func TestValidateUser_Success(t *testing.T) {
 		WithArgs(username, password).
 		WillReturnRows(rows)
 
-	repository := NewPostgresRepository(db)
+	repository := NewSqliteRepository(db)
 	expect := true
 	actual := repository.ValidateUser(
 		context.Background(),
@@ -50,7 +50,7 @@ func TestValidateUser_WrongUsername(t *testing.T) {
 		WithArgs(wrongUsername, password).
 		WillReturnError(fmt.Errorf("invalid username"))
 
-	repository := NewPostgresRepository(db)
+	repository := NewSqliteRepository(db)
 	expect := false
 	actual := repository.ValidateUser(
 		context.Background(),
@@ -75,7 +75,7 @@ func TestValidateUser_WrongPassword(t *testing.T) {
 		WithArgs(username, wrongPassword).
 		WillReturnError(fmt.Errorf("invalid pasword"))
 
-	repository := NewPostgresRepository(db)
+	repository := NewSqliteRepository(db)
 	expect := false
 	actual := repository.ValidateUser(
 		context.Background(),
@@ -103,7 +103,7 @@ func TestGetUser_Success(t *testing.T) {
 		WithArgs(username).
 		WillReturnRows(row)
 
-	repository := NewPostgresRepository(db)
+	repository := NewSqliteRepository(db)
 	expect := &models.User{
 		ID:            uint(userID),
 		Username:      username,
@@ -132,7 +132,7 @@ func TestGetUser_FailWithNoRow(t *testing.T) {
 		WithArgs(wrongUsername).
 		WillReturnError(errors.New("sql: no rows in result set"))
 
-	repository := NewPostgresRepository(db)
+	repository := NewSqliteRepository(db)
 
 	user, err := repository.GetUserByUserName(context.Background(), utils.SqlNullString(wrongUsername))
 	if err == nil || user != nil {
@@ -159,7 +159,7 @@ func TestRetrieveTasks_Success(t *testing.T) {
 		WithArgs(uint(userID), currentDate).
 		WillReturnRows(rows)
 
-	repository := NewPostgresRepository(db)
+	repository := NewSqliteRepository(db)
 	expect := []*models.Task{
 		{
 			ID:          tasksIds[0],
@@ -195,7 +195,7 @@ func TestRetrieveTasks_Success(t *testing.T) {
 	}
 }
 
-func TestRetrieveTasks_FailDueToTimedOutContext(t *testing.T) {
+func TestRetrieveTasks_FailWithTimedOutContext(t *testing.T) {
 	db, mock := setupMock()
 	defer db.Close()
 
@@ -205,7 +205,7 @@ func TestRetrieveTasks_FailDueToTimedOutContext(t *testing.T) {
 		WithArgs(uint(userID), currentDate).
 		WillReturnError(errors.New("error context time out"))
 
-	repository := NewPostgresRepository(db)
+	repository := NewSqliteRepository(db)
 	timedOutCtx, cancle := context.WithTimeout(context.Background(), time.Millisecond)
 	defer cancle()
 
@@ -236,7 +236,7 @@ func TestAddTask_Success(t *testing.T) {
 		WithArgs(&task.ID, &task.Detail, &task.UserID, &task.CreatedDate).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 
-	repository := NewPostgresRepository(db)
+	repository := NewSqliteRepository(db)
 	err := repository.AddTask(context.Background(), &task)
 	if err != nil {
 		t.Fatalf("failed adding task: %s", err)
@@ -263,7 +263,7 @@ func TestAddTask_Fail(t *testing.T) {
 		WithArgs(&task.ID, &task.Detail, &task.UserID, currentDate).
 		WillReturnError(fmt.Errorf("nil user_id"))
 
-	repository := NewPostgresRepository(db)
+	repository := NewSqliteRepository(db)
 	err := repository.AddTask(context.Background(), &task)
 	if err == nil {
 		t.Fatalf("AddTask should fail due to nil user_id")
