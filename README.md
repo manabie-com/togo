@@ -51,7 +51,8 @@ go test -v ./...
 
 # About the solution
 ## Data model
-Diagram (to be updated)
+![diagram](https://user-images.githubusercontent.com/40640560/160240700-2c0d6a41-df76-4a4e-9972-373563a2be68.png)
+
 
 Rule is flexible and new rule can be created to throttle requests for any user action with small amount of code change.
 For example, to throttle number of update requests per second, we can create a rule like this:
@@ -68,12 +69,14 @@ And then place `RateLimiter("tasks/update")` next to the route handler. However,
 ## Overview
 From high level, a rate limiter middleware is used to handle user requests before sending it to lower layers.
 The number of requests an user can perform is limited by a rule.
+![image](https://user-images.githubusercontent.com/40640560/160240960-92d6b1fb-33b5-4a02-aace-bcc38f53703c.png)
+
 
 ## How rate limiter middleware works
 Rule is stored persistently in MySQL database. Because this data is not expected to be changed often, it is cached in Redis using cache-aside model (server fetch from Redis first, if not found, fetch from MySQL and cache rule data in Redis for subsequent requests).
 
 Each user has a bucket to store the number of requests they have performed in the past time window.
-Bucket key is a combination of user id, action and time window, followed the format `counter:{user_id}:{action}:day:{time_window}`. That means each time window for each user and action will have its own counter.
+Bucket key is a combination of user id, action and time window, followed the format `counter:{user_id}:{action}:{unit}:{time_window}`. That means each time window for each user and action will have its own counter.
 
 Example `counter:9725cc63-4e92-4893-a6b2-216617f3a5dd:tasks/create:day:26` means the number of task creation requests performed by user 9725cc63-4e92-4893-a6b2-216617f3a5dd on 26th of current month
 
