@@ -1,6 +1,8 @@
 package utils
 
-import "database/sql"
+import (
+	"database/sql"
+)
 
 func SqlNullString(s string) sql.NullString {
 	return sql.NullString{

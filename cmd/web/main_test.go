@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestConnectDatabase(t *testing.T) {
+func TestConnectDatabase_Postgres(t *testing.T) {
 	// set env for testing
 	{
 		os.Setenv("DB_USER", "togo_user")
@@ -15,6 +15,8 @@ func TestConnectDatabase(t *testing.T) {
 		os.Setenv("DB_HOST", "localhost")
 		os.Setenv("DB_PORT", "5432")
 		os.Setenv("DB_NAME", "togo_db")
+
+		os.Setenv("DB_DRIVER", "postgres")
 	}
 
 	srv, db, err := run()
@@ -30,5 +32,6 @@ func TestConnectDatabase(t *testing.T) {
 		os.Unsetenv("DB_HOST")
 		os.Unsetenv("DB_PORT")
 		os.Unsetenv("DB_NAME")
+		os.Unsetenv("DB_DRIVER")
 	}
 }

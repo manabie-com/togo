@@ -16,6 +16,7 @@ import (
 )
 
 func TestValidateUser_Success(t *testing.T) {
+	t.Parallel()
 	db, mock := setupMock()
 	defer db.Close()
 
@@ -43,6 +44,7 @@ func TestValidateUser_Success(t *testing.T) {
 }
 
 func TestValidateUser_WrongUsername(t *testing.T) {
+	t.Parallel()
 	db, mock := setupMock()
 	defer db.Close()
 
@@ -68,6 +70,7 @@ func TestValidateUser_WrongUsername(t *testing.T) {
 }
 
 func TestValidateUser_WrongPassword(t *testing.T) {
+	t.Parallel()
 	db, mock := setupMock()
 	defer db.Close()
 
@@ -93,6 +96,7 @@ func TestValidateUser_WrongPassword(t *testing.T) {
 }
 
 func TestGetUser_Success(t *testing.T) {
+	t.Parallel()
 	db, mock := setupMock()
 	defer db.Close()
 
@@ -125,6 +129,7 @@ func TestGetUser_Success(t *testing.T) {
 }
 
 func TestGetUser_FailWithNoRow(t *testing.T) {
+	t.Parallel()
 	db, mock := setupMock()
 	defer db.Close()
 
@@ -145,6 +150,7 @@ func TestGetUser_FailWithNoRow(t *testing.T) {
 }
 
 func TestRetrieveTasks_Success(t *testing.T) {
+	t.Parallel()
 	db, mock := setupMock()
 	defer db.Close()
 
@@ -196,6 +202,7 @@ func TestRetrieveTasks_Success(t *testing.T) {
 }
 
 func TestRetrieveTasks_FailDueToTimedOutContext(t *testing.T) {
+	t.Parallel()
 	db, mock := setupMock()
 	defer db.Close()
 
@@ -220,6 +227,7 @@ func TestRetrieveTasks_FailDueToTimedOutContext(t *testing.T) {
 }
 
 func TestAddTask_Success(t *testing.T) {
+	t.Parallel()
 	db, mock := setupMock()
 	defer db.Close()
 
@@ -248,6 +256,7 @@ func TestAddTask_Success(t *testing.T) {
 }
 
 func TestAddTask_Fail(t *testing.T) {
+	t.Parallel()
 	db, mock := setupMock()
 	defer db.Close()
 

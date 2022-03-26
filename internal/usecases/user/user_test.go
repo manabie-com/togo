@@ -15,6 +15,7 @@ import (
 )
 
 func TestValidateUser_Success(t *testing.T) {
+	t.Parallel()
 	db, mock := setupMock()
 	defer db.Close()
 
@@ -44,6 +45,7 @@ func TestValidateUser_Success(t *testing.T) {
 }
 
 func TestValidateUser_WrongUsername(t *testing.T) {
+	t.Parallel()
 	db, mock := setupMock()
 	defer db.Close()
 
@@ -71,6 +73,7 @@ func TestValidateUser_WrongUsername(t *testing.T) {
 }
 
 func TestValidateUser_WrongPassword(t *testing.T) {
+	t.Parallel()
 	db, mock := setupMock()
 	defer db.Close()
 
@@ -98,6 +101,7 @@ func TestValidateUser_WrongPassword(t *testing.T) {
 }
 
 func TestGetUserByUsername_Success(t *testing.T) {
+	t.Parallel()
 	db, mock := setupMock()
 	defer db.Close()
 
@@ -133,6 +137,7 @@ func TestGetUserByUsername_Success(t *testing.T) {
 }
 
 func TestGetUserByUserName_FailWithNoRow(t *testing.T) {
+	t.Parallel()
 	db, mock := setupMock()
 	defer db.Close()
 
@@ -155,6 +160,7 @@ func TestGetUserByUserName_FailWithNoRow(t *testing.T) {
 }
 
 func TestGenerateToken_Success(t *testing.T) {
+	t.Parallel()
 	db, _ := setupMock()
 	defer db.Close()
 
@@ -181,8 +187,15 @@ func TestGenerateToken_Success(t *testing.T) {
 }
 
 func TestGenerateToken_Fail(t *testing.T) {
+	t.Parallel()
 	db, _ := setupMock()
 	defer db.Close()
+
+	// unset env
+	{
+		os.Unsetenv("JWT_TIMEOUT")
+		os.Unsetenv("JWT_KEY")
+	}
 
 	// Test with Postgres repo
 	repository := postgres.NewPostgresRepository(db)

@@ -13,12 +13,12 @@ const (
 	connMaxLifeTime = 5 * time.Minute
 )
 
+var dbConn = &DB{}
+
 // DB holds the database connection pool
 type DB struct {
 	SQL *sql.DB
 }
-
-var dbConn = &DB{}
 
 // ConnectDB creates a database connection pool for PostgreSql
 func ConnectDB(dsn string) (*DB, error) {

@@ -15,6 +15,7 @@ import (
 )
 
 func TestRetrieveTask(t *testing.T) {
+	t.Parallel()
 	db, mock := setupMock()
 	defer db.Close()
 
@@ -69,6 +70,7 @@ func TestRetrieveTask(t *testing.T) {
 }
 
 func TestAddTask_Success(t *testing.T) {
+	t.Parallel()
 	db, mock := setupMock()
 	defer db.Close()
 
@@ -98,6 +100,7 @@ func TestAddTask_Success(t *testing.T) {
 }
 
 func TestIsMaxTaskPerDay_Reached(t *testing.T) {
+	t.Parallel()
 	db, mock := setupMock()
 	defer db.Close()
 
@@ -139,6 +142,7 @@ func TestIsMaxTaskPerDay_Reached(t *testing.T) {
 }
 
 func TestIsMaxTaskPerDay_NotReached(t *testing.T) {
+	t.Parallel()
 	db, mock := setupMock()
 	defer db.Close()
 
@@ -179,6 +183,7 @@ func TestIsMaxTaskPerDay_NotReached(t *testing.T) {
 }
 
 func TestIsMaxTaskPerDay_FailDueToTimedOutContext(t *testing.T) {
+	t.Parallel()
 	db, mock := setupMock()
 	defer db.Close()
 
