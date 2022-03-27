@@ -10,6 +10,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.15.1
 	github.com/golang/mock v1.6.0
 	github.com/jackc/pgx/v4 v4.15.0
+	github.com/jmoiron/sqlx v1.3.4 // indirect
 	github.com/matoous/go-nanoid/v2 v2.0.0
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/opencontainers/runc v1.1.0 // indirect

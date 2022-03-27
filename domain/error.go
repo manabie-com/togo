@@ -16,4 +16,8 @@ var (
 		Code:    "invalid_arg",
 		Message: "invalid argument",
 	}
+	ErrNotFound = Error{
+		Code:    "not_found",
+		Message: "not found",
+	}
 )

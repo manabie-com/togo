@@ -10,6 +10,8 @@ import (
 	"testing"
 
 	_ "github.com/jackc/pgx/v4/stdlib"
+	"github.com/jmoiron/sqlx"
+	"github.com/laghodessa/togo/infra/postgres"
 	"github.com/ory/dockertest/v3"
 )
 
@@ -53,4 +55,16 @@ func setup(m *testing.M) int {
 	}
 
 	return m.Run()
+}
+
+func migrate(t *testing.T) {
+	t.Helper()
+	if err := postgres.Migrate(dbURL); err != nil {
+		log.Fatalf("migrate db: %s", err)
+	}
+}
+func clearDB() {
+	dbx := sqlx.NewDb(db, "postgres")
+	_ = dbx.MustExec(`DELETE FROM "user"`)
+	_ = dbx.MustExec(`DELETE FROM task`)
 }
