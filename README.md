@@ -1,30 +1,74 @@
-### Requirements
+# Togo
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+## Table of contents
 
-### Notes
+* [Postman Collection] (#postmant-collection)
+* [Features] (#features)
+* [Diagrams] (#diagrams)
+* [Start] (#start)
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
 
-### How to submit your solution?
+## Postman Collection
 
-- Fork this repo and show us your development progress via a PR
+This is a Postman collection contains REST API of Togo service.
+[Postman Collection] (docs/togo.postman_collection.json)
 
-### Interesting facts about Manabie
+## Features
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+There are a few main features in this repo.
+:heavy_check_mark: Login
+:heavy_check_mark: Retrieve tasks
+:heavy_check_mark: Create task
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+There are also a few functionalities/ultilities I want to improve but I don't have enough time.
+
+:x: Apply Swagger(Open API 3.0) tools to create docs and help with generate boilerplate codes for request/response definitions.
+:x: Implement user permission to have an admin account to create many other users and also implement API for create/update/delete users.
+
+## Diagrams
+
+1.  ### Sequence Diagram
+
+![Sequence] (https://raw.githubusercontent.com/mirageruler/togo/master/docs/togo-sequence.svg)
+
+2. ### ERD Diagram
+
+![ERD] (https://raw.githubusercontent.com/mirageruler/togo/master/docs/togo-erd.svg)
+
+## Start
+
+Follow these steps to run Togo service.
+
+1. ### Installation
+
+```
+git clone https://github.com/mirageruler/togo
+cd togo
+cp .env.example .env
+```
+
+2. ### Run uint test & integration test
+
+```
+docker-compose up --build -d
+docker-compose exec db psql -U togo_user togo_db
+```
+
+In the psql console type this:
+
+``` 
+create database togo_db_test;
+exit;
+```
+
+Finally, comeback to terminal console, type this:
+
+```
+go test ./...
+```
+
+3. ### Run without test
+
+```
+docker-compose up --build
+```
