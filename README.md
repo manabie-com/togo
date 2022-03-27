@@ -2,38 +2,42 @@
 
 ## Table of contents
 
-* [Postman Collection] (#postmant-collection)
-* [Features] (#features)
-* [Diagrams] (#diagrams)
-* [Start] (#start)
+* [Postman Collection](#postman-collection)
+* [Features](#features)
+* [Diagrams](#diagrams)
+* [Start](#start)
 
 
 ## Postman Collection
 
 This is a Postman collection contains REST API of Togo service.
-[Postman Collection] (docs/togo.postman_collection.json)
+[Postman Collection](docs/togo.postman_collection.json)
 
 ## Features
 
 There are a few main features in this repo.
+
 :heavy_check_mark: Login
+
 :heavy_check_mark: Retrieve tasks
+
 :heavy_check_mark: Create task
 
 There are also a few functionalities/ultilities I want to improve but I don't have enough time.
 
 :x: Apply Swagger(Open API 3.0) tools to create docs and help with generate boilerplate codes for request/response definitions.
+
 :x: Implement user permission to have an admin account to create many other users and also implement API for create/update/delete users.
 
 ## Diagrams
 
 1.  ### Sequence Diagram
 
-![Sequence] (https://raw.githubusercontent.com/mirageruler/togo/master/docs/togo-sequence.svg)
+![Sequence](https://raw.githubusercontent.com/mirageruler/togo/master/docs/togo-sequence.svg)
 
 2. ### ERD Diagram
 
-![ERD] (https://raw.githubusercontent.com/mirageruler/togo/master/docs/togo-erd.svg)
+![ERD](https://raw.githubusercontent.com/mirageruler/togo/master/docs/togo-erd.svg)
 
 ## Start
 
