@@ -8,7 +8,7 @@ import (
 )
 
 // DatabaseRepository interface is the definition for methods collection
-// that interact directly with the database
+// that interact directly with the connected database
 type DatabaseRepository interface {
 	ValidateUser(ctx context.Context, username, password sql.NullString) bool
 	GetUserByUserName(ctx context.Context, username sql.NullString) (*models.User, error)

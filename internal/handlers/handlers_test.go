@@ -53,19 +53,21 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	os.Setenv("JWT_TIMEOUT", "1000000")
 
 	// Set up a test server
-	repo := NewRepo(dbConn)
-	SetRepoForHandlers(repo)
+	{
+		repo := NewRepo(dbConn)
+		SetRepoForHandlers(repo)
 
-	srv := &http.Server{
-		Addr:    fmt.Sprintf(":%d", s.port),
-		Handler: routes(),
-	}
-
-	go func() {
-		if err = srv.ListenAndServe(); err != nil {
-			log.Fatalf("error listening at port %d: %+s", s.port, err)
+		srv := &http.Server{
+			Addr:    fmt.Sprintf(":%d", s.port),
+			Handler: routes(),
 		}
-	}()
+
+		go func() {
+			if err = srv.ListenAndServe(); err != nil {
+				log.Fatalf("error listening at port %d: %+s", s.port, err)
+			}
+		}()
+	}
 }
 
 func (s *IntegrationTestSuite) TearDownSuite() {

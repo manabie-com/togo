@@ -11,7 +11,7 @@ func TestRoutes(t *testing.T) {
 
 	switch v := mux.(type) {
 	case *chi.Mux:
-		// true, donothing
+		// true, do nothing
 	default:
 		t.Errorf("expect type *chi.Mux, not %T", v)
 	}

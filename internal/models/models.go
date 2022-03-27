@@ -1,6 +1,6 @@
 package models
 
-// User deinfes `users` table in the database
+// User defines `users` table in the database
 type User struct {
 	ID            uint   `json:"id"`
 	Username      string `json:"username"`
