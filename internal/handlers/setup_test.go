@@ -37,6 +37,8 @@ func routes() http.Handler {
 
 	{
 		mux.Post("/login", Repo.Login)
+		mux.Get("/tasks", Repo.RetrieveTasks)
+		mux.Post("/tasks", Repo.AddTask)
 	}
 
 	return mux

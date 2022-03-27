@@ -20,6 +20,8 @@ func routes() http.Handler {
 	// New api should be added below
 	{
 		mux.Post("/login", handlers.Repo.Login)
+		mux.Get("/tasks", handlers.Repo.RetrieveTasks)
+		mux.Post("/tasks", handlers.Repo.AddTask)
 	}
 
 	return mux

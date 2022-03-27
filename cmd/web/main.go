@@ -48,9 +48,7 @@ func run() (*http.Server, *driver.DB, error) {
 		var id int
 		query := "SELECT id FROM users WHERE username = 'khxingn' AND password = 'Qq@1234567'"
 		row := db.SQL.QueryRowContext(context.Background(), query)
-		err = row.Scan(&id)
-
-		if err != nil {
+		if err = row.Scan(&id); err != nil {
 			insertQuery := "INSERT INTO users(id, username, password) VALUES (1, 'khxingn', 'Qq@1234567');"
 			_, err := db.SQL.ExecContext(context.Background(), insertQuery)
 			if err != nil {
