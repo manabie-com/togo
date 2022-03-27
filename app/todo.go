@@ -59,7 +59,7 @@ func (uc *TodoUsecase) AddTask(ctx context.Context, req AddTask) (todo.Task, err
 		return todo.Task{}, err
 	}
 
-	if err := uc.TaskRepo.AddTask(ctx, task, loc); err != nil {
+	if err := uc.TaskRepo.AddTask(ctx, task, loc, user.TaskDailyLimit); err != nil {
 		return todo.Task{}, fmt.Errorf("add task: %w", err)
 	}
 	return task, nil

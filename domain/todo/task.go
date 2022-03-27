@@ -56,6 +56,6 @@ type TaskRepo interface {
 	// until is exclusive
 	CountInTimeRangeByUserID(_ context.Context, userID string, since time.Time, until time.Time) (int, error)
 	// AddTask add new user tasks.
-	// It should also handle user daily limit logic
-	AddTask(_ context.Context, _ Task, loc *time.Location) error
+	// It should also handle user daily limit logic to avoid race condition with daily limit
+	AddTask(_ context.Context, _ Task, loc *time.Location, dailyLimit int) error
 }

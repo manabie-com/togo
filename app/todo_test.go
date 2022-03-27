@@ -24,7 +24,7 @@ func TestTodoUsecase_AddTask(t *testing.T) {
 		Return(todofixture.NewUser(), nil)
 
 	taskRepo.EXPECT().
-		AddTask(mock.Any(), mock.Any(), mock.Any()).
+		AddTask(mock.Any(), mock.Any(), mock.Any(), mock.Any()).
 		Return(nil)
 
 	taskRepo.EXPECT().

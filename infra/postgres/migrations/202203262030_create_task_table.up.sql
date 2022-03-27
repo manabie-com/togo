@@ -4,4 +4,6 @@ CREATE TABLE IF NOT EXISTS task (
   user_pk INT NOT NULL REFERENCES "user"(pk),
   message VARCHAR NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-)
+);
+
+CREATE INDEX IF NOT EXISTS task_user_pk_idx ON task(user_pk);

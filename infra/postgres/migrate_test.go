@@ -10,6 +10,7 @@ import (
 )
 
 func TestMigrate(t *testing.T) {
+	t.Cleanup(clearDB)
 	err := postgres.Migrate(dbURL)
 	assert.NoError(t, err)
 }

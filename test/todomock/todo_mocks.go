@@ -75,17 +75,17 @@ func (m *MockTaskRepo) EXPECT() *MockTaskRepoMockRecorder {
 }
 
 // AddTask mocks base method.
-func (m *MockTaskRepo) AddTask(arg0 context.Context, arg1 todo.Task, arg2 *time.Location) error {
+func (m *MockTaskRepo) AddTask(arg0 context.Context, arg1 todo.Task, arg2 *time.Location, arg3 int) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddTask", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "AddTask", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // AddTask indicates an expected call of AddTask.
-func (mr *MockTaskRepoMockRecorder) AddTask(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockTaskRepoMockRecorder) AddTask(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddTask", reflect.TypeOf((*MockTaskRepo)(nil).AddTask), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddTask", reflect.TypeOf((*MockTaskRepo)(nil).AddTask), arg0, arg1, arg2, arg3)
 }
 
 // CountInTimeRangeByUserID mocks base method.
