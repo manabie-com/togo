@@ -1,30 +1,89 @@
-### Requirements
+## Features
+- API auth and handle task for each user.
+- Split services layer to domain and transport layer.
+- Write unit test for the domain layer.
+- Write unit test for the store layer.
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+## Project Structure
 
-### Notes
+```sh
+.
+├── cmd/
+│   └── main.go                #  main func 
+│   │          
+│   └── migrate                
+│   |   └── main.go           #  main func for migrate
+├── configs/
+│   ├── config.go             # contain config variable
+├── internal/ 
+│   ├── transport/            # contain transport layer
+│   │   └── ...
+|   ├── domain/               # contain bussiness layer 
+│   │   └── ...
+│   └── storages/             # contain model and repository/store layer
+│   │   └── postgres/         
+│   │   |   └── ...
+│   │   └── entities.go       #  contain models and entities
+│   │   └── task.go           #  contain interface  of task store
+│   │   └── user.go           #  contain interface of user store
+├── common/ 
+│   └── errors/
+│   |   └── ... 
+│   └── constants/
+│   |    └── storages/  
+├── utils/ 
+├── Dockerfile
+├── docker-compose.yml
+├── .gitignore                # specifies intentionally untracked files to ignore
+├── .env
+├── docker.env
+├── go.mod 
+├── go.sum
+```
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+## Installation
 
-### How to submit your solution?
+Make sure you have Go installed ([download](https://golang.org/dl/)). Version `1.16` or higher is required.
 
-- Fork this repo and show us your development progress via a PR
+Install make for start the server.
 
-### Interesting facts about Manabie
+For Linux:
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+```sh
+$sudo apt install make
+```
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+For Macos:
+
+```sh
+$brew install make
+```
+
+## Start project
+
+
+Start server with docker:
+
+```sh
+$make docker-start
+```
+
+Your app should now be running on [localhost:5050](http://localhost:5050/).
+
+## Curl sample 
+
+curl --location --request POST 'localhost:5050/task' \
+--header 'Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDA0OTUzMjUsInVzZXJfaWQiOiJoYW9wcm8xIn0.PrNVQtJ9in3rGaCCsdbl4e07zwdlZzu57pOzyNx7otw' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "content":"noi dung 6"
+}'
+
+## Test
+
+```sh
+$make test
+```
+
+## Some love for my solution 
+I think it is the way that I implement a global var for avoiding race condition about number task each user
