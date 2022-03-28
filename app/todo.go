@@ -22,6 +22,7 @@ type AddTask struct {
 	TimeZone string
 }
 
+// AddTask add new todo task to user's list
 func (uc *TodoUsecase) AddTask(ctx context.Context, req AddTask) (todo.Task, error) {
 	user, err := uc.UserRepo.GetUser(ctx, req.Task.UserID)
 	if err != nil {

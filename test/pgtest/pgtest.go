@@ -50,5 +50,5 @@ func ClearDB(db *sql.DB) {
 	dbx := sqlx.NewDb(db, "postgres")
 	_ = dbx.MustExec(`TRUNCATE "user" CASCADE`)
 	_ = dbx.MustExec(`TRUNCATE task CASCADE`)
-	_ = dbx.MustExec(`DROP TABLE schema_migrations`)
+	_ = dbx.MustExec(`DROP TABLE IF EXISTS schema_migrations`)
 }

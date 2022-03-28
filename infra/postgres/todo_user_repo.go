@@ -40,6 +40,14 @@ func (repo *TodoUserRepo) GetUser(ctx context.Context, id string) (todo.User, er
 	}, nil
 }
 
+func (repo *TodoUserRepo) AddUser(ctx context.Context, u todo.User) error {
+	q := `INSERT INTO "user" (id, task_daily_limit) VALUES ($1, $2)`
+	if _, err := repo.db.ExecContext(ctx, q, u.ID, u.TaskDailyLimit); err != nil {
+		return fmt.Errorf("insert user: %w", err)
+	}
+	return nil
+}
+
 type User struct {
 	PK             int `db:"pk"`
 	TaskDailyLimit int `db:"task_daily_limit"`

@@ -4,9 +4,13 @@ package rest_test
 
 import (
 	"bytes"
+	"context"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 
+	"github.com/laghodessa/togo/domain/todo"
+	"github.com/laghodessa/togo/test/todofixture"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
@@ -16,6 +20,7 @@ var _ = Describe("/tasks", func() {
 	var target string
 	var body string
 	var req *http.Request
+	var user = todofixture.NewUser(func(u *todo.User) { u.TaskDailyLimit = 1 })
 
 	JustBeforeEach(func() {
 		req = httptest.NewRequest(method, "http://togo.com/api/v1"+target, bytes.NewBufferString(body))
@@ -24,14 +29,24 @@ var _ = Describe("/tasks", func() {
 
 	Describe("POST /tasks", func() {
 		BeforeEach(func() {
+			Expect(userRepo.AddUser(context.Background(), user)).To(Succeed())
 			method = "POST"
 			target = "/tasks"
+			body = fmt.Sprintf(`
+			{
+				"timeZone": "Asia/Ho_Chi_Minh",
+				"task": {
+					"userId": "%s",
+					"message": "todo message"
+				}
+			}`, user.ID)
 		})
 
 		It("returns 201", func() {
-			// resp, err := server.Test(req)
-			// Expect(err).To(Succeed())
-			// Expect(resp).To(HaveHTTPStatus(http.StatusCreated))
+			resp, err := server.Test(req)
+			Expect(err).To(Succeed())
+			Expect(resp).To(HaveHTTPStatus(http.StatusCreated))
+			Expect(resp).To(HaveHTTPBody(ContainSubstring("todo message")))
 		})
 
 		Context("user does not exist", func() {
@@ -49,11 +64,28 @@ var _ = Describe("/tasks", func() {
 			})
 		})
 
-		Context("user's daily limit reahed", func() {
-			It("returns 422", func() {
-				// resp, err := server.Test(req)
-				// Expect(err).To(Succeed())
-				// Expect(resp).To(HaveHTTPStatus(http.StatusUnprocessableEntity))
+		Context("user's daily limit reached", func() {
+			BeforeEach(func() {
+				body = fmt.Sprintf(`
+				{
+					"timeZone": "Asia/Ho_Chi_Minh",
+					"task": {
+						"userId": "%s",
+						"message": "todo message"
+					}
+				}`, user.ID)
+			})
+			JustBeforeEach(func() {
+				// setup hit user daily limit
+				resp, err := server.Test(req)
+				Expect(err).To(Succeed())
+				Expect(resp).To(HaveHTTPStatus(http.StatusCreated))
+			})
+
+			FIt("returns 422", func() {
+				resp, err := server.Test(req)
+				Expect(err).To(Succeed())
+				Expect(resp).To(HaveHTTPStatus(http.StatusUnprocessableEntity))
 			})
 		})
 	})

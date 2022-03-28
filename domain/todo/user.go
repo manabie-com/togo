@@ -25,7 +25,10 @@ func (u User) HitTaskDailyLimit(todayTotal int) error {
 }
 
 type UserRepo interface {
+	// GetUser returns user by id
 	GetUser(ctx context.Context, id string) (User, error)
+	// AddUser creates a new user
+	AddUser(context.Context, User) error
 }
 
 type UserOpt func(*User) error
