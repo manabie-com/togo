@@ -44,7 +44,7 @@ var _ = Describe("/tasks", func() {
 
 		It("returns 201", func() {
 			resp, err := server.Test(req)
-			Expect(err).To(Succeed())
+			Expect(err).ShouldNot(HaveOccurred())
 			Expect(resp).To(HaveHTTPStatus(http.StatusCreated))
 			Expect(resp).To(HaveHTTPBody(ContainSubstring("todo message")))
 		})
@@ -56,7 +56,7 @@ var _ = Describe("/tasks", func() {
 
 			It("returns 404", func() {
 				resp, err := server.Test(req)
-				Expect(err).To(Succeed())
+				Expect(err).ShouldNot(HaveOccurred())
 				Expect(resp).To(HaveHTTPStatus(http.StatusNotFound))
 				Expect(resp).To(HaveHTTPBody(MatchJSON(`
 				{"code": "not_found", "message": "user not found"}
@@ -78,13 +78,13 @@ var _ = Describe("/tasks", func() {
 			JustBeforeEach(func() {
 				// setup hit user daily limit
 				resp, err := server.Test(req)
-				Expect(err).To(Succeed())
+				Expect(err).ShouldNot(HaveOccurred())
 				Expect(resp).To(HaveHTTPStatus(http.StatusCreated))
 			})
 
-			FIt("returns 422", func() {
+			It("returns 422", func() {
 				resp, err := server.Test(req)
-				Expect(err).To(Succeed())
+				Expect(err).ShouldNot(HaveOccurred())
 				Expect(resp).To(HaveHTTPStatus(http.StatusUnprocessableEntity))
 			})
 		})

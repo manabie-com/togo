@@ -65,3 +65,17 @@ func (uc *TodoUsecase) AddTask(ctx context.Context, req AddTask) (todo.Task, err
 	}
 	return task, nil
 }
+
+func (uc *TodoUsecase) AddUser(ctx context.Context, req User) (todo.User, error) {
+	user, err := todo.NewUser(
+		todo.UserTaskDailyLimit(req.TaskDailyLimit),
+	)
+	if err != nil {
+		return todo.User{}, err
+	}
+
+	if err := uc.UserRepo.AddUser(ctx, user); err != nil {
+		return todo.User{}, fmt.Errorf("add user: %w", err)
+	}
+	return user, nil
+}

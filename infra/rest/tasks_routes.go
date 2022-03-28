@@ -9,15 +9,15 @@ import (
 )
 
 func RegisterTasks(api fiber.Router, todoUC *app.TodoUsecase) {
-	h := &taskHandlers{}
+	h := &tasksHandler{}
 
 	tasks := api.Group("/tasks")
 	tasks.Post("/", h.addTask(todoUC))
 }
 
-type taskHandlers struct{}
+type tasksHandler struct{}
 
-func (*taskHandlers) addTask(todoUC *app.TodoUsecase) fiber.Handler {
+func (*tasksHandler) addTask(todoUC *app.TodoUsecase) fiber.Handler {
 	type Request struct {
 		Task struct {
 			UserID  string `json:"userId"`
@@ -42,6 +42,10 @@ func (*taskHandlers) addTask(todoUC *app.TodoUsecase) fiber.Handler {
 		if err != nil {
 			return fmt.Errorf("add task: %w", err)
 		}
-		return c.Status(http.StatusCreated).JSON(task)
+		return c.Status(http.StatusCreated).JSON(Task{
+			ID:      task.ID,
+			UserID:  task.UserID,
+			Message: task.Message,
+		})
 	}
 }

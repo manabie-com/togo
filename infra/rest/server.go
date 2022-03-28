@@ -26,6 +26,7 @@ func NewFiber(db *sql.DB) *fiber.App {
 	}
 
 	RegisterTasks(api, todoUC)
+	RegisterUsers(api, todoUC)
 
 	return server
 }

@@ -26,7 +26,7 @@ func (err Error) Is(target error) bool {
 // defines error groups for easier error handling at the infra layer
 var (
 	ErrInvalidArg = Error{
-		Code:    "invalid_argument",
+		Code:    CodeInvalidArg,
 		Message: "invalid argument",
 	}
 	ErrNotFound = Error{
@@ -39,11 +39,11 @@ func NewError(code, msg string) error {
 	return Error{Code: code, Message: msg}
 }
 
-func NotFound(msg string) error {
-	return NewError(CodeNotFound, msg)
-}
+func NotFound(msg string) error   { return NewError(CodeNotFound, msg) }
+func InvalidArg(msg string) error { return NewError(CodeInvalidArg, msg) }
 
 const (
-	CodeInternal = "internal"
-	CodeNotFound = "not_found"
+	CodeInternal   = "internal"
+	CodeNotFound   = "not_found"
+	CodeInvalidArg = "invalid_argument"
 )

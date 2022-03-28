@@ -50,7 +50,7 @@ func NewUser(opts ...UserOpt) (u User, err error) {
 func UserTaskDailyLimit(limit int) UserOpt {
 	return func(u *User) error {
 		if limit <= 0 {
-			return fmt.Errorf("%w: invalid task daily limit", domain.ErrInvalidArg)
+			return domain.InvalidArg("invalid task daily limit")
 		}
 		u.TaskDailyLimit = limit
 		return nil
