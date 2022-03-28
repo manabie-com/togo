@@ -1,0 +1,74 @@
+{
+  "users": [
+    {
+      "name": "Nguyen Van A",
+      "ability": 4
+    },
+    {
+      "name": "Nguyen Van B",
+      "ability": 5
+    },
+    {
+      "name": "Nguyen Van C",
+      "ability": 2
+    },
+    {
+      "name": "Nguyen Van D",
+      "ability": 8
+    }
+  ],
+  "calenders": [
+    {
+      "date": "20/01/2022"
+    },
+    {
+      "date": "22/01/2022"
+    },
+    {
+      "date": "23/01/2022"
+    },
+    {
+      "date": "24/01/2022"
+    }
+  ],
+  "assignments": [
+    {
+      "user_id": 1,
+      "date": "20/01/2022"
+    },
+    {
+      "user_id": 2,
+      "date": "22/01/2022"
+    },
+    {
+      "user_id": 3,
+      "date": "24/01/2022"
+    },
+    {
+      "user_id": 4,
+      "date": "23/01/2022"
+    }
+  ],
+  "tasks": [
+    {
+      "title": "A",
+      "description": "1",
+      "assignment_id": "1"
+    },
+    {
+      "title": "B",
+      "description": "1",
+      "assignment_id": "1"
+    },
+    {
+      "title": "C",
+      "description": "1",
+      "assignment_id": "1"
+    },
+    {
+      "title": "D",
+      "description": "1",
+      "assignment_id": "3"
+    }
+  ]
+}
