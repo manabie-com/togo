@@ -33,7 +33,7 @@ func (uc *TodoUsecase) AddTask(ctx context.Context, req AddTask) (todo.Task, err
 	// use timezone to avoid DST related issues
 	loc, err := time.LoadLocation(req.TimeZone)
 	if err != nil {
-		return todo.Task{}, fmt.Errorf("%w: invalid timezone", domain.ErrInvalidArg)
+		return todo.Task{}, domain.InvalidArg("invalid timezone")
 	}
 	now := time.Now().In(loc)
 	year, month, day := now.Date()
@@ -66,6 +66,7 @@ func (uc *TodoUsecase) AddTask(ctx context.Context, req AddTask) (todo.Task, err
 	return task, nil
 }
 
+// AddUser creates new user
 func (uc *TodoUsecase) AddUser(ctx context.Context, req User) (todo.User, error) {
 	user, err := todo.NewUser(
 		todo.UserTaskDailyLimit(req.TaskDailyLimit),

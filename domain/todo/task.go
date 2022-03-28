@@ -2,7 +2,6 @@ package todo
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/laghodessa/togo/domain"
@@ -25,10 +24,10 @@ func NewTask(opts ...TaskOpt) (task Task, err error) {
 	}
 
 	if task.UserID == "" {
-		return Task{}, fmt.Errorf("%w: user id can't be blank", domain.ErrInvalidArg)
+		return Task{}, domain.InvalidArg("user id can't be blank")
 	}
 	if task.Message == "" {
-		return Task{}, fmt.Errorf("%w: task message can't be blank", domain.ErrInvalidArg)
+		return Task{}, domain.InvalidArg("task message can't be blank")
 	}
 	task.ID = domain.NewID()
 	return task, nil

@@ -2,7 +2,6 @@ package todo
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/laghodessa/togo/domain"
 )
@@ -41,7 +40,7 @@ func NewUser(opts ...UserOpt) (u User, err error) {
 	}
 
 	if u.TaskDailyLimit == 0 {
-		return User{}, fmt.Errorf("%w: missing task daily limit", domain.ErrInvalidArg)
+		return User{}, domain.InvalidArg("missing task daily limit")
 	}
 	u.ID = domain.NewID()
 	return u, nil
@@ -58,8 +57,5 @@ func UserTaskDailyLimit(limit int) UserOpt {
 }
 
 var (
-	ErrUserHitTaskDailyLimit = domain.Error{
-		Code:    "todo_user_hit_task_daily_limit",
-		Message: "user hit task daily limit",
-	}
+	ErrUserHitTaskDailyLimit = domain.NewError("todo_user_hit_task_daily_limit", "user hit task daily limit")
 )
