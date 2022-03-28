@@ -7,12 +7,17 @@ require (
 	github.com/containerd/continuity v0.2.2 // indirect
 	github.com/docker/cli v20.10.14+incompatible // indirect
 	github.com/docker/docker v20.10.14+incompatible // indirect
+	github.com/gofiber/fiber/v2 v2.30.0 // indirect
 	github.com/golang-migrate/migrate/v4 v4.15.1
 	github.com/golang/mock v1.6.0
 	github.com/jackc/pgx/v4 v4.15.0
 	github.com/jmoiron/sqlx v1.3.4 // indirect
+	github.com/joho/godotenv v1.4.0 // indirect
+	github.com/klauspost/compress v1.15.1 // indirect
 	github.com/matoous/go-nanoid/v2 v2.0.0
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
+	github.com/onsi/ginkgo/v2 v2.1.3 // indirect
+	github.com/onsi/gomega v1.19.0 // indirect
 	github.com/opencontainers/runc v1.1.0 // indirect
 	github.com/ory/dockertest/v3 v3.8.1
 	github.com/stretchr/testify v1.7.1

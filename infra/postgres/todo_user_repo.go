@@ -30,7 +30,7 @@ func (repo *TodoUserRepo) GetUser(ctx context.Context, id string) (todo.User, er
 	var row User
 	if err := repo.db.GetContext(ctx, &row, q, id); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return todo.User{}, fmt.Errorf("%w: user not found", domain.ErrNotFound)
+			return todo.User{}, domain.NotFound("user not found")
 		}
 		return todo.User{}, fmt.Errorf("select from user: %w", err)
 	}

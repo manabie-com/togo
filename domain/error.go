@@ -1,6 +1,8 @@
 package domain
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Error struct {
 	Code    string
@@ -11,13 +13,37 @@ func (err Error) Error() string {
 	return fmt.Sprintf("%s: %s", err.Code, err.Message)
 }
 
+// Is returns true when error is an instance of domain.Error
+// and has the same Error.Code
+func (err Error) Is(target error) bool {
+	domainErr, ok := target.(Error)
+	if !ok {
+		return false
+	}
+	return err.Code == domainErr.Code
+}
+
+// defines error groups for easier error handling at the infra layer
 var (
 	ErrInvalidArg = Error{
-		Code:    "invalid_arg",
+		Code:    "invalid_argument",
 		Message: "invalid argument",
 	}
 	ErrNotFound = Error{
-		Code:    "not_found",
+		Code:    CodeNotFound,
 		Message: "not found",
 	}
+)
+
+func NewError(code, msg string) error {
+	return Error{Code: code, Message: msg}
+}
+
+func NotFound(msg string) error {
+	return NewError(CodeNotFound, msg)
+}
+
+const (
+	CodeInternal = "internal"
+	CodeNotFound = "not_found"
 )

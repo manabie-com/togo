@@ -3,9 +3,20 @@ Time start: 2022-03-25 20:04
 
 ## How to start
 
+1. Create a `.env` file at project root
+    ```sh
+    SERVER_PORT=3000
+    POSTGRES_URL=postgres://postgres@localhost:5432/togo_dev
+    ```
+
 1. Run migration with
     ```go
     go run ./cmd/migrate
+    ```
+
+1. Start the server with
+    ```go
+    go run ./cmd/server
     ```
 
 ### Testing
