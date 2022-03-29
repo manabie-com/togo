@@ -16,7 +16,7 @@ Time start: 2022-03-25 20:04
 1. Create a `.env` file at project root
     ```sh
     SERVER_PORT=3000
-    POSTGRES_URL=postgres://postgres@localhost:5432/togo_dev
+    POSTGRES_URL=postgres://postgres@localhost:5432/togo_dev?sslmode=disable
     ```
 
 1. Run migration with
@@ -27,6 +27,43 @@ Time start: 2022-03-25 20:04
 1. Start the server with
     ```go
     go run ./cmd/server
+    ```
+
+1. Create new user
+    ```sh
+    curl -X POST localhost:3000/api/v1/users -i \
+      -H 'Content-Type: application/json' \
+      -d '{"taskDailyLimit": 1}'
+    ```
+
+    Sample response:
+    ```json
+    {
+      "id": "d8fLZ71wS3K",
+      "taskDailyLimit": 1
+    }
+    ```
+
+1. Create new task
+    ```sh
+    curl -X POST localhost:3000/api/v1/tasks -i \
+      -H 'Content-Type: application/json' \
+      -d '{
+        "timeZone": "Asia/Ho_Chi_Minh",
+        "task": {
+          "userId": "d8fLZ71wS3K",
+          "message": "resolve todos"
+        }
+      }'
+    ```
+
+    Sample response:
+    ```json
+    {
+      "id": "uEiIZEqsWOe",
+      "userId": "d8fLZ71wS3K",
+      "message": "resolve todos"
+    }
     ```
 
 ### Testing
