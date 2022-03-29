@@ -1,7 +1,17 @@
 # Togo
+
 Time start: 2022-03-25 20:04
 
-## How to start
+### Dependencies
+
+- Go 1.16
+- PostgreSQL 14.2
+- Docker/Podman (for integration test)
+- Linux (not tested on Windows or MacOS)
+
+### How to start
+
+1. Setup PostgreSQL instance, create a database named `togo_dev`
 
 1. Create a `.env` file at project root
     ```sh
@@ -32,6 +42,20 @@ go test ./...
 ```go
 go test -tags=integration ./...
 ```
+
+### Q&A
+
+> What do you love about your solution?
+- Isolate domain logic from application logic
+- Isolate unit and integration test
+- Use `_test` suffix to test only public interfaces
+- Central HTTP error handling
+- Use container for testing on real PostgreSQL instance
+
+> What else do you want us to know about however you do not have enough time to complete?
+- Request logging
+- Transaction for integration test to rollback after each test
+- Authentication
 
 ### Requirements
 
