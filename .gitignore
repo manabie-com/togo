@@ -4,6 +4,7 @@
 *.dll
 *.so
 *.dylib
+__debug_bin
 
 # Test binary, built with `go test -c`
 *.test
@@ -16,4 +17,9 @@
 
 out/
 
+# env
+.env
+.envrc
+
 .idea
+.vscode/
