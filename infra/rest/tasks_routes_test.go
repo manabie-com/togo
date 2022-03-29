@@ -51,7 +51,9 @@ var _ = Describe("/tasks", func() {
 
 		Context("user does not exist", func() {
 			BeforeEach(func() {
-				body = `{"userId": "doesnotexist"}`
+				body = `{
+					"task": { "userId": "doesnotexist" }
+				}`
 			})
 
 			It("returns 404", func() {

@@ -26,6 +26,10 @@ type AddTask struct {
 
 // AddTask add new todo task to user's list
 func (uc *TodoUsecase) AddTask(ctx context.Context, req AddTask) (todo.Task, error) {
+	if req.Task.UserID == "" {
+		return todo.Task{}, domain.InvalidArg("missing user id")
+	}
+
 	user, err := uc.UserRepo.GetUser(ctx, req.Task.UserID)
 	if err != nil {
 		return todo.Task{}, fmt.Errorf("get user: %w", err)

@@ -34,7 +34,6 @@ var _ = Describe("TodoUsecase", func() {
 		var err error
 
 		JustBeforeEach(func() {
-			userID = domain.NewID()
 			req = app.AddTask{
 				Task: app.Task{
 					UserID:  userID,
@@ -51,6 +50,7 @@ var _ = Describe("TodoUsecase", func() {
 		})
 
 		BeforeEach(func() {
+			userID = domain.NewID()
 			userRepo.EXPECT().
 				GetUser(mock.Any(), mock.Any()).
 				Return(todofixture.NewUser(), nil).AnyTimes()
@@ -66,6 +66,12 @@ var _ = Describe("TodoUsecase", func() {
 		It("succeeds", func() { Expect(err).ShouldNot(HaveOccurred()) })
 		It("returns valid task message", func() { Expect(task.Message).To(Equal("stop coding")) })
 		It("returns valid task user id", func() { Expect(task.UserID).To(Equal(userID)) })
+
+		Context("request is missing user id", func() {
+			BeforeEach(func() { userID = "" })
+			It("fails", func() { Expect(err).Should(HaveOccurred()) })
+			It("returns invalid argument error", func() { Expect(errors.Is(err, domain.ErrInvalidArg)).To(BeTrue()) })
+		})
 
 		Context("user hit daily limit", func() {
 			BeforeEach(func() {
