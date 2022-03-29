@@ -90,7 +90,7 @@ go test -tags=integration ./...
 - Use container for testing on real PostgreSQL instance
 
 > What else do you want us to know about however you do not have enough time to complete?
-- Request logging
+- Dedicated logger, structured request logging
 - Transaction for integration test to rollback after each test
 - Authentication
 

@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/laghodessa/togo/app"
 	"github.com/laghodessa/togo/domain"
 	"github.com/laghodessa/togo/infra/postgres"
@@ -15,6 +16,9 @@ func NewFiber(db *sql.DB) *fiber.App {
 	server := fiber.New(fiber.Config{
 		ErrorHandler: ErrorHandler,
 	})
+
+	server.Use(logger.New())
+
 	api := server.Group("/api/v1")
 
 	userRepo := postgres.NewTodoUserRepo(db)
