@@ -3,6 +3,7 @@ package todo_test
 import (
 	"errors"
 
+	"github.com/laghodessa/togo/domain"
 	"github.com/laghodessa/togo/domain/todo"
 	"github.com/laghodessa/togo/test/todofixture"
 	. "github.com/onsi/ginkgo/v2"
@@ -28,6 +29,18 @@ var _ = Describe("NewUser", func() {
 		It("succeeds", func() { Expect(err).ShouldNot(HaveOccurred()) })
 		It("create new user id", func() { Expect(user.ID).ToNot(BeEmpty()) })
 		It("set daily limit task", func() { Expect(user.TaskDailyLimit).To(Equal(taskDailyLimit)) })
+	})
+
+	Context("daily task = 0", func() {
+		BeforeEach(func() { taskDailyLimit = 0 })
+		It("fails", func() { Expect(err).Should(HaveOccurred()) })
+		It("returns invalid argument error", func() { Expect(errors.Is(err, domain.ErrInvalidArg)).To(BeTrue()) })
+	})
+
+	Context("daily task < 0", func() {
+		BeforeEach(func() { taskDailyLimit = -1 })
+		It("fails", func() { Expect(err).Should(HaveOccurred()) })
+		It("returns invalid argument error", func() { Expect(errors.Is(err, domain.ErrInvalidArg)).To(BeTrue()) })
 	})
 })
 

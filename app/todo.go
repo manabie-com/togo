@@ -14,9 +14,11 @@ type TodoUsecase struct {
 	UserRepo todo.UserRepo
 }
 
-// AddTask add one specified task
+// AddTask request
 //
-// timezone is the client timezone
+// TimeZone is the client time zone.
+// Note: consider moving time zone to user's settings.
+// Letting the client change select TimeZone on each request may not meet the business requirement.
 type AddTask struct {
 	Task     Task
 	TimeZone string
@@ -47,7 +49,7 @@ func (uc *TodoUsecase) AddTask(ctx context.Context, req AddTask) (todo.Task, err
 
 	// checking daily limit here is unreliable,
 	// but in most cases, this will suffice
-	// repo should handle set-validation
+	// repo should handle set-validation like daily limit
 	if err := user.HitTaskDailyLimit(nTasks); err != nil {
 		return todo.Task{}, err
 	}
