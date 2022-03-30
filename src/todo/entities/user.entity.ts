@@ -7,22 +7,22 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Todo {
+export class User {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
   @Column({
-    type: 'text',
+    type: 'varchar',
+    length: '255',
     nullable: false,
   })
-  content: string;
+  name: string;
 
   @Column({
-    type: 'int4',
-    name: 'user_id',
+    type: 'int2',
     nullable: false,
   })
-  userId: number;
+  limit: number;
 
   @CreateDateColumn({
     type: 'timestamptz',

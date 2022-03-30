@@ -3,11 +3,10 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TodoModule } from './todo/todo.module';
-console.log('process.env', process.env)
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({isGlobal: true}),
     TypeOrmModule.forRoot({
       type: process.env.DB_DIALECT,
       host: process.env.DB_HOST,
