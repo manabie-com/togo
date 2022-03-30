@@ -9,6 +9,6 @@ import { TodoController } from './todo.controller';
 @Module({
   imports: [TypeOrmModule.forFeature([Todo, User])],
   controllers: [TodoController],
-  providers: [TodoApplication]
+  providers: [TodoApplication],
 })
 export class TodoModule {}

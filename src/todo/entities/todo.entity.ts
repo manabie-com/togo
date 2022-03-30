@@ -15,7 +15,7 @@ export class Todo {
     type: 'text',
     nullable: false,
   })
-  content: string;
+  task: string;
 
   @Column({
     type: 'int4',

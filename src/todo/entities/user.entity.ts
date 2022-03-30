@@ -10,17 +10,10 @@ import {
 export class User {
   @PrimaryGeneratedColumn('increment')
   id: number;
-
-  @Column({
-    type: 'varchar',
-    length: '255',
-    nullable: false,
-  })
-  name: string;
-
+  
   @Column({
     type: 'int2',
-    nullable: false,
+    nullable: true,
   })
   limit: number;
 
