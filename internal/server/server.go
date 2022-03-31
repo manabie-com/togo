@@ -74,9 +74,7 @@ func NewGatewayServer(cfg *configs.Config) *gatewayServer {
 		cfg: cfg,
 	}
 }
-
-// RunGRPCGateway will start an GRPC Gateway
-func (s *gatewayServer) RunGRPCGateway(ss ServiceServer) (err error) {
+func (s *gatewayServer) GetGRPCMux(ss ServiceServer) (*runtime.ServeMux, error) {
 	ctx := context.Background()
 
 	runtime.WithErrorHandler(customHTTPError)
@@ -96,18 +94,27 @@ func (s *gatewayServer) RunGRPCGateway(ss ServiceServer) (err error) {
 	}
 	conn, err := grpc.Dial(fmt.Sprintf(":%d", s.cfg.GRPCAddress), opts...)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if err = ss.RegisterWithHandler(ctx, mux, conn); err != nil {
-		return err
+		return nil, err
 	}
+	return mux, nil
+}
+
+// RunGRPCGateway will start an GRPC Gateway
+func (s *gatewayServer) RunGRPCGateway(ss ServiceServer) error {
 
 	muxHttp := http.NewServeMux()
 	muxHttp.HandleFunc("/metrics", func(w http.ResponseWriter, r *http.Request) {
 		promhttp.Handler().ServeHTTP(w, r)
 	})
 
+	mux, err := s.GetGRPCMux(ss)
+	if err != nil {
+		return err
+	}
 	muxHttp.Handle("/", mux)
 
 	return http.ListenAndServe(fmt.Sprintf(":%d", s.cfg.HTTPAddress), muxHttp)

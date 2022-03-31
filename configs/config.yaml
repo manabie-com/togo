@@ -5,8 +5,8 @@ http_address: 9000
 mysql:
   address: 127.0.0.1
   database: togo
-  username: togo
-  password: togo
+  username: root
+  password: mysql
   protocol: tcp
   parse_time: true
 redis:
