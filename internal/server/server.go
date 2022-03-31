@@ -78,8 +78,6 @@ func NewGatewayServer(cfg *configs.Config) *gatewayServer {
 // RunGRPCGateway will start an GRPC Gateway
 func (s *gatewayServer) RunGRPCGateway(ss ServiceServer) (err error) {
 	ctx := context.Background()
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
 
 	runtime.WithErrorHandler(customHTTPError)
 	mux := runtime.NewServeMux(
