@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/vchitai/l"
@@ -18,6 +19,7 @@ import (
 	"github.com/vchitai/togo/internal/server"
 	"github.com/vchitai/togo/internal/service"
 	"github.com/vchitai/togo/internal/store"
+	"github.com/vchitai/togo/internal/utils"
 )
 
 var (
@@ -28,7 +30,6 @@ var (
 func initDB() {
 	cfg := configs.Load()
 	db := must.ConnectMySQL(cfg.MySQL)
-	_ = must.ConnectRedis(cfg.Redis)
 
 	// Delete the database if exists
 	if err := db.Exec("DROP DATABASE IF EXISTS " + testDBName).Error; err != nil {
@@ -56,6 +57,9 @@ func cleanupDB() {
 func TestAddAndGetDiagram(t *testing.T) {
 	initDB()
 	defer cleanupDB()
+
+	var userID = "user-test"
+
 	cfg := configs.Load()
 	var (
 		db       = must.ConnectMySQL(cfg.MySQL)
@@ -63,11 +67,14 @@ func TestAddAndGetDiagram(t *testing.T) {
 	)
 	_ = db.AutoMigrate(&models.ToDoConfig{})
 	_ = db.AutoMigrate(&models.ToDo{})
+	// reset count for test user
+	_ = redisCli.Del(redisCli.Context(), store.BuildUserDailyUsedCount(userID, utils.RoundDate(time.Now().Add(7*time.Hour)))).Err()
+
 	var (
 		todoStore = store.NewToDo(db, redisCli)
 		svc       = service.New(cfg, todoStore)
 		srv       = server.NewGRPCServer().
-				WithServiceServer(svc)
+			WithServiceServer(svc)
 		gw = server.NewGatewayServer(cfg)
 	)
 	go func() {
@@ -82,14 +89,14 @@ func TestAddAndGetDiagram(t *testing.T) {
 
 	mux, err := gw.GetGRPCMux(svc)
 	assert.NoError(t, err)
-	req := httptest.NewRequest(http.MethodPost, "/to-do", bytes.NewBufferString(`{
-	"user_id": "user-id",
+	req := httptest.NewRequest(http.MethodPost, "/to-do", bytes.NewBufferString(fmt.Sprintf(`{
+	"user_id": %q,
     "entry": [
         {
             "content": "a"
         }
     ]
-}`))
+}`, userID)))
 	w := httptest.NewRecorder()
 	mux.ServeHTTP(w, req)
 	res := w.Result()

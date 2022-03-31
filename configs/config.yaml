@@ -14,4 +14,4 @@ redis:
   password:
   db: 0
 
-default_todo_list_add_limited_per_day: 4
+default_todo_list_add_limited_per_day: 1

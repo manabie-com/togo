@@ -31,7 +31,7 @@ type toDo struct {
 }
 
 func (t *toDo) IncreaseUsedCount(ctx context.Context, userID string, day time.Time, by int64) (int64, error) {
-	var key = buildUserDailyUsedCount(userID, day)
+	var key = BuildUserDailyUsedCount(userID, day)
 	res, err := t.redisCli.IncrBy(ctx, key, by).Result()
 	if err != nil {
 		return 0, err
@@ -44,7 +44,7 @@ func (t *toDo) IncreaseUsedCount(ctx context.Context, userID string, day time.Ti
 }
 
 func (t *toDo) DecreaseUsedCount(ctx context.Context, userID string, day time.Time, by int64) (int64, error) {
-	var key = buildUserDailyUsedCount(userID, day)
+	var key = BuildUserDailyUsedCount(userID, day)
 	res, err := t.redisCli.DecrBy(ctx, key, by).Result()
 	if err != nil {
 		return 0, err
@@ -66,7 +66,7 @@ func (t *toDo) GetConfig(ctx context.Context, userID string) (*models.ToDoConfig
 }
 
 func (t *toDo) GetUsedCount(ctx context.Context, userID string, day time.Time) (int64, error) {
-	var key = buildUserDailyUsedCount(userID, day)
+	var key = BuildUserDailyUsedCount(userID, day)
 	res, err := t.redisCli.Get(ctx, key).Int64()
 	if errors.Is(err, redis.Nil) {
 		return 0, nil
@@ -81,7 +81,7 @@ func (t *toDo) Record(ctx context.Context, list []*models.ToDo) error {
 	return t.db.WithContext(ctx).Save(list).Error
 }
 
-func buildUserDailyUsedCount(userID string, day time.Time) string {
+func BuildUserDailyUsedCount(userID string, day time.Time) string {
 	return fmt.Sprintf("daily-used-count:%s:%d", userID, day.Unix())
 }
 
