@@ -5,15 +5,20 @@
 *.so
 *.dylib
 
-# Test binary, built with `go test -c`
+vendor/
+cmd/sqlize/vendor/
+cmd_test/
+vendor.zip
+*.protoset
+
+# Test binary, build with `go test -c`
 *.test
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-# Dependency directories (remove the comment below to include it)
-# vendor/
-
-out/
-
 .idea
+.vscode
+.envrc
+.DS_Store
+repositories/user_metadata_test.go

@@ -1,0 +1,47 @@
+syntax = "proto3";
+package pb;
+
+option go_package = "github.com/vchitai/togo/pb";
+
+import "google/api/annotations.proto";
+
+service BaseService {
+  rpc Liveness(LivenessRequest) returns (LivenessResponse) {
+    option (google.api.http) = {
+      get: "/health"
+    };
+  }
+
+  rpc ToggleReadiness(ToggleReadinessRequest) returns (ToggleReadinessResponse) {
+    option (google.api.http) = {
+      post: "/ready"
+    };
+  }
+
+  rpc Readiness(ReadinessRequest) returns (ReadinessResponse) {
+    option (google.api.http) = {
+      get: "/ready"
+    };
+  }
+
+}
+
+message LivenessRequest {}
+
+message LivenessResponse {
+  string message = 1 [json_name = "message"];
+}
+
+message ToggleReadinessRequest {
+  bool is_ready = 1;
+}
+
+message ToggleReadinessResponse {
+  string message = 1 [json_name = "message"];
+}
+
+message ReadinessRequest {}
+
+message ReadinessResponse {
+  string message = 1 [json_name = "message"];
+}
