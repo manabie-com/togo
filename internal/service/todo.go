@@ -11,52 +11,65 @@ import (
 	"github.com/vchitai/togo/internal/store"
 	"github.com/vchitai/togo/internal/utils"
 	"github.com/vchitai/togo/pb"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
+
+var now = time.Now
 
 func (s *serverImpl) AddToDoList(ctx context.Context, req *pb.AddToDoListRequest) (*pb.AddToDoListResponse, error) {
 	var (
 		userID = req.GetUserId()
 		today  = utils.RoundDate(
-			time.Now().Add(7 * time.Hour), // TODO: allow config time zone later
+			now().Add(7 * time.Hour), // TODO: allow config time zone later
 		)
 	)
+	// get user config if exist
 	userCfg, err := s.toDoStore.GetConfig(ctx, userID)
 	if errors.Is(err, store.ErrNotFound) {
+		// if not exist, use default config
 		userCfg = s.getDefaultUserConfig()
 	} else if err != nil {
+		// if other error occurred, return
 		ll.Error("Get user config failed", l.Error(err))
-		return nil, status.Error(codes.Internal, "internal server error")
+		return nil, errInternal
 	}
+
+	// get user used quota
 	userUsedCount, err := s.toDoStore.GetUsedCount(ctx, userID, today)
 	if err != nil {
+		// if error occurred, return
 		ll.Error("Get user used count failed", l.Error(err))
-		return nil, status.Error(codes.Internal, "internal server error")
+		return nil, errInternal
 	}
+	// if user use over the limited
 	if userUsedCount >= userCfg.Limited {
-		return nil, status.Error(codes.InvalidArgument, "you have reached daily limit")
+		return nil, errDailyQuotaReached
 	}
+	// if after added the list, user use over the limited
 	var addingAmount = int64(len(req.GetEntry()))
 	if userUsedCount+addingAmount > userCfg.Limited {
-		return nil, status.Error(codes.InvalidArgument, "you will exceed daily limit adding this list")
+		return nil, errDailyQuotaExceed
 	}
+
+	// acquire the lock by commit the adding amount
 	userUsedCount, err = s.toDoStore.IncreaseUsedCount(ctx, userID, today, addingAmount)
 	if err != nil {
 		ll.Error("Increase user used count failed", l.Error(err))
-		return nil, status.Error(codes.Internal, "internal server error")
+		return nil, errInternal
 	}
+
+	// record the list
 	var todoModel = mapper.Proto2ModelToDoEntryList(req.GetEntry())
 	for _, todo := range todoModel {
 		todo.UserID = userID
 	}
 	if err := s.toDoStore.Record(ctx, todoModel); err != nil {
+		// if record failed, release the lock
 		ll.Error("Record to do list failed", l.Error(err))
 		userUsedCount, err = s.toDoStore.DecreaseUsedCount(ctx, userID, today, addingAmount)
 		if err != nil {
 			ll.Error("Decrease user used count failed", l.Error(err))
 		}
-		return nil, status.Error(codes.Internal, "internal server error")
+		return nil, errInternal
 	}
 	return &pb.AddToDoListResponse{
 		Message: "ok",

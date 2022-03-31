@@ -112,7 +112,12 @@ func (m *AddToDoListRequest) Validate() error {
 		return nil
 	}
 
-	// no validation rules for UserId
+	if utf8.RuneCountInString(m.GetUserId()) < 1 {
+		return AddToDoListRequestValidationError{
+			field:  "UserId",
+			reason: "value length must be at least 1 runes",
+		}
+	}
 
 	if len(m.GetEntry()) < 1 {
 		return AddToDoListRequestValidationError{

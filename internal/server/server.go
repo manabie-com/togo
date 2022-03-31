@@ -178,15 +178,3 @@ func httpStatusFromCode(code errors.Code) int {
 		return http.StatusOK
 	}
 }
-
-func (s *gatewayServer) WrapCheckMethod(method string, handler http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != method {
-			w.WriteHeader(http.StatusNotFound)
-			w.Write([]byte("Not Found"))
-			return
-		}
-
-		handler(w, r)
-	}
-}

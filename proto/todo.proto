@@ -21,7 +21,7 @@ message ToDoEntry {
 
 
 message AddToDoListRequest {
-  string user_id = 1;
+  string user_id = 1 [(validate.rules).string = {min_len : 1}];
   repeated ToDoEntry entry = 2 [(validate.rules).repeated = {min_items: 1}];
 }
 
