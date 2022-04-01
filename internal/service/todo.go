@@ -15,7 +15,7 @@ import (
 
 var now = time.Now
 
-func (s *serverImpl) AddToDoList(ctx context.Context, req *pb.AddToDoListRequest) (*pb.AddToDoListResponse, error) {
+func (s *serverImpl) AddToDoList(ctx context.Context, req *pb.AddToDoListRequest) (resp *pb.AddToDoListResponse, respErr error) {
 	var (
 		userID = req.GetUserId()
 		today  = utils.RoundDate(
@@ -56,6 +56,17 @@ func (s *serverImpl) AddToDoList(ctx context.Context, req *pb.AddToDoListRequest
 		ll.Error("Increase user used count failed", l.Error(err))
 		return nil, errInternal
 	}
+	defer func() {
+		if respErr != nil {
+			userUsedCount, err = s.toDoStore.DecreaseUsedCount(ctx, userID, today, addingAmount)
+			if err != nil {
+				ll.Error("Decrease user used count failed", l.Error(err))
+			}
+		}
+	}()
+	if userUsedCount > userCfg.Limited {
+		return nil, errDailyQuotaExceed
+	}
 
 	// record the list
 	var todoModel = mapper.Proto2ModelToDoEntryList(req.GetEntry())
@@ -65,12 +76,9 @@ func (s *serverImpl) AddToDoList(ctx context.Context, req *pb.AddToDoListRequest
 	if err := s.toDoStore.Record(ctx, todoModel); err != nil {
 		// if record failed, release the lock
 		ll.Error("Record to do list failed", l.Error(err))
-		userUsedCount, err = s.toDoStore.DecreaseUsedCount(ctx, userID, today, addingAmount)
-		if err != nil {
-			ll.Error("Decrease user used count failed", l.Error(err))
-		}
 		return nil, errInternal
 	}
+
 	return &pb.AddToDoListResponse{
 		Message: "ok",
 	}, nil

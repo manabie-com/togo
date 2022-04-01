@@ -347,3 +347,44 @@ func TestServerImplAddToDoListFailedExceedLimit(t *testing.T) {
 	assert.Nil(t, resp)
 	mockToDoStore.AssertExpectations(t)
 }
+
+func TestServerImplAddToDoListFailedExceedLimit2(t *testing.T) {
+	var (
+		ctx    = context.TODO()
+		userID = "user-id"
+		req    = pb.AddToDoListRequest{
+			UserId: userID,
+			Entry: []*pb.ToDoEntry{
+				{
+					Content: "content",
+				},
+				{
+					Content: "content",
+				},
+			},
+		}
+	)
+	mockToDoStore := mockStore.ToDo{}
+	mockToDoStore.Mock.
+		On("GetConfig", ctx, userID).
+		Return(nil, store.ErrNotFound)
+	mockToDoStore.Mock.
+		On("GetUsedCount", ctx, userID, someRandomDay).
+		Return(int64(0), nil)
+	mockToDoStore.Mock.
+		On("IncreaseUsedCount", ctx, userID, someRandomDay, int64(len(req.GetEntry()))).
+		Return(int64(3), nil)
+	mockToDoStore.Mock.
+		On("DecreaseUsedCount", ctx, userID, someRandomDay, int64(len(req.GetEntry()))).
+		Return(int64(1), nil)
+	srv := serverImpl{
+		cfg: &configs.Config{
+			ToDoListAddLimitedPerDay: 2,
+		},
+		toDoStore: &mockToDoStore,
+	}
+	resp, err := srv.AddToDoList(ctx, &req)
+	assert.ErrorIs(t, err, errDailyQuotaExceed)
+	assert.Nil(t, resp)
+	mockToDoStore.AssertExpectations(t)
+}
