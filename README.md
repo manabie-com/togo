@@ -78,6 +78,26 @@ According to the project requirement, I would love to design this project as a s
 
 ### Installation
 
+1. Clone this repository
+
+```sh
+git clone https://github.com/TrinhTrungDung/togo.git
+```
+
+2. Download and install [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+
+3. Go to the project directory and use this following command to run the application:
+
+```sh
+docker-compose up -d
+```
+
+4. Migrate database changes:
+
+```sh
+go run cmd/migration/main.go
+```
+
 <!-- USAGE -->
 
 ## Usage

@@ -17,7 +17,7 @@ type Configuration struct {
 	DbUser     string `env:"POSTGRES_USER"`
 	DbPassword string `env:"POSTGRES_PASSWORD"`
 	DbName     string `env:"POSTGRES_DB"`
-	DbSslMode  bool   `env:"POSTGRES_SSL_MODE"`
+	DbSslMode  string `env:"POSTGRES_SSL_MODE"`
 	DbLog      bool   `env:"POSTGRES_LOG"`
 }
 

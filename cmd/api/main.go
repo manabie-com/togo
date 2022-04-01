@@ -14,7 +14,7 @@ func main() {
 		panic(err)
 	}
 
-	db, err := db.New(fmt.Sprintf("%s://%s:%s@%s:%d/%s?sslmode=%t", cfg.DbDialect, cfg.DbUser, cfg.DbPassword, cfg.DbHost, cfg.DbPort, cfg.DbName, cfg.DbSslMode), cfg.DbLog)
+	db, err := db.New(fmt.Sprintf("%s://%s:%s@%s:%d/%s?sslmode=%s", cfg.DbDialect, cfg.DbUser, cfg.DbPassword, cfg.DbHost, cfg.DbPort, cfg.DbName, cfg.DbSslMode), cfg.DbLog)
 	if err != nil {
 		panic(err)
 	}
