@@ -1,30 +1,90 @@
-### Requirements
+<div id="top"></div>
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+[![MIT License][license-shield]][license-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
 
-### Notes
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <h3 align="center">TOGO Golang Implementation Sample</h3>
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+  <p align="center">
+    TOGO application implemented using Golang, PostgreSQL, Docker
+    <br />
+    <a href="#">View Demo</a>
+  </p>
+</div>
 
-### How to submit your solution?
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li><a href="#built-with">Built With</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#installation">Installation</a></li>
+      </ul>
+    </li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#license">License</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ol>
+</details>
 
-- Fork this repo and show us your development progress via a PR
+<!-- ABOUT THE PROJECT -->
 
-### Interesting facts about Manabie
+## About The Project
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+### Built With
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+- [Golang 1.18](https://go.dev/)
+- [PostgreSQL 14.2](https://www.postgresql.org/)
+- [Docker 4.6.1](https://www.docker.com/)
+
+<!-- GETTING STARTED -->
+
+## Getting Started
+
+### Prerequisites
+
+Make sure that you have installed [Docker](https://www.docker.com/) before running the application locally, you can download [Docker Desktop](https://www.docker.com/products/docker-desktop/) so docker cli can be installed accordingly.
+
+- Check Docker version after installing:
+
+  ```sh
+  docker version
+  ```
+
+### Installation
+
+<!-- USAGE -->
+
+## Usage
+
+<!-- LICENSE -->
+
+## License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+<!-- CONTACT -->
+
+## Contact
+
+Trinh Trung Dung - [@dungtrungtrinh](https://twitter.com/dungtrungtrinh) - dungtrungtrinh@gmail.com
+
+Project Link: [https://github.com/TrinhTrungDung/togo](https://github.com/TrinhTrungDung/togo)
+
+<!-- LINKS -->
+
+[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
+[license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-url]: https://www.linkedin.com/in/trinhtrungdung/
