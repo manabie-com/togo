@@ -50,7 +50,7 @@ export class Validation implements NestInterceptor {
 
     const limit: number = req.body.limit_task || user.limit;
     const quantityTask = tasks.length + 1;
-    if (quantityTask > limit) {
+    if (limit != null && quantityTask > limit) {
       throw new BadRequestException('Overload task in 1 day');
     }
  

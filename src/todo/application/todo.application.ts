@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -19,17 +19,21 @@ export class TodoApplication {
   public async create(createTodoDto: CreateTodoDto) {
     const todoDomain = new TodoDomain(this.todoRepository);
     const userDomain = new UserDomain(this.userRepository);
-    let userId: number = createTodoDto.user_id;
 
-    if (!userId) {
-      const user = await userDomain.create(createTodoDto);
-      userId = user.id;
-    }
+    try {
+      let userId: number = createTodoDto.user_id;
+      if (!userId) {
+        const user = await userDomain.create(createTodoDto);
+        userId = user.id;
+      }
 
-    if (createTodoDto.limit_task) {
-      await userDomain.update(createTodoDto, userId);
-    }
+      if (createTodoDto.limit_task) {
+        await userDomain.update(createTodoDto, userId);
+      }
 
-    return await todoDomain.create({ ...createTodoDto, user_id: userId });
+      return await todoDomain.create({ ...createTodoDto, user_id: userId });
+    } catch(e) {
+      throw new InternalServerErrorException();
+    } 
   }
 }
