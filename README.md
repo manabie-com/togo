@@ -64,13 +64,17 @@ According to the project requirement, I would love to design this project as a s
 
 ### Prerequisites
 
-Make sure that you have installed [Docker](https://www.docker.com/) before running the application locally, you can download [Docker Desktop](https://www.docker.com/products/docker-desktop/) so docker cli can be installed accordingly.
+- Make sure that you have installed [Docker](https://www.docker.com/) before running the application locally, you can download [Docker Desktop](https://www.docker.com/products/docker-desktop/) so docker cli can be installed accordingly.
 
-- Check Docker version after installing:
+  - Check Docker version after installing:
 
-  ```sh
-  docker version
-  ```
+    ```sh
+    docker version
+    ```
+
+- Make sure to create `.env` file, you can use the most powerful shortcut in developer's world (`Ctrl + C` and `Ctrl + V`) to copy and paste [.env.example](./.env.example) file, rename it to `.env` and change the variables inside `.env` file.
+
+<!-- INSTALLATION -->
 
 ### Installation
 

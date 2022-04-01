@@ -1,25 +1,23 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
-	"time"
-
-	"github.com/labstack/echo/v4"
+	"github.com/TrinhTrungDung/togo/config"
+	"github.com/TrinhTrungDung/togo/pkg/server"
 )
 
 func main() {
-	e := echo.New()
-	e.GET("/", healthCheck)
-	e.Server.Addr = fmt.Sprintf(":8080")
-	e.Server.ReadTimeout = time.Duration(10) * time.Second
-	e.Server.WriteTimeout = time.Duration(5) * time.Second
+	cfg, err := config.Load()
+	if err != nil {
+		panic(err)
+	}
 
-	e.StartServer(e.Server)
-}
-
-func healthCheck(c echo.Context) error {
-	return c.JSON(http.StatusOK, map[string]interface{}{
-		"status": "ok",
+	// Initialize HTTP server
+	e := server.New(&server.Config{
+		Port:         cfg.Port,
+		ReadTimeout:  cfg.ReadTimeout,
+		WriteTimeout: cfg.WriteTimeout,
 	})
+
+	// Start the HTTP server
+	server.Start(e)
 }
