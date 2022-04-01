@@ -7,10 +7,18 @@ import (
 
 // Configuration represents the server configuration
 type Configuration struct {
-	Host         string `env:"HOST"`
-	Port         int    `env:"PORT"`
-	ReadTimeout  int    `env:"READ_TIMEOUT"`
-	WriteTimeout int    `env:"WRITE_TIMEOUT"`
+	ServerPort         int `env:"SERVER_PORT"`
+	ServerReadTimeout  int `env:"SERVER_READ_TIMEOUT"`
+	ServerWriteTimeout int `env:"SERVER_WRITE_TIMEOUT"`
+
+	DbDialect  string `env:"POSTGRES_DIALECT"`
+	DbHost     string `env:"POSTGRES_HOST"`
+	DbPort     int    `env:"POSTGRES_PORT"`
+	DbUser     string `env:"POSTGRES_USER"`
+	DbPassword string `env:"POSTGRES_PASSWORD"`
+	DbName     string `env:"POSTGRES_DB"`
+	DbSslMode  bool   `env:"POSTGRES_SSL_MODE"`
+	DbLog      bool   `env:"POSTGRES_LOG"`
 }
 
 // Load returns Configuration struct

@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/TrinhTrungDung/togo/config"
+	"github.com/TrinhTrungDung/togo/pkg/db"
 	"github.com/TrinhTrungDung/togo/pkg/server"
 )
 
@@ -11,11 +14,17 @@ func main() {
 		panic(err)
 	}
 
+	db, err := db.New(fmt.Sprintf("%s://%s:%s@%s:%d/%s?sslmode=%t", cfg.DbDialect, cfg.DbUser, cfg.DbPassword, cfg.DbHost, cfg.DbPort, cfg.DbName, cfg.DbSslMode), cfg.DbLog)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
 	// Initialize HTTP server
 	e := server.New(&server.Config{
-		Port:         cfg.Port,
-		ReadTimeout:  cfg.ReadTimeout,
-		WriteTimeout: cfg.WriteTimeout,
+		Port:         cfg.ServerPort,
+		ReadTimeout:  cfg.ServerReadTimeout,
+		WriteTimeout: cfg.ServerWriteTimeout,
 	})
 
 	// Start the HTTP server

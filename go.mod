@@ -5,6 +5,12 @@ go 1.18
 require github.com/labstack/echo/v4 v4.7.2
 
 require (
+	github.com/jinzhu/gorm v1.9.16
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/lib/pq v1.1.1 // indirect
+)
+
+require (
 	github.com/caarlos0/env/v5 v5.1.4
 	github.com/joho/godotenv v1.4.0
 	github.com/labstack/gommon v0.3.1 // indirect
