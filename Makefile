@@ -64,6 +64,9 @@ pb \
 		--auth_out=paths=source_relative,.:pb\
 		proto/*.proto
 
+run:
+	@go run cmd/server/*.go
+
 generate:
 	buf generate
 	@(cd ./pb ; GOSUMDB=off go mod tidy)
