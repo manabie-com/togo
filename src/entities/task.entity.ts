@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { TodoBase } from './todoBase.entity';
 import { ToDoList } from './toDoList.entity';
@@ -16,9 +17,11 @@ export class Task extends TodoBase {
     Object.assign(this, parital);
   }
   @Column({ type: 'text', nullable: true })
+  @ApiProperty()
   title: string;
 
   @Column({ type: 'text', nullable: true })
+  @ApiProperty()
   desc: string;
 
   @Column({
@@ -30,6 +33,7 @@ export class Task extends TodoBase {
   status: ETaskStatus;
 
   @Column({ type: 'timestamp', nullable: true })
+  @ApiProperty()
   deadlineAt: Date;
 
   @ManyToOne(() => User)

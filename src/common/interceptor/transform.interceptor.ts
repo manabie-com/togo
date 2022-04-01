@@ -22,7 +22,7 @@ export class TransformInterceptor<T>
     return next.handle().pipe(
       map((data) => ({
         success: true,
-        data,
+        data: data ? data : null,
         message: null,
       })),
     );
