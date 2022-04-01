@@ -9,6 +9,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { User } from './entities/user.entity';
 import { Task } from './entities/task.entity';
 import { ToDoList } from './entities/toDoList.entity';
+import { ResponseDto } from './dto/ApiReponse.dto';
+import { PaginatedDto } from './dto';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -20,7 +22,7 @@ async function bootstrap() {
     .addTag('todo')
     .build();
   const document = SwaggerModule.createDocument(app, config, {
-    extraModels: [User, Task, ToDoList],
+    extraModels: [User, Task, ToDoList, ResponseDto, PaginatedDto],
   });
   SwaggerModule.setup('api', app, document);
   app.use(cookieParser());

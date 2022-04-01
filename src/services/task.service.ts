@@ -40,8 +40,8 @@ export class TaskService {
     };
   }
 
-  findOne(id: number) {
-    return this.taskRepo.findOne(id);
+  findOne(id: number, relations: ('toDoList' | 'user')[] = []) {
+    return this.taskRepo.findOne(id, { relations });
   }
 
   async update(
@@ -49,15 +49,17 @@ export class TaskService {
     { title, desc, userId, deadlineAt, status }: UpdateTaskDto,
   ) {
     const task = await this.findOne(id);
-    if (!task) throw new NotFoundException('Không tìm thấy task');
+    if (!task) throw new NotFoundException('Task not found!');
 
     if (userId) {
       const user = await this.userService.findOne(userId);
-      if (user) throw new NotFoundException('Không tìm thấy user');
+      if (!user) throw new NotFoundException('User not found!');
 
       const todayTaskCount = await this.countTasks(userId);
       if (todayTaskCount + 1 >= user.dailyMaxTasks) {
-        throw new BadRequestException('User đã đạt giới hạng tasks hôm nay');
+        throw new BadRequestException(
+          'User has reached the maximum number of tasks today!',
+        );
       }
       task.user = user;
     }
@@ -69,12 +71,16 @@ export class TaskService {
     }
     task.title = title;
     task.desc = desc;
-    task.deadlineAt = new Date(deadlineAt);
+    task.deadlineAt = deadlineAt ? new Date(deadlineAt) : null;
     return this.taskRepo.save(task);
   }
 
   async create({ title, desc, deadlineAt }: CreateTaskDto) {
-    const task = new Task({ title, deadlineAt: new Date(deadlineAt), desc });
+    const task = new Task({
+      title,
+      deadlineAt: deadlineAt ? new Date(deadlineAt) : null,
+      desc,
+    });
     return this.taskRepo.save(task);
   }
 

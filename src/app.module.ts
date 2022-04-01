@@ -12,6 +12,7 @@ import { Task } from './entities/task.entity';
 import { User } from './entities/user.entity';
 import { ToDoList } from './entities/toDoList.entity';
 import { UserService } from './services/user.service';
+import { TaskController } from './controllers/task.controller';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { UserService } from './services/user.service';
     DatabaseModule,
     TypeOrmModule.forFeature([Task, User, ToDoList]),
   ],
-  controllers: [AppController, UserController],
+  controllers: [AppController, UserController, TaskController],
   providers: [AppService, UserService, TaskService, ToDoService],
 })
 export class AppModule {}

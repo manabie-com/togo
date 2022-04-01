@@ -19,7 +19,7 @@ export class ToDoList extends TodoBase {
 
   @Column('boolean')
   @ApiProperty()
-  isDone: boolean;
+  isDone = false;
 
   @ManyToOne(() => Task)
   @JoinColumn()

@@ -30,6 +30,7 @@ export class Task extends TodoBase {
     nullable: false,
     default: ETaskStatus.DO_TO,
   })
+  @ApiProperty({ enum: ETaskStatus })
   status: ETaskStatus;
 
   @Column({ type: 'timestamp', nullable: true })
