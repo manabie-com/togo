@@ -42,6 +42,16 @@
 
 ## About The Project
 
+### Project Requirements
+
+- Implement one single API which accepts a todo task and records it
+  - There is a maximum **limit of N tasks per user** that can be added **per day**.
+  - Different users can have **different** maximum daily limit.
+
+### Implementation Brainstorm
+
+According to the project requirement, I would love to design this project as a subscription-based TODO application, since different users can have different limited daily TODO tasks creation (e.g. Bronze tier user can create only 1 task/day, Silver tier has 10 tasks/day creation and Gold tier has 100 tasks/day).
+
 ### Built With
 
 - [Golang 1.18](https://go.dev/)
@@ -85,6 +95,6 @@ Project Link: [https://github.com/TrinhTrungDung/togo](https://github.com/TrinhT
 <!-- LINKS -->
 
 [license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
-[license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
+[license-url]: https://github.com/TrinhTrungDung/togo/blob/master/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/trinhtrungdung/
