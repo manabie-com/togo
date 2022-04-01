@@ -1,0 +1,37 @@
+version: "3"
+services:
+  manabie_db:
+    container_name: manabie_db
+    image: postgres:13
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=manabie
+    volumes:
+      - ./etc/db/dbdata:/var/lib/postgresql/data/
+    networks:
+      - manabie
+
+  manabie_app:
+    container_name: manabie_app
+    build:
+      context: ./
+      dockerfile: ./etc/app/Dockerfile
+    volumes:
+      - ./:/var/www/app
+    working_dir: /var/www/app
+    environment:
+      NODE_ENV: "development"
+    ports: 
+      - "3000:3000"
+    command: /bin/bash -c "yarn install && yarn start:dev"
+    networks:
+      - manabie
+
+networks:
+  manabie:
+    name: manabie
+    driver: bridge
