@@ -27,8 +27,7 @@ services:
       NODE_ENV: "development"
     ports: 
       - "3000:3000"
-    command: /bin/bash -c "npm run start:dev"
-    # command: /bin/bash -c "yarn install"
+    command: /bin/bash -c "yarn install && yarn start:dev"
     networks:
       - manabie
 
