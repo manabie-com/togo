@@ -1,34 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { TodoService } from './todo.service';
+import { Controller, UseInterceptors, Post, Body } from '@nestjs/common';
+
+import { Validation } from './interceptor/validation.interceptor';
+
+import { TodoApplication } from './application/todo.application';
 import { CreateTodoDto } from './dto/create-todo.dto';
-import { UpdateTodoDto } from './dto/update-todo.dto';
 
 @Controller('todo')
 export class TodoController {
-  constructor(private readonly todoService: TodoService) {}
+  constructor(private readonly todoApplication: TodoApplication) {}
 
   @Post()
-  create(@Body() createTodoDto: CreateTodoDto) {
-    return this.todoService.create(createTodoDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.todoService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.todoService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTodoDto: UpdateTodoDto) {
-    return this.todoService.update(+id, updateTodoDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.todoService.remove(+id);
+  @UseInterceptors(Validation)
+  async create(@Body() createTodoDto: CreateTodoDto) {
+    return this.todoApplication.create(createTodoDto);
   }
 }

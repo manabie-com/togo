@@ -1,30 +1,68 @@
-### Requirements
+### Clone
+- Clone project
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+>  https://github.com/leducphucdev/togo.git
 
-### Notes
+> cd togo
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+### Run Docker
+- Copy .env.example to .env
+- Download docker and run command
 
-### How to submit your solution?
+> docker-compose up
 
-- Fork this repo and show us your development progress via a PR
+- Use curl call api create todo
 
-### Interesting facts about Manabie
+> curl -X 'POST' 'http://localhost:3000/todo' -H 'Content-Type: application/json' -d '{ "task": "test" }'; 
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+- Attach container for run test
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+> docker exec -it manabie_app bash 
+
+- Run command test
+
+>  yarn test:e2e
+
+### Not run Docker
+- Copy .env.example to .env
+- If you're not running with Docker then install the package postgres with version 13 and node 12
+- Then create database postgres:
+
+  - user: admin
+  - password: 123456
+  - databse: manabie
+  - port: 5432
+
+- Then write .env. Example:
+
+  DB_DIALECT=postgres
+
+  DB_USER=admin
+
+  DB_PASSWORD=123456
+
+  DB_NAME=manabie
+
+  DB_HOST=127.0.0.1
+
+  DB_PORT=5432
+
+- Then run command
+
+> yarn install
+
+> yarn start:dev
+
+- Use curl call api create todo
+
+> curl -X 'POST' 'http://localhost:3000/todo' -H 'Content-Type: application/json' -d '{ "task": "test" }'; 
+
+- Run command test
+
+> yarn test:e2e
+
+### Structure
+
+- Use DDD(Domain Driven Design) to can open for microservice
+- Use layer service Application Layer and Domain Layer in DDD for Business
+- Use Decotor pattern in Nest for Aspect Oriented Programming. Used to separate the processing stream into separate objects from each other. As validation, cache, log ...
