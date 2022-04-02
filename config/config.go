@@ -11,7 +11,6 @@ type Configuration struct {
 	ServerReadTimeout  int `env:"SERVER_READ_TIMEOUT"`
 	ServerWriteTimeout int `env:"SERVER_WRITE_TIMEOUT"`
 
-	DbDialect  string `env:"POSTGRES_DIALECT"`
 	DbHost     string `env:"POSTGRES_HOST"`
 	DbPort     int    `env:"POSTGRES_PORT"`
 	DbUser     string `env:"POSTGRES_USER"`

@@ -14,11 +14,10 @@ func main() {
 		panic(err)
 	}
 
-	db, err := db.New(fmt.Sprintf("%s://%s:%s@%s:%d/%s?sslmode=%s", cfg.DbDialect, cfg.DbUser, cfg.DbPassword, cfg.DbHost, cfg.DbPort, cfg.DbName, cfg.DbSslMode), cfg.DbLog)
+	_, err = db.New(fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=%s", cfg.DbHost, cfg.DbUser, cfg.DbPassword, cfg.DbName, cfg.DbPort, cfg.DbSslMode), cfg.DbLog)
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
 
 	// Initialize HTTP server
 	e := server.New(&server.Config{

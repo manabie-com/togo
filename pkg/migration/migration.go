@@ -4,9 +4,9 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/jinzhu/gorm"
+	"github.com/go-gormigrate/gormigrate/v2"
 	"github.com/labstack/gommon/log"
-	"gopkg.in/gormigrate.v1"
+	"gorm.io/gorm"
 )
 
 var logger = log.New("migration")

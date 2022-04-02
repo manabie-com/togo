@@ -1,23 +1,34 @@
 package db
 
 import (
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"log"
+	"os"
+	"time"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 // New creates new PostgreSQL database connection
-func New(dbPsn string, enableLog bool) (*gorm.DB, error) {
-	return new("postgres", dbPsn, enableLog)
-}
-
-// new creates supported database connection (PostgreSQL currently)
-func new(dialect, dbPsn string, enableLog bool) (*gorm.DB, error) {
-	db, err := gorm.Open(dialect, dbPsn)
+func New(dsn string, enableLog bool) (*gorm.DB, error) {
+	dbConfig := &gorm.Config{}
+	if enableLog {
+		logger := logger.New(
+			log.New(os.Stdout, "\r\n", log.LstdFlags),
+			logger.Config{
+				SlowThreshold:             time.Second,
+				LogLevel:                  logger.Silent,
+				IgnoreRecordNotFoundError: false,
+				Colorful:                  false,
+			},
+		)
+		dbConfig.Logger = logger
+	}
+	db, err := gorm.Open(postgres.Open(dsn), dbConfig)
 	if err != nil {
 		return nil, err
 	}
-
-	db.LogMode(enableLog == true)
 
 	return db, nil
 }

@@ -2,12 +2,20 @@ package migration
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/TrinhTrungDung/togo/config"
 	"github.com/TrinhTrungDung/togo/pkg/db"
 	"github.com/TrinhTrungDung/togo/pkg/migration"
-	"gopkg.in/gormigrate.v1"
+	"github.com/go-gormigrate/gormigrate/v2"
+	"gorm.io/gorm"
 )
+
+type Base struct {
+	ID        int `gorm:"primary_key"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
 
 func Run() (resErr error) {
 	cfg, err := config.Load()
@@ -15,11 +23,10 @@ func Run() (resErr error) {
 		return err
 	}
 
-	db, err := db.New(fmt.Sprintf("%s://%s:%s@%s:%d/%s?sslmode=%s", cfg.DbDialect, cfg.DbUser, cfg.DbPassword, cfg.DbHost, cfg.DbPort, cfg.DbName, cfg.DbSslMode), false)
+	db, err := db.New(fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=%s", cfg.DbHost, cfg.DbUser, cfg.DbPassword, cfg.DbName, cfg.DbPort, cfg.DbSslMode), false)
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
 
 	defer func() {
 		if r := recover(); r != nil {
@@ -41,7 +48,47 @@ func Run() (resErr error) {
 	}
 
 	migration.Run(db, []*gormigrate.Migration{
-		{},
+		{
+			ID: "202204021000",
+			Migrate: func(tx *gorm.DB) error {
+				type Plan struct {
+					Base
+					Name     string `gorm:"type:varchar(30)"`
+					MaxTasks int
+				}
+
+				type User struct {
+					Base
+					FirstName string `gorm:"type:varchar(255)"`
+					LastName  string `gorm:"type:varchar(255)"`
+					Email     string `gorm:"type:varchar(254);unique_index;not null"`
+					Username  string `gorm:"type:varchar(255);unique_index;not null"`
+					Password  string `gorm:"type:varchar(255);not null"`
+				}
+
+				type Task struct {
+					Base
+					Content string `gorm:"type:text"`
+					UserID  int
+				}
+
+				type Subscription struct {
+					UserID  int `gorm:"primary_key;autoIncrement:false"`
+					PlanID  int `gorm:"primary_key;autoIncrement:false"`
+					StartAt time.Time
+					EndAt   time.Time
+				}
+
+				if err := tx.AutoMigrate(&User{}, &Plan{}, &Task{}, &Subscription{}); err != nil {
+					return err
+				}
+
+				return nil
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropTable("users", "plans", "tasks", "subscriptions")
+			},
+		},
 	})
 
 	return nil
