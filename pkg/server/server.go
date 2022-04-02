@@ -26,7 +26,9 @@ func New(cfg *Config) *echo.Echo {
 	e := echo.New()
 	e.Use(middleware.Logger(), middleware.Recover())
 	e.GET("/", healthCheck)
+	e.Validator = newValidator()
 	e.HTTPErrorHandler = newErrorHandler(e).HandlerFunc
+	e.Binder = newBinder()
 	e.Server.Addr = fmt.Sprintf(":%d", cfg.Port)
 	e.Server.ReadTimeout = time.Duration(cfg.ReadTimeout) * time.Second
 	e.Server.WriteTimeout = time.Duration(cfg.WriteTimeout) * time.Second

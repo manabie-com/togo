@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 )
 
@@ -14,6 +15,11 @@ const (
 	GenericErrorType    = "GENERIC"
 	ValidationErrorType = "VALIDATION"
 )
+
+var ValidationErrors = map[string]string{
+	"required": " is required",
+	"email":    "'s value should be a valid email address",
+}
 
 // ErrorResponse represents the error response
 type ErrorResponse struct {
@@ -111,6 +117,14 @@ func (h *ErrorHandler) HandlerFunc(err error, c echo.Context) {
 		if e.Internal != nil {
 			httpErr.Internal = e.Internal
 		}
+	case validator.ValidationErrors:
+		httpErr.Code = http.StatusBadRequest
+		httpErr.Type = ValidationErrorType
+		var errMsg []string
+		for _, v := range e {
+			errMsg = append(errMsg, getVldErrorMsg(v))
+		}
+		httpErr.Message = strings.Join(errMsg, "\n")
 	default:
 		if h.e.Debug {
 			httpErr.Message = err.Error()
@@ -128,4 +142,27 @@ func (h *ErrorHandler) HandlerFunc(err error, c echo.Context) {
 			h.e.Logger.Error(err)
 		}
 	}
+}
+
+func getVldErrorMsg(v validator.FieldError) string {
+	field := v.Field()
+	vtag := v.ActualTag()
+	vtagVal := v.Param()
+
+	if msg, ok := ValidationErrors[vtag]; ok {
+		return field + msg
+	}
+
+	switch vtag {
+	case "oneof":
+		return field + " should be one of " + strings.Replace(vtagVal, " ", ", ", -1)
+	case "ltfield":
+		return field + " should be less than " + vtagVal
+	case "gtfield":
+		return field + " should be greater than " + vtagVal
+	case "eqfield":
+		return field + " does not match " + vtagVal
+	}
+
+	return field + " failed on " + vtag + " validation"
 }
