@@ -8,9 +8,10 @@ import (
 // Configuration represents the server configuration
 type Configuration struct {
 	// Server configuration parameters
-	ServerPort         int `env:"SERVER_PORT"`
-	ServerReadTimeout  int `env:"SERVER_READ_TIMEOUT"`
-	ServerWriteTimeout int `env:"SERVER_WRITE_TIMEOUT"`
+	ServerPort         int  `env:"SERVER_PORT"`
+	ServerReadTimeout  int  `env:"SERVER_READ_TIMEOUT"`
+	ServerWriteTimeout int  `env:"SERVER_WRITE_TIMEOUT"`
+	ServerDebug        bool `env:"SERVER_DEBUG"`
 
 	// Database configuration parameters
 	DbHost     string `env:"POSTGRES_HOST"`

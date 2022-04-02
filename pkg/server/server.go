@@ -9,6 +9,8 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/gommon/log"
 )
 
 // Config represents server specific config
@@ -16,15 +18,24 @@ type Config struct {
 	Port         int
 	ReadTimeout  int
 	WriteTimeout int
+	Debug        bool
 }
 
 // New creates new echo server with customizable configuration
 func New(cfg *Config) *echo.Echo {
 	e := echo.New()
+	e.Use(middleware.Logger(), middleware.Recover())
 	e.GET("/", healthCheck)
+	e.HTTPErrorHandler = newErrorHandler(e).HandlerFunc
 	e.Server.Addr = fmt.Sprintf(":%d", cfg.Port)
 	e.Server.ReadTimeout = time.Duration(cfg.ReadTimeout) * time.Second
 	e.Server.WriteTimeout = time.Duration(cfg.WriteTimeout) * time.Second
+	e.Debug = cfg.Debug
+	if e.Debug {
+		e.Logger.SetLevel(log.DEBUG)
+	} else {
+		e.Logger.SetLevel(log.ERROR)
+	}
 
 	return e
 }

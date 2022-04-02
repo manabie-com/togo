@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"github.com/TrinhTrungDung/togo/config"
+	"github.com/TrinhTrungDung/togo/internal/api/auth"
+	"github.com/TrinhTrungDung/togo/pkg/crypter"
 	"github.com/TrinhTrungDung/togo/pkg/db"
 	"github.com/TrinhTrungDung/togo/pkg/jwt"
 	"github.com/TrinhTrungDung/togo/pkg/server"
@@ -15,7 +17,7 @@ func main() {
 		panic(err)
 	}
 
-	_, err = db.New(fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=%s", cfg.DbHost, cfg.DbUser, cfg.DbPassword, cfg.DbName, cfg.DbPort, cfg.DbSslMode), cfg.DbLog)
+	db, err := db.New(fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=%s", cfg.DbHost, cfg.DbUser, cfg.DbPassword, cfg.DbName, cfg.DbPort, cfg.DbSslMode), cfg.DbLog)
 	if err != nil {
 		panic(err)
 	}
@@ -25,10 +27,17 @@ func main() {
 		Port:         cfg.ServerPort,
 		ReadTimeout:  cfg.ServerReadTimeout,
 		WriteTimeout: cfg.ServerWriteTimeout,
+		Debug:        cfg.ServerDebug,
 	})
 
-	// Initialize JWT middleware service
+	// Initialize necessary services
+	crypterSvc := crypter.New()
 	_ = jwt.New(cfg.JwtAlgorithm, cfg.JwtSecret, cfg.JwtDuration)
+	authSvc := auth.New(db, crypterSvc)
+
+	// Initialize root API
+	rootRouter := e.Group("/api")
+	auth.NewHTTP(authSvc, rootRouter.Group("/auth"))
 
 	// Start the HTTP server
 	server.Start(e)

@@ -54,6 +54,17 @@
 
 - Initial flow:
   - User creates new account, then login to interact with the application through JWT token, then user registers which plan he/she wants to use Freemium/Silver/Gold. If he/she didn't choose any plan yet, Freemium plan is applied by default.
+  - Possible endpoints:
+    - POST /auth/register: User's account registration.
+    - POST /auth/login: User login endpoint.
+    - POST /auth/logout: User logout endpoint.
+    - GET /plans: Retrieves all current provided plans.
+    - POST /subscribe: User subscribes to chosen plan.
+    - GET /tasks: Retrieves all tasks for the current user.
+    - GET /tasks/{id}: Retrieves specific task.
+    - POST /tasks: Creates new tasks.
+    - PUT /tasks/{id}: Modifies specific task.
+    - DELETE /tasks/{id}: Soft deletes specific task.
 
 ### Built With
 
