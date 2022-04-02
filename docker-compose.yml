@@ -1,0 +1,40 @@
+version: '3'
+services:
+  redis:
+    image: redis:alpine
+    ports:
+      - 6379:6379
+    command: redis-server --appendonly yes
+    networks:
+      - internal
+    restart: always
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=togo
+    ports:
+      - 5432:5432
+    networks:
+      - internal
+    volumes:
+      - postgresvol:/data
+  togo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 4000:4000
+    networks:
+      - internal
+    depends_on:
+      - redis
+      - postgres
+    restart: always
+networks:
+  internal:
+    driver: bridge
+volumes:
+  postgresvol:
