@@ -1,30 +1,130 @@
-### Requirements
+## Features
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+- Using DDD Pattern as:
+  - Application layer: `transport`
+  - Domain layer: `domain`, `services`, `usecase`
+  - Infrastructure layer: `provider`, `repository`
+- Unit tests for services functionalities.
+- Unit tests for repository functionalities.
+- Integration tests for auth and task APIs.
 
-### Notes
+# Instructions
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+Make sure you have Go installed ([download](https://go.dev/dl/)). Version `1.17` or higher is required.
 
-### How to submit your solution?
+Make sure you have Docker installed ([instructions](https://docs.docker.com/engine/install/)).
 
-- Fork this repo and show us your development progress via a PR
+Make sure you have `make` installed for running the scripts.
 
-### Interesting facts about Manabie
+````
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+<br/>
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+## Start Server
+
+Using command bellow to build and run on Docker Compose
+
+```sh
+make start
+````
+
+- `Togo` app will available on `127.0.0.1:4000`
+- `Redis` will available on `127.0.0.1:6379`
+- `PostgreSQL` will available on `127.0.0.1:5432`
+
+To stop the server
+
+```sh
+make stop
+```
+
+<br/>
+
+## Run Unit Tests
+
+```sh
+make unit-test
+```
+
+<br/>
+
+## Run Integration Tests
+
+```sh
+make integration-test
+```
+
+<br/>
+
+# CURL samples
+
+Sign up:
+
+```sh
+curl --location --request POST 'http://127.0.0.1:4000/auth/register' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "fullName": "Duy Nguyen",
+    "username": "duynvh",
+    "password": "123456",
+    "tasksPerDay": 10
+}'
+```
+
+Login:
+
+```sh
+curl --location --request POST 'http://127.0.0.1:4000/auth/login' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "username": "duynvh",
+    "password": "123456"
+}'
+```
+
+Get user Me:
+
+```sh
+curl --location --request GET 'http://127.0.0.1:4000/users/me' \
+--header 'Authorization: Bearer <token>'
+```
+
+Update user Me:
+
+```sh
+curl --location --request PATCH 'http://127.0.0.1:4000/users/me' \
+--header 'Authorization: Bearer <token>' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "tasksPerDay": 1000
+}'
+```
+
+Add tasks:
+
+```sh
+curl --location --request POST 'http://127.0.0.1:4000/tasks' \
+--header 'Authorization: Bearer <token>' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "content": "Demo 1"
+}'
+```
+
+Get tasks:
+
+```sh
+curl --location --request GET 'http://127.0.0.1:4000/tasks' \
+--header 'Authorization: Bearer <token>'
+```
+
+Update a task:
+
+```sh
+curl --location --request PATCH 'http://127.0.0.1:4000/tasks/1' \
+--header 'Authorization: Bearer <token>' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "content": "text updated"
+}'
+```
