@@ -50,7 +50,10 @@
 
 ### Implementation Brainstorm
 
-According to the project requirement, I would love to design this project as a subscription-based TODO application, since different users can have different limited daily TODO tasks creation (e.g. Bronze tier user can create only 1 task/day, Silver tier has 10 tasks/day creation and Gold tier has 100 tasks/day).
+- According to the project requirement, I would love to design this project as a subscription-based TODO application, since different users can have different limited daily TODO tasks creation (e.g. Freemium tier user can create only 1 task/day, Silver tier has 10 tasks/day creation and Gold tier has 100 tasks/day).
+
+- Initial flow:
+  - User creates new account, then login to interact with the application through JWT token, then user registers which plan he/she wants to use Freemium/Silver/Gold. If he/she didn't choose any plan yet, Freemium plan is applied by default.
 
 ### Built With
 

@@ -5,6 +5,7 @@ import (
 
 	"github.com/TrinhTrungDung/togo/config"
 	"github.com/TrinhTrungDung/togo/pkg/db"
+	"github.com/TrinhTrungDung/togo/pkg/jwt"
 	"github.com/TrinhTrungDung/togo/pkg/server"
 )
 
@@ -25,6 +26,9 @@ func main() {
 		ReadTimeout:  cfg.ServerReadTimeout,
 		WriteTimeout: cfg.ServerWriteTimeout,
 	})
+
+	// Initialize JWT middleware service
+	_ = jwt.New(cfg.JwtAlgorithm, cfg.JwtSecret, cfg.JwtDuration)
 
 	// Start the HTTP server
 	server.Start(e)

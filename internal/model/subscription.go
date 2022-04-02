@@ -4,8 +4,8 @@ import "time"
 
 // Subscription represents the user subscription model
 type Subscription struct {
-	UserID  int `gorm:"primaryKey;autoIncrement:false"`
-	PlanID  int `gorm:"primaryKey;autoIncrement:false"`
+	UserID  int
+	PlanID  int
 	StartAt time.Time
 	EndAt   time.Time
 }
