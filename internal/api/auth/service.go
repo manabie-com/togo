@@ -1,6 +1,8 @@
 package auth
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 // Crypter represents security interface
 type Crypter interface {
@@ -8,15 +10,22 @@ type Crypter interface {
 	HashPassword(string) string
 }
 
-// Auth represents auth application service
-type Auth struct {
-	db *gorm.DB
-	cr Crypter
+// JWT represents JWT generator interface
+type JWT interface {
+	GenerateToken(map[string]interface{}) (string, int, error)
 }
 
-func New(db *gorm.DB, cr Crypter) *Auth {
+// Auth represents auth application service
+type Auth struct {
+	db  *gorm.DB
+	cr  Crypter
+	jwt JWT
+}
+
+func New(db *gorm.DB, cr Crypter, jwt JWT) *Auth {
 	return &Auth{
-		db: db,
-		cr: cr,
+		db:  db,
+		cr:  cr,
+		jwt: jwt,
 	}
 }

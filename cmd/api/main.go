@@ -32,8 +32,8 @@ func main() {
 
 	// Initialize necessary services
 	crypterSvc := crypter.New()
-	_ = jwt.New(cfg.JwtAlgorithm, cfg.JwtSecret, cfg.JwtDuration)
-	authSvc := auth.New(db, crypterSvc)
+	jwtSvc := jwt.New(cfg.JwtAlgorithm, cfg.JwtSecret, cfg.JwtDuration)
+	authSvc := auth.New(db, crypterSvc, jwtSvc)
 
 	// Initialize root API
 	rootRouter := e.Group("/api")

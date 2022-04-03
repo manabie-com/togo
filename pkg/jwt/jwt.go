@@ -54,7 +54,15 @@ func (j *JWT) MWFunc() echo.MiddlewareFunc {
 	}
 }
 
-// func (j *JWT)
+func (j *JWT) GenerateToken(claims map[string]interface{}) (string, int, error) {
+	expTime := time.Now().Add(j.duration)
+	claims["exp"] = expTime.Unix()
+
+	token := jwt.NewWithClaims(j.algo, jwt.MapClaims(claims))
+	tokenString, err := token.SignedString(j.key)
+
+	return tokenString, int(expTime.Sub(time.Now()).Seconds()), err
+}
 
 // parseTokenFromHeader parses token from Authorization header
 func (j *JWT) parseTokenFromHeader(c echo.Context) (*jwt.Token, error) {

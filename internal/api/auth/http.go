@@ -11,9 +11,8 @@ import (
 // Service represents auth application interface
 type Service interface {
 	Register(RegisterData) (*model.User, error)
-	// LoginUsername(LoginUsernameData) (*model.User, error)
-	// LoginEmail(LoginEmailData) (*model.User, error)
-	// Logout()
+	LoginUsername(LoginUsernameData) (*model.AuthToken, error)
+	LoginEmail(LoginEmailData) (*model.AuthToken, error)
 }
 
 // HTTP represents auth http service
@@ -32,20 +31,22 @@ type RegisterData struct {
 
 // LoginUsernameData contains user's login data using username from JSON request
 type LoginUsernameData struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username string `json:"username" validate:"required"`
+	Password string `json:"password" validate:"required"`
 }
 
 // LoginEmailData contains user's login data using email from JSON request
 type LoginEmailData struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" validate:"required"`
+	Password string `json:"password" validate:"required"`
 }
 
 func NewHTTP(svc Service, eg *echo.Group) {
 	h := HTTP{svc}
 
 	eg.POST("/register", h.register)
+	eg.POST("/login-username", h.loginUsername)
+	eg.POST("/login-email", h.loginEmail)
 }
 
 func (h *HTTP) register(c echo.Context) error {
@@ -58,6 +59,36 @@ func (h *HTTP) register(c echo.Context) error {
 	body.LastName = strings.TrimSpace(body.LastName)
 
 	resp, err := h.svc.Register(body)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, resp)
+}
+
+func (h *HTTP) loginUsername(c echo.Context) error {
+	body := LoginUsernameData{}
+	if err := c.Bind(&body); err != nil {
+		return err
+	}
+	body.Username = strings.TrimSpace(body.Username)
+
+	resp, err := h.svc.LoginUsername(body)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, resp)
+}
+
+func (h *HTTP) loginEmail(c echo.Context) error {
+	body := LoginEmailData{}
+	if err := c.Bind(&body); err != nil {
+		return err
+	}
+	body.Email = strings.TrimSpace(body.Email)
+
+	resp, err := h.svc.LoginEmail(body)
 	if err != nil {
 		return err
 	}

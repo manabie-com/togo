@@ -57,7 +57,7 @@
   - Possible endpoints:
     - POST /auth/register: User's account registration.
     - POST /auth/login: User login endpoint.
-    - POST /auth/logout: User logout endpoint.
+    - POST /auth/logout: User logout endpoint (Due to lack of time and scope of the challenge, I might not add this endpoint and doing invalidate token stuff with Redis integration)
     - GET /plans: Retrieves all current provided plans.
     - POST /subscribe: User subscribes to chosen plan.
     - GET /tasks: Retrieves all tasks for the current user.
