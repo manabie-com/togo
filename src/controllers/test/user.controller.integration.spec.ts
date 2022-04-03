@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, Logger } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ValidationPipe } from 'src/common/pipes/validation.pipe';
@@ -7,10 +7,13 @@ import { UserService } from 'src/services/user.service';
 import { UserController } from '../user.controller';
 import * as request from 'supertest';
 import { CreateUserDto, GetUserListDto, UpdateUserDto } from 'src/dto';
+import * as cookieParser from 'cookie-parser';
+import { AllExceptionFilter } from 'src/common/exceptions/exception.filter';
+import { TransformInterceptor } from 'src/common/interceptor/transform.interceptor';
 
 const mockedUser = new User({ id: 1, name: 'NVA', dailyMaxTasks: 2 });
 
-describe('The AuthenticationController', () => {
+describe('The UserController', () => {
   let app: INestApplication;
   let userData: User;
   let usersRepository: Record<string, any>;
@@ -39,6 +42,12 @@ describe('The AuthenticationController', () => {
     }).compile();
     app = module.createNestApplication();
     app.useGlobalPipes(new ValidationPipe());
+    app.use(cookieParser());
+    app.setGlobalPrefix('api');
+    const logger = new Logger();
+    app.useGlobalFilters(new AllExceptionFilter(logger));
+    app.useGlobalInterceptors(new TransformInterceptor());
+    app.enableCors();
     await app.init();
   });
   describe('when creating with valid data', () => {
@@ -50,10 +59,14 @@ describe('The AuthenticationController', () => {
       createUserDto.dailyMaxTasks = mockedUser.dailyMaxTasks;
       createUserDto.name = mockedUser.name;
       return request(app.getHttpServer())
-        .post('/users')
+        .post('/api/users')
         .send(createUserDto)
         .expect(201)
-        .expect(expectedData);
+        .expect({
+          message: null,
+          data: expectedData,
+          success: true,
+        });
     });
   });
   describe('when creating with invalid data', () => {
@@ -62,9 +75,12 @@ describe('The AuthenticationController', () => {
       createUserDto.dailyMaxTasks = mockedUser.dailyMaxTasks;
       createUserDto.name = null;
       return request(app.getHttpServer())
-        .post('/users')
+        .post('/api/users')
         .send(createUserDto)
-        .expect(400);
+        .then((result) => {
+          expect(result.statusCode).toEqual(200);
+          expect(result.body.success).toEqual(false);
+        });
     });
   });
   describe('update user by id', () => {
@@ -73,16 +89,19 @@ describe('The AuthenticationController', () => {
       updateUserDto.dailyMaxTasks = mockedUser.dailyMaxTasks;
       updateUserDto.name = 'NVB';
       const userId = 1;
-      const result = {
+      const expectData = {
         ...userData,
         name: updateUserDto.name,
         dailyMaxTasks: updateUserDto.dailyMaxTasks,
       };
       return request(app.getHttpServer())
-        .put(`/users/${userId}`)
+        .put(`/api/users/${userId}`)
         .send(updateUserDto)
-        .expect(200)
-        .expect(result);
+        .then((result) => {
+          expect(result.statusCode).toEqual(200);
+          expect(result.body.success).toEqual(true);
+          expect(result.body.data).toEqual(expectData);
+        });
     });
   });
   describe('get user by id', () => {
@@ -92,16 +111,24 @@ describe('The AuthenticationController', () => {
       });
       it('throw error', () => {
         const userId = 1;
-        return request(app.getHttpServer()).get(`/users/${userId}`).expect(404);
+        return request(app.getHttpServer())
+          .get(`/api/users/${userId}`)
+          .then((result) => {
+            expect(result.statusCode).toEqual(200);
+            expect(result.body.success).toEqual(false);
+          });
       });
     });
     describe('user found', () => {
       it('should return data of user', () => {
         const userId = 1;
         return request(app.getHttpServer())
-          .get(`/users/${userId}`)
-          .expect(200)
-          .expect(userData);
+          .get(`/api/users/${userId}`)
+          .then((result) => {
+            expect(result.statusCode).toEqual(200);
+            expect(result.body.success).toEqual(true);
+            expect(result.body.data).toEqual(userData);
+          });
       });
     });
   });
@@ -113,10 +140,13 @@ describe('The AuthenticationController', () => {
       };
       const queryParameters = new GetUserListDto();
       return request(app.getHttpServer())
-        .get('/users')
+        .get('/api/users')
         .query(queryParameters)
-        .expect(200)
-        .expect(expectData);
+        .then((result) => {
+          expect(result.statusCode).toEqual(200);
+          expect(result.body.success).toEqual(true);
+          expect(result.body.data).toEqual(expectData);
+        });
     });
   });
 });

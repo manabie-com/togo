@@ -1,6 +1,9 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, Logger } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import * as cookieParser from 'cookie-parser';
+import { AllExceptionFilter } from 'src/common/exceptions/exception.filter';
+import { TransformInterceptor } from 'src/common/interceptor/transform.interceptor';
 import { ValidationPipe } from 'src/common/pipes/validation.pipe';
 import {
   CreateTaskDto,
@@ -91,6 +94,12 @@ describe('The TaskController', () => {
     }).compile();
     app = module.createNestApplication();
     app.useGlobalPipes(new ValidationPipe());
+    app.use(cookieParser());
+    app.setGlobalPrefix('api');
+    const logger = new Logger();
+    app.useGlobalFilters(new AllExceptionFilter(logger));
+    app.useGlobalInterceptors(new TransformInterceptor());
+    app.enableCors();
     await app.init();
   });
   describe('get tasks', () => {
@@ -106,10 +115,13 @@ describe('The TaskController', () => {
       };
       const queryParameters = new GetTasksDto();
       return request(app.getHttpServer())
-        .get('/tasks')
+        .get('/api/tasks')
         .query(queryParameters)
-        .expect(200)
-        .expect(expectData);
+        .then((result) => {
+          expect(result.statusCode).toEqual(200);
+          expect(result.body.success).toEqual(true);
+          expect(result.body.data).toEqual(expectData);
+        });
     });
   });
   describe('get a task by id', () => {
@@ -119,7 +131,12 @@ describe('The TaskController', () => {
       });
       it('throw error', () => {
         const taskId = 1;
-        return request(app.getHttpServer()).get(`/tasks/${taskId}`).expect(404);
+        return request(app.getHttpServer())
+          .get(`/api/tasks/${taskId}`)
+          .then((result) => {
+            expect(result.statusCode).toEqual(200);
+            expect(result.body.success).toEqual(false);
+          });
       });
     });
     describe('task id is matched', () => {
@@ -129,9 +146,12 @@ describe('The TaskController', () => {
       it('should return data of task', () => {
         const taskId = 1;
         return request(app.getHttpServer())
-          .get(`/tasks/${taskId}`)
-          .expect(200)
-          .expect(taskData);
+          .get(`/api/tasks/${taskId}`)
+          .then((result) => {
+            expect(result.statusCode).toEqual(200);
+            expect(result.body.success).toEqual(true);
+            expect(result.body.data).toEqual(taskData);
+          });
       });
     });
   });
@@ -143,9 +163,12 @@ describe('The TaskController', () => {
       it('throw error', () => {
         const createDto = new CreateTaskDto();
         return request(app.getHttpServer())
-          .post(`/tasks`)
+          .post(`/api/tasks`)
           .send(createDto)
-          .expect(400);
+          .then((result) => {
+            expect(result.statusCode).toEqual(200);
+            expect(result.body.success).toEqual(false);
+          });
       });
     });
     describe('with valid params', () => {
@@ -161,10 +184,14 @@ describe('The TaskController', () => {
         createDto.desc = taskData.desc;
         console.log(createDto);
         return request(app.getHttpServer())
-          .post(`/tasks`)
+          .post(`/api/tasks`)
           .send(createDto)
           .expect(201)
-          .expect(taskData);
+          .expect({
+            message: null,
+            data: taskData,
+            success: true,
+          });
       });
     });
   });
@@ -189,10 +216,13 @@ describe('The TaskController', () => {
         updateDto.title = taskData.title;
         updateDto.desc = taskData.desc;
         return request(app.getHttpServer())
-          .put(`/tasks/${taskId}`)
+          .put(`/api/tasks/${taskId}`)
           .send(updateDto)
-          .expect(200)
-          .expect(expectData);
+          .then((result) => {
+            expect(result.statusCode).toEqual(200);
+            expect(result.body.success).toEqual(true);
+            expect(result.body.data).toEqual(expectData);
+          });
       });
     });
   });
@@ -209,9 +239,12 @@ describe('The TaskController', () => {
       it('should response delete result', () => {
         const taskId = 1;
         return request(app.getHttpServer())
-          .delete(`/tasks/${taskId}`)
-          .expect(200)
-          .expect(deleteResult);
+          .delete(`/api/tasks/${taskId}`)
+          .then((result) => {
+            expect(result.statusCode).toEqual(200);
+            expect(result.body.success).toEqual(true);
+            expect(result.body.data).toEqual(deleteResult);
+          });
       });
     });
     describe('task id is not matched', () => {
@@ -221,8 +254,11 @@ describe('The TaskController', () => {
       it('throw error', () => {
         const taskId = 1;
         return request(app.getHttpServer())
-          .delete(`/tasks/${taskId}`)
-          .expect(404);
+          .delete(`/api/tasks/${taskId}`)
+          .then((result) => {
+            expect(result.statusCode).toEqual(200);
+            expect(result.body.success).toEqual(false);
+          });
       });
     });
   });
@@ -232,9 +268,12 @@ describe('The TaskController', () => {
         const taskId = 1;
         const createTodoDto = new CreateToDoDto();
         return request(app.getHttpServer())
-          .post(`/tasks/${taskId}/to-do`)
+          .post(`/api/tasks/${taskId}/to-do`)
           .send(createTodoDto)
-          .expect(400);
+          .then((result) => {
+            expect(result.statusCode).toEqual(200);
+            expect(result.body.success).toEqual(false);
+          });
       });
     });
     describe('task id is not matched', () => {
@@ -247,9 +286,12 @@ describe('The TaskController', () => {
         createTodoDto.title = 'title';
         createTodoDto.desc = 'desc';
         return request(app.getHttpServer())
-          .post(`/tasks/${taskId}/to-do`)
+          .post(`/api/tasks/${taskId}/to-do`)
           .send(createTodoDto)
-          .expect(404);
+          .then((result) => {
+            expect(result.statusCode).toEqual(200);
+            expect(result.body.success).toEqual(false);
+          });
       });
     });
     describe('with valid parameters', () => {
@@ -266,10 +308,13 @@ describe('The TaskController', () => {
         createTodoDto.title = todoData.title;
         createTodoDto.desc = todoData.desc;
         return request(app.getHttpServer())
-          .post(`/tasks/${taskId}/to-do`)
+          .post(`/api/tasks/${taskId}/to-do`)
           .send(createTodoDto)
-          .expect(201)
-          .expect(expectData);
+          .then((result) => {
+            expect(result.statusCode).toEqual(201);
+            expect(result.body.success).toEqual(true);
+            expect(result.body.data).toEqual(expectData);
+          });
       });
     });
   });
@@ -285,9 +330,12 @@ describe('The TaskController', () => {
         updateToDoDto.title = 'title';
         updateToDoDto.desc = 'desc';
         return request(app.getHttpServer())
-          .put(`/tasks/${taskId}/to-do/${todoId}`)
+          .put(`/api/tasks/${taskId}/to-do/${todoId}`)
           .send(updateToDoDto)
-          .expect(404);
+          .then((result) => {
+            expect(result.statusCode).toEqual(200);
+            expect(result.body.success).toEqual(false);
+          });
       });
     });
     describe('with invalid parameters', () => {
@@ -298,12 +346,13 @@ describe('The TaskController', () => {
         const taskId = 1;
         const todoId = 1;
         const updateToDoDto = new UpdateToDoDto();
-        // updateToDoDto.title = 'title';
-        // updateToDoDto.desc = 'desc';
         return request(app.getHttpServer())
-          .put(`/tasks/${taskId}/to-do/${todoId}`)
+          .put(`/api/tasks/${taskId}/to-do/${todoId}`)
           .send(updateToDoDto)
-          .expect(400);
+          .then((result) => {
+            expect(result.statusCode).toEqual(200);
+            expect(result.body.success).toEqual(false);
+          });
       });
     });
     describe('with valid parameters', () => {
@@ -326,10 +375,13 @@ describe('The TaskController', () => {
           isDone: updateToDoDto.isDone,
         };
         return request(app.getHttpServer())
-          .put(`/tasks/${taskId}/to-do/${todoId}`)
+          .put(`/api/tasks/${taskId}/to-do/${todoId}`)
           .send(updateToDoDto)
-          .expect(200)
-          .expect(expectData);
+          .then((result) => {
+            expect(result.statusCode).toEqual(200);
+            expect(result.body.success).toEqual(true);
+            expect(result.body.data).toEqual(expectData);
+          });
       });
     });
   });
