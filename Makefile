@@ -10,8 +10,9 @@ depends: ## Install & build dependencies
 	go build ./...
 	go mod tidy
 
-start: depends ## Start dev environment
+start: depends ## Start dev environment and server
 	docker-compose up -d
+	go run cmd/api/main.go
 
 migrate: ## Run database migrations
 	go run cmd/migration/main.go

@@ -110,7 +110,7 @@ git clone https://github.com/TrinhTrungDung/togo.git
 make start
 ```
 
-2. Don't forget to migrate database changes after that:
+2. Don't forget to migrate database changes after that, open another terminal and type in this command:
 
 ```sh
 make migrate
