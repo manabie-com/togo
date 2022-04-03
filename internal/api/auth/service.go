@@ -22,6 +22,7 @@ type Auth struct {
 	jwt JWT
 }
 
+// New creates new auth service
 func New(db *gorm.DB, cr Crypter, jwt JWT) *Auth {
 	return &Auth{
 		db:  db,

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/TrinhTrungDung/togo/config"
+	"github.com/TrinhTrungDung/togo/internal/model"
 	"github.com/TrinhTrungDung/togo/pkg/db"
 	"github.com/TrinhTrungDung/togo/pkg/migration"
 	"github.com/go-gormigrate/gormigrate/v2"
@@ -87,6 +88,33 @@ func Run() (resErr error) {
 			},
 			Rollback: func(tx *gorm.DB) error {
 				return tx.Migrator().DropTable("users", "plans", "tasks", "subscriptions")
+			},
+		},
+		{
+			ID: "202204031021",
+			Migrate: func(tx *gorm.DB) error {
+				defaultPlans := []*model.Plan{
+					{
+						Name:     "Freemium",
+						MaxTasks: 1,
+					},
+					{
+						Name:     "Silver",
+						MaxTasks: 10,
+					},
+					{
+						Name:     "Gold",
+						MaxTasks: 100,
+					},
+				}
+
+				for _, plan := range defaultPlans {
+					if err := tx.Create(plan).Error; err != nil {
+						return err
+					}
+				}
+
+				return nil
 			},
 		},
 	})

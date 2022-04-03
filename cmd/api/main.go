@@ -5,6 +5,7 @@ import (
 
 	"github.com/TrinhTrungDung/togo/config"
 	"github.com/TrinhTrungDung/togo/internal/api/auth"
+	"github.com/TrinhTrungDung/togo/internal/api/plan"
 	"github.com/TrinhTrungDung/togo/pkg/crypter"
 	"github.com/TrinhTrungDung/togo/pkg/db"
 	"github.com/TrinhTrungDung/togo/pkg/jwt"
@@ -34,10 +35,12 @@ func main() {
 	crypterSvc := crypter.New()
 	jwtSvc := jwt.New(cfg.JwtAlgorithm, cfg.JwtSecret, cfg.JwtDuration)
 	authSvc := auth.New(db, crypterSvc, jwtSvc)
+	planSvc := plan.New(db)
 
 	// Initialize root API
 	rootRouter := e.Group("/api")
 	auth.NewHTTP(authSvc, rootRouter.Group("/auth"))
+	plan.NewHTTP(planSvc, rootRouter.Group("/plans"))
 
 	// Start the HTTP server
 	server.Start(e)
