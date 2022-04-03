@@ -7,6 +7,7 @@ import (
 	"github.com/TrinhTrungDung/togo/internal/api/auth"
 	"github.com/TrinhTrungDung/togo/internal/api/plan"
 	"github.com/TrinhTrungDung/togo/internal/api/subscription"
+	"github.com/TrinhTrungDung/togo/internal/api/task"
 	"github.com/TrinhTrungDung/togo/pkg/crypter"
 	"github.com/TrinhTrungDung/togo/pkg/db"
 	"github.com/TrinhTrungDung/togo/pkg/jwt"
@@ -38,12 +39,14 @@ func main() {
 	authSvc := auth.New(db, crypterSvc, jwtSvc)
 	planSvc := plan.New(db)
 	subscriptionSvc := subscription.New(db)
+	taskSvc := task.New(db)
 
 	// Initialize root API
 	rootRouter := e.Group("/api")
 	auth.NewHTTP(authSvc, rootRouter.Group("/auth"))
 	plan.NewHTTP(planSvc, rootRouter.Group("/plans"))
 	subscription.NewHTTP(subscriptionSvc, authSvc, rootRouter.Group("/subscriptions", jwtSvc.MWFunc()))
+	task.NewHTTP(taskSvc, authSvc, rootRouter.Group("/tasks", jwtSvc.MWFunc()))
 
 	// Start the HTTP server
 	server.Start(e)

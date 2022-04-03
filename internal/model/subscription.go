@@ -8,4 +8,5 @@ type Subscription struct {
 	PlanID  int        `json:"plan_id"`
 	StartAt time.Time  `json:"start_at"`
 	EndAt   *time.Time `json:"end_at"`
+	Plan    Plan       `json:"-"`
 }

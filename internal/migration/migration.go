@@ -143,6 +143,32 @@ func Run() (resErr error) {
 				return tx.Migrator().DropTable("subscriptions")
 			},
 		},
+		{
+			ID: "202204031746",
+			Migrate: func(tx *gorm.DB) error {
+				type Task struct {
+					Base
+					Content string `gorm:"type:text"`
+					Deleted gorm.DeletedAt
+					UserID  int
+				}
+
+				// Drop current tasks table
+				// NOTE: Only do this when there's no existing task in database yet
+				if err := tx.Migrator().DropTable("tasks"); err != nil {
+					return err
+				}
+
+				if err := tx.AutoMigrate(&Task{}); err != nil {
+					return err
+				}
+
+				return nil
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropTable("tasks")
+			},
+		},
 	})
 
 	return nil

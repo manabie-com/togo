@@ -11,7 +11,6 @@
   <p align="center">
     TOGO application implemented using Golang, PostgreSQL, Docker
     <br />
-    <a href="#">View Demo</a>
   </p>
 </div>
 
@@ -71,6 +70,7 @@
 - [Golang 1.18](https://go.dev/)
 - [PostgreSQL 14.2](https://www.postgresql.org/)
 - [Docker 4.6.1](https://www.docker.com/)
+- [Postman](https://www.postman.com)
 
 <!-- GETTING STARTED -->
 
@@ -78,7 +78,7 @@
 
 ### Prerequisites
 
-- Make sure that you have installed [Docker](https://www.docker.com/) before running the application locally, you can download [Docker Desktop](https://www.docker.com/products/docker-desktop/) so docker cli can be installed accordingly.
+- Make sure that you have installed [Golang](https://go.dev/dl/) and [Docker](https://www.docker.com/) before running the application locally, you can download [Docker Desktop](https://www.docker.com/products/docker-desktop/) so docker cli can be installed accordingly. You should download [Postman](https://www.postman.com/downloads/) too if you want to test the API endpoints.
 
   - Check Docker version after installing:
 
@@ -98,23 +98,41 @@
 git clone https://github.com/TrinhTrungDung/togo.git
 ```
 
-2. Download and install [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-
-3. Go to the project directory and use this following command to run the application:
-
-```sh
-docker-compose up -d
-```
-
-4. Migrate database changes:
-
-```sh
-go run cmd/migration/main.go
-```
+2. Download and install [Golang](https://go.dev/dl/), [Docker Desktop](https://www.docker.com/products/docker-desktop/) and [Postman](https://www.postman.com/downloads/)
 
 <!-- USAGE -->
 
 ## Usage
+
+1. Go to the project directory and use this following command to spin up the application:
+
+```sh
+make start
+```
+
+2. Don't forget to migrate database changes after that:
+
+```sh
+make migrate
+```
+
+3. Import this collection [link](https://www.getpostman.com/collections/9f9cedd5440a74c3a98c) to your Postman
+
+4. If you want to clean up the application, use this command:
+
+```sh
+make remove
+```
+
+### Future Improvements
+
+- I think within this challenge period of time this is super clean codebase and an elegant solution so of course I am kinda proud of it. And since this is the challenge with limited time, I didn't add too many fancy features, so below are a few ideas I can easily add in this codebase:
+  - Documenting the API with Swagger (please forgive me I didn't add this)
+  - Automation mark the subscription when deadline is met using AWS Lambda Function + Step Functions.
+  - Integrate Redis to invalidate tokens. (Shame on me not doing invalidate token nor logout feature when doing challenge)
+  - Add price charging feature on each provided plans of course, this is the most important feature in terms of real world usages.
+  - User cancel subscription feature: charge user only the current month that he/she subscribes and cancel the next month (Downgrade subscription back to freemium plan). And refund policy is important in any subscription-based platform too.
+  - And of course many features could been added too, these abovementioned points are just the examples.
 
 <!-- LICENSE -->
 
