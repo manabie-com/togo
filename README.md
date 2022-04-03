@@ -67,16 +67,11 @@ $ npm run test
 $ npm run test:cov
 ```
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+## What do you love about your solution ?
+- The task includes multiple sub tasks.
+- The Sub task or main task can check done.
+- Set deadline for a task.
+## What else do you want us to know about however you do not have enough time to complete?
+- Write apis for user authentication.
+- The task can be assigned to multiple users.
+- Set deadline for a sub task.
