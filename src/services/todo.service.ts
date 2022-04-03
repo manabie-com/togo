@@ -52,7 +52,7 @@ export class ToDoService {
     }
     toDo.title = title;
     toDo.desc = desc;
-    if (isDone !== null || isDone !== undefined) {
+    if (isDone !== null && isDone !== undefined) {
       toDo.isDone = isDone;
     }
     return this.toDoListRepo.save(toDo);

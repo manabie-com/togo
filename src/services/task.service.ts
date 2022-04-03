@@ -56,7 +56,7 @@ export class TaskService {
       if (!user) throw new NotFoundException('User not found!');
 
       const todayTaskCount = await this.countTasks(userId);
-      if (todayTaskCount + 1 >= user.dailyMaxTasks) {
+      if (todayTaskCount == user.dailyMaxTasks) {
         throw new BadRequestException(
           'User has reached the maximum number of tasks today!',
         );
