@@ -26,7 +26,19 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Installation
+## Install postgres only 
+```bash
+$ docker-compose up -d
+```
+## Running the app - using the docker (run database and api)
+```bash
+$ docker-compose up -d
+```
+## Api specification - swagger
+here: http://localhost:3000/api
+## pgAdmin
+here: http://localhost:5050
+## Installation without docker
 
 ```bash
 $ npm install
@@ -50,9 +62,6 @@ $ npm run start:prod
 ```bash
 # unit tests
 $ npm run test
-
-# e2e tests
-$ npm run test:e2e
 
 # test coverage
 $ npm run test:cov

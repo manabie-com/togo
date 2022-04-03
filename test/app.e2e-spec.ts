@@ -31,11 +31,4 @@ describe('AppController (e2e)', () => {
       data: 'Hello World!',
     });
   });
-  it('/ GET USERS', () => {
-    return request(app.getHttpServer()).get('/api/users').expect(200).expect({
-      success: true,
-      message: null,
-      data: 'Hello World!',
-    });
-  });
 });

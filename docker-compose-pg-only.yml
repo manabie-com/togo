@@ -30,22 +30,6 @@ services:
     networks:
       - postgres
     restart: unless-stopped
-  todo:
-    container_name: todo_nodejs
-    build: ./
-    image: todo_nodejs_image
-    depends_on:
-      - postgres
-    ports:
-      - 3000:3000
-    environment:
-      DB_PORT: 5432
-      DB_HOST: postgres
-      DB_NAME: postgres
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres
-    networks:
-      - postgres
 networks:
   postgres:
     driver: bridge
