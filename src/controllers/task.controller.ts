@@ -25,6 +25,7 @@ import { Task } from 'src/entities/task.entity';
 import { ToDoList } from 'src/entities/toDoList.entity';
 import { TaskService } from 'src/services/task.service';
 import { ToDoService } from 'src/services/todo.service';
+import { DeleteResult } from 'typeorm';
 
 @Controller('tasks')
 @ApiTags('tasks')
@@ -69,13 +70,12 @@ export class TaskController {
 
   @Delete(':taskId')
   @ApiOperation({ summary: 'Delete a task' })
-  @ApiResponse(ToDoList)
+  @ApiResponse(DeleteResult)
   async deleteTask(@Param('taskId', new ParseIntPipe()) id: number) {
     const task = await this.taskService.findOne(id);
     if (!task) throw new NotFoundException('Task not found!');
 
-    await this.taskService.delete(id);
-    return this.taskService.findOne(id);
+    return this.taskService.delete(id);
   }
 
   @Post(':taskId/to-do')
