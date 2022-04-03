@@ -27,7 +27,7 @@ func New(algo, secret string, duration int) *JWT {
 
 	return &JWT{
 		key:      []byte(secret),
-		duration: time.Duration(duration),
+		duration: time.Duration(duration) * time.Second,
 		algo:     signingMethod,
 	}
 }
@@ -39,6 +39,7 @@ func (j *JWT) MWFunc() echo.MiddlewareFunc {
 			token, err := j.parseTokenFromHeader(c)
 			if err != nil {
 				c.Logger().Errorf("Error parsing token: %+v", err)
+				return server.NewHTTPError(http.StatusBadRequest, "MISSING_TOKEN", "Missing access token")
 			}
 			if !token.Valid {
 				return server.NewHTTPError(http.StatusUnauthorized, "UNAUTHORIZED", "Your session is unauthorized or has been expired.").SetInternal(err)

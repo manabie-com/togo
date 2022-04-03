@@ -95,15 +95,15 @@ func Run() (resErr error) {
 			Migrate: func(tx *gorm.DB) error {
 				defaultPlans := []*model.Plan{
 					{
-						Name:     "Freemium",
+						Name:     model.FreemiumPlan,
 						MaxTasks: 1,
 					},
 					{
-						Name:     "Silver",
+						Name:     model.SilverPlan,
 						MaxTasks: 10,
 					},
 					{
-						Name:     "Gold",
+						Name:     model.GoldPlan,
 						MaxTasks: 100,
 					},
 				}
@@ -115,6 +115,32 @@ func Run() (resErr error) {
 				}
 
 				return nil
+			},
+		},
+		{
+			ID: "202204031056",
+			Migrate: func(tx *gorm.DB) error {
+				type Subscription struct {
+					UserID  int `gorm:"primary_key;autoIncrement:false"`
+					PlanID  int `gorm:"primary_key;autoIncrement:false"`
+					StartAt time.Time
+					EndAt   *time.Time
+				}
+
+				// Drop current subscriptions table
+				// NOTE: Only do this when there's no existing subscription in database yet
+				if err := tx.Migrator().DropTable("subscriptions"); err != nil {
+					return err
+				}
+
+				if err := tx.AutoMigrate(&Subscription{}); err != nil {
+					return err
+				}
+
+				return nil
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropTable("subscriptions")
 			},
 		},
 	})

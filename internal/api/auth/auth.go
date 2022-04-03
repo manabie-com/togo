@@ -1,11 +1,12 @@
 package auth
 
 import (
-	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/TrinhTrungDung/togo/internal/model"
 	"github.com/TrinhTrungDung/togo/pkg/server"
+	"github.com/labstack/echo/v4"
 )
 
 var (
@@ -38,7 +39,23 @@ func (a *Auth) Register(data RegisterData) (*model.User, error) {
 	}
 
 	if err := a.db.Create(u).Error; err != nil {
-		return nil, server.NewHTTPInternalError("Error creating user").SetInternal(err)
+		return nil, server.NewHTTPInternalError("Cannot creating user").SetInternal(err)
+	}
+
+	plan := &model.Plan{}
+	if err := a.db.Where(&model.Plan{Name: model.FreemiumPlan}).Take(plan).Error; err != nil {
+		return nil, server.NewHTTPError(http.StatusBadRequest, "INVALID_PLAN", "Plan is currently not supported").SetInternal(err)
+	}
+
+	// Create default freemium subscription for new user
+	sub := &model.Subscription{
+		UserID:  u.ID,
+		PlanID:  plan.ID,
+		StartAt: time.Now(),
+		EndAt:   nil,
+	}
+	if err := a.db.Create(sub).Error; err != nil {
+		return nil, server.NewHTTPInternalError("Cannot create subscription").SetInternal(err)
 	}
 
 	return u, nil
@@ -52,7 +69,6 @@ func (a *Auth) LoginUsername(data LoginUsernameData) (*model.AuthToken, error) {
 	if err := a.db.Where(&model.User{Username: data.Username}).Take(user).Error; err != nil {
 		return nil, ErrInvalidUsername
 	}
-	fmt.Println(user)
 
 	// Check if password is matched
 	if !a.cr.CompareHashAndPassword(user.Password, data.Password) {
@@ -111,4 +127,17 @@ func (a *Auth) LoginEmail(data LoginEmailData) (*model.AuthToken, error) {
 	}
 
 	return token, nil
+}
+
+// User returns user data stored in jwt token
+func (s *Auth) User(c echo.Context) *model.AuthUser {
+	id, _ := c.Get("id").(float64)
+	user, _ := c.Get("username").(string)
+	email, _ := c.Get("email").(string)
+
+	return &model.AuthUser{
+		ID:       int(id),
+		Username: user,
+		Email:    email,
+	}
 }

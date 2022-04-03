@@ -1,5 +1,11 @@
 package model
 
+const (
+	FreemiumPlan = "Freemium"
+	SilverPlan   = "Silver"
+	GoldPlan     = "Gold"
+)
+
 // Plan represents the plan model
 type Plan struct {
 	Base
