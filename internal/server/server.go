@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/f6galaxy/kitchen/errors"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	grpc_validator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
@@ -16,6 +15,7 @@ import (
 	"github.com/vchitai/l"
 	"github.com/vchitai/togo/configs"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -131,7 +131,7 @@ func customHTTPError(ctx context.Context, _ *runtime.ServeMux, marshaler runtime
 
 	contentType := "application/json"
 	w.Header().Set("Content-type", contentType)
-	w.WriteHeader(httpStatusFromCode(errors.Code(grpc.Code(err))))
+	w.WriteHeader(httpStatusFromCode(grpc.Code(err)))
 	jErr := json.NewEncoder(w).Encode(errorBody{
 		Err:  grpc.ErrorDesc(err),
 		Msg:  grpc.ErrorDesc(err),
@@ -143,41 +143,41 @@ func customHTTPError(ctx context.Context, _ *runtime.ServeMux, marshaler runtime
 	}
 }
 
-func httpStatusFromCode(code errors.Code) int {
+func httpStatusFromCode(code codes.Code) int {
 	switch code {
-	case errors.NoError:
+	case codes.OK:
 		return http.StatusOK
-	case errors.Canceled:
+	case codes.Canceled:
 		return http.StatusRequestTimeout
-	case errors.Unknown:
+	case codes.Unknown:
 		return http.StatusInternalServerError
-	case errors.InvalidArgument:
+	case codes.InvalidArgument:
 		return http.StatusBadRequest
-	case errors.DeadlineExceeded:
+	case codes.DeadlineExceeded:
 		return http.StatusGatewayTimeout
-	case errors.NotFound:
+	case codes.NotFound:
 		return http.StatusNotFound
-	case errors.AlreadyExists:
+	case codes.AlreadyExists:
 		return http.StatusConflict
-	case errors.PermissionDenied:
+	case codes.PermissionDenied:
 		return http.StatusForbidden
-	case errors.Unauthenticated:
+	case codes.Unauthenticated:
 		return http.StatusUnauthorized
-	case errors.ResourceExhausted:
+	case codes.ResourceExhausted:
 		return http.StatusTooManyRequests
-	case errors.FailedPrecondition:
+	case codes.FailedPrecondition:
 		return http.StatusPreconditionFailed
-	case errors.Aborted:
+	case codes.Aborted:
 		return http.StatusConflict
-	case errors.OutOfRange:
+	case codes.OutOfRange:
 		return http.StatusBadRequest
-	case errors.Unimplemented:
+	case codes.Unimplemented:
 		return http.StatusNotImplemented
-	case errors.Internal:
+	case codes.Internal:
 		return http.StatusInternalServerError
-	case errors.Unavailable:
+	case codes.Unavailable:
 		return http.StatusServiceUnavailable
-	case errors.DataLoss:
+	case codes.DataLoss:
 		return http.StatusInternalServerError
 	default:
 		return http.StatusOK

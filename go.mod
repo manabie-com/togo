@@ -6,7 +6,6 @@ require (
 	github.com/benbjohnson/clock v1.3.0 // indirect
 	github.com/bufbuild/buf v0.56.0
 	github.com/envoyproxy/protoc-gen-validate v0.6.1
-	github.com/f6galaxy/kitchen v0.0.0-20211025150806-10b2238b13a7
 	github.com/go-redis/redis/v8 v8.11.4
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/gogo/protobuf v1.3.2
