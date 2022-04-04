@@ -28,7 +28,7 @@
 
 ## Install postgres only 
 ```bash
-$ docker-compose up -d
+$ docker-compose -f docker-compose-pg-only.yml up -d
 ```
 ## Running the app - using the docker (run database and api)
 ```bash
