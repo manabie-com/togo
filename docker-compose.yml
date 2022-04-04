@@ -1,0 +1,51 @@
+version: '3.5'
+services:
+  postgres:
+    container_name: postgres_container
+    hostname: postgres
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+       - ./db:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+    restart: unless-stopped
+  
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: password
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+       - ./pgadmin:/var/lib/pgadmin
+
+    ports:
+      - "5050:80"
+    networks:
+      - postgres
+    restart: unless-stopped
+  todo:
+    container_name: todo_nodejs
+    build: ./
+    image: todo_nodejs_image
+    depends_on:
+      - postgres
+    ports:
+      - 3000:3000
+    environment:
+      DB_PORT: 5432
+      DB_HOST: postgres
+      DB_NAME: postgres
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+    networks:
+      - postgres
+networks:
+  postgres:
+    driver: bridge
