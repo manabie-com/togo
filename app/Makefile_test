@@ -1,0 +1,28 @@
+.PHONY: prepare dependency test docker_up docker_down clear
+
+-include app.env.test
+export $(shell test -f app.env.test && sed 's/=.*//' app.env.test)
+
+prepare:
+	@echo "Copy app.env.example to app.env.test if app.env.test does not exists"
+	test -f app.env.test || cp -a app.env.example app.env.test
+
+dependency:
+	@go get -v ./...
+
+test: docker_up dependency
+	@go test ./...
+
+coverage: docker_up dependency
+	@go test -cover ./...
+
+docker_conf:
+	@docker-compose -p $(APP_NAME)_test -f docker-compose.test.yaml --env-file ./app.env.test config
+
+docker_up:
+	@docker-compose -p $(APP_NAME)_test -f docker-compose.test.yaml --env-file ./app.env.test up -d
+
+docker_down:
+	@docker-compose -p $(APP_NAME)_test -f docker-compose.test.yaml --env-file ./app.env.test down -v
+
+clear: docker_down
