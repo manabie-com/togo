@@ -1,0 +1,30 @@
+syntax = "proto3";
+package pb;
+
+option go_package = "github.com/vchitai/togo/pb";
+
+import "google/api/annotations.proto";
+import "validate/validate.proto";
+
+service ToDoService {
+  rpc AddToDoList(AddToDoListRequest) returns (AddToDoListResponse) {
+    option (google.api.http) = {
+      post: "/to-do",
+      body: "*"
+    };
+  }
+}
+
+message ToDoEntry {
+  string content = 1 [(validate.rules).string = {min_len : 1}];
+}
+
+
+message AddToDoListRequest {
+  string user_id = 1 [(validate.rules).string = {min_len : 1}];
+  repeated ToDoEntry entry = 2 [(validate.rules).repeated = {min_items: 1}];
+}
+
+message AddToDoListResponse {
+  string message = 1;
+}

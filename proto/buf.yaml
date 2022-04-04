@@ -1,0 +1,12 @@
+version: v1beta1
+name: buf.build/vchitai/togo
+deps:
+  - buf.build/googleapis/googleapis
+  - buf.build/gogo/protobuf
+  - buf.build/envoyproxy/protoc-gen-validate
+lint:
+  use:
+    - DEFAULT
+breaking:
+  use:
+    - FILE

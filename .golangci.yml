@@ -1,0 +1,75 @@
+run:
+  deadline: 5m
+  issues-exit-code: 1
+  # skip-dirs: vendor
+  skip-dirs-use-default: true
+  tests: false
+
+
+output:
+  format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
+
+linters:
+  enable:
+    - bodyclose
+    - deadcode
+    - errcheck
+    # - goimports
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - structcheck
+    - typecheck
+    # - unused
+    - varcheck
+    # - dupl
+    # - lll
+    - unparam
+    - sqlclosecheck
+    - unconvert
+    - noctx
+    # - gomnd
+    - gocritic
+    # - scopelint
+    - dogsled
+    - nolintlint
+    - misspell
+    # - maligned
+    - prealloc
+    # - gofumpt
+    - gocognit
+    # - stylecheck
+    - gosec
+  disable:
+    - unused
+    - goimports
+    - goconst
+linters-settings:
+  gocritic:
+    disabled-checks:
+      # Comment out line this because this is disabled by default. 
+      - commentFormatting
+  gocognit:
+    # minimal code complexity to report, 30 by default (but we recommend 10-20)
+    min-complexity: 40
+  errcheck:
+    check-blank: false
+    check-type-assertions: true
+
+issues:
+  exclude-rules:
+    - linters:
+        - staticcheck
+      text: "SA1019:"
+    - linters:
+        - staticcheck
+      text: "SA5008:"
+    - linters:
+        - gosec
+      text: "G402:"
+    - linters:
+        - gocritic
+      text: "singleCaseSwitch:"

@@ -1,0 +1,22 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "6060:8080"
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports:
+      - "3306:3306"
+    volumes:
+      - ../migrations_up/:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: be_questing

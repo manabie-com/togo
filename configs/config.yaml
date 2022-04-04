@@ -1,0 +1,17 @@
+environment: D
+grpc_address: 10000
+http_address: 9000
+
+mysql:
+  address: 127.0.0.1
+  database: togo
+  username: root
+  password: mysql
+  protocol: tcp
+  parse_time: true
+redis:
+  addr: 127.0.0.1:6379
+  password:
+  db: 0
+
+default_todo_list_add_limited_per_day: 1
