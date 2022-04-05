@@ -1,0 +1,34 @@
+version: '3.3'
+
+networks:
+  togo-network:
+    driver: bridge
+
+services:
+  mysqldb:
+    image: mysql
+    env_file: .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=$DB_USERNAME
+      - MYSQL_DATABASE=$DB_NAME
+    ports:
+      - $DB_PORT:$DB_PORT
+    networks:
+      - togo-network
+    volumes:
+      - /home/data:/var/lib/mysql
+
+  app:
+    build: ./
+    restart: always
+    env_file: .env
+    environment:
+      - DB_HOST=mysqldb
+    ports:
+      - 3000:3000
+    networks:
+      - togo-network
+    depends_on:
+      - mysqldb
+    links:
+      - 'mysqldb'
