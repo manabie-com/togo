@@ -1,30 +1,32 @@
 ### Requirements
+* Golang version 1.16
+* SQLite3
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+### How to run the code locally
+* Update the `absolutePath` variable in `internal/database/init`. the db and db for unit tests are in `databases` directory
+* Go to the cmd directory through your command line
+* Run `go run main.go`
+* Run this on curl
+```
+curl --request POST \
+  --url http://localhost:8080/tasks \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"username": "jmramos",
+	"name": "Buying Milk from Grocery Store"
+}'
+```
+* You can use the following usernames for seperate users: `jmramos (limit of 5 todo's / day)`, `test1 5 limit`, `test2 5 limit` `test3 1 limit`
 
-### Notes
+### How to run the tests locally
+* Update the `internal/test/util` to your own directory. the db and db for unit tests are in `databases` directory
+* Run `go test ./...` in the project directory to run all tests
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+### What do i like about my solution?
+* Using SQLite would not require the reviewers to install databases on their local
+* Easy testing of functions using tests
+* Seperation of concerns
 
-### How to submit your solution?
-
-- Fork this repo and show us your development progress via a PR
-
-### Interesting facts about Manabie
-
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
-
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+### What else do you want us to know about however you do not have enough time to complete?
+* I could have created an endpoint for creating users.
+* Add test on the handler (controller level test)
