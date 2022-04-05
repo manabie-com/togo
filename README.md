@@ -1,30 +1,79 @@
-### Requirements
+# How to run
+make sure you have 'make' to run scripts
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+```sh
+cp .env.example .env
+```
 
-### Notes
+set your ip to DB_HOST variable
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+```sh
+make build-db build-app
+```
 
-### How to submit your solution?
+```sql
+CREATE TABLE users (
+	id serial PRIMARY KEY,
+	email VARCHAR ( 255 ) UNIQUE NOT NULL,
+	password VARCHAR ( 255 ) NOT NULL,
+    limit_todo SMALLINT NOT NULL DEFAULT 5,
+	created_at TIMESTAMP NOT NULL,
+	updated_at TIMESTAMP
+);
 
-- Fork this repo and show us your development progress via a PR
+INSERT INTO users (email, password, created_at) VALUES ('test@gmail.com', 'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', now());
 
-### Interesting facts about Manabie
+CREATE TABLE todos (
+	id serial PRIMARY KEY,
+	user_id BIGINT,
+	task VARCHAR ( 255 ) UNIQUE NOT NULL,
+	due_date TIMESTAMP,
+	status SMALLINT NOT NULL DEFAULT 0,
+	created_at TIMESTAMP NOT NULL,
+	updated_at TIMESTAMP,
+	UNIQUE (user_id, task),
+	CONSTRAINT fk_user
+	FOREIGN KEY(user_id)
+	REFERENCES users(id)
+);
+```
+# CURLs
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+Login:
+```sh
+curl -H "Content-Type: application/json" \
+-d '{"email":"test@gmail.com","password":"123456"}' \
+http://localhost:5000/api/login
+```
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+Create task:
+
+```sh
+curl -H "Content-Type: application/json" \
+-H "Authorization: Bearer <token>" \
+-d '{"task":"task1","due_date":"2022-04-05 15:00"}' \
+http://localhost:5000/api/todo/create
+```
+
+# Test
+
+Integration test:
+```sh
+make build-integration-test
+```
+
+Unit-test:
+```sh
+make unit-test
+```
+
+# Architect, layout
+
+- Clean architecture
+- layout: https://github.com/golang-standards/project-layout
+
+Why i love this solution?
+- Database Independent
+- Highly Testable
+
+There are a few more things I want to do: write more test cases, create docs api, implement Logger package
