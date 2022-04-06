@@ -19,7 +19,7 @@ There are a few main features in this repo.
 
 :heavy_check_mark: Login
 
-:heavy_check_mark: Retrieve tasks
+:heavy_check_mark: Retrieve tasks by created date
 
 :heavy_check_mark: Create task
 

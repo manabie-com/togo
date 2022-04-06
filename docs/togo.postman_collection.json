@@ -1,99 +1,90 @@
 {
-	"info": {
-		"_postman_id": "009db66d-5e6a-4028-9048-32738f28f0e2",
-		"name": "togo",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "Login",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"username\": \"khxingn\",\n    \"password\": \"Qq@1234567\"\n}"
-				},
-				"url": {
-					"raw": "http://localhost:3000/login",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"login"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Create task",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDgzODU4MzAsIm1heF90YXNrX3Blcl9kYXkiOjUsInVzZXJfaWQiOjF9.z3l_2SpmydslCu0DEyxch8bXxGPFD_Etp_p8hU4gmLk",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"detail\": \"first task\"\n}"
-				},
-				"url": {
-					"raw": "http://localhost:3000/tasks",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"tasks"
-					],
-					"query": [
-						{
-							"key": "",
-							"value": "",
-							"disabled": true
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "List task by created date",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDgzODU4MzAsIm1heF90YXNrX3Blcl9kYXkiOjUsInVzZXJfaWQiOjF9.z3l_2SpmydslCu0DEyxch8bXxGPFD_Etp_p8hU4gmLk",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "http://localhost:3000/tasks?created_date=2022-03-27",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"tasks"
-					],
-					"query": [
-						{
-							"key": "created_date",
-							"value": "2022-03-27"
-						}
-					]
-				}
-			},
-			"response": []
-		}
-	]
+    "info": {
+        "_postman_id": "009db66d-5e6a-4028-9048-32738f28f0e2",
+        "name": "togo",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [{
+            "name": "Login",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"username\": \"khxingn\",\n    \"password\": \"Qq@1234567\"\n}"
+                },
+                "url": {
+                    "raw": "http://localhost:3000/login",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "3000",
+                    "path": [
+                        "login"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Create task",
+            "request": {
+                "method": "POST",
+                "header": [{
+                    "key": "Authorization",
+                    "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDgzODU4MzAsIm1heF90YXNrX3Blcl9kYXkiOjUsInVzZXJfaWQiOjF9.z3l_2SpmydslCu0DEyxch8bXxGPFD_Etp_p8hU4gmLk",
+                    "type": "text"
+                }],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"detail\": \"first task\"\n}"
+                },
+                "url": {
+                    "raw": "http://localhost:3000/tasks",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "3000",
+                    "path": [
+                        "tasks"
+                    ],
+                    "query": [{
+                        "key": "",
+                        "value": "",
+                        "disabled": true
+                    }]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "List task by created date",
+            "request": {
+                "method": "GET",
+                "header": [{
+                    "key": "Authorization",
+                    "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDgzODU4MzAsIm1heF90YXNrX3Blcl9kYXkiOjUsInVzZXJfaWQiOjF9.z3l_2SpmydslCu0DEyxch8bXxGPFD_Etp_p8hU4gmLk",
+                    "type": "text"
+                }],
+                "url": {
+                    "raw": "http://localhost:3000/tasks?created_date=2022-03-27",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "3000",
+                    "path": [
+                        "tasks"
+                    ],
+                    "query": [{
+                        "key": "created_date",
+                        "value": "2022-03-27"
+                    }]
+                }
+            },
+            "response": []
+        }
+    ]
 }
