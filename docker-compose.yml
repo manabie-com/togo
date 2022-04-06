@@ -1,0 +1,21 @@
+version: "3"
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env.dev
+
+
+  postgres:
+    image: postgres:12-alpine
+    env_file:
+      - .env-db.dev
+    ports:
+      - "5432:5432"
