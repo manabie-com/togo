@@ -23,7 +23,9 @@
     - Simple function.
     - Embedded database and embedded Redis need to remove in the production application(I use them for easy integration purposes).
     - HINCRBY Redis function will not work as expected when 1 user creates more than 2000 tasks at a time.
-
+- What I will complete if have enough time:
+  - Remove steal redis cached.
+  - Handle application exception.
 - How to run my code locally:
   - Enviroment: jdk8, docker.
   - Existed data when start app:
