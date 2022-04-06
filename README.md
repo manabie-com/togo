@@ -12,7 +12,7 @@
   - Authorization mechanism: base on HTTP Authorization request header and value is userId - a numeric string, ex: "123123", "34241", "647544"
   - Rate limit mechanism: 
     - Use Redis Hashes to store and check the rate limit config.
-    - Use HINCRBY to update the rate limit per user, to guarantee the amniotic operations.
+    - Use HINCRBY to update the rate limit per user, to guarantee the atomic operations.
 
 - Pros and Cons:
   - Pros:
