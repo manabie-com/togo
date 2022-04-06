@@ -323,4 +323,6 @@ Known issues:
     - The server extracts the language using middleware.
     - For building the response: receive the message key and language and use a translator library to get and return the i18n string.
 - Production build files are not included because it does not the main goal of this assignment so I skipped adding them.
-- If I have more time, I want to add more test cases and CI/CD definition files for automated tasks.
+- Each user has a different timezone, this cause the query to select his/her total daily task can be wrong.
+  - The solution for this issue: Save user timezone, and use it to convert the time from server timezone into the user timezone before executing the query.
+- If I have more time, I want to add more test cases and CI/CD definition files for automated tasks and solve other known issues.
