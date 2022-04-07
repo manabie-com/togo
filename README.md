@@ -16,13 +16,13 @@
 
 - Pros and Cons:
   - Pros:
-    - Guarantees each Redis hashes save rate limit counter contains a maximum of 1000 entries, which can best suit with hash-zip map-max-entries Redis setting and can reduce the used memory efficiently. Because I save one hash key per user, which can populate to millions when active users shoot up.
+    - Guarantees each Redis hashes save rate limit counter contains a maximum of 1000 entries, which can best suit with hash-max-ziplist-entries Redis setting, higher would cause noticeable CPU activity. Because I save one hash entry per user, which can populate to millions when active users shoot up.
     - Quite fast with Redis to storage and guarantees atomic get and check rate limit operation.
     - Implement basic handler application exception.
   - Cons:
     - Simple function.
     - Embedded database and embedded Redis need to remove in the production application(I use them for easy integration purposes).
-    - HINCRBY Redis function will not work as expected when 1 user creates more than 2000 tasks at a time.
+    - HINCRBY Redis function sometimes not work as expected when 1 user have more than 2000 request create task at a time.
 - What I will complete if have enough time:
   - Remove steal redis cached.
   - Handle application exception.
