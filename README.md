@@ -1,30 +1,46 @@
 ### Requirements
+.net core 6 sdk/ .net core 6 runtime
+### How to run source code locally: 
+	after installing the above requirement, use command
+	go to src
+		“dotnet build”
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+	go to bin of Manabie.Api, use command
+		dotnet Manabie.Api/bin/Debug/net6.0/Manabie.Api.dll  
+### CURL: 
+#### authenticate
+	- curl -X 'POST' \
+  'https://localhost:5001/api/Auth/authenticate' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "username": "cuongnsm",
+  "password": "password"
+}'
+####	Authorization test
+        - curl -X 'GET' \
+  'https://localhost:5001/api/Auth' \
+  -H 'accept: */*' \
+  -H 'Authorization: Bearer {token}'
+	- Add task
+#### Add task
+		curl -X 'POST' \
+  'https://localhost:5001/api/Task' \
+  -H 'accept: text/plain' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer {token}'
+  -d '{
+  "todo": "string"
+}'
 
-### Notes
+#### Get tasks
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
-
-### How to submit your solution?
-
-- Fork this repo and show us your development progress via a PR
-
-### Interesting facts about Manabie
-
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
-
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+curl -X 'GET' \
+  'https://localhost:5001/api/Task' \
+  -H 'accept: text/plain' \
+-H 'Authorization: Bearer {token}'
+#### Run tests
+- To run test, go to src following use command
+	dotnet test
+#### LOVE!
+- I do love simple!

@@ -1,0 +1,89 @@
+﻿<Properties StartupConfiguration="{226D9EC1-9959-4B31-8F2D-A01626495FFE}|Unit Tests">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Manabie.Api.IntegrationTests/SUT/TestAuthController.cs">
+    <Files>
+      <File FileName="Manabie.Api.Tests/Services/UserServiceTests.cs" Line="71" Column="35" />
+      <File FileName="Manabie.Api/Services/UserService.cs" Line="35" Column="32" />
+      <File FileName="Manabie.Api/appsettings.json" Line="6" Column="40" />
+      <File FileName="Manabie.Api/Services/IUserService.cs" Line="12" Column="26" />
+      <File FileName="Manabie.Api/Entities/User.cs" Line="29" Column="41" />
+      <File FileName="Manabie.Api/Insfrastructures/ManaDbContext.cs" Line="34" Column="1" />
+      <File FileName="Manabie.Api/Models/AuthenticateRequest.cs" Line="1" Column="1" />
+      <File FileName="Manabie.Api/Models/AuthenticateResponse.cs" Line="21" Column="34" />
+      <File FileName="Manabie.Api/Controllers/TaskController.cs" Line="31" Column="1" />
+      <File FileName="Manabie.Api/Controllers/BaseController.cs" Line="20" Column="14" />
+      <File FileName="Manabie.Api/Middleware/JWTMiddleware.cs" Line="61" Column="50" />
+      <File FileName="Manabie.Api/Auth/AuthorizeAttribute.cs" Line="9" Column="66" />
+      <File FileName="Manabie.Api/Entities/Task.cs" Line="27" Column="5" />
+      <File FileName="Manabie.Api/Services/ITaskService.cs" Line="9" Column="40" />
+      <File FileName="Manabie.Api/Services/TaskService.cs" Line="12" Column="26" />
+      <File FileName="Manabie.Api/Program.cs" Line="46" Column="1" />
+      <File FileName="Manabie.Api/Utilities/AppSettings.cs" Line="1" Column="1" />
+      <File FileName="Manabie.Api/Utilities/Utility.cs" Line="24" Column="85" />
+      <File FileName="Manabie.Api/Entities/EntityBase.cs" Line="4" Column="13" />
+      <File FileName="Manabie.Api/Models/TaskViewModel.cs" Line="6" Column="27" />
+      <File FileName="Manabie.Api/Models/TaskListViewModel.cs" Line="10" Column="1" />
+      <File FileName="Manabie.Api/Models/MessageResponse.cs" Line="4" Column="18" />
+      <File FileName="Manabie.Api.Tests/Services/TaskServiceTests.cs" Line="146" Column="7" />
+      <File FileName="Manabie.Api/Migrations/ManaDbContextModelSnapshot.cs" Line="70" Column="32" />
+      <File FileName="Manabie.Api/Migrations/20220406070623_Init.cs" Line="49" Column="1" />
+      <File FileName="Manabie.Api/Controllers/AuthController.cs" Line="31" Column="45" />
+      <File FileName="Manabie.Api/Manabie.Api.csproj" Line="52" Column="14" />
+      <File FileName="Manabie.Api.Tests/Manabie.Api.Tests.csproj" Line="21" Column="64" />
+      <File FileName="Manabie.Api.IntegrationTests/SUT/TestAuthController.cs" Line="70" Column="44" />
+      <File FileName="Manabie.Api.IntegrationTests/Manabie.Api.IntegrationTests.csproj" Line="6" Column="33" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="ManaAssignment" expanded="True">
+            <Node name="Manabie.Api" expanded="True">
+              <Node name="Auth" expanded="True" />
+              <Node name="Controllers" expanded="True" />
+              <Node name="Entities" expanded="True" />
+              <Node name="Insfrastructures" expanded="True" />
+              <Node name="Middleware" expanded="True" />
+              <Node name="Migrations" expanded="True" />
+              <Node name="Models" expanded="True" />
+              <Node name="Properties" expanded="True" />
+              <Node name="Services" expanded="True" />
+              <Node name="Utilities" expanded="True" />
+            </Node>
+            <Node name="Manabie.Api.IntegrationTests" expanded="True">
+              <Node name="SUT" expanded="True">
+                <Node name="TestAuthController.cs" selected="True" />
+              </Node>
+            </Node>
+            <Node name="Manabie.Api.Tests" expanded="True">
+              <Node name="Services" expanded="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State />
+      </Pad>
+      <Pad Id="MonoDevelop.UnitTesting.TestPad">
+        <State name="__root__">
+          <Node name="ManaAssignment" expanded="True">
+            <Node name="Manabie.Api.IntegrationTests" expanded="True">
+              <Node name="Manabie.Api.IntegrationTests.SUT" expanded="True">
+                <Node name="TestAuthController" expanded="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.Manabie.Api.Tests PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.ItemProperties.Manabie.Api.IntegrationTests PreferredExecutionTarget="/Applications/Safari.app" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="/Users/doffy/Desktop/Workspace/test/togo/src/Manabie.Api.IntegrationTests/BasicTests.cs" relfile="Manabie.Api.IntegrationTests/BasicTests.cs" line="38" column="1" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.Manabie.Api PreferredExecutionTarget="/Applications/Safari.app" />
+</Properties>
