@@ -61,7 +61,7 @@
     - need to install docker
     - move to todo/todo-task-application
     - run script to build docker images: "docker build -t todo-task-app ."
-    - run script to run docker container: "docker run -p 8888:8888 todo-app-v2"
+    - run script to run docker container: "docker run -p 8888:8888 todo-task-app"
     - curl:
       - create tasks: 
         - curl --location --request POST 'http://localhost:8888/todo-task/v1/tasks' \
@@ -74,17 +74,17 @@
           }'
       - get tasks:
         - curl --location --request GET 'http://localhost:8888/todo-task/v1/tasks'
-      - get tasks/{id}:
-        - curl --location --request GET 'http://localhost:8888/todo-task/v1/tasks/a66d5aa4-40d1-4f07-9cd6-46e3355e6c20'
-      - update tasks/{id};
-        - curl --location --request PUT 'http://localhost:8888/todo-task/v1/tasks/1a229915-41cd-4f69-8846-3545c526b0fd' \
+      - get tasks/{taskId}:
+        - curl --location --request GET 'http://localhost:8888/todo-task/v1/tasks/{taskId}'
+      - update tasks/{taskId};
+        - curl --location --request PUT 'http://localhost:8888/todo-task/v1/tasks/{taskId}' \
           --header 'Content-Type: application/json' \
           --data-raw '{
               "name": "test-121312aaaaaaa3",
               "content": "cont232333333333ent test-1"
           }'
-      - delete tasks/{id}:
-        - curl --location --request DELETE 'http://localhost:8888/todo-task/v1/tasks/1a229915-41cd-4f69-8846-3545c526b0fd'
+      - delete tasks/{taskId}:
+        - curl --location --request DELETE 'http://localhost:8888/todo-task/v1/tasks/{taskId}'
   - Run Unit Test:
     - move to todo/todo-task-application
     - run script: "mvn -U clean test"
