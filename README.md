@@ -26,6 +26,7 @@ There are 2 make commands for testing: `make test-all` and `make test`
 - Enter command: `make test-all`
   - When running test-all, a MSSQL container will be created for testing (with port 1434).
   - Container run only one time and will be down after testing done.
+
 **2. Run test after editing code on testing container**
 - First setup testing enviroment: `make setup-integration-test`
 - Option run test both unit-test and integration-test: `make test`
