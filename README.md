@@ -19,6 +19,7 @@ When `make deploy` done, it will build 2 images `manabie-test:latest` and `manab
 ```
 ### How to run unit tests locally
 There are 2 make commands for testing: `make test-all` and `make test`
+
 **1. Run all tests on testing container**
 - Enter command: `make test-all`
   - When running test-all, a MSSQL container will be created for testing (with port 1434).
@@ -28,5 +29,6 @@ There are 2 make commands for testing: `make test-all` and `make test`
 - Option run test both unit-test and integration-test: `make test`
 - Option run only unit-test: `make unit-test`
 - Option run only integration-test: `make integration-test`
+
 ### My solutions
 
