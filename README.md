@@ -10,6 +10,8 @@
 ## How to run App
 #### Notes when running App:
   - Has docker installed
+  - **Run command** `docker network create mana-nw`
+
 ### How to run App locally
 - At the workspace directory, enter command `make deploy`
 When `make deploy` done, it will build 2 images `manabie-test:latest` and `manabie-mssql:latest`
