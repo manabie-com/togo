@@ -30,8 +30,3 @@ func TestLoadEnviromemts(t *testing.T) {
 	require.NotEmpty(t, globalTestConfig.Enviroments.DbUser)
 	require.NotEmpty(t, globalTestConfig.Enviroments.DbPort)
 }
-
-func TestLoadComponents(t *testing.T) {
-	err := globalTestConfig.LoadComponents(globalTestConfig.Enviroments)
-	require.NoError(t, err)
-}
