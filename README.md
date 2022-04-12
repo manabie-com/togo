@@ -8,7 +8,7 @@
 - [ ] Choose a suitable architecture to make your code simple, organizable, and maintainable
   - Project is using a reference of 3-tier model (just Models package as Data Access Layer and Handlers package as Controller Layer)
 - [ ] How to run app locally
-  - [A brief description about how to run App and its deployment diagram](https://github.com/huynhnhattu/huynhtu/edit/master/README.md#how-to-run-app)
+  - [A brief description about how to run App and its deployment diagram](https://github.com/huynhnhattu/huynhtu/blob/master/README.md#how-to-run-app)
 ## How to run App
 #### Notes when running App:
   - Has docker installed
