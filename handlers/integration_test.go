@@ -45,7 +45,7 @@ func TestMain(m *testing.M) {
 	wd, _ := os.Getwd()
 	err := godotenv.Load(filepath.Join(wd, ".env-test"))
 	if err != nil {
-		log.Fatal("Cannot load .env.test file")
+		log.Fatal("Cannot load .env-test file")
 	}
 	dbHost := os.Getenv("DB_HOST")
 	dbName := os.Getenv("DB_NAME")
