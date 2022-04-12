@@ -8,7 +8,7 @@
 - [ ] Choose a suitable architecture to make your code simple, organizable, and maintainable
   - Project is using a reference of 3-tier model (just Models package as Data Access Layer and Handlers package as Controller Layer)
 - [ ] How to run app locally
-  - [A brief description about how to run App and its deployment diagram](https://github.com/huynhnhattu/huynhtu/blob/master/README.md#how-to-run-app)
+  - [A brief description about how to run App and its deployment diagram](https://github.com/huynhnhattu/huynhtu/#how-to-run-app)
 ## How to run App
 #### Notes when running App:
   - Has docker installed
@@ -20,12 +20,16 @@
 When `make deploy` done, it will build 2 images `manabie-test:latest` and `manabie-mssql:latest`
 ### Sample `curl` command to call my API
 - A sample `curl` command to call API with PUT method and endpoint `api/tasks`
-- Sample request PUT body in JSON format
+- Using `curl` command:
+```
+curl -X PUT http://localhost:8080/api/tasks -H 'Content-Type: application/json' -d '{"userId":"user_id1","maxDailyLimit":8,"task":"Finish Manabie testing project"}'
+```
+- Sample request PUT body in JSON format for POSTMAN or ThunderClient vscode's extension
 ```
 {
     "userId":"user_id1",
     "maxDailyLimit":8,
-    "task":"Finish Manabie's testing project"
+    "task":"Finish Manabie testing project"
 }
 ```
 ### How to run unit tests locally
