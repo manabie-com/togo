@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"testing"
+	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/require"
@@ -30,6 +31,7 @@ var (
 func TestMain(m *testing.M) {
 	/* Testing models */
 	var db *gorm.DB
+	var wait int
 	/* First load config from .env.test */
 	/* Change workspace dir to read .env */
 	_, filename, _, _ := runtime.Caller(0)
@@ -47,10 +49,19 @@ func TestMain(m *testing.M) {
 	dbPort := os.Getenv("DB_PORT")
 
 	dsn := fmt.Sprintf("sqlserver://%s:%s@%s:%s?database=%s", dbUser, dbPassword, dbHost, dbPort, dbName)
-	if db, err = gorm.Open(sqlserver.Open(dsn), &gorm.Config{}); err != nil {
-		log.Fatal("[MODEL TESTING] Cannot connect to database")
+
+	for wait = 0; wait < 20; wait++ {
+		db, err = gorm.Open(sqlserver.Open(dsn), &gorm.Config{})
+		if err != nil {
+			time.Sleep(time.Second)
+		} else {
+			break
+		}
 	}
 
+	if err != nil {
+		log.Fatal("Cannot connect to database, end models testing")
+	}
 	/* Database migration */
 	// Drop all tables before testing
 	db.Migrator().DropTable(&Task{}, &User{})
