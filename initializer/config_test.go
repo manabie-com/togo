@@ -5,6 +5,7 @@ import (
 	"path"
 	"runtime"
 	"testing"
+	"time"
 
 	_ "github.com/stretchr/testify"
 	"github.com/stretchr/testify/require"
@@ -29,4 +30,18 @@ func TestLoadEnviromemts(t *testing.T) {
 	require.NotEmpty(t, globalTestConfig.Enviroments.DbPassword)
 	require.NotEmpty(t, globalTestConfig.Enviroments.DbUser)
 	require.NotEmpty(t, globalTestConfig.Enviroments.DbPort)
+}
+
+func TestLoadComponents(t *testing.T) {
+	var wait int
+	var err error
+	for wait = 0; wait < 50; wait++ {
+		err = globalTestConfig.LoadComponents(globalTestConfig.Enviroments)
+		if err != nil {
+			time.Sleep(time.Second)
+		} else {
+			break
+		}
+	}
+	require.NoError(t, err)
 }
