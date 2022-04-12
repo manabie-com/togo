@@ -51,10 +51,7 @@ func (th *TaskHandler) UpdateUserTask(c *gin.Context) {
 		/* Refill DailyTasksLimit value in next day */
 		nowDay := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), 0, 0, 0, 0, time.Now().Location())
 		lastUpdated := time.Date(user.LastUpdatedTask.Year(), user.LastUpdatedTask.Month(), user.LastUpdatedTask.Day(), 0, 0, 0, 0, user.LastUpdatedTask.Location())
-		fmt.Println("Now", nowDay)
-		fmt.Println("Last", lastUpdated)
 		if nowDay.After(lastUpdated) {
-			fmt.Println("HERE")
 			user.DailyTasksLimit = user.MaxDailyTasks
 		}
 
