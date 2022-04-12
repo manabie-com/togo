@@ -18,9 +18,9 @@ setup-integration-test:
 		&& docker-compose -f docker-compose-test.yaml down \
 		&& docker-compose -f docker-compose-test.yaml up -d
 integration-test:
-	go test -tags=integration -timeout 30s -coverprofile=coverage.out github.com/manabie-com/togo/handlers
+	go test -tags=integration -timeout 30s -coverprofile=coverage.out -v github.com/manabie-com/togo/handlers
 unit-test:
-	go test -tags=unit -timeout 30s -coverprofile=coverage.out github.com/manabie-com/togo/models github.com/manabie-com/togo/initializer
+	go test -tags=unit -timeout 30s -coverprofile=coverage.out -v github.com/manabie-com/togo/models github.com/manabie-com/togo/initializer
 test-coverage:
 	go test -tags="unit integration" ./... -coverprofile=coverage.out && go tool cover -html=coverage.out
 test:
