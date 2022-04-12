@@ -43,7 +43,7 @@ func TestMain(m *testing.M) {
 	os.Chdir(path.Join(path.Dir(filename), ".."))
 
 	wd, _ := os.Getwd()
-	err := godotenv.Load(filepath.Join(wd, ".env.test"))
+	err := godotenv.Load(filepath.Join(wd, ".env-test"))
 	if err != nil {
 		log.Fatal("Cannot load .env.test file")
 	}

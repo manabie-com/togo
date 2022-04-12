@@ -22,7 +22,7 @@ func TestLoadEnviromemts(t *testing.T) {
 	_, filename, _, _ := runtime.Caller(0)
 	os.Chdir(path.Join(path.Dir(filename), ".."))
 
-	err := globalTestConfig.LoadEnviromemts(".env.test")
+	err := globalTestConfig.LoadEnviromemts(".env-test")
 	require.NoError(t, err)
 	require.NotEmpty(t, globalTestConfig.Enviroments.DbHost)
 	require.NotEmpty(t, globalTestConfig.Enviroments.DbName)
