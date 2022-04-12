@@ -55,7 +55,7 @@ func TestMain(m *testing.M) {
 	dbPort := os.Getenv("DB_PORT")
 
 	dsn := fmt.Sprintf("sqlserver://%s:%s@%s:%s?database=%s", dbUser, dbPassword, dbHost, dbPort, dbName)
-	for wait = 0; wait < 20; wait++ {
+	for wait = 0; wait < 50; wait++ {
 		db, err = gorm.Open(sqlserver.Open(dsn), &gorm.Config{})
 		if err != nil {
 			time.Sleep(time.Second)
