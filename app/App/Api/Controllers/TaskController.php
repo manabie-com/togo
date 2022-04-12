@@ -4,10 +4,10 @@ namespace Api\Controllers;
 
 use Api\Requests\Task\CreateTaskRequest;
 use Api\Requests\Task\UpdateTaskRequest;
+use Domain\Tasks\Filters\TaskFilter;
 use Domain\Tasks\Models\Task;
+use Domain\Tasks\Sorts\TaskSort;
 use Domain\Tasks\Transformers\TaskTransformer;
-use Domain\Users\Filters\UserFilter;
-use Domain\Users\Sorts\UserSort;
 use Illuminate\Http\JsonResponse;
 use Repository\IRepositories\ITaskRepository;
 
@@ -28,11 +28,11 @@ class TaskController extends ApiController
     /**
      * Display a listing of the resource.
      *
-     * @param UserFilter $filter
-     * @param UserSort $sort
+     * @param TaskFilter $filter
+     * @param TaskSort $sort
      * @return JsonResponse
      */
-    public function index(UserFilter $filter, UserSort $sort): JsonResponse
+    public function index(TaskFilter $filter, TaskSort $sort): JsonResponse
     {
         $task = $this->taskRepository->getList($filter, $sort);
 
