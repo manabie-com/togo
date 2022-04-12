@@ -29,7 +29,13 @@ func (th *TaskHandler) UpdateUserTask(c *gin.Context) {
 	var user *models.User
 	// Get request body data
 	userTask := &models.UserTask{}
-	if err = c.ShouldBind(userTask); err != nil {
+	err = c.ShouldBind(userTask)
+
+	if err == nil && len(userTask.UserID) == 0 {
+		err = fmt.Errorf("UserID cannot be empty")
+	}
+
+	if err != nil {
 		utils.ResponseJson(c, http.StatusBadRequest, &utils.ErrorResponse{
 			StatusCode: http.StatusBadRequest,
 			Message:    "Invalid request body",
