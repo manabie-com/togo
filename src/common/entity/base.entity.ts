@@ -9,16 +9,9 @@ export class BaseEntity {
   id: string;
 
   @CreateDateColumn({
-    name: 'created_at',
-    type: 'timestamp with time zone',
-    default: () => 'CURRENT_TIMESTAMP',
+    name: 'created_date',
+    type: 'date',
+    default: () => 'CURRENT_DATE',
   })
   createdAt?: Date;
-
-  @UpdateDateColumn({
-    name: 'updated_at',
-    type: 'timestamp with time zone',
-    default: () => 'CURRENT_TIMESTAMP',
-  })
-  updatedAt?: Date;
 }

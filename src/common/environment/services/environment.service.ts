@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import dotenv from 'dotenv';
-import fs from 'fs';
+import * as dotenv from 'dotenv';
+import * as fs from 'fs';
 import { EnvironmentConstants } from '../constants/environment.constant';
 
 @Injectable()

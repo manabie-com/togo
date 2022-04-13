@@ -20,4 +20,10 @@ export class TaskEntity extends BaseEntity {
     type: 'uuid',
   })
   userId: string;
+
+  @Column({
+    name: 'start_date',
+    type: 'date',
+  })
+  startDate?: Date;
 }

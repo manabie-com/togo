@@ -1,5 +1,5 @@
-import { BaseEntity } from 'src/common/entity/base.entity';
 import { Column, Entity } from 'typeorm';
+import { BaseEntity } from '../../../common/entity/base.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity extends BaseEntity {
@@ -18,6 +18,7 @@ export class UserEntity extends BaseEntity {
   @Column({
     name: 'max_task',
     type: 'int',
+    default: 3,
   })
   maxTask: number;
 }
