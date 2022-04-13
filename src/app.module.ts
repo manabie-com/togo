@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 import { PgModule } from './common/database/pg.module';
 import { EnvironmentModule } from './common/environment/environment.module';
 import { JwtStrategy } from './common/jwt/jwt.strategy';
@@ -10,6 +11,7 @@ import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
+    HttpModule,
     EnvironmentModule,
     TaskModule,
     UserModule,

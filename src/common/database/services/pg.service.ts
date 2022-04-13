@@ -16,6 +16,17 @@ export class PgService {
       database: this.environmentService.getKey(PgConstants.POSTGRES_DATABASE),
     };
 
+    if (process.env.NODE_ENV === 'test') {
+      return {
+        type: 'sqlite',
+        database: 'test.db',
+        dropSchema: true,
+        entities: config.entities,
+        synchronize: true,
+        logging: false,
+      };
+    }
+
     return {
       type: PgConstants.POSTGRES,
       ...connection,
