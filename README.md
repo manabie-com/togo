@@ -13,6 +13,72 @@
   - What do you love about your solution?
   - What else do you want us to know about however you do not have enough time to complete?
 
+### How to run your code locally?
+
+- Prerequisites: Docker
+- Run postgresql:
+
+```bash
+docker-compose up -d
+```
+
+- Installation:
+
+```bash
+npm install
+```
+
+- Run app:
+
+```bash
+npm start
+```
+
+### Sample curl command to call API
+
+- Register new user
+
+```curl
+curl -X POST "http://localhost:8080/v1/auth/register" -H "Content-type: application/json" -d '{"username": "togo", "password": "123456"}'
+```
+
+- Login user
+
+```curl
+curl -X POST "http://localhost:8080/v1/auth/login" -H "Content-type: application/json" -d '{"username": "togo", "password": "123456"}'
+```
+
+- Create task
+
+```curl
+curl -X POST "http://localhost:8080/v1/task" -H "Content-type: application/json" -H "Authorization: Bearer + token" -d '{"title": "togo", "content":"togo", "startDate":"2022-04-12"}'
+```
+
+### How to run your tests locally
+
+- Run unit tests:
+
+```bash
+npm run test:unit
+```
+
+- Run integration tests:
+
+```bash
+npm run test:component
+```
+
+- Run both test cases:
+
+```bash
+npm run test
+```
+
+### What do you love about your solution
+
+- I applied nestjs - good framework with DI and clean architecture to build this challenge.
+- For integration testing, I decided to use sqlite for lightweight.
+
 ### Notes
 
 - We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
