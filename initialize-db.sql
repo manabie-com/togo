@@ -1,8 +1,9 @@
 CREATE DATABASE tododb WITH ENCODING 'UTF8' LC_COLLATE='English_United States' LC_CTYPE='English_United States';
 
-create user todo_user with encrypted password 'helloworld';
+create user todo_user with encrypted password 'secret';
 
 grant all privileges on database tododb to todo_user;
+
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public to todo_user;
 
 CREATE TABLE IF NOT EXISTS users (
