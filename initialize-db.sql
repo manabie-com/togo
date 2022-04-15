@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS task_config (
 insert into task_config values ('task_limit', '10');
 
 insert into users (username, name, email, password) values ('qgdomingo', 'Gio Domingo', 'qgdomingo@sample.com', 'secret');
+insert into users (username, name, email, password) values ('todo_test_user', 'Test User', 'testuser@sample.com', 'secret');
 insert into tasks (title, description, username) values ('Insert test task data', 'lorem ipsum 1', 'qgdomingo');
 insert into tasks (title, description, username) values ('Get test data', 'lorem ipsum 2', 'qgdomingo');
 insert into tasks (title, description, username) values ('Update test data', 'lorem ipsum 3', 'qgdomingo');
