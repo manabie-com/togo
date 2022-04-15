@@ -16,27 +16,29 @@ func main() {
 		os.Exit(1)
 	}
 
-	// create db connection that returns the address of the controller instances
-	// use those controller instances as the function handler below
-	// db struct should be found in the controllers?
-	
-	todoCont := taskController.TaskDB{ DBPoolConn: dbPoolConn }
+	defer dbPoolConn.Close()
+
+	// create for user and the login and register controllers
+	taskCont := taskController.TaskDB{ DBPoolConn: dbPoolConn }
 
 	router := gin.Default()
 
+	//	todoGroup.POST("/login", func(context *gin.Context){})
+	//	todoGroup.POST("/register", func(context *gin.Context){})
 	todoGroup := router.Group("/todo") 
 	{
-		todoGroup.GET("/fetch", todoCont.GetTasks)
-		todoGroup.GET("/fetch/:id", todoCont.GetTaskById)
-		todoGroup.GET("/fetch/usertask/:user", todoCont.GetTaskByUser)
-		todoGroup.POST("/create", todoCont.CreateTask)
-		todoGroup.PUT("/update/:id", todoCont.UpdateTask)
-		todoGroup.DELETE("/delete/:id", todoCont.DeleteTask)
+		todoGroup.GET("/fetch", taskCont.GetTasks)
+		todoGroup.GET("/fetch/:id", taskCont.GetTaskById)
+		todoGroup.GET("/fetch/usertask/:user", taskCont.GetTaskByUser)
+		todoGroup.POST("/create", taskCont.CreateTask)
+		todoGroup.PUT("/update/:id", taskCont.UpdateTask)
+		todoGroup.DELETE("/delete/:id", taskCont.DeleteTask)
 	}
 
 	//userGroup := router.Group("/user") 
 	//{
-	//	todoGroup.POST("/login", func(context *gin.Context){})
+	//	todoGroup.POST("/fetch/:username", func(context *gin.Context){})
+	//	todoGroup.POST("/update/:username", func(context *gin.Context){})
 	//}
 
 	// listen and serve on localhost:8080

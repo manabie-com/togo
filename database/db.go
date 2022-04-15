@@ -1,12 +1,13 @@
 package database
 
 import (
+	"os"
 	"context"
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
 func CreateConnection() (*pgxpool.Pool, error) {
-	connectionString := "postgres://todo_user:helloworld@localhost:5432/tododb"
+	connectionString := os.Getenv("POSTGRES_DB_URL")
 
 	dbpool, err := pgxpool.Connect(context.Background(), connectionString)
 	
