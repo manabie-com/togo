@@ -17,7 +17,7 @@
 Installed and working: Golang, Docker 
 
 ### Architecture/Design
-Code was written in a REST API architecture. The code structure may not be in industry standard as this is the first time I have created a REST API from scratch.
+Code was written in a REST API architecture. The code structure may not be industry standard as this is the first time I have created a REST API from scratch. The controller kind of acts as both a controller and the service itself.
 
 ### What do you love about your solution?
 1. I love how each code function is separated through files according to their purpose, a practice that I prefer in coding. This allows an easier to maintain and read as contrary to the one single file. 
@@ -26,10 +26,10 @@ Code was written in a REST API architecture. The code structure may not be in in
 4. I now appreciate what a Test Driven Development means and the benefit associated with it. Should I make changes to my code, I would be able to test its functions immediately and see if the expected output is still achieved/attained.
 
 ### What else do you want us to know about however you do not have enough time to complete?
-1. As someone who's out of the practice in IT development, I am proud that I was able to create a REST API in a limited time (~a week). 
-2. I think there are still a lot of things to improve on how the base code and the tests are implemented, in which I hope to learn more a lot should I get hired. The things to improve that I thought of as of now are Golang coding standards, and more use of structs and interfaces. 
-3. Another thing is the environment variables of the PostgreSQL connection string be separated into username, password, hostname, port, etc. While the password, ideally, should be stored and fetched from a password vault application like CyberArk as best practice and should not be stored in a simple environment variable.
-4. TODO: Implement an user authentication mechanism on the API that uses JWT as the authentication token. Another one is to implement a password encryption/decryption mechanism to be used along side the authentication mechanism wherein an encrypted password will be stored instead in the database.
+1. As someone who's out of the practice in IT development, I am proud that I was able to create a REST API in a limited time (~a week).  
+3. I think there are still a lot of things to improve on how the base code and the tests are implemented, in which I hope to learn more a lot should I get hired. The things to improve that I thought of as of now are Golang coding standards, and more use of structs and interfaces. 
+4. Another thing is the environment variables of the PostgreSQL connection string be separated into username, password, hostname, port, etc. While the password, ideally, should be stored and fetched from a password vault application like CyberArk as best practice and should not be stored in a simple environment variable.
+5. TODO: Implement an user authentication mechanism on the API that uses JWT as the authentication token. Another one is to implement a password encryption/decryption mechanism to be used along side the authentication mechanism wherein an encrypted password will be stored instead in the database.
 
 ### Running the Code Locally
 1. Pull the code from the repository to your local machine
