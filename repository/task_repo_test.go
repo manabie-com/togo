@@ -42,23 +42,23 @@ func TestFetchTaskByID(t *testing.T) {
 
 	if len(allTasks) == 0 {
 		t.Error("There are no tasks available from database")
-	}
+	} else {
+		sampleID := allTasks[0].ID
 
-	sampleID := allTasks[0].ID
+		// Fetch the task using the sample ID
+		taskFetched, errMessage := GetTasksDB(dbConn, sampleID)
 
-	// Fetch the task using the sample ID
-	taskFetched, errMessage := GetTasksDB(dbConn, sampleID)
+		if errMessage != nil {
+			t.Errorf("Failed to pull task by ID from database, message: %v | error: %v", errMessage["message"], errMessage["error"])
+		}
 
-	if errMessage != nil {
-		t.Errorf("Failed to pull task by ID from database, message: %v | error: %v", errMessage["message"], errMessage["error"])
-	}
+		if len(taskFetched) == 0 {
+			t.Errorf("Task with ID %v from database is not found", sampleID)
+		} 
 
-	if len(taskFetched) == 0 {
-		t.Errorf("Task with ID %v from database is not found", sampleID)
-	} 
-
-	if sampleID != taskFetched[0].ID {
-		t.Errorf("Expected task ID %v is different from the fetched task ID %v", sampleID, taskFetched[0].ID)
+		if sampleID != taskFetched[0].ID {
+			t.Errorf("Expected task ID %v is different from the fetched task ID %v", sampleID, taskFetched[0].ID)
+		}
 	}
 
 	dbConn.Close()
@@ -80,33 +80,34 @@ func TestFetchTaskByUsername(t *testing.T) {
 
 	if len(allTasks) == 0 {
 		t.Error("There are no tasks available from database")
-	}
+	} else {
 
-	// Get the count of tasks owned using the first task user name
-	expectedTaskCount := 0
-	sampleUsername := allTasks[0].Username
+		// Get the count of tasks owned using the first task user name
+		expectedTaskCount := 0
+		sampleUsername := allTasks[0].Username
 
-	for _, task := range allTasks {
-		if task.Username == sampleUsername {
-			expectedTaskCount += 1
+		for _, task := range allTasks {
+			if task.Username == sampleUsername {
+				expectedTaskCount += 1
+			}
 		}
-	}
 
-	// Fetch the all tasks under the sample username
-	taskFetched, errMessage := GetTasksDB(dbConn, sampleUsername)
+		// Fetch the all tasks under the sample username
+		taskFetched, errMessage := GetTasksDB(dbConn, sampleUsername)
 
-	if errMessage != nil {
-		t.Errorf("Failed to pull task by username from database, message: %v | error: %v", errMessage["message"], errMessage["error"])
-	}
+		if errMessage != nil {
+			t.Errorf("Failed to pull task by username from database, message: %v | error: %v", errMessage["message"], errMessage["error"])
+		}
 
-	fetchedTaskCount := len(taskFetched)
+		fetchedTaskCount := len(taskFetched)
 
-	if fetchedTaskCount == 0 {
-		t.Errorf("Tasks owned by %v are not found in the database", sampleUsername)
-	} 
+		if fetchedTaskCount == 0 {
+			t.Errorf("Tasks owned by %v are not found in the database", sampleUsername)
+		} 
 
-	if fetchedTaskCount != expectedTaskCount {
-		t.Errorf("Expected task count %v is different from the fetched task count %v", expectedTaskCount, fetchedTaskCount)
+		if fetchedTaskCount != expectedTaskCount {
+			t.Errorf("Expected task count %v is different from the fetched task count %v", expectedTaskCount, fetchedTaskCount)
+		}
 	}
 
 	dbConn.Close()

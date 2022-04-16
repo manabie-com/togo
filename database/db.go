@@ -1,7 +1,7 @@
 package database
 
 import (
-	"os"
+	// "os"
 	"context"
 	"github.com/jackc/pgx/v4/pgxpool"
 )
