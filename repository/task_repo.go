@@ -63,7 +63,7 @@ func GetTasksDB (dbPoolConn *pgxpool.Pool, searchParam any) ([]model.Task, map[s
 
 func InsertTaskDB (dbPoolConn *pgxpool.Pool, task *model.TaskUserEnteredDetails) (bool, map[string]string) {
 	message := make(map[string]string)
-	sql := "INSERT INTO tasks (title, description, username) SELECT $1, $2, $3::VARCHAR FROM task_config WHERE name = 'task_limit' AND value::INTEGER > (SELECT COUNT(id) FROM tasks WHERE username = $3 AND create_date = current_date) RETURNING id"
+	sql := "INSERT INTO tasks (title, description, username) SELECT $1, $2, $3::VARCHAR FROM task_limit_config WHERE username = $3 AND task_limit > (SELECT COUNT(id) FROM tasks WHERE username = $3 AND create_date = current_date) RETURNING id"
 
 	row, err := dbPoolConn.Query(context.Background(), sql, task.Title, task.Description, task.Username)
 	if err != nil {

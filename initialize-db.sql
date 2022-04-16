@@ -22,15 +22,16 @@ CREATE TABLE IF NOT EXISTS tasks (
   CONSTRAINT fk_username FOREIGN KEY(username) REFERENCES users(username)
 );
 
-CREATE TABLE IF NOT EXISTS task_config (
-  name VARCHAR(20) NOT NULL,
-  value VARCHAR(10) NOT NULL
+CREATE TABLE IF NOT EXISTS task_limit_config (
+   username VARCHAR(15) NOT NULL,
+   task_limit INTEGER NOT NULL,
+   CONSTRAINT fk_username_config FOREIGN KEY(username) REFERENCES users(username)
 );
 
-insert into task_config values ('task_limit', '10');
-
 insert into users (username, name, email, password) values ('qgdomingo', 'Gio Domingo', 'qgdomingo@sample.com', 'secret');
+insert into task_limit_config values ('qgdomingo', '10');
 insert into users (username, name, email, password) values ('todo_test_user', 'Test User', 'testuser@sample.com', 'secret');
+insert into task_limit_config values ('todo_test_user', '5');
 insert into tasks (title, description, username) values ('Insert test task data', 'lorem ipsum 1', 'qgdomingo');
 insert into tasks (title, description, username) values ('Get test data', 'lorem ipsum 2', 'qgdomingo');
 insert into tasks (title, description, username) values ('Update test data', 'lorem ipsum 3', 'qgdomingo');
