@@ -36,8 +36,11 @@ Code was written in a REST API architecture. The code structure may not be indus
 ```
 git clone https://github.com/qgdomingo/todo-app.git
 ```
-2. TODO: setup docker compose postgres container
-3. Setup environment variable POSTGRES_DB_URL, no need to change on the link
+2. Setup and bring up PostgreSQL container - Go to the project directory (./todo-app) and run docker compose 
+```
+docker-compose up -d
+```
+3. Setup environment variable POSTGRES_DB_URL, no need to change anything on the link itself
 ```
 POSTGRES_DB_URL=postgres://todo_user:secret@localhost:5432/tododb
 ```
