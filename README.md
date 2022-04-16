@@ -17,7 +17,7 @@
 Installed and working: Golang, Docker 
 
 ### Architecture/Design
-Code was written in a REST API architecture. The code structure may not be industry standard as this is the first time I have created a REST API from scratch. The controller kind of acts as both a controller and the service itself.
+Code was written in a REST API architecture. The code structure may not be industry standard as this is the first time I have created a REST API from scratch and first time using the Go language and PostgreSQL. The controller kind of acts as both a controller and the service itself.
 
 ### What do you love about your solution?
 1. I love how each code function is separated through files according to their purpose, a practice that I prefer in coding. This allows an easier to maintain and read as contrary to the one single file. 
