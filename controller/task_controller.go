@@ -4,17 +4,16 @@ import (
 	"net/http"
 	"strconv"
 	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx/v4/pgxpool"
-	"github.com/qgdomingo/todo-app/repository"
+	"github.com/qgdomingo/todo-app/interfaces"
 	"github.com/qgdomingo/todo-app/model"
 )
 
-type TaskDB struct {
-	DBPoolConn *pgxpool.Pool
+type TaskController struct {
+	TaskRepo interfaces.ITaskRepository
 }
 
-func (db *TaskDB) GetTasks(c *gin.Context) {
-	allTasks, errMessage := repository.GetTasksDB(db.DBPoolConn, nil)
+func (tc *TaskController) GetTasks(c *gin.Context) {
+	allTasks, errMessage := tc.TaskRepo.GetTasksDB(nil)
 	
 	if errMessage != nil {
 		c.IndentedJSON(http.StatusInternalServerError, errMessage)
@@ -28,11 +27,11 @@ func (db *TaskDB) GetTasks(c *gin.Context) {
 	}
 }
 
-func (db *TaskDB) GetTaskById(c *gin.Context) {
+func (tc *TaskController) GetTaskById(c *gin.Context) {
 	id := c.Param("id")
 	
 	if id, err := strconv.Atoi(id); err == nil  {
-		allTasks, errMessage := repository.GetTasksDB(db.DBPoolConn, id)
+		allTasks, errMessage := tc.TaskRepo.GetTasksDB(id)
 
 		if errMessage != nil {
 			c.IndentedJSON(http.StatusInternalServerError, errMessage)
@@ -50,11 +49,11 @@ func (db *TaskDB) GetTaskById(c *gin.Context) {
 	}
 }
 
-func (db *TaskDB) GetTaskByUser(c *gin.Context) {
+func (tc *TaskController) GetTaskByUser(c *gin.Context) {
 	user := c.Param("user")
 	
 	if user != "" {
-		allTasks, errMessage := repository.GetTasksDB(db.DBPoolConn, user)
+		allTasks, errMessage := tc.TaskRepo.GetTasksDB(user)
 
 		if errMessage != nil {
 			c.IndentedJSON(http.StatusInternalServerError, errMessage)
@@ -72,7 +71,7 @@ func (db *TaskDB) GetTaskByUser(c *gin.Context) {
 	}
 }
 
-func (db *TaskDB) CreateTask(c *gin.Context) {
+func (tc *TaskController) CreateTask(c *gin.Context) {
 	var taskDetails model.TaskUserEnteredDetails
 
 	err := c.ShouldBindJSON(&taskDetails)
@@ -83,21 +82,26 @@ func (db *TaskDB) CreateTask(c *gin.Context) {
 			"error"   : err.Error() })
 	}
 
-	isTaskCreated, errMessage := repository.InsertTaskDB(db.DBPoolConn, &taskDetails)
+	if taskDetails.Title != "" && taskDetails.Description != "" && taskDetails.Username != "" {
+		isTaskCreated, errMessage := tc.TaskRepo.InsertTaskDB(&taskDetails)
 
-	if errMessage != nil {
-		c.IndentedJSON(http.StatusInternalServerError, err)
-		return
-	}
-
-	if isTaskCreated {
-		c.IndentedJSON(http.StatusOK, gin.H{ "message" : "New task has been created successfully" })
+		if errMessage != nil {
+			c.IndentedJSON(http.StatusInternalServerError, err)
+			return
+		}
+	
+		if isTaskCreated {
+			c.IndentedJSON(http.StatusOK, gin.H{ "message" : "New task has been created successfully" })
+		} else {
+			c.IndentedJSON(http.StatusOK, gin.H{ "message" : "Task has not been created due to the user reaching the new task limit today" })
+		}
 	} else {
-		c.IndentedJSON(http.StatusOK, gin.H{ "message" : "Task has not been created due to the user reaching the new task limit today" })
+		c.IndentedJSON(http.StatusBadRequest, gin.H{ "message" : "Either one or more of the required data on the request is empty" })
 	}
+
 }
 
-func (db *TaskDB) UpdateTask(c *gin.Context) {
+func (tc *TaskController) UpdateTask(c *gin.Context) {
 	id := c.Param("id")
 	
 	if id, err := strconv.Atoi(id); err == nil {
@@ -110,32 +114,35 @@ func (db *TaskDB) UpdateTask(c *gin.Context) {
 				"message" : "Error on binding data from request",
 				"error"   : err.Error() })
 		}
-	
-		isTaskUpdated, errMessage := repository.UpdateTaskDB(db.DBPoolConn, &taskDetails, id)
+		
+		if taskDetails.Title != "" && taskDetails.Description != "" && taskDetails.Username != "" {
+			isTaskUpdated, errMessage := tc.TaskRepo.UpdateTaskDB(&taskDetails, id)
 
-		if errMessage != nil {
-			c.IndentedJSON(http.StatusInternalServerError, errMessage)
-			return
-		}
-	
-		if isTaskUpdated {
-			c.IndentedJSON(http.StatusOK, gin.H{ "message" : "Task has been updated successfully" })
+			if errMessage != nil {
+				c.IndentedJSON(http.StatusInternalServerError, errMessage)
+				return
+			}
+		
+			if isTaskUpdated {
+				c.IndentedJSON(http.StatusOK, gin.H{ "message" : "Task has been updated successfully" })
+			} else {
+				c.IndentedJSON(http.StatusOK, gin.H{ "message" : "Task was not updated, task with the provided id and/or username is not found." })
+			}
 		} else {
-			c.IndentedJSON(http.StatusOK, gin.H{ "message" : "Task was not updated, task with the provided id and/or username is not found." })
+			c.IndentedJSON(http.StatusBadRequest, gin.H{ "message" : "Either one or more of the required data on the request is empty" })
 		}
-	
 	} else {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{ "message" : "Invalid ID was entered on the request URL" })
 	}
 
 }
 
-func (db *TaskDB) DeleteTask(c *gin.Context) {
+func (tc *TaskController) DeleteTask(c *gin.Context) {
 	id := c.Param("id")
 	
 	if id, err := strconv.Atoi(id); err == nil {
 	
-		isTaskDeleted, errMessage := repository.DeleteTaskDB(db.DBPoolConn, id)
+		isTaskDeleted, errMessage := tc.TaskRepo.DeleteTaskDB(id)
 
 		if errMessage != nil {
 			c.IndentedJSON(http.StatusInternalServerError, errMessage)
@@ -145,7 +152,7 @@ func (db *TaskDB) DeleteTask(c *gin.Context) {
 		if isTaskDeleted {
 			c.IndentedJSON(http.StatusOK, gin.H{ "message" : "Task has been removed successfully" })
 		} else {
-			c.IndentedJSON(http.StatusOK, gin.H{ "message" : "Task was not removed, task with the provided id is not found." })
+			c.IndentedJSON(http.StatusNotFound, gin.H{ "message" : "Task was not removed, task with the provided id is not found." })
 		}
 		
 	} else {

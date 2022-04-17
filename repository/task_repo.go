@@ -7,29 +7,33 @@ import (
 	"github.com/qgdomingo/todo-app/model"
 )
 
+type TaskRepository struct {
+	DBPoolConn *pgxpool.Pool
+}
 
-func GetTasksDB (dbPoolConn *pgxpool.Pool, searchParam any) ([]model.Task, map[string]string) {
+func (t *TaskRepository) GetTasksDB (searchParam any) ([]model.Task, map[string]string) {
 	var allTasks []model.Task
 	var rows pgx.Rows
 	var err error
 	message := make(map[string]string)
-	sql := "SELECT id, title, description, username, create_date from tasks"
+	sql := "SELECT id, title, description, username, create_date from tasks "
 
 	if searchParam != nil {
 		switch searchParam.(type) {
 			case int:
-				sql += " where id = $1"
+				sql += "where id = $1 "
 			case string:
-				sql += " where username = $1"
+				sql += "where username = $1 "
 			default:
 				message["message"] = "Search task parameter entered is invalid"
 				message["error"] = ""
 				return nil, message
 		}
-
-		rows, err = dbPoolConn.Query(context.Background(), sql, searchParam)
+		sql += "ORDER BY id asc"
+		rows, err = t.DBPoolConn.Query(context.Background(), sql, searchParam)
 	} else {
-		rows, err = dbPoolConn.Query(context.Background(), sql)
+		sql += "ORDER BY id asc"
+		rows, err = t.DBPoolConn.Query(context.Background(), sql)
 	}
 
 	if err != nil {
@@ -61,11 +65,11 @@ func GetTasksDB (dbPoolConn *pgxpool.Pool, searchParam any) ([]model.Task, map[s
 }
 
 
-func InsertTaskDB (dbPoolConn *pgxpool.Pool, task *model.TaskUserEnteredDetails) (bool, map[string]string) {
+func (t *TaskRepository) InsertTaskDB (task *model.TaskUserEnteredDetails) (bool, map[string]string) {
 	message := make(map[string]string)
 	sql := "INSERT INTO tasks (title, description, username) SELECT $1, $2, $3::VARCHAR FROM task_limit_config WHERE username = $3 AND task_limit > (SELECT COUNT(id) FROM tasks WHERE username = $3 AND create_date = current_date) RETURNING id"
 
-	row, err := dbPoolConn.Query(context.Background(), sql, task.Title, task.Description, task.Username)
+	row, err := t.DBPoolConn.Query(context.Background(), sql, task.Title, task.Description, task.Username)
 	if err != nil {
 		message["message"] = "Unable to insert data into the tasks table"
 		message["error"] = err.Error()
@@ -77,11 +81,11 @@ func InsertTaskDB (dbPoolConn *pgxpool.Pool, task *model.TaskUserEnteredDetails)
 	return row.Next(), nil
 }
 
-func UpdateTaskDB (dbPoolConn *pgxpool.Pool, task *model.TaskUserEnteredDetails, id int) (bool, map[string]string) {
+func (t *TaskRepository) UpdateTaskDB (task *model.TaskUserEnteredDetails, id int) (bool, map[string]string) {
 	message := make(map[string]string)
 	sql := "UPDATE tasks SET title = $1, description = $2 WHERE username = $3 AND id = $4 RETURNING id"
 
-	row, err := dbPoolConn.Query(context.Background(), sql, task.Title, task.Description, task.Username, id)
+	row, err := t.DBPoolConn.Query(context.Background(), sql, task.Title, task.Description, task.Username, id)
 	if err != nil {
 		message["message"] = "Unable to update data into the tasks table"
 		message["error"] = err.Error()
@@ -93,11 +97,11 @@ func UpdateTaskDB (dbPoolConn *pgxpool.Pool, task *model.TaskUserEnteredDetails,
 	return row.Next(), nil
 }
 
-func DeleteTaskDB (dbPoolConn *pgxpool.Pool, id int) (bool, map[string]string) {
+func (t *TaskRepository) DeleteTaskDB (id int) (bool, map[string]string) {
 	message := make(map[string]string)
 	sql := "DELETE FROM tasks WHERE id = $1 RETURNING id"
 
-	row, err := dbPoolConn.Query(context.Background(), sql, id)
+	row, err := t.DBPoolConn.Query(context.Background(), sql, id)
 	if err != nil {
 		message["message"] = "Unable to delete data from the tasks table"
 		message["error"] = err.Error()

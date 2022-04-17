@@ -13,7 +13,9 @@ func TestFetchAllTasks(t *testing.T) {
 		t.Fatalf("Unable to connect to the database: %v", err.Error())
 	}
 
-	allTasks, errMessage := GetTasksDB(dbConn, nil)
+	taskRepo := TaskRepository{ DBPoolConn : dbConn }
+
+	allTasks, errMessage := taskRepo.GetTasksDB(nil)
 
 	if errMessage != nil {
 		t.Errorf("Failed to pull tasks from database, message: %v | error: %v", errMessage["message"], errMessage["error"])
@@ -33,8 +35,10 @@ func TestFetchTaskByID(t *testing.T) {
 		t.Fatalf("Unable to connect to the database: %v", err.Error())
 	}
 
+	taskRepo := TaskRepository{ DBPoolConn : dbConn }
+
 	// Fetch all tasks and use first one as sample
-	allTasks, errMessage := GetTasksDB(dbConn, nil)
+	allTasks, errMessage := taskRepo.GetTasksDB(nil)
 
 	if errMessage != nil {
 		t.Errorf("Failed to pull tasks from database, message: %v | error: %v", errMessage["message"], errMessage["error"])
@@ -46,7 +50,7 @@ func TestFetchTaskByID(t *testing.T) {
 		sampleID := allTasks[0].ID
 
 		// Fetch the task using the sample ID
-		taskFetched, errMessage := GetTasksDB(dbConn, sampleID)
+		taskFetched, errMessage := taskRepo.GetTasksDB(sampleID)
 
 		if errMessage != nil {
 			t.Errorf("Failed to pull task by ID from database, message: %v | error: %v", errMessage["message"], errMessage["error"])
@@ -71,8 +75,10 @@ func TestFetchTaskByUsername(t *testing.T) {
 		t.Fatalf("Unable to connect to the database: %v", err.Error())
 	}
 
+	taskRepo := TaskRepository{ DBPoolConn : dbConn }
+
 	// Fetch all tasks 
-	allTasks, errMessage := GetTasksDB(dbConn, nil)
+	allTasks, errMessage := taskRepo.GetTasksDB(nil)
 
 	if errMessage != nil {
 		t.Errorf("Failed to pull tasks from database, message: %v | error: %v", errMessage["message"], errMessage["error"])
@@ -93,7 +99,7 @@ func TestFetchTaskByUsername(t *testing.T) {
 		}
 
 		// Fetch the all tasks under the sample username
-		taskFetched, errMessage := GetTasksDB(dbConn, sampleUsername)
+		taskFetched, errMessage := taskRepo.GetTasksDB(sampleUsername)
 
 		if errMessage != nil {
 			t.Errorf("Failed to pull task by username from database, message: %v | error: %v", errMessage["message"], errMessage["error"])
@@ -120,8 +126,10 @@ func TestFetchTaskEmptyStringParameter(t *testing.T) {
 		t.Fatalf("Unable to connect to the database: %v", err.Error())
 	}
 
+	taskRepo := TaskRepository{ DBPoolConn : dbConn }
+
 	// Fetch task using empty string
-	taskFetched, errMessage := GetTasksDB(dbConn, "")
+	taskFetched, errMessage := taskRepo.GetTasksDB("")
 
 	if errMessage != nil {
 		t.Errorf("Failed to pull task by ID from database, message: %v | error: %v", errMessage["message"], errMessage["error"])
@@ -143,13 +151,15 @@ func TestCreateTask(t *testing.T) {
 		t.Fatalf("Unable to connect to the database: %v", err.Error())
 	}
 
+	taskRepo := TaskRepository{ DBPoolConn : dbConn }
+
 	taskData := model.TaskUserEnteredDetails{
 		Title: "Unit Test Create",
 		Description: "Unit Test Create",
 		Username: "todo_test_user",
 	}
 
-	isTaskCreated, errMessage := InsertTaskDB(dbConn, &taskData)
+	isTaskCreated, errMessage := taskRepo.InsertTaskDB(&taskData)
 
 	if errMessage != nil {
 		t.Errorf("Failed to insert data into the database, message: %v | error: %v", errMessage["message"], errMessage["error"])
@@ -175,7 +185,9 @@ func TestCreateTaskInvalidUser(t *testing.T) {
 		Username: "todo_test_user_fake",
 	}
 
-	isTaskCreated, errMessage := InsertTaskDB(dbConn, &taskData)
+	taskRepo := TaskRepository{ DBPoolConn : dbConn }
+
+	isTaskCreated, errMessage := taskRepo.InsertTaskDB(&taskData)
 
 	if errMessage != nil {
 		t.Errorf("Failed to attempt to insert data into the database, message: %v | error: %v", errMessage["message"], errMessage["error"])
@@ -195,8 +207,10 @@ func TestUpdateTask(t *testing.T) {
 		t.Fatalf("Unable to connect to the database: %v", err.Error())
 	}
 
+	taskRepo := TaskRepository{ DBPoolConn : dbConn }
+
 	// Fetch sample tasks created by todo_test_user
-	taskList, errMessage := GetTasksDB(dbConn, "todo_test_user")
+	taskList, errMessage := taskRepo.GetTasksDB("todo_test_user")
 
 	if errMessage != nil {
 		t.Errorf("Failed to pull task by username from database, message: %v | error: %v", errMessage["message"], errMessage["error"])
@@ -212,7 +226,7 @@ func TestUpdateTask(t *testing.T) {
 		Username: "todo_test_user",
 	}
 
-	isTaskUpdated, errMessage := UpdateTaskDB(dbConn, &taskData, taskList[0].ID)
+	isTaskUpdated, errMessage := taskRepo.UpdateTaskDB(&taskData, taskList[0].ID)
 
 	if errMessage != nil {
 		t.Errorf("Failed to update data into the database, message: %v | error: %v", errMessage["message"], errMessage["error"])
@@ -232,8 +246,10 @@ func TestUpdateTaskInvalidUser(t *testing.T) {
 		t.Fatalf("Unable to connect to the database: %v", err.Error())
 	}
 
+	taskRepo := TaskRepository{ DBPoolConn : dbConn }
+
 	// Fetch sample tasks created by todo_test_user
-	taskList, errMessage := GetTasksDB(dbConn, "todo_test_user")
+	taskList, errMessage := taskRepo.GetTasksDB("todo_test_user")
 
 	if errMessage != nil {
 		t.Errorf("Failed to pull task by username from database, message: %v | error: %v", errMessage["message"], errMessage["error"])
@@ -249,7 +265,7 @@ func TestUpdateTaskInvalidUser(t *testing.T) {
 		Username: "todo_test_user_fake",
 	}
 
-	isTaskUpdated, errMessage := UpdateTaskDB(dbConn, &taskData, taskList[0].ID)
+	isTaskUpdated, errMessage := taskRepo.UpdateTaskDB(&taskData, taskList[0].ID)
 
 	if errMessage != nil {
 		t.Errorf("Failed to update data into the database, message: %v | error: %v", errMessage["message"], errMessage["error"])
@@ -269,8 +285,10 @@ func TestDeleteTask(t *testing.T) {
 		t.Fatalf("Unable to connect to the database: %v", err.Error())
 	}
 
+	taskRepo := TaskRepository{ DBPoolConn : dbConn }
+
 	// Fetch sample tasks created by test user
-	taskList, errMessage := GetTasksDB(dbConn, "todo_test_user")
+	taskList, errMessage := taskRepo.GetTasksDB("todo_test_user")
 
 	if errMessage != nil {
 		t.Errorf("Failed to pull task by username from database, message: %v | error: %v", errMessage["message"], errMessage["error"])
@@ -281,7 +299,7 @@ func TestDeleteTask(t *testing.T) {
 	}
 
 	for _, task := range taskList {
-		isTaskDeleted, errMessage := DeleteTaskDB(dbConn, task.ID)
+		isTaskDeleted, errMessage := taskRepo.DeleteTaskDB(task.ID)
 
 		if errMessage != nil {
 			t.Errorf("Failed to update data into the database, message: %v | error: %v", errMessage["message"], errMessage["error"])

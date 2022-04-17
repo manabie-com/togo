@@ -3,7 +3,8 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	db "github.com/qgdomingo/todo-app/database"
-	taskController "github.com/qgdomingo/todo-app/controller"
+	"github.com/qgdomingo/todo-app/controller"
+	"github.com/qgdomingo/todo-app/repository"
 	"fmt"
 	"os"
 )
@@ -18,8 +19,11 @@ func main() {
 
 	defer dbPoolConn.Close()
 
+	// initialize the repository
+	taskRepo := repository.TaskRepository{ DBPoolConn: dbPoolConn }
+
 	// create controllers for both task and user
-	taskCont := taskController.TaskDB{ DBPoolConn: dbPoolConn }
+	taskCont := controller.TaskController{ TaskRepo: &taskRepo }
 
 	router := gin.Default()
 
