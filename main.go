@@ -18,13 +18,14 @@ func main() {
 
 	defer dbPoolConn.Close()
 
-	// create for user and the login and register controllers
+	// create controllers for both task and user
 	taskCont := taskController.TaskDB{ DBPoolConn: dbPoolConn }
 
 	router := gin.Default()
 
-	//	todoGroup.POST("/login", func(context *gin.Context){})
-	//	todoGroup.POST("/register", func(context *gin.Context){})
+	router.POST("/login", func(context *gin.Context){})
+	router.POST("/register", func(context *gin.Context){})
+
 	todoGroup := router.Group("/todo") 
 	{
 		todoGroup.GET("/fetch", taskCont.GetTasks)
@@ -35,12 +36,11 @@ func main() {
 		todoGroup.DELETE("/delete/:id", taskCont.DeleteTask)
 	}
 
-	//userGroup := router.Group("/user") 
-	//{
-	//	todoGroup.POST("/fetch/:username", func(context *gin.Context){})
-	//	todoGroup.POST("/update/:username", func(context *gin.Context){})
-	//}
-
+	userGroup := router.Group("/user") 
+	{
+		userGroup.POST("/fetch/:username", func(context *gin.Context){})
+		userGroup.POST("/update/:username", func(context *gin.Context){})
+	}
 
 	// listen and serve on localhost:8080
 	router.Run()
