@@ -1,0 +1,34 @@
+{
+  "name": "togo",
+  "version": "1.0.0",
+  "description": "- Implement one single API which accepts a todo task and records it\r   - There is a maximum **limit of N tasks per user** that can be added **per day**.\r   - Different users can have **different** maximum daily limit.\r - Write integration (functional) tests\r - Write unit tests\r - Choose a suitable architecture to make your code simple, organizable, and maintainable\r - Write a concise README\r   - How to run your code locally?\r   - A sample “curl” command to call your API\r   - How to run your unit tests locally?\r   - What do you love about your solution?\r   - What else do you want us to know about however you do not have enough time to complete?",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --verbose --testPathPattern=spec\\.js$",
+    "test:watch": "npm run test -- --watch",
+    "test:integ": "jest --verbose --testPathPattern=integration.test\\.js$",
+    "start:dev": "nodemon src/index.js",
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alvinlucillo/togo.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alvinlucillo/togo/issues"
+  },
+  "homepage": "https://github.com/alvinlucillo/togo#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.15",
+    "supertest": "^6.2.1"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.2",
+    "jest": "^27.4.7",
+    "mongoose": "^6.1.5"
+  }
+}
