@@ -3,69 +3,17 @@ package controller
 import (
 	"testing"
 	"net/http"
-	"net/http/httptest"
-	"time"
 	"bytes"
-	"encoding/json"
 	"io/ioutil"
 	"github.com/gin-gonic/gin"
-	"github.com/qgdomingo/todo-app/model"
-	"github.com/qgdomingo/todo-app/mock"
 	"github.com/stretchr/testify/assert"
 )
 
-func createMockTaskData(length int) []model.Task {
-	taskList := []model.Task{}
-	if length > 0 {
-		for i := 1; i <= length; i++ {
-			task := model.Task {
-				ID: i,
-				Title: "Sample Task Title",
-				Description: "Sample Task Description",
-				Username: "todo_test_user",
-				CreateDate: time.Now() }
-			taskList = append(taskList, task)
-		}
-	}
-	return taskList
-}
-
-func createMockErrorMessage(message string, errMsg string) map[string]string {
-	errMessage := make(map[string]string)
-	errMessage["message"] = message
-	errMessage["error"] = errMsg
-	return errMessage
-}
-
-func createMockTaskJSON(c *gin.Context, title string, desc string, username string) ([]byte, error) {
-	c.Request.Method = "POST"
-    c.Request.Header.Set("Content-Type", "application/json")
-
-	taskDetails := model.TaskUserEnteredDetails {
-		Title: title,
-		Description: desc,
-		Username: username,
-	}
-	jsonbytes, err := json.Marshal(taskDetails)
-
-	return jsonbytes, err
-}
 
 func TestFetchAllTaskAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header),
-    }
+	w, ctx := createRegularContext()
 	
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		TaskList: createMockTaskData(2),
-		ErrorMessage: nil }
-
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(createMockTaskData(2), false, nil)
 
 	taskCont.GetTasks(ctx)
 	
@@ -73,20 +21,9 @@ func TestFetchAllTaskAPI (t *testing.T) {
 }
 
 func TestFetchAllTaskEmptyAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header),
-    }
+	w, ctx := createRegularContext()
 	
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		TaskList: createMockTaskData(0),
-		ErrorMessage: nil }
-
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(createMockTaskData(0), false, nil)
 	
 	taskCont.GetTasks(ctx)
 
@@ -94,20 +31,9 @@ func TestFetchAllTaskEmptyAPI (t *testing.T) {
 }
 
 func TestFetchAllTaskErrorAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
+	w, ctx := createRegularContext()
 
-	ctx.Request = &http.Request{
-        Header: make(http.Header),
-    }
-	
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		TaskList: nil,
-		ErrorMessage: createMockErrorMessage("Test Message", "Test Error Message") }
-
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(nil, false, createMockErrorMessage("Test Message", "Test Error Message"))
 	
 	taskCont.GetTasks(ctx)
 
@@ -115,12 +41,7 @@ func TestFetchAllTaskErrorAPI (t *testing.T) {
 }
 
 func TestFetchTaskByIDAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header) }
+	w, ctx := createRegularContext()
 
 	ctx.Params = []gin.Param{
 		{
@@ -128,13 +49,8 @@ func TestFetchTaskByIDAPI (t *testing.T) {
 			Value: "3",
 		},
 	}
-	
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		TaskList: createMockTaskData(1),
-		ErrorMessage: nil }
 
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(createMockTaskData(1), false, nil)
 	
 	taskCont.GetTaskById(ctx)
 
@@ -142,12 +58,7 @@ func TestFetchTaskByIDAPI (t *testing.T) {
 }
 
 func TestFetchTaskByIDNotFoundAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header) }
+	w, ctx := createRegularContext()
 
 	ctx.Params = []gin.Param{
 		{
@@ -156,12 +67,7 @@ func TestFetchTaskByIDNotFoundAPI (t *testing.T) {
 		},
 	}
 	
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		TaskList: createMockTaskData(0),
-		ErrorMessage: nil }
-
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(createMockTaskData(0), false, nil)
 	
 	taskCont.GetTaskById(ctx)
 
@@ -169,12 +75,7 @@ func TestFetchTaskByIDNotFoundAPI (t *testing.T) {
 }
 
 func TestFetchTaskByInvalidIDAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header) }
+	w, ctx := createRegularContext()
 
 	ctx.Params = []gin.Param{
 		{
@@ -183,12 +84,7 @@ func TestFetchTaskByInvalidIDAPI (t *testing.T) {
 		},
 	}
 	
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		TaskList: nil,
-		ErrorMessage: nil }
-
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(nil, false, nil)
 	
 	taskCont.GetTaskById(ctx)
 
@@ -196,12 +92,7 @@ func TestFetchTaskByInvalidIDAPI (t *testing.T) {
 }
 
 func TestFetchTaskByEmptyIDAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header) }
+	w, ctx := createRegularContext()
 
 	ctx.Params = []gin.Param{
 		{
@@ -210,12 +101,7 @@ func TestFetchTaskByEmptyIDAPI (t *testing.T) {
 		},
 	}
 	
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		TaskList: createMockTaskData(2),
-		ErrorMessage: nil }
-
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(createMockTaskData(2), false, nil)
 	
 	taskCont.GetTaskById(ctx)
 
@@ -223,12 +109,7 @@ func TestFetchTaskByEmptyIDAPI (t *testing.T) {
 }
 
 func TestFetchTaskByIDErrorAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header) }
+	w, ctx := createRegularContext()
 
 	ctx.Params = []gin.Param{
 		{
@@ -237,12 +118,7 @@ func TestFetchTaskByIDErrorAPI (t *testing.T) {
 		},
 	}
 	
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		TaskList: nil,
-		ErrorMessage: createMockErrorMessage("Test Message", "Test Error Message") }
-
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(nil, false, createMockErrorMessage("Test Message", "Test Error Message"))
 	
 	taskCont.GetTaskById(ctx)
 
@@ -250,12 +126,7 @@ func TestFetchTaskByIDErrorAPI (t *testing.T) {
 }
 
 func TestFetchTaskByUsernameAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header) }
+	w, ctx := createRegularContext()
 
 	ctx.Params = []gin.Param{
 		{
@@ -264,12 +135,7 @@ func TestFetchTaskByUsernameAPI (t *testing.T) {
 		},
 	}
 	
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		TaskList: createMockTaskData(2),
-		ErrorMessage: nil }
-
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(createMockTaskData(2), false, nil)
 	
 	taskCont.GetTaskByUser(ctx)
 
@@ -277,12 +143,7 @@ func TestFetchTaskByUsernameAPI (t *testing.T) {
 }
 
 func TestFetchTaskByUsernameNotFoundAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header) }
+	w, ctx := createRegularContext()
 
 	ctx.Params = []gin.Param{
 		{
@@ -291,12 +152,7 @@ func TestFetchTaskByUsernameNotFoundAPI (t *testing.T) {
 		},
 	}
 	
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		TaskList: createMockTaskData(0),
-		ErrorMessage: nil }
-
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(createMockTaskData(0), false, nil)
 	
 	taskCont.GetTaskByUser(ctx)
 
@@ -304,12 +160,7 @@ func TestFetchTaskByUsernameNotFoundAPI (t *testing.T) {
 }
 
 func TestFetchTaskByEmptyUsernameAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header) }
+	w, ctx := createRegularContext()
 
 	ctx.Params = []gin.Param{
 		{
@@ -318,12 +169,7 @@ func TestFetchTaskByEmptyUsernameAPI (t *testing.T) {
 		},
 	}
 	
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		TaskList: nil,
-		ErrorMessage: nil }
-
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(nil, false, nil)
 	
 	taskCont.GetTaskByUser(ctx)
 
@@ -331,12 +177,7 @@ func TestFetchTaskByEmptyUsernameAPI (t *testing.T) {
 }
 
 func TestFetchTaskByUsernameErrorAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header) }
+	w, ctx := createRegularContext()
 
 	ctx.Params = []gin.Param{
 		{
@@ -345,12 +186,7 @@ func TestFetchTaskByUsernameErrorAPI (t *testing.T) {
 		},
 	}
 	
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		TaskList: nil,
-		ErrorMessage: createMockErrorMessage("Test Message", "Test Error Message") }
-
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(nil, false, createMockErrorMessage("Test Message", "Test Error Message"))
 	
 	taskCont.GetTaskByUser(ctx)
 
@@ -358,12 +194,7 @@ func TestFetchTaskByUsernameErrorAPI (t *testing.T) {
 }
 
 func TestCreateTaskAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header) }
+	w, ctx := createRegularContext()
 
 	jsonBytes, err := createMockTaskJSON(ctx, "Test Task Title", "Test Task Description", "todo_task_user")
 
@@ -371,15 +202,9 @@ func TestCreateTaskAPI (t *testing.T) {
 		t.Errorf("Error encountered when creating mock JSON: %v", err.Error())
 	}
 
-	// Add the JSON to the Request body
 	ctx.Request.Body = ioutil.NopCloser(bytes.NewBuffer(jsonBytes))
 	
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		IsTaskSuccessful: true,
-		ErrorMessage: nil }
-
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(nil, true, nil)
 	
 	taskCont.CreateTask(ctx)
 
@@ -387,12 +212,7 @@ func TestCreateTaskAPI (t *testing.T) {
 }
 
 func TestCreateTaskEmptyDetailsAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header) }
+	w, ctx := createRegularContext()
 
 	jsonBytes, err := createMockTaskJSON(ctx, "", "", "todo_task_user")
 
@@ -400,15 +220,9 @@ func TestCreateTaskEmptyDetailsAPI (t *testing.T) {
 		t.Errorf("Error encountered when creating mock JSON: %v", err.Error())
 	}
 
-	// Add the JSON to the Request body
 	ctx.Request.Body = ioutil.NopCloser(bytes.NewBuffer(jsonBytes))
 	
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		IsTaskSuccessful: false,
-		ErrorMessage: nil }
-
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(nil, false, nil)
 	
 	taskCont.CreateTask(ctx)
 
@@ -416,12 +230,7 @@ func TestCreateTaskEmptyDetailsAPI (t *testing.T) {
 }
 
 func TestCreateTaskFailedInsertAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header) }
+	w, ctx := createRegularContext()
 
 	jsonBytes, err := createMockTaskJSON(ctx, "Test Task Title", "Test Task Description", "todo_task_user")
 
@@ -429,15 +238,9 @@ func TestCreateTaskFailedInsertAPI (t *testing.T) {
 		t.Errorf("Error encountered when creating mock JSON: %v", err.Error())
 	}
 
-	// Add the JSON to the Request body
 	ctx.Request.Body = ioutil.NopCloser(bytes.NewBuffer(jsonBytes))
 	
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		IsTaskSuccessful: false,
-		ErrorMessage: nil }
-
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(nil, false, nil)
 	
 	taskCont.CreateTask(ctx)
 
@@ -445,12 +248,7 @@ func TestCreateTaskFailedInsertAPI (t *testing.T) {
 }
 
 func TestCreateTaskErrorAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header) }
+	w, ctx := createRegularContext()
 
 	jsonBytes, err := createMockTaskJSON(ctx, "Test Task Title", "Test Task Description", "todo_task_user")
 
@@ -458,15 +256,9 @@ func TestCreateTaskErrorAPI (t *testing.T) {
 		t.Errorf("Error encountered when creating mock JSON: %v", err.Error())
 	}
 
-	// Add the JSON to the Request body
 	ctx.Request.Body = ioutil.NopCloser(bytes.NewBuffer(jsonBytes))
 	
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		IsTaskSuccessful: false,
-		ErrorMessage: createMockErrorMessage("Test Message", "Test Error Message") }
-
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(nil, false, createMockErrorMessage("Test Message", "Test Error Message"))
 	
 	taskCont.CreateTask(ctx)
 
@@ -474,12 +266,7 @@ func TestCreateTaskErrorAPI (t *testing.T) {
 }
 
 func TestUpdateTaskAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header) }
+	w, ctx := createRegularContext()
 
 	ctx.Params = []gin.Param{
 		{
@@ -494,15 +281,9 @@ func TestUpdateTaskAPI (t *testing.T) {
 		t.Errorf("Error encountered when creating mock JSON: %v", err.Error())
 	}
 
-	// Add the JSON to the Request body
 	ctx.Request.Body = ioutil.NopCloser(bytes.NewBuffer(jsonBytes))
 	
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		IsTaskSuccessful: true,
-		ErrorMessage: nil }
-
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(nil, true, nil)
 	
 	taskCont.UpdateTask(ctx)
 
@@ -510,12 +291,7 @@ func TestUpdateTaskAPI (t *testing.T) {
 }
 
 func TestUpdateTaskInvalidIDAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header) }
+	w, ctx := createRegularContext()
 
 	ctx.Params = []gin.Param{
 		{
@@ -524,12 +300,7 @@ func TestUpdateTaskInvalidIDAPI (t *testing.T) {
 		},
 	}
 
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		IsTaskSuccessful: true,
-		ErrorMessage: nil }
-
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(nil, true, nil)
 	
 	taskCont.UpdateTask(ctx)
 
@@ -537,12 +308,7 @@ func TestUpdateTaskInvalidIDAPI (t *testing.T) {
 }
 
 func TestUpdateTaskEmptyIDAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header) }
+	w, ctx := createRegularContext()
 
 	ctx.Params = []gin.Param{
 		{
@@ -551,12 +317,7 @@ func TestUpdateTaskEmptyIDAPI (t *testing.T) {
 		},
 	}
 
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		IsTaskSuccessful: true,
-		ErrorMessage: nil }
-
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(nil, true, nil)
 	
 	taskCont.UpdateTask(ctx)
 
@@ -564,12 +325,7 @@ func TestUpdateTaskEmptyIDAPI (t *testing.T) {
 }
 
 func TestUpdateTaskEmptyDetailsAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header) }
+	w, ctx := createRegularContext()
 
 	ctx.Params = []gin.Param{
 		{
@@ -584,15 +340,9 @@ func TestUpdateTaskEmptyDetailsAPI (t *testing.T) {
 		t.Errorf("Error encountered when creating mock JSON: %v", err.Error())
 	}
 
-	// Add the JSON to the Request body
 	ctx.Request.Body = ioutil.NopCloser(bytes.NewBuffer(jsonBytes))
 	
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		IsTaskSuccessful: true,
-		ErrorMessage: nil }
-
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(nil, true, nil)
 	
 	taskCont.UpdateTask(ctx)
 
@@ -600,12 +350,7 @@ func TestUpdateTaskEmptyDetailsAPI (t *testing.T) {
 }
 
 func TestUpdateTaskFailedUpdateAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header) }
+	w, ctx := createRegularContext()
 
 	ctx.Params = []gin.Param{
 		{
@@ -620,15 +365,9 @@ func TestUpdateTaskFailedUpdateAPI (t *testing.T) {
 		t.Errorf("Error encountered when creating mock JSON: %v", err.Error())
 	}
 
-	// Add the JSON to the Request body
 	ctx.Request.Body = ioutil.NopCloser(bytes.NewBuffer(jsonBytes))
 	
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		IsTaskSuccessful: false,
-		ErrorMessage: nil }
-
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(nil, false, nil)
 	
 	taskCont.UpdateTask(ctx)
 
@@ -636,12 +375,7 @@ func TestUpdateTaskFailedUpdateAPI (t *testing.T) {
 }
 
 func TestUpdateTaskErrorAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header) }
+	w, ctx := createRegularContext()
 
 	ctx.Params = []gin.Param{
 		{
@@ -656,15 +390,9 @@ func TestUpdateTaskErrorAPI (t *testing.T) {
 		t.Errorf("Error encountered when creating mock JSON: %v", err.Error())
 	}
 
-	// Add the JSON to the Request body
 	ctx.Request.Body = ioutil.NopCloser(bytes.NewBuffer(jsonBytes))
 	
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		IsTaskSuccessful: false,
-		ErrorMessage: createMockErrorMessage("Test Message", "Test Error Message") }
-
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(nil, false, createMockErrorMessage("Test Message", "Test Error Message"))
 	
 	taskCont.UpdateTask(ctx)
 
@@ -672,12 +400,7 @@ func TestUpdateTaskErrorAPI (t *testing.T) {
 }
 
 func TestDeleteTaskAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header) }
+	w, ctx := createRegularContext()
 
 	ctx.Params = []gin.Param{
 		{
@@ -685,13 +408,8 @@ func TestDeleteTaskAPI (t *testing.T) {
 			Value: "3",
 		},
 	}
-	
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		IsTaskSuccessful: true,
-		ErrorMessage: nil }
 
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(nil, true, nil)
 	
 	taskCont.DeleteTask(ctx)
 
@@ -699,12 +417,7 @@ func TestDeleteTaskAPI (t *testing.T) {
 }
 
 func TestDeleteTaskIDNotFoundAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header) }
+	w, ctx := createRegularContext()
 
 	ctx.Params = []gin.Param{
 		{
@@ -713,12 +426,7 @@ func TestDeleteTaskIDNotFoundAPI (t *testing.T) {
 		},
 	}
 	
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		IsTaskSuccessful: false,
-		ErrorMessage: nil }
-
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(nil, false, nil)
 	
 	taskCont.DeleteTask(ctx)
 
@@ -726,12 +434,7 @@ func TestDeleteTaskIDNotFoundAPI (t *testing.T) {
 }
 
 func TestDeleteTaskInvalidIDAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header) }
+	w, ctx := createRegularContext()
 
 	ctx.Params = []gin.Param{
 		{
@@ -740,12 +443,7 @@ func TestDeleteTaskInvalidIDAPI (t *testing.T) {
 		},
 	}
 	
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		IsTaskSuccessful: false,
-		ErrorMessage: nil }
-
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(nil, false, nil)
 	
 	taskCont.DeleteTask(ctx)
 
@@ -753,12 +451,7 @@ func TestDeleteTaskInvalidIDAPI (t *testing.T) {
 }
 
 func TestDeleteTaskEmptyIDAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header) }
+	w, ctx := createRegularContext()
 
 	ctx.Params = []gin.Param{
 		{
@@ -767,12 +460,7 @@ func TestDeleteTaskEmptyIDAPI (t *testing.T) {
 		},
 	}
 	
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		IsTaskSuccessful: false,
-		ErrorMessage: nil }
-
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(nil, false, nil)
 	
 	taskCont.DeleteTask(ctx)
 
@@ -780,12 +468,7 @@ func TestDeleteTaskEmptyIDAPI (t *testing.T) {
 }
 
 func TestDeleteTaskErrorAPI (t *testing.T) {
-	w := httptest.NewRecorder()
-	gin.SetMode(gin.TestMode)
-    ctx, _ := gin.CreateTestContext(w)
-
-	ctx.Request = &http.Request{
-        Header: make(http.Header) }
+	w, ctx := createRegularContext()
 
 	ctx.Params = []gin.Param{
 		{
@@ -794,12 +477,7 @@ func TestDeleteTaskErrorAPI (t *testing.T) {
 		},
 	}
 	
-	// Create the Task Repository Mock
-	taskRepoMock := mock.TaskRepositoryMock {
-		TaskList: nil,
-		ErrorMessage: createMockErrorMessage("Test Message", "Test Error Message") }
-
-	taskCont := TaskController{ TaskRepo : &taskRepoMock }
+	taskCont := getTaskController(nil, false, createMockErrorMessage("Test Message", "Test Error Message"))
 	
 	taskCont.DeleteTask(ctx)
 
