@@ -1,0 +1,23 @@
+use togo;
+
+DROP TABLE IF EXISTS users;
+CREATE TABLE users(
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    daily_limit INT NOT NULL DEFAULT 0
+)ENGINE=INNODB;
+
+DROP TABLE IF EXISTS user_daily_counters;
+CREATE TABLE user_daily_counters(
+    user_id BIGINT NOT NULL UNIQUE,
+    daily_count INT NOT NULL DEFAULT 0,
+    last_updated DATETIME NOT NULL
+)ENGINE=INNODB;
+
+DROP TABLE IF EXISTS tasks;
+CREATE TABLE tasks(
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    user_id BIGINT NOT NULL,
+    name VARCHAR(64) NOT NULL,
+
+    INDEX user_id_idx(user_id)
+)ENGINE=INNODB;
