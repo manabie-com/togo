@@ -10,6 +10,7 @@ import (
 )
 
 func main() {
+	// Create the database connection which will be used by the controllers
 	dbPoolConn, err := db.CreateConnection()
 
 	if err != nil {
@@ -19,11 +20,13 @@ func main() {
 
 	defer dbPoolConn.Close()
 
-	// initialize the repository
+	// Create the repositories 
 	taskRepo := repository.TaskRepository{ DBPoolConn: dbPoolConn }
 	userRepo := repository.UserRepository{ DBPoolConn: dbPoolConn }
 
-	// create controllers for both task and user
+	// Create controllers for both task and user that implements the actual repositories
+	// -- Repositories are interfaced so it can be implemented differently 
+	//    i.e. in a way not to connect to the database for unit testing
 	taskCont := controller.TaskController{ TaskRepo: &taskRepo }
 	userCont := controller.UserController{ UserRepo: &userRepo }
 
