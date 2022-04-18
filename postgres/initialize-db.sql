@@ -33,5 +33,7 @@ CREATE TABLE IF NOT EXISTS task_limit_config (
 insert into users (username, name, email, password) values ('qgdomingo', 'Gio Domingo', 'qgdomingo@sample.com', 'secret');
 insert into users (username, name, email, password) values ('todo_test_user', 'Test User', 'testuser@sample.com', 'secret');
 
+insert into tasks (title, description, username) values ('Dummy Task Title', 'Dummy Task Description', 'qgdomingo');
+
 insert into task_limit_config values ('qgdomingo', '10');
 insert into task_limit_config values ('todo_test_user', '5');
