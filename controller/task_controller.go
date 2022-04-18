@@ -80,6 +80,7 @@ func (tc *TaskController) CreateTask(c *gin.Context) {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{
 			"message" : "Error on binding data from request",
 			"error"   : err.Error() })
+		return
 	}
 
 	if taskDetails.Title != "" && taskDetails.Description != "" && taskDetails.Username != "" {
@@ -113,6 +114,7 @@ func (tc *TaskController) UpdateTask(c *gin.Context) {
 			c.IndentedJSON(http.StatusBadRequest, gin.H{
 				"message" : "Error on binding data from request",
 				"error"   : err.Error() })
+			return
 		}
 		
 		if taskDetails.Title != "" && taskDetails.Description != "" && taskDetails.Username != "" {
@@ -126,7 +128,7 @@ func (tc *TaskController) UpdateTask(c *gin.Context) {
 			if isTaskUpdated {
 				c.IndentedJSON(http.StatusOK, gin.H{ "message" : "Task has been updated successfully" })
 			} else {
-				c.IndentedJSON(http.StatusOK, gin.H{ "message" : "Task was not updated, task with the provided id and/or username is not found." })
+				c.IndentedJSON(http.StatusNotFound, gin.H{ "message" : "Task was not updated, task with the provided id and/or username is not found." })
 			}
 		} else {
 			c.IndentedJSON(http.StatusBadRequest, gin.H{ "message" : "Either one or more of the required data on the request is empty" })

@@ -21,14 +21,16 @@ func main() {
 
 	// initialize the repository
 	taskRepo := repository.TaskRepository{ DBPoolConn: dbPoolConn }
+	userRepo := repository.UserRepository{ DBPoolConn: dbPoolConn }
 
 	// create controllers for both task and user
 	taskCont := controller.TaskController{ TaskRepo: &taskRepo }
+	userCont := controller.UserController{ UserRepo: &userRepo }
 
 	router := gin.Default()
 
-	router.POST("/login", func(context *gin.Context){})
-	router.POST("/register", func(context *gin.Context){})
+	router.POST("/login", userCont.LoginUser)
+	router.POST("/register", userCont.RegisterUser)
 
 	todoGroup := router.Group("/todo") 
 	{
@@ -42,8 +44,9 @@ func main() {
 
 	userGroup := router.Group("/user") 
 	{
-		userGroup.POST("/fetch/:username", func(context *gin.Context){})
-		userGroup.POST("/update/:username", func(context *gin.Context){})
+		userGroup.GET("/fetch/:username", userCont.FetchUserDetails)
+		userGroup.PUT("/update/:username", userCont.UpdateUserDetails)
+		userGroup.PUT("/pwdchange/:username", userCont.UserPasswordChange)
 	}
 
 	// listen and serve on localhost:8080

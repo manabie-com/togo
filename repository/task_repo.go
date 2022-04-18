@@ -16,14 +16,14 @@ func (t *TaskRepository) GetTasksDB (searchParam any) ([]model.Task, map[string]
 	var rows pgx.Rows
 	var err error
 	message := make(map[string]string)
-	sql := "SELECT id, title, description, username, create_date from tasks "
+	sql := "SELECT id, title, description, username, create_date FROM tasks "
 
 	if searchParam != nil {
 		switch searchParam.(type) {
 			case int:
-				sql += "where id = $1 "
+				sql += "WHERE id = $1 "
 			case string:
-				sql += "where username = $1 "
+				sql += "WHERE username = $1 "
 			default:
 				message["message"] = "Search task parameter entered is invalid"
 				message["error"] = ""

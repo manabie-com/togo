@@ -470,7 +470,7 @@ func TestCreateTaskErrorAPI (t *testing.T) {
 	
 	taskCont.CreateTask(ctx)
 
-	assert.EqualValues(t, http.StatusOK, w.Code, "Output should be HTTP Code OK")
+	assert.EqualValues(t, http.StatusInternalServerError, w.Code, "Output should be HTTP Code Internal Server Error")
 }
 
 func TestUpdateTaskAPI (t *testing.T) {
@@ -632,7 +632,7 @@ func TestUpdateTaskFailedUpdateAPI (t *testing.T) {
 	
 	taskCont.UpdateTask(ctx)
 
-	assert.EqualValues(t, http.StatusOK, w.Code, "Output should be HTTP Code OK")
+	assert.EqualValues(t, http.StatusNotFound, w.Code, "Output should be HTTP Code OK")
 }
 
 func TestUpdateTaskErrorAPI (t *testing.T) {
