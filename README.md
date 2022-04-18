@@ -14,22 +14,23 @@
   - What else do you want us to know about however you do not have enough time to complete?
 
 ### System Requirements
-Installed and working: Golang, Docker 
+Installed and working: Golang, Docker
 
 ### Architecture/Design
-Code was written in a REST API architecture. The code structure may not be industry standard as this is the first time I have created a REST API from scratch and first time using the Go language and PostgreSQL. The controller kind of acts as both a controller and the service itself.
+Code was written in a REST architecture. The code structure may not be industry standard as this is the first time I have created a REST API from scratch and first time using the Go language and PostgreSQL. The controller kind of acts as both a controller and the service itself.
 
 ### What do you love about your solution?
-1. I love how each code function is separated through files according to their purpose, a practice that I prefer in coding. This allows an easier to maintain and read as contrary to the one single file. 
-2. My solution also features a full CRUD of the todo task
-3. Task limit per user is configurable in the database. Based from my experience as an application support, simple configurations such as the task limit per user and configurations that are expected to change every now and then, is better implemented in the database to be easily configured as requested by the business/client.
-4. I now appreciate what a Test Driven Development means and the benefit associated with it. Should I make changes to my code, I would be able to test its functions immediately and see if the expected output is still achieved/attained.
+1. I love how each code function is separated through files according to their purpose, a practice that I prefer in coding. This allows an easier to maintain and read source code as contrary to a one whole single file. 
+2. My solution features a full CRUD of the todo task
+3. Task limit per user is configurable in the database. Based from my experience as an application support, configurations such as the task limit per user and configurations that are expected to change every now and then is better implemented in the database. This allows an easy update upon request by the business/client.
+4. I now appreciate what a Test Driven Development means and the benefit associated with it. Should I make changes to my code, I would be able to test its functions immediately and see if the expected output is still as expected
+5. I was able to implement a kind of dependency injection design principle, which allowed me to create unit tests for my controller/handler functions
 
 ### What else do you want us to know about however you do not have enough time to complete?
-1. As someone who's out of the practice in IT development, I am proud that I was able to create a REST API in a limited time (~a week).  
-3. I think there are still a lot of things to improve on how the base code and the tests are implemented, in which I hope to learn more a lot should I get hired. The things to improve that I thought of as of now are Golang coding standards, and more use of structs and interfaces. 
-4. Another thing is the environment variables of the PostgreSQL connection string be separated into username, password, hostname, port, etc. While the password, ideally, should be stored and fetched from a password vault application like CyberArk as best practice and should not be stored in a simple environment variable.
-5. TODO: Implement an user authentication mechanism on the API that uses JWT as the authentication token. Another one is to implement a password encryption/decryption mechanism to be used along side the authentication mechanism wherein an encrypted password will be stored instead in the database.
+1. As someone who's out of the practice in IT development, I am proud that I was able to create a REST API in a limited time using technologies new to me (~a week). This is of course achieved with the help of online resources/references. 
+3. I think there are still a lot of things to improve on how the base code and the tests are implemented, in which I hope to learn more a lot should I get hired. The things to improve that I thought of as of now are Golang coding standards, better use of structs and interfaces, and better implementation of unit and integration test codes.
+4. Another thing is the environment variables of the PostgreSQL connection string be separated into username, password, hostname, port, etc. While the password, ideally, should be stored and fetched from a password vault application like CyberArk as best practice for security and should not be stored simply in an environment variable.
+5. Implement a user authentication mechanism on the API that uses JWT as the authentication token. The JWT will then be used to check if the user is authorized to perform any tasks or user details update. Another one is to implement a password encryption/decryption mechanism to be used along side the authentication mechanism wherein an encrypted password will be stored instead of plain string in the database.
 
 ### Running the Code Locally
 1. Pull the code from the repository to your local machine
@@ -51,7 +52,7 @@ go run main.go
 5. API will run in port 8080
 
 ### Running Integration Test
-Go to the project path "todo-app" and run the test. PostgreSQL docker must be up and running
+Go to the project path "todo-app" and run the test. PostgreSQL docker must be up and running.
 ```
 go test -v ./repository
 ```
