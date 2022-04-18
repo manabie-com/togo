@@ -10,6 +10,8 @@ import (
 	"github.com/qgdomingo/todo-app/mock"
 )
 
+// These are functions used by the unit testing for Task and User controllers
+
 func createRegularContext() (*httptest.ResponseRecorder, *gin.Context) {
 	w := httptest.NewRecorder()
 	gin.SetMode(gin.TestMode)

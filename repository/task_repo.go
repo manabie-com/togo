@@ -7,10 +7,12 @@ import (
 	"github.com/qgdomingo/todo-app/model"
 )
 
+// Struct where the database connection memory address is stored
 type TaskRepository struct {
 	DBPoolConn *pgxpool.Pool
 }
 
+// Function that fetches tasks and will add a filter in the query if there is an integer (for task id) or string (for tasks under a username) search parameter passed
 func (t *TaskRepository) GetTasksDB (searchParam any) ([]model.Task, map[string]string) {
 	var allTasks []model.Task
 	var rows pgx.Rows
@@ -64,7 +66,7 @@ func (t *TaskRepository) GetTasksDB (searchParam any) ([]model.Task, map[string]
 	return allTasks, nil
 }
 
-
+// Function that inserts a task into the tasks table, the limit of each user is computed on the sql query
 func (t *TaskRepository) InsertTaskDB (task *model.TaskUserEnteredDetails) (bool, map[string]string) {
 	message := make(map[string]string)
 	sql := "INSERT INTO tasks (title, description, username) SELECT $1, $2, $3::VARCHAR FROM task_limit_config WHERE username = $3 AND task_limit > (SELECT COUNT(id) FROM tasks WHERE username = $3 AND create_date = current_date) RETURNING id"
@@ -81,6 +83,7 @@ func (t *TaskRepository) InsertTaskDB (task *model.TaskUserEnteredDetails) (bool
 	return row.Next(), nil
 }
 
+// Function that updates a task in the tasks table
 func (t *TaskRepository) UpdateTaskDB (task *model.TaskUserEnteredDetails, id int) (bool, map[string]string) {
 	message := make(map[string]string)
 	sql := "UPDATE tasks SET title = $1, description = $2 WHERE username = $3 AND id = $4 RETURNING id"
@@ -97,6 +100,7 @@ func (t *TaskRepository) UpdateTaskDB (task *model.TaskUserEnteredDetails, id in
 	return row.Next(), nil
 }
 
+// Function that deletes a task in the tasks table
 func (t *TaskRepository) DeleteTaskDB (id int) (bool, map[string]string) {
 	message := make(map[string]string)
 	sql := "DELETE FROM tasks WHERE id = $1 RETURNING id"

@@ -1,5 +1,7 @@
 package repository
 
+// This is the integration test - this would check for tasks in the database and would create, update and delete a dummy task
+
 import (
 	"testing"
 	"github.com/qgdomingo/todo-app/database"

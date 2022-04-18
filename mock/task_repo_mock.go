@@ -4,6 +4,9 @@ import (
 	"github.com/qgdomingo/todo-app/model"
 )
 
+// This is the dummy repository implementation of the Task functions in task_repo.go
+// 		which will be used in the unit test in task_controller_test.go
+
 type TaskRepositoryMock struct {
 	TaskList []model.Task
 	IsTaskSuccessful bool

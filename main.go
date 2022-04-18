@@ -27,6 +27,10 @@ func main() {
 	// Create controllers for both task and user that implements the actual repositories
 	// -- Repositories are interfaced so it can be implemented differently 
 	//    i.e. in a way not to connect to the database for unit testing
+	// -- These controllers handle the following: 
+	//		-> Validating the HTTP request url parameter (if any)
+	//		-> Validating the HTTP request body to ensure they are populated
+	//		-> Provides the appropriate HTTP response based from the results of the repository functions
 	taskCont := controller.TaskController{ TaskRepo: &taskRepo }
 	userCont := controller.UserController{ UserRepo: &userRepo }
 

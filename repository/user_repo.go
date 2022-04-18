@@ -6,10 +6,15 @@ import (
 	"github.com/qgdomingo/todo-app/model"
 )
 
+// Struct where the database connection memory address is stored
 type UserRepository struct {
 	DBPoolConn *pgxpool.Pool
 }
 
+// Function that takes the UserLogin model that should contain username and password 
+// 	  then fetches the same username and password from the databse then compares the two.
+// The compare can happen on the select query but I chose to separate it for a "future feature" 
+// 	   where password encryption/decryption is implemented
 func (u *UserRepository) LoginUserDB (user *model.UserLogin) (bool, map[string]string) {
 	var userResult model.UserLogin
 	message := make(map[string]string)
@@ -43,6 +48,7 @@ func (u *UserRepository) LoginUserDB (user *model.UserLogin) (bool, map[string]s
 	return false, nil
 }
 
+// Function that creates a new user and if created succesfully, will create a task limit for the user immediately
 func (u *UserRepository) RegisterUserDB (user *model.NewUser) (bool, map[string]string) {
 	message := make(map[string]string)
 	sql := "INSERT INTO users (username, name, email, password) VALUES ($1, $2, $3, $4) RETURNING username"
@@ -78,6 +84,7 @@ func (u *UserRepository) RegisterUserDB (user *model.NewUser) (bool, map[string]
 	return false, nil
 }
 
+// Function that fetches user details and as well as the configured task limit for the same user
 func (u *UserRepository) FetchUserDetailsDB (username string) ([]model.UserDetails, map[string]string) {
 	var userList []model.UserDetails
 	message := make(map[string]string)
@@ -109,6 +116,7 @@ func (u *UserRepository) FetchUserDetailsDB (username string) ([]model.UserDetai
 	return userList, nil
 }
 
+// Function that updates the user details and if successful, will update the configured task limit for the same user
 func (u *UserRepository) UpdateUserDetailsDB (user *model.UserDetails, username string) (bool, map[string]string) {
 	message := make(map[string]string)
 	sql := "UPDATE users SET username = $1, name = $2, email = $3 WHERE username = $4 RETURNING username"
@@ -144,6 +152,8 @@ func (u *UserRepository) UpdateUserDetailsDB (user *model.UserDetails, username 
 	return false, nil
 }
 
+// Function that changes the user's password, this takes the current password of the user and compares it in the database
+// 		This is the opposite of the implementation in LoginUserDB function
 func (u *UserRepository) UserPasswordChangeDB (user *model.UserNewPassword, username string) (bool, map[string]string) {
 	message := make(map[string]string)
 	sql := "UPDATE users SET password = $1 WHERE password = $2 AND username = $3 RETURNING username"

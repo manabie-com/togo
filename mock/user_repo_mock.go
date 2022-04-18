@@ -4,6 +4,9 @@ import (
 	"github.com/qgdomingo/todo-app/model"
 )
 
+// This is the dummy repository implementation of the User functions in user_repo.go
+// 		which will be used in the unit test in user_controller_test.go
+
 type UserRepositoryMock struct {
 	UserList []model.UserDetails
 	IsTaskSuccessful bool

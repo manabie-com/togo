@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-
+// Unit Testing for the User Controller
 
 func TestLoginAPI (t *testing.T) {
 	w, ctx := createRegularContext()
