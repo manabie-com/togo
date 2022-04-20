@@ -1,30 +1,69 @@
 ### Requirements
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+- [x] Implement one single API which accepts a todo task and records it
+  - [x] There is a maximum **limit of N tasks per user** that can be added **per day**.
+  - [x] Different users can have **different** maximum daily limit.
+- [x] Write integration (functional) tests
+- [x] Write unit tests
+- [x] Choose a suitable architecture to make your code simple, organizable, and maintainable
+- [x] Write a concise README
+  - [x] How to run your code locally?
+  - [x] A sample “curl” command to call your API
+  - [x] How to run your unit tests locally?
+  - [x] What do you love about your solution?
+  - [x] What else do you want us to know about however you do not have enough time to complete?
 
-### Notes
+### How to run my code locally?
+- Require: Docker
+- Create .env file.
+```
+cp .env.example .env
+```
+- Build and run source with docker
+```
+docker-compose up -d --build
+```
+- Install composer
+```
+docker exec -it manabie_togo composer install
+```
+- Migrate table and seed data (users)
+```
+docker exec -it manabie_togo php artisan migrate:fresh --seed
+```
+- Run test (unit test and integration test)
+    + Unit test: `/tests/Unit'
+    + Function test: `/tests/Feature'
+```
+docker exec -it manabie_togo php artisan test
+```
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+### Sample “curl” command to call your API
+1. Get all users
+```
+curl http://localhost:8088/api/users
+```
+2. Login
+```
+curl -d '{"user_name":"{user_name}","password":"password"}' -H "Content-Type: application/json" -X POST http://localhost:8088/api/auth/login
+```
+- `user_name`: get one `user_name` from api get users.
+- `password`: default `password`
+- ex: curl -d '{"user_name":"altenwerth.cory","password":"password"}' -H "Content-Type: application/json" -X POST http://localhost:8088/api/auth/login
+3. Get user's task
+```
+curl http://localhost:8088/api/tasks -H "Accept: application/json" -H "Authorization: Bearer {token}"
+```
++ `token`: get token from api login.
++ ex: curl http://localhost:8088/api/tasks -H "Accept: application/json" -H "Authorization: Bearer 3|Ka5ftoBfueY854hobEFflPO2BK6so6EhJEwlpP01"
+4. Create new task
+```
+curl -d '{"name":"Test add new task"}' -H "Content-Type: application/json" -H "Authorization: Bearer {token}" -X POST http://localhost:8088/api/tasks
+```
++ `token`: get token from api login.
++ ex: curl -d '{"name":"Test add new task"}' -H "Content-Type: application/json" -H "Authorization: Bearer 3|Ka5ftoBfueY854hobEFflPO2BK6so6EhJEwlpP01" -X POST http://localhost:8088/api/tasks
+### What do you love about your solution?
+I applied repository pattern, beyond crud struct to my code simple, organizable, and maintainable.
 
-### How to submit your solution?
-
-- Fork this repo and show us your development progress via a PR
-
-### Interesting facts about Manabie
-
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
-
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+### What else do you want us to know about however you do not have enough time to complete?
+If I have more time, I want to apply CI/CD to my project.
