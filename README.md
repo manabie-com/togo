@@ -12,12 +12,12 @@
 ### README
 
 1. Run Code locally
-#With IDE
+1.1 With IDE
 - Install IntelliJ (https://www.jetbrains.com/idea/download/?fromIDE=#section=windows).
 - Install POSTGRESQL (https://www.postgresql.org/download/windows/ I choose ver12).
 - Install JRE, setup Evironment variables.
 - Enable spring.jpa.hibernate.ddl-auto=create in \src\main\resources\application.properties for auto generate tables
-#With Deployed Service
+1.2 With Deployed Service
 - cd deploy (deployed service (manage-task-service2.jar) & deploy tool, config are there)
 - Run CMD: WinSW.NET4 install
 - Open Window Service Manager -> Select our service -> Start.
