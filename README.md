@@ -1,30 +1,5 @@
-### Requirements
-
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
-
-### Notes
-
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
-
-### How to submit your solution?
-
-- Fork this repo and show us your development progress via a PR
-
-### Interesting facts about Manabie
-
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
-
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+I have completed 4 functions of the project  Step01 Account registration function:  curl --header "Content-Type: application/json" -d “{\”account\": \"vupv1\",\"password\": \"abcxyz\",\"email\": \"phungvu.2103@gmail.com\”}” http://0.0.0.0:33333/api/account/register  Step02 Account login function => token authentication received after successful login  curl --header "Content-Type: application/json" -d “{\”account\": \"vupv1\",\"password\": \”abcxyz\"}” http://0.0.0.0:33333/api/account/login  Step03 Create Task => use the token obtained in Step2
+curl --header "Content-Type: application/json" -d “{\“title\”: \”this is title\",\"details\": \”abcxyz\”,\"token\": \” token authentication \"}” http://0.0.0.0:33333/api/task/create  Step04 Update task => use the token obtained in Step2 and taskID obtained in Step3
+curl --header "Content-Type: application/json" -d “{\“id\”: \”this is taskID\",\"details\": \”abcxyz\”,\"token\": \” token authentication \"}” http://0.0.0.0:33333/api/task/create  I don't write unit test nor integration test because I am quite busy with marriage. I can make good use of the testing library, httptest in go.
+I can pretty well use tools like postman, wireshark … and I used these tools to test this little project.  note, my project uses mongodb and it needs to be installed by default on local with default port 27017 and my golang version is Go SDK 1.18.1
+Run my program  : ../ManabieProject/src then run go run main.go
