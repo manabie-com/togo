@@ -2,10 +2,10 @@ module Api
   module V1
     class TodosController < ApplicationController
       def create
-        todo = Todo.new(todo_params)
+        todo = user.todos.new(todo_params)
 
         if todo.save
-          render json: { message: 'Todo created', data: todo }, status: :ok
+          render json: { message: 'Todo created', data: todo }, status: :created
         else
           render json: { message: 'Something went wrong' }, status: :unprocessable_entity
         end
@@ -18,7 +18,12 @@ module Api
       end
 
       def user
-        # todo: current user or find by ip_address
+        # todo: auth user
+        @user ||= User.find_or_create_by(remote_ip: client_remote_ip)
+      end
+
+      def client_remote_ip
+        request.remote_ip
       end
     end
   end
