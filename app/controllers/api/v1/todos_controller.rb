@@ -1,19 +1,30 @@
 module Api
   module V1
     class TodosController < ApplicationController
+      include RequestTrackable
+      include CurrentUser
+
+      before_action :count_request, only: :create
+
       def create
-        todo = if user
-                 user.todos.new(todo_params)
+        if client_reach_daily_limit?
+          render json: { status: 429, message: "Too many requests" },
+            status: 429
+          return
+        end
+
+        todo = if current_user
+                 current_user.todos.new(todo_params)
                else
                  Todo.new(todo_params)
                end
 
         if todo.save
           render json: { status: 201, message: "Todo created", data: todo },
-            status: :created
+            status: 201
         else
           render json: { status: 422, message: "Something went wrong" },
-            status: :unprocessable_entity
+            status: 422
         end
       end
 
@@ -21,14 +32,6 @@ module Api
 
       def todo_params
         params.permit(:title, :content, :done)
-      end
-
-      def user
-        # current_user
-      end
-
-      def client_remote_ip
-        request.remote_ip
       end
     end
   end
