@@ -2,6 +2,7 @@ module RequestTrackable
   extend ActiveSupport::Concern
 
   def count_request
+    redis.set(client_id, 0, ex: 1.day) if redis.get(client_id).nil?
     redis.incr(client_id)
   end
 
@@ -16,7 +17,7 @@ module RequestTrackable
   end
 
   def redis
-    @redis ||= Redis.new # todo: isolate redis
+    @redis ||= Redis.new
   end
 
   def client_id

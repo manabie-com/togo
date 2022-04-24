@@ -3,6 +3,7 @@ to test:
 - thorttle based on ip address
 - thorrltle user differently
 - have a configuration file to thorrtle
+- deployment
 
 done:
 - allow non register user
