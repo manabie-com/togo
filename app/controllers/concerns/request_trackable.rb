@@ -6,7 +6,7 @@ module RequestTrackable
   end
 
   def client_reach_daily_limit?
-    redis.get(client_id).to_i >= 30 # todo: save as config
+    redis.get(client_id).to_i >= ENV["unauthenticated_post_todo_limit"].to_i
   end
 
   private
@@ -16,7 +16,7 @@ module RequestTrackable
   end
 
   def redis
-    @redis ||= Redis.new
+    @redis ||= Redis.new # todo: isolate redis
   end
 
   def client_id

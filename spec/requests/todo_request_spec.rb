@@ -49,7 +49,7 @@ RSpec.describe Todo, type: :request do
         date = Time.now.strftime("%d:%m:%Y")
         client_id = "#{remote_ip}:#{date}"
         redis = Redis.new
-        redis.set(client_id, 30)
+        redis.set(client_id, ENV["unauthenticated_post_todo_limit"].to_i)
       end
     end
   end

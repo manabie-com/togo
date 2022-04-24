@@ -7,3 +7,10 @@ to test:
 done:
 - allow non register user
 
+set up:
+- redis
+- ruby
+- rails
+
+copy local config to config
+
