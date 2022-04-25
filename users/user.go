@@ -1,11 +1,14 @@
 package users
 
+import "time"
+
 type User struct {
-	UserId    int        `json:"user_id"`
-	Name      string     `json:"name"`
-	TaskLimit int        `json:"task_limit"`
-	DailyTask int        `json:"daily_task"`
-	TodoTasks []TodoTask `json:"todo_tasks"`
+	UserId      int        `json:"user_id"`
+	Name        string     `json:"name"`
+	TaskLimit   int        `json:"task_limit"`
+	DailyTask   int        `json:"daily_task"`
+	LastUpdated time.Time  `json:"last_updated,omitempty"`
+	TodoTasks   []TodoTask `json:"todo_tasks"`
 }
 
 type TodoTask struct {
