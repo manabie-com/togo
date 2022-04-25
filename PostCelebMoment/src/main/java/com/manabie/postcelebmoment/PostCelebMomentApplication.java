@@ -12,6 +12,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
@@ -54,9 +56,16 @@ public class PostCelebMomentApplication {
 	    return new Date().getTime() + "-" + multiPart.getOriginalFilename().replace(" ", "_");
 	}
 	
-	private void uploadFileTos3bucket(String fileName, File file) {
-	    s3client.putObject(new PutObjectRequest(bucketName, fileName, file)
-	            .withCannedAcl(CannedAccessControlList.PublicRead));
+	public boolean uploadFileTos3bucket(String fileName, File file) {
+	    try {
+	    	s3client.putObject(new PutObjectRequest(bucketName, fileName, file)
+		            .withCannedAcl(CannedAccessControlList.PublicRead));
+	        return true;
+	      } catch (AmazonServiceException e) {
+	        return false;
+	      } catch (SdkClientException e) {
+	        return false;
+	      }
 	}
 	
 	public String uploadFile(MultipartFile multipartFile) {
@@ -70,11 +79,68 @@ public class PostCelebMomentApplication {
 	        file.delete();
 	    } catch (Exception e) {
 	       e.printStackTrace();
+	       return "";
 	    }
 	    return fileUrl;
 	}
 	
-	
+	public String getEndpointUrl() {
+		return endpointUrl;
+	}
+
+
+	public void setEndpointUrl(String endpointUrl) {
+		this.endpointUrl = endpointUrl;
+	}
+
+
+	public String getBucketName() {
+		return bucketName;
+	}
+
+
+	public void setBucketName(String bucketName) {
+		this.bucketName = bucketName;
+	}
+
+
+	public String getAccessKey() {
+		return accessKey;
+	}
+
+
+	public void setAccessKey(String accessKey) {
+		this.accessKey = accessKey;
+	}
+
+
+	public String getSecretKey() {
+		return secretKey;
+	}
+
+
+	public void setSecretKey(String secretKey) {
+		this.secretKey = secretKey;
+	}
+
+
+	public String getRegion() {
+		return region;
+	}
+
+
+	public void setRegion(String region) {
+		this.region = region;
+	}
+
+	public AmazonS3 getS3client() {
+		return s3client;
+	}
+
+	public void setS3client(AmazonS3 s3client) {
+		this.s3client = s3client;
+	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(PostCelebMomentApplication.class, args);
 	}
