@@ -2,16 +2,19 @@ package errors
 
 import "fmt"
 
+// General Http Error Context
 const (
 	BadRequestContext    = 400
 	InternalErrorContext = 503
 )
 
+// General Http Error Messages
 const (
 	BadRequestMessage   = "bad.request"
 	InteralErrorMessage = "internal.error"
 )
 
+// CustomError Codes
 const (
 	TodoTaskRequestInvalid  = "001"
 	ExceedDailyLimitRecords = "002"
@@ -35,6 +38,7 @@ func (o CustomError) Error() string {
 	return fmt.Sprintf("CustomError code = %v desc - %v errors = %v", o.Code, o.Message, o.ErrorInfor)
 }
 
+// GetError get errContext, errMessage, errCode and return a CustomError accordingly
 func GetError(errContext int, errMessage string, errCode string) *CustomError {
 	errInfor := GenerateErrorInfor(errCode)
 	customErr := &CustomError{
@@ -45,6 +49,7 @@ func GetError(errContext int, errMessage string, errCode string) *CustomError {
 	return customErr
 }
 
+// GenerateErrorInfor take errCode and return the ErrorInfor accordingly
 func GenerateErrorInfor(errCode string) ErrorInfor {
 	switch errCode {
 	case TodoTaskRequestInvalid:

@@ -2,6 +2,7 @@ package users
 
 import "time"
 
+// User struct
 type User struct {
 	UserId      int        `json:"user_id"`
 	Name        string     `json:"name"`
@@ -11,12 +12,14 @@ type User struct {
 	TodoTasks   []TodoTask `json:"todo_tasks"`
 }
 
+// TodoTask struct
 type TodoTask struct {
 	Title      string `json:"title"`
 	Detail     string `json:"detail"`
 	RemindDate string `json:"remind_date"`
 }
 
+// Create a temporary list of user
 func CreateTempUsers() []*User {
 	users := []*User{
 		{

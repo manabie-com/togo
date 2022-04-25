@@ -7,6 +7,7 @@ import (
 	"github.com/SVincentTran/togo/errors"
 )
 
+// Err handler middleware
 type ErrHandler func(http.ResponseWriter, *http.Request) error
 
 func (fn ErrHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {

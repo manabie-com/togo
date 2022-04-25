@@ -13,6 +13,7 @@ type TodoTaskRequest struct {
 	RemindDate string `json:"remind_date"`
 }
 
+// Validate struct function
 func (req TodoTaskRequest) Validate() error {
 	validate := validator.New()
 	err := validate.Struct(req)
