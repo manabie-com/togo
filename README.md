@@ -39,6 +39,8 @@ Get source after that try run "go install" and "go build" then open togo.exe to 
 
 can use Postman or just patse this curl to send request to API
 
+change userId to another number to switch to another user
+
 curl --location --request POST 'http://localhost:8080/todo/add' \
 --header 'Content-Type: application/json' \
 --data-raw '{

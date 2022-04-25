@@ -15,7 +15,7 @@ func GetUserById(todo *models.Todo) (*models.User, error) {
 
 	var user models.User
 
-	if errDb := database.DB.Model(user).Where("Id = ?", todo.Userid).First(&user).Error; errDb != nil {
+	if errDb := database.DB.Preload("Tasks").Model(user).Where("Id = ?", todo.Userid).First(&user).Error; errDb != nil {
 		if errors.Is(errDb, gorm.ErrRecordNotFound) {
 			return CreateUser(todo)
 		}
