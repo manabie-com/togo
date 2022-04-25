@@ -1,0 +1,6 @@
+amazonProperties:
+      endpointUrl: https://s3.ap-southeast-1.amazonaws.com
+      accessKey: AKIA3L76SIDYZYCYKG43 
+      secretKey: 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
+      bucketName: manabie-landing-celebmoment
+      region: ap-southeast-1
