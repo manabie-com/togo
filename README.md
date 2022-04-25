@@ -1,30 +1,60 @@
-### Requirements
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+<p align="center">
+<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+</p>
 
-### Notes
+## About Laravel
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-### How to submit your solution?
+- [Simple, fast routing engine](https://laravel.com/docs/routing).
+- [Powerful dependency injection container](https://laravel.com/docs/container).
+- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
+- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
+- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
+- [Robust background job processing](https://laravel.com/docs/queues).
+- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-- Fork this repo and show us your development progress via a PR
+Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-### Interesting facts about Manabie
+## About Me
+	App name: Wildlife
+	Nickname: photrucco
+	Gmail: photrucco@gmail.com
+	Website:
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+## Install required
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+1. PHP 7.3 or 7.4
+2. MySQl
+3. Composer 2.1.8 or newest
+4. Curl
+5. Test by Pest (https://pestphp.com/docs/installation)
+
+Xampp package: (https://www.apachefriends.org/xampp-files/7.4.29/xampp-windows-x64-7.4.29-0-VC15-installer.exe)
+
+
+
+## How to run
+
+Make sure something was installed.
+
+1. composer update(/install)
+	msg => "Publishing complete."
+2. php artisan migrate:fresh --seed
+	
+    - msg => "Migration table created successfully."
+	- msg => "Database seeding completed successfully."
+3. php artisan serve 
+	- msg => eg: "Starting Laravel development server: http://127.0.0.1:8000"
+4. use account to login wildlife
+	username:"groot"
+	password: "groot@123"
+	role: ELF(god)
+	- see other users(http://127.0.0.1:8000/elf/animals)
+
+
