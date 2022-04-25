@@ -28,3 +28,45 @@
 - We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
 
 Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+
+________________________________________________________________________________________________________________________
+
+### NGO HOAI TRONG
+
+### user guide and installation guide 
+
+Get source after that try run "go install" and "go build" then open togo.exe to start hosting
+
+can use Postman or just patse this curl to send request to API
+
+curl --location --request POST 'http://localhost:8080/todo/add' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "task":"example",
+    "userid":1
+}'
+
+to run api test  execute this command 
+"go test -timeout 30s -run ^TestAddTodoTask$ github.com/manabie-com/togo/test"
+
+to run integration test execute this command 
+- go test -timeout 30s -run ^TestAddTodo$ github.com/manabie-com/togo/handlers
+- go test -timeout 30s -run ^TestAddTodoLimitTask$ github.com/manabie-com/togo/handlers
+- go test -timeout 30s -run ^TestGetUserById$ github.com/manabie-com/togo/handlers
+- go test -timeout 30s -run ^TestCreateUser$ github.com/manabie-com/togo/handlers
+
+### technologies
+
+- SQLite3
+- Gin
+- Gorm
+- httpTest
+- testing
+
+
+### What do you love about your solution?
+- I don't have many experience with go lang so I just use factory pattern to handle this task  , I think its good to maintenance and extension 
+- I use some popular technologies so Its good to follow up and understand code.
+
+### What else do you want us to know about however you do not have enough time to complete?
+- I just want to say , I'm very interested with Go lang.
