@@ -8,14 +8,16 @@ In here, I am setting default the limitation is 5 photos per day.
 	+Apply post man application to do integration test
 	
 -How to run code:
-	+Import like a maven project into Eclipse or Inteliji
+	+Import like a maven project into Eclipse or Inteliji >> Right-click on project >> Run as Spring Boot App
 	+Run application like normal java maven project
 	+Use post man to send a post request or send request by Go script like below.
 	
-
+-How to run unit test:
+	+Right click on class PostCelebMomentApplicationTests >> Run as JUnit test
 -TO DO:
 	+Implement logic to viewer can vote what photo they love and base on that info to upgrade photographer's level
 	+User AWS database to store User Tracking information instead of csv file
+	+Write more unit test
 
 
 
