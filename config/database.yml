@@ -1,0 +1,18 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  username: postgres
+  password: postgres
+  host: localhost
+
+development:
+  <<: *default
+  database: togo_dev
+
+test:
+  <<: *default
+  database: togo_test
+
+production:
+  <<: *default
+  database: togo_prod
