@@ -19,7 +19,7 @@ public class BucketController {
     }
 
     @PostMapping("/celebMoment")
-    public String uploadFile(@RequestPart(value = "file") MultipartFile file) {
-        return this.celebMomentClient.uploadFile(file);
+    public String uploadFile(@RequestPart(value = "file") MultipartFile file, @RequestPart(value = "userId") String userId) {
+        return this.celebMomentClient.uploadFile(file, userId);
     }
 }
