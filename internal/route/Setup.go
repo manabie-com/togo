@@ -1,9 +1,10 @@
 package route
 
-func Setup(g *gin.Engine) {
-	g.GET("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
+import "github.com/gofiber/fiber/v2"
+
+func Setup(app *fiber.App) {
+	v1 := app.Group("api/v1")
+	TaskRoutes(v1)
+	UserRoutes(v1)
+
 }
