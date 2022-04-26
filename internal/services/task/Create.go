@@ -23,8 +23,8 @@ func Create(c *fiber.Ctx) error {
 	count := CountDaily(payload.UserID)
 	max := user.GetMaxDailyTodo(payload.UserID)
 
-	if count > max {
-		return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{"retCode": 400, "message": "Already reached the maximum daily task."})
+	if count == max {
+		return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{"retCode": 400, "message": "You already reached the maximum task for today."})
 	}
 
 	result := connect.DB.Create(&payload)
