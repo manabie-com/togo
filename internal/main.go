@@ -1,53 +1,55 @@
 package main
 
 import (
-	"context"
+	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 	"togo/internal/route"
 
-	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 func main() {
-	app := gin.Default()
-	route.Setup(app)
-	srv := &http.Server{
-		Addr:    ":8080",
-		Handler: app,
+
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("Error Loading Env File: ", err)
 	}
 
+	port := os.Getenv("PORT")
+
+	app := fiber.New(fiber.Config{
+		IdleTimeout:  30 * time.Second,
+		WriteTimeout: 30 * time.Second,
+		ReadTimeout:  30 * time.Second,
+	})
+
+	route.Setup(app)
+
+	// Listen from a different goroutine
 	go func() {
-		// service connections
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("listen: %s\n", err)
+		if err := app.Listen(":" + port); err != nil {
+			log.Panic(err)
 		}
 	}()
 
-	// Wait for interrupt signal to gracefully shutdown the server with
-	// a timeout of 5 seconds.
-	quit := make(chan os.Signal)
-	// kill (no param) default send syscanll.SIGTERM
-	// kill -2 is syscall.SIGINT
-	// kill -9 is syscall. SIGKILL but can"t be catch, so don't need add it
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-	log.Println("Shutdown Server ...")
+	c := make(chan os.Signal, 1)                    // Create channel to signify a signal being sent
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM) // When an interrupt or termination signal is sent, notify the channel
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	if err := srv.Shutdown(ctx); err != nil {
-		log.Fatal("Server Shutdown:", err)
-	}
-	// catching ctx.Done(). timeout of 5 seconds.
-	select {
-	case <-ctx.Done():
-		log.Println("timeout of 5 seconds.")
-	}
-	log.Println("Server exiting")
+	_ = <-c // This blocks the main thread until an interrupt is received
+	fmt.Println("Gracefully shutting down...")
+	_ = app.Shutdown()
+
+	fmt.Println("Running cleanup tasks...")
+
+	// Your cleanup tasks go here
+	// db.Close()
+	// redisConn.Close()
+	fmt.Println("Fiber was successful shutdown.")
 
 }
