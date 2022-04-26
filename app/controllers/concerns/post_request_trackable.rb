@@ -1,4 +1,4 @@
-module RequestTrackable
+module PostRequestTrackable
   extend ActiveSupport::Concern
 
   def count_request
@@ -7,7 +7,11 @@ module RequestTrackable
   end
 
   def client_reach_daily_limit?
-    redis.get(client_id).to_i >= ENV["unauthenticated_post_todo_limit"].to_i
+    redis.get(client_id).to_i >= client_post_request_daily_limit
+  end
+
+  def current_user
+    User.find_or_create_by(remote_ip: client_remote_ip) # todo: save to session
   end
 
   private
@@ -21,10 +25,14 @@ module RequestTrackable
   end
 
   def client_id
-    "#{request.remote_ip}:#{date}" # todo: change if user is authed
+    "#{client_remote_ip}:#{date}"
   end
 
   def date
     Time.now.strftime("%d:%m:%Y")
+  end
+
+  def client_post_request_daily_limit
+    ENV["base_post_request_daily_limit"].to_i + current_user.id
   end
 end
