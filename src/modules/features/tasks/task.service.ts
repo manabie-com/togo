@@ -17,7 +17,7 @@ export class TaskService {
     const tasksCreate = createTaskRequest.tasks.map((task) =>
       this.taskModel.create({
         ...task,
-        status: TaskStatus.TO_DO,
+        status: 'TO_DO',
         createdBy: userId,
       })
     );

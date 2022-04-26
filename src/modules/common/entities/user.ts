@@ -1,4 +1,5 @@
-import { Column, Model, Table } from 'sequelize-typescript';
+import { Column, HasOne, Index, Model, Table } from 'sequelize-typescript';
+import { UserSettingTask } from './user-setting-task';
 
 @Table
 export class User extends Model {
@@ -6,14 +7,18 @@ export class User extends Model {
   name: string;
 
   @Column
+  @Index('user-name')
   username: string;
 
   @Column
   password: string;
 
-  @Column
+  @Column({ field: 'created_at' })
   createdAt: Date;
 
-  @Column
+  @Column({ field: 'updated_at' })
   updatedAt: Date;
+
+  @HasOne(() => UserSettingTask)
+  setting: UserSettingTask;
 }

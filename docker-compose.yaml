@@ -1,25 +1,21 @@
-version: '3.5'
-
+# This configuration is intended for development purpose, it's **your** responsibility to harden it for production
+version: '3.3'
 services:
-  postgres:
-    container_name: postgres_container
-    image: postgres
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: cQcfN90QHC7SBgKA
-      PGDATA: /data/postgres
-      POSTGRES_DB: tasks
+  db-postgresql:
+    container_name: postgres13
+    image: postgres:13.1
     volumes:
-       - postgres:/data/postgres
+      - ../storage/postgresql:/var/run/postgresql
+      # - /var/run/postgresql:/var/run/postgresql
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST_AUTH_METHOD=trust
     ports:
-      - "5432:5432"
+      - 5432:5432
     networks:
-      - postgres
-    restart: unless-stopped
-
+      - system
+ 
 networks:
-  postgres:
+  system:
     driver: bridge
-
-volumes:
-    postgres:

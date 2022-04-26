@@ -1,3 +1,4 @@
+import sequelize from 'sequelize';
 import { Column, Model, Table } from 'sequelize-typescript';
 
 @Table
@@ -11,15 +12,18 @@ export class Task extends Model {
   @Column
   note: string;
 
-  @Column
+  @Column({
+    type: sequelize.DataTypes.ENUM,
+    values: ['TO_DO', 'IN_PROGESS', 'REVIEW', 'RE_OPEN', 'TESTING', 'DONE'],
+  })
   status: TaskStatus;
 
-  @Column
+  @Column({ field: 'created_by' })
   createdBy: string;
 
-  @Column
+  @Column({ field: 'created_at' })
   createdAt: Date;
 
-  @Column
+  @Column({ field: 'updated_at' })
   updatedAt: Date;
 }
