@@ -1,0 +1,6 @@
+version: '3'
+
+services:
+  node-app-todoapp:
+    container_name: node-app-todoapp-test
+    command: yarn test

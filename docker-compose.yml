@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  manabie-todoapp:
+    build: .
+    image: manabie-todoapp
+    ports:
+      - '6363:6363'
+    depends_on:
+      - postgres
+    volumes:
+      - manabie-todoapp
+    networks:
+      - manabie
+
+  postgres:
+    image: postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - dbdata:/data/db
+    networks:
+      - manabie
+
+volumes:
+  dbdata:
+
+networks:
+  manabie:
+    driver: bridge
