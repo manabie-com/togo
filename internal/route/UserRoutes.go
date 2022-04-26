@@ -10,6 +10,7 @@ func UserRoutes(rg fiber.Router) {
 
 	tg := rg.Group("/user")
 	tg.Post("/create", user.Create)
+	tg.Get("/login", user.Login)
 
 	// rg.GET("/user/:id", user.Get)
 	// rg.GET("/user", user.GetAll)
