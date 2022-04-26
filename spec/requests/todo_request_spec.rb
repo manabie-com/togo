@@ -7,7 +7,7 @@ RSpec.describe Todo, type: :request do
 
   describe "POST /api/v1/todos" do
     it "creates new user for a new ip address" do
-      clear_redis
+      clear_db
 
       expect(User.where(remote_ip: REMOTE_IP)).to be_empty
 
@@ -29,12 +29,12 @@ RSpec.describe Todo, type: :request do
 
       expect(User.where(remote_ip: REMOTE_IP)).not_to be_empty
 
-      clear_redis
+      clear_db
     end
 
     context "user has not reached daily limit" do
       it "creates todo" do
-        clear_redis
+        clear_db
 
         expect {
           post "/api/v1/todos", :params => {
@@ -56,7 +56,7 @@ RSpec.describe Todo, type: :request do
 
     context "user has reached daily limit" do
       it "does not create todo" do
-        clear_redis
+        clear_db
         client_reach_daily_limit
 
         expect {
@@ -79,7 +79,7 @@ RSpec.describe Todo, type: :request do
 
     context "user daily limit is reset" do
       it "creates todo" do
-        clear_redis
+        clear_db
         client_reach_daily_limit
 
         travel_to 2.days.from_now do
@@ -108,9 +108,11 @@ RSpec.describe Todo, type: :request do
     redis.set(client_id, client_post_request_daily_limit)
   end
 
-  def clear_redis
+  def clear_db
     redis = Redis.new
     redis.del(client_id)
+    User.destroy_all
+    Todo.destroy_all
   end
 
   def client_id
