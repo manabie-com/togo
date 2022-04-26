@@ -16,5 +16,4 @@ func init() {
 		panic(err)
 	}
 	DB.AutoMigrate(&model.User{}, &model.Task{})
-
 }
