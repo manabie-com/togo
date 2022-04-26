@@ -6,7 +6,33 @@ RSpec.describe Todo, type: :request do
   REMOTE_IP = "1.2.3.4"
 
   describe "POST /api/v1/todos" do
-    context "user is unauthenticated and has not reached daily limit" do
+    it "creates new user for a new ip address" do
+      clear_redis
+
+      expect(User.where(remote_ip: REMOTE_IP)).to be_empty
+
+      expect {
+        post "/api/v1/todos", :params => {
+          :todos => {
+            :title => "title",
+            :content => "content",
+            :done => true
+          }
+        }, env: { "REMOTE_ADDR": REMOTE_IP }
+
+        expect(response).to have_http_status(201)
+
+        data = JSON.parse(response.body)
+        expect(data["status"]).to eq 201
+        expect(data["message"]).to eq "Todo created"
+      }.to change { Todo.count }.by 1
+
+      expect(User.where(remote_ip: REMOTE_IP)).not_to be_empty
+
+      clear_redis
+    end
+
+    context "user has not reached daily limit" do
       it "creates todo" do
         clear_redis
 
@@ -28,7 +54,7 @@ RSpec.describe Todo, type: :request do
       end
     end
 
-    context "user is unauthenticated and has reached daily limit" do
+    context "user has reached daily limit" do
       it "does not create todo" do
         clear_redis
         client_reach_daily_limit
@@ -51,7 +77,7 @@ RSpec.describe Todo, type: :request do
       end
     end
 
-    context "user is unauthenticated and daily limit is reset" do
+    context "user daily limit is reset" do
       it "creates todo" do
         clear_redis
         client_reach_daily_limit
@@ -79,7 +105,7 @@ RSpec.describe Todo, type: :request do
 
   def client_reach_daily_limit
     redis = Redis.new
-    redis.set(client_id, ENV["unauthenticated_post_todo_limit"].to_i)
+    redis.set(client_id, client_post_request_daily_limit)
   end
 
   def clear_redis
@@ -92,5 +118,13 @@ RSpec.describe Todo, type: :request do
     date = Time.now.strftime("%d:%m:%Y")
 
     "#{remote_ip}:#{date}"
+  end
+
+  def client_post_request_daily_limit
+    ENV["base_post_request_daily_limit"].to_i + current_user.id
+  end
+
+  def current_user
+    User.find_or_create_by(remote_ip: REMOTE_IP)
   end
 end
