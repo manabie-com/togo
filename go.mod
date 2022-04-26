@@ -3,6 +3,7 @@ module togo
 go 1.17
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-playground/validator/v10 v10.10.1
 	github.com/gofiber/fiber/v2 v2.32.0
 	github.com/gofiber/jwt/v2 v2.2.7
