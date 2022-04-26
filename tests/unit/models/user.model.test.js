@@ -1,5 +1,5 @@
 const faker = require('faker');
-const { User } = require('../../../src/models');
+const { User } = require('../../../backend/models');
 
 describe('User model', () => {
   describe('User validation', () => {
@@ -9,7 +9,6 @@ describe('User model', () => {
         name: faker.name.findName(),
         email: faker.internet.email().toLowerCase(),
         password: 'password1',
-        role: 'user',
       };
     });
 
@@ -36,11 +35,6 @@ describe('User model', () => {
       newUser.password = '11111111';
       await expect(new User(newUser).validate()).rejects.toThrow();
     });
-
-    test('should throw a validation error if role is unknown', async () => {
-      newUser.role = 'invalid';
-      await expect(new User(newUser).validate()).rejects.toThrow();
-    });
   });
 
   describe('User toJSON()', () => {
@@ -49,7 +43,6 @@ describe('User model', () => {
         name: faker.name.findName(),
         email: faker.internet.email().toLowerCase(),
         password: 'password1',
-        role: 'user',
       };
       expect(new User(newUser).toJSON()).not.toHaveProperty('password');
     });

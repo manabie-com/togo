@@ -4,7 +4,7 @@ const httpStatus = require('http-status');
 const app = require('../../backend/app/app');
 const setupTestDB = require('../utils/setupTestDB');
 const { User } = require('../../backend/models');
-const { userOne, userTwo, admin, insertUsers } = require('../fixtures/user.fixture');
+const { userOne, userTwo, insertUsers } = require('../fixtures/user.fixture');
 const { userOneAccessToken } = require('../fixtures/token.fixture');
 
 setupTestDB();
