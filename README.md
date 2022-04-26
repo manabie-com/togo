@@ -28,3 +28,70 @@
 - We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
 
 Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+
+## Setup & Run Code
+
+### Without Docker
+
+> npm install
+
+or
+
+> yarn install
+
+then
+
+Running with DB online:
+
+> yarn start
+
+or
+
+> npm start
+
+Running locally:
+
+>yarn dev
+
+or
+
+> npm run dev
+
+Testing:
+
+> yarn test
+
+### With Docker
+
+run docker container in development mode
+> yarn docker:dev
+
+run docker container in production mode
+>yarn docker:prod
+
+run all tests in a docker container
+>yarn docker:test
+
+## API Documentation
+
+To view the list of available APIs and their specifications, run the server and go to http://localhost:6363/v1/docs in your browser.
+
+### API Endpoints
+List of available routes:
+
+**Auth routes**:\
+`POST /v1/auth/register` - register\
+`POST /v1/auth/login` - login\
+`POST /v1/auth/refresh-tokens` - refresh auth tokens\
+`GET /v1/auth/logout`
+
+**User routes**:\
+`GET /v1/user` - get user\
+`PATCH /v1/user` - update user\
+
+**Task routes**:\
+`POST /v1/todo` - create a task\
+`GET /v1/todo` - get all tasks of user\
+`GET /v1/task/:taskId` - get a task\
+`PATCH /v1/task/:taskId` - update task\
+`DELETE /v1/task/:taskId` - delete task

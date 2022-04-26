@@ -51,38 +51,7 @@ module.exports = router;
  *                  example: Get task success
  *                 data:
  *                  type: object
- *                  $ref: '#/components/schemas/tasks'
- *       "401":
- *         $ref: '#/components/responses/Unauthorized'
- *       "404":
- *         $ref: '#/components/responses/NotFound'
- *
- *   patch:
- *     summary: Update task
- *     description: Task update information.
- *     tags: [Tasks]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       description: Update any field of task
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *              task_name:
- *                type: string,
- *                example: Coding
- *     responses:
- *       "204":
- *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *                $ref: '#/components/schemas/user'
- *       "400":
- *         $ref: '#/components/responses/LimitTaskNotAvailable'
+ *                  $ref: '#/components/schemas/Tasks'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "404":
@@ -117,9 +86,88 @@ module.exports = router;
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/tasks'
- *       "400":
- *         $ref: '#/components/responses/LimitTaskNotAvailable'
+ *                $ref: '#/components/schemas/Tasks'
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ *       "404":
+ *         $ref: '#/components/responses/NotFound'
+ */
+
+/**
+ * @swagger
+ * /todo/:taskId:
+ *   patch:
+ *     summary: Update task
+ *     description: Task update information.
+ *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: taskId
+ *         schema:
+ *            type: number
+ *     requestBody:
+ *       required: true
+ *       description: Update any field of task
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *              task_name:
+ *                type: string,
+ *                example: Coding
+ *     responses:
+ *       "204":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *                $ref: '#/components/schemas/Tasks'
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ *       "404":
+ *         $ref: '#/components/responses/NotFound'
+ *
+ *   get:
+ *     summary: get a task
+ *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name:  taskId
+ *         schema:
+ *            type: number
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *                $ref: '#/components/schemas/Tasks'
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ *       "404":
+ *         $ref: '#/components/responses/NotFound'
+ *   delete:
+ *     summary: delete a task
+ *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name:  taskId
+ *         schema:
+ *            type: number
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *                $ref: '#/components/schemas/Tasks'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "404":
