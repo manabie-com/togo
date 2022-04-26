@@ -1,8 +1,7 @@
 module Api
   module V1
     class TodosController < ApplicationController
-      include RequestTrackable
-      include CurrentUser
+      include PostRequestTrackable
 
       before_action :count_request, only: :create
 
@@ -13,11 +12,7 @@ module Api
           return
         end
 
-        todo = if current_user
-                 current_user.todos.new(todo_params)
-               else
-                 Todo.new(todo_params)
-               end
+        todo = current_user.todos.new(todo_params)
 
         if todo.save
           render json: { status: 201, message: "Todo created", data: todo },
@@ -31,7 +26,7 @@ module Api
       private
 
       def todo_params
-        params.permit(:title, :content, :done)
+        params.permit(:title, :content)
       end
     end
   end
