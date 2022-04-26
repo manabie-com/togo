@@ -46,7 +46,7 @@ module.exports = router;
  *                  example: Get task success
  *                 data:
  *                  type: object
- *                  $ref: '#/components/schemas/task'
+ *                  $ref: '#/components/schemas/tasks'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "404":

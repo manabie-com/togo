@@ -1,0 +1,245 @@
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        avatar:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        name:
+          type: string
+        limit_daily_task:
+          type: number
+      example:
+        avatar: http://cdn.onlinewebfonts.com/svg/img_339542.png
+        email: tuandoan2604@gmail.com
+        password: 1231231231a
+        fullName: Tuan Doan
+        limit_daily_task: 5
+
+    Token:
+      type: object
+      properties:
+        token:
+          type: string
+        expires:
+          type: string
+          format: date-time
+      example:
+        token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWJhYzUzNDk1NGI1NDEzOTgwNmMxMTIiLCJpYXQiOjE1ODkyOTg0ODQsImV4cCI6MTU4OTMwMDI4NH0.m1U63blB0MLej_WfB7yC2FTMnCziif9X8yzwDEfJXAg
+        expires: 2020-05-12T16:18:04.793Z
+
+    AuthTokens:
+      type: object
+      properties:
+        access:
+          $ref: '#/components/schemas/Token'
+        refresh:
+          $ref: '#/components/schemas/Token'
+
+    Tasks:
+      type: object
+      propertise:
+        task_name:
+          type: string
+        user_id:
+          type: number
+        task_priority:
+          type: number
+      example:
+        task_name: 'Dinner with Rose'
+        user_id: 1
+        task_priority: 0
+
+  responses:
+    DuplicateEmail:
+      description: Email address already in use
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            status: 400
+            message: Email address already in use!
+            data: null
+    DuplicateNumberPhone:
+      description: Contact already in use
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            status: 400
+            message: Contact already in use!
+            data: null
+    EmailNotFound:
+      description: Email not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            status: 400
+            message: No user found with this email!
+            data: null
+    IncorrectEmailOrPassword:
+      description: Incorecct email or password
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            status: 401
+            message: Incorrect email or password
+            data: null
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            status: 401
+            message: Please authenticate
+            data: null
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            status: 403
+            message: Forbidden
+            data: null
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            status: 404
+            message: Not found
+            data: null
+    CannotCreateInterview:
+      description:  Cannot create interview with this userId
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            status: 400
+            message:  Cannot create interview with this userId!
+            data: null
+    CannotGetInterview:
+      description: Cannot get interview with this userId
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            status: 400
+            message: Cannot get interview with this userId!
+            data: null
+    InterviewNotFound:
+      description: Interview NotFound
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            status: 400
+            message: Interview NotFound!
+            data: null
+    CannotCreateMobilization:
+      description: Cannot create mobilization with this userId
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            status: 400
+            message: Cannot create mobilization with this userId!
+            data: null
+    CannotGetMobilization:
+      description: Cannot get mobilization with this userId
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            status: 400
+            message: Cannot get mobilization with this userId!
+            data: null
+    MobilizationNotFound:
+      description: Mobilization NotFound
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            status: 400
+            message: Mobilization NotFound!
+            data: null
+    CannotGetHistory:
+      description: Cannot get histories with this userId
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            status: 400
+            message: Cannot get histories with this userId!
+            data: null
+    HistoryNotFound:
+      description:  History NotFound
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            status: 400
+            message:  History NotFound!
+            data: null
+    CannotGetRequest:
+      description: Cannot get request with this userId
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            status: 400
+            message: Cannot get request with this userId!
+            data: null
+    RequestNotFound:
+      description: Request NotFound
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            status: 400
+            message: Request NotFound!
+            data: null
+    AccountNotFound:
+      description: Account not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            status: 400
+            message: Account not found!
+            data: null
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
