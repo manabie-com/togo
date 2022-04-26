@@ -2,24 +2,21 @@ package user
 
 import (
 	"time"
+	"togo/internal/model"
+	"togo/internal/utils"
 
-	"github.com/dgrijalva/jwt-go"
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 )
 
 // Login get user and password
 func Login(c *fiber.Ctx) error {
-	type LoginInput struct {
-		username string `json:"username"`
-		Password string `json:"password"`
-	}
-	var input LoginInput
-	if err := c.BodyParser(&input); err != nil {
-		return c.SendStatus(fiber.StatusUnauthorized)
-	}
 
-	user := input.username
-	pass := input.Password
+	payload := new(model.LoginInput)
+	utils.BodyParser(c, payload)
+
+	user := payload.Username
+	pass := payload.Password
 
 	if user != "ender" || pass != "ender" {
 		return c.SendStatus(fiber.StatusUnauthorized)
@@ -28,7 +25,7 @@ func Login(c *fiber.Ctx) error {
 	token := jwt.New(jwt.SigningMethodHS256)
 
 	claims := token.Claims.(jwt.MapClaims)
-	claims["identity"] = identity
+	claims["identity"] = user
 	claims["admin"] = true
 	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 
