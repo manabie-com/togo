@@ -95,7 +95,7 @@ module.exports = router;
 
 /**
  * @swagger
- * /todo/:taskId:
+ * /todo/{taskId}:
  *   patch:
  *     summary: Update task
  *     description: Task update information.
