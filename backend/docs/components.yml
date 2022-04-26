@@ -41,10 +41,9 @@ components:
           $ref: '#/components/schemas/Token'
         refresh:
           $ref: '#/components/schemas/Token'
-
     Tasks:
       type: object
-      propertise:
+      properties:
         task_name:
           type: string
         user_id:

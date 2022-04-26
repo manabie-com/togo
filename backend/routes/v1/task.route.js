@@ -83,7 +83,7 @@ module.exports = router;
  *       "404":
  *         $ref: '#/components/responses/NotFound'
  *
- *   create task:
+ *   post:
  *     summary: create task
  *     description: Create New Task.
  *     tags: [Tasks]
@@ -97,16 +97,22 @@ module.exports = router;
  *           schema:
  *             type: object
  *             properties:
+ *              user_id:
+ *                type: number,
+ *                example: 1
  *              task_name:
  *                type: string,
  *                example: Coding
+ *              task_priority:
+ *                type: number,
+ *                example: 1
  *     responses:
- *       "204":
+ *       "201":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/user'
+ *                $ref: '#/components/schemas/tasks'
  *       "400":
  *         $ref: '#/components/responses/LimitTaskNotAvailable'
  *       "401":

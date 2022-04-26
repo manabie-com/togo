@@ -75,10 +75,20 @@ const changePasswordByPk = async (userId, body) => {
   return user;
 };
 
+/**
+ * Get user by email
+ * @param {string} email
+ * @returns {Promise<User>}
+ */
+const getUserByEmail = async (email) => {
+  return users.findOne({ email });
+};
+
 module.exports = {
   getUserByPk,
   updateUserByPk,
   deleteUserByPk,
   changePasswordByPk,
   createUser,
+  getUserByEmail,
 };

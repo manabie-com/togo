@@ -27,7 +27,6 @@ module.exports = router;
  * /auth/register:
  *   post:
  *     summary: Register an user
- *     description: input date format mm/dd/yyyy
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -36,74 +35,28 @@ module.exports = router;
  *           schema:
  *             type: object
  *             required:
- *               - accountId
+ *               - name
  *               - email
  *               - password
- *               - dob
- *               - age
- *               - fullName
- *               - phoneNumber
- *               - fullDepartmentName
- *               - mainSkill
- *               - level
- *               - status
- *               - site
+ *               - limit_daily_task
  *             properties:
- *               accountId:
+ *               name:
  *                 type: string
- *                 description: id of account from FPT
+ *                 description: username
  *               email:
  *                 type: string
  *                 format: email
- *                 description: email FPT, must be unique
+ *                 description: email, must be unique
  *               password:
  *                 type: string
- *               dob:
- *                 type: string
- *                 format: date
- *               age:
+ *               limit_daily_task:
  *                 type: number
- *               fullName:
- *                 type: string
- *               phoneNumber:
- *                 type: string
- *                 description: should be "+84xxxxxxxxx" or "0xxxxxxxxx"
- *               fullDepartmentName:
- *                 type: string
- *               mainSkill:
- *                 type: string
- *               level:
- *                 type: number
- *               status:
- *                 type: string
- *               type:
- *                 type: string
- *               site:
- *                 type: string
- *               onboardDay:
- *                 type: string
- *                 format: date
- *               mentor:
- *                 type: string
- *               mentorFullName:
- *                 typeL string
+ *                 description: limit task of user in a day
  *             example:
- *                accountId: "quangnh69"
- *                email: quangnh69@gmail.com
- *                password: pass
- *                dob: 03-04-1999
- *                age: 23
- *                fullName: Nguyễn Hồng Quang
- *                phoneNumber: "+84855513506"
- *                fullDepartmentName: FWA.EC
- *                mainSkill: Java
- *                level: 10
- *                status: Onboard
- *                type: Internal
- *                site: hà nội
- *                onboardDay: 03-01-2022
- *                mentor: TuanDV32
- *                mentorFullName: Đoàn Văn Tuấn
+ *                email: tuandoan2604@gmail.com
+ *                name: tuandoan
+ *                password: 1231231231a
+ *                limit_daily_task: 1
  *     responses:
  *       "201":
  *         description: Register success
@@ -123,8 +76,8 @@ module.exports = router;
  *                  $ref: '#/components/schemas/user'
  *       "400":
  *          $ref: '#/components/responses/DuplicateEmail'
- *       400:
- *          $ref: '#/components/responses/DuplicateNumberPhone'
+ *       "404":
+ *          $ref: '#/components/responses/NotFound'
  */
 
 /**
@@ -149,8 +102,8 @@ module.exports = router;
  *               password:
  *                 type: string
  *             example:
- *               email: fake@gmail.com
- *               password: pass
+ *               email: tuandoan2604@gmail.com
+ *               password: 1231231231a
  *     responses:
  *       "200":
  *         description: Login success
