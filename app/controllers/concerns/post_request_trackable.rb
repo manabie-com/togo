@@ -10,10 +10,6 @@ module PostRequestTrackable
     redis.get(client_id).to_i >= client_post_request_daily_limit
   end
 
-  def current_user
-    User.find_or_create_by(remote_ip: client_remote_ip) # todo: save to session
-  end
-
   private
 
   def client_remote_ip
@@ -33,6 +29,10 @@ module PostRequestTrackable
   end
 
   def client_post_request_daily_limit
-    ENV["base_post_request_daily_limit"].to_i + current_user.id
+    base_post_request_daily_limit + current_user.id
+  end
+
+  def base_post_request_daily_limit
+    ENV["base_post_request_daily_limit"].to_i
   end
 end

@@ -2,6 +2,7 @@ module Api
   module V1
     class TodosController < ApplicationController
       include PostRequestTrackable
+      include CurrentUser
 
       before_action :count_request, only: :create
 
