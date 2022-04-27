@@ -1,7 +1,6 @@
 package user
 
 import (
-	"fmt"
 	"time"
 	"togo/internal/model"
 	"togo/internal/services/login"
@@ -19,9 +18,6 @@ func Login(c *fiber.Ctx) error {
 
 	user := payload.Username
 	pass := payload.Password
-
-	fmt.Println("user: ", user)
-	fmt.Println("pass: ", pass)
 
 	if !login.Validate(user, pass) {
 		return c.JSON(fiber.Map{"status": "error", "message": "Invalid username/password"})
