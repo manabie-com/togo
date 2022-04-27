@@ -1,8 +1,10 @@
 package user
 
 import (
+	"fmt"
 	"time"
 	"togo/internal/model"
+	"togo/internal/services/login"
 	"togo/internal/utils"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -18,8 +20,11 @@ func Login(c *fiber.Ctx) error {
 	user := payload.Username
 	pass := payload.Password
 
-	if user != "ender" || pass != "ender" {
-		return c.SendStatus(fiber.StatusUnauthorized)
+	fmt.Println("user: ", user)
+	fmt.Println("pass: ", pass)
+
+	if !login.Validate(user, pass) {
+		return c.JSON(fiber.Map{"status": "error", "message": "Invalid username/password"})
 	}
 
 	token := jwt.New(jwt.SigningMethodHS256)
