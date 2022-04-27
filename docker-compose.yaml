@@ -1,0 +1,32 @@
+version: '3.0'
+services:
+  backend:
+    image: golang:1.18.1-buster
+    volumes: 
+      - ./backend:/opt/app
+      - backend_home:/root
+    working_dir: /opt/app
+    command: sleep infinity
+  db:
+    image: postgres:14.2
+    environment:
+        - POSTGRES_DB=manabie
+        - POSTGRES_USER=manabie
+        - POSTGRES_PASSWORD=manabie
+    volumes: 
+        - ./db:/var/lib/postgresql/data
+  migrations:
+    image: node:17-buster-slim
+    volumes:
+        - ./migrations:/opt/app/workspace
+    command: sleep infinity
+    environment:
+        - PGHOST=manabie-db-1
+        - PGUSER=manabie
+        - PGDATABASE=manabie
+        - PGPASSWORD=manabie
+        - PGPORT=5432
+        - CONFIG_FILE=./initial_data/config.yaml
+    working_dir: /opt/app/workspace
+volumes:
+  backend_home:
