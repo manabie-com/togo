@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+	"togo/internal/middleware"
 	"togo/internal/route"
 
 	"github.com/joho/godotenv"
@@ -28,6 +29,8 @@ func main() {
 		WriteTimeout: 30 * time.Second,
 		ReadTimeout:  30 * time.Second,
 	})
+
+	middleware.Logger(app)
 
 	route.Setup(app)
 
