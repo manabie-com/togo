@@ -15,7 +15,7 @@ export class UserSettingTask extends Model {
     type: DataType.INTEGER,
   })
   @ForeignKey(() => User)
-  userId: string;
+  userId: number;
 
   @Column({ field: 'maximum_task' })
   maximum: number;

@@ -17,7 +17,6 @@ export class TaskController {
     @SessionUser() user: any,
     @Body() createTasksRequest: CreateMultiTaskRequest
   ): Promise<void> {
-    console.log(user);
     return this.taskService.createTask(user.id, createTasksRequest);
   }
 }

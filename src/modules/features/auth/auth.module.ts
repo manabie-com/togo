@@ -13,7 +13,6 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
-        console.log('sadsa', configService.get('JWT_KEY'));
         return {
           secret: configService.get('JWT_KEY'),
           signOptions: {

@@ -19,7 +19,7 @@ export class Task extends Model {
   status: TaskStatus;
 
   @Column({ field: 'created_by' })
-  createdBy: string;
+  createdBy: number;
 
   @Column({ field: 'created_at' })
   createdAt: Date;
