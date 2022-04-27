@@ -12,7 +12,4 @@ func TaskRoutes(rg fiber.Router) {
 	tg := rg.Group("/task")
 	tg.Post("/create", middleware.Protected(), task.Create)
 
-	//rg.PUT("/task/:id", task.Update)
-	//rg.DELETE("/task/:id", task.Delete)
-
 }
