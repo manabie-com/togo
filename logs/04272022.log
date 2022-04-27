@@ -1,0 +1,238 @@
+-----------------------------------------------------------
+PID:62484 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMjk2NDEwLCJpZGVudGl0eSI6ImtpZXIxMjEyMTEyIn0.ZMDT1yI2avuNvx_PH1CKynBtIrtTSkg4vvPWZSpoSuA","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:64564 STATUS:200 - Method:GET Path:/api/v1/user/login
+Request Body: {
+    "username":"kier1212112",
+    "password":"ender"
+}
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMjk3MjA2LCJpZGVudGl0eSI6ImtpZXIxMjEyMTEyIn0.P23iiHsDUQJdjEqE_SJYb8WoW4bQtH_wuC3Kgkb9gY0","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:67825 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMjk5MjM2LCJpZGVudGl0eSI6ImtpZXIxMjEyMTEyIn0.oAbbii1h0rdkI2TRE6oCHwS9feJ-zlqsJpxS0vWiCrA","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:67825 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMjk5MjM4LCJpZGVudGl0eSI6ImtpZXIxMjEyMTEyIn0.5r_T-Us1mEOPM7KyJJVvgZ36SKHnc4YzRYK20SSdfus","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:67825 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMjk5MjQyLCJpZGVudGl0eSI6IiJ9.VU7GJNY083GDa_iF2qlc-lS96rjTWw7Pic_hhrJu6GY","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:67825 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMjk5MjQ0LCJpZGVudGl0eSI6IiJ9.8PQMYLVN4XjsoWh6F_tZC3ceXqSEpJC0s2zG_UR0F9w","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:67825 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMjk5MjQ0LCJpZGVudGl0eSI6IiJ9.8PQMYLVN4XjsoWh6F_tZC3ceXqSEpJC0s2zG_UR0F9w","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:68211 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMjk5Mjk2LCJpZGVudGl0eSI6IiJ9.f1URg3NHYY97zAE36WS6jeDAxew7qMOm_Ug-BgC1zyY","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:68211 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMjk5Mjk4LCJpZGVudGl0eSI6IiJ9.oHQw2osS0elPknZI2OOX5ts2ELPrBlRb_2rSORuqRH8","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:68211 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMjk5MzAzLCJpZGVudGl0eSI6ImtpZXIxMjEyMTEyIn0.DpniezNXRbzbCmRU-piha64D_kMyPSNZyEzrf0qURLg","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:68211 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMjk5MzA0LCJpZGVudGl0eSI6ImtpZXIxMjEyMTEyIn0.QbGItf8he7_VYQHPHgkwS6XaWj6LtMoeoEee8P6B6Bk","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:68211 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMjk5MzA0LCJpZGVudGl0eSI6ImtpZXIxMjEyMTEyIn0.QbGItf8he7_VYQHPHgkwS6XaWj6LtMoeoEee8P6B6Bk","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:68460 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMjk5MzM0LCJpZGVudGl0eSI6ImtpZXIxMjEyMTEyIn0.p_mKI_1yy--dmSNiJzjJXOy6va7AjnboTTJ4kX-0LTs","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:68460 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMjk5MzM1LCJpZGVudGl0eSI6ImtpZXIxMjEyMTEyIn0.GS3MSytkhalNXITo4xm6RlBV-UYdkC8wcVxt-Q1S3UA","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:68460 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMjk5MzQzLCJpZGVudGl0eSI6IiJ9.st5nKXSAoqDFFIlBHl98bQ-iriifGg-NNNSoEdgC6AI","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:68460 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMjk5MzQzLCJpZGVudGl0eSI6IiJ9.st5nKXSAoqDFFIlBHl98bQ-iriifGg-NNNSoEdgC6AI","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:68460 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMjk5MzQ0LCJpZGVudGl0eSI6IiJ9.lnYYpC2pOz3AU0oKIxUTuobB8H_ilpjcwDLKwh_d5oA","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:68460 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMjk5MzQ0LCJpZGVudGl0eSI6IiJ9.lnYYpC2pOz3AU0oKIxUTuobB8H_ilpjcwDLKwh_d5oA","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:68460 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMjk5MzUwLCJpZGVudGl0eSI6ImtpZXIxMjEyMTEyIn0.7P0HycgNzrE6Femw8PQULQgHQ3tQrIaQ_AdzHENprSI","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:69222 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMjk5NDEzLCJpZGVudGl0eSI6IiJ9.Cf99GRjDcoBrabqZ6VL5myOz49FFPY8BjvnKypn1kQQ","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:69222 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMjk5NDE2LCJpZGVudGl0eSI6ImtpZXIxMjEyMTEyIn0.JBtSKc4crOwBqTZrqRRSUWz6tqyKUihlrs1iZIEExwY","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:69222 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMjk5NDE3LCJpZGVudGl0eSI6ImtpZXIxMjEyMTEyIn0.bM9rhWKgRHY5htk3ohhZvzkGXXb4E-qXcdYH7KAhKTk","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:70780 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMzAwNjg4LCJpZGVudGl0eSI6ImtpZXIxMjEyMTEyIn0.QYiHax9jtYRk69nrBzqgESojz0PzK8Kn3CV0n1cvbbI","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:71150 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMzAwNzQyLCJpZGVudGl0eSI6ImtpZXIxMjEyMTEyIn0.Mo3K8isDXKJ1_3OSQ_qF7me8tpxRWwcOr-Q3UlOVw20","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:71281 STATUS:401 - Method:GET Path:/api/v1/user/login
+Response Body: Unauthorized
+-----------------------------------------------------------
+PID:71701 STATUS:401 - Method:GET Path:/api/v1/user/login
+Response Body: Unauthorized
+-----------------------------------------------------------
+PID:72149 STATUS:401 - Method:GET Path:/api/v1/user/login
+Response Body: Unauthorized
+-----------------------------------------------------------
+PID:72149 STATUS:401 - Method:GET Path:/api/v1/user/login
+Response Body: Unauthorized
+-----------------------------------------------------------
+PID:72149 STATUS:401 - Method:GET Path:/api/v1/user/login
+Response Body: Unauthorized
+-----------------------------------------------------------
+PID:72149 STATUS:401 - Method:GET Path:/api/v1/user/login
+Response Body: Unauthorized
+-----------------------------------------------------------
+PID:72656 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"message":"Invalid username/password","status":"error"}
+-----------------------------------------------------------
+PID:72656 STATUS:405 - Method:GET Path:/api/v1/user/create
+Response Body: Method Not Allowed
+-----------------------------------------------------------
+PID:72656 STATUS:200 - Method:POST Path:/api/v1/user/create
+Response Body: {"ID":5,"CreatedAt":"2022-04-27T14:43:17.158032+08:00","UpdatedAt":"2022-04-27T14:43:17.158032+08:00","DeletedAt":null,"user_name":"kier123","password":"$2a$14$Hm.bGi6DZShDvpuprXh6Qu4h1t.xnAMh1rv1UDLa76gZcyB/V1vqu","max_todos":0}
+-----------------------------------------------------------
+PID:72656 STATUS:405 - Method:POST Path:/api/v1/user/login
+Response Body: Method Not Allowed
+-----------------------------------------------------------
+PID:72656 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMzAxMDEzLCJpZGVudGl0eSI6ImtpZXIxMjMifQ.hB15htPVZjvy1edbyqihOW_Aw693cSIA7gBK4Tls1pQ","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:72656 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMzAxMDIyLCJpZGVudGl0eSI6ImtpZXIxMjMifQ.77JqQwBa9rOtw3YzYFchgSqyS3GHMU4MWTAmZfZqZIc","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:72656 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMzAxMDI4LCJpZGVudGl0eSI6ImtpZXIxMjMyIn0.IiJnOqtHrbm1tFJm9zjjLjkCSLEh9idRwJTKXZwr2bY","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:72656 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMzAxMDM3LCJpZGVudGl0eSI6ImtpZXIxMjMyMjIyIn0.XI6sI5FUTLRCjfvHJo1ZwGHUMef86VViVdmcPvtDSyw","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:72656 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMzAxMDg0LCJpZGVudGl0eSI6ImtpZXIxMjMyMjIyIn0.RHKfkeLYyR1XbdylOB8UieI9MQequbUMbIzoYVhzJS4","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:72990 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"message":"Invalid username/password","status":"error"}
+-----------------------------------------------------------
+PID:72990 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"message":"Invalid username/password","status":"error"}
+-----------------------------------------------------------
+PID:72990 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMzAxMTMzLCJpZGVudGl0eSI6ImtpZXIxMjMifQ.H5ONwLj1DPWEL0TAfFSRbuZmgA7OnDeWae3PPM2_LqM","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:72990 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMzAxMTQ2LCJpZGVudGl0eSI6ImtpZXIxMiJ9.pZ0f7MkYqRYg-bnggkZhoNGtXKfkYkM3HpNsr5QuptA","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:75435 STATUS:405 - Method:GET Path:/api/v1/task/create
+Response Body: Method Not Allowed
+-----------------------------------------------------------
+PID:75435 STATUS:405 - Method:GET Path:/api/v1/task/create
+Response Body: Method Not Allowed
+-----------------------------------------------------------
+PID:75435 STATUS:400 - Method:POST Path:/api/v1/task/create
+Response Body: {"data":null,"message":"Missing or malformed JWT","status":"error"}
+-----------------------------------------------------------
+PID:75435 STATUS:400 - Method:POST Path:/api/v1/task/create
+Response Body: {"data":null,"message":"Missing or malformed JWT","status":"error"}
+-----------------------------------------------------------
+PID:75435 STATUS:400 - Method:POST Path:/api/v1/task/create
+Response Body: {"data":null,"message":"Missing or malformed JWT","status":"error"}
+-----------------------------------------------------------
+PID:75435 STATUS:400 - Method:POST Path:/api/v1/task/create
+Response Body: {"data":null,"message":"Missing or malformed JWT","status":"error"}
+-----------------------------------------------------------
+PID:75435 STATUS:400 - Method:POST Path:/api/v1/task/create
+Response Body: {"data":null,"message":"Missing or malformed JWT","status":"error"}
+-----------------------------------------------------------
+PID:75435 STATUS:405 - Method:POST Path:/api/v1/user/login
+Response Body: Method Not Allowed
+-----------------------------------------------------------
+PID:75435 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"message":"Invalid username/password","status":"error"}
+-----------------------------------------------------------
+PID:75435 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMzAxOTY3LCJpZGVudGl0eSI6ImtpZXIxMjMifQ.1kgSlYvzfFgUjz3MWdWwMA42ilqFIzCcF2DBcqMWCbc","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:75435 STATUS:404 - Method:GET Path:/
+Response Body: Cannot GET /
+-----------------------------------------------------------
+PID:75435 STATUS:404 - Method:GET Path:/favicon.ico
+Response Body: Cannot GET /favicon.ico
+-----------------------------------------------------------
+PID:75435 STATUS:500 - Method:POST Path:/api/v1/user/create
+Response Body: {"ID":6,"CreatedAt":"2022-04-27T15:06:44.090253+08:00","UpdatedAt":"2022-04-27T15:06:44.090253+08:00","DeletedAt":null,"user_name":"","password":"$2a$14$wu2gl5CqKIBHxQyoX4xUXuVdPaTd0ByycHcYZz1BkF/3Oq4EPa.x2","max_todos":0}
+-----------------------------------------------------------
+PID:75435 STATUS:200 - Method:POST Path:/api/v1/user/create
+Response Body: {"ID":7,"CreatedAt":"2022-04-27T15:07:19.384047+08:00","UpdatedAt":"2022-04-27T15:07:19.384047+08:00","DeletedAt":null,"user_name":"admin_kier","password":"$2a$14$zm3OWy56QBkZCbX8In9T8eXC9RxNMCsfaZBHR3NvY/qpbETZi5qSi","max_todos":5}
+-----------------------------------------------------------
+PID:75435 STATUS:405 - Method:POST Path:/api/v1/user/login
+Response Body: Method Not Allowed
+-----------------------------------------------------------
+PID:75435 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"message":"Invalid username/password","status":"error"}
+-----------------------------------------------------------
+PID:75435 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"message":"Invalid username/password","status":"error"}
+-----------------------------------------------------------
+PID:75435 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMzAyNTE4LCJpZGVudGl0eSI6ImFkbWluX2tpZXIifQ._0VN84kMSuLFgBzZRwRoLVlVrmj_2GCKEJQ4t2bjlnE","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:75435 STATUS:400 - Method:POST Path:/api/v1/task/create
+Response Body: {"data":null,"message":"Missing or malformed JWT","status":"error"}
+-----------------------------------------------------------
+PID:75435 STATUS:200 - Method:POST Path:/api/v1/task/create
+Response Body: {"ID":13,"CreatedAt":"2022-04-27T15:11:06.070534+08:00","UpdatedAt":"2022-04-27T15:11:06.070534+08:00","DeletedAt":null,"name":"Task 1","description":"Lorem Ipsum amet","user_id":7,"user":{"ID":0,"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z","DeletedAt":null,"user_name":"","password":"","max_todos":0}}
+-----------------------------------------------------------
+PID:75435 STATUS:401 - Method:POST Path:/api/v1/task/create
+Response Body: {"data":null,"message":"Invalid or expired JWT","status":"error"}
+-----------------------------------------------------------
+PID:75435 STATUS:401 - Method:POST Path:/api/v1/task/create
+Response Body: {"data":null,"message":"Invalid or expired JWT","status":"error"}
+-----------------------------------------------------------
+PID:75435 STATUS:401 - Method:POST Path:/api/v1/task/create
+Response Body: {"data":null,"message":"Invalid or expired JWT","status":"error"}
+-----------------------------------------------------------
+PID:75435 STATUS:401 - Method:POST Path:/api/v1/task/create
+Response Body: {"data":null,"message":"Invalid or expired JWT","status":"error"}
+-----------------------------------------------------------
+PID:75435 STATUS:401 - Method:POST Path:/api/v1/task/create
+Response Body: {"data":null,"message":"Invalid or expired JWT","status":"error"}
+-----------------------------------------------------------
+PID:75435 STATUS:401 - Method:POST Path:/api/v1/task/create
+Response Body: {"data":null,"message":"Invalid or expired JWT","status":"error"}
+-----------------------------------------------------------
+PID:75435 STATUS:401 - Method:POST Path:/api/v1/task/create
+Response Body: {"data":null,"message":"Invalid or expired JWT","status":"error"}
+-----------------------------------------------------------
+PID:75435 STATUS:401 - Method:POST Path:/api/v1/task/create
+Response Body: {"data":null,"message":"Invalid or expired JWT","status":"error"}
+-----------------------------------------------------------
+PID:75435 STATUS:401 - Method:POST Path:/api/v1/task/create
+Response Body: {"data":null,"message":"Invalid or expired JWT","status":"error"}
+-----------------------------------------------------------
+PID:75435 STATUS:401 - Method:POST Path:/api/v1/task/create
+Response Body: {"data":null,"message":"Invalid or expired JWT","status":"error"}
+-----------------------------------------------------------
+PID:75435 STATUS:401 - Method:POST Path:/api/v1/task/create
+Response Body: {"data":null,"message":"Invalid or expired JWT","status":"error"}
+-----------------------------------------------------------
+PID:75435 STATUS:401 - Method:POST Path:/api/v1/task/create
+Response Body: {"data":null,"message":"Invalid or expired JWT","status":"error"}
+-----------------------------------------------------------
+PID:75435 STATUS:401 - Method:POST Path:/api/v1/task/create
+Response Body: {"data":null,"message":"Invalid or expired JWT","status":"error"}
+-----------------------------------------------------------
+PID:75435 STATUS:401 - Method:POST Path:/api/v1/task/create
+Response Body: {"data":null,"message":"Invalid or expired JWT","status":"error"}
+-----------------------------------------------------------
+PID:75435 STATUS:200 - Method:POST Path:/api/v1/task/create
+Response Body: {"ID":14,"CreatedAt":"2022-04-27T15:14:00.931061+08:00","UpdatedAt":"2022-04-27T15:14:00.931061+08:00","DeletedAt":null,"name":"Task 1","description":"Lorem Ipsum amet","user_id":7,"user":{"ID":0,"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z","DeletedAt":null,"user_name":"","password":"","max_todos":0}}
