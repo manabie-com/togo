@@ -1,7 +1,7 @@
 package route
 
 import (
-	"togo/internal/services/user"
+	"togo/internal/controller"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -9,12 +9,7 @@ import (
 func UserRoutes(rg fiber.Router) {
 
 	tg := rg.Group("/user")
-	tg.Post("/create", user.Create)
-	tg.Get("/login", user.Login)
-
-	// rg.GET("/user/:id", user.Get)
-	// rg.GET("/user", user.GetAll)
-	// rg.PUT("/user/:id", user.Update)
-	// rg.DELETE("/user/:id", user.Delete)
+	tg.Post("/create", controller.CreateUser)
+	tg.Get("/login", controller.LoginUser)
 
 }
