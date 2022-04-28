@@ -11,7 +11,7 @@ var DB *gorm.DB
 var err error
 
 func init() {
-	DB, err = gorm.Open(sqlite.Open("database/todo.db"), &gorm.Config{})
+	DB, err = gorm.Open(sqlite.Open("../database/todo.db"), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
