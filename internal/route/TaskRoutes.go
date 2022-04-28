@@ -1,8 +1,8 @@
 package route
 
 import (
+	"togo/internal/controller"
 	"togo/internal/middleware"
-	"togo/internal/services/task"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -10,6 +10,6 @@ import (
 func TaskRoutes(rg fiber.Router) {
 
 	tg := rg.Group("/task")
-	tg.Post("/create", middleware.Protected(), task.Create)
+	tg.Post("/create", middleware.Protected(), controller.CreateTask)
 
 }
