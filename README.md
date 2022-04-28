@@ -1,30 +1,45 @@
-### Requirements
+<h1 align="center" id="title">ToGo Project</h1>
+<h3 align="center" id="title">By: Kier A. Quebral</h3>
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+<h2>Kindly use the follwing command:</h2>
 
-### Notes
+<p>1. To run the pprogram in your localhost</p>
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+```
+make run
+```
 
-### How to submit your solution?
+<p>2. To kill the current process</p>
 
-- Fork this repo and show us your development progress via a PR
+```
+make kill
+```
 
-### Interesting facts about Manabie
+<p>3. To do a unit testing</p>
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+```
+make testing.unit
+```
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+<h2>🧐 Here're some cURL to call our awesome API</h2>
+
+<p>1. Use this cURL to create you awesome user.</p>
+
+```
+curl --location --request POST 'http://127.0.0.1:8080/api/v1/user/create' \ --header 'Content-Type: application/json' \ --data-raw '{     "user_name":"admin_kier"     "password":"P@ssw0rd123"     "max_todos":5 }'
+```
+
+<p>2. Use this cURL to login your awesome account.. Once you successfully login it will return a token. You need the token to create task</p>
+
+```
+curl --location --request GET 'http://127.0.0.1:8080/api/v1/user/login' \ --header 'Content-Type: application/json' \ --data-raw '{     "user_name":"admin_kier"     "password":"P@ssw0rd123" }'
+```
+
+<p>3. Use this cURL to create your awesome task. Remember you need to include the token in Authorization header</p>
+
+```
+curl --location --request POST 'http://127.0.0.1:8080/api/v1/task/create' \ --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxMzAyNTE4LCJpZGVudGl0eSI6ImFkbWluX2tpZXIifQ._0VN84kMSuLFgBzZRwRoLVlVrmj_2GCKEJQ4t2bjlnE' \ --header 'Content-Type: application/json' \ --data-raw '{     "name":"Tas"     "description": "Lorem Ipsum amet"     "user_id":1 }'
+```
+
+<p>What I love for my solution is I show how to use interface and I share how I write a simple api that use jwt for authentication. I hope this project met your requirements for the position as Back-End Engineer. </p>
+

@@ -1,0 +1,210 @@
+-----------------------------------------------------------
+PID:97919 STATUS:200 - Method:POST Path:/api/v1/task/create
+Response Body: {"ID":15,"CreatedAt":"2022-04-28T19:12:56.813015+08:00","UpdatedAt":"2022-04-28T19:12:56.813015+08:00","DeletedAt":null,"name":"Task 1","description":"Lorem Ipsum amet","user_id":7,"user":{"ID":0,"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z","DeletedAt":null,"user_name":"","password":"","max_todos":0}}
+-----------------------------------------------------------
+PID:609 STATUS:200 - Method:POST Path:/api/v1/task/create
+Response Body: {"ID":16,"CreatedAt":"2022-04-28T19:21:29.273726+08:00","UpdatedAt":"2022-04-28T19:21:29.273726+08:00","DeletedAt":null,"name":"Task 1","description":"Lorem Ipsum amet","user_id":7,"user":{"ID":0,"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z","DeletedAt":null,"user_name":"","password":"","max_todos":0}}
+-----------------------------------------------------------
+PID:609 STATUS:200 - Method:POST Path:/api/v1/task/create
+Response Body: {"ID":17,"CreatedAt":"2022-04-28T19:21:29.896794+08:00","UpdatedAt":"2022-04-28T19:21:29.896794+08:00","DeletedAt":null,"name":"Task 1","description":"Lorem Ipsum amet","user_id":7,"user":{"ID":0,"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z","DeletedAt":null,"user_name":"","password":"","max_todos":0}}
+-----------------------------------------------------------
+PID:609 STATUS:200 - Method:POST Path:/api/v1/task/create
+Response Body: {"ID":18,"CreatedAt":"2022-04-28T19:21:30.35297+08:00","UpdatedAt":"2022-04-28T19:21:30.35297+08:00","DeletedAt":null,"name":"Task 1","description":"Lorem Ipsum amet","user_id":7,"user":{"ID":0,"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z","DeletedAt":null,"user_name":"","password":"","max_todos":0}}
+-----------------------------------------------------------
+PID:609 STATUS:200 - Method:POST Path:/api/v1/task/create
+Response Body: {"ID":19,"CreatedAt":"2022-04-28T19:21:30.796796+08:00","UpdatedAt":"2022-04-28T19:21:30.796796+08:00","DeletedAt":null,"name":"Task 1","description":"Lorem Ipsum amet","user_id":7,"user":{"ID":0,"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z","DeletedAt":null,"user_name":"","password":"","max_todos":0}}
+-----------------------------------------------------------
+PID:609 STATUS:406 - Method:POST Path:/api/v1/task/create
+Response Body: {"message":"Daily task limit exceeded","retCode":406}
+-----------------------------------------------------------
+PID:609 STATUS:406 - Method:POST Path:/api/v1/task/create
+Response Body: {"message":"Daily task limit exceeded","retCode":406}
+-----------------------------------------------------------
+PID:609 STATUS:406 - Method:POST Path:/api/v1/task/create
+Response Body: {"message":"Daily task limit exceeded","retCode":406}
+-----------------------------------------------------------
+PID:609 STATUS:406 - Method:POST Path:/api/v1/task/create
+Response Body: {"message":"Daily task limit exceeded","retCode":406}
+-----------------------------------------------------------
+PID:609 STATUS:406 - Method:POST Path:/api/v1/task/create
+Response Body: {"message":"Daily task limit exceeded","retCode":406}
+-----------------------------------------------------------
+PID:609 STATUS:406 - Method:POST Path:/api/v1/task/create
+Response Body: {"message":"Daily task limit exceeded","retCode":406}
+-----------------------------------------------------------
+PID:609 STATUS:406 - Method:POST Path:/api/v1/task/create
+Response Body: {"message":"Daily task limit exceeded","retCode":406}
+-----------------------------------------------------------
+PID:609 STATUS:406 - Method:POST Path:/api/v1/task/create
+Response Body: {"message":"Daily task limit exceeded","retCode":406}
+-----------------------------------------------------------
+PID:609 STATUS:406 - Method:POST Path:/api/v1/task/create
+Response Body: {"message":"Daily task limit exceeded","retCode":406}
+-----------------------------------------------------------
+PID:609 STATUS:406 - Method:POST Path:/api/v1/task/create
+Response Body: {"message":"Daily task limit exceeded","retCode":406}
+-----------------------------------------------------------
+PID:609 STATUS:406 - Method:POST Path:/api/v1/task/create
+Response Body: {"message":"Daily task limit exceeded","retCode":406}
+-----------------------------------------------------------
+PID:609 STATUS:406 - Method:POST Path:/api/v1/task/create
+Response Body: {"message":"Daily task limit exceeded","retCode":406}
+-----------------------------------------------------------
+PID:609 STATUS:406 - Method:POST Path:/api/v1/task/create
+Response Body: {"message":"Daily task limit exceeded","retCode":406}
+-----------------------------------------------------------
+PID:609 STATUS:406 - Method:POST Path:/api/v1/task/create
+Response Body: {"message":"Daily task limit exceeded","retCode":406}
+-----------------------------------------------------------
+PID:609 STATUS:406 - Method:POST Path:/api/v1/task/create
+Response Body: {"message":"Daily task limit exceeded","retCode":406}
+-----------------------------------------------------------
+PID:609 STATUS:406 - Method:POST Path:/api/v1/task/create
+Response Body: {"message":"Daily task limit exceeded","retCode":406}
+-----------------------------------------------------------
+PID:609 STATUS:406 - Method:POST Path:/api/v1/task/create
+Response Body: {"message":"Daily task limit exceeded","retCode":406}
+-----------------------------------------------------------
+PID:609 STATUS:400 - Method:POST Path:/api/v1/task/create
+Response Body: "Key: 'Task.Name' Error:Field validation for 'Name' failed on the 'required' tag"
+-----------------------------------------------------------
+PID:609 STATUS:400 - Method:POST Path:/api/v1/task/create
+Response Body: "Key: 'Task.Name' Error:Field validation for 'Name' failed on the 'required' tag"
+-----------------------------------------------------------
+PID:609 STATUS:400 - Method:POST Path:/api/v1/task/create
+Response Body: "Key: 'Task.Name' Error:Field validation for 'Name' failed on the 'required' tag"
+-----------------------------------------------------------
+PID:609 STATUS:400 - Method:POST Path:/api/v1/task/create
+Response Body: "Key: 'Task.Name' Error:Field validation for 'Name' failed on the 'min' tag"
+-----------------------------------------------------------
+PID:609 STATUS:400 - Method:POST Path:/api/v1/task/create
+Response Body: "Key: 'Task.Name' Error:Field validation for 'Name' failed on the 'min' tag"
+-----------------------------------------------------------
+PID:609 STATUS:406 - Method:POST Path:/api/v1/task/create
+Response Body: {"message":"Daily task limit exceeded","retCode":406}
+-----------------------------------------------------------
+PID:609 STATUS:401 - Method:POST Path:/api/v1/task/create
+Response Body: {"data":null,"message":"Invalid or expired JWT","status":"error"}
+-----------------------------------------------------------
+PID:609 STATUS:401 - Method:POST Path:/api/v1/task/create
+Response Body: {"data":null,"message":"Invalid or expired JWT","status":"error"}
+-----------------------------------------------------------
+PID:5238 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"ID":8,"CreatedAt":"2022-04-28T19:33:04.211737+08:00","UpdatedAt":"2022-04-28T19:33:04.211737+08:00","DeletedAt":null,"user_name":"admin_kier","password":"$2a$14$tPzfkb3t9IymcJZHLyziv.SpkxcO5PWDuRL62WtuxM6Ao5E9tLFSy","max_todos":0}
+-----------------------------------------------------------
+PID:5238 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"ID":9,"CreatedAt":"2022-04-28T19:33:31.357378+08:00","UpdatedAt":"2022-04-28T19:33:31.357378+08:00","DeletedAt":null,"user_name":"admin_kier","password":"$2a$14$j5P6xG77TBj1qepso/M9AO25S9IR6ygVurbO0pN3WAtnGAglNgkF6","max_todos":0}
+-----------------------------------------------------------
+PID:5686 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"message":"Invalid username/password","status":"error"}
+-----------------------------------------------------------
+PID:5686 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"message":"Invalid username/password","status":"error"}
+-----------------------------------------------------------
+PID:5686 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"message":"Invalid username/password","status":"error"}
+-----------------------------------------------------------
+PID:5686 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"message":"Invalid username/password","status":"error"}
+-----------------------------------------------------------
+PID:5686 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxNDA0ODM3LCJpZGVudGl0eSI6ImFkbWluX2tpZXIifQ.GEC1ANgUwXzKeTRkpcXa6Ii6bJID62tzTc17-UGjHEA","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:5686 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxNDA0ODQwLCJpZGVudGl0eSI6ImFkbWluX2tpZXIifQ.hmBeYFNaozGlobPfdZGYjtTh2xu4Ia69wZyC22l5aa8","message":"Success login","status":"success"}
+-----------------------------------------------------------
+PID:5686 STATUS:200 - Method:POST Path:/api/v1/user/create
+Response Body: {"ID":10,"CreatedAt":"2022-04-28T19:34:20.585006+08:00","UpdatedAt":"2022-04-28T19:34:20.585006+08:00","DeletedAt":null,"user_name":"admin_kier","password":"$2a$14$J4RiWheUqgLzq//MA2AMi.UDRsl0dBDAvbLdsSBUIb6YAW52b5Rty","max_todos":2}
+-----------------------------------------------------------
+PID:7851 STATUS:200 - Method:POST Path:/api/v1/user/create
+Response Body: {"ID":11,"CreatedAt":"2022-04-28T19:38:00.227429+08:00","UpdatedAt":"2022-04-28T19:38:00.227429+08:00","DeletedAt":null,"user_name":"admin_kier","password":"$2a$14$kTDoe6tqpiAXYGOBKSZhJOSf338R.F/xOpOCh/CDA9fHsqb2kNbTa","max_todos":2}
+-----------------------------------------------------------
+PID:7851 STATUS:200 - Method:POST Path:/api/v1/user/create
+Response Body: {"ID":12,"CreatedAt":"2022-04-28T19:38:02.778702+08:00","UpdatedAt":"2022-04-28T19:38:02.778702+08:00","DeletedAt":null,"user_name":"admin_kier","password":"$2a$14$1OppUhzrPbWZ8eRkiPmAZuZ4JR/ZqfedXsFkqMrGJuJvsN2IDO5EO","max_todos":2}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:8040 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:38299 STATUS:405 - Method:GET Path:/api/v1/user/create
+Response Body: Method Not Allowed
+-----------------------------------------------------------
+PID:38299 STATUS:409 - Method:POST Path:/api/v1/user/create
+Response Body: {"message":"Username already exists","status":"error"}
+-----------------------------------------------------------
+PID:38299 STATUS:200 - Method:GET Path:/api/v1/user/login
+Response Body: {"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6dHJ1ZSwiZXhwIjoxNjUxNDExMTUzLCJpZGVudGl0eSI6ImFkbWluX2tpZXIifQ.hAGlaYEDV4AFm0wBxZzlnkyIIusKIY_5XRUU2BQzgfk","message":"Success login","status":"success"}
