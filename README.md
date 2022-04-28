@@ -21,7 +21,7 @@ make kill
 make testing.unit
 ```
 
-<h2>🧐 Here're some of the project's best features:Use this cURL to call our awesome API</h2>
+<h2>🧐 Here're some cURL to call our awesome API</h2>
 
 <p>1. Use this cURL to create you awesome user.</p>
 
