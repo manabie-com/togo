@@ -12,7 +12,7 @@ import (
 func Logger(app *fiber.App) {
 
 	currentTime := time.Now()
-	file, err := os.OpenFile("../logs/"+currentTime.Format("01022006")+".log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	file, err := os.OpenFile("../../logs/"+currentTime.Format("01022006")+".log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		log.Fatalf("error opening file: %v", err)
 	}
