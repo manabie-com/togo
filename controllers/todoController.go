@@ -5,8 +5,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/manabie-com/togo/database"
-
 	"github.com/manabie-com/togo/models"
 
 	"github.com/manabie-com/togo/factories"
@@ -19,8 +17,6 @@ func AddTodoTask(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
-
-	database.ConnectDatabase()
 
 	user, errUser := factories.UserFactory("get", &newTodo)
 

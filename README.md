@@ -50,6 +50,7 @@ curl --location --request POST 'http://localhost:8080/todo/add' \
 
 to run api test  execute this command 
 "go test -timeout 30s -run ^TestAddTodoTask$ github.com/manabie-com/togo/test"
+"go test -timeout 30s -run ^TestAddTodoTaskWithIncorrectParameter$ github.com/manabie-com/togo/test"
 
 to run integration test execute this command 
 - go test -timeout 30s -run ^TestAddTodo$ github.com/manabie-com/togo/handlers
