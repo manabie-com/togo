@@ -34,10 +34,17 @@ module.exports.down = async function (next) {
   await client.connect()
   try {
     await client.query('BEGIN')
-    for (let i = 0; i < 10000; i++) {
-      await client.query(`
-        DELETE FROM "user" where id=$1
-      `, [i])
+    let response = await client.query(`
+      SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES 
+        WHERE TABLE_NAME = 'user'
+    `)
+    let count = response.rows[0].count 
+    if (count > 0) {
+      for (let i = 0; i < 10000; i++) {
+        await client.query(`
+          DELETE FROM "user" where id=$1
+        `, [i])
+      }
     }
     await client.query('COMMIT')
   } catch (exception) {

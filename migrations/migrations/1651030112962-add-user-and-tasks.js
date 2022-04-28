@@ -20,7 +20,8 @@ module.exports.up = async function (next) {
         id SERIAL PRIMARY KEY,
         user_id INT REFERENCES "user"(id) ON UPDATE CASCADE ON DELETE CASCADE NOT NULL,
         title TEXT NOT NULL,
-        content TEXT NOT NULL 
+        content TEXT NOT NULL,
+        created_time TIMESTAMPTZ NOT NULL
       )
     `)
     await client.query('COMMIT')
@@ -38,7 +39,7 @@ module.exports.down = async function (next) {
   try {
     await client.query('BEGIN')
     await client.query(`
-      CREATE TABLE IF NOT EXISTS "tasks"
+      DROP TABLE IF EXISTS "tasks"
     `)
     await client.query(`
       DROP TABLE IF EXISTS "user"`)

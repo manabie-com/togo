@@ -6,31 +6,39 @@ services:
       - ./backend:/opt/app
       - backend_home:/root
     environment:
-      - PGHOST=manabie-db-1
+      - PGHOST=manabie-db-test-1
       - PGUSER=manabie
       - PGDATABASE=manabie
       - PGPASSWORD=manabie
     working_dir: /opt/app
     command: sleep infinity
-  db:
+    depends_on:
+      - migrations
+  db-test:
     image: postgres:14.2
     environment:
       - POSTGRES_DB=manabie
       - POSTGRES_USER=manabie
       - POSTGRES_PASSWORD=manabie
-    volumes: 
-      - ./db:/var/lib/postgresql/data
+    tmpfs: 
+      - /var/lib/postgresql/data
   migrations:
     image: node:17-buster-slim
     volumes:
       - ./migrations:/opt/app/workspace
-    command: sleep infinity
+      - type: bind
+        source: ./migrations/migrate.test
+        target: /opt/app/workspace/.migrate
+    command: bash -c 'sleep 2 && npx migrate up'
     environment:
-      - PGHOST=manabie-db-1
+      - PGHOST=manabie-db-test-1
       - PGUSER=manabie
       - PGDATABASE=manabie
       - PGPASSWORD=manabie
       - PGPORT=5432
+      - CONFIG_FILE=./initial_data/config.yaml
     working_dir: /opt/app/workspace
+    depends_on:
+      - db-test
 volumes:
   backend_home:
