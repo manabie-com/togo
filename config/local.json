@@ -1,0 +1,19 @@
+{
+    "dbConfig": {
+        "HOST": "ec2-3-218-171-44.compute-1.amazonaws.com",
+        "USER": "ejdenxmmlfclga",
+        "PASSWORD": "bb0ae7dbcf21b55bb51e9695e93d9cb5646937915fd43420d6d1e4a0a679137e",
+        "DB": "dfgrb90kfrpjra",
+        "dialect": "postgres",
+        "pool": {
+            "max": 5,
+            "min": 0,
+            "acquire": 30000,
+            "idle": 10000
+        }
+    },
+    "accessToken": {
+        "accessTokenSecret": "accessTokenSecret",
+        "refreshTokenSecret": "refreshTokenSecret"
+    }
+}
