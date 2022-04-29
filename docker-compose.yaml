@@ -30,7 +30,7 @@ services:
     image: node:17-buster-slim
     volumes:
       - ./migrations:/opt/app/workspace
-    command: bash -c 'sleep 2 && npx migrate up'
+    command: bash -c 'npm install && sleep 2 && npx migrate up'
     environment:
       - PGHOST=manabie-db-1
       - PGUSER=manabie

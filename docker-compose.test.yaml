@@ -30,7 +30,7 @@ services:
       - type: bind
         source: ./migrations/migrate.test
         target: /opt/app/workspace/.migrate
-    command: bash -c 'sleep 2 && npx migrate up'
+    command: bash -c 'npm install && sleep 2 && npx migrate up'
     environment:
       - PGHOST=manabie-db-test-1
       - PGUSER=manabie

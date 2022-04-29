@@ -12,7 +12,7 @@ services:
     image: node:17-buster-slim
     volumes:
       - ./migrations:/opt/app/workspace
-    command: sleep infinity
+    command: bash -c 'npm install && sleep infinity'
     environment:
       - PGHOST=manabie-db-1
       - PGUSER=manabie
