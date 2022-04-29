@@ -1,12 +1,12 @@
 import { StatusCode } from '../common/enum';
 import { ERROR_CODE, ErrorList } from './error.list';
-import { ErrorDetails } from './error.type';
+import { IErrorDetails } from './error.type';
 
 export class AppError extends Error {
   public errorCode: ERROR_CODE;
-  errors?: ErrorDetails[];
+  errors?: IErrorDetails[];
   code: number = StatusCode.INTERNAL_SERVER_ERROR;
-  constructor(errorCode: ERROR_CODE, errors?: ErrorDetails[]) {
+  constructor(errorCode: ERROR_CODE, errors?: IErrorDetails[]) {
     super(errorCode);
     this.errorCode = errorCode;
     this.name = AppError.name;
