@@ -1,7 +1,14 @@
 import hapi from '@hapi/hapi';
 import Inert from '@hapi/inert';
 import Vision from '@hapi/vision';
-import { HOST, PORT } from './config';
+import {
+  HOST,
+  PORT,
+  MONGO_URI,
+  MONGO_USER,
+  MONGO_PASS,
+  MONGO_DB_NAME
+} from './config';
 
 import logger from './logger';
 import routes from './routes';
@@ -10,6 +17,7 @@ import errorHandler from './plugins/errorHandler.plugin';
 import ResponseWrapper from './plugins/responseWrapper.plugin';
 import RequestWrapper from './plugins/requestWrapper.plugin';
 import Swagger from './plugins/swagger.plugin';
+import { connectMongo } from './connectMongo';
 
 const createServer = async () => {
   const server = new hapi.Server({
@@ -40,7 +48,12 @@ const createServer = async () => {
 };
 
 export const init = async () => {
-  // await connectMongo();
+  await connectMongo({
+    dbUri: MONGO_URI,
+    user: MONGO_USER,
+    pass: MONGO_PASS,
+    dbName: MONGO_DB_NAME
+  });
 
   const server = await createServer();
   await server
