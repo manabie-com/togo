@@ -13,11 +13,10 @@ namespace ManabieTodo.Services
         private IDatabaseService _dbService { get; }
 
         public AuthenticationService(
-            IFakeCache fakeCache,
             JwTokenGenerator jwTokenGenerator,
             IDatabaseService dbService)
         {
-            _fakeCache = fakeCache;
+            _fakeCache = CacheFactory.FakeCache;
             _jwTokenGenerator = jwTokenGenerator;
             _dbService = dbService;
         }
