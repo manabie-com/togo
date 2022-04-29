@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: users
@@ -12,6 +14,6 @@ class User < ApplicationRecord
   has_many :tasks, dependent: :delete_all
 
   def reach_daily_task_limit?
-    tasks.size >= max_daily_tasks
+    tasks.within_today.size >= max_daily_tasks
   end
 end

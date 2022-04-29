@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: tasks
@@ -10,4 +12,6 @@
 #
 class Task < ApplicationRecord
   belongs_to :user
+
+  scope :within_today, -> { where(created_at: Time.current.all_day) }
 end
