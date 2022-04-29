@@ -17,3 +17,8 @@
 out/
 
 .idea
+
+node_modules
+.env
+dist
+coverage
