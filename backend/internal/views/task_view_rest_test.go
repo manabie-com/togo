@@ -16,7 +16,6 @@ import (
 )
 
 func TestViewRest(t *testing.T) {
-	t.Log("a")
 	container := dig.New()
 	var err error
 	err = common.ProvideClockSim(container)

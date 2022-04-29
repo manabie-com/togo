@@ -1,23 +1,5 @@
 version: '3.0'
 services:
-  backend:
-    image: golang:1.18.1-buster
-    volumes: 
-      - ./backend:/opt/app
-      - go_root:/go
-    environment:
-      - PGHOST=manabie-db-1
-      - PGUSER=manabie
-      - PGDATABASE=manabie
-      - PGPASSWORD=manabie
-      - SIM_OFFSET_DAY=1
-    working_dir: /opt/app
-    command: bash -c 'go mod vendor && go install cmd/server.go && server'
-    depends_on:
-      migrations:
-        condition: service_completed_successfully
-    ports:
-      - 8090:8090
   db:
     image: postgres:14.2
     environment:
@@ -30,7 +12,7 @@ services:
     image: node:17-buster-slim
     volumes:
       - ./migrations:/opt/app/workspace
-    command: bash -c 'sleep 2 && npx migrate up'
+    command: sleep infinity
     environment:
       - PGHOST=manabie-db-1
       - PGUSER=manabie
