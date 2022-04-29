@@ -30,7 +30,7 @@ func TestRepositoryFactorySql(t *testing.T) {
 
 
 	t.Run("can create repositories", func (t *testing.T) {
-		factory := MakeRepositoryFactory(db)
+		factory := MakeRepositoryFactorySql(db)
 		ctx := context.Background()
 		testCreateRepositories := func (oDone chan error) {
 			err, txErr := factory.StartTransactionAuto(
@@ -73,7 +73,7 @@ func TestRepositoryFactorySql(t *testing.T) {
 	})
 
 	t.Run("commit if ok", func (t *testing.T) {
-		factory := MakeRepositoryFactory(db)
+		factory := MakeRepositoryFactorySql(db)
 		SetUpTaskRepositorySqlTest(db)
 
 		verifyTaskCount(0, db, t)
@@ -116,7 +116,7 @@ func TestRepositoryFactorySql(t *testing.T) {
 
 
 	t.Run("rollback if error", func (t *testing.T) {
-		factory := MakeRepositoryFactory(db)
+		factory := MakeRepositoryFactorySql(db)
 		SetUpTaskRepositorySqlTest(db)
 
 		verifyTaskCount(0, db, t)

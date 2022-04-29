@@ -16,8 +16,8 @@ type TaskController struct {
 func MakeTaskController(
 	iFactory repositories.RepositoryFactoryI,
 	iClock common.ClockI,
-) TaskController {
-	return TaskController{
+) *TaskController {
+	return &TaskController{
 		factory: iFactory,
 		clock: iClock,
 	}

@@ -14,10 +14,10 @@ type RepositoryFactory struct {
 	count int
 }
 
-func MakeRepositoryFactory(
+func MakeRepositoryFactorySql(
 	iDb *sql.DB,
-) RepositoryFactory {
-	return RepositoryFactory {
+) *RepositoryFactory {
+	return &RepositoryFactory {
 		db: iDb,
 		count: 0,
 		transactions: map[TransactionId]*sql.Tx{},

@@ -1,19 +1,20 @@
-version: '3.0'
+version: '3.8'
 services:
   backend:
     image: golang:1.18.1-buster
     volumes: 
       - ./backend:/opt/app
-      - backend_home:/root
+      - go_root:/go
     environment:
       - PGHOST=manabie-db-test-1
       - PGUSER=manabie
       - PGDATABASE=manabie
       - PGPASSWORD=manabie
     working_dir: /opt/app
-    command: sleep infinity
+    command: bash -c 'go mod vendor && go test ./...'
     depends_on:
-      - migrations
+      migrations:
+        condition: service_completed_successfully
   db-test:
     image: postgres:14.2
     environment:
@@ -36,9 +37,8 @@ services:
       - PGDATABASE=manabie
       - PGPASSWORD=manabie
       - PGPORT=5432
-      - CONFIG_FILE=./initial_data/config.yaml
     working_dir: /opt/app/workspace
     depends_on:
       - db-test
 volumes:
-  backend_home:
+  go_root:

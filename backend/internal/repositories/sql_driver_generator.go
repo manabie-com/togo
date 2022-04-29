@@ -5,6 +5,7 @@ import (
 	"os"
 	"fmt"
 	_ "github.com/lib/pq"
+	"go.uber.org/dig"
 )
 
 func ConnectPostgres() *sql.DB {
@@ -20,4 +21,8 @@ func ConnectPostgres() *sql.DB {
 	}
 
 	return db
+}
+
+func ProvideSqlConnection(iContainer *dig.Container) error {
+	return iContainer.Provide(ConnectPostgres)
 }

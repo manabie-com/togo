@@ -3,11 +3,11 @@ package models
 import "manabie.com/internal/common"
 
 type Task struct {
-	Id int
-	Title string
-	Content string
-	CreatedTime common.Time
-	Owner *User
+	Id int 						`json:"id"`
+	Title string 				`json:"title"`
+	Content string  			`json:"content"`
+	CreatedTime common.Time  	`json:"created_time"`
+	Owner *User					`json:"-"`
 }
 
 func MakeTask(
