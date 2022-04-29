@@ -34,52 +34,59 @@ func (c TaskController) CreateTaskForUserId(
 	var newTask models.Task
 	/// need Serialzable isolation because otherwise the task limit may be exceeded
 	/// we don't need performance anyway
-	err, txError := c.factory.StartTransactionAuto(
-		iContext, 
-		repositories.Serializable,
-		func(iTransactionId repositories.TransactionId) error {
-			userRepository, err := c.factory.GetUserRepository(iTransactionId)
-			if err != nil {
-				return err
-			}
+	var err, txError error
+	for true {
+		err, txError = c.factory.StartTransactionAuto(
+			iContext, 
+			repositories.Serializable,
+			func(iTransactionId repositories.TransactionId) error {
+				userRepository, err := c.factory.GetUserRepository(iTransactionId)
+				if err != nil {
+					return err
+				}
 
-			taskRepository, err := c.factory.GetTaskRepository(iTransactionId)
-			if err != nil {
-				return err
-			}
+				taskRepository, err := c.factory.GetTaskRepository(iTransactionId)
+				if err != nil {
+					return err
+				}
 
-			user, err := userRepository.FetchUserById(iContext, iUserId)
-			if err != nil {
-				return err
-			}
+				user, err := userRepository.FetchUserById(iContext, iUserId)
+				if err != nil {
+					return err
+				}
 
-			currentTime := c.clock.Now()
-			numberOfTasks, err := taskRepository.FetchNumberOfTaskForUserCreatedOnDay(iContext, user, currentTime)
-			if err != nil {
-				return err
-			}
+				currentTime := c.clock.Now()
+				numberOfTasks, err := taskRepository.FetchNumberOfTaskForUserCreatedOnDay(iContext, user, currentTime)
+				if err != nil {
+					return err
+				}
 
-			if numberOfTasks >= user.MaxNumberOfTasks {
-				return TaskLimitExceeds
-			}
+				if numberOfTasks >= user.MaxNumberOfTasks {
+					return TaskLimitExceeds
+				}
 
-			task := models.MakeTask(
-				-1,
-				iTaskTitle,
-				iTaskContent,
-				currentTime,
-				nil,
-			)
+				task := models.MakeTask(
+					-1,
+					iTaskTitle,
+					iTaskContent,
+					currentTime,
+					nil,
+				)
 
-			newTaskList, err := taskRepository.CreateTaskForUser(iContext, user, []models.Task{task})
-			if err != nil {
-				return err
-			}
+				newTaskList, err := taskRepository.CreateTaskForUser(iContext, user, []models.Task{task})
+				if err != nil {
+					return err
+				}
 
-			newTask = newTaskList[0]
-			return nil
-		},
-	)
+				newTask = newTaskList[0]
+				return nil
+			},
+		)
+
+		if txError != common.SqlSerializableTransactionError {
+			break
+		}
+	}
 
 	if err != nil {
 		return models.Task{}, err
