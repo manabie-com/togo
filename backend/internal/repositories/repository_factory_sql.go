@@ -42,10 +42,10 @@ func (f *RepositoryFactory) StartTransactionAuto(
 	iContext context.Context, 
 	iIsolationLevel TransactionLevel,
 	iHandler TransactionHandler,
-) error {
+) (error, error) {
 	tx, err := f.db.BeginTx(iContext, &sql.TxOptions{Isolation: isolationLevelToSqlIsolationLevel(iIsolationLevel)})
 	if err != nil {
-		return err
+		return nil, err
 	}
 	f.mtx.Lock()
 	count := TransactionId(f.count)
@@ -58,13 +58,14 @@ func (f *RepositoryFactory) StartTransactionAuto(
 	delete(f.transactions, count)
 	f.mtx.Unlock()
 
+	var commitErr error
 	if err != nil {
-		tx.Rollback()
+		commitErr = tx.Rollback()
 	} else {
-		tx.Commit()
+		commitErr = tx.Commit()
 	}
 
-	return err
+	return err, commitErr
 }
 
 func (f *RepositoryFactory) GetTaskRepository(iId TransactionId) (TaskRepositoryI, error) {

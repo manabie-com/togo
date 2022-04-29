@@ -34,7 +34,7 @@ func (c TaskController) CreateTaskForUserId(
 	var newTask models.Task
 	/// need Serialzable isolation because otherwise the task limit may be exceeded
 	/// we don't need performance anyway
-	err := c.factory.StartTransactionAuto(
+	err, txError := c.factory.StartTransactionAuto(
 		iContext, 
 		repositories.Serializable,
 		func(iTransactionId repositories.TransactionId) error {
@@ -82,6 +82,10 @@ func (c TaskController) CreateTaskForUserId(
 	)
 
 	if err != nil {
+		return models.Task{}, err
+	}
+
+	if txError != nil {
 		return models.Task{}, err
 	}
 

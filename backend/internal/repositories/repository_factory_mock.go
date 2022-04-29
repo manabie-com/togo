@@ -38,14 +38,14 @@ func (m *RepositoryFactoryMock) StartTransactionAuto(
 	iContext context.Context, 
 	iIsolationLevel TransactionLevel,
 	iHandler TransactionHandler,
-) error {
+) (error, error) {
 	m.Count += 1
 	m.validIds[m.Count] = true
 	m.TransactionLevelsHistory[m.Count] = iIsolationLevel
 	defer func () {
 		delete(m.validIds, m.Count)
 	}()
-	return iHandler(TransactionId(m.Count))
+	return iHandler(TransactionId(m.Count)), nil
 }
 
 func (m *RepositoryFactoryMock) GetTaskRepository(iId TransactionId) (TaskRepositoryI, error) {

@@ -21,12 +21,13 @@ type RepositoryFactoryI interface {
 	/// transaction ID which can be used to create different 
 	/// repositories. Repositories instances don't need to be
 	/// the same for the same transaction id.
-	/// return the error returns by transaction handler
+	/// return the error returns by transaction handler and the result of the 
+	/// begin / commit / abort
 	StartTransactionAuto(
 		iContext context.Context, 
 		iIsolationLevel TransactionLevel,
 		iHandler TransactionHandler,
-	) error
+	) (error, error)
 	/// return common.NotFound if iId has not been created
 	GetTaskRepository(iId TransactionId) (TaskRepositoryI, error)
 	/// return common.NotFound if iId has not been created

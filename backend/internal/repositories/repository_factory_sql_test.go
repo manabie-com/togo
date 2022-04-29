@@ -33,7 +33,7 @@ func TestRepositoryFactorySql(t *testing.T) {
 		factory := MakeRepositoryFactory(db)
 		ctx := context.Background()
 		testCreateRepositories := func (oDone chan error) {
-			err := factory.StartTransactionAuto(
+			err, txErr := factory.StartTransactionAuto(
 				ctx, 
 				ReadCommitted,
 				func (iTransactionId TransactionId) error  {
@@ -53,6 +53,7 @@ func TestRepositoryFactorySql(t *testing.T) {
 				},
 			)
 			require.Equal(t, nil, err)
+			require.Equal(t, nil, txErr)
 			oDone <- nil
 		}
 
@@ -78,7 +79,7 @@ func TestRepositoryFactorySql(t *testing.T) {
 		verifyTaskCount(0, db, t)
 
 		ctx := context.Background()
-		err := factory.StartTransactionAuto(
+		err, txErr := factory.StartTransactionAuto(
 			ctx, 
 			ReadCommitted,
 			func (iTransactionId TransactionId) error  {
@@ -110,6 +111,7 @@ func TestRepositoryFactorySql(t *testing.T) {
 		)
 		verifyTaskCount(1, db, t)
 		require.Equal(t, nil, err)
+		require.Equal(t, nil, txErr)
 	})
 
 
@@ -121,7 +123,7 @@ func TestRepositoryFactorySql(t *testing.T) {
 
 		ctx := context.Background()
 		mockError := fmt.Errorf("error")
-		err := factory.StartTransactionAuto(
+		err, txErr := factory.StartTransactionAuto(
 			ctx, 
 			ReadCommitted,
 			func (iTransactionId TransactionId) error  {
@@ -154,5 +156,6 @@ func TestRepositoryFactorySql(t *testing.T) {
 
 		verifyTaskCount(0, db, t)
 		require.Equal(t, mockError, err)
+		require.Equal(t, nil, txErr)
 	})
 }
