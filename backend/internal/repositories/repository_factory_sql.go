@@ -65,7 +65,7 @@ func (f *RepositoryFactory) StartTransactionAuto(
 		commitErr = tx.Commit()
 	}
 	
-	return err, common.NormalizeSqlError(commitErr)
+	return common.NormalizeSqlError(err), common.NormalizeSqlError(commitErr)
 }
 
 func (f *RepositoryFactory) GetTaskRepository(iId TransactionId) (TaskRepositoryI, error) {

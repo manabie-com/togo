@@ -83,7 +83,7 @@ func (c TaskController) CreateTaskForUserId(
 			},
 		)
 
-		if txError != common.SqlSerializableTransactionError {
+		if txError != common.SqlSerializableTransactionError && err != common.SqlSerializableTransactionError {
 			break
 		}
 	}
