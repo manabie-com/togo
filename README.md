@@ -1,30 +1,50 @@
-### Requirements
+### REQUIREMENTS
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+[dotnet SDK 6](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
 
-### Notes
+### INTRODUCE
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+This project using C# language with framework dotnet 6. With:
 
-### How to submit your solution?
+- Dependency Injection pattern
+- XUnit (for unit test and integration test)
+- The database is Sqlite.
 
-- Fork this repo and show us your development progress via a PR
+### HOW TO USE
 
-### Interesting facts about Manabie
+First, you need to install all of the library of this project so write the command line:
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+```commandline
+dotnet restore
+```
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+And then you need build up the project by:
+
+```commandline
+dotnet build
+```
+
+And now, enjoy this code by:
+
+```commandline
+dotnet watch run
+```
+
+Or you can call the Unit test by
+
+```commandline
+dotnet test
+```
+
+### HOW TO cURL
+
+I don't make cUrl but i had integrated the swagger into this project for you, so that you can open that swagger by this endpoint `swagger/index.html` after run the project.
+
+### WHAT I LOVED
+
+This project can show up my skill of using DI object with static object for the software lifecycle.
+Show up the knowledge of request lifecycle and the importance of this in the ways that handle data on server side
+
+### WHAT'S THE PROBLEMS OF THIS
+
+Actually, I still work in current company so I dont do this project by my best. I only scope in the main of requirement so I hope you can ask me more if you have any quest of my project. 
