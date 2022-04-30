@@ -41,4 +41,26 @@ describe('user.service', () => {
       expect(expected.errorCode).toEqual(ERROR_CODE.CREATE_USER_ERROR);
     });
   });
+
+  describe('getById', () => {
+    it('Should get user by id successfully', async () => {
+      const userId = '_test';
+      (userRepository.getById as jest.Mock).mockResolvedValueOnce({
+        ...createUserPayload,
+        _id: userId
+      });
+
+      const expected = await userService.getById(userId);
+      expect(expected).toEqual(expect.objectContaining(createUserPayload));
+    });
+
+    it(`Should throw error ${ERROR_CODE.USER_NOT_FOUND} when not found user`, async () => {
+      const userId = '_test';
+      (userRepository.getById as jest.Mock).mockResolvedValueOnce(null);
+
+      const expected = await userService.getById(userId).catch((err) => err);
+      expect(expected).toBeInstanceOf(AppError);
+      expect(expected.errorCode).toEqual(ERROR_CODE.USER_NOT_FOUND);
+    });
+  });
 });

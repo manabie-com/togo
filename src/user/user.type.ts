@@ -1,3 +1,4 @@
+import { IBaseModel } from '../common/type';
 import { IUserConfigurationEnum } from './user.enum';
 
 export interface IUserConfiguration {
@@ -6,7 +7,7 @@ export interface IUserConfiguration {
   count: number;
 }
 
-export interface IUser {
+export interface IUser extends IBaseModel {
   username: string;
   password: string;
   configuration: IUserConfiguration;

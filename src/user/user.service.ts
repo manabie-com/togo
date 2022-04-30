@@ -15,6 +15,15 @@ const createUser = async (payload: ICreateUserPayload): Promise<IUser> => {
   }
 };
 
+const getById = async (userId: string): Promise<IUser> => {
+  const user = await userRepository.getById(userId);
+  if (!user) {
+    throw new AppError(ERROR_CODE.USER_NOT_FOUND);
+  }
+  return user;
+};
+
 export default {
-  createUser
+  createUser,
+  getById
 };
