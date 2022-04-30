@@ -7,7 +7,7 @@ module.exports.up = async function (next) {
   await client.connect()
   try {
     await client.query('BEGIN')
-    await client.query(`DROP INDEX IF EXISTS task_user_id_index`)
+    await client.query(`CREATE INDEX IF NOT EXISTS task_user_id_index on "tasks" (user_id)`)
     await client.query('COMMIT')
   } catch (exception) {
     await client.query('ROLLBACK')
