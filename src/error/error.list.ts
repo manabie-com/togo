@@ -1,11 +1,15 @@
 import { StatusCode } from '../common/enum';
+import { IErrorList } from './error.type';
 
 enum ERROR_CODE {
   INVALID_REQUEST = 'INVALID_REQUEST',
   UNKNOWN_ERROR = 'UNKNOWN_ERROR',
   INCORRECT_FIELD = 'INCORRECT_FIELD',
   REQUIRED = 'REQUIRED',
-  MAX_LENGTH = 'MAX_LENGTH'
+  MAX_LENGTH = 'MAX_LENGTH',
+  DUPLICATE_USER = 'DUPLICATE_USER',
+  CREATE_USER_ERROR = 'CREATE_USER_ERROR',
+  USER_NOT_FOUND = 'USER_NOT_FOUND'
 }
 
 // customized error message for joi
@@ -14,7 +18,7 @@ const JoiValidationErrors = {
   'string.max': ERROR_CODE.MAX_LENGTH
 };
 
-const ErrorList = {
+const ErrorList: IErrorList = {
   [ERROR_CODE.INVALID_REQUEST]: {
     statusCode: StatusCode.BAD_REQUEST,
     message: 'Invalid request'
@@ -34,6 +38,18 @@ const ErrorList = {
   [ERROR_CODE.MAX_LENGTH]: {
     statusCode: StatusCode.BAD_REQUEST,
     message: 'Max Length'
+  },
+  [ERROR_CODE.DUPLICATE_USER]: {
+    statusCode: StatusCode.BAD_REQUEST,
+    message: 'Duplicate username'
+  },
+  [ERROR_CODE.CREATE_USER_ERROR]: {
+    statusCode: StatusCode.BAD_REQUEST,
+    message: 'Create user error'
+  },
+  [ERROR_CODE.USER_NOT_FOUND]: {
+    statusCode: StatusCode.BAD_REQUEST,
+    message: 'User not found'
   }
 };
 

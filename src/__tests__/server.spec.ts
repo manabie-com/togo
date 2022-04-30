@@ -14,6 +14,10 @@ jest.mock('@hapi/hapi', () => {
   };
 });
 
+jest.mock('../connectMongo', () => ({
+  connectMongo: jest.fn()
+}));
+
 describe('server', () => {
   it('should create server', async () => {
     const server = await Server.init();

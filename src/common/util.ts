@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import { StatusCode } from './enum';
 
 interface IErrorByStatusCode {
@@ -46,3 +47,6 @@ export const displayErrorsDescription = (errorList: {
     })
     .join('| | | |\n')}`;
 };
+
+export const isMongoObjectId = (id: string): boolean =>
+  Types.ObjectId.isValid(id);

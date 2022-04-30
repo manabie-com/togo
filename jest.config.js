@@ -24,6 +24,7 @@ module.exports = {
     'src/**/*.{ts,js}',
     '!src/**/*.(interface|constant|model|enum|type).{ts,js}',
     '!**/__mocks__/**',
-    '!**/node_modules/**'
+    '!**/node_modules/**',
+    '!**/logger.ts'
   ]
 };

@@ -3,7 +3,7 @@ import { ValidationError, ValidationErrorItem } from 'joi';
 
 import { AppError } from '../error/error.service';
 import { ERROR_CODE, JoiValidationErrors } from '../error/error.list';
-import { ErrorDetails } from '../error/error.type';
+import { IErrorDetails } from '../error/error.type';
 
 interface JoiValidationErrors {
   [index: string]: ERROR_CODE;
@@ -15,8 +15,8 @@ const buildKey = (paths: (string | number)[]): string => {
 
 const buildMappedErrorDetails = (
   details: ValidationErrorItem[]
-): ErrorDetails[] => {
-  return details.reduce<ErrorDetails[]>((acc, detail, index) => {
+): IErrorDetails[] => {
+  return details.reduce<IErrorDetails[]>((acc, detail, index) => {
     if (
       index !== 0 &&
       buildKey(detail.path) === buildKey(details[index - 1].path)
