@@ -27,9 +27,10 @@ const handleHapiResponse = (
   }
 
   if (responseData.variety === 'plain') {
-    return hapiResponse
-      .response({ data: responseData.source } as Hapi.ResponseValue)
-      .code(responseData.statusCode);
+    const responseObj = responseData.source
+      ? ({ data: responseData.source } as Hapi.ResponseValue)
+      : undefined;
+    return hapiResponse.response(responseObj).code(responseData.statusCode);
   }
   return hapiResponse.continue;
 };

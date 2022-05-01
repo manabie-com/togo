@@ -7,12 +7,13 @@ import KafkaService from '../common/kafka';
 import logger from '../logger';
 import RedisService from '../common/redis';
 import { TaskStatusEnum } from './task.enum';
+import { TASK_CONSUMER_TOPIC } from './task.topic';
 
 const createTask = async (payload: ICreateTaskPayload): Promise<ITask> => {
   try {
     await userService.getById(payload.userId);
     const task = await taskRepository.createTask(payload);
-    await KafkaService.produceMessage('task-consumer', [
+    await KafkaService.produceMessage(TASK_CONSUMER_TOPIC, [
       { value: task._id.toString() }
     ]);
     return task;

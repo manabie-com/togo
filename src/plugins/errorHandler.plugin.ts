@@ -29,7 +29,8 @@ const buildMappedErrorDetails = (
       ERROR_CODE.INCORRECT_FIELD;
     acc.push({
       code: errorCode,
-      key: buildKey(detail.path)
+      key: buildKey(detail.path),
+      type: detail.type
     });
 
     return acc;

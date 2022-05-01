@@ -7,6 +7,6 @@ export const createUserPayloadValidator = Joi.object<ICreateUserPayload>({
   password: Joi.string().required(),
   configuration: Joi.object({
     type: Joi.string().valid(...Object.keys(IUserConfigurationEnum)),
-    limit: Joi.number().required()
+    limit: Joi.number().required().integer().greater(0)
   })
 });

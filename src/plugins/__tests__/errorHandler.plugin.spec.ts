@@ -47,7 +47,9 @@ describe('errorHandler.plugin', () => {
     };
     it('Should return the error mapping', () => {
       const details = [detail];
-      const mappedDetails = [{ code: ERROR_CODE.MAX_LENGTH, key: 'id' }];
+      const mappedDetails = [
+        { code: ERROR_CODE.MAX_LENGTH, key: 'id', type: detail.type }
+      ];
 
       const expected = buildMappedErrorDetails(details);
       expect(expected).toEqual(mappedDetails);
@@ -60,7 +62,9 @@ describe('errorHandler.plugin', () => {
           type: 'string.unknown'
         }
       ];
-      const mappedDetails = [{ code: ERROR_CODE.INCORRECT_FIELD, key: 'id' }];
+      const mappedDetails = [
+        { code: ERROR_CODE.INCORRECT_FIELD, key: 'id', type: 'string.unknown' }
+      ];
 
       const expected = buildMappedErrorDetails(details);
       expect(expected).toEqual(mappedDetails);
@@ -68,7 +72,9 @@ describe('errorHandler.plugin', () => {
 
     it('Should return the error mapping with no duplicate', () => {
       const details = [detail, detail];
-      const mappedDetails = [{ code: ERROR_CODE.MAX_LENGTH, key: 'id' }];
+      const mappedDetails = [
+        { code: ERROR_CODE.MAX_LENGTH, key: 'id', type: detail.type }
+      ];
 
       const expected = buildMappedErrorDetails(details);
 
