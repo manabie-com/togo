@@ -17,3 +17,9 @@ export interface ICreateTaskPayload {
   name: string;
   userId: string;
 }
+
+export interface IUpdateTaskByIdPayload {
+  status?: TaskStatusEnum;
+  reason?: ITaskReason;
+  name?: string;
+}

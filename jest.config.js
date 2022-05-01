@@ -25,6 +25,8 @@ module.exports = {
     '!src/**/*.(interface|constant|model|enum|type).{ts,js}',
     '!**/__mocks__/**',
     '!**/node_modules/**',
-    '!**/logger.ts'
+    '!**/logger.ts',
+    '!**/kafka.ts',
+    '!**/redis.ts'
   ]
 };

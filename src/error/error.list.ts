@@ -10,7 +10,8 @@ enum ERROR_CODE {
   DUPLICATE_USER = 'DUPLICATE_USER',
   CREATE_USER_ERROR = 'CREATE_USER_ERROR',
   USER_NOT_FOUND = 'USER_NOT_FOUND',
-  TASK_NOT_FOUND = 'TASK_NOT_FOUND'
+  TASK_NOT_FOUND = 'TASK_NOT_FOUND',
+  TASK_MAXIMUM_LIMIT = 'TASK_MAXIMUM_LIMIT'
 }
 
 // customized error message for joi
@@ -55,6 +56,10 @@ const ErrorList: IErrorList = {
   [ERROR_CODE.TASK_NOT_FOUND]: {
     statusCode: StatusCode.BAD_REQUEST,
     message: 'Task not found'
+  },
+  [ERROR_CODE.TASK_MAXIMUM_LIMIT]: {
+    statusCode: StatusCode.BAD_REQUEST,
+    message: 'Maximum limit of tasks per user create'
   }
 };
 

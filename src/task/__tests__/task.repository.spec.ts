@@ -3,10 +3,14 @@ import taskRepository from '../task.repository';
 import taskModel from '../task.model';
 
 import { createTaskPayload } from '../__mock__/task.data';
+import { TaskStatusEnum } from '../task.enum';
+import { ERROR_CODE } from '../../error/error.list';
+import { AppError } from '../../error/error.service';
 
 jest.mock('../task.model', () => ({
   create: jest.fn(),
-  findOne: jest.fn()
+  findOne: jest.fn(),
+  findByIdAndUpdate: jest.fn()
 }));
 
 describe('task.repository', () => {
@@ -24,35 +28,103 @@ describe('task.repository', () => {
 
   describe('getById', () => {
     it('Should get task by id successfully', async () => {
-      const userId = new Types.ObjectId();
+      const taskId = new Types.ObjectId();
       (taskModel.findOne as unknown as jest.Mock).mockImplementationOnce(
         () => ({
           exec: jest.fn().mockResolvedValueOnce({
-            _id: userId,
+            _id: taskId,
             ...createTaskPayload
           })
         })
       );
 
-      const expected = await taskRepository.getById(userId.toString());
+      const expected = await taskRepository.getById(taskId.toString());
       expect(expected).toEqual(expect.objectContaining(createTaskPayload));
     });
 
     it('Should return null when not found user by id', async () => {
-      const userId = new Types.ObjectId();
+      const taskId = new Types.ObjectId();
       (taskModel.findOne as unknown as jest.Mock).mockImplementationOnce(
         () => ({
           exec: jest.fn().mockResolvedValueOnce(null)
         })
       );
 
-      const expected = await taskRepository.getById(userId.toString());
+      const expected = await taskRepository.getById(taskId.toString());
       expect(expected).toBeNull();
     });
 
     it('Should return null when invalid user id', async () => {
       const expected = await taskRepository.getById('_test');
       expect(expected).toBeNull();
+    });
+  });
+
+  describe('updateById', () => {
+    it('Should update the task successfully', async () => {
+      const taskId = new Types.ObjectId();
+      const status = TaskStatusEnum.DONE;
+      const updatedObj = {
+        _id: taskId,
+        ...createTaskPayload,
+        status
+      };
+      (
+        taskModel.findByIdAndUpdate as unknown as jest.Mock
+      ).mockImplementationOnce(() => ({
+        exec: jest.fn().mockResolvedValueOnce(updatedObj)
+      }));
+
+      const expected = await taskRepository.updateById(taskId.toString(), {
+        status
+      });
+
+      expect(taskModel.findByIdAndUpdate).toBeCalledWith(
+        taskId.toString(),
+        { status },
+        { new: true }
+      );
+      expect(expected).toEqual(updatedObj);
+    });
+
+    it(`Should throw error ${ERROR_CODE.TASK_NOT_FOUND} when taskId is null`, async () => {
+      const expected = await taskRepository
+        .updateById(null, {
+          status: TaskStatusEnum.DONE
+        })
+        .catch((err) => err);
+
+      expect(expected).toBeInstanceOf(AppError);
+      expect(expected.errorCode).toBe(ERROR_CODE.TASK_NOT_FOUND);
+    });
+
+    it(`Should throw error ${ERROR_CODE.TASK_NOT_FOUND} when not found the task`, async () => {
+      const taskId = new Types.ObjectId();
+      const status = TaskStatusEnum.DONE;
+      const updatedObj = {
+        _id: taskId,
+        ...createTaskPayload,
+        status
+      };
+      (
+        taskModel.findByIdAndUpdate as unknown as jest.Mock
+      ).mockImplementationOnce(() => ({
+        exec: jest.fn().mockResolvedValueOnce(null)
+      }));
+
+      const expected = await taskRepository
+        .updateById(taskId.toString(), {
+          status
+        })
+        .catch((err) => err);
+
+      expect(taskModel.findByIdAndUpdate).toBeCalledWith(
+        taskId.toString(),
+        { status },
+        { new: true }
+      );
+      expect(expected).toBeInstanceOf(AppError);
+      expect(expected.errorCode).toBe(ERROR_CODE.TASK_NOT_FOUND);
     });
   });
 });
