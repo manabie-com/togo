@@ -4,7 +4,6 @@ import { IUserConfigurationEnum } from './user.enum';
 export interface IUserConfiguration {
   type: IUserConfigurationEnum;
   limit: number;
-  count: number;
 }
 
 export interface IUser extends IBaseModel {

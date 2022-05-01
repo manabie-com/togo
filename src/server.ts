@@ -18,6 +18,7 @@ import ResponseWrapper from './plugins/responseWrapper.plugin';
 import RequestWrapper from './plugins/requestWrapper.plugin';
 import Swagger from './plugins/swagger.plugin';
 import { connectMongo } from './connectMongo';
+import taskConsumer from './task/task.consumer';
 
 const createServer = async () => {
   const server = new hapi.Server({
@@ -56,11 +57,10 @@ export const init = async () => {
   });
 
   const server = await createServer();
-  await server
-    .initialize()
-    .then(() =>
-      logger.info(`server started at ${server.info.host}:${server.info.port}`)
-    );
+  await server.initialize().then(() => {
+    logger.info(`server started at ${server.info.host}:${server.info.port}`);
+    taskConsumer.createTaskConsumer();
+  });
   return server;
 };
 

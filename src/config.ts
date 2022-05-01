@@ -8,7 +8,10 @@ const {
   MONGO_URI,
   MONGO_USER,
   MONGO_PASS,
-  MONGO_DB_NAME
+  MONGO_DB_NAME,
+  KAFKA_URL,
+  KAFKA_GROUP_ID,
+  REDIS_URL
 } = process.env;
 
 export {
@@ -19,5 +22,8 @@ export {
   MONGO_URI,
   MONGO_USER,
   MONGO_PASS,
-  MONGO_DB_NAME
+  MONGO_DB_NAME,
+  KAFKA_URL,
+  KAFKA_GROUP_ID,
+  REDIS_URL
 };
