@@ -1,0 +1,60 @@
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.csproj.AssemblyReference.cache
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.AssemblyInfoInputs.cache
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.AssemblyInfo.cs
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.csproj.CoreCompileInputs.cache
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.JsonRepository\bin\Debug\net5.0\Manabie.Togo.JsonRepository.deps.json
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.JsonRepository\bin\Debug\net5.0\Manabie.Togo.JsonRepository.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.JsonRepository\bin\Debug\net5.0\ref\Manabie.Togo.JsonRepository.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.JsonRepository\bin\Debug\net5.0\Manabie.Togo.JsonRepository.pdb
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.JsonRepository\bin\Debug\net5.0\Manabie.Togo.Data.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.JsonRepository\bin\Debug\net5.0\Manabie.Togo.Data.pdb
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.csproj.CopyComplete
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\ref\Manabie.Togo.JsonRepository.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.pdb
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.JsonRepository\bin\Debug\net5.0\Manabie.Togo.JsonRepository.deps.json
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.JsonRepository\bin\Debug\net5.0\Manabie.Togo.JsonRepository.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.JsonRepository\bin\Debug\net5.0\ref\Manabie.Togo.JsonRepository.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.JsonRepository\bin\Debug\net5.0\Manabie.Togo.JsonRepository.pdb
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.JsonRepository\bin\Debug\net5.0\Manabie.Togo.Data.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.JsonRepository\bin\Debug\net5.0\Manabie.Togo.Data.pdb
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.csproj.AssemblyReference.cache
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.GeneratedMSBuildEditorConfig.editorconfig
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.AssemblyInfoInputs.cache
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.AssemblyInfo.cs
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.csproj.CoreCompileInputs.cache
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.csproj.CopyComplete
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\ref\Manabie.Togo.JsonRepository.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.pdb
+D:\Others-Git\Manabie\Manabie.Togo.JsonRepository\bin\Debug\net5.0\Manabie.Togo.JsonRepository.deps.json
+D:\Others-Git\Manabie\Manabie.Togo.JsonRepository\bin\Debug\net5.0\Manabie.Togo.JsonRepository.dll
+D:\Others-Git\Manabie\Manabie.Togo.JsonRepository\bin\Debug\net5.0\ref\Manabie.Togo.JsonRepository.dll
+D:\Others-Git\Manabie\Manabie.Togo.JsonRepository\bin\Debug\net5.0\Manabie.Togo.JsonRepository.pdb
+D:\Others-Git\Manabie\Manabie.Togo.JsonRepository\bin\Debug\net5.0\Manabie.Togo.Data.dll
+D:\Others-Git\Manabie\Manabie.Togo.JsonRepository\bin\Debug\net5.0\Manabie.Togo.Data.pdb
+D:\Others-Git\Manabie\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.csproj.AssemblyReference.cache
+D:\Others-Git\Manabie\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.GeneratedMSBuildEditorConfig.editorconfig
+D:\Others-Git\Manabie\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.AssemblyInfoInputs.cache
+D:\Others-Git\Manabie\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.AssemblyInfo.cs
+D:\Others-Git\Manabie\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.csproj.CoreCompileInputs.cache
+D:\Others-Git\Manabie\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.csproj.CopyComplete
+D:\Others-Git\Manabie\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.dll
+D:\Others-Git\Manabie\Manabie.Togo.JsonRepository\obj\Debug\net5.0\ref\Manabie.Togo.JsonRepository.dll
+D:\Others-Git\Manabie\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.pdb
+D:\Others-Git\togo\Manabie.Togo.JsonRepository\bin\Debug\net5.0\Manabie.Togo.JsonRepository.deps.json
+D:\Others-Git\togo\Manabie.Togo.JsonRepository\bin\Debug\net5.0\Manabie.Togo.JsonRepository.dll
+D:\Others-Git\togo\Manabie.Togo.JsonRepository\bin\Debug\net5.0\ref\Manabie.Togo.JsonRepository.dll
+D:\Others-Git\togo\Manabie.Togo.JsonRepository\bin\Debug\net5.0\Manabie.Togo.JsonRepository.pdb
+D:\Others-Git\togo\Manabie.Togo.JsonRepository\bin\Debug\net5.0\Manabie.Togo.Data.dll
+D:\Others-Git\togo\Manabie.Togo.JsonRepository\bin\Debug\net5.0\Manabie.Togo.Data.pdb
+D:\Others-Git\togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.csproj.AssemblyReference.cache
+D:\Others-Git\togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.GeneratedMSBuildEditorConfig.editorconfig
+D:\Others-Git\togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.AssemblyInfoInputs.cache
+D:\Others-Git\togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.AssemblyInfo.cs
+D:\Others-Git\togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.csproj.CoreCompileInputs.cache
+D:\Others-Git\togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.csproj.CopyComplete
+D:\Others-Git\togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.dll
+D:\Others-Git\togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\ref\Manabie.Togo.JsonRepository.dll
+D:\Others-Git\togo\Manabie.Togo.JsonRepository\obj\Debug\net5.0\Manabie.Togo.JsonRepository.pdb

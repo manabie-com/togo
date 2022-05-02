@@ -1,0 +1,247 @@
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.csproj.AssemblyReference.cache
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.AssemblyInfoInputs.cache
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.AssemblyInfo.cs
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.csproj.CoreCompileInputs.cache
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\appsettings.Development.json
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\appsettings.json
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Api.exe
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Api.deps.json
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Api.runtimeconfig.json
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Api.runtimeconfig.dev.json
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Api.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\ref\Manabie.Togo.Api.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Api.pdb
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\AutoMapper.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\FluentValidation.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\MediaBrowser.Common.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\MediaBrowser.Model.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\MediatR.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\MediatR.Contracts.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\MediatR.Extensions.Microsoft.DependencyInjection.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Microsoft.Extensions.Options.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Microsoft.Extensions.Primitives.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Microsoft.OpenApi.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Newtonsoft.Json.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Pipelines.Sockets.Unofficial.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\StackExchange.Redis.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\System.Configuration.ConfigurationManager.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\System.Diagnostics.PerformanceCounter.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\System.IO.Pipelines.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\runtimes\win\lib\netcoreapp2.0\System.Diagnostics.PerformanceCounter.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Core.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Data.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Domain.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.JsonRepository.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.RedisRepository.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Service.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Data.pdb
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Domain.pdb
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Service.pdb
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Core.pdb
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.JsonRepository.pdb
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.RedisRepository.pdb
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\scopedcss\bundle\Manabie.Togo.Api.styles.css
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\staticwebassets\Manabie.Togo.Api.StaticWebAssets.Manifest.cache
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.RazorTargetAssemblyInfo.cache
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.csproj.CopyComplete
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\ref\Manabie.Togo.Api.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.pdb
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.genruntimeconfig.cache
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\appsettings.Development.json
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\appsettings.json
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Api.exe
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Api.deps.json
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Api.runtimeconfig.json
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Api.runtimeconfig.dev.json
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Api.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\ref\Manabie.Togo.Api.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Api.pdb
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\AutoMapper.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\FluentValidation.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\MediaBrowser.Common.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\MediaBrowser.Model.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\MediatR.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\MediatR.Contracts.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\MediatR.Extensions.Microsoft.DependencyInjection.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Microsoft.Extensions.Options.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Microsoft.Extensions.Primitives.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Microsoft.OpenApi.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Newtonsoft.Json.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Pipelines.Sockets.Unofficial.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\StackExchange.Redis.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\System.Configuration.ConfigurationManager.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\System.Diagnostics.PerformanceCounter.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\System.IO.Pipelines.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\System.Runtime.CompilerServices.Unsafe.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\System.Security.Cryptography.ProtectedData.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\runtimes\win\lib\netcoreapp2.0\System.Diagnostics.PerformanceCounter.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Core.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Data.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Domain.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.JsonRepository.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.RedisRepository.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Service.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Data.pdb
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Domain.pdb
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Service.pdb
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Core.pdb
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.JsonRepository.pdb
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.RedisRepository.pdb
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.csproj.AssemblyReference.cache
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.GeneratedMSBuildEditorConfig.editorconfig
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.AssemblyInfoInputs.cache
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.AssemblyInfo.cs
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.csproj.CoreCompileInputs.cache
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.MvcApplicationPartsAssemblyInfo.cs
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.MvcApplicationPartsAssemblyInfo.cache
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\scopedcss\bundle\Manabie.Togo.Api.styles.css
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\staticwebassets\Manabie.Togo.Api.StaticWebAssets.Manifest.cache
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.RazorTargetAssemblyInfo.cache
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.csproj.CopyComplete
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\ref\Manabie.Togo.Api.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.pdb
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.genruntimeconfig.cache
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\appsettings.json
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\appsettings.Development.json
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Api.exe
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Api.deps.json
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Api.runtimeconfig.json
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Api.runtimeconfig.dev.json
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Api.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\ref\Manabie.Togo.Api.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Api.pdb
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\AutoMapper.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\FluentValidation.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\MediaBrowser.Common.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\MediaBrowser.Model.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\MediatR.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\MediatR.Contracts.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\MediatR.Extensions.Microsoft.DependencyInjection.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Microsoft.Extensions.Options.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Microsoft.Extensions.Primitives.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Microsoft.OpenApi.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Newtonsoft.Json.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Pipelines.Sockets.Unofficial.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\StackExchange.Redis.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\System.Configuration.ConfigurationManager.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\System.Diagnostics.PerformanceCounter.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\System.IO.Pipelines.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\System.Runtime.CompilerServices.Unsafe.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\System.Security.Cryptography.ProtectedData.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\runtimes\win\lib\netcoreapp2.0\System.Diagnostics.PerformanceCounter.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Core.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Data.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Domain.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.JsonRepository.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.RedisRepository.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Service.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Data.pdb
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Domain.pdb
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Service.pdb
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Core.pdb
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.JsonRepository.pdb
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.RedisRepository.pdb
+D:\Others-Git\Manabie\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.csproj.AssemblyReference.cache
+D:\Others-Git\Manabie\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.GeneratedMSBuildEditorConfig.editorconfig
+D:\Others-Git\Manabie\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.AssemblyInfoInputs.cache
+D:\Others-Git\Manabie\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.AssemblyInfo.cs
+D:\Others-Git\Manabie\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.csproj.CoreCompileInputs.cache
+D:\Others-Git\Manabie\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.MvcApplicationPartsAssemblyInfo.cs
+D:\Others-Git\Manabie\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.MvcApplicationPartsAssemblyInfo.cache
+D:\Others-Git\Manabie\Manabie.Togo.Api\obj\Debug\net5.0\staticwebassets\Manabie.Togo.Api.StaticWebAssets.Manifest.cache
+D:\Others-Git\Manabie\Manabie.Togo.Api\obj\Debug\net5.0\staticwebassets\Manabie.Togo.Api.StaticWebAssets.xml
+D:\Others-Git\Manabie\Manabie.Togo.Api\obj\Debug\net5.0\scopedcss\bundle\Manabie.Togo.Api.styles.css
+D:\Others-Git\Manabie\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.RazorTargetAssemblyInfo.cache
+D:\Others-Git\Manabie\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.csproj.CopyComplete
+D:\Others-Git\Manabie\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\obj\Debug\net5.0\ref\Manabie.Togo.Api.dll
+D:\Others-Git\Manabie\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.pdb
+D:\Others-Git\Manabie\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.genruntimeconfig.cache
+D:\Others-Git\Manabie\Manabie.Togo.Api\bin\Debug\net5.0\JsonFiles\UserTaskEntity.json
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\appsettings.Development.json
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\appsettings.json
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Api.exe
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Api.deps.json
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Api.runtimeconfig.json
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Api.runtimeconfig.dev.json
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Api.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\ref\Manabie.Togo.Api.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Api.pdb
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\AutoMapper.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\FluentValidation.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\MediaBrowser.Common.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\MediaBrowser.Model.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\MediatR.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\MediatR.Contracts.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\MediatR.Extensions.Microsoft.DependencyInjection.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Microsoft.Extensions.Options.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Microsoft.Extensions.Primitives.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Microsoft.OpenApi.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Newtonsoft.Json.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Pipelines.Sockets.Unofficial.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\StackExchange.Redis.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\System.Configuration.ConfigurationManager.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\System.Diagnostics.PerformanceCounter.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\System.IO.Pipelines.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\System.Runtime.CompilerServices.Unsafe.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\System.Security.Cryptography.ProtectedData.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\runtimes\win\lib\netcoreapp2.0\System.Diagnostics.PerformanceCounter.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Core.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Data.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Domain.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.JsonRepository.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.RedisRepository.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Service.dll
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Data.pdb
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Domain.pdb
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Service.pdb
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.Core.pdb
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.JsonRepository.pdb
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\Manabie.Togo.RedisRepository.pdb
+D:\Others-Git\togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.csproj.AssemblyReference.cache
+D:\Others-Git\togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.GeneratedMSBuildEditorConfig.editorconfig
+D:\Others-Git\togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.AssemblyInfoInputs.cache
+D:\Others-Git\togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.AssemblyInfo.cs
+D:\Others-Git\togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.csproj.CoreCompileInputs.cache
+D:\Others-Git\togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.MvcApplicationPartsAssemblyInfo.cs
+D:\Others-Git\togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.MvcApplicationPartsAssemblyInfo.cache
+D:\Others-Git\togo\Manabie.Togo.Api\obj\Debug\net5.0\staticwebassets\Manabie.Togo.Api.StaticWebAssets.Manifest.cache
+D:\Others-Git\togo\Manabie.Togo.Api\obj\Debug\net5.0\staticwebassets\Manabie.Togo.Api.StaticWebAssets.xml
+D:\Others-Git\togo\Manabie.Togo.Api\obj\Debug\net5.0\scopedcss\bundle\Manabie.Togo.Api.styles.css
+D:\Others-Git\togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.RazorTargetAssemblyInfo.cache
+D:\Others-Git\togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.csproj.CopyComplete
+D:\Others-Git\togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.dll
+D:\Others-Git\togo\Manabie.Togo.Api\obj\Debug\net5.0\ref\Manabie.Togo.Api.dll
+D:\Others-Git\togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.pdb
+D:\Others-Git\togo\Manabie.Togo.Api\obj\Debug\net5.0\Manabie.Togo.Api.genruntimeconfig.cache
+D:\Others-Git\togo\Manabie.Togo.Api\bin\Debug\net5.0\JsonFiles\UserTaskEntity.json

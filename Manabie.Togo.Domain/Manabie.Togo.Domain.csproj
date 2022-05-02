@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="11.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Manabie.Togo.Core\Manabie.Togo.Core.csproj" />
+    <ProjectReference Include="..\Manabie.Togo.Data\Manabie.Togo.Data.csproj" />
+    <ProjectReference Include="..\Manabie.Togo.JsonRepository\Manabie.Togo.JsonRepository.csproj" />
+    <ProjectReference Include="..\Manabie.Togo.RedisRepository\Manabie.Togo.RedisRepository.csproj" />
+  </ItemGroup>
+
+</Project>

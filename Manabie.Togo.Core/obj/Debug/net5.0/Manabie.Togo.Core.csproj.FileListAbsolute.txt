@@ -1,0 +1,48 @@
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Core\bin\Debug\net5.0\Manabie.Togo.Core.deps.json
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Core\bin\Debug\net5.0\Manabie.Togo.Core.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Core\bin\Debug\net5.0\ref\Manabie.Togo.Core.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Core\bin\Debug\net5.0\Manabie.Togo.Core.pdb
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.csproj.AssemblyReference.cache
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.AssemblyInfoInputs.cache
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.AssemblyInfo.cs
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.csproj.CoreCompileInputs.cache
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Core\obj\Debug\net5.0\ref\Manabie.Togo.Core.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.pdb
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Core\bin\Debug\net5.0\Manabie.Togo.Core.deps.json
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Core\bin\Debug\net5.0\Manabie.Togo.Core.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Core\bin\Debug\net5.0\ref\Manabie.Togo.Core.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Core\bin\Debug\net5.0\Manabie.Togo.Core.pdb
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.csproj.AssemblyReference.cache
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.AssemblyInfoInputs.cache
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.AssemblyInfo.cs
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.csproj.CoreCompileInputs.cache
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Core\obj\Debug\net5.0\ref\Manabie.Togo.Core.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.pdb
+D:\Others-Git\Manabie\Manabie.Togo.Core\bin\Debug\net5.0\Manabie.Togo.Core.deps.json
+D:\Others-Git\Manabie\Manabie.Togo.Core\bin\Debug\net5.0\Manabie.Togo.Core.dll
+D:\Others-Git\Manabie\Manabie.Togo.Core\bin\Debug\net5.0\ref\Manabie.Togo.Core.dll
+D:\Others-Git\Manabie\Manabie.Togo.Core\bin\Debug\net5.0\Manabie.Togo.Core.pdb
+D:\Others-Git\Manabie\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.csproj.AssemblyReference.cache
+D:\Others-Git\Manabie\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\Others-Git\Manabie\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.AssemblyInfoInputs.cache
+D:\Others-Git\Manabie\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.AssemblyInfo.cs
+D:\Others-Git\Manabie\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.csproj.CoreCompileInputs.cache
+D:\Others-Git\Manabie\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.dll
+D:\Others-Git\Manabie\Manabie.Togo.Core\obj\Debug\net5.0\ref\Manabie.Togo.Core.dll
+D:\Others-Git\Manabie\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.pdb
+D:\Others-Git\togo\Manabie.Togo.Core\bin\Debug\net5.0\Manabie.Togo.Core.deps.json
+D:\Others-Git\togo\Manabie.Togo.Core\bin\Debug\net5.0\Manabie.Togo.Core.dll
+D:\Others-Git\togo\Manabie.Togo.Core\bin\Debug\net5.0\ref\Manabie.Togo.Core.dll
+D:\Others-Git\togo\Manabie.Togo.Core\bin\Debug\net5.0\Manabie.Togo.Core.pdb
+D:\Others-Git\togo\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.csproj.AssemblyReference.cache
+D:\Others-Git\togo\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\Others-Git\togo\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.AssemblyInfoInputs.cache
+D:\Others-Git\togo\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.AssemblyInfo.cs
+D:\Others-Git\togo\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.csproj.CoreCompileInputs.cache
+D:\Others-Git\togo\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.dll
+D:\Others-Git\togo\Manabie.Togo.Core\obj\Debug\net5.0\ref\Manabie.Togo.Core.dll
+D:\Others-Git\togo\Manabie.Togo.Core\obj\Debug\net5.0\Manabie.Togo.Core.pdb

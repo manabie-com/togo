@@ -1,0 +1,60 @@
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.csproj.AssemblyReference.cache
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.AssemblyInfoInputs.cache
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.AssemblyInfo.cs
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.csproj.CoreCompileInputs.cache
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.RedisRepository\bin\Debug\net5.0\Manabie.Togo.RedisRepository.deps.json
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.RedisRepository\bin\Debug\net5.0\Manabie.Togo.RedisRepository.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.RedisRepository\bin\Debug\net5.0\ref\Manabie.Togo.RedisRepository.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.RedisRepository\bin\Debug\net5.0\Manabie.Togo.RedisRepository.pdb
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.RedisRepository\bin\Debug\net5.0\Manabie.Togo.Data.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.RedisRepository\bin\Debug\net5.0\Manabie.Togo.Data.pdb
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.csproj.CopyComplete
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\ref\Manabie.Togo.RedisRepository.dll
+C:\Users\mrphu\OneDrive\Desktop\Nhap\togo\Manabie.Togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.pdb
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.RedisRepository\bin\Debug\net5.0\Manabie.Togo.RedisRepository.deps.json
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.RedisRepository\bin\Debug\net5.0\Manabie.Togo.RedisRepository.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.RedisRepository\bin\Debug\net5.0\ref\Manabie.Togo.RedisRepository.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.RedisRepository\bin\Debug\net5.0\Manabie.Togo.RedisRepository.pdb
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.RedisRepository\bin\Debug\net5.0\Manabie.Togo.Data.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.RedisRepository\bin\Debug\net5.0\Manabie.Togo.Data.pdb
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.csproj.AssemblyReference.cache
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.GeneratedMSBuildEditorConfig.editorconfig
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.AssemblyInfoInputs.cache
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.AssemblyInfo.cs
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.csproj.CoreCompileInputs.cache
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.csproj.CopyComplete
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\ref\Manabie.Togo.RedisRepository.dll
+D:\Cá nhân\togo\Manabie.Togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.pdb
+D:\Others-Git\Manabie\Manabie.Togo.RedisRepository\bin\Debug\net5.0\Manabie.Togo.RedisRepository.deps.json
+D:\Others-Git\Manabie\Manabie.Togo.RedisRepository\bin\Debug\net5.0\Manabie.Togo.RedisRepository.dll
+D:\Others-Git\Manabie\Manabie.Togo.RedisRepository\bin\Debug\net5.0\ref\Manabie.Togo.RedisRepository.dll
+D:\Others-Git\Manabie\Manabie.Togo.RedisRepository\bin\Debug\net5.0\Manabie.Togo.RedisRepository.pdb
+D:\Others-Git\Manabie\Manabie.Togo.RedisRepository\bin\Debug\net5.0\Manabie.Togo.Data.dll
+D:\Others-Git\Manabie\Manabie.Togo.RedisRepository\bin\Debug\net5.0\Manabie.Togo.Data.pdb
+D:\Others-Git\Manabie\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.csproj.AssemblyReference.cache
+D:\Others-Git\Manabie\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.GeneratedMSBuildEditorConfig.editorconfig
+D:\Others-Git\Manabie\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.AssemblyInfoInputs.cache
+D:\Others-Git\Manabie\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.AssemblyInfo.cs
+D:\Others-Git\Manabie\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.csproj.CoreCompileInputs.cache
+D:\Others-Git\Manabie\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.csproj.CopyComplete
+D:\Others-Git\Manabie\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.dll
+D:\Others-Git\Manabie\Manabie.Togo.RedisRepository\obj\Debug\net5.0\ref\Manabie.Togo.RedisRepository.dll
+D:\Others-Git\Manabie\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.pdb
+D:\Others-Git\togo\Manabie.Togo.RedisRepository\bin\Debug\net5.0\Manabie.Togo.RedisRepository.deps.json
+D:\Others-Git\togo\Manabie.Togo.RedisRepository\bin\Debug\net5.0\Manabie.Togo.RedisRepository.dll
+D:\Others-Git\togo\Manabie.Togo.RedisRepository\bin\Debug\net5.0\ref\Manabie.Togo.RedisRepository.dll
+D:\Others-Git\togo\Manabie.Togo.RedisRepository\bin\Debug\net5.0\Manabie.Togo.RedisRepository.pdb
+D:\Others-Git\togo\Manabie.Togo.RedisRepository\bin\Debug\net5.0\Manabie.Togo.Data.dll
+D:\Others-Git\togo\Manabie.Togo.RedisRepository\bin\Debug\net5.0\Manabie.Togo.Data.pdb
+D:\Others-Git\togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.csproj.AssemblyReference.cache
+D:\Others-Git\togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.GeneratedMSBuildEditorConfig.editorconfig
+D:\Others-Git\togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.AssemblyInfoInputs.cache
+D:\Others-Git\togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.AssemblyInfo.cs
+D:\Others-Git\togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.csproj.CoreCompileInputs.cache
+D:\Others-Git\togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.csproj.CopyComplete
+D:\Others-Git\togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.dll
+D:\Others-Git\togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\ref\Manabie.Togo.RedisRepository.dll
+D:\Others-Git\togo\Manabie.Togo.RedisRepository\obj\Debug\net5.0\Manabie.Togo.RedisRepository.pdb
