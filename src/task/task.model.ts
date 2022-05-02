@@ -1,14 +1,17 @@
 import { Schema, model } from 'mongoose';
 import { TaskStatusEnum } from './task.enum';
 
-const reasonSchema = new Schema({
-  errorCode: {
-    type: String
+const reasonSchema = new Schema(
+  {
+    errorCode: {
+      type: String
+    },
+    message: {
+      type: String
+    }
   },
-  message: {
-    type: String
-  }
-});
+  { _id: false }
+);
 
 const taskSchema = new Schema({
   name: { type: String, required: true },

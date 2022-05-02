@@ -23,3 +23,8 @@ export interface IUpdateTaskByIdPayload {
   reason?: ITaskReason;
   name?: string;
 }
+
+export interface IGetTasksQuery {
+  status?: TaskStatusEnum | 'ALL';
+  userId?: string;
+}

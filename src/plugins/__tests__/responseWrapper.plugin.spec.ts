@@ -24,6 +24,18 @@ describe('Plugin - responseWrapper', () => {
     },
     {
       method: 'POST',
+      path: '/test-empty-response',
+      options: {
+        handler: testHandler,
+        validate: {
+          payload: Joi.object({
+            name: Joi.string()
+          })
+        }
+      }
+    },
+    {
+      method: 'POST',
       path: '/test2',
       options: {
         handler: testHandler2,
@@ -64,6 +76,20 @@ describe('Plugin - responseWrapper', () => {
       expect(response.result).toEqual({
         data: 'test result'
       });
+    });
+
+    it('should return undefined response successfully', async () => {
+      testHandler.mockResolvedValueOnce(null);
+
+      const response: hapi.ServerInjectResponse = await testServer.inject({
+        method: 'POST',
+        url: '/test-empty-response',
+        payload: {
+          name: 'test'
+        }
+      });
+
+      expect(response.result).toBeNull();
     });
 
     it('should wrap AppError response in error object', async () => {

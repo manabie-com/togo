@@ -154,4 +154,19 @@ describe('task.service', () => {
       });
     });
   });
+
+  describe('getsByUserId', () => {
+    it('Should get tasks by user id successfully', async () => {
+      const userId = '_userId';
+      const tasks = [
+        {
+          ...createTaskPayload
+        }
+      ];
+      (taskRepository.getsByUserId as jest.Mock).mockResolvedValueOnce(tasks);
+
+      const expected = await taskService.getsByUserId({ userId });
+      expect(expected).toEqual(tasks);
+    });
+  });
 });

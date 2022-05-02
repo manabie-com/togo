@@ -1,16 +1,30 @@
 import hapi from '@hapi/hapi';
+import ResponseWrapper from '../../plugins/responseWrapper.plugin';
 import { StatusCode } from '../../common/enum';
+import taskService from '../../task/task.service';
 import userController from '../user.controller';
-import { IUserConfigurationEnum } from '../user.enum';
+import { UserConfigurationEnum } from '../user.enum';
 import userService from '../user.service';
 import { createUserPayload } from '../__mock__/user.data';
+import { createTaskPayloadFn } from '../../task/__mock__/task.data';
+import { TaskStatusEnum } from '../../task/task.enum';
+import { ERROR_CODE } from '../../error/error.list';
+import { AppError } from '../../error/error.service';
 
 jest.mock('../user.service');
+jest.mock('../../task/task.service');
+jest.mock('../../common/kafka');
+jest.mock('redis', () => ({
+  createClient: jest.fn().mockImplementationOnce(() => ({
+    connect: jest.fn()
+  }))
+}));
 
 describe('user.controller', () => {
   let server: hapi.Server;
   beforeAll(async () => {
     server = new hapi.Server();
+    server.register([ResponseWrapper]);
     server.route(userController);
   });
 
@@ -24,7 +38,7 @@ describe('user.controller', () => {
           password: 'password',
           configuration: {
             limit: 100,
-            type: IUserConfigurationEnum.DAILY
+            type: UserConfigurationEnum.DAILY
           }
         }
       };
@@ -34,7 +48,11 @@ describe('user.controller', () => {
       );
 
       const response = await server.inject(options);
+
       expect(response.statusCode).toEqual(StatusCode.CREATED);
+      expect(response.result).toEqual({
+        data: { userId: createUserPayload.id }
+      });
     });
 
     it(`Should return status ${StatusCode.BAD_REQUEST} when wrong input payload`, async () => {
@@ -48,6 +66,86 @@ describe('user.controller', () => {
         createUserPayload
       );
 
+      const response = await server.inject(options);
+      expect(response.statusCode).toEqual(StatusCode.BAD_REQUEST);
+    });
+  });
+
+  describe('GET /user/{userId}/tasks', () => {
+    it('Should return tasks by user id successfully', async () => {
+      const userId = '_userId';
+      const taskId = '_taskId';
+      const tasks = [
+        createTaskPayloadFn({ userId, id: taskId, status: TaskStatusEnum.DONE })
+      ];
+      const options = {
+        method: 'GET',
+        url: `/user/${userId}/tasks`
+      };
+
+      (userService.getById as jest.Mock).mockResolvedValueOnce(null);
+      (taskService.getsByUserId as jest.Mock).mockResolvedValueOnce(tasks);
+
+      const response = await server.inject(options);
+
+      expect(response.statusCode).toEqual(StatusCode.OK);
+      expect(response.result).toEqual({ data: tasks });
+    });
+
+    it(`Should throw ${ERROR_CODE.USER_NOT_FOUND} when not found the user`, async () => {
+      const userId = '_userId';
+      const options = {
+        method: 'GET',
+        url: `/user/${userId}/tasks`
+      };
+
+      (userService.getById as jest.Mock).mockRejectedValueOnce(
+        new AppError(ERROR_CODE.USER_NOT_FOUND)
+      );
+
+      const response = await server.inject(options);
+
+      expect(response.statusCode).toEqual(StatusCode.BAD_REQUEST);
+      expect(response.result).toEqual(
+        expect.objectContaining({
+          statusCode: StatusCode.BAD_REQUEST,
+          message: ERROR_CODE.USER_NOT_FOUND
+        })
+      );
+    });
+  });
+
+  describe('POST user/{userId}/task', () => {
+    const userId = '_userId';
+    it(`Should return status ${StatusCode.CREATED} when creating successfully`, async () => {
+      const createTaskData = createTaskPayloadFn({ userId });
+      const options = {
+        method: 'POST',
+        url: `/user/${userId}/task`,
+        payload: {
+          name: '_name'
+        }
+      };
+
+      (taskService.createTask as jest.Mock).mockResolvedValueOnce(
+        createTaskData
+      );
+
+      const response = await server.inject(options);
+
+      expect(response.statusCode).toEqual(StatusCode.CREATED);
+    });
+
+    it(`Should return status ${StatusCode.BAD_REQUEST} when wrong input payload`, async () => {
+      const options = {
+        method: 'POST',
+        url: `/user/${userId}/task`,
+        payload: {}
+      };
+      const createTaskData = createTaskPayloadFn({ userId });
+      (taskService.createTask as jest.Mock).mockResolvedValueOnce(
+        createTaskData
+      );
       const response = await server.inject(options);
       expect(response.statusCode).toEqual(StatusCode.BAD_REQUEST);
     });

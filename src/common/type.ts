@@ -1,3 +1,3 @@
 export interface IBaseModel {
-  _id: string;
+  id: string;
 }

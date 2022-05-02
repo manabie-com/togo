@@ -51,7 +51,9 @@ describe('user.service', () => {
       });
 
       const expected = await userService.getById(userId);
-      expect(expected).toEqual(expect.objectContaining(createUserPayload));
+      expect(expected).toEqual(
+        expect.objectContaining({ ...createUserPayload, _id: userId })
+      );
     });
 
     it(`Should throw error ${ERROR_CODE.USER_NOT_FOUND} when not found user`, async () => {
