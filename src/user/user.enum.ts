@@ -1,4 +1,4 @@
-export enum IUserConfigurationEnum {
+export enum UserConfigurationEnum {
   DAILY = 'DAILY',
   MONTHLY = 'MONTHLY',
   YEARLY = 'YEARLY'

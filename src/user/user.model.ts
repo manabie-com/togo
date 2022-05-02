@@ -1,17 +1,20 @@
 import { Schema, model } from 'mongoose';
-import { IUserConfigurationEnum } from './user.enum';
+import { UserConfigurationEnum } from './user.enum';
 
-const configurationSchema = new Schema({
-  type: {
-    type: String,
-    enum: [...Object.values(IUserConfigurationEnum)],
-    default: IUserConfigurationEnum.DAILY
+const configurationSchema = new Schema(
+  {
+    type: {
+      type: String,
+      enum: [...Object.values(UserConfigurationEnum)],
+      default: UserConfigurationEnum.DAILY
+    },
+    limit: {
+      type: Number,
+      default: 0
+    }
   },
-  limit: {
-    type: Number,
-    default: 0
-  }
-});
+  { _id: false }
+);
 
 const userSchema = new Schema({
   username: { type: String, required: true, unique: true },

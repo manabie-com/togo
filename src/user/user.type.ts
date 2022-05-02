@@ -1,8 +1,8 @@
 import { IBaseModel } from '../common/type';
-import { IUserConfigurationEnum } from './user.enum';
+import { UserConfigurationEnum } from './user.enum';
 
 export interface IUserConfiguration {
-  type: IUserConfigurationEnum;
+  type: UserConfigurationEnum;
   limit: number;
 }
 

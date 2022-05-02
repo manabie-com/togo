@@ -6,11 +6,13 @@ import { createTaskPayload } from '../__mock__/task.data';
 import { TaskStatusEnum } from '../task.enum';
 import { ERROR_CODE } from '../../error/error.list';
 import { AppError } from '../../error/error.service';
+import { documentToObject } from '../../common/util';
 
 jest.mock('../task.model', () => ({
   create: jest.fn(),
   findOne: jest.fn(),
-  findByIdAndUpdate: jest.fn()
+  findByIdAndUpdate: jest.fn(),
+  find: jest.fn()
 }));
 
 describe('task.repository', () => {
@@ -125,6 +127,54 @@ describe('task.repository', () => {
       );
       expect(expected).toBeInstanceOf(AppError);
       expect(expected.errorCode).toBe(ERROR_CODE.TASK_NOT_FOUND);
+    });
+  });
+
+  describe('getsByUserId', () => {
+    it('Should get tasks by user id successfully', async () => {
+      const taskId = new Types.ObjectId();
+      const tasks = [
+        {
+          _id: taskId,
+          ...createTaskPayload
+        }
+      ];
+      (taskModel.find as unknown as jest.Mock).mockImplementationOnce(() => ({
+        lean: jest.fn().mockImplementationOnce(() => ({
+          exec: jest.fn().mockResolvedValueOnce(tasks)
+        }))
+      }));
+
+      const expected = await taskRepository.getsByUserId({
+        userId: createTaskPayload.userId
+      });
+
+      expect(expected).toEqual(tasks.map((task) => documentToObject(task)));
+    });
+
+    it('Should omit the status property on query when the status is ALL', async () => {
+      const taskId = new Types.ObjectId();
+      const tasks = [
+        {
+          _id: taskId,
+          ...createTaskPayload
+        }
+      ];
+      (taskModel.find as unknown as jest.Mock).mockImplementationOnce(() => ({
+        lean: jest.fn().mockImplementationOnce(() => ({
+          exec: jest.fn().mockResolvedValueOnce(tasks)
+        }))
+      }));
+
+      const expected = await taskRepository.getsByUserId({
+        userId: createTaskPayload.userId,
+        status: 'ALL'
+      });
+
+      expect(taskModel.find).toBeCalledWith({
+        userId: createTaskPayload.userId
+      });
+      expect(expected).toEqual(tasks.map((task) => documentToObject(task)));
     });
   });
 });

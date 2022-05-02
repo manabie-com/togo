@@ -2,7 +2,12 @@ import { ErrorList, ERROR_CODE } from '../error/error.list';
 import { AppError } from '../error/error.service';
 import userService from '../user/user.service';
 import taskRepository from './task.repository';
-import { ICreateTaskPayload, ITask, IUpdateTaskByIdPayload } from './task.type';
+import {
+  ICreateTaskPayload,
+  IGetTasksQuery,
+  ITask,
+  IUpdateTaskByIdPayload
+} from './task.type';
 import KafkaService from '../common/kafka';
 import logger from '../logger';
 import RedisService from '../common/redis';
@@ -14,7 +19,7 @@ const createTask = async (payload: ICreateTaskPayload): Promise<ITask> => {
     await userService.getById(payload.userId);
     const task = await taskRepository.createTask(payload);
     await KafkaService.produceMessage(TASK_CONSUMER_TOPIC, [
-      { value: task._id.toString() }
+      { value: task.id }
     ]);
     return task;
   } catch (err) {
@@ -59,8 +64,17 @@ const processTask = async (taskId: string): Promise<void> => {
   await taskRepository.updateById(taskId, updateTaskObj);
 };
 
+const getsByUserId = async (query: IGetTasksQuery): Promise<ITask[]> => {
+  const tasks = await taskRepository.getsByUserId({
+    status: TaskStatusEnum.DONE,
+    ...query
+  });
+  return tasks;
+};
+
 export default {
   createTask,
   getById,
-  processTask
+  processTask,
+  getsByUserId
 };

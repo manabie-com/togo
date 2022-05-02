@@ -1,4 +1,5 @@
 import { Types } from 'mongoose';
+import { omit } from 'lodash';
 import { StatusCode } from './enum';
 
 interface IErrorByStatusCode {
@@ -50,3 +51,6 @@ export const displayErrorsDescription = (errorList: {
 
 export const isMongoObjectId = (id: string): boolean =>
   Types.ObjectId.isValid(id);
+
+export const documentToObject = (document: any) =>
+  omit({ ...document, id: document._id.toString() }, ['_id', '__v']);

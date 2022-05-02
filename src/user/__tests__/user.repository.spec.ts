@@ -12,13 +12,16 @@ jest.mock('../user.model', () => ({
 describe('user.repository', () => {
   describe('createUser', () => {
     it('Should create user successfully', async () => {
+      const userId = new Types.ObjectId();
       (userModel.create as unknown as jest.Mock).mockResolvedValueOnce({
-        _id: 1,
+        _id: userId,
         ...createUserPayload
       });
 
       const expected = await userRepository.createUser(createUserPayload);
-      expect(expected).toEqual(expect.objectContaining(createUserPayload));
+      expect(expected).toEqual(
+        expect.objectContaining({ ...createUserPayload, id: userId.toString() })
+      );
     });
   });
 
