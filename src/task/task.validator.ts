@@ -3,7 +3,12 @@ import { TaskStatusEnum } from './task.enum';
 
 export const createTaskPayloadValidator = Joi.object({
   name: Joi.string().required()
-});
+}).label('createTask - Payload');
+
+export const taskReasonValidator = Joi.object({
+  errorCode: Joi.string().optional(),
+  message: Joi.string().optional()
+}).label('Task - Reason');
 
 export const TaskValidator = Joi.object({
   id: Joi.string().required(),
@@ -12,8 +17,5 @@ export const TaskValidator = Joi.object({
   status: Joi.string()
     .valid(...Object.keys(TaskStatusEnum))
     .required(),
-  reason: {
-    errorCode: Joi.string().optional(),
-    message: Joi.string().optional()
-  }
-});
+  reason: taskReasonValidator
+}).label('Task');

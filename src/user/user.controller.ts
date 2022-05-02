@@ -10,7 +10,8 @@ import {
   createUserPayloadValidator,
   createUserResponseValidator,
   getTasksByUserQueryValidator,
-  getTasksByUserResponseValidator
+  getTasksByUserResponseValidator,
+  userParamValidator
 } from './user.validator';
 
 const createUser: hapi.ServerRoute = {
@@ -43,7 +44,8 @@ const getTasksByUser: hapi.ServerRoute = {
     description: 'Get list tasks by user',
     tags: ['api', 'user'],
     validate: {
-      query: getTasksByUserQueryValidator
+      query: getTasksByUserQueryValidator,
+      params: userParamValidator
     },
     response: {
       schema: getTasksByUserResponseValidator
@@ -70,7 +72,8 @@ const createTask: hapi.ServerRoute = {
     description: 'Create new task',
     tags: ['api', 'user'],
     validate: {
-      payload: createTaskPayloadValidator
+      payload: createTaskPayloadValidator,
+      params: userParamValidator
     },
     handler: async (req, res) => {
       logger.info('createTask >>>>');
