@@ -1,0 +1,45 @@
+###
+### Signup
+POST http://localhost:8080/api/v1/signup
+Content-Type: application/json
+
+{
+  "username": "hungvg",
+  "password": "11111111",
+  "taskLimit": 10
+}
+
+###
+### Login
+POST http://localhost:8080/api/v1/login
+Content-Type: application/json
+
+{
+  "username": "hungvg",
+  "password": "11111111"
+}
+
+###
+### Get task
+GET http://localhost:8080/api/v1/tasks/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsInVzZXJuYW1lIjoiaHVuZ3ZnIiwiZXhwIjoxNjUxNDc3NjUzfQ.bxXNDScW2mNn9CfuyQiReWcIJk6WSZX7yHlBE1dqrrU
+
+###
+### Get tasks
+GET http://localhost:8080/api/v1/tasks?page=1&limit=10
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsInVzZXJuYW1lIjoiaHVuZ3ZnIiwiZXhwIjoxNjUxNDc3NjUzfQ.bxXNDScW2mNn9CfuyQiReWcIJk6WSZX7yHlBE1dqrrU
+
+###
+### Create task
+POST http://localhost:8080/api/v1/tasks
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsInVzZXJuYW1lIjoiaHVuZ3ZnIiwiZXhwIjoxNjUxNDc3NjUzfQ.bxXNDScW2mNn9CfuyQiReWcIJk6WSZX7yHlBE1dqrrU
+{
+  "name": "Task 1",
+  "content": "To do task 1"
+}
+
+###
+### Delete tasks
+DELETE http://localhost:8080/api/v1/tasks/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsInVzZXJuYW1lIjoiaHVuZ3ZnIiwiZXhwIjoxNjUxNDc3NjUzfQ.bxXNDScW2mNn9CfuyQiReWcIJk6WSZX7yHlBE1dqrrU
