@@ -13,6 +13,12 @@ import { AppError } from '../../error/error.service';
 
 jest.mock('../user.service');
 jest.mock('../../task/task.service');
+jest.mock('../../common/kafka');
+jest.mock('redis', () => ({
+  createClient: jest.fn().mockImplementationOnce(() => ({
+    connect: jest.fn()
+  }))
+}));
 
 describe('user.controller', () => {
   let server: hapi.Server;
@@ -106,6 +112,42 @@ describe('user.controller', () => {
           message: ERROR_CODE.USER_NOT_FOUND
         })
       );
+    });
+  });
+
+  describe('POST user/{userId}/task', () => {
+    const userId = '_userId';
+    it(`Should return status ${StatusCode.CREATED} when creating successfully`, async () => {
+      const createTaskData = createTaskPayloadFn({ userId });
+      const options = {
+        method: 'POST',
+        url: `/user/${userId}/task`,
+        payload: {
+          name: '_name'
+        }
+      };
+
+      (taskService.createTask as jest.Mock).mockResolvedValueOnce(
+        createTaskData
+      );
+
+      const response = await server.inject(options);
+
+      expect(response.statusCode).toEqual(StatusCode.CREATED);
+    });
+
+    it(`Should return status ${StatusCode.BAD_REQUEST} when wrong input payload`, async () => {
+      const options = {
+        method: 'POST',
+        url: `/user/${userId}/task`,
+        payload: {}
+      };
+      const createTaskData = createTaskPayloadFn({ userId });
+      (taskService.createTask as jest.Mock).mockResolvedValueOnce(
+        createTaskData
+      );
+      const response = await server.inject(options);
+      expect(response.statusCode).toEqual(StatusCode.BAD_REQUEST);
     });
   });
 });

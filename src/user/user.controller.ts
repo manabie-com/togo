@@ -2,6 +2,8 @@ import hapi from '@hapi/hapi';
 import { StatusCode } from '../common/enum';
 import logger from '../logger';
 import taskService from '../task/task.service';
+import { ICreateTaskPayload } from '../task/task.type';
+import { createTaskPayloadValidator } from '../task/task.validator';
 import userService from './user.service';
 import { ICreateUserPayload } from './user.type';
 import {
@@ -61,6 +63,32 @@ const getTasksByUser: hapi.ServerRoute = {
   }
 };
 
-const userController: hapi.ServerRoute[] = [createUser, getTasksByUser];
+const createTask: hapi.ServerRoute = {
+  method: 'POST',
+  path: '/user/{userId}/task',
+  options: {
+    description: 'Create new task',
+    tags: ['api', 'user'],
+    validate: {
+      payload: createTaskPayloadValidator
+    },
+    handler: async (req, res) => {
+      logger.info('createTask >>>>');
+      const { payload, params } = req;
+      const createTaskPayload = {
+        ...(payload as object),
+        userId: params.userId
+      } as ICreateTaskPayload;
+      await taskService.createTask(createTaskPayload);
+      return res.response().code(StatusCode.CREATED);
+    }
+  }
+};
+
+const userController: hapi.ServerRoute[] = [
+  createUser,
+  getTasksByUser,
+  createTask
+];
 
 export default userController;

@@ -1,10 +1,8 @@
 import Joi from 'joi';
 import { TaskStatusEnum } from './task.enum';
-import { ICreateTaskPayload } from './task.type';
 
-export const createTaskPayloadValidator = Joi.object<ICreateTaskPayload>({
-  name: Joi.string().required(),
-  userId: Joi.string().required()
+export const createTaskPayloadValidator = Joi.object({
+  name: Joi.string().required()
 });
 
 export const TaskValidator = Joi.object({
