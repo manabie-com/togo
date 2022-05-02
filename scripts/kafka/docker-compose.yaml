@@ -1,0 +1,21 @@
+version: "3"
+services:
+  zookeeper:
+    image: "bitnami/zookeeper:$ZOOKEEPER_VERSION"
+    ports:
+      - "$ZOOKEEPER_PORT:2181"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+  kafka:
+    image: "bitnami/kafka:$KAFKA_VERSION"
+    container_name: "kafka"
+    ports:
+      - "$KAFKA_PORT:$KAFKA_PORT"
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_LISTENERS=PLAINTEXT://:$KAFKA_PORT
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:$KAFKA_PORT
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    depends_on:
+      - zookeeper

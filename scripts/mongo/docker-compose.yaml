@@ -1,0 +1,18 @@
+version: "3.1"
+
+services:
+  mongo:
+    image: mongo
+    restart: always
+    user: "501"
+    ports:
+      - $MONGO_PORT:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: $MONGO_ROOT_USER
+      MONGO_INITDB_ROOT_PASSWORD: $MONGO_ROOT_PASS
+    volumes:
+      - "./data:/data/db"
+      - ./docker-entrypoint-initdb.d/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+
+volumes:
+  data:
