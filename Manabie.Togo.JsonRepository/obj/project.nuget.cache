@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "VIYgMvVZ1jtVgQzaEkOZRZayUEQZjC0Bs6TnRJE8+HULVH37avP+XEiJJUx2XD3uPmGgtu7aUNIRlQvf2/FJUg==",
+  "success": true,
+  "projectFilePath": "D:\\Others-Git\\togo\\Manabie.Togo.JsonRepository\\Manabie.Togo.JsonRepository.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\mrphu\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}

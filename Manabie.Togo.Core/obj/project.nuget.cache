@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "WkWQGra1gUzKuDfNPB7KgI5iMrK7h2JNbVKcNnXPio3Gc+PocfbCi6TN9xsPI0RGPZ/t2ZPB6BC9ep12BVnWcQ==",
+  "success": true,
+  "projectFilePath": "D:\\Others-Git\\togo\\Manabie.Togo.Core\\Manabie.Togo.Core.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\mrphu\\.nuget\\packages\\fluentvalidation\\11.0.0\\fluentvalidation.11.0.0.nupkg.sha512",
+    "C:\\Users\\mrphu\\.nuget\\packages\\mediatr\\10.0.1\\mediatr.10.0.1.nupkg.sha512",
+    "C:\\Users\\mrphu\\.nuget\\packages\\mediatr.contracts\\1.0.1\\mediatr.contracts.1.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}

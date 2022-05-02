@@ -1,3 +1,33 @@
+### About this solution
+- Run the code in locally
+  - Please setup Redis cache
+  - Add .net core 5.0 to the visual studio
+- Sample “curl” command to call the API
+  - Api for inserted
+    - url : https://localhost:44388/userstask/insert
+	- method : POST
+	- body example : 
+		{
+			"isDeleted": false,
+			"createdDate": "2022-05-01T12:42:18.100Z",
+			"createdBy": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+			"modifiedDate": "2022-05-02T12:42:18.100Z",
+			"modifiedBy": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+			"userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+			"taskName": "taskName-1",
+			"description": "this is task 1",
+			"taskDate": "2022-05-02T12:42:18.100Z"
+		}
+  - Able to using swagger for calling apis
+- Run unit test : please go to test/ Test explorer (in visual studio) and chose "Run All Tests In View"
+- About the solution
+  - Using c# .net core 5.0 
+  - Using json-textfile for repository
+  - Using Redis for caching
+  - Using CQRS pattern
+- Somethings else
+  - Able to using entity framework with Sql server instead json-textfile
+
 ### Requirements
 
 - Implement one single API which accepts a todo task and records it
