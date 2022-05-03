@@ -27,6 +27,7 @@ module.exports = {
     '!**/node_modules/**',
     '!**/logger.ts',
     '!**/kafka.ts',
-    '!**/redis.ts'
+    '!**/redis.ts',
+    '!**/integration/**'
   ]
 };

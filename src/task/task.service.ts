@@ -42,7 +42,8 @@ const processTask = async (taskId: string): Promise<void> => {
   const { configuration } = await userService.getById(task.userId);
   const updateTaskObj: IUpdateTaskByIdPayload = { status: TaskStatusEnum.DONE };
 
-  if (count >= configuration.limit) {
+  count++;
+  if (count > configuration.limit) {
     logger.info(
       `processTask >>>> count(${count}) >= limit(${configuration.limit})`
     );
@@ -52,7 +53,7 @@ const processTask = async (taskId: string): Promise<void> => {
       message: ErrorList[ERROR_CODE.TASK_MAXIMUM_LIMIT].message
     };
   }
-  count++;
+
   updateTaskObj.status === TaskStatusEnum.DONE &&
     (await RedisService.set(task.userId, count.toString()));
   logger.info(

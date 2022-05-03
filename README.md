@@ -32,6 +32,7 @@
 - Unit Test: We are using Jest for assertion and mocking.
 - To run the test cases use `npm run test`.
 - To get the test coverage use `npm run test:cov`.
+- To run the integration test, you should setup dev (see ## Dev setup section), then run `npm run start:dev` for starting the server first. Then you should run `npm run test:integration`.
 
 ## Git Hooks
 
@@ -156,3 +157,13 @@ Response: 200
 - We can improve the performance by separating the service creating task and consuming message for checking possible to be added per day.
 
 - We can improve the performance by scaling out the service with increase the partition of topics and the instances server. Then we can consume more messages to run.
+
+## Need to improve
+
+- Should add more unit test to coverage all codes.
+
+- Write validation for consuming message
+
+- Should write Dockerfile for building docker image for the application
+
+- Find another solution for writing integration test

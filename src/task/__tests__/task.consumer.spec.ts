@@ -8,10 +8,14 @@ jest.mock('../task.service');
 describe('task.consumer', () => {
   it('Should consume message successfully', async () => {
     const expectedPayload = { value: '_test' };
+    const commitOffsets = jest.fn();
+    const consumer = jest.fn().mockImplementationOnce(() => ({
+      commitOffsets
+    }));
     (taskService.processTask as jest.Mock).mockResolvedValueOnce(null);
     (KafkaService.consumeMessage as jest.Mock).mockImplementationOnce(
       (_topic, handler) => {
-        handler(expectedPayload);
+        handler(expectedPayload, consumer);
       }
     );
     await taskConsumer.createTaskConsumer();
