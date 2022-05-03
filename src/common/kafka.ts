@@ -1,4 +1,4 @@
-import { Kafka, Message } from 'kafkajs';
+import { Consumer, Kafka, Message } from 'kafkajs';
 import { KAFKA_URL, KAFKA_GROUP_ID, SERVICE_NAME } from '../config';
 
 interface IKafkaService {
@@ -28,7 +28,7 @@ class KafkaService {
 
   consumeMessage = async (
     selectedTopic: string,
-    handler: (message: any) => Promise<void> | void
+    handler: (message: any, consumer: Consumer) => Promise<void> | void
   ) => {
     const consumer = this._kafka.consumer({ groupId: KAFKA_GROUP_ID || '' });
 
@@ -36,8 +36,9 @@ class KafkaService {
     await consumer.subscribe({ topic: selectedTopic, fromBeginning: true });
 
     await consumer.run({
+      autoCommit: false,
       eachMessage: async ({ message }) => {
-        handler(message);
+        handler(message, consumer);
       }
     });
   };
