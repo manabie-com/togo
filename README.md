@@ -42,4 +42,4 @@ Run `./launch.sh`. It will automatically migrate and create test users for the d
 ### Note
 Because performance is not a concern, I'm counting the number of tasks created on a particular day to enforce the task limit constraint. However, this requires that I have a serializable isolation level which will likely affect the performance. One way to solve this is to instead create a seperate table for counting the nubmer of tasks created. Hence, only repeateable read isolation will be needed. However, it is not as flexible in terms of time zone as the current solution.
 
-(Update) So apparently postgres is smart enough to not signal a serializable conflict when using unrelated rows on indexed columns. So if I issue `SET enable_seqscan = OFF;`, the index scan should be reliably used and performance should be optimal
+(Update) So after doing some testing, apparently postgres is smart enough to not signal a serializable conflict when using unrelated rows on indexed columns. So if I issue `SET enable_seqscan = OFF;`, the index scan should be reliably used and performance should be optimal
