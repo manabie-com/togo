@@ -8,40 +8,40 @@ import (
 
 func TestGetUserById(t *testing.T) {
 
-	todo1 := &models.Togo{Task: "testing1", Userid: 1}
+	togo1 := &models.Togo{Task: "testing1", Userid: 1}
 
-	SetUpUnitTest(todo1)
+	SetUpUnitTest(togo1)
 
-	result, err := GetUserById(todo1)
+	result, err := GetUserById(togo1)
 
 	if err != nil {
-		t.Errorf("There are error when execute GetUserById with parameter %v", todo1.Userid)
+		t.Errorf("There are error when execute GetUserById with parameter %v", togo1.Userid)
 	}
 
 	if result == nil || result.Id == 0 {
-		t.Errorf("Can't found user when execute GetUserById with parameter %v", todo1.Userid)
+		t.Errorf("Can't found user when execute GetUserById with parameter %v", togo1.Userid)
 	}
 
-	cleanUnitTest(todo1)
+	cleanUnitTest(togo1)
 }
 
 func TestCreateUser(t *testing.T) {
 
-	todo2 := &models.Togo{Task: "testing2", Userid: 1}
+	togo2 := &models.Togo{Task: "testing2", Userid: 1}
 
-	SetUpUnitTest(todo2)
+	SetUpUnitTest(togo2)
 
-	deleteUser(todo2)
+	deleteUser(togo2)
 
-	result, err := CreateUser(todo2)
+	result, err := CreateUser(togo2)
 
 	if err != nil {
-		t.Errorf("There are error when execute CreateUser with parameter %v", todo2.Userid)
+		t.Errorf("There are error when execute CreateUser with parameter %v", togo2.Userid)
 	}
 
 	if result == nil || result.Id == 0 {
-		t.Errorf("Can't create user when execute CreateUser with parameter %v", todo2.Userid)
+		t.Errorf("Can't create user when execute CreateUser with parameter %v", togo2.Userid)
 	}
 
-	cleanUnitTest(todo2)
+	cleanUnitTest(togo2)
 }

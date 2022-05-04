@@ -7,9 +7,9 @@ import (
 	"github.com/manabie-com/togo/models"
 )
 
-func TodoFactory(typeAction string, todo *models.Togo) (*models.User, error) {
+func TogoFactory(typeAction string, togo *models.Togo) (*models.User, error) {
 	if typeAction == "add" {
-		return handlers.AddTodo(todo)
+		return handlers.Addtogo(togo)
 	}
 	return nil, errors.New("incorrect type action")
 }

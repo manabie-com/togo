@@ -6,47 +6,47 @@ import (
 	"github.com/manabie-com/togo/models"
 )
 
-func TestAddTodo(t *testing.T) {
+func TestAddtogo(t *testing.T) {
 
-	todo1 := &models.Togo{Task: "testing1", Userid: 1}
+	togo1 := &models.Togo{Task: "testing1", Userid: 1}
 
-	SetUpUnitTest(todo1)
+	SetUpUnitTest(togo1)
 
-	user, _ := GetUserById(todo1)
+	user, _ := GetUserById(togo1)
 
-	todo1.Userid = user.Id
+	togo1.Userid = user.Id
 
-	result, err := AddTodo(todo1)
+	result, err := Addtogo(togo1)
 
 	if err != nil {
-		t.Errorf("There are error when add todo with parameter %v", todo1.Task)
+		t.Errorf("There are error when add togo with parameter %v", togo1.Task)
 	}
 
 	if result == nil || result.CountTasks() == 0 {
 		t.Errorf("Can't update count task with parameter %v", len(result.Tasks))
 	}
 
-	deleteTodo(todo1)
+	deletetogo(togo1)
 
-	cleanLimitTask(todo1)
+	cleanLimitTask(togo1)
 
-	cleanUnitTest(todo1)
+	cleanUnitTest(togo1)
 }
 
-func TestAddTodoLimitTask(t *testing.T) {
+func TestAddtogoLimitTask(t *testing.T) {
 
-	todo2 := &models.Togo{Task: "testing2", Userid: 1}
+	togo2 := &models.Togo{Task: "testing2", Userid: 1}
 
-	SetUpUnitTest(todo2)
+	SetUpUnitTest(togo2)
 
-	GetUserById(todo2)
+	GetUserById(togo2)
 
-	user, _ := GetUserById(todo2)
+	user, _ := GetUserById(togo2)
 
-	todo2.Userid = user.Id
+	togo2.Userid = user.Id
 
 	for i := 0; i <= 10; i++ {
-		result, err := AddTodo(todo2)
+		result, err := Addtogo(togo2)
 		if user.CountTasks() > 10 {
 			if err == nil {
 				t.Errorf("Limit task working incorrect %v", result.CountTasks())
@@ -54,9 +54,9 @@ func TestAddTodoLimitTask(t *testing.T) {
 		}
 	}
 
-	deleteTodo(todo2)
+	deletetogo(togo2)
 
-	cleanLimitTask(todo2)
+	cleanLimitTask(togo2)
 
-	cleanUnitTest(todo2)
+	cleanUnitTest(togo2)
 }

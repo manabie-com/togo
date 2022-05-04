@@ -1,6 +1,6 @@
 ### Requirements
 
-- Implement one single API which accepts a todo task and records it
+- Implement one single API which accepts a togo task and records it
   - There is a maximum **limit of N tasks per user** that can be added **per day**.
   - Different users can have **different** maximum daily limit.
 - Write integration (functional) tests
@@ -41,7 +41,7 @@ can use Postman or just patse this curl to send request to API
 
 change userId to another number to switch to another user
 
-curl --location --request POST 'http://localhost:8080/todo/add' \
+curl --location --request POST 'http://localhost:8080/togo/add' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "task":"example",
@@ -49,12 +49,12 @@ curl --location --request POST 'http://localhost:8080/todo/add' \
 }'
 
 to run api test  execute this command 
-"go test -timeout 30s -run ^TestAddTodoTask$ github.com/manabie-com/togo/test"
-"go test -timeout 30s -run ^TestAddTodoTaskWithIncorrectParameter$ github.com/manabie-com/togo/test"
+"go test -timeout 30s -run ^TestAddtogoTask$ github.com/manabie-com/togo/test"
+"go test -timeout 30s -run ^TestAddtogoTaskWithIncorrectParameter$ github.com/manabie-com/togo/test"
 
 to run integration test execute this command 
-- go test -timeout 30s -run ^TestAddTodo$ github.com/manabie-com/togo/handlers
-- go test -timeout 30s -run ^TestAddTodoLimitTask$ github.com/manabie-com/togo/handlers
+- go test -timeout 30s -run ^TestAddtogo$ github.com/manabie-com/togo/handlers
+- go test -timeout 30s -run ^TestAddtogoLimitTask$ github.com/manabie-com/togo/handlers
 - go test -timeout 30s -run ^TestGetUserById$ github.com/manabie-com/togo/handlers
 - go test -timeout 30s -run ^TestCreateUser$ github.com/manabie-com/togo/handlers
 

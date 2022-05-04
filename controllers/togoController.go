@@ -11,14 +11,14 @@ import (
 )
 
 func AddTogoTask(context *gin.Context) {
-	var newTodo models.Togo
+	var newtogo models.Togo
 
-	if err := context.BindJSON(&newTodo); err != nil {
+	if err := context.BindJSON(&newtogo); err != nil {
 		context.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	user, errUser := factories.UserFactory("get", &newTodo)
+	user, errUser := factories.UserFactory("get", &newtogo)
 
 	if errUser != nil {
 		context.JSON(http.StatusBadRequest, errUser.Error())
@@ -30,10 +30,10 @@ func AddTogoTask(context *gin.Context) {
 		return
 	}
 
-	result, errTodo := factories.TodoFactory("add", &newTodo)
+	result, errtogo := factories.TogoFactory("add", &newtogo)
 
-	if errTodo != nil {
-		context.JSON(http.StatusInternalServerError, errTodo.Error())
+	if errtogo != nil {
+		context.JSON(http.StatusInternalServerError, errtogo.Error())
 		return
 	}
 

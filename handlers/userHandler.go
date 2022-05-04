@@ -11,13 +11,13 @@ import (
 	"github.com/manabie-com/togo/models"
 )
 
-func GetUserById(todo *models.Togo) (*models.User, error) {
+func GetUserById(togo *models.Togo) (*models.User, error) {
 
 	var user models.User
 
-	if errDb := database.DB.Preload("Tasks").Model(user).Where("Id = ?", todo.Userid).First(&user).Error; errDb != nil {
+	if errDb := database.DB.Preload("Tasks").Model(user).Where("Id = ?", togo.Userid).First(&user).Error; errDb != nil {
 		if errors.Is(errDb, gorm.ErrRecordNotFound) {
-			return CreateUser(todo)
+			return CreateUser(togo)
 		}
 		return nil, errDb
 	}
@@ -25,9 +25,9 @@ func GetUserById(todo *models.Togo) (*models.User, error) {
 	return &user, nil
 }
 
-func CreateUser(todo *models.Togo) (*models.User, error) {
+func CreateUser(togo *models.Togo) (*models.User, error) {
 
-	newUser := &models.User{Id: todo.Userid, LimitTasks: 10, Tasks: []models.Togo{}}
+	newUser := &models.User{Id: togo.Userid, LimitTasks: 10, Tasks: []models.Togo{}}
 	if errorCreate := database.DB.Create(newUser).Error; errorCreate != nil {
 		return nil, errorCreate
 	}
@@ -35,14 +35,14 @@ func CreateUser(todo *models.Togo) (*models.User, error) {
 	return newUser, nil
 }
 
-func deleteUser(todo *models.Togo) error {
+func deleteUser(togo *models.Togo) error {
 
 	var user models.User
 
-	user.Id = todo.Userid
+	user.Id = togo.Userid
 
-	if err := database.DB.Model(&user).Where("Id = ?", todo.Userid).Delete(user).Error; err != nil {
-		return errors.New("user not found with id: " + strconv.Itoa(todo.Userid))
+	if err := database.DB.Model(&user).Where("Id = ?", togo.Userid).Delete(user).Error; err != nil {
+		return errors.New("user not found with id: " + strconv.Itoa(togo.Userid))
 	}
 
 	return nil

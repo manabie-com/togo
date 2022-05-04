@@ -12,7 +12,7 @@ import (
 	"github.com/manabie-com/togo/database"
 )
 
-func TestAddTodoTask(t *testing.T) {
+func TestAddtogoTask(t *testing.T) {
 
 	r := gin.Default()
 
@@ -25,9 +25,9 @@ func TestAddTodoTask(t *testing.T) {
 
 	body, _ := json.Marshal(params)
 
-	r.POST("/todo/add", controllers.AddTogoTask)
+	r.POST("/togo/add", controllers.AddTogoTask)
 
-	req, _ := http.NewRequest("POST", "/todo/add", bytes.NewReader(body))
+	req, _ := http.NewRequest("POST", "/togo/add", bytes.NewReader(body))
 	req.Header.Set("Content-Type", "application/raw")
 
 	testHTTPResponse(t, r, req, func(w *httptest.ResponseRecorder) bool {
@@ -39,7 +39,7 @@ func TestAddTodoTask(t *testing.T) {
 	database.DisconnectDatabase()
 }
 
-func TestAddTodoTaskWithIncorrectParameter(t *testing.T) {
+func TestAddtogoTaskWithIncorrectParameter(t *testing.T) {
 
 	r := gin.Default()
 
@@ -51,9 +51,9 @@ func TestAddTodoTaskWithIncorrectParameter(t *testing.T) {
 
 	body, _ := json.Marshal(params)
 
-	r.POST("/todo/add", controllers.AddTogoTask)
+	r.POST("/togo/add", controllers.AddTogoTask)
 
-	req, _ := http.NewRequest("POST", "/todo/add", bytes.NewReader(body))
+	req, _ := http.NewRequest("POST", "/togo/add", bytes.NewReader(body))
 	req.Header.Set("Content-Type", "application/raw")
 
 	testHTTPResponse(t, r, req, func(w *httptest.ResponseRecorder) bool {

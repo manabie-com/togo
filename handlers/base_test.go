@@ -5,14 +5,14 @@ import (
 	"github.com/manabie-com/togo/models"
 )
 
-func SetUpUnitTest(todo *models.Togo) {
+func SetUpUnitTest(togo *models.Togo) {
 	database.ConnectDatabase()
 }
 
-func cleanUnitTest(todo *models.Togo) {
+func cleanUnitTest(togo *models.Togo) {
 	database.DisconnectDatabase()
 }
 
-func cleanLimitTask(todo *models.Togo) {
-	resetLimitTask(todo)
+func cleanLimitTask(togo *models.Togo) {
+	resetLimitTask(togo)
 }

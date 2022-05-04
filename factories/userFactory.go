@@ -8,12 +8,12 @@ import (
 	"github.com/manabie-com/togo/models"
 )
 
-func UserFactory(typeAction string, todo *models.Togo) (*models.User, error) {
+func UserFactory(typeAction string, togo *models.Togo) (*models.User, error) {
 	if typeAction == "get" {
-		return handlers.GetUserById(todo)
+		return handlers.GetUserById(togo)
 	}
 	if typeAction == "add" {
-		return handlers.CreateUser(todo)
+		return handlers.CreateUser(togo)
 	}
 	return &models.User{}, errors.New("incorrect type action")
 }

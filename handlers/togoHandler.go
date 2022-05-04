@@ -9,34 +9,34 @@ import (
 	"github.com/manabie-com/togo/models"
 )
 
-func AddTodo(newTodo *models.Togo) (*models.User, error) {
+func Addtogo(newtogo *models.Togo) (*models.User, error) {
 
 	var user models.User
 
-	if err := database.DB.Preload("Tasks").Where("Id = ?", newTodo.Userid).First(&user).Error; err != nil {
-		return nil, errors.New("user not found with id: " + strconv.Itoa(newTodo.Userid))
+	if err := database.DB.Preload("Tasks").Where("Id = ?", newtogo.Userid).First(&user).Error; err != nil {
+		return nil, errors.New("user not found with id: " + strconv.Itoa(newtogo.Userid))
 	}
 
 	if user.CountTasks() >= 10 {
 		return nil, errors.New("tasks has been limit." + strconv.Itoa(user.CountTasks()))
 	}
-	// Create todo task
-	todo := models.Togo{Task: newTodo.Task, Userid: newTodo.Userid, Date: time.Now()}
+	// Create togo task
+	togo := models.Togo{Task: newtogo.Task, Userid: newtogo.Userid, Date: time.Now()}
 
-	database.DB.Model(todo).Create(&todo)
+	database.DB.Model(togo).Create(&togo)
 
-	user.Tasks = append(user.Tasks, todo)
+	user.Tasks = append(user.Tasks, togo)
 
 	return &user, nil
 
 }
 
-func resetLimitTask(todo *models.Togo) (*models.User, error) {
+func resetLimitTask(togo *models.Togo) (*models.User, error) {
 
 	var user models.User
 
-	if err := database.DB.Preload("Tasks").Where("Id = ?", todo.Userid).First(&user).Error; err != nil {
-		return nil, errors.New("user not found with id: " + strconv.Itoa(todo.Userid))
+	if err := database.DB.Preload("Tasks").Where("Id = ?", togo.Userid).First(&user).Error; err != nil {
+		return nil, errors.New("user not found with id: " + strconv.Itoa(togo.Userid))
 	}
 
 	// update countTasks
@@ -46,10 +46,10 @@ func resetLimitTask(todo *models.Togo) (*models.User, error) {
 	return &user, nil
 }
 
-func deleteTodo(todo *models.Togo) error {
+func deletetogo(togo *models.Togo) error {
 
-	if err := database.DB.Model(&todo).Where("userid = ?", todo.Userid).Delete(todo).Error; err != nil {
-		return errors.New("user not found with id: " + strconv.Itoa(todo.Userid))
+	if err := database.DB.Model(&togo).Where("userid = ?", togo.Userid).Delete(togo).Error; err != nil {
+		return errors.New("user not found with id: " + strconv.Itoa(togo.Userid))
 	}
 
 	return nil

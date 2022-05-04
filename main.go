@@ -17,7 +17,7 @@ func hostDefault() {
 
 	database.ConnectDatabase()
 
-	r.POST("/todo/add", controllers.AddTogoTask)
+	r.POST("/togo/add", controllers.AddTogoTask)
 
 	r.Run()
 }
