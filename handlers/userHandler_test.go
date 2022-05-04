@@ -8,7 +8,7 @@ import (
 
 func TestGetUserById(t *testing.T) {
 
-	todo1 := &models.Todo{Task: "testing1", Userid: 1}
+	todo1 := &models.Togo{Task: "testing1", Userid: 1}
 
 	SetUpUnitTest(todo1)
 
@@ -27,7 +27,7 @@ func TestGetUserById(t *testing.T) {
 
 func TestCreateUser(t *testing.T) {
 
-	todo2 := &models.Todo{Task: "testing2", Userid: 1}
+	todo2 := &models.Togo{Task: "testing2", Userid: 1}
 
 	SetUpUnitTest(todo2)
 

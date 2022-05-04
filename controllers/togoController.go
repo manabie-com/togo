@@ -10,8 +10,8 @@ import (
 	"github.com/manabie-com/togo/factories"
 )
 
-func AddTodoTask(context *gin.Context) {
-	var newTodo models.Todo
+func AddTogoTask(context *gin.Context) {
+	var newTodo models.Togo
 
 	if err := context.BindJSON(&newTodo); err != nil {
 		context.JSON(http.StatusBadRequest, err.Error())

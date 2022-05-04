@@ -8,7 +8,7 @@ import (
 	"github.com/manabie-com/togo/models"
 )
 
-func UserFactory(typeAction string, todo *models.Todo) (*models.User, error) {
+func UserFactory(typeAction string, todo *models.Togo) (*models.User, error) {
 	if typeAction == "get" {
 		return handlers.GetUserById(todo)
 	}

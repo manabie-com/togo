@@ -25,7 +25,7 @@ func TestAddTodoTask(t *testing.T) {
 
 	body, _ := json.Marshal(params)
 
-	r.POST("/todo/add", controllers.AddTodoTask)
+	r.POST("/todo/add", controllers.AddTogoTask)
 
 	req, _ := http.NewRequest("POST", "/todo/add", bytes.NewReader(body))
 	req.Header.Set("Content-Type", "application/raw")
@@ -51,7 +51,7 @@ func TestAddTodoTaskWithIncorrectParameter(t *testing.T) {
 
 	body, _ := json.Marshal(params)
 
-	r.POST("/todo/add", controllers.AddTodoTask)
+	r.POST("/todo/add", controllers.AddTogoTask)
 
 	req, _ := http.NewRequest("POST", "/todo/add", bytes.NewReader(body))
 	req.Header.Set("Content-Type", "application/raw")

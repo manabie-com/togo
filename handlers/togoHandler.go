@@ -9,7 +9,7 @@ import (
 	"github.com/manabie-com/togo/models"
 )
 
-func AddTodo(newTodo *models.Todo) (*models.User, error) {
+func AddTodo(newTodo *models.Togo) (*models.User, error) {
 
 	var user models.User
 
@@ -21,7 +21,7 @@ func AddTodo(newTodo *models.Todo) (*models.User, error) {
 		return nil, errors.New("tasks has been limit." + strconv.Itoa(user.CountTasks()))
 	}
 	// Create todo task
-	todo := models.Todo{Task: newTodo.Task, Userid: newTodo.Userid, Date: time.Now()}
+	todo := models.Togo{Task: newTodo.Task, Userid: newTodo.Userid, Date: time.Now()}
 
 	database.DB.Model(todo).Create(&todo)
 
@@ -31,7 +31,7 @@ func AddTodo(newTodo *models.Todo) (*models.User, error) {
 
 }
 
-func resetLimitTask(todo *models.Todo) (*models.User, error) {
+func resetLimitTask(todo *models.Togo) (*models.User, error) {
 
 	var user models.User
 
@@ -40,13 +40,13 @@ func resetLimitTask(todo *models.Todo) (*models.User, error) {
 	}
 
 	// update countTasks
-	user.Tasks = []models.Todo{}
+	user.Tasks = []models.Togo{}
 	database.DB.Model(&user).Update(user)
 
 	return &user, nil
 }
 
-func deleteTodo(todo *models.Todo) error {
+func deleteTodo(todo *models.Togo) error {
 
 	if err := database.DB.Model(&todo).Where("userid = ?", todo.Userid).Delete(todo).Error; err != nil {
 		return errors.New("user not found with id: " + strconv.Itoa(todo.Userid))

@@ -7,7 +7,7 @@ import (
 type User struct {
 	LimitTasks int    `json:"limitTasks"`
 	Id         int    `json:"userid" gorm:"primary_key;auto_increment"`
-	Tasks      []Todo `gorm:"foreignKey:Userid;references:Id; polymorphic:Owner"`
+	Tasks      []Togo `gorm:"foreignKey:Userid;references:Id; polymorphic:Owner"`
 }
 
 func (b *User) CountTasks() int {
