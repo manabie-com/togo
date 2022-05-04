@@ -1,0 +1,65 @@
+{
+  "name": "togo",
+  "version": "1.0.0",
+  "description": "- Implement one single API which accepts a todo task and records it   - There is a maximum **limit of N tasks per user** that can be added **per day**.   - Different users can have **different** maximum daily limit. - Write integration (functional) tests - Write unit tests - Choose a suitable architecture to make your code simple, organizable, and maintainable - Write a concise README   - How to run your code locally?   - A sample “curl” command to call your API   - How to run your unit tests locally?   - What do you love about your solution?   - What else do you want us to know about however you do not have enough time to complete?",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --verbose --testPathIgnorePatterns integration/ ",
+    "test:cov": "npm run test -- --coverage --testPathIgnorePatterns integration/",
+    "test:integration": "jest --verbose /integration",
+    "prestart": "tsc",
+    "lint": "eslint ./src/**/*.ts --fix",
+    "start:dev": "nodemon --watch src -e ts --exec npm run start",
+    "start": "node dist/src/server.js",
+    "build": "tsc",
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/giangvo1125/togo.git"
+  },
+  "author": "giangvo1125",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/giangvo1125/togo/issues"
+  },
+  "homepage": "https://github.com/giangvo1125/togo#readme",
+  "devDependencies": {
+    "@types/cls-hooked": "~4.3.3",
+    "@types/hapi__hapi": "~20.0.10",
+    "@types/hapi__inert": "~5.2.3",
+    "@types/hapi__vision": "~5.5.3",
+    "@types/jest": "~24.0.5",
+    "@types/lodash": "~4.14.182",
+    "@types/uuid": "~8.3.4",
+    "@typescript-eslint/eslint-plugin": "~5.10.2",
+    "@typescript-eslint/parser": "~5.10.2",
+    "axios": "~0.27.2",
+    "eslint": "~8.8.0",
+    "eslint-config-prettier": "~8.3.0",
+    "eslint-plugin-prettier": "~4.0.0",
+    "husky": "~7.0.4",
+    "jest": "~24.9.0",
+    "lint-staged": "~12.3.3",
+    "mongodb-memory-server": "~6.2.2",
+    "nodemon": "~2.0.15",
+    "prettier": "~2.5.1",
+    "ts-jest": "~24.2.0",
+    "typescript": "~4.5.5"
+  },
+  "dependencies": {
+    "@hapi/hapi": "~20.2.1",
+    "@hapi/inert": "~6.0.5",
+    "@hapi/vision": "~6.1.0",
+    "cls-hooked": "~4.2.2",
+    "dotenv": "~16.0.0",
+    "hapi-swagger": "~14.2.4",
+    "joi": "~17.6.0",
+    "kafkajs": "~1.16.0",
+    "lodash": "~4.17.21",
+    "mongoose": "~6.3.1",
+    "pino": "~7.11.0",
+    "redis": "~4.0.6",
+    "uuid": "~8.3.2"
+  }
+}
