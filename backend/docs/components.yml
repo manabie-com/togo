@@ -11,7 +11,7 @@ components:
           type: string
         password:
           type: string
-        name:
+        username:
           type: string
         limit_daily_task:
           type: number
@@ -19,7 +19,7 @@ components:
         avatar: http://cdn.onlinewebfonts.com/svg/img_339542.png
         email: tuandoan2604@gmail.com
         password: 1231231231a
-        fullName: Tuan Doan
+        username: TuanDoan
         limit_daily_task: 5
 
     Token:
@@ -125,106 +125,6 @@ components:
           example:
             status: 404
             message: Not found
-            data: null
-    CannotCreateInterview:
-      description:  Cannot create interview with this userId
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            status: 400
-            message:  Cannot create interview with this userId!
-            data: null
-    CannotGetInterview:
-      description: Cannot get interview with this userId
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            status: 400
-            message: Cannot get interview with this userId!
-            data: null
-    InterviewNotFound:
-      description: Interview NotFound
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            status: 400
-            message: Interview NotFound!
-            data: null
-    CannotCreateMobilization:
-      description: Cannot create mobilization with this userId
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            status: 400
-            message: Cannot create mobilization with this userId!
-            data: null
-    CannotGetMobilization:
-      description: Cannot get mobilization with this userId
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            status: 400
-            message: Cannot get mobilization with this userId!
-            data: null
-    MobilizationNotFound:
-      description: Mobilization NotFound
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            status: 400
-            message: Mobilization NotFound!
-            data: null
-    CannotGetHistory:
-      description: Cannot get histories with this userId
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            status: 400
-            message: Cannot get histories with this userId!
-            data: null
-    HistoryNotFound:
-      description:  History NotFound
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            status: 400
-            message:  History NotFound!
-            data: null
-    CannotGetRequest:
-      description: Cannot get request with this userId
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            status: 400
-            message: Cannot get request with this userId!
-            data: null
-    RequestNotFound:
-      description: Request NotFound
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            status: 400
-            message: Request NotFound!
             data: null
     AccountNotFound:
       description: Account not found

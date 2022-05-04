@@ -5,6 +5,7 @@ const register = {
     email: Joi.string().required(),
     password: Joi.string().required(),
     username: Joi.string().required(),
+    limit_daily_task: Joi.number().optional(),
   }),
 };
 

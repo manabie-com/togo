@@ -35,12 +35,12 @@ module.exports = router;
  *           schema:
  *             type: object
  *             required:
- *               - name
+ *               - username
  *               - email
  *               - password
  *               - limit_daily_task
  *             properties:
- *               name:
+ *               username:
  *                 type: string
  *                 description: username
  *               email:
@@ -54,7 +54,7 @@ module.exports = router;
  *                 description: limit task of user in a day
  *             example:
  *                email: tuandoan2604@gmail.com
- *                name: tuandoan
+ *                username: tuandoan
  *                password: 1231231231a
  *                limit_daily_task: 1
  *     responses:
@@ -73,7 +73,7 @@ module.exports = router;
  *                  example: Created user success
  *                 data:
  *                  type: object
- *                  $ref: '#/components/schemas/user'
+ *                  $ref: '#/components/schemas/User'
  *       "400":
  *          $ref: '#/components/responses/DuplicateEmail'
  *       "404":
