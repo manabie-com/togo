@@ -1,0 +1,43 @@
+# This configuration is intended for development purpose, it's **your** responsibility to harden it for production
+version: '3.3'
+services:
+  app:
+    depends_on: 
+      - db-postgresql
+    env_file: ./.env
+    build: ./
+    ports:
+      - "3002:3002"
+    environment:
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_DATABASE=tasks
+      - DB_HOST=db-postgresql
+      - DB_PORT=5432
+      - JWT_ID=jsonwebtoken
+      - JWT_KEY=16beeb1db9c8388793c9e3dbbaa92a20
+      - EXPIRE_DATE=86400
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+    networks:
+      - system
+  db-postgresql:
+    container_name: postgres13
+    image: postgres:13.1
+    volumes:
+      - ../storage/postgresql:/var/run/postgresql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      # - /var/run/postgresql:/var/run/postgresql
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    ports:
+      - 5432:5432
+    networks:
+      - system
+ 
+networks:
+  system:
+    driver: bridge

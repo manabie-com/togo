@@ -17,3 +17,7 @@
 out/
 
 .idea
+
+/dist
+/node_modules
+/coverage
