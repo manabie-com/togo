@@ -1,0 +1,27 @@
+=============================TECHNICAL SETUP=============================
+
+Create a virtual environment with conda:
+    - conda create --name togo python=3.6.3
+Activate environment with conda:
+    - conda activate togo
+Install django inside the virtual environment:
+    - pip install django
+Setup the django project:
+    - django-admin startproject togo
+Create the superuser:
+    - email - ramosmikaelanicole@gmail.com
+    - password - <password> hint: july
+    - username - mikaelanicole
+Install django rest framework:
+    - pip install djangorestframework
+
+=======================APPLICATION SPECIFIC SETUP=========================
+
+Naming the endpoint:
+    - HTTP POST /task-management/new-task/
+JSON payload must include the following:
+    - task name
+API header should include following:
+    - username
+Authorization:
+    - api key - one api key for all requests coming from one application/organization
