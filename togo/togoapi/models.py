@@ -34,3 +34,4 @@ class UserTask(models.Model):
     id = models.AutoField(primary_key=True)
     user_id = models.BigIntegerField()
     added_time = models.DateTimeField()
+    is_active = models.BooleanField(default=True)

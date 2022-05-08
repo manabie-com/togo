@@ -14,6 +14,15 @@ Create the superuser:
     - username - mikaelanicole
 Install django rest framework:
     - pip install djangorestframework
+Install django rest framework api key:
+    - pip install djangorestframework-api-key
+Created API key in admin dashboard
+    - qkYpjT1D.Yg3aa1kv4ghPmh5lg2NCMi5PWmIp8Cy4
+
+=============================MILESTONES=================================
+CURL COMMAND THAT WORKED
+curl -X POST -H "Authorization: Api-Key qkYpjT1D.Yg3aa1kv4ghPmh5lg2NCMi5PWmIp8Cy4" -H "Content-Type: application/json" -d "{\"title\":\"study\",\"description\":\"do some coding\",\"start_time\":\"2022-05-08 17:00:00\",\"end_time\":\"2022-05-08 18:00:00\"}" http://localhost:8000/tasks/
+- django's rest api key library already does all the work for api key Authorization
 
 =======================APPLICATION SPECIFIC SETUP=========================
 
