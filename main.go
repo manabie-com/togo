@@ -60,9 +60,9 @@ func main() {
 	r.GET("/users/:user_id", users.GetUser)
 
 	//post routes
-	r.POST("/Task", middleware.AuthMiddleware(), middleware.MaxSizeAllowed(8192000), Tasks.SaveTask)
-	r.GET("/Task/:Task_id", Tasks.GetTaskAndCreator)
-	r.GET("/Task", Tasks.GetAllTask)
+	r.POST("/task", middleware.AuthMiddleware(), middleware.MaxSizeAllowed(8192000), Tasks.SaveTask)
+	r.GET("/task/:task_id", Tasks.GetTaskAndCreator)
+	r.GET("/task", Tasks.GetAllTask)
 
 	//authentication routes
 	r.POST("/login", authenticate.Login)

@@ -12,13 +12,13 @@ type TaskApp struct {
 var _ TaskAppInterface = &TaskApp{}
 
 type TaskAppInterface interface {
-	SaveTask(*entity.Task) (*entity.Task, map[string]string)
+	SaveTask(*entity.Task, int64) (*entity.Task, map[string]string)
 	GetAllTask() ([]entity.Task, error)
 	GetTask(uint64) (*entity.Task, error)
 }
 
-func (f *TaskApp) SaveTask(Task *entity.Task) (*entity.Task, map[string]string) {
-	return f.tr.SaveTask(Task)
+func (f *TaskApp) SaveTask(Task *entity.Task, userLimit int64) (*entity.Task, map[string]string) {
+	return f.tr.SaveTask(Task, userLimit)
 }
 
 func (f *TaskApp) GetAllTask() ([]entity.Task, error) {

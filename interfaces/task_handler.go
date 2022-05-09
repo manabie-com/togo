@@ -63,7 +63,7 @@ func (fo *Task) SaveTask(c *gin.Context) {
 	}
 
 	//check if the user exist
-	_, err = fo.userApp.GetUser(userId)
+	User, err := fo.userApp.GetUser(userId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, "user not found, unauthorized")
 		return
@@ -73,7 +73,8 @@ func (fo *Task) SaveTask(c *gin.Context) {
 	Task.UserID = userId
 	Task.Title = title
 	Task.Description = description
-	savedTask, saveErr := fo.TaskApp.SaveTask(&Task)
+
+	savedTask, saveErr := fo.TaskApp.SaveTask(&Task, User.TaskLimitPerDay)
 	if saveErr != nil {
 		c.JSON(http.StatusInternalServerError, saveErr)
 		return

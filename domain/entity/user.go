@@ -6,12 +6,13 @@ import (
 	"time"
 
 	"github.com/jfzam/togo/infrastructure/security"
+	"gorm.io/gorm"
 )
 
 type User struct {
 	ID              uint64    `gorm:"primary_key;auto_increment" json:"id"`
-	UserName        string    `gorm:"size:50;not null;" json:"username"`
-	Password        string    `gorm:"size:50;not null;" json:"password"`
+	UserName        string    `gorm:"size:20;not null;unique" json:"username"`
+	Password        string    `gorm:"size:60;not null;" json:"password"`
 	TaskLimitPerDay int64     `gorm:"default:0" json:"task_limit_per_day"`
 	CreatedAt       time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 }
@@ -22,7 +23,7 @@ type PublicUser struct {
 }
 
 // BeforeSave hash the password
-func (u *User) BeforeSave() error {
+func (u *User) BeforeSave(tx *gorm.DB) error {
 	hashPassword, err := security.Hash(u.Password)
 	if err != nil {
 		return err
@@ -66,7 +67,7 @@ func (u *User) Validate(action string) map[string]string {
 			errorMessages["password_required"] = "password is required"
 		}
 		if u.UserName == "" {
-			errorMessages["email_required"] = "username is required"
+			errorMessages["username_required"] = "username is required"
 		}
 	default:
 		if u.UserName == "" {
@@ -77,6 +78,9 @@ func (u *User) Validate(action string) map[string]string {
 		}
 		if u.Password != "" && len(u.Password) < 12 {
 			errorMessages["invalid_password"] = "password should be at least 12 characters"
+		}
+		if u.TaskLimitPerDay == 0 {
+			errorMessages["invalid_task_limit_per_day"] = "task limit per day is required and should be atleast 1"
 		}
 	}
 	return errorMessages

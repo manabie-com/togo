@@ -4,6 +4,8 @@ import (
 	"html"
 	"strings"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type Task struct {
@@ -14,8 +16,9 @@ type Task struct {
 	CreatedAt   time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 }
 
-func (f *Task) BeforeSave() {
+func (f *Task) BeforeSave(tx *gorm.DB) error {
 	f.Title = html.EscapeString(strings.TrimSpace(f.Title))
+	return nil
 }
 
 func (f *Task) Prepare() {

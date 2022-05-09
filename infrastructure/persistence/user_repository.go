@@ -65,7 +65,7 @@ func (r *UserRepo) GetUsers() ([]entity.User, error) {
 func (r *UserRepo) GetUserByUsernameAndPassword(u *entity.User) (*entity.User, map[string]string) {
 	var user entity.User
 	dbErr := map[string]string{}
-	err := r.db.Debug().Where("username = ?", u.UserName).Take(&user).Error
+	err := r.db.Debug().Where("user_name = ?", u.UserName).Take(&user).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		dbErr["no_user"] = "user not found"
 		return nil, dbErr
