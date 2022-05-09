@@ -6,7 +6,7 @@ import (
 )
 
 type userApp struct {
-	ur repository.UserRepository
+	us repository.UserRepository
 }
 
 //UserApp implements the UserAppInterface
@@ -20,17 +20,17 @@ type UserAppInterface interface {
 }
 
 func (u *userApp) SaveUser(user *entity.User) (*entity.User, map[string]string) {
-	return u.ur.SaveUser(user)
+	return u.us.SaveUser(user)
 }
 
 func (u *userApp) GetUser(userId uint64) (*entity.User, error) {
-	return u.ur.GetUser(userId)
+	return u.us.GetUser(userId)
 }
 
 func (u *userApp) GetUsers() ([]entity.User, error) {
-	return u.ur.GetUsers()
+	return u.us.GetUsers()
 }
 
 func (u *userApp) GetUserByUsernameAndPassword(user *entity.User) (*entity.User, map[string]string) {
-	return u.ur.GetUserByUsernameAndPassword(user)
+	return u.us.GetUserByUsernameAndPassword(user)
 }

@@ -59,7 +59,6 @@ func (u *User) Prepare() {
 // Validate validates user action
 func (u *User) Validate(action string) map[string]string {
 	var errorMessages = make(map[string]string)
-	//var err error
 
 	switch strings.ToLower(action) {
 	case "login":
@@ -69,25 +68,15 @@ func (u *User) Validate(action string) map[string]string {
 		if u.UserName == "" {
 			errorMessages["email_required"] = "username is required"
 		}
-		if u.UserName != "" {
-			// if err = checkmail.ValidateFormat(u.Email); err != nil {
-			// 	errorMessages["invalid_email"] = "please provide a valid email"
-			// }
-		}
 	default:
 		if u.UserName == "" {
-			errorMessages["firstname_required"] = "first name is required"
+			errorMessages["username_required"] = "user name is required"
 		}
 		if u.Password == "" {
 			errorMessages["password_required"] = "password is required"
 		}
 		if u.Password != "" && len(u.Password) < 12 {
 			errorMessages["invalid_password"] = "password should be at least 12 characters"
-		}
-		if u.UserName != "" {
-			// if err = checkmail.ValidateFormat(u.Email); err != nil {
-			// 	errorMessages["invalid_email"] = "please provide a valid email"
-			//
 		}
 	}
 	return errorMessages
