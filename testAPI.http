@@ -1,0 +1,33 @@
+POST http://localhost:8080/tasks
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhYWFhQGFhYS5hYSIsImV4cCI6MTY1MjIwODQyMiwiaWF0IjoxNjUyMTkwNDIyfQ.ZuxMEvIpUYS6qL__Qy9otpRXrkujMbk1ilNyrs7SSyFJTmVLvnoHKbJCSjhCdiWjfqc7c27Oe6Lsiv7Ogko-lA
+
+{
+  "content": "Test thr task !!!!!! "
+}
+
+
+###
+GET http://localhost:8080/tasks
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhYWFhQGFhYS5hYSIsImV4cCI6MTY1MjIwODQyMiwiaWF0IjoxNjUyMTkwNDIyfQ.ZuxMEvIpUYS6qL__Qy9otpRXrkujMbk1ilNyrs7SSyFJTmVLvnoHKbJCSjhCdiWjfqc7c27Oe6Lsiv7Ogko-lA
+
+
+###
+POST http://localhost:8080/authenticate
+Content-Type: application/json
+
+{"username": "aaaa@aaa.aa",
+  "password": "a"}
+
+###
+POST http://localhost:8080/register
+Content-Type: application/json
+
+{
+  "username": "aaaa@aaa.aa",
+  "password": "a",
+  "taskLimit": 2
+}
+
+###
