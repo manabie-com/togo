@@ -30,6 +30,6 @@ test-all:
 	docker-compose -f docker-compose-test.yaml down \
 		&& make build-test \
 		&& docker-compose -f docker-compose-test.yaml up -d \
-  		&& make integration-test \
-		&& make unit-test \
+  		&& go test -tags=integration -v ./... \
+		&& go test -tags=unit -v ./... \
 		&& docker-compose -f docker-compose-test.yaml down
