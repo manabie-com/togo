@@ -55,12 +55,12 @@ func main() {
 	r.Use(middleware.CORSMiddleware()) //For CORS
 
 	//user routes
-	r.POST("/users", users.SaveUser)
+	r.POST("/register", users.SaveUser)
 	r.GET("/users", users.GetUsers)
 	r.GET("/users/:user_id", users.GetUser)
 
 	//post routes
-	r.POST("/task", middleware.AuthMiddleware(), middleware.MaxSizeAllowed(8192000), Tasks.SaveTask)
+	r.POST("/task", middleware.AuthMiddleware(), Tasks.SaveTask)
 	r.GET("/task/:task_id", Tasks.GetTaskAndCreator)
 	r.GET("/task", Tasks.GetAllTask)
 
