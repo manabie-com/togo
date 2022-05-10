@@ -12,7 +12,7 @@ build:
 		&& cd ..
 deploy:
 	make build && \
-	docker-compose -f docker-compose.yaml down && docker-compose -f docker-compose.yaml up
+	docker-compose -f docker-compose.yaml down && docker-compose -f docker-compose.yaml up -d
 setup-integration-test:
 	make build-test \
 		&& docker-compose -f docker-compose-test.yaml down \
