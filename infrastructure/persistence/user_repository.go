@@ -28,7 +28,7 @@ func (r *UserRepo) SaveUser(user *entity.User) (*entity.User, map[string]string)
 	if err != nil {
 		//If the email is already taken
 		if strings.Contains(err.Error(), "duplicate") || strings.Contains(err.Error(), "Duplicate") {
-			dbErr["email_taken"] = "email already taken"
+			dbErr["username_taken"] = "username already taken"
 			return nil, dbErr
 		}
 		//any other db error

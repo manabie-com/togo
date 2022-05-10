@@ -38,7 +38,7 @@ func (r *TaskRepo) SaveTask(task *entity.Task, userLimit int64) (*entity.Task, m
 	// check if user reached its task limit
 	if int(userLimit) <= len(tasks) {
 		fmt.Println("user reached its task limit for today")
-		dbErr["user_limit"] = "user reached its task limit for today"
+		dbErr["user_task_limit"] = "user reached its task limit for today"
 		return nil, dbErr
 	}
 
