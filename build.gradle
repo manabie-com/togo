@@ -1,0 +1,49 @@
+plugins {
+    id 'org.springframework.boot' version '2.4.0'
+    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+    id 'java'
+}
+
+group = 'com'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.modelmapper:modelmapper:2.3.7'
+    implementation 'junit:junit:4.13.1'
+    implementation 'junit:junit:4.13.1'
+    compile group: 'org.springframework', name: 'spring-context-support', version: '5.3.2'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    compile group: 'net.bytebuddy', name: 'byte-buddy', version: '1.10.18'
+    compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'mysql:mysql-connector-java'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.4.1'
+    testImplementation 'org.springframework.security:spring-security-test'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.3.5'
+    implementation 'com.google.code.gson:gson:2.9.0'
+
+
+}
+
+test {
+    useJUnitPlatform()
+}
