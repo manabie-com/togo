@@ -6,10 +6,7 @@ from rest_framework import viewsets
 
 from .serializers import TaskSerializer, UserSerializer, UserTaskSerializer
 from .models import User, UserTask, Task
-
-from datetime import datetime, timedelta
-
-from .util import authutil
+from .util import dbutil
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -19,39 +16,32 @@ class UserTaskViewSet(viewsets.ModelViewSet):
     queryset = UserTask.objects.all()
     serializer_class = UserTaskSerializer
 
+    # create - function executed for POST http request
+    # validate the username provided to which the task will be associated with
+    # proceed to creating the task if valid username
     def create(self, request):
+        self.destroy()
+
         try: 
-            username = request.META.get('HTTP_USERNAME')            
-            if not authutil.usernameExists(username):
+            username = request.META.get('HTTP_USERNAME')
+            user = dbutil.user(username)
+            if not user:
                 return HttpResponse('Username does not exist', status=401)
-        except:
+            return dbutil.CreateUtil.createTaskRecord(user, request)
+
+        except Exception as e:
+            print(e)
             return HttpResponse('Missing a username header?', status=401)
 
-        # insert a new usertask to UserTask
-        # insert a new task to Task
-        return HttpResponse(status=200)
-            
-    """
-    What the DELETE method would do
-    - set the active flag of a UserTask to False
-        - no deletions - with consideration for archiving purposes
-    - update the task_today of the users
-    """
-
-    def delete():
-        timenow = datetime.datetime.now()
-        
-        expired = UserTask.objects.filter(added_time=(timenow-timedelta(hours=24), timenow))
-        expired.update(is_active=False)
-
-        # update the task_today values for all users
+    # destroy - function executed for DELETE http request
+    def destroy(self):
+        dbutil.DeleteUtil.deleteExpiredTasks()
 
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
 
-    def create(task):
-        pass
+
 
 
 

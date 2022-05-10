@@ -24,6 +24,8 @@ CURL COMMAND THAT WORKED
 curl -X POST -H "Authorization: Api-Key qkYpjT1D.Yg3aa1kv4ghPmh5lg2NCMi5PWmIp8Cy4" -H "Content-Type: application/json" -d "{\"title\":\"study\",\"description\":\"do some coding\",\"start_time\":\"2022-05-08 17:00:00\",\"end_time\":\"2022-05-08 18:00:00\"}" http://localhost:8000/tasks/
 - django's rest api key library already does all the work for api key Authorization
 
+UPDATE: added the username header checker
+curl -X POST -H "Authorization: Api-Key qkYpjT1D.Yg3aa1kv4ghPmh5lg2NCMi5PWmIp8Cy4" -H "Content-Type: application/json" -H "Username: oliviahyee" -d "{\"title\":\"hobby\",\"description\":\"pilates\",\"start_time\":\"2022-05-08 20:00:00\",\"end_time\":\"2022-05-08 20:15:00\",\"added_time\":\"2022-05-08 21:45:00\"}" http://localhost:8000/usertasks/
 =======================APPLICATION SPECIFIC SETUP=========================
 
 Naming the endpoint:
