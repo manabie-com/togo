@@ -3,7 +3,14 @@ from django.test import TestCase
 from rest_framework.test import APITestCase
 from rest_framework import status
 
-class TestAddTodo(APITestCase):
+from .util import detailvalidationutil
+from .util import dbutil
+
+from datetime import datetime, timedelta
+from django.test.client import RequestFactory
+
+
+class AddTodoAPITestCase(APITestCase):
 
     correct_header = {
         "HTTP_AUTHORIZATION": "Api-Key qkYpjT1D.Yg3aa1kv4ghPmh5lg2NCMi5PWmIp8Cy4", 
@@ -58,3 +65,22 @@ class TestAddTodo(APITestCase):
         response = self.client.post(self.endpoint, self.todo, **self.correct_header)
         print(response.data, response.content)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+class ValidationUtilTestCase(TestCase):
+    date_frm = "%Y-%m-%d %H:%M:%S"
+
+    def test_valid_schedule_valid_pair(self):
+        start = (datetime.now() + timedelta(minutes=1)).strftime(self.date_frm)
+        end = (datetime.now() + timedelta(hours=1)).strftime(self.date_frm)
+        isValid = detailvalidationutil.validSchedule(start, end)
+        self.assertEqual(isValid, True)
+
+    def test_valid_schedule_invalid_pair(self):
+        start = (datetime.now() + timedelta(minutes=1)).strftime(self.date_frm)
+        end = (datetime.now() - timedelta(hours=1)).strftime(self.date_frm)
+        isValid = detailvalidationutil.validSchedule(start, end)
+        self.assertEqual(isValid, False)
+
+    def test_valid_schedule_invalid_past_start(self):
+        isValid = detailvalidationutil.validSchedule("2022-05-10 10:10:10", "2022-05-10 12:30:10")
+        self.assertEqual(isValid, False)

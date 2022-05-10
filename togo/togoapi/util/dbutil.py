@@ -59,7 +59,7 @@ class CreateUtil():
     # setup up a transaction for inserting new records to Task and UserTask tables
     @staticmethod
     def createNewTask(user_id, request):
-        if detailvalidationutil.validSchedule(request):
+        if detailvalidationutil.validSchedule(request.data.get("start_time"), request.data.get("end_time")):
             try:
                 with transaction.atomic():
                     ut_id = CreateUtil.createdUserTaskId(user_id)
