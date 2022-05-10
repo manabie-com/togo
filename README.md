@@ -1,30 +1,58 @@
-### Requirements
+# Task Todo
+## Guilde run in Intellij IDEA
+Ensure you have JDK 8 (or newer) and Git installed
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+    java -version
+    git --version
 
-### Notes
+First clone the repository:
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+    git clone https://github.com/manabie-com/togo.git
+    
+Link Gradle Project
 
-### How to submit your solution?
+    Open this project on Intellij IDEA
+    Right click on build.gradle file and select Link Gradle Project
 
-- Fork this repo and show us your development progress via a PR
+Setup Run/Debug Configurations
 
-### Interesting facts about Manabie
+    add a new configuration : Spring boot
+    select main class is com/todo/TodoApplication.java
+    
+Run
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+## A sample “curl” command to call your API
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+Register
+
+    curl --location --request POST 'http://localhost:8080/register' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+      "username": "aaaa@aaa.aa",
+      "password": "a",
+      "taskLimit": 2
+    }'
+    
+Login to get token
+    
+    curl --location --request POST 'http://localhost:8080/authenticate' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+      "username": "aaaa@aaa.aa",
+      "password": "a"
+    }'
+    
+List all task of current user
+    
+    curl --location --request GET 'http://localhost:8080/tasks' \
+    --header 'Content-Type: application/json' \
+    --header 'Authorization: Bearer <token>'
+    
+Accepts a todo task and records it
+    
+    curl --location --request POST 'http://localhost:8080/tasks' \
+    --header 'Content-Type: application/json' \
+    --header 'Authorization: Bearer <token>' \
+    --data-raw '{
+      "content": "Test task !!!!!! "
+    }'
