@@ -8,6 +8,8 @@ from .serializers import TaskSerializer, UserSerializer, UserTaskSerializer
 from .models import User, UserTask, Task
 from .util import dbutil
 
+username_header = "HTTP_USERNAME"
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -17,17 +19,15 @@ class UserTaskViewSet(viewsets.ModelViewSet):
     serializer_class = UserTaskSerializer
 
     # create - function executed for POST http request
+    # calls the destroy functionality to make sure the expired tasks are deactivated
     # validate the username provided to which the task will be associated with
     # proceed to creating the task if valid username
     def create(self, request):
         self.destroy()
-
         try: 
-            username = request.META.get('HTTP_USERNAME')
+            username = request.META.get(username_header)
             user = dbutil.user(username)
-            if not user:
-                return HttpResponse('Username does not exist', status=401)
-            return dbutil.CreateUtil.createTaskRecord(user, request)
+            return dbutil.CreateUtil.createTaskRecord(user, request.data)
 
         except Exception as e:
             print(e)
