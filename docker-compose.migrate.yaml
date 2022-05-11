@@ -8,6 +8,7 @@ services:
       - POSTGRES_PASSWORD=manabie
     volumes: 
       - ./db:/var/lib/postgresql/data
+    hostname: manabie-db-1
   migrations:
     image: node:17-buster-slim
     volumes:
@@ -22,5 +23,6 @@ services:
     working_dir: /opt/app/workspace
     depends_on:
       - db
+    hostname: manabie-migrations-1
 volumes:
   go_root:

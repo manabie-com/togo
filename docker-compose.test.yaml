@@ -11,10 +11,10 @@ services:
       - PGDATABASE=manabie
       - PGPASSWORD=manabie
     working_dir: /opt/app
-    command: bash -c 'go mod vendor && go test ./...'
+    command: bash -c 'while ping -c 1 -W 1 manabie-migrations-1 1>/dev/null; do :; done; go mod vendor && go test ./...'
     depends_on:
-      migrations:
-        condition: service_completed_successfully
+      - migrations
+    hostname: manabie-backend-1
   db-test:
     image: postgres:14.2
     environment:
@@ -23,6 +23,7 @@ services:
       - POSTGRES_PASSWORD=manabie
     tmpfs: 
       - /var/lib/postgresql/data
+    hostname: manabie-db-test-1
   migrations:
     image: node:17-buster-slim
     volumes:
@@ -30,7 +31,7 @@ services:
       - type: bind
         source: ./migrations/migrate.test
         target: /opt/app/workspace/.migrate
-    command: bash -c 'npm install && sleep 2 && npx migrate up'
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; npm install && npx migrate up'
     environment:
       - PGHOST=manabie-db-test-1
       - PGUSER=manabie
@@ -40,5 +41,6 @@ services:
     working_dir: /opt/app/workspace
     depends_on:
       - db-test
+    hostname: manabie-migrations-1
 volumes:
   go_root:
