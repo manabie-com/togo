@@ -27,6 +27,6 @@ class UserTask(models.Model):
 class Task(models.Model):
     task = models.ForeignKey(UserTask, on_delete=models.CASCADE, default=1)
     title = models.CharField(max_length=50)
-    description = models.CharField(max_length=100)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    description = models.CharField(max_length=100,blank=True)
+    start_time = models.DateTimeField(blank=True)
+    end_time = models.DateTimeField(blank=True)
