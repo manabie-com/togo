@@ -2,9 +2,9 @@
 This http server implements one single API which accepts a todo task and records it.
  - There is a maximum **limit of N tasks per user** that can be added **per day**.
  - Different users can have **different** maximum daily limit.
-The server is written in Go, using service pattern and repository pattern to create a clean architecture 
+ - The server is written in Go, using service pattern and repository pattern to create a clean architecture 
 to make it simple for organizing and maintaining.
-The project includes unit tests for repository layer, using SQLite for database.
+ - The project includes unit tests for repository layer, using SQLite for database.
 
 # Usage
 ## How to run locally:
