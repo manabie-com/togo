@@ -1,0 +1,5 @@
+com\manabie\todo\api\UserControllerTest.class
+com\manabie\todo\service\TaskServiceTest.class
+com\manabie\todo\service\UserServiceTest.class
+com\manabie\todo\utils\TimeUtilsTest.class
+com\manabie\todo\api\AuthenticationControllerTest.class
