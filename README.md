@@ -12,7 +12,7 @@ cd {download_path}/togo/togo
 ```sh
 pip install virtualenv                                      # installs the virtualenv dependency
 python -m venv togo-test                                    # using python virtualenv
-togo-test-venv\Scripts\activate.bat                         # activates the virtual environment
+togo-test\Scripts\activate.bat                              # activates the virtual environment
 
 conda create --name togo-test python=3.6.3                  # using anaconda
 conda activate togo-test                                    # activates the virtual environment
@@ -27,7 +27,7 @@ python manage.py runserver
 ```
 
 ## Sample cURL command
-  - curl -X POST -H "Authorization: Api-Key cvQYsddc.PZVUK5AY3vftSerjzbwqz2qgsoNdjB6h" -H "Content-Type: application/json" -H "Username: choerry" -d "{\"title\":\"cook\"}" http://localhost:8000/usertasks/
+  - curl -X POST -H "Authorization: Api-Key cvQYsddc.PZVUK5AY3vftSerjzbwqz2qgsoNdjB6h" -H "Content-Type: application/json" -H "Username: choerry" -d "{``\``"title``\``":``\``"cook``\``"}" http://localhost:8000/usertasks/
 
 ##### The following information can be added to the data:
   - **title** - title of the task
