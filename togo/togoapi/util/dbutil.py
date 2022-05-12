@@ -3,10 +3,12 @@ from ..models import User, UserTask, Task
 from django.http import HttpResponse
 from datetime import datetime, timedelta
 
-from ..util import detailvalidationutil
+from ..util import detailvalidationutil, logutil
 from django.db import DatabaseError, transaction
 
 from django.utils import timezone
+
+import logging
 
 time_format = "%Y-%m-%d %H:%M:%S"
 td = "description"
@@ -37,8 +39,11 @@ class DeleteUtil():
                 DeleteUtil.deactivateTasks()
                 DeleteUtil.updateTaskCountToday()
         except DatabaseError as e:
-            print(e)
+            logutil.errlog(e)
             return HttpResponse("Could not delete expired tasks....", status=401)
+
+        logutil.infolog("Completed task count refresh successfully....")
+        return HttpResponse("Completed task count refresh successfully...", status=200)
 
     # sets active = False for user tasks added over 24 hours ago
     @staticmethod
@@ -60,7 +65,8 @@ class CreateUtil():
     @staticmethod
     def createTaskRecord(user, data):
         if not detailvalidationutil.dailyLimitReached(user): 
-            CreateUtil.createNewTask(user, data)       
+            CreateUtil.createNewTask(user, data)
+            logutil.infolog("Todo was successfully added...")
             return HttpResponse("Task successfully created...", status=201)
         
         return HttpResponse("Daily task limit has been reached!!", status=409)
@@ -77,7 +83,7 @@ class CreateUtil():
                     CreateUtil.createTask(ut_id, data)
                     CreateUtil.incrementUserDailyTask(user)
             except DatabaseError as e:
-                print(e)
+                logutil.errlog(e)
                 return HttpResponse("Could not create a new task...", status=404)
 
         else:
@@ -125,6 +131,7 @@ class CreateUtil():
         
         return task
 
+    # returns time + 1 hour
     @staticmethod
     def defaultEndTime(start_time):
         return (datetime.strptime(start_time, time_format) + timedelta(hours=1)).strftime(time_format)
