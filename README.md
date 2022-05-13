@@ -1,15 +1,11 @@
 ### How to run code locally?
 
 - Enviroments
-  - Apache Maven 3.8.5
-  - Openjdk 17.0.2
   - Docker
 - Run code
   - Clone repo: git clone https://github.com/long-lehoang/togo
   - Open togo directory: cd togo
-  - Run mysql on docker: docker-compose up -d
-  - Build project: mvn clean install
-  - Run: mvn spring-boot:run
+  - Run mysql on docker: docker compose up -d
   
 ### A sample “curl” command to call API
 
@@ -20,7 +16,7 @@
 
 ### How to run your unit tests locally?
 
-- Just run command in todo directory: mvn test
+- Just run command in todo directory: docker compose run test
 
 ### What do you love about your solution?
 
