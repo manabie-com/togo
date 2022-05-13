@@ -14,4 +14,4 @@
   - for running test cases: “go test main_test.go -v”
 
 - I made a simple approach to complete the exam
-
+- Completed the code around 2-3 hours due to hectic work schedule
