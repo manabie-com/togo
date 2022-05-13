@@ -5,8 +5,6 @@
 *.so
 *.dylib
 
-# Test binary, built with `go test -c`
-*.test
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
@@ -17,3 +15,12 @@
 out/
 
 .idea
+/ToDoAPI/ToDoApp.Test/bin
+/ToDoAPI/ToDoApp.Test/obj
+/ToDoAPI/ToDoApp.DTO/bin/Release/net5.0
+/ToDoAPI/ToDoApp.DTO/obj/Debug/net5.0
+/ToDoAPI/ToDoApp.DTO/obj/Release/net5.0
+/ToDoAPI/ToDoApp.DTO/obj
+/ToDoAPI/ToDoApp.API/obj
+/ToDoAPI/ToDoApp.API/bin/Release/net5.0
+/ToDoAPI/ToDoApp.API/.config

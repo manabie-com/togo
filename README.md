@@ -1,30 +1,49 @@
-### Requirements
+### Prerequisite:
+- .Net SDK (.Net 5) 
+- Visual Studio 2019-2022
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+### Project Structure:
+- ToDoApp.API: API Controller 
+- ToDoApp.DTO: Database setup, entity structure
+  - Using In memory DB of Entity Framework
+- ToDoApp.Test: Unit and Integration Test
 
-### Notes
+### Run code Locally:
+## Option 1: Via .Net CLI
+- After install .NET SDK, please verify that .Net SDK has been installed successfully by open Command Line Tool (Windows) or Terminal (MAC) and Run 
+```
+dotnet --version
+```
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+- Locate **togo\ToDoAPI** and run command
+```
+dotnet build
+```
 
-### How to submit your solution?
+- Locate **togo\ToDoAPI\ToDoApp.API**  and run command
+```
+dotnet run -c Debug
+```
 
-- Fork this repo and show us your development progress via a PR
+- The project will be built and using port 5001
 
-### Interesting facts about Manabie
+I have integrate Swagger into this project that we can view and execute API via UI - Please open localhost:5001
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+## Option 2: Via Visual Studio
+- Open Solution and Start Debug 
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+### Run Test Locally
+
+## Option 1: Via CLI
+
+- Locate **togo\ToDoAPI** and run command
+```
+dotnet test
+```
+## Option 2: Via Visual Studio
+- Open Solution and open Test Explorer then Run test
+
+
+With this project, i love at that it has ability to write unit and integration test
+
+If there is more time for me, i would like to work about the authentication when execute API and API logging.
