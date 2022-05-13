@@ -1,11 +1,11 @@
 ### How to run code locally?
 
-- Enviroments
+- Environments
   - Docker
 - Run code
   - Clone repo: git clone https://github.com/long-lehoang/togo
   - Open togo directory: cd togo
-  - Run mysql on docker: docker compose up -d
+  - Run app: docker compose up -d
   
 ### A sample “curl” command to call API
 
