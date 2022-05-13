@@ -1,30 +1,39 @@
-### Requirements
+# Overview
+This http server implements one single API which accepts a todo task and records it.
+ - There is a maximum **limit of N tasks per user** that can be added **per day**.
+ - Different users can have **different** maximum daily limit.
+ - The server is written in Go, using service pattern and repository pattern to create a clean architecture 
+to make it simple for organizing and maintaining.
+ - The project includes unit tests for repository layer, using SQLite for database.
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+# Usage
+## How to run locally:
+- Clone this repo
+- From the repo directory, run:
+```shell
+go build -o ./build/togo ./cmd/server && ./build/togo
+```
 
-### Notes
+## How to run test with coverage:
+- From the repo directory, run:
+```shell
+go test -v -cover ./...
+```
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+## Example “curl” command:
+```shell
+curl -X POST 'http://localhost:8080/task?user_id=1&task=homework'
+```
+Available data for testing:
+- user_id = 1, daily_limit = 1
+- user_id = 2, daily_limit = 2
+- user_id = 3, daily_limit = 3
 
-### How to submit your solution?
+## What I love about the solution:
+The project follows "clean architecture" concept, make use of service pattern and repository patten,
+which make it seamlessly easy to organize and maintain.
 
-- Fork this repo and show us your development progress via a PR
-
-### Interesting facts about Manabie
-
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
-
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+## Todo:
+- User authentication
+- Unit test coverage could be improved
+- Integration testing with docker
