@@ -56,7 +56,10 @@ class UserRecordTaskDetail(views.APIView):
         return Response(serialzer.data, status=status.HTTP_200_OK)
 
     def put(self, request, pk):
-        _UserRecordTask = self.get_object(pk=pk)
+        try:
+            _UserRecordTask = self.get_object(pk=pk)
+        except:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         serialzer = UserRecordTaskSerializer(instance=_UserRecordTask, data=request.data)
         if serialzer.is_valid():
             serialzer.save()
@@ -64,7 +67,10 @@ class UserRecordTaskDetail(views.APIView):
         return Response(serialzer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
-        _UserRecordTask = self.get_object(pk=pk)
+        try:
+            _UserRecordTask = self.get_object(pk=pk)
+        except:
+            return Response(status=status.HTTP_404_NOT_FOUND)        
         _UserRecordTask.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
