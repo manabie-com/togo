@@ -6,7 +6,7 @@ from django.utils import timezone
 
 # Create your models here.
 class UserRecordTask(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="usernames")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, null=False)
     TaskTitle = models.CharField(max_length=50)
     TaskDescription = models.CharField(max_length=500)
     TaskDay = models.DateTimeField(default=datetime.now, blank=True)
@@ -15,11 +15,11 @@ class UserRecordTask(models.Model):
         return str(self.user) + ' task: ' + str(self.TaskTitle) + ' ' + str(self.TaskDay)
 
     def __repr__(self):
-        return str(self.TaskTitle) + ' record by ' + str(self.user)
+        return str(self.TaskTitle) + ' record by ' + str(self.user)        
 
 
 class UserTaskAllow(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, null=False)
     task_allow = models.IntegerField()
     task_done = models.IntegerField()
     start_task_time = models.DateTimeField(default=datetime.now, blank=True)
