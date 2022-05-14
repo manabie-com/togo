@@ -5,6 +5,8 @@ import (
 	"github.com/japananh/togo/common"
 	"github.com/japananh/togo/component"
 	"github.com/japananh/togo/component/tokenprovider"
+	"github.com/japananh/togo/middleware"
+	"github.com/japananh/togo/modules/task/tasktransport/gintask"
 	"github.com/japananh/togo/modules/user/usertransport/ginuser"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -46,7 +48,7 @@ func runService(db *gorm.DB,
 
 	appCtx := component.NewAppContext(db, secretKey, tokenConfig)
 
-	//r.Use(middleware.Recover(appCtx))
+	r.Use(middleware.Recover(appCtx))
 
 	v1 := r.Group("/api/v1")
 
@@ -58,6 +60,11 @@ func runService(db *gorm.DB,
 
 	v1.POST("/register", ginuser.Register(appCtx))
 	v1.POST("/login", ginuser.Login(appCtx))
+
+	tasks := v1.Group("/tasks", middleware.RequiredAuth(appCtx))
+	{
+		tasks.POST("/", gintask.CreateTask(appCtx))
+	}
 
 	// TODO: How to only show these APIs in development?
 	// api for encode uid receives real id and database type, then return fake uid
