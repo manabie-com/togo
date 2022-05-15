@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"github.com/gin-gonic/gin"
 	"github.com/japananh/togo/common"
 	"github.com/japananh/togo/component"
@@ -9,6 +10,7 @@ import (
 	"github.com/japananh/togo/modules/task/tasktransport/gintask"
 	"github.com/japananh/togo/modules/user/usertransport/ginuser"
 	"github.com/joho/godotenv"
+	goose "github.com/pressly/goose/v3"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
@@ -16,7 +18,11 @@ import (
 	"os"
 )
 
+//go:embed migrations/*.sql
+var embedMigrations embed.FS
+
 func main() {
+	// load env from `.env` file
 	if err := loadEnv(); err != nil {
 		log.Fatalln("Missing env file")
 	}
@@ -30,16 +36,24 @@ func main() {
 		log.Fatalln("Missing some env")
 	}
 
+	// connect to database
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalln(err)
 	}
 
+	// run database migrations
+	if err := runDBMigrations(db); err != nil {
+		log.Fatalln(err)
+	}
+
+	// create token configs
 	tokenConfig, err := tokenprovider.NewTokenConfig(atExpiryStr, rtExpiryStr)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
+	// run api service
 	if err := runService(db, secretKey, tokenConfig); err != nil {
 		log.Fatalln(err)
 	}
@@ -48,6 +62,25 @@ func main() {
 func loadEnv() error {
 	cwd, _ := os.Getwd()
 	return godotenv.Load(cwd + `/.env`)
+}
+
+func runDBMigrations(db *gorm.DB) error {
+	sqlDB, err := db.DB()
+	if err != nil {
+		return err
+	}
+
+	goose.SetBaseFS(embedMigrations)
+
+	if err := goose.SetDialect("mysql"); err != nil {
+		return err
+	}
+
+	if err := goose.Up(sqlDB, "migrations"); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func runService(db *gorm.DB,
