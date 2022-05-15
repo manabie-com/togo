@@ -6,6 +6,14 @@ import (
 	"unicode"
 )
 
+var (
+	ErrInvalidCharacterMsg         = "password has invalid characters"
+	ErrNotEnoughCharacterMsg       = "password must have at least 8 characters"
+	ErrMustHaveNumberMsg           = "password must have at least 1 number"
+	ErrMustHaveLetterMsg           = "password must have at least 1 letter"
+	ErrMustHaveSpecialCharacterMsg = "password must have at least 1 special character"
+)
+
 type UserCreate struct {
 	common.SQLModel `json:",inline"`
 	Status          int    `json:"status" gorm:"column:status;default:1;"`
@@ -30,14 +38,14 @@ func (u *UserCreate) Validate() error {
 	if u.DailyTaskLimit <= 0 {
 		u.DailyTaskLimit = 5
 	}
-	if errMsg := verifyPassword(u.Password); errMsg != "" {
+	if errMsg := VerifyPassword(u.Password); errMsg != "" {
 		return ErrPasswordInvalid(errMsg)
 	}
 
 	return nil
 }
 
-func verifyPassword(s string) string {
+func VerifyPassword(s string) string {
 	hasNumber, hasLetter, hasSpecial, hasInvalidCharacter := false, false, false, false
 	letterCount := 0
 
@@ -56,23 +64,23 @@ func verifyPassword(s string) string {
 	}
 
 	if hasInvalidCharacter {
-		return "password has invalid characters"
+		return ErrInvalidCharacterMsg
 	}
 
 	if letterCount < 8 {
-		return "password must have at least 8 characters"
+		return ErrNotEnoughCharacterMsg
 	}
 
 	if !hasNumber {
-		return "password must have at least 1 number"
+		return ErrMustHaveNumberMsg
 	}
 
 	if !hasLetter {
-		return "password must have at least 1 letter"
+		return ErrMustHaveLetterMsg
 	}
 
 	if !hasSpecial {
-		return "password must have at least 1 speicial character"
+		return ErrMustHaveSpecialCharacterMsg
 	}
 
 	return ""
