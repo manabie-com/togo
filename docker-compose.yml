@@ -1,0 +1,37 @@
+version: "3.9"
+volumes:
+  postgres:
+services:
+  db:
+    image: postgres:10.14
+    container_name: db
+    volumes:
+      - postgres:/data/postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - PGDATA=/data/postgres
+    ports:
+      - "3308:5432"
+    command: ["postgres", "-c", "log_statement=all"]
+    networks:
+      - backend
+  db_test:
+    image: postgres:10.14
+    container_name: db_test
+    volumes:
+      - postgres:/data/postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - PGDATA=/data/postgres_test
+    ports:
+      - "3309:5432"
+    command: ["postgres", "-c", "log_statement=all"]
+    networks:
+      - backend
+networks:
+  backend:
+    name: 'backend'
