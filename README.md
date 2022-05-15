@@ -1,30 +1,29 @@
-### Requirements
+### How to run code locally?
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+- Environments
+  - Docker
+- Run code
+  - Clone repo: git clone https://github.com/long-lehoang/togo
+  - Open togo directory: cd togo
+  - Run app: docker compose up -d
+  
+### A sample “curl” command to call API
 
-### Notes
+- Register user: curl -X POST -H "Content-Type: application/json" -d "{ \\"username\\":\\"long\\",\\"password\\":\\"Password1!\\"}" "http://localhost:8080/user/register"
+- Login: curl -X POST -H "Content-Type: application/json" -d "{ \\"username\\":\\"long\\",\\"password\\":\\"Password1!\\"}" "http://localhost:8080/auth/login"
+- Add Task: curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer {*Token*}" -d "{ \\"title\\":\\"Interview\\",\\"description\\":\\"Manabie interview\\"}" "http://localhost:8080/task"
+- Delete task: curl -X DELETE -H "Content-Type: application/json" -H "Authorization: Bearer {*Token*} " -d "{ \\"title\\":\\"Interview\\",\\"description\\":\\"Manabie interview\\"}" "http://localhost:8080/task?id={id}"
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+### How to run your unit tests locally?
 
-### How to submit your solution?
+- Just run command in todo directory: docker compose run test
 
-- Fork this repo and show us your development progress via a PR
+### What do you love about your solution?
 
-### Interesting facts about Manabie
+- Nothing
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+### What else do you want us to know about however you do not have enough time to complete?
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+- Add Flyway to manage script
+- Add Update Task API
+- Update Delete Api with isDelete.

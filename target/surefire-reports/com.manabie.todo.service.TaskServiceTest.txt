@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.manabie.todo.service.TaskServiceTest
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.88 s - in com.manabie.todo.service.TaskServiceTest

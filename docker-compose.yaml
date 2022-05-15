@@ -1,0 +1,35 @@
+version: "3.9"
+services:
+  mysql:
+    image: mysql/mysql-server:8.0
+    environment:
+      - MYSQL_DATABASE=todo
+      - MYSQL_USER=manabie
+      - MYSQL_PASSWORD=Manabie@2022
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d/
+    ports:
+      - "3306:3306"
+    networks:
+      - todo-network
+  app:
+    container_name: todo-app
+    restart: on-failure
+    depends_on:
+      - mysql
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_USER: manabie
+      SPRING_DATASOURCE_PASSWORD: Manabie@2022
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/todo
+    networks:
+      - todo-network
+  test:
+    build:
+      context: .
+      dockerfile: ./test.Dockerfile
+networks:
+  todo-network:
+    driver: bridge
