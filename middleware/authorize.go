@@ -19,7 +19,7 @@ func ErrWrongAuthHeader(err error) *common.AppError {
 	)
 }
 
-func extractTokenFromHeaderString(s string) (string, error) {
+func ExtractTokenFromHeaderString(s string) (string, error) {
 	parts := strings.Split(s, " ")
 
 	if parts[0] != "Bearer" || len(parts) < 2 || strings.TrimSpace(parts[1]) == "" {
@@ -33,7 +33,7 @@ func RequiredAuth(appCtx component.AppContext) func(c *gin.Context) {
 	tokenProvider := jwt.NewTokenJWTProvider(appCtx.SecretKey())
 
 	return func(c *gin.Context) {
-		token, err := extractTokenFromHeaderString(c.GetHeader("Authorization"))
+		token, err := ExtractTokenFromHeaderString(c.GetHeader("Authorization"))
 		if err != nil {
 			panic(err)
 		}
