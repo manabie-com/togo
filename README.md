@@ -81,8 +81,7 @@ These 2 APIs are used for development environment only.
 
 ## What else do you want us to know about however you do not have enough time to complete?
 
-- Increase the test coverage
-- Write integration test
-- Handle run some APIs in development environment only
-- Add database migration
-- Handle CI/CD
+- [ ] Increase the test coverage up to 80%
+- [ ] Write integration test
+- [ ] Handle run some APIs in development environment only
+- [ ] Handle CI/CD
