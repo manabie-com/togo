@@ -8,6 +8,7 @@ import (
 	"github.com/japananh/togo/middleware"
 	"github.com/japananh/togo/modules/task/tasktransport/gintask"
 	"github.com/japananh/togo/modules/user/usertransport/ginuser"
+	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
@@ -16,6 +17,10 @@ import (
 )
 
 func main() {
+	if err := loadEnv(); err != nil {
+		log.Fatalln("Missing env file")
+	}
+
 	dsn := os.Getenv("DB_CONNECTION_STR")
 	secretKey := os.Getenv("SYSTEM_KEY")
 	atExpiryStr := os.Getenv("ACCESS_TOKEN_EXPIRY")
@@ -40,6 +45,11 @@ func main() {
 	}
 }
 
+func loadEnv() error {
+	cwd, _ := os.Getwd()
+	return godotenv.Load(cwd + `/.env`)
+}
+
 func runService(db *gorm.DB,
 	secretKey string,
 	tokenConfig *tokenprovider.TokenConfig,
@@ -51,12 +61,6 @@ func runService(db *gorm.DB,
 	r.Use(middleware.Recover(appCtx))
 
 	v1 := r.Group("/api/v1")
-
-	v1.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
 
 	v1.POST("/register", ginuser.Register(appCtx))
 	v1.POST("/login", ginuser.Login(appCtx))

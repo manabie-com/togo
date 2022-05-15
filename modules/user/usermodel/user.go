@@ -2,6 +2,7 @@ package usermodel
 
 import (
 	"errors"
+
 	"github.com/japananh/togo/common"
 )
 
@@ -26,14 +27,6 @@ func ErrPasswordInvalid(msg string) *common.AppError {
 		errors.New(msg),
 		msg,
 		"ErrPasswordInvalid",
-	)
-}
-
-func ErrDailyLimitTaskInvalid(msg string) *common.AppError {
-	return common.NewCustomError(
-		errors.New(msg),
-		msg,
-		"ErrDailyLimitTaskInvalid",
 	)
 }
 
