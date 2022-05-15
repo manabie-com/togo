@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestUserCreate_GenSalt(t *testing.T) {
+func TestSalt_GenSalt(t *testing.T) {
 	var tcs = []struct {
 		arg      int
 		expected string
