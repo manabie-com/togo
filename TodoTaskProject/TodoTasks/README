@@ -10,9 +10,13 @@ I. Run code in local PC
       + There is a maximum limit of N tasks per user that can be added per day.
       + Different users can have different maximum daily limit.
       + Every user gets reset limit every new day.
-- to open admin page, open browser then access link: http://127.0.0.1:8000/admin
-- to post or get all record: http://127.0.0.1:8000/userrecords/
-- to put or get one record: http://127.0.0.1:8000/userrecord/
+- to open admin page:
+      + username/password: danny/Foxconn168!! 
+      + open browser then access link: http://127.0.0.1:8000/admin
+- Using Postman
+      + username/password: check in admin site
+      + to post or get all record: http://127.0.0.1:8000/userrecords/
+      + to put or get one record: http://127.0.0.1:8000/userrecord/
 
 II. Unit Test
 - cmd command: cd D:\project\TodoTaskProject\TodoTasks
