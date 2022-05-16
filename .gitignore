@@ -21,6 +21,7 @@ out/
 # Environment
 *.env
 !example.env
+!example_test.env
 
 # .DS_Store
 .DS_Store

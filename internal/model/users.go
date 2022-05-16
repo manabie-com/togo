@@ -43,3 +43,9 @@ func (*user) GetUserTasksTodayByUserID(userID int16) (*user, error) {
 		Take(&user).Error
 	return &user, err
 }
+
+// Create create user
+func (u *user) Create() error {
+	return database.DB().
+		Create(u).Error
+}

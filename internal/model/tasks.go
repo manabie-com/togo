@@ -68,3 +68,9 @@ func (t *task) Assign(userID int16, taskIDs []int16) error {
 			},
 		).Error
 }
+
+// Create create task
+func (t *task) Create() error {
+	return database.DB().
+		Create(t).Error
+}
