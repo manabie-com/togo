@@ -13,8 +13,8 @@ from .serializers import UserRecordTaskSerializer, UserTaskAllowSerializer
 import datetime
 
 class UserRecordTasks(views.APIView):
-    #authentication_classes = [SessionAuthentication, BasicAuthentication]
-    #permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         _UserRecordTask = UserRecordTask.objects.all()
         serializer = UserRecordTaskSerializer(_UserRecordTask, many=True)
