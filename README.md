@@ -1,30 +1,90 @@
-### Requirements
+# TOGO PROJECT
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+## OVERVIEW
+Implement one single API which accepts a todo task and records it.<br>
+There is a maximum limit of N tasks per user that can be added per day.<br>
+Different users can have different maximum daily limit.
 
-### Notes
+## INDEX
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+- [Required](#Required)
+- [Local development environment](#local-development-environment)
+- [Sample curl API](#sample-curl-api)
+- [Unit test](#unit-test)
+- [About my solution](#about-my-solution)
+- [Development](#development)
 
-### How to submit your solution?
 
-- Fork this repo and show us your development progress via a PR
+## Required
+- VSCode  
+  https://code.visualstudio.com/download
+- Docker  
+  https://docs.docker.com/get-docker/
 
-### Interesting facts about Manabie
+## Local development environment
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+Develop on `Docker Container` using `VSCODE Remote Container`.
+https://code.visualstudio.com/docs/remote/containers
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+Use `Colima` to run Docker Containers
+
+Install Colima:
+```
+brew install colima
+```
+
+Then run colima, and every docker command should work as before:
+```
+colima start
+```
+
+To Stop container, run below command:
+```
+colima stop
+```
+
+If this is the first time, please setting environment variable and package:
+```
+cp example.env .env
+go mod download
+```
+
+Start server:
+```
+go run main.go
+```
+
+## Sample curl API
+Sample curl API to assign `task ids = 2,3` for `user id = 1`:
+```
+curl --location --request POST 'http://localhost:8080/users/1/tasks' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "task_ids": [2, 3]
+}'
+```
+
+## Unit test
+If this is the first time, please setting environment variable:
+```
+cp example_test.env test.env
+```
+Run test:
+```
+go test -coverprofile=coverage.out ./... 
+```
+Coverage:
+```
+go tool cover -html=coverage.out
+```
+
+## About my solution
+My solution is nothing special, it's simple, easy to understand, easy to expand and maintain.
+
+## Development
+If have more time, I will create common function for reusable functions, create middleware, develop necessary features (CRUD users, tasks) and expand features, as said at PR description:
+- A task has many subtasks.
+- A task will be complete in more than 1 day.
+- Assign task on one day but do it on another day.
+- Who has the role to assign/do tasks?
+- Task will have more information to save such as status, comments...
