@@ -53,7 +53,7 @@ func (t *taskLimiterServiceImpl) SetTaskLimit(userId int, taskId int, limit int)
 	return fmt.Sprintf("user %d now can do task %d - %d times per day", userId, taskId, limit), nil
 }
 
-func (t *taskLimiterServiceImpl) ReloadCache() (string, error) {
+func (t *taskLimiterServiceImpl) ResetDailyTask() (string, error) {
 	taskLimitSettings, err := t.store.GetAllTaskLimitSetting()
 	if err != nil {
 		return "", errors.Wrapf(err, "fail to get all task limit setting")

@@ -89,7 +89,7 @@ func Run() error {
 	back.HandleFunc("/set-limit", SetTaskLimiter).Methods("POST")
 
 	job := r.PathPrefix("/j/manabie").Subrouter()
-	job.HandleFunc("/reload-cache", ReloadCache).Methods("POST")
+	job.HandleFunc("/reset-daily-tasks", ResetDailyTask).Methods("POST")
 
 	external := r.PathPrefix("/e/manabie").Subrouter()
 	external.HandleFunc("/do-task/{taskId}", DoTask).Methods("POST")

@@ -77,8 +77,8 @@ func SetTaskLimiter(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func ReloadCache(w http.ResponseWriter, r *http.Request) {
-	res, err := taskLimiterService.ReloadCache()
+func ResetDailyTask(w http.ResponseWriter, r *http.Request) {
+	res, err := taskLimiterService.ResetDailyTask()
 	if err != nil {
 		log.Error(err)
 		RespondError(w, 500, err)

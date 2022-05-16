@@ -1,7 +1,7 @@
 package togo
 
 type Store interface {
-	Initialize()
+	Initialize() error
 	CreateUser(username string, password string) (UserEntity, error)
 	Login(username string, password string) (int, error)
 	CreateTask(taskName string, description string) (TaskEntity, error)

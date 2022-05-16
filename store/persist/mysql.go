@@ -38,9 +38,34 @@ func NewStore(cfg Config) (togo.Store, error) {
 	return &storeImpl{db: db}, nil
 }
 
-func (s *storeImpl) Initialize() {
-	//TODO implement me
-	panic("implement me")
+func (s *storeImpl) Initialize() error {
+	var schema = `
+		create table manabie_user (
+			id int not null auto_increment primary key,
+			username varchar(50) unique,
+			password varchar(100),
+			created_at timestamp not null,
+			last_login timestamp
+		);
+		
+		
+		create table manabie_task (
+			id int not null auto_increment primary key,
+			task_name varchar(50) unique ,
+			description varchar(500) ,
+			created_at timestamp not null
+		);
+		
+		create table manabie_task_limit_setting (
+			user_id int not null,
+			task_id int not null,
+			num_limit int not null,
+			updated_at timestamp not null ,
+			constraint user_task_unique unique (user_id, task_id)
+		);`
+
+	_, err := s.db.Exec(schema)
+	return err
 }
 
 func (s *storeImpl) CreateUser(username string, password string) (togo.UserEntity, error) {
