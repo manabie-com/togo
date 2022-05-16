@@ -18,7 +18,7 @@ func (u *UserHandler) AssignTasks(c *gin.Context) {
 	paramUserID := c.Param("id")
 	userID, err := strconv.ParseInt(paramUserID, 10, 16)
 	if err != nil {
-		c.String(http.StatusBadRequest, err.Error())
+		exception.ThrownError(c, err)
 		return
 	}
 
@@ -28,14 +28,14 @@ func (u *UserHandler) AssignTasks(c *gin.Context) {
 	}
 	err = c.ShouldBindJSON(&request)
 	if err != nil {
-		c.String(http.StatusBadRequest, err.Error())
+		exception.ThrownError(c, err)
 		return
 	}
 
 	// validate
 	err = validate.Struct(request)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
+		exception.ThrownError(c, err)
 		return
 	}
 
