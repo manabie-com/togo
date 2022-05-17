@@ -2,6 +2,7 @@
 This is an API endpoint that accepts todo tasks from users. A user can have a daily limit of tasks to input.
 
 ## Running the code locally
+### With Python Virtual Environment
 To run the code locally, refer to the following steps:
   1. Make sure that Python v3.6.3 is properly installed in the machine - [Python Installation Tutorial](https://www.tutorialspoint.com/how-to-install-python-in-windows)
   2. Download a copy of the source code and open the togo/togo/ directory in Command Prompt
@@ -28,7 +29,6 @@ python manage.py runserver
 
 ### With Docker
   - Docker repository: https://hub.docker.com/repository/docker/doremikaelatido/todo/general
-Steps on running locally with Docker:
   1. Pull the todo remote repository
 ```
 docker pull doremikaelatido/todo
@@ -50,8 +50,7 @@ At this point, http://localhost:8000/ should display the ApiRoot page
 
 ## Sample cURL command
   - curl -X POST -H "Authorization: Api-Key cvQYsddc.PZVUK5AY3vftSerjzbwqz2qgsoNdjB6h" -H "Content-Type: application/json" -H "Username: choerry" -d "{``\``"title``\``":``\``"cook``\``"}" http://localhost:8000/usertasks/
-  - curl -X POST -H "Authorization: Api-Key KXtkNGX6.ZRAEk0EGKwBPWOLi3Qya4msM4aNltrew" -H "Content-Type: application/json" -H "Username: yeojin" -d "{\"title\":\"bracelet diy\"}" http://localhost:8000/usertasks/
-Alternative API key: KXtkNGX6.ZRAEk0EGKwBPWOLi3Qya4msM4aNltrew
+  - curl -X POST -H "Authorization: Api-Key xn58ox4d.vVIexLi9I5q2F5k6HythNqyNrIprB99X" -H "Content-Type: application/json" -H "Username: oliviahye" -d "{``\``"title``\``":``\``"animal crossing``\``"}" http://localhost:8000/usertasks/
 
 ##### The following information can be added to the data:
   - **title** - title of the task
@@ -60,7 +59,7 @@ Alternative API key: KXtkNGX6.ZRAEk0EGKwBPWOLi3Qya4msM4aNltrew
   - **end_time** (%Y-%m-%d %H:%M:%S) - when the task is expected to be completed (optional)
 
 ## Unit Testing
-In the same directory (from the steps to run the code locally (/togo/togo) OR through Docker container's CLI
+In the same directory (from the steps to run the code locally (/togo/togo) OR through Docker container's CLI:
 Run the command 
 ```sh
 python manage.py test
