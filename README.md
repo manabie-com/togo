@@ -26,8 +26,32 @@ pip install -r requirements.txt
 python manage.py runserver
 ```
 
+### With Docker
+  - Docker repository: https://hub.docker.com/repository/docker/doremikaelatido/todo/general
+Steps on running locally with Docker:
+  1. Pull the todo remote repository
+```
+docker pull doremikaelatido/todo
+```
+  2. Confirm successful pull using another command, "doremikaelatido/todo" must be listed down
+```
+docker images
+```
+  3. Make sure docker account is logged in, if not yet set up - provide the credentials
+```
+docker login
+```
+  4. Run the code with Docker
+```
+docker run -d -p 8000:8000 doremikaelatido/todo
+```
+
+At this point, http://localhost:8000/ should display the ApiRoot page
+
 ## Sample cURL command
   - curl -X POST -H "Authorization: Api-Key cvQYsddc.PZVUK5AY3vftSerjzbwqz2qgsoNdjB6h" -H "Content-Type: application/json" -H "Username: choerry" -d "{``\``"title``\``":``\``"cook``\``"}" http://localhost:8000/usertasks/
+  - curl -X POST -H "Authorization: Api-Key KXtkNGX6.ZRAEk0EGKwBPWOLi3Qya4msM4aNltrew" -H "Content-Type: application/json" -H "Username: yeojin" -d "{\"title\":\"bracelet diy\"}" http://localhost:8000/usertasks/
+Alternative API key: KXtkNGX6.ZRAEk0EGKwBPWOLi3Qya4msM4aNltrew
 
 ##### The following information can be added to the data:
   - **title** - title of the task
@@ -36,7 +60,8 @@ python manage.py runserver
   - **end_time** (%Y-%m-%d %H:%M:%S) - when the task is expected to be completed (optional)
 
 ## Unit Testing
-In the same directory (from the steps to run the code locally (/togo/togo), run the command 
+In the same directory (from the steps to run the code locally (/togo/togo) OR through Docker container's CLI
+Run the command 
 ```sh
 python manage.py test
 ```
