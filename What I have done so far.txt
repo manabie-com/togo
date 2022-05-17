@@ -1,0 +1,44 @@
+=============================TECHNICAL SETUP=============================
+
+Create a virtual environment with conda:
+    - conda create --name togo python=3.6.3
+Activate environment with conda:
+    - conda activate togo
+Install django inside the virtual environment:
+    - pip install django
+Setup the django project:
+    - django-admin startproject togo
+Create the superuser:
+    - email - ramosmikaelanicole@gmail.com
+    - password - <password> hint: july
+    - username - mikaelanicole
+Install django rest framework:
+    - pip install djangorestframework
+Install django rest framework api key:
+    - pip install djangorestframework-api-key
+Created API key in admin dashboard
+    - qkYpjT1D.Yg3aa1kv4ghPmh5lg2NCMi5PWmIp8Cy4
+
+=============================MILESTONES=================================
+CURL COMMAND THAT WORKED
+curl -X POST -H "Authorization: Api-Key qkYpjT1D.Yg3aa1kv4ghPmh5lg2NCMi5PWmIp8Cy4" -H "Content-Type: application/json" -d "{\"title\":\"study\",\"description\":\"do some coding\",\"start_time\":\"2022-05-08 17:00:00\",\"end_time\":\"2022-05-08 18:00:00\"}" http://localhost:8000/tasks/
+- django's rest api key library already does all the work for api key Authorization
+
+UPDATE: added the username header checker
+curl -X POST -H "Authorization: Api-Key cvQYsddc.PZVUK5AY3vftSerjzbwqz2qgsoNdjB6h" -H "Content-Type: application/json" -H "Username: oliviahyee" -d "{\"title\":\"hobby\",\"description\":\"pilates\",\"start_time\":\"2022-05-08 20:00:00\",\"end_time\":\"2022-05-08 20:15:00\",\"added_time\":\"2022-05-08 21:45:00\"}" http://localhost:8000/usertasks/
+=======================APPLICATION SPECIFIC SETUP=========================
+
+Naming the endpoint:
+    - HTTP POST /task-management/new-task/
+JSON payload must include the following:
+    - task name
+API header should include following:
+    - username
+Authorization:
+    - api key - one api key for all requests coming from one application/organization
+
+==================================PENDING=================================
+- documentation
+- write proper logging
+- more testing?
+- use a global config file

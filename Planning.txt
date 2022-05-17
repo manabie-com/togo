@@ -1,0 +1,54 @@
+Technicalities:
+Programming language and framework to use - Python + Django
+Database to use - PostgreSQL?
+
+For deletion:
+    - For simplicity, we can just automate a < daily tasks total clear > job every 24 hours - midnight
+    - But realistically speaking, people tend to have different body clocks, so their days don't start at the same time
+    - With that in mind, need for "expired task deletion" functionality - task will be up for deletion 24 hours after it was added  
+
+For efficiency?
+    - only look out for expired tasks when the limit is reached 
+    - con? - two simultaneous api calls - both will try to delete the expired tasks - safe delete
+
+For authentication/authorization?
+    - one account for all api calls or one api token for each account
+    - for this situation, I would set up specific api token and just add the username (of the user) to the header
+
+Requirements:
+ONE API endpoint
+    - one user - N todo tasks/day
+    - things to note down:
+        - info to send for the task
+            - task title
+            - task description
+            - time start
+            - time end
+            - added_time 
+
+Database structure?
+- table for the API key?
+    - id, username, api_key, last_updated
+- users table
+    - id, username, daily limit
+- tasks table
+    - id, user_id, title, description, time start, time end 
+- user tasks table
+    - id (matches with task id), user_id, added_time
+
+Unit tests
+- valid user authentication - does this user exist in the database?
+- valid user authentication - can this user log in?
+- user credentials, keep in json or use as header? - only one pair of authentication credentials
+- get user's task number limit - to be used alongside database write
+- getting correct status codes
+- task deletion
+
+Archiving:
+- i don't think this is necessary - daily tasks - short term information
+
+Logging:
+- file? or save in database
+
+Documentation:
+- use swagger?
