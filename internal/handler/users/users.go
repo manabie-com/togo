@@ -8,6 +8,7 @@ import (
 	r_users "github.com/manabie-com/togo/internal/reqres/users"
 	u_users "github.com/manabie-com/togo/internal/usecase/users"
 	"github.com/manabie-com/togo/pkg/exception"
+	"github.com/manabie-com/togo/pkg/utils"
 	"github.com/manabie-com/togo/pkg/validate"
 )
 
@@ -31,6 +32,9 @@ func (u *UserHandler) AssignTasks(c *gin.Context) {
 		exception.ThrownError(c, err)
 		return
 	}
+
+	// remove duplicate
+	request.TaskIDs = utils.RemoveDuplicate(request.TaskIDs)
 
 	// validate
 	err = validate.Struct(request)
