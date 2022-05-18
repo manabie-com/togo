@@ -10,6 +10,7 @@
     "start": "cross-env NODE_ENV=development node src/app.js"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.1",
@@ -19,6 +20,8 @@
     "express-rate-limit": "^6.4.0",
     "helmet": "^5.0.2",
     "http-status": "^1.5.2",
+    "joi": "^17.6.0",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.3.3",
     "morgan": "^1.10.0",
     "swagger-jsdoc": "^6.2.1",

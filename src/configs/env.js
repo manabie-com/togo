@@ -52,6 +52,9 @@ const env = {
     username: getOsEnv("SWAGGER_USERNAME"),
     password: getOsEnv("SWAGGER_PASSWORD"),
   },
+  jwt: {
+    secret: getOsEnv("JWT_SECRET"),
+  },
 };
 
 module.exports = env;
