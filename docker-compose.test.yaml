@@ -31,7 +31,7 @@ services:
       - type: bind
         source: ./migrations/migrate.test
         target: /opt/app/workspace/.migrate
-    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; npm install && npx migrate up'
+    command: bash -c 'while !</dev/tcp/manabie-db-test-1/5432; do sleep 1; done; npm install && npx migrate up'
     environment:
       - PGHOST=manabie-db-test-1
       - PGUSER=manabie

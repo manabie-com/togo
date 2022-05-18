@@ -31,7 +31,7 @@ services:
     image: node:17-buster-slim
     volumes:
       - ./migrations:/opt/app/workspace
-    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; npm install && npx migrate up'
+    command: bash -c 'while !</dev/tcp/manabie-db-1/5432; do sleep 1; done; npm install && npx migrate up'
     environment:
       - PGHOST=manabie-db-1
       - PGUSER=manabie
