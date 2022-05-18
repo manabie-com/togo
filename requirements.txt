@@ -1,0 +1,14 @@
+Django>=3.0,<4.0
+psycopg2-binary>=2.8
+djangorestframework==3.12.2
+django-filter==2.4.0
+Markdown==3.3.3
+djangorestframework-simplejwt==4.6.0
+requests==2.25.1
+django-cors-headers==3.6.0
+celery==5.0.5
+django-celery-results==2.0.0
+redis==3.5.3
+django-redis==5.2.0
+Faker==13.6.0
+factory-boy==3.2.1

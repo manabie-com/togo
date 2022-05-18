@@ -1,0 +1,47 @@
+version: "3.3"
+
+services:
+  db:
+    image: postgres
+    ports:
+      - "0.0.0.0:5432:5432"
+    restart: always
+    env_file:
+      ./.env
+    volumes:
+      - ./.env:/togo/usr/app/.env
+  backend:
+    image: togo_backend
+    env_file:
+      ./.env
+    build: .
+    command: ["/usr/app/togo/wait-for-it.sh", "db:5432", "-t", "5", "--", "python", "manage.py", "runserver", "0.0.0.0:8001"]
+    volumes:
+      - ./:/usr/app/togo
+    ports:
+      - "8001:8001"
+    depends_on:
+      - db
+  migration:
+    image: togo_backend
+    env_file:
+      ./.env
+    command: ["/usr/app/togo/wait-for-it.sh", "db:5432", "-t", "5", "--", "python", "manage.py", "migrate"]
+    volumes:
+      - ./:/usr/app/togo
+    depends_on:
+      - db
+      - backend
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+  worker:
+    image: togo_backend
+    command:  bash -c "rm -f -- -celerybeat && celery -A myapp worker -l INFO"
+    env_file:
+      ./.env
+    volumes:
+      - ./:/usr/app/togo
+    depends_on:
+      - backend
