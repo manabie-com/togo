@@ -62,7 +62,15 @@
    ### `curl` command: 
    - Check health of server: 
       ```bash
-      curl -v http://localhost:3000/api/ping  
+      curl http://localhost:3000/api/ping  
+      ```
+   - Create new user : 
+      ```bash
+      curl -d '{"username":"first_user"}' -H 'Content-Type: application/json' http://localhost:3000/api/user/
+      ```
+   - Get user's profile : 
+      ```bash
+      curl http://localhost:3000/api/user/first_user
       ```
 
    ### Swagger:
