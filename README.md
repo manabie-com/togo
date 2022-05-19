@@ -28,3 +28,18 @@
 - We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
 
 Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+
+### Architecture
+![Overall architecture diagram](./docs/Overall_architecture.drawio.png)
+Overall architecture diagram
+
+### Usage
+#### Testing
+Run `./launch_test.sh`. It will run a test database and the test suite inside the docker. Once the test is completed, you can exit by pressing Ctrl+C
+#### Demo
+Run `./launch.sh`. It will automatically migrate and create test users for the database. The http server will be served on port 8090. The api can be test by calling `./test_curl.sh [user_id] [task-title] [task-content]`. User with id i will have task limit of i + 1. You can also set the time offset to simulate a day in the future by setting SIM_OFFSET_DAY value in the docker-compose.yaml. It might take some time for the server to start up. Hence if you see empty reply from server error, please retry multiple times.
+
+### Note
+Because performance is not a concern, I'm counting the number of tasks created on a particular day to enforce the task limit constraint. However, this requires that I have a serializable isolation level which will likely affect the performance. One way to solve this is to instead create a seperate table for counting the nubmer of tasks created. Hence, only repeateable read isolation will be needed. However, it is not as flexible in terms of time zone as the current solution.
+
+(Update) So after doing some testing, apparently postgres is smart enough to not signal a serializable conflict when using unrelated rows on indexed columns. So if I issue `SET enable_seqscan = OFF;`, the index scan should be reliably used and performance should be optimal

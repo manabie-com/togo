@@ -1,3 +1,8 @@
+db
+migrations/node_modules
+migrations/.migrate
+migrations/migrate*
+vendor/
 # Binaries for programs and plugins
 *.exe
 *.exe~

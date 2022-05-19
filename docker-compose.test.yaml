@@ -1,0 +1,46 @@
+version: '3.8'
+services:
+  backend:
+    image: golang:1.18.1-buster
+    volumes: 
+      - ./backend:/opt/app
+      - go_root:/go
+    environment:
+      - PGHOST=manabie-db-test-1
+      - PGUSER=manabie
+      - PGDATABASE=manabie
+      - PGPASSWORD=manabie
+    working_dir: /opt/app
+    command: bash -c 'while ping -c 1 -W 1 manabie-migrations-1 1>/dev/null; do :; done; go mod vendor && go test ./...'
+    depends_on:
+      - migrations
+    hostname: manabie-backend-1
+  db-test:
+    image: postgres:14.2
+    environment:
+      - POSTGRES_DB=manabie
+      - POSTGRES_USER=manabie
+      - POSTGRES_PASSWORD=manabie
+    tmpfs: 
+      - /var/lib/postgresql/data
+    hostname: manabie-db-test-1
+  migrations:
+    image: node:17-buster-slim
+    volumes:
+      - ./migrations:/opt/app/workspace
+      - type: bind
+        source: ./migrations/migrate.test
+        target: /opt/app/workspace/.migrate
+    command: bash -c 'while !</dev/tcp/manabie-db-test-1/5432; do sleep 1; done; npm install && npx migrate up'
+    environment:
+      - PGHOST=manabie-db-test-1
+      - PGUSER=manabie
+      - PGDATABASE=manabie
+      - PGPASSWORD=manabie
+      - PGPORT=5432
+    working_dir: /opt/app/workspace
+    depends_on:
+      - db-test
+    hostname: manabie-migrations-1
+volumes:
+  go_root:
