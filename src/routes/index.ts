@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import PingRoute from "@/routes/ping.route";
+import UsersRoute from "@/routes/users.route";
 
 const router = Router();
 // #region Swagger typedef global
@@ -39,5 +40,6 @@ const router = Router();
  */
 // #endregion
 router.use("/ping/", PingRoute);
+router.use("/user/", UsersRoute);
 
 export default router;

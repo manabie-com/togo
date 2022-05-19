@@ -12,6 +12,7 @@ module.exports = {
       "plugin:import/recommended",
       "plugin:import/typescript",
    ],
+   ignorePatterns: ["tests"],
    parser: "@typescript-eslint/parser",
    plugins: ["@typescript-eslint"],
    root: true,
