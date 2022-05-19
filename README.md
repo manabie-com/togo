@@ -32,7 +32,18 @@
 - Apis called by job service with '/j'
 - User Create And Login are 2 public apis, start with '/p' (public)
 
+### Deployment
+- **Install mysql:**
+  - docker pull mysql
+  - docker run --name mysql-instance -e MYSQL_ROOT_PASSWORD=thangna -d mysql
+- **Install redis:**
+  - docker pull redis
+  - docker run --name redis-instance -d redis
+- **Go required version:** 1.17.5 
+- **Command to run service:**
+  - First way: **go run main/main.go -c conf/config.yml**
+  - Second way: **go build -o goapp -mod=vendor main/main.go** then ./goapp -c conf/config.yml
+
 ### Note
-- **Command to run service:**  go run main/main.go -c conf/config.yml
-- Due to lack of the time, I'm still not write unit test abd integration test for this project.
+- Due to lack of the time, I'm still not write unit test and integration test for this project.
 - Again, I really apologize for submit task since I have to do a heavy load of work in my company 
