@@ -12,7 +12,10 @@ type Querier interface {
 	CreateTask(ctx context.Context, arg CreateTaskParams) (Task, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	GetTask(ctx context.Context, id int32) (Task, error)
-	GetUser(ctx context.Context, userName string) (User, error)
+	GetUserById(ctx context.Context, id int32) (User, error)
+	GetUserByName(ctx context.Context, userName string) (User, error)
+	GetUsers(ctx context.Context, arg GetUsersParams) ([]User, error)
+	SelectTaskByUserId(ctx context.Context, id int32) ([]SelectTaskByUserIdRow, error)
 }
 
 var _ Querier = (*Queries)(nil)

@@ -63,3 +63,45 @@ func (q *Queries) GetTask(ctx context.Context, id int32) (Task, error) {
 	)
 	return i, err
 }
+
+const selectTaskByUserId = `-- name: SelectTaskByUserId :many
+SELECT t.title, t.user_id, t.created_at, t.updated_at FROM tasks t
+INNER JOIN  users u
+ON t.user_id = u.id
+WHERE u.id = $1 LIMIT 1
+`
+
+type SelectTaskByUserIdRow struct {
+	Title     string    `json:"title"`
+	UserID    int32     `json:"user_id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+func (q *Queries) SelectTaskByUserId(ctx context.Context, id int32) ([]SelectTaskByUserIdRow, error) {
+	rows, err := q.db.QueryContext(ctx, selectTaskByUserId, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []SelectTaskByUserIdRow{}
+	for rows.Next() {
+		var i SelectTaskByUserIdRow
+		if err := rows.Scan(
+			&i.Title,
+			&i.UserID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

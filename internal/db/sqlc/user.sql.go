@@ -50,13 +50,13 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	return i, err
 }
 
-const getUser = `-- name: GetUser :one
+const getUserById = `-- name: GetUserById :one
 SELECT id, user_name, hashed_password, created_at, updated_at, maximum_task_in_day FROM users
-WHERE user_name = $1 LIMIT 1
+WHERE id = $1 LIMIT 1
 `
 
-func (q *Queries) GetUser(ctx context.Context, userName string) (User, error) {
-	row := q.db.QueryRowContext(ctx, getUser, userName)
+func (q *Queries) GetUserById(ctx context.Context, id int32) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserById, id)
 	var i User
 	err := row.Scan(
 		&i.ID,
@@ -67,4 +67,65 @@ func (q *Queries) GetUser(ctx context.Context, userName string) (User, error) {
 		&i.MaximumTaskInDay,
 	)
 	return i, err
+}
+
+const getUserByName = `-- name: GetUserByName :one
+SELECT id, user_name, hashed_password, created_at, updated_at, maximum_task_in_day FROM users
+WHERE user_name = $1 LIMIT 1
+`
+
+func (q *Queries) GetUserByName(ctx context.Context, userName string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByName, userName)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.UserName,
+		&i.HashedPassword,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.MaximumTaskInDay,
+	)
+	return i, err
+}
+
+const getUsers = `-- name: GetUsers :many
+SELECT id, user_name, hashed_password, created_at, updated_at, maximum_task_in_day FROM users
+ORDER BY id
+LIMIT $1
+OFFSET $2
+`
+
+type GetUsersParams struct {
+	Limit  int32 `json:"limit"`
+	Offset int32 `json:"offset"`
+}
+
+func (q *Queries) GetUsers(ctx context.Context, arg GetUsersParams) ([]User, error) {
+	rows, err := q.db.QueryContext(ctx, getUsers, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []User{}
+	for rows.Next() {
+		var i User
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserName,
+			&i.HashedPassword,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.MaximumTaskInDay,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

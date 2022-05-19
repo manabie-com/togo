@@ -1,4 +1,8 @@
 {
   "DB_DRIVER": "postgres",
-  "DB_SOURCE": "postgresql://root:root@localhost:5432/task_management?sslmode=disable"
+  "DB_SOURCE": "postgresql://root:root@localhost:5432/task_management?sslmode=disable",
+  "HTTP_SERVER_ADDRESS": "0.0.0.0:8080",
+  "TOKEN_SYMMETRIC_KEY": 12312312535235346678786973456775868,
+  "ACCESS_TOKEN_DURATION":"15m",
+  "REFRESH_TOKEN_DURATION" :"24h"
 }
