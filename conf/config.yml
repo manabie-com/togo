@@ -1,0 +1,19 @@
+server:
+  port: 9999
+
+redis:
+  hostname: "127.0.0.1:6379"
+  password: ""
+  db: 0
+  max-retries: 5
+  dial-timeout: 10
+  read-timeout: 30
+  write-timeout: 30
+
+mysql:
+  username: "root"
+  password: "thangna"
+  hostname: "127.0.0.1:3306"
+  dbname:   "manabie"
+  max-open-connection: 30
+  max-connection-lifetime: 30

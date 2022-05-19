@@ -1,30 +1,49 @@
-### Requirements
+### High Level Design
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+![image info](./doc/highleveldesign.png)
 
-### Notes
+- Our system should have authen/author service to check if user has the right to call api
+- Assume that we have 10 million users. <br/>each user has 10 tasks.<br/> the size of row in manabie_task_limit_setting
+  is 32 byte.
+  <br/> => the total storage for setting will be 32 * 10M *10 ~= 3.2GB.
+  <br/> => it is easy to load all the task setting to cache (no need to handle cache eviction)
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+### Detailed Component
 
-### How to submit your solution?
+- Due to lack of the time, authen service is involved in task service.
+- I use redis for the cache and mysql for the permanent storage.
+- Script to **initialize db schema** is inside function Initialize() (./store/persist/mysql.go)
 
-- Fork this repo and show us your development progress via a PR
+### Api Design
+- **To test if task limiter work or not**, you must do the following step: Create task, Create User, Set Task Limit, Login then call Do Task
 
-### Interesting facts about Manabie
+| Api               | Purpose                                                    | Curl                                                                                                                                                                                   |
+|-------------------|------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Create User       | User Sign Up                                               | curl --location --request POST 'http://localhost:9999/p/manabie/signup' --header 'Content-Type: application/json' --data-raw '{ "username": "linpn", "password": "abc123"}'            |
+| User Login        | User login and get jwt token                               | curl --location --request POST 'http://localhost:9999/p/manabie/login' --header 'Content-Type: application/json' --data-raw '{ "username": "linpn", "password": "abc123"}'             |
+| Create Task       | Administrator create task                                  | curl --location --request POST 'http://localhost:9999/b/manabie/create-task' --header 'Content-Type: application/json' --data-raw '{ "taskName": "manabie_task_1", "description": ""}' |
+| Set Task Limit    | Administrator set task limit for user                      | curl --location --request POST 'http://localhost:9999/b/manabie/set-limit' --header 'Content-Type: application/json' --data-raw '{"userId": 1, "taskId": 1, "limit": 10}'              |
+| Do Task           | User try to do a task                                      | curl --location --request POST 'http://localhost:9999/e/manabie/do-task/1' --header 'Authorization: jwt_from_login'                                                                    |
+| Reset daily tasks | Job service will call api to reset cache at the end of day |curl --location --request POST 'http://localhost:9999/j/manabie/reset-daily-tasks'|
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+- Apis called by user start with '/e' (external) which need Authorization header
+- Apis called by administrator start with '/b' (back) which also need Authorization header and priority but I have not done yet
+- Apis called by job service with '/j'
+- User Create And Login are 2 public apis, start with '/p' (public)
+
+### Deployment
+- **Install mysql:**
+  - docker pull mysql
+  - docker run --name mysql-instance -e MYSQL_ROOT_PASSWORD=thangna -d mysql
+- **Install redis:**
+  - docker pull redis
+  - docker run --name redis-instance -d redis
+- **Go required version:** 1.17.5 
+- **Command to run service:**
+  - First way: **go run main/main.go -c conf/config.yml**
+  - Second way: **go build -o goapp -mod=vendor main/main.go** then ./goapp -c conf/config.yml
+
+### Note
+- Due to lack of the time, I'm still not write unit test and integration test for this project.
+- Again, I really apologize for submit task since I have to do a heavy load of work in my company 

@@ -16,4 +16,6 @@
 
 out/
 
-.idea
+.vscode/
+.idea/
+goapp
