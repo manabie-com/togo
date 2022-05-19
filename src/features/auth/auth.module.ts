@@ -7,15 +7,7 @@ import { AuthService } from './auth.service';
 
 @Module({
     imports: [
-        UserModule,
-        JwtModule.registerAsync({
-            imports: [ConfigModule],
-            inject: [ConfigService],
-            useFactory: (configService: ConfigService) => ({
-                secret: configService.get('AUTH_JWT_SECRET'),
-                signOptions: { expiresIn: configService.get('AUTH_JWT_EXPIRED_TIME') }
-            }),
-        })
+        UserModule
     ],
     controllers: [AuthController],
     providers: [AuthService],

@@ -1,14 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { AdminRoleGuard } from '../../guards/role.guard';
 
-@Controller('user')
+
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @UseGuards(AdminRoleGuard)
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  async create(@Body() createTaskDto: CreateUserDto) {
+    return await this.userService.create(createTaskDto);
   }
 }

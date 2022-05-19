@@ -1,29 +1,15 @@
-import { Exclude } from "class-transformer";
 import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { UserRole } from "../enum/role.enum";
 
-@Entity({ name: 'users' })
-export class UserEntity extends BaseEntity {
+@Entity({ name: 'tasks' })
+export class TaskEntity extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column()
-    email: string;
+    content: string;
 
     @Column()
-    password: string;
-
-    @Column({
-        default: 5
-    })
-    maxTasks: number;
-
-    @Column({
-        type: "enum",
-        enum: UserRole,
-        default: UserRole.MEMBER
-    })
-    role: string;
+    userId: number;
 
     @CreateDateColumn({ type: "timestamp", default: () => "CURRENT_TIMESTAMP(6)" })
     createdAt: Date;
