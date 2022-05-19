@@ -46,7 +46,11 @@ userSchema.statics.isEmailTaken = async function (email) {
  * @returns {Promise<string>}
  */
 userSchema.methods.generateAuthToken = function () {
-  const token = jwt.sign({ id: this.id }, env.jwt.secret);
+  const payload = {
+    id: this.id,
+    maxTask: this.maxTask,
+  };
+  const token = jwt.sign(payload, env.jwt.secret);
   return token;
 };
 

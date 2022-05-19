@@ -22,7 +22,7 @@ const createUser = async (userBody) => {
     throw new ApiError(httpStatus.BAD_REQUEST, "Email already taken");
   }
 
-  return User.create(userBody)
+  return User.create(userBody);
 };
 
 module.exports = {

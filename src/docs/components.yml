@@ -3,7 +3,7 @@ components:
     User:
       type: object
       properties:
-        id:
+        _id:
           type: string
         email:
           type: string
@@ -13,15 +13,34 @@ components:
         maxTask:
           type: integer
       example:
-        id: 6283d4900000000000000000
+        _id: 6283d4900000000000000000
         name: Manabie's user
         email: manabie1@manabie.com
         maxTask: 10
 
-    Token:
-      type: string
+    Task:
+      type: object
+      properties:
+        _id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        priority:
+          type: string
+          enum: [high, medium, low]
+        completed:
+          type: boolean
+        createdBy:
+          type: string
       example:
-        token: changeMeNow
+        _id: 6285335e5241fd836a648a59
+        title: A difficult task
+        description: This task is really hard user
+        priority: medium
+        completed: false
+        createdBy: 628504ae209baafeb6693daf
 
     Error:
       type: object
@@ -41,6 +60,15 @@ components:
           example:
             code: 400
             message: Email already taken
+    BadRequest:
+      description: Invalid payload
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: 400
+            message: Invalid payload
     UnauthorizedLogin:
       description: Unauthorized login
       content:

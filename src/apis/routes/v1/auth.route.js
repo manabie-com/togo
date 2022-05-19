@@ -1,7 +1,7 @@
 const express = require("express");
 
-const { authController } = require("../../controllers");
 const { authValidation } = require("../../validations");
+const { authController } = require("../../controllers");
 
 const validate = require("../../../middlewares/validate");
 
@@ -44,7 +44,6 @@ module.exports = router;
  *               - name
  *               - email
  *               - password
- *               - maxTask
  *             properties:
  *               name:
  *                 type: string
@@ -80,11 +79,11 @@ module.exports = router;
  *                   type: string
  *               example:
  *                 user:
- *                   id: 6283d4900000000000000000
+ *                   _id: 6283d4900000000000000000
  *                   name: Manabie's user
  *                   email: manabie1@manabie.com
  *                   maxTask: 10
- *                 token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyODUwNWYxMjE5NzllMWZjZTM4MzhiOCIsImlhdCI6MTY1Mjg4NDk3N30.2sJkLI7xvve6gO06rSCCYFtwmLQm2CQUGj4NlF8ioQ0
+ *                 token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyODUwNGFlMjA5YmFhZmViNjY5M2RhZiIsIm1heFRhc2siOjEwLCJpYXQiOjE2NTI5NTQ0Mzh9.No2n32pB8whz0M1yF8RHB14P0mrXZlqYB4QgV6uHL1s
  *       "400":
  *         $ref: '#/components/responses/DuplicateEmail'
  */
@@ -130,11 +129,11 @@ module.exports = router;
  *                   type: string
  *               example:
  *                 user:
- *                   id: 6283d4900000000000000000
+ *                   _id: 6283d4900000000000000000
  *                   name: Manabie's user
  *                   email: manabie1@manabie.com
  *                   maxTask: 10
- *                 token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyODUwNWYxMjE5NzllMWZjZTM4MzhiOCIsImlhdCI6MTY1Mjg4NDk3N30.2sJkLI7xvve6gO06rSCCYFtwmLQm2CQUGj4NlF8ioQ0
+ *                 token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyODUwNGFlMjA5YmFhZmViNjY5M2RhZiIsIm1heFRhc2siOjEwLCJpYXQiOjE2NTI5NTQ0Mzh9.No2n32pB8whz0M1yF8RHB14P0mrXZlqYB4QgV6uHL1s
  *       "401":
  *         $ref: '#/components/responses/UnauthorizedLogin'
  */
