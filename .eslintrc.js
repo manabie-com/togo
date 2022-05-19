@@ -16,10 +16,6 @@ module.exports = {
    plugins: ["@typescript-eslint"],
    root: true,
    rules: {
-      "prettier/prettier": ["error"],
-      "no-promise-executor-return": ["warn"],
-      "no-unused-vars": 0,
-      "no-shadow": 0,
       "@typescript-eslint/no-unused-vars": ["warn"],
       "import/extensions": [
          "error",
@@ -50,6 +46,9 @@ module.exports = {
             allow: ["error", "info"],
          },
       ],
+      "no-promise-executor-return": ["warn"],
+      "no-shadow": 0,
+      "no-unused-vars": 0,
       "prettier/prettier": ["error"],
       quotes: [
          2,
