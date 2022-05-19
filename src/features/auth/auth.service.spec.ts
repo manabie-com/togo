@@ -1,18 +1,123 @@
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
+import { CryptoUtil } from '../../utils/crypto.util';
+import { UserEntity } from '../user/entities/user.entity';
+import { UserRepository } from '../user/user.repository';
+import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
   let service: AuthService;
+  let spyUserService: UserService;
 
   beforeEach(async () => {
+    const mockUserService = {
+      findOneByEmail: jest.fn(),
+      create: jest.fn()
+    };
+
+    const mockUserRepository = {
+      find: jest.fn(),
+      save: jest.fn()
+    };
+
+    const mockJWTService = {
+      sign: jest.fn().mockReturnValue('fakeJWTToken')
+    };
+
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthService],
-    }).compile();
+      imports: [
+        JwtModule.registerAsync({
+          imports: [ConfigModule],
+          inject: [ConfigService],
+          useFactory: (configService: ConfigService) => ({
+              secret: configService.get('AUTH_JWT_SECRET'),
+              signOptions: { expiresIn: configService.get('AUTH_JWT_EXPIRED_TIME') }
+          }),
+      })
+      ],
+      providers: [
+        AuthService,
+        {
+          provide: UserService,
+          useValue: mockUserService 
+        },
+        {
+          provide: UserRepository,
+          useValue: mockUserRepository
+        },
+        {
+          provide: JwtService,
+          useValue: mockJWTService
+        }
+      ],
+    })
+    .compile();
 
     service = module.get<AuthService>(AuthService);
+    spyUserService = module.get<UserService>(UserService);
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  describe('singin function', () =>{
+    it('should call findOneByEmail function of UserService', async () => {  
+      const payload = {
+        email: 'steven@gmail.com',
+        password: '123'
+      };
+
+      jest.spyOn(spyUserService, 'findOneByEmail').mockResolvedValue({
+        id: 1,
+        email: 'steven@gmail.com',
+        maxTasks: 5
+      } as UserEntity);
+
+      jest.spyOn(CryptoUtil, 'compareHashWithPlainText').mockResolvedValue(true);
+
+      await service.signin(payload);
+      expect(spyUserService.findOneByEmail).toHaveBeenCalled();
+      expect(spyUserService.findOneByEmail).toHaveBeenCalledWith(payload.email);
+    });
+
+    it('should throw an invalid email or password exception', async () => {  
+      const payload = {
+        email: 'steven@gmail.com',
+        password: '123'
+      };
+
+      let errorMessage = '';
+
+      try {
+        await service.signin(payload)
+      } catch(err) {
+        errorMessage = err.message;
+      }
+  
+      expect(errorMessage).toBe(`Email or password is invalid. Please try again.`);
+    });
+
+    it('should return a JWT token', async () => {  
+      const payload = {
+        email: 'steven@gmail.com',
+        password: '123'
+      };
+
+      const expectedResult = 'fakeJWTToken';
+
+      jest.spyOn(spyUserService, 'findOneByEmail').mockResolvedValue({
+        id: 1,
+        email: 'steven@gmail.com',
+        maxTasks: 5
+      } as UserEntity);
+
+      jest.spyOn(CryptoUtil, 'compareHashWithPlainText').mockResolvedValue(true);
+
+      const token = await service.signin(payload);
+      expect(token).toBe(expectedResult);
+    });
   });
 });
