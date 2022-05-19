@@ -27,7 +27,7 @@ node_modules/
 .npmrc
 
 # dotenv environment variables file
-.env
+
 .env.prod
 .env.dev
 .env.test
