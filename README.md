@@ -2,7 +2,7 @@
 - To make sure that there are no errors that relate to NodeJS version happens on local machine, I created a docker-compose.yaml file which contains a both web-app and postgres-database components. So, just type that command "docker-compose up -d" to run the code.
 
 ## 2. A sample “curl” command to call your API?
-### There are 3 API enpoints:
+### There are 3 API endpoints:
 * Signin: curl -X POST http://localhost:3000/api/v1/signin -d '{"email": "admin@gmail.com", "password": "admin123"}' -H "Content-Type: application/json" -> This user information already added into database during app starting time.
 
 + Create user: curl -X POST http://localhost:3000/api/v1/users -d '{"email": "steven@gmail.com", "password": "123456", "maxTasks": 6 }' -H "Content-Type: application/json" -H "Authorization: Bearer token"
