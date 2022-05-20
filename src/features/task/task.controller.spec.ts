@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { CoreModule } from '../../globalModule/core.module';
 import { TaskController } from './task.controller';
 import { TaskService } from './task.service';
 
@@ -12,6 +13,7 @@ describe('TaskController', () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
+      imports: [CoreModule],
       controllers: [TaskController],
       providers: [
         TaskService,

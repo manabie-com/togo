@@ -4,6 +4,7 @@ import { TaskController } from './task.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TaskRepository } from './task.repository';
 import { UserModule } from '../user/user.module';
+import { CurrentUserInterceptor } from '../../interceptor/user.interceptor';
 
 @Module({
   imports: [
@@ -11,6 +12,6 @@ import { UserModule } from '../user/user.module';
     TypeOrmModule.forFeature([ TaskRepository ])
   ],
   controllers: [TaskController],
-  providers: [TaskService]
+  providers: [TaskService, CurrentUserInterceptor]
 })
 export class TaskModule {}

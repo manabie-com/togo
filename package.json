@@ -26,6 +26,7 @@
     "seed:run": "ts-node ./node_modules/typeorm-seeding/dist/cli.js -n dist/configuration/database.js seed"
   },
   "dependencies": {
+    "@golevelup/ts-jest": "^0.3.3",
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^2.0.0",
     "@nestjs/core": "^8.0.0",
@@ -79,9 +80,15 @@
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "**/*.(t|j)s"
+      "**/*.(t|j)s",
+      "!**/*.module.ts"
     ],
     "coverageDirectory": "../coverage",
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/database/*",
+      "<rootDir>/configuration/*",
+      "<rootDir>/main.ts"
+    ],
     "testEnvironment": "node"
   }
 }

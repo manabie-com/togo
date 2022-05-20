@@ -10,6 +10,7 @@ import { AuthService } from './auth.service';
 describe('AuthService', () => {
   let service: AuthService;
   let spyUserService: UserService;
+  let spyJwtService: JwtService;
 
   beforeEach(async () => {
     const mockUserService = {
@@ -23,7 +24,8 @@ describe('AuthService', () => {
     };
 
     const mockJWTService = {
-      sign: jest.fn().mockReturnValue('fakeJWTToken')
+      sign: jest.fn().mockReturnValue('fakeJWTToken'),
+      verify: jest.fn()
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -57,6 +59,7 @@ describe('AuthService', () => {
 
     service = module.get<AuthService>(AuthService);
     spyUserService = module.get<UserService>(UserService);
+    spyJwtService = module.get<JwtService>(JwtService);
   });
 
   it('should be defined', () => {
@@ -83,13 +86,37 @@ describe('AuthService', () => {
       expect(spyUserService.findOneByEmail).toHaveBeenCalledWith(payload.email);
     });
 
-    it('should throw an invalid email or password exception', async () => {  
+    it('should throw an invalid email or password exception when receiving a non-exist user', async () => {  
       const payload = {
         email: 'steven@gmail.com',
         password: '123'
       };
 
       let errorMessage = '';
+
+      try {
+        await service.signin(payload)
+      } catch(err) {
+        errorMessage = err.message;
+      }
+  
+      expect(errorMessage).toBe(`Email or password is invalid. Please try again.`);
+    });
+
+    it('should throw an invalid email or password exception when receiving a wrong password', async () => {  
+      const payload = {
+        email: 'steven@gmail.com',
+        password: '123'
+      };
+
+      let errorMessage = '';
+
+      jest.spyOn(spyUserService, 'findOneByEmail').mockResolvedValue({
+        id: 1,
+        email: 'steven@gmail.com',
+      } as UserEntity);
+
+      jest.spyOn(CryptoUtil, 'compareHashWithPlainText').mockResolvedValue(false);
 
       try {
         await service.signin(payload)
@@ -118,6 +145,11 @@ describe('AuthService', () => {
 
       const token = await service.signin(payload);
       expect(token).toBe(expectedResult);
+    });
+
+    it('should return false when verifying an invalid JWT token', async () => {  
+      const result = service.verifyToken('invalidToken');
+      expect(result).toBe(false);
     });
   });
 });

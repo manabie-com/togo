@@ -1,4 +1,3 @@
-import { Exclude } from "class-transformer";
 import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { UserRole } from "../enum/role.enum";
 

@@ -24,15 +24,15 @@ export class AuthService {
 			throw new NotFoundException(`Email or password is invalid. Please try again.`);
 		}
 
-		return await this.jwtService.sign({ email, role: user.role });
+		return await this.jwtService.sign({ id: user.id, email, role: user.role });
 	}
 
 	verifyToken(token: string): boolean {
-		const isTokenValid = this.jwtService.verify(token);
-		if(!isTokenValid) {
+		try {
+			const isTokenValid = this.jwtService.verify(token);
+			return isTokenValid ? true : false;
+		} catch(err){
 			return false;
 		}
-
-		return true;
 	}
 }

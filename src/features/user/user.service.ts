@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CryptoUtil } from '../../utils/crypto.util';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { UserRepository } from './user.repository';
 
@@ -20,7 +19,6 @@ export class UserService {
 		}
 
 		const hashPassword = await CryptoUtil.hash(password);
-
 		return await this.userRepository.save({ email, password: hashPassword, maxTasks });
   }
 
@@ -34,9 +32,5 @@ export class UserService {
 
   async findOneById(id: number) {
     return await this.userRepository.findOne(id);
-  }
-
-  async update(id: number, updateUserDto: UpdateUserDto) {
-    return await this.userRepository.update(id, updateUserDto);
   }
 }

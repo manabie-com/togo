@@ -2,9 +2,7 @@ import * as dotenv from "dotenv";
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
 
 function getDatabase(): TypeOrmModuleOptions | any {
-  if (!Boolean(process.env.NODE_ENV === "production")) {
-    dotenv.config({ path: ".env" });
-  }
+  dotenv.config({ path: ".env" });
 
   return {
     type: process.env.DATABASE_TYPE,
