@@ -1,30 +1,48 @@
-### Requirements
+## 1. How to run your code locally?
+- To make sure that there are no errors that relate to NodeJS version happens on local machine, I created a docker-compose.yaml file which contains a both web-app and postgres-database components. So, just type that command "docker-compose up -d" to run the code.
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+## 2. A sample “curl” command to call your API?
+### There are 3 API endpoints:
+* Signin: curl -X POST http://localhost:3000/api/v1/signin -d '{"email": "admin@gmail.com", "password": "admin123"}' -H "Content-Type: application/json" -> This user information already added into database during app starting time.
 
-### Notes
++ Create user: curl -X POST http://localhost:3000/api/v1/users -d '{"email": "steven@gmail.com", "password": "123456", "maxTasks": 6 }' -H "Content-Type: application/json" -H "Authorization: Bearer token"
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
++ Create task: curl -X POST http://localhost:3000/api/v1/tasks -d '{ "content": "Task One" }' -H "Content-Type: application/json" -H "Authorization: Bearer token"
 
-### How to submit your solution?
+* Note: To call `create user` API, you must login with admin account {"email": "admin@gmail.com", "password": "admin123"}.
 
-- Fork this repo and show us your development progress via a PR
+## 3. How to run your unit tests locally?
+- At the root folder, just type "yarn run test" command.
+- At the root folder, just type "yarn run test:cov" to run coverage test. Find statistics file at **{rootFolder}/coverage/lcov-report/index.html** path 
+ 
+## 4. What do you love about your solution?
+- Users are able to add new tasks on next day if their number of tasks has reached the limit today. 
+Example: There is one user who has the daily limit task is 5. On 20/05/2022, the number of tasks of this user is reached the limit. On 21/05/2022, this user can create 5 more tasks.
 
-### Interesting facts about Manabie
+## 5. What else do you want us to know about however you do not have enough time to complete?
+- I would like to continue to add e2e testing cases more. Beside that, I would also like to add a new feature to check the number of tasks has been finished in a day to decide whether user is allowed to add more tasks on next day or not.
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+## DB SCHEMA
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+```
+CREATE TABLE users ( 
+  id INT NOT NULL, 
+  password TEXT NOT NULL,
+  role TEXT NOT NULL,
+  maxTasks INTEGER DEFAULT 5 NOT NULL,
+  createdAt TEXT NOT NULL,
+  updatedAt TEXT NOT NULL,
+
+  CONSTRAINT users_PK PRIMARY KEY (id) 
+); 
+
+CREATE TABLE tasks ( 
+  id INT NOT NULL, 
+  content TEXT NOT NULL, 
+  userId INT NOT NULL, 
+  createdAt TEXT NOT NULL,
+  updatedAt TEXT NOT NULL,
+
+  CONSTRAINT tasks_PK PRIMARY KEY (id), 
+  CONSTRAINT tasks_FK FOREIGN KEY (userId) REFERENCES users(id) );
+```

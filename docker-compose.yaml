@@ -1,0 +1,39 @@
+version: "3.7"
+services:
+  web:
+    container_name: web
+    build: .
+    entrypoint: ["/bin/bash", "./entrypoint.sh"]
+    environment:
+      - PORT=3000
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=123456
+    networks:
+    - togo
+    ports:
+    - "3000:3000"
+    depends_on:
+      - db
+
+  db:
+    container_name: database
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: todo
+    networks:
+    - togo
+    ports:
+    - "5432:5432"
+    volumes:
+    - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+
+networks:
+  togo:
+    driver: bridge
