@@ -21,3 +21,28 @@ Example: There is one user who has the daily limit task is 5. On 20/05/2022, the
 
 ## 5. What else do you want us to know about however you do not have enough time to complete?
 - I would like to continue to add e2e testing cases more. Beside that, I would also like to add a new feature to check the number of tasks has been finished in a day to decide whether user is allowed to add more tasks on next day or not.
+
+## DB SCHEMA
+
+```
+CREATE TABLE users ( 
+  id INT NOT NULL, 
+  password TEXT NOT NULL,
+  role TEXT NOT NULL,
+  maxTasks INTEGER DEFAULT 5 NOT NULL,
+  createdAt TEXT NOT NULL,
+  updatedAt TEXT NOT NULL,
+
+  CONSTRAINT users_PK PRIMARY KEY (id) 
+); 
+
+CREATE TABLE tasks ( 
+  id INT NOT NULL, 
+  content TEXT NOT NULL, 
+  userId INT NOT NULL, 
+  createdAt TEXT NOT NULL,
+  updatedAt TEXT NOT NULL,
+
+  CONSTRAINT tasks_PK PRIMARY KEY (id), 
+  CONSTRAINT tasks_FK FOREIGN KEY (userId) REFERENCES users(id) );
+```
