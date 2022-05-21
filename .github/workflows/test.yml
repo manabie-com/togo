@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install package
-        run: npm ci
+        run: npm install
       - name: Check code format 
         run: npm run lint
       - name: Run test
