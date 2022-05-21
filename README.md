@@ -11,6 +11,8 @@
    - [Run integration test only](#run-integration-test-only)
    - [Run all test](#run-all-test)
    - [Run coverage test](#run-coverage-test)
+- [What do you love about your solution?](#what-do-you-love-about-your-solution)
+- [What else do you want us to know about however you do not have enough time to complete?](#what-else-do-you-want-us-to-know-about-however-you-do-not-have-enough-time-to-complete)
 
 ## Usage
 
@@ -142,3 +144,8 @@
    ```bash
    npm run test:coverage
    ```
+
+## What do you love about your solution?
+
+
+## What else do you want us to know about however you do not have enough time to complete?
