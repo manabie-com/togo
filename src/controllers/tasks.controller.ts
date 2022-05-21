@@ -13,7 +13,7 @@ export const createNewTask = async (req: Request): Promise<IAPIResponse> => {
    const beginningOfDay = startOfDay(new Date());
 
    const getListTaskToday = TasksModel.find({ createdAt: { $gte: beginningOfDay } })
-      .populate({ match: { id: params.userID }, path: "user", select: "_id" })
+      .populate({ match: { id: params.userID }, path: "userId", select: "_id" })
       .lean()
       .exec();
    const getInfoUser = UsersModel.findOne({ id: params.userID }, { _id: 0, limit: 1 })
@@ -37,7 +37,10 @@ export const getListTask = async (req: Request): Promise<IAPIResponse> => {
    const { params } = req;
    if (!params.userID) return CODE_400();
 
-   const listTask = await TasksModel.find({ userId: params.userID }, { _v: 0 }).lean().exec();
+   const listTask = await TasksModel.find({ userId: params.userID }, { __v: 0 })
+      .sort({ createAt: -1 })
+      .lean()
+      .exec();
 
    return { data: listTask };
 };
