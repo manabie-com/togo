@@ -1,13 +1,15 @@
 package domain
 
 import (
+	"gorm.io/gorm"
 	"time"
 )
 
 type TaskParams struct {
-	Content      string `json:"content" validate:"required"`
-	UserEmail    string `json:"user_email"`
-	UserMaxTasks int32  `json:"user_max_tasks"`
+	Content   string `json:"content" validate:"required"`
+	UserEmail string `json:"user_email" validate:"omitempty,required_without=user_id"`
+	UserId    int    `json:"user_id" validate:"omitempty,required_without=user_email"`
+	TaskLimit int    `json:"task_limit"`
 }
 
 type Task struct {
@@ -23,5 +25,7 @@ type ITaskService interface {
 }
 
 type ITaskRepository interface {
+	SetTx(tx *gorm.DB) *gorm.DB
 	Create(task Task) (Task, error)
+	Save(task Task) error
 }

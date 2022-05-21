@@ -23,3 +23,16 @@ func (repo *TaskRepository) Create(task domain.Task) (domain.Task, error) {
 	}
 	return task, nil
 }
+
+func (repo *TaskRepository) Save(task domain.Task) error {
+	result := repo.db.Save(&task)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+func (repo *TaskRepository) SetTx(tx *gorm.DB) *gorm.DB {
+	repo.db = tx
+	return tx
+}

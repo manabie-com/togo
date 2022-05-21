@@ -30,7 +30,7 @@ func (h *TaskHandler) Create(c echo.Context) error {
 
 	task, err := h.service.Create(taskParams)
 	if err != nil {
-		return err
+		return c.JSON(http.StatusInternalServerError, domain.ResponseError{Message: err.Error()})
 	}
 
 	return c.JSON(http.StatusOK, domain.ResponseSuccess{Data: task})

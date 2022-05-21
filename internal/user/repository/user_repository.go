@@ -41,3 +41,16 @@ func (repo *UserRepository) FindById(id int) (domain.User, error) {
 	}
 	return user, nil
 }
+
+func (repo *UserRepository) Save(user domain.User) error {
+	result := repo.db.Save(&user)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
+
+func (repo *UserRepository) SetTx(tx *gorm.DB) *gorm.DB {
+	repo.db = tx
+	return tx
+}
