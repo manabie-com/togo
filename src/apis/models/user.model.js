@@ -47,7 +47,7 @@ userSchema.statics.isEmailTaken = async function (email) {
  */
 userSchema.methods.generateAuthToken = function () {
   const payload = {
-    id: this.id,
+    _id: this._id,
     maxTask: this.maxTask,
   };
   const token = jwt.sign(payload, env.jwt.secret);
@@ -64,13 +64,19 @@ userSchema.methods.isPasswordMatch = async function (password) {
 };
 
 userSchema.pre("save", async function (next) {
-  const user = this;
+  await preSaveFunc(next, this);
+});
+
+const preSaveFunc = async (next, user) => {
   if (user.isModified("password")) {
     user.password = await bcrypt.hash(user.password, 10);
   }
   next();
-});
+};
 
 const User = mongoose.model("User", userSchema);
 
-module.exports = User;
+module.exports = {
+  User,
+  preSaveFunc,
+};

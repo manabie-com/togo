@@ -12,17 +12,17 @@ const { getStartOfDay, objectIdFromDate } = require("../../utils/common");
  */
 const createTask = async (taskBody, user) => {
   const startOfDay = getStartOfDay();
-  const taskInDay = await countTasks(objectIdFromDate(startOfDay), user.id);
+  const taskInDay = await countTasks(objectIdFromDate(startOfDay), user._id);
   if (taskInDay >= user.maxTask) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Reach task limit in day");
   }
 
-  return Task.create({ ...taskBody, createdBy: user.id });
+  return Task.create({ ...taskBody, createdBy: user._id });
 };
 
 /**
  * Get tasks by created user
- * @param {Object} taskBody
+ * @param {string} createdBy
  * @returns {Promise<Task>}
  */
 const getTasks = async (createdBy) => {
@@ -65,7 +65,7 @@ const getTask = async (id, createdBy) => {
  * Update a task
  * @param {string} id
  * @param {Object} taskBody
- * @param {Object} user
+ * @param {Object} createdBy
  * @returns {Promise<Task>}
  */
 const updateTask = async (id, taskBody, createdBy) => {

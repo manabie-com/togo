@@ -6,8 +6,9 @@
   "author": "Ha Pham",
   "license": "MIT",
   "scripts": {
+    "test": "cross-env NODE_ENV=development jest --watchAll",
     "dev": "cross-env NODE_ENV=development nodemon src/app.js",
-    "start": "cross-env NODE_ENV=development node src/app.js"
+    "start": "cross-env NODE_ENV=production node src/app.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

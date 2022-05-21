@@ -22,7 +22,7 @@ const login = async (email, password) => {
 /**
  * Get token from Bearer token + signature
  * @param {Object} headers
- * @returns {Promise<string>}
+ * @returns {string}
  */
 const getTokenFromHeaders = (headers) => {
   const token = _.get(headers, "authorization");

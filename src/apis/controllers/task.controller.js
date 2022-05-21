@@ -15,20 +15,20 @@ const getTasks = catchAsync(async (req, res) => {
 });
 
 const getTaskById = catchAsync(async (req, res) => {
-  const createdBy = get(req.user, "id", "");
+  const createdBy = get(req.user, "_id", "");
   const task = await taskService.getTask(req.params.id, createdBy);
   res.status(httpStatus.OK).send(task);
 });
 
 const updateTask = catchAsync(async (req, res) => {
-  const createdBy = get(req.user, "id", "");
+  const createdBy = get(req.user, "_id", "");
 
   const task = await taskService.updateTask(req.params.id, req.body, createdBy);
   res.status(httpStatus.OK).send(task);
 });
 
 const deleteTask = catchAsync(async (req, res) => {
-  const createdBy = get(req.user, "id", "");
+  const createdBy = get(req.user, "_id", "");
 
   await taskService.deleteTask(req.params.id, createdBy);
   res.status(httpStatus.NO_CONTENT).send();
