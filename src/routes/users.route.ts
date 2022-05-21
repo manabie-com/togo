@@ -30,7 +30,6 @@ router.post("/", handleAPI(createNewUser));
  * @return {Status400} - 400 - Bad request - application/json
  * @return {Status500} - 500 - Internal error response - application/json
  * @tags user
- * @security BasicAuth
  */
 router.get("/:username?", handleAPI(getProfile));
 

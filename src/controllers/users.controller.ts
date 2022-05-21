@@ -25,9 +25,7 @@ export const getProfile = async (req: Request): Promise<IAPIResponse> => {
 
    if (!username) return CODE_400();
 
-   const user = await UsersModel.findOne({ username }, { _id: 0, limit: 1, username: 1 })
-      .lean()
-      .exec();
+   const user = await UsersModel.findOne({ username }, { limit: 1, username: 1 }).lean().exec();
 
    if (!user) return CODE_404();
 

@@ -15,13 +15,13 @@ const stubUsers = [
       username: "testing",
    },
 ];
-const finderFiltersMockOne = (query: { getQuery: () => any }) => {
+const finderUsersMockOne = (query: { getQuery: () => any }) => {
    const { username } = query.getQuery();
 
    return stubUsers.filter((data) => data.username === username)[0];
 };
 
-mockingoose(UsersModel).toReturn(finderFiltersMockOne, "findOne");
+mockingoose(UsersModel).toReturn(finderUsersMockOne, "findOne");
 
 describe("Create new user", () => {
    it("With no body should return status 400", async () => {

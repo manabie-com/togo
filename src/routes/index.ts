@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import PingRoute from "@/routes/ping.route";
+import TasksRoute from "@/routes/tasks.route";
 import UsersRoute from "@/routes/users.route";
 
 const router = Router();
@@ -41,5 +42,6 @@ const router = Router();
 // #endregion
 router.use("/ping/", PingRoute);
 router.use("/user/", UsersRoute);
+router.use("/task/", TasksRoute);
 
 export default router;
