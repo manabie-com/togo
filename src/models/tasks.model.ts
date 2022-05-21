@@ -8,7 +8,7 @@ const tasks = new Schema<ITasksModel>(
          require: true,
          type: String,
       },
-      user: { ref: "users", type: Schema.Types.ObjectId },
+      userId: { ref: "users", type: Schema.Types.ObjectId },
    },
    { timestamps: true }
 );

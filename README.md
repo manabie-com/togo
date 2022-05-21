@@ -72,6 +72,16 @@
       ```bash
       curl http://localhost:3000/api/user/first_user
       ```
+   
+   - After we get user's profile we get userID and create new task: 
+      ```bash
+      curl -d '{"name":"Task name"}' -H 'Content-Type: application/json' http://localhost:3000/api/task/{userID}
+      ```
+
+   - After we get user's profile we get userID and get list task: 
+      ```bash
+      curl http://localhost:3000/api/task/{userID}
+      ```
 
    ### Swagger:
    - Go to http://localhost:3000/api/docs

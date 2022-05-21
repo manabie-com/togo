@@ -18,28 +18,30 @@ const stubUsers = [
    },
 ];
 
-const stubSTask: { name: string; user: string; createdAt: Date }[] = [];
+const stubSTask: { name: string; userId: string; createdAt: Date }[] = [];
 
 const finderUsersMockOne = (query: { getQuery: () => any }) => {
    const { id } = query.getQuery();
    return stubUsers.filter((data) => data._id === id)[0];
 };
 
-const finderTasksMockOne = (query: { getQuery: () => any }) => {
-   const { createdAt } = query.getQuery();
-   console.log("===========finderTasksMockOne=============\n");
-   console.log("query.getQuery(): ", query);
-   return stubSTask.filter(
-      (data) => isEqual(data.createdAt, createdAt.$gte) || isAfter(data.createdAt, createdAt.$gte)
-   );
+const finderTasksMock = (query: { getQuery: () => any }) => {
+   const { createdAt, userId } = query.getQuery();
+
+   return stubSTask.filter((data) => {
+      const findByDate =
+         createdAt &&
+         (isEqual(data.createdAt, createdAt.$gte) || isAfter(data.createdAt, createdAt.$gte));
+      return findByDate || data.userId === userId;
+   });
 };
 
 mockingoose(UsersModel).toReturn(finderUsersMockOne, "findOne");
 
-mockingoose(TasksModel).toReturn(finderTasksMockOne, "find");
+mockingoose(TasksModel).toReturn(finderTasksMock, "find");
 jest.spyOn(TasksModel, "create").mockImplementation((value) => {
    const newData = {
-      ...(value as unknown as { name: string; user: string }),
+      ...(value as unknown as { name: string; userId: string }),
       createdAt: new Date(),
    };
    stubSTask.push(newData);
@@ -96,6 +98,22 @@ describe("Create new task", () => {
       expect(res.body.message).toMatch(
          /Bad request: This user is out of the limit in order to create a new task./g
       );
+   });
+});
+
+describe("Get list task", () => {
+   it("With no params userID should return status 400", async () => {
+      const res = await server.get("/api/task/");
+      expect(res.status).toBe(400);
+      expect(res.body.message).toMatch(/Bad Request: Please check parameter/g);
+   });
+
+   it("Normal case in the body should return status 201", async () => {
+      const res = await server.get("/api/task/628695e4abfb7fd6ca76ff99");
+
+      expect(res.status).toBe(200);
+      expect(res.body.message).toMatch(/OK: Success/g);
+      expect(res.body.data.length).toBe(1);
    });
 });
 
