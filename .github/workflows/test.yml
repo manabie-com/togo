@@ -1,10 +1,10 @@
 name: Node.js CI
 
-on: [push]
+on: [push, pull-request]
 
 jobs:
   build:
-
+    name: Lint and Test
     runs-on: ubuntu-latest
 
     strategy:
