@@ -1,56 +1,62 @@
+const Joi = require('joi');
+const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
 
-const todolist = [
-  { id: 1, name: 'Action' },  
-  { id: 2, name: 'Horror' },  
-  { id: 3, name: 'Romance' },  
-];
+const Todo = mongoose.model('Todo', new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    minlength: 5,
+    maxlength: 50
+  }
+}));
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
+  const todolist = await Todo.find().sort('name');
   res.send(todolist);
 });
 
-router.post('/', (req, res) => {
-  const { error } = validateGenre(req.body); 
+router.post('/', async (req, res) => {
+  const { error } = validateTodo(req.body); 
   if (error) return res.status(400).send(error.details[0].message);
 
-  const todo = {
-    id: todolist.length + 1,
-    name: req.body.name
-  };
-  todolist.push(todo);
-  res.send(todo);
-});
-
-router.put('/:id', (req, res) => {
-  const todo = todolist.find(c => c.id === parseInt(req.params.id));
-  if (!todo) return res.status(404).send('The todo with the given ID was not found.');
-
-  const { error } = validateGenre(req.body); 
-  if (error) return res.status(400).send(error.details[0].message);
+  let todo = new Todo({ name: req.body.name });
+  todo = await todo.save();
   
-  todo.name = req.body.name; 
   res.send(todo);
 });
 
-router.delete('/:id', (req, res) => {
-  const todo = todolist.find(c => c.id === parseInt(req.params.id));
+router.put('/:id', async (req, res) => {
+  const { error } = validateTodo(req.body); 
+  if (error) return res.status(400).send(error.details[0].message);
+
+  const todo = await Todo.findByIdAndUpdate(req.params.id, { name: req.body.name }, {
+    new: true
+  });
+
+  if (!todo) return res.status(404).send('The todo with the given ID was not found.');
+  
+  res.send(todo);
+});
+
+router.delete('/:id', async (req, res) => {
+  const todo = await Todo.findByIdAndRemove(req.params.id);
+
   if (!todo) return res.status(404).send('The todo with the given ID was not found.');
 
-  const index = todolist.indexOf(todo);
-  todolist.splice(index, 1);
-
   res.send(todo);
 });
 
-router.get('/:id', (req, res) => {
-  const todo = todolist.find(c => c.id === parseInt(req.params.id));
+router.get('/:id', async (req, res) => {
+  const todo = await Todo.findById(req.params.id);
+
   if (!todo) return res.status(404).send('The todo with the given ID was not found.');
+
   res.send(todo);
 });
 
-function validateGenre(todo) {
+function validateTodo(todo) {
   const schema = {
     name: Joi.string().min(3).required()
   };
