@@ -1,30 +1,63 @@
-### Requirements
+# Manabie
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+Project using node.js to do the test
 
-### Notes
+---
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+## Requirements
+For development, you will need Node.js and a node global package, Npm, and MongoDB installed in your environment.
 
-### How to submit your solution?
+### 1. Mongo DB
+  If MongoDB is not installed, just run docker-compose to set up your mongo DB in the local environment for your own.
 
-- Fork this repo and show us your development progress via a PR
+    $ docker-compose up -d
+### 2. Nodejs + npm
 
-### Interesting facts about Manabie
+  Just go on [official Node.js website](https://nodejs.org/) and download the installer.
+Also, be sure to have `git` available in your PATH, `npm` might need it (You can find git [here](https://git-scm.com/).
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+## Running the project
+### 1. Open terminal/command prompt in folder togo
+### 2. Install the necessary packages
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+    $ npm install
+
+* ***Note: Just run this command when running the program for the first time*** 
+
+### 3. Assign environment variables
+  If using your own MongoDB, you should change **DB_CONNECTION** variable to your connection URI in **.env** file
+### 4. Start project
+
+    $ npm start
+
+## A sample “curl” command to call my API
+
+```bash
+curl --location --request POST 'http://localhost:3000/api/v1/auth/register' --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'name=Manabie'\''s user' --data-urlencode 'email=manabie1@manabie.com' --data-urlencode 'password=manabie1' --data-urlencode 'maxTask=10'
+```
+  For easy tracking of all project's API, you should visit [here](http://localhost:3000/swagger) to use swagger to test with account and password below:
+  ```
+  Url: http://localhost:3000/swagger
+  Account: admin
+  Password: admin
+  ```
+
+## Running the test
+### 1. Open terminal/command prompt in folder togo
+### 2. Install the necessary packages
+
+    $ npm install
+
+* ***Note: Just run this command when running the program for the first time*** 
+
+### 3. Assign environment variables
+  If using your own MongoDB, you should change **DB_CONNECTION** variable to your connection URI in **.env.test** file
+### 4. Test project
+
+    $ npm test
+
+### 5. After run the test
+  You can see test coverage by go to **togo/coverage/lcov-report** folder and open **index.html** file to see it.
+## Future
+ * Apply TDD in future function
+ * Using Go to do this test instead of node.js
