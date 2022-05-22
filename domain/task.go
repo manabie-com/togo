@@ -16,7 +16,6 @@ type Task struct {
 	ID        int64     `json:"id" gorm:"primaryKey"`
 	Content   string    `json:"content" validate:"required"`
 	UserId    *int      `json:"user_id"`
-	User      *User     `json:"user"`
 	CreatedAt time.Time `json:"created_at"`
 }
 
