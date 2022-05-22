@@ -17,12 +17,14 @@ async function initApp() {
   await mongooseLoader();
 
   // express
-  const app = expressLoader();
+  const app = expressLoader.app;
 
   // swagger
   swaggerLoader(app);
 }
 
-initApp()
+const server = initApp()
   .then(() => bannerLogger(log))
   .catch((error) => log.error("Application is crashed: " + error));
+
+module.exports = server;

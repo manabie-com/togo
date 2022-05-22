@@ -31,7 +31,11 @@ const getTokenFromHeaders = (headers) => {
     throw new ApiError(httpStatus.UNAUTHORIZED, "Please authenticate");
 
   const parts = _.split(token, ".");
-  if (_.size(parts) !== 3) throw new Error("Invalid token. Has no signature");
+  if (_.size(parts) !== 3)
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      "Invalid token. Has no signature"
+    );
 
   return token.replace("Bearer ", "");
 };

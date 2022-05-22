@@ -12,6 +12,8 @@ module.exports = function (req, res, next) {
     req.user = decoded;
     return next();
   } catch (ex) {
-    res.status(UNAUTHORIZED).send("Please authenticate");
+    res
+      .status(ex.statusCode ? ex.statusCode : UNAUTHORIZED)
+      .send("Please authenticate");
   }
 };

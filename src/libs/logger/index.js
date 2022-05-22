@@ -29,16 +29,8 @@ module.exports = class Logger {
     if (winston) winston[level](`${this._formatScope()} ${message}`, args);
   }
 
-  debug(message, ...args) {
-    this._log("debug", message, args);
-  }
-
   info(message, ...args) {
     this._log("info", message, args);
-  }
-
-  warn(message, ...args) {
-    this._log("warn", message, args);
   }
 
   error(message, ...args) {

@@ -10,7 +10,7 @@ const createTask = catchAsync(async (req, res) => {
 });
 
 const getTasks = catchAsync(async (req, res) => {
-  const tasks = await taskService.getTasks(req.user);
+  const tasks = await taskService.getTasks(req.user._id);
   res.status(httpStatus.OK).send(tasks);
 });
 

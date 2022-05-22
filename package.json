@@ -6,7 +6,7 @@
   "author": "Ha Pham",
   "license": "MIT",
   "scripts": {
-    "test": "cross-env NODE_ENV=development jest --watchAll",
+    "test": "cross-env NODE_ENV=test jest --maxWorkers=1 --forceExit --detectOpenHandles --watchAll --verbose --coverage",
     "dev": "cross-env NODE_ENV=development nodemon src/app.js",
     "start": "cross-env NODE_ENV=production node src/app.js"
   },
@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "jest": "^28.1.0",
-    "nodemon": "^2.0.16"
+    "nodemon": "^2.0.16",
+    "supertest": "^6.2.3"
   }
 }

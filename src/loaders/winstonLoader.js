@@ -9,7 +9,7 @@ module.exports = () => {
         level: env.log.level,
         handleExceptions: true,
         format:
-          env.node !== "development"
+          env.node === "production"
             ? format.combine(format.json())
             : format.combine(format.colorize(), format.simple()),
       }),

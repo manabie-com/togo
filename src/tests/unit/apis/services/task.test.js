@@ -85,7 +85,7 @@ describe("getTask", () => {
     expect(Task.findById).toBeCalledTimes(1);
   });
 
-  it("should return a task by id and createdBy", () => {
+  it("should return a task by id and createdBy", async () => {
     const createdBy = mongoose.Types.ObjectId().toHexString();
     const id = mongoose.Types.ObjectId().toHexString();
     const task = {
@@ -96,15 +96,15 @@ describe("getTask", () => {
 
     Task.findById = jest.fn().mockResolvedValue(task);
 
-    expect(
-      Promise.resolve(taskService.getTask(id, createdBy))
-    ).resolves.toMatchObject(task);
+    const result = taskService.getTask(id, createdBy);
+
+    await expect(result).resolves.toMatchObject(task);
     expect(Task.findById).toBeCalledTimes(1);
   });
 });
 
 describe("updateTask", () => {
-  it("should update task", () => {
+  it("should update task", async () => {
     const id = mongoose.Types.ObjectId().toHexString();
     const createdBy = mongoose.Types.ObjectId().toHexString();
 
@@ -122,9 +122,8 @@ describe("updateTask", () => {
     taskService.getTask = jest.fn().mockResolvedValue(oldTask);
     oldTask.save = jest.fn();
 
-    expect(
-      Promise.resolve(taskService.updateTask(id, updatingTask, createdBy))
-    ).resolves.toMatchObject(new Task(updatingTask));
+    const result = taskService.updateTask(id, updatingTask, createdBy);
+    await expect(result).resolves.toMatchObject(new Task(updatingTask));
   });
 
   it("deleteTask", async () => {
@@ -143,5 +142,20 @@ describe("updateTask", () => {
 
     await taskService.deleteTask(id, createdBy.toString());
     expect(task.remove).toBeCalledTimes(1);
+  });
+});
+
+describe("countTasks", () => {
+  it("should return count result", async () => {
+    const from = mongoose.Types.ObjectId().toHexString();
+    const createdBy = mongoose.Types.ObjectId().toHexString();
+    const numberOfTask = 1;
+
+    Task.count = jest.fn().mockResolvedValue(numberOfTask);
+
+    const result = taskService.countTasks(from, createdBy);
+
+    await expect(result).resolves.toBe(numberOfTask);
+    expect(Task.findById).toBeCalledTimes(1);
   });
 });
