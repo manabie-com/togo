@@ -1,0 +1,13 @@
+{"level":"info","message":"Listening on port 3000...","timestamp":"2022-05-22T20:49:23.098Z"}
+{"level":"info","message":"Connected to MongoDB...","timestamp":"2022-05-22T20:49:23.122Z"}
+{"level":"info","message":"Listening on port 3000...","timestamp":"2022-05-22T20:49:24.759Z"}
+{"level":"info","message":"Connected to MongoDB...","timestamp":"2022-05-22T20:49:24.784Z"}
+{"level":"info","message":"Listening on port 3000...","timestamp":"2022-05-22T20:49:34.466Z"}
+{"level":"info","message":"Connected to MongoDB...","timestamp":"2022-05-22T20:49:34.491Z"}
+{"level":"info","message":"Listening on port 3000...","timestamp":"2022-05-22T20:49:36.047Z"}
+{"level":"info","message":"Connected to MongoDB...","timestamp":"2022-05-22T20:49:36.072Z"}
+{"level":"info","message":"Listening on port 3000...","timestamp":"2022-05-22T20:49:42.093Z"}
+{"level":"info","message":"Connected to MongoDB...","timestamp":"2022-05-22T20:49:42.115Z"}
+{"level":"info","message":"Listening on port 3000...","timestamp":"2022-05-22T20:49:43.399Z"}
+{"level":"info","message":"Connected to MongoDB...","timestamp":"2022-05-22T20:49:43.422Z"}
+{"message":"todolist is not defined","stack":"ReferenceError: todolist is not defined\n    at /Users/vokhanh/TestTechnical/ToDoList/togo/routes/todolist.js:10:12\n    at processTicksAndRejections (internal/process/task_queues.js:94:5)","level":"error","timestamp":"2022-05-22T20:49:54.020Z"}

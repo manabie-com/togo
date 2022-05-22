@@ -6,7 +6,7 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  const todolist = await Todo.find().sort('name');
+  const todoli = await Todo.find().sort('name');
   res.send(todolist);
 });
 
@@ -22,6 +22,7 @@ router.post('/', auth, async (req, res) => {
 
 router.put('/:id', async (req, res) => {
   const { error } = validate(req.body); 
+  
   if (error) return res.status(400).send(error.details[0].message);
 
   const todo = await Todo.findByIdAndUpdate(req.params.id, { name: req.body.name }, {
