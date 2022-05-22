@@ -1,3 +1,5 @@
+const auth = require('../middleware/auth');
+const admin = require('../middleware/admin');
 const { Todo, validate } = require('../models/todo');
 const mongoose = require('mongoose');
 const express = require('express');
@@ -8,8 +10,8 @@ router.get('/', async (req, res) => {
   res.send(todolist);
 });
 
-router.post('/', async (req, res) => {
-  const { error } = validate(req.body); 
+router.post('/', auth, async (req, res) => {
+    const { error } = validate(req.body); 
   if (error) return res.status(400).send(error.details[0].message);
 
   let todo = new Todo({ name: req.body.name });
@@ -31,8 +33,8 @@ router.put('/:id', async (req, res) => {
   res.send(todo);
 });
 
-router.delete('/:id', async (req, res) => {
-  const todo = await Todo.findByIdAndRemove(req.params.id);
+router.delete('/:id', [auth, admin], async (req, res) => {
+    const todo = await Todo.findByIdAndRemove(req.params.id);
 
   if (!todo) return res.status(404).send('The todo with the given ID was not found.');
 
