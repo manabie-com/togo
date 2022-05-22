@@ -11,3 +11,5 @@
 {"level":"info","message":"Listening on port 3000...","timestamp":"2022-05-22T20:49:43.399Z"}
 {"level":"info","message":"Connected to MongoDB...","timestamp":"2022-05-22T20:49:43.422Z"}
 {"message":"todolist is not defined","stack":"ReferenceError: todolist is not defined\n    at /Users/vokhanh/TestTechnical/ToDoList/togo/routes/todolist.js:10:12\n    at processTicksAndRejections (internal/process/task_queues.js:94:5)","level":"error","timestamp":"2022-05-22T20:49:54.020Z"}
+{"level":"info","message":"Listening on port 3000...","timestamp":"2022-05-22T20:52:30.657Z"}
+{"level":"info","message":"Connected to MongoDB...","timestamp":"2022-05-22T20:52:30.681Z"}
