@@ -1,0 +1,44 @@
+version: "3.9"
+services:
+  db:
+    image: mysql/mysql-server:latest-aarch64
+    container_name: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - db_data:/var/lib/mysql # `db_data` is the name of the volume
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3308:3306" # <exposed-port>:<port-used-in-container>
+    expose:
+      # Opens port 3308 on the container
+      - "3308"
+    environment:
+      - MYSQL_DATABASE=manabie_togo
+      - MYSQL_USER=nana
+      - MYSQL_PASSWORD=nana@123
+      - MYSQL_ROOT_PASSWORD=root@123
+      - MYSQL_ROOT_HOST=172.18.0.1
+  api:
+    container_name: togo-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: togo-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    expose:
+      - "8000"
+    environment:
+      - PORT=8000
+      - DB_CONNECTION_STR=nana:nana@123@tcp(db:3306)/manabie_togo?charset=utf8mb4&parseTime=True&loc=Local
+      - SYSTEM_KEY=nana@123
+      - REFRESH_TOKEN_EXPIRY=604800
+      - ACCESS_TOKEN_EXPIRY=86400
+      - TEST_DB_CONNECTION_STR=nana:nana@123@tcp(db:3306)/manabie_togo?charset=utf8mb4&parseTime=True&loc=Local
+    depends_on:
+      - db
+    command: [ "/app/main" ]
+# create volumes to rebuild faster
+volumes:
+  db_data:
