@@ -83,4 +83,3 @@ The application is divided into distribution packages:
 * **services**: provides function to handle data with database. 
 * **test**: it contains integration test and unit test.
 * **docs**: it contains Postman requests collection.
-
