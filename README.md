@@ -1,5 +1,5 @@
 ## Run project locally
-- Install go
+- Install go 1.16
 - Set up mysql and create a new database, example: togo
 - Config http port and database on .env file. example
 ```
