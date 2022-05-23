@@ -1,0 +1,23 @@
+version: "3.8"
+services:
+    mssql:
+        container_name: manabie-mssql
+        image: 'manabie-mssql:latest'
+        ports:
+            - '1433:1433'
+        environment:
+            - ACCEPT_EULA=Y
+            - SA_PASSWORD=strong-password123@
+            - TZ=Asia/Ho_Chi_Minh
+    mana:
+        restart: unless-stopped
+        depends_on:
+            - mssql
+        container_name: manabie-test
+        image: 'manabie-test:latest'
+        ports:
+            - '8080:8080'
+networks:
+    default:
+        external: true
+        name: mana-nw

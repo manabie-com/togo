@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+    mssql-test:
+        container_name: manabie-mssql-test
+        image: 'manabie-mssql-test:latest'
+        user: root
+        ports:
+            - '1434:1433'
+        environment:
+            - ACCEPT_EULA=Y
+            - SA_PASSWORD=strong-password123@
+            - TZ=Asia/Ho_Chi_Minh
