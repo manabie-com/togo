@@ -48,7 +48,7 @@
    ### Run through docker:
    - You must use `file .env` 
       ```env
-      DATABASE_URL=mongodb://docker:27017
+      DATABASE_URL=mongodb://mongo:27017
       PORT=3000
       ```
    - Then run `cmd`

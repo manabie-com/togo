@@ -13,7 +13,7 @@ export const createNewUser = async (req: Request): Promise<IAPIResponse> => {
 
    user = new UsersModel();
    user.username = body.username;
-   if (body.limit) user.limit = body.limit;
+   if (body.limit > 0) user.limit = body.limit;
 
    await user.save();
 
