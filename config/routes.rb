@@ -5,5 +5,6 @@ Rails.application.routes.draw do
   # root "articles#index"
   namespace 'api' do
     resources :user
+    resources :task
   end
 end
