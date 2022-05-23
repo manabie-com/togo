@@ -108,16 +108,3 @@ def get_todos(current_user):
         result.append(data)
 
     return jsonify({"todos": result})
-
-# @app.route("/authors/<author_id>", methods=["DELETE"])
-# @token_required
-# def delete_author(current_user, author_id):
-#     author = Authors.query.filter_by(id=author_id, user_id=current_user.id).first()
-    
-#     if not author:
-#         return jsonify({"message": "Author does not exist."})
-    
-#     db.session.delete(author)
-#     db.session.commit()
-
-#     return jsonify({"message": "Author deleted."})
