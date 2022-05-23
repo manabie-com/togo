@@ -14,20 +14,20 @@ type LoginStore interface {
 type loginBiz struct {
 	loginStore    LoginStore
 	tokenProvider tokenprovider.Provider
-	hasher        Hasher
+	hash          Hash
 	tokenConfig   *tokenprovider.TokenConfig
 }
 
 func NewLoginBiz(
 	loginStore LoginStore,
 	tokenProvider tokenprovider.Provider,
-	hasher Hasher,
+	hash Hash,
 	tokenConfig *tokenprovider.TokenConfig,
 ) *loginBiz {
 	return &loginBiz{
 		loginStore:    loginStore,
 		tokenProvider: tokenProvider,
-		hasher:        hasher,
+		hash:          hash,
 		tokenConfig:   tokenConfig,
 	}
 }
@@ -38,7 +38,7 @@ func (biz *loginBiz) Login(ctx context.Context, data *usermodel.UserLogin) (*use
 		return nil, usermodel.ErrEmailOrPasswordInvalid
 	}
 
-	hashedPassword := biz.hasher.Hash(data.Password + user.Salt)
+	hashedPassword := biz.hash.Hash(data.Password + user.Salt)
 	if user.Password != hashedPassword {
 		return nil, usermodel.ErrEmailOrPasswordInvalid
 	}

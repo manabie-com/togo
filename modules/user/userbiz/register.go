@@ -11,17 +11,17 @@ type RegisterStore interface {
 	CreateUser(ctx context.Context, data *usermodel.UserCreate) error
 }
 
-type Hasher interface {
+type Hash interface {
 	Hash(data string) string
 }
 
 type registerBiz struct {
-	store  RegisterStore
-	hasher Hasher
+	store RegisterStore
+	hash  Hash
 }
 
-func NewRegisterBiz(store RegisterStore, hasher Hasher) *registerBiz {
-	return &registerBiz{store: store, hasher: hasher}
+func NewRegisterBiz(store RegisterStore, hash Hash) *registerBiz {
+	return &registerBiz{store: store, hash: hash}
 }
 
 func (biz *registerBiz) Register(ctx context.Context, data *usermodel.UserCreate) error {
@@ -38,7 +38,7 @@ func (biz *registerBiz) Register(ctx context.Context, data *usermodel.UserCreate
 	if err == common.ErrRecordNotFound {
 		salt := common.GenSalt(50)
 
-		data.Password = biz.hasher.Hash(data.Password + salt)
+		data.Password = biz.hash.Hash(data.Password + salt)
 		data.Salt = salt
 
 		if err := biz.store.CreateUser(ctx, data); err != nil {

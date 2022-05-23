@@ -3,7 +3,7 @@ package ginuser
 import (
 	"github.com/japananh/togo/common"
 	"github.com/japananh/togo/component"
-	"github.com/japananh/togo/component/hasher"
+	"github.com/japananh/togo/component/hash"
 	"github.com/japananh/togo/component/tokenprovider/jwt"
 	"github.com/japananh/togo/modules/user/userbiz"
 	"github.com/japananh/togo/modules/user/usermodel"
@@ -24,7 +24,7 @@ func Login(appCtx component.AppContext) gin.HandlerFunc {
 		db := appCtx.GetMainDBConnection()
 		store := userstorage.NewSQLStore(db)
 		tokenProvider := jwt.NewTokenJWTProvider(appCtx.SecretKey())
-		md5 := hasher.NewMd5Hash()
+		md5 := hash.NewMd5Hash()
 		tokenConfig := appCtx.GetTokenConfig()
 
 		biz := userbiz.NewLoginBiz(store, tokenProvider, md5, tokenConfig)

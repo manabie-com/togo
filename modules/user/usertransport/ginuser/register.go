@@ -3,7 +3,7 @@ package ginuser
 import (
 	"github.com/japananh/togo/common"
 	"github.com/japananh/togo/component"
-	"github.com/japananh/togo/component/hasher"
+	"github.com/japananh/togo/component/hash"
 	"github.com/japananh/togo/modules/user/userbiz"
 	"github.com/japananh/togo/modules/user/usermodel"
 	"github.com/japananh/togo/modules/user/userstorage"
@@ -22,7 +22,7 @@ func Register(appCtx component.AppContext) gin.HandlerFunc {
 
 		db := appCtx.GetMainDBConnection()
 		store := userstorage.NewSQLStore(db)
-		md5 := hasher.NewMd5Hash()
+		md5 := hash.NewMd5Hash()
 		biz := userbiz.NewRegisterBiz(store, md5)
 
 		if err := biz.Register(c.Request.Context(), &data); err != nil {

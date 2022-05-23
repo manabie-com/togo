@@ -1,7 +1,7 @@
-package hasher_test
+package hash_test
 
 import (
-	"github.com/japananh/togo/component/hasher"
+	"github.com/japananh/togo/component/hash"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -18,7 +18,7 @@ func TestMd5Hash_Hash(t *testing.T) {
 	}
 
 	for _, tc := range tcs {
-		output := hasher.NewMd5Hash().Hash(tc.password + tc.salt)
+		output := hash.NewMd5Hash().Hash(tc.password + tc.salt)
 		assert.Equal(t, tc.expected, output, "they should be equal")
 	}
 }

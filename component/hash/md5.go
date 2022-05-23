@@ -1,4 +1,4 @@
-package hasher
+package hash
 
 import (
 	"crypto/md5"
@@ -12,7 +12,7 @@ func NewMd5Hash() *md5Hash {
 }
 
 func (h *md5Hash) Hash(data string) string {
-	hasher := md5.New()
-	hasher.Write([]byte(data))
-	return hex.EncodeToString(hasher.Sum(nil))
+	hash := md5.New()
+	hash.Write([]byte(data))
+	return hex.EncodeToString(hash.Sum(nil))
 }
