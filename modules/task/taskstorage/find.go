@@ -9,7 +9,7 @@ import (
 )
 
 func (s *sqlStore) FindTaskByCondition(
-	ctx context.Context,
+	_ context.Context,
 	conditions map[string]interface{},
 	moreKeys ...string,
 ) (*taskmodel.Task, error) {

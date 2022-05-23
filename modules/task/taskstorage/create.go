@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func (s *sqlStore) CreateTask(ctx context.Context, data *taskmodel.TaskCreate) error {
+func (s *sqlStore) CreateTask(_ context.Context, data *taskmodel.TaskCreate) error {
 	db := s.db.Begin()
 
 	if err := db.Table(data.TableName()).Create(data).Error; err != nil {
@@ -23,7 +23,7 @@ func (s *sqlStore) CreateTask(ctx context.Context, data *taskmodel.TaskCreate) e
 	return nil
 }
 
-func (s *sqlStore) CountUserDailyTask(ctx context.Context, createdBy int) (int, error) {
+func (s *sqlStore) CountUserDailyTask(_ context.Context, createdBy int) (int, error) {
 	db := s.db
 	layoutISO := "2006-01-02"
 	todayDate := time.Now().Format(layoutISO)

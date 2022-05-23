@@ -9,7 +9,7 @@ import (
 )
 
 func (s *sqlStore) FindUser(
-	ctx context.Context,
+	_ context.Context,
 	conditions map[string]interface{},
 	moreInfo ...string,
 ) (*usermodel.User, error) {

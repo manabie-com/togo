@@ -6,7 +6,7 @@ import (
 	"github.com/japananh/togo/modules/user/usermodel"
 )
 
-func (s *sqlStore) CreateUser(ctx context.Context, data *usermodel.UserCreate) error {
+func (s *sqlStore) CreateUser(_ context.Context, data *usermodel.UserCreate) error {
 	db := s.db.Begin()
 
 	if err := db.Table(data.TableName()).Create(data).Error; err != nil {
