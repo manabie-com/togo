@@ -71,18 +71,8 @@ func (biz *createTaskRepo) CreateTask(
 		return common.NewCustomError(nil, "exceed daily task limit", "ErrExceedDailyTaskLimit")
 	}
 
-	// check for duplicated task
-	duplicatedTask, err := biz.store.FindTaskByCondition(ctx, map[string]interface{}{"id": data.Id})
-	if duplicatedTask != nil {
-		return common.ErrEntityExisted(usermodel.EntityName, nil)
-	}
-
-	if err == common.ErrRecordNotFound {
-		if err := biz.store.CreateTask(ctx, data); err != nil {
-			return common.ErrCannotCreateEntity(taskmodel.EntityName, err)
-		}
-	} else {
-		return common.ErrDB(err)
+	if err := biz.store.CreateTask(ctx, data); err != nil {
+		return common.ErrCannotCreateEntity(taskmodel.EntityName, err)
 	}
 
 	return nil
