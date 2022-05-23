@@ -17,3 +17,4 @@ app/__pycache__
 out/
 
 .idea
+*.db
