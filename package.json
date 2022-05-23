@@ -39,5 +39,8 @@
     "mongoose": "^6.1.5",
     "shortid": "^2.2.16",
     "supertest": "^6.1.6"
+  },
+  "devDependencies": {
+    "@shelf/jest-mongodb": "^2.2.2"
   }
 }

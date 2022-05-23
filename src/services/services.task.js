@@ -123,6 +123,8 @@ async function deleteTask(id) {
     message: ''
   }
 
+  if (!id) return result;
+
   const target = await taskModel.findById(id);
   if (!target || target.status < 0) {
     result.code = 404;
@@ -152,6 +154,7 @@ async function listTask(filter = {}, pageSize = 10, currentPage = 0, sort = {}) 
     .limit(pageSize)
     .skip(currentPage * pageSize)
     .sort(sort)
+    .exec()
     .then(res => res)
     .catch(err => {
       console.log(err);

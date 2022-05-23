@@ -83,9 +83,9 @@ module.exports.deleteTask = async (ctx) => {
   const id = ctx.query.id || '';
   const target = await taskService.readTask(id);
 
-  if (!target || target.userId.toString() !== userId || target.status === -1) {
-    return ctx.showError('Task not found!', 404);
-  }
+  // if (!target || target.userId.toString() !== userId || target.status === -1) {
+  //   return ctx.showError('Task not found!', 404);
+  // }
 
   const result = await taskService.deleteTask(id);
 

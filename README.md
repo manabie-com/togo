@@ -51,7 +51,7 @@ It will response
     "code":200,
     "data": {
         "message": "REST API VERSION 0.0.1.",
-        "date":"2022-01-11T16:46:05.029Z"
+        "date":"2022-05-23T16:46:05.029Z"
     }
 }
 ```
