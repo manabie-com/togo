@@ -1,22 +1,25 @@
 const Joi = require('joi');
 const mongoose = require('mongoose');
 
-const Todo = mongoose.model('Todo', new mongoose.Schema({
+const todoSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
     minlength: 5,
     maxlength: 50
   }
-}));
+});
 
-function validateTodo(genre) {
+const Todo = mongoose.model('Todo', todoSchema);
+
+function validateTodo(todo) {
   const schema = {
-    name: Joi.string().min(5).required()
+    name: Joi.string().min(5).max(50).required()
   };
 
-  return Joi.validate(genre, schema);
+  return Joi.validate(todo, schema);
 }
 
+exports.todoSchema = todoSchema;
 exports.Todo = Todo; 
 exports.validate = validateTodo;
