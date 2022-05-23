@@ -1,3 +1,9 @@
+##Overview
+Some package, template or library I used implement to this assignment:
+- implement Clean architecture to easy maintain https://github.com/bxcodec/go-clean-arch
+- GORM to apply ORM database https://gorm.io/index.html
+- Echo framework https://echo.labstack.com/
+
 ## Run project locally
 - Install go 1.16
 - Set up mysql and create a new database, example: togo
