@@ -25,6 +25,5 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build the Docker image
       run:  
-        chmod +x ./local-build.sh
-        ./local-build.sh
+        chmod +x ./local-build.sh && ./local-build.sh
     
