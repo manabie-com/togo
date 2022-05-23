@@ -16,7 +16,8 @@
       "test:unit": "cross-env jest --testPathPattern=./tests/unit",
       "test:integration": "cross-env jest --testPathPattern=./tests/integration",
       "test:coverage": "cross-env jest --coverage",
-      "lint": "eslint . --ext .ts,.tsx --fix"
+      "lint": "eslint . --ext .ts,.tsx --fix",
+      "sonar": "sonar-scanner"
    },
    "dependencies": {
       "compression": "^1.7.4",
@@ -51,6 +52,7 @@
       "mockingoose": "^2.15.2",
       "nodemon": "^2.0.16",
       "prettier": "^2.6.2",
+      "sonar-scanner": "^3.1.0",
       "supertest": "^6.2.3",
       "ts-jest": "^28.0.2"
    }

@@ -11,7 +11,7 @@ import { OPTIONS, URL } from "config/database.config";
  */
 export const startApplication = async () => {
    const listenPort = parseInt(PORT, 10);
-   connect(URL, OPTIONS);
+   await connect(URL, OPTIONS);
 
    app.listen(listenPort, () => {
       console.info(`Listening Port: ${listenPort}`);

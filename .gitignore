@@ -46,6 +46,8 @@ yarn-warning.log
 # Lock package
 package-lock.json
 yarn.lock
+.sonar_lock
+.scannerwork
 
 # Coverage directory
 coverage
