@@ -28,6 +28,7 @@ func main() {
 	}
 
 	dsn := os.Getenv("DB_CONNECTION_STR")
+	dsnTest := os.Getenv("TEST_DB_CONNECTION_STR")
 	secretKey := os.Getenv("SYSTEM_KEY")
 	atExpiryStr := os.Getenv("ACCESS_TOKEN_EXPIRY")
 	rtExpiryStr := os.Getenv("REFRESH_TOKEN_EXPIRY")
@@ -42,8 +43,14 @@ func main() {
 		log.Fatalln(err)
 	}
 
+	// connect to test database
+	testDb, err := gorm.Open(mysql.Open(dsnTest), &gorm.Config{})
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	// run database migrations
-	if err := runDBMigrations(db); err != nil {
+	if err := runDBMigrations(db, testDb); err != nil {
 		log.Fatalln(err)
 	}
 
@@ -64,8 +71,13 @@ func loadEnv() error {
 	return godotenv.Load(cwd + `/.env`)
 }
 
-func runDBMigrations(db *gorm.DB) error {
+func runDBMigrations(db *gorm.DB, testDb *gorm.DB) error {
 	sqlDB, err := db.DB()
+	if err != nil {
+		return err
+	}
+
+	sqlTestDB, err := testDb.DB()
 	if err != nil {
 		return err
 	}
@@ -77,6 +89,10 @@ func runDBMigrations(db *gorm.DB) error {
 	}
 
 	if err := goose.Up(sqlDB, "migrations"); err != nil {
+		return err
+	}
+
+	if err := goose.Up(sqlTestDB, "migrations"); err != nil {
 		return err
 	}
 
