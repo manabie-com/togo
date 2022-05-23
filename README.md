@@ -3,7 +3,7 @@
 - Set up mysql and create a new database, example: togo
 - Config http port and database on .env file. example
 ```
-HTTP_PORT=8080
+HTTP_PORT=9099
 APP_TIMEZONE="UTC"
 DB_HOST=127.0.0.1
 DB_PORT=3306
