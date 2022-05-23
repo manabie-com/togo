@@ -1,30 +1,86 @@
-### Requirements
+# Introduction
+A challenge from Manabie. Build togo API assignment.
+This project is automatically tested [ integation-test, unit-test ] on github actions. Please check the status [here](https://github.com/tienvnz98/togo/actions).
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+## Usage
+**Requirements**
+* Node-v16.x
+* Docker-20.x.x
 
-### Notes
+### How to run test localy
+**Run integration test and unit test**
+```
+npm i
+npm test
+```
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+### How to run this app
+Install node packages.
+```
+npm i
+```
 
-### How to submit your solution?
+**First options: Run this app on the host localy (development mode).**
 
-- Fork this repo and show us your development progress via a PR
+Start dependencie services in depend-services.yml file.
+```
+docker-compose -f depend-services.yml up -d
+```
 
-### Interesting facts about Manabie
+Start node http server on the host.
+```
+npm start
+```
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+**Second options: Run this app inside container (production mode)**
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+Start docker-compose file.
+```
+docker-compose up -d
+```
+
+### How to request to this app by curl
+All request detail inside [postman collection](./docs/TOGO-TEST.json)
+
+```
+curl --location --request GET 'http://localhost:9200/api/public/home'
+
+It will response
+{
+    "success": true,
+    "code":200,
+    "data": {
+        "message": "REST API VERSION 0.0.1.",
+        "date":"2022-01-11T16:46:05.029Z"
+    }
+}
+```
+
+## Source code structure
+```
+    |-docs/
+    |-src/
+        |-controllers/
+        |-middlewares/
+        |-models/
+        |-services/
+        |-utils/
+        |-app.js
+        |-routes.js
+        |-server.js
+    |-test/
+        |-integration-test/
+        |-unit-test/
+            |-auth/
+            |-task/
+    |-package.json
+```
+
+The application is divided into distribution packages:
+* **controllers**: it contains pakages, this pakages provides functions to receive requests and return repsonses.
+* **middlewares**: it contains is a next function, used to append some function in context or verify token in headers request.
+* **models**: it contains the schemas to working with the database.
+* **services**: provides function to handle data with database. 
+* **test**: it contains integration test and unit test.
+* **docs**: it contains Postman requests collection.
+

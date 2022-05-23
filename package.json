@@ -1,0 +1,43 @@
+{
+  "name": "togo",
+  "version": "0.0.1",
+  "description": "togo test",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "start": "node ./src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tienvnz98/togo.git"
+  },
+  "keywords": [
+    "test"
+  ],
+  "author": "tiennm",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tienvnz98/togo/issues"
+  },
+  "homepage": "https://github.com/tienvnz98/togo#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "jest": "27.4.3",
+    "joi": "^17.4.2",
+    "jsonwebtoken": "^8.5.1",
+    "koa": "^2.13.4",
+    "koa-bodyparser": "^4.3.0",
+    "koa-cors": "^0.0.16",
+    "koa-logger": "^3.2.1",
+    "koa-router": "^10.1.1",
+    "lodash": "^4.17.21",
+    "moment-timezone": "^0.5.33",
+    "mongodb-memory-server": "^8.1.0",
+    "mongoose": "^6.1.5",
+    "shortid": "^2.2.16",
+    "supertest": "^6.1.6"
+  }
+}

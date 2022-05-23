@@ -1,0 +1,232 @@
+{
+	"info": {
+		"_postman_id": "7f4ace7d-4b4d-4e74-9a03-d772a93c23e0",
+		"name": "TOGO-TEST",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "SIGN-UP",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"user_001\",\n    \"password\": \"my_password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9200/api/public/auth/sign-up",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9200",
+					"path": [
+						"api",
+						"public",
+						"auth",
+						"sign-up"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SIGN-IN",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"user_001\",\n    \"password\": \"my_password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9200/api/public/auth/sign-in",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9200",
+					"path": [
+						"api",
+						"public",
+						"auth",
+						"sign-in"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CREATE-TASK",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MWRhNTMwMTVmMjc3ZjNiNWRhYjdiNTUiLCJleHAiOjE2NDE3ODQ4NjQsImlhdCI6MTY0MTY5ODQ2NH0.9RkH2tWay2IO8L7v79IMI1x1mf6hYLsKGZo8Peaus-A",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Job 001\",\n    \"description\": \"Description for job 001\",\n    \"status\": 0\n}   ",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:9200/api/me/task",
+					"host": [
+						"localhost"
+					],
+					"port": "9200",
+					"path": [
+						"api",
+						"me",
+						"task"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UPDATE-TASK",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MWRhNTMwMTVmMjc3ZjNiNWRhYjdiNTUiLCJleHAiOjE2NDE3ODQ4NjQsImlhdCI6MTY0MTY5ODQ2NH0.9RkH2tWay2IO8L7v79IMI1x1mf6hYLsKGZo8Peaus-A",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Job 001\",\n    \"description\": \"Description for job 001\",\n    \"status\": 1\n}   ",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:9200/api/me/task?id=61da563ecee7473ceef92123",
+					"host": [
+						"localhost"
+					],
+					"port": "9200",
+					"path": [
+						"api",
+						"me",
+						"task"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "61da563ecee7473ceef92123"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELTE-TASK",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MWRhNTMwMTVmMjc3ZjNiNWRhYjdiNTUiLCJleHAiOjE2NDE3ODQ4NjQsImlhdCI6MTY0MTY5ODQ2NH0.9RkH2tWay2IO8L7v79IMI1x1mf6hYLsKGZo8Peaus-A",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:9200/api/me/task?id=61da563ecee7473ceef92123",
+					"host": [
+						"localhost"
+					],
+					"port": "9200",
+					"path": [
+						"api",
+						"me",
+						"task"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "61da563ecee7473ceef92123"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "LIST TASK",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MWRiMDVkYThiNjA1YjhkYzI1MjQzOTIiLCJleHAiOjE2NDE5OTY4NzYsImlhdCI6MTY0MTkxMDQ3Nn0.lStIw2nynlKzyKZPGB87GKz7v_5M90YkaprsY5zeZ3Y",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9200/api/me/task?from=2022-01-11&to=2022-01-11",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9200",
+					"path": [
+						"api",
+						"me",
+						"task"
+					],
+					"query": [
+						{
+							"key": "from",
+							"value": "2022-01-11"
+						},
+						{
+							"key": "to",
+							"value": "2022-01-11"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
