@@ -24,8 +24,8 @@ func (repo *TaskRepository) Create(task domain.Task) (domain.Task, error) {
 	return task, nil
 }
 
-func (repo *TaskRepository) Save(task domain.Task) error {
-	result := repo.db.Save(&task)
+func (repo *TaskRepository) Update(task domain.Task) error {
+	result := repo.db.Updates(&task)
 	if result.Error != nil {
 		return result.Error
 	}

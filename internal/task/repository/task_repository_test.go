@@ -49,3 +49,26 @@ func TestCreate(t *testing.T) {
 	_, createErr := taskRepo.Create(task)
 	assert.NoError(t, createErr)
 }
+
+func TestUpdate(t *testing.T) {
+	now := time.Now()
+	userId := 22
+	task := domain.Task{
+		ID:        1,
+		Content:   "task content",
+		UserId:    &userId,
+		CreatedAt: now,
+	}
+
+	db, mock := NewMock()
+
+	mock.ExpectBegin()
+	mock.ExpectExec("UPDATE `tasks` SET `content`=?,`user_id`=?,`created_at`=? WHERE `id` = ?").
+		WithArgs(task.Content, *task.UserId, task.CreatedAt, task.ID).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectCommit()
+
+	taskRepo := taskRepository.NewTaskRepository(db)
+	updateErr := taskRepo.Update(task)
+	assert.NoError(t, updateErr)
+}

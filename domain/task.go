@@ -26,5 +26,5 @@ type ITaskService interface {
 type ITaskRepository interface {
 	SetTx(tx *gorm.DB) *gorm.DB
 	Create(task Task) (Task, error)
-	Save(task Task) error
+	Update(task Task) error
 }

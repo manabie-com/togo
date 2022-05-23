@@ -44,7 +44,7 @@ func (service *TaskService) Create(params domain.TaskParams) (domain.Task, error
 				return
 			}
 
-			err = service.AssignToUser(task, user)
+			err = service.AssignToUser(createdTask, user)
 			if err != nil {
 				return
 			}
@@ -68,7 +68,7 @@ func (service *TaskService) Create(params domain.TaskParams) (domain.Task, error
 					return
 				}
 			}
-			err = service.AssignToUser(task, user)
+			err = service.AssignToUser(createdTask, user)
 			if err != nil {
 				return
 			}
@@ -90,7 +90,7 @@ func (service *TaskService) AssignToUser(task domain.Task, user domain.User) err
 	}
 
 	task.UserId = &user.ID
-	err := service.repo.Save(task)
+	err := service.repo.Update(task)
 	if err != nil {
 		return err
 	}
