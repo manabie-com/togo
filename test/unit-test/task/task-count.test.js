@@ -1,18 +1,26 @@
 const { taskModel } = require('../../../src/models/model.task');
+const { userModel } = require('../../../src/models/model.user');
 const taskService = require('../../../src/services/services.task');
+const user = {
+  _id: '61db05da8b605b8dc2524391',
+  username: 'tiennm1',
+  password: '123456',
+  limit: 5
+}
 
+taskModel.count = jest.fn().mockResolvedValue(4);
+userModel.findById = jest.fn().mockResolvedValue(user);
 
-describe("[UNIT TEST]: CREATE TASK TEST.", () => {
+describe("[UNIT TEST]: COUNT TASK TEST.", () => {
   // =============== CASE 01 ================
-  it('Create user success.', async () => {
-    // taskModel.create = jest.fn().mockResolvedValue({
-    //   username: user.username,
-    //   createdAt: "2022-01-09T15:57:14.750Z",
-    //   updatedAt: "2022-01-09T15:57:14.750Z",
-    //   password: user.password,
-    //   limit: 10,
-    //   __v: 0
-    // });
-    expect(true).toBe(true);
+  it('Count task per day/user.', async () => {
+    const res = await taskService.count(user._id);
+    expect(res).toBe(true);
+  });
+  // =============== CASE 02 ================
+  it('Count task per day/user (over task).', async () => {
+    taskModel.count = jest.fn().mockResolvedValue(5);
+    const res = await taskService.count(user._id);
+    expect(res).toBe(false);
   });
 });
