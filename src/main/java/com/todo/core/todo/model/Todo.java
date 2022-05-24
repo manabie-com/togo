@@ -1,9 +1,12 @@
 package com.todo.core.todo.model;
 
+import com.todo.core.todo.application.dto.TodoDTO;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.time.LocalDate;
 
 @Entity
 public class Todo {
@@ -21,12 +24,22 @@ public class Todo {
     @Column(nullable = false)
     private Long todoUserId;
 
+    @Column(nullable = false)
+    private LocalDate dateCreated;
+
     public Todo() {
     }
 
-    public Todo(String status, String task, Long todoUserId) {
+    public Todo(String status, String task, Long todoUserId, LocalDate dateCreated) {
         this.status = status;
         this.task = task;
+        this.todoUserId = todoUserId;
+        this.dateCreated = dateCreated;
+    }
+
+    public Todo(TodoDTO todoDTO, Long todoUserId) {
+        this.task = todoDTO.getTask();
+        this.status = todoDTO.getStatus();
         this.todoUserId = todoUserId;
     }
 
@@ -44,5 +57,9 @@ public class Todo {
 
     public Long getTodoUserId() {
         return todoUserId;
+    }
+
+    public LocalDate getDateCreated() {
+        return dateCreated;
     }
 }

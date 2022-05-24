@@ -4,6 +4,7 @@ import com.todo.core.todo.model.Todo;
 import com.todo.core.user.model.TodoUser;
 import com.todo.core.user.repository.TodoUserRepository;
 import org.assertj.core.util.Lists;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.persistence.EntityManager;
 import javax.sql.DataSource;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,6 +36,12 @@ public class TodoRepositoryTests {
         assertThat(todoRepository).isNotNull();
     }
 
+    @BeforeEach
+    void doBeforeEach() {
+        todoRepository.deleteAll();
+        todoUserRepository.deleteAll();
+    }
+
     @Test
     void doSaveAndListAllFromUser() {
         todoUserRepository
@@ -48,22 +57,72 @@ public class TodoRepositoryTests {
                 new Todo(
                     "not-completed",
                     "task-test",
-                    id
+                    id,
+                    LocalDate.now(ZoneId.of("Asia/Manila"))
                 ),
                 new Todo(
                     "not-completed",
                     "task-test-2",
-                    id
+                    id,
+                    LocalDate.now(ZoneId.of("Asia/Manila"))
                 ),
                 new Todo(
                     "not-completed",
                     "task-test-3",
-                    77L
+                    77L,
+                    LocalDate.now(ZoneId.of("Asia/Manila"))
                 )
 
         ));
 
         List<Todo> todoList = todoRepository.findAllByTodoUserId(id);
         assertThat(todoList.size()).isEqualTo(2);
+    }
+
+    @Test
+    public void retrieveByDateCreatedAndUserId() {
+        todoUserRepository
+            .save(new
+                TodoUser("usertest", "passtest", 5L)
+            );
+
+        final Long id = todoUserRepository.findByUsername("usertest")
+            .get()
+            .getId();
+
+        todoRepository.saveAll(Lists.list(
+            new Todo(
+                "not-completed",
+                "task-test",
+                id,
+                LocalDate.now(ZoneId.of("Asia/Manila"))
+            ),
+            new Todo(
+                "not-completed",
+                "task-test-2x",
+                id,
+                LocalDate.of(2002, 12,12)
+            ),
+            new Todo(
+                "not-completed",
+                "task-test-2",
+                id,
+                LocalDate.of(2002, 12,12)
+            ),
+            new Todo(
+                "not-completed",
+                "task-test-3",
+                77L,
+                LocalDate.now(ZoneId.of("Asia/Manila"))
+            )
+
+        ));
+
+        final int countOfToday =
+            todoRepository.countByDateCreatedAndTodoUserId(LocalDate.now(ZoneId.of("Asia/Manila")), id);
+        final int countOfOtherDay =
+            todoRepository.countByDateCreatedAndTodoUserId(LocalDate.of(2002, 12, 12), id);
+        assertThat(countOfToday).isEqualTo(1);
+        assertThat(countOfOtherDay).isEqualTo(2);
     }
 }
