@@ -2,6 +2,8 @@ const request = require('supertest');
 const {Todo} = require('../../models/todo');
 const {User} = require('../../models/user');
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const _ = require('lodash');
 
 let server;
 
@@ -12,64 +14,24 @@ describe('/api/todolist', () => {
     await Todo.remove({});
   });
 
-  describe('GET /', () => {
-    it('should return all todolist', async () => {
-      const todolist = [
-        { name: 'todo1' },
-        { name: 'todo2' },
-      ];
-      
-      await Todo.collection.insertMany(todolist);
-
-      const res = await request(server).get('/api/todolist');
-      
-      expect(res.status).toBe(200);
-      expect(res.body.length).toBe(2);
-      expect(res.body.some(g => g.name === 'todo1')).toBeTruthy();
-      expect(res.body.some(g => g.name === 'todo2')).toBeTruthy();
-    });
-  });
-
-  describe('GET /:id', () => {
-    it('should return a todo if valid id is passed', async () => {
-      const todo = new Todo({ name: 'todo1' });
-      await todo.save();
-
-      const res = await request(server).get('/api/todolist/' + todo._id);
-
-      expect(res.status).toBe(200);
-      expect(res.body).toHaveProperty('name', todo.name);     
-    });
-
-    it('should return 404 if invalid id is passed', async () => {
-      const res = await request(server).get('/api/todolist/1');
-
-      expect(res.status).toBe(404);
-    });
-
-    it('should return 404 if no todo with the given id exists', async () => {
-      const id = mongoose.Types.ObjectId();
-      const res = await request(server).get('/api/todolist/' + id);
-
-      expect(res.status).toBe(404);
-    });
-  });
-
   describe('POST /', () => {
 
     let token; 
-    let name; 
+    let name;
+    let user_id = "";
 
     const exec = async () => {
+
       return await request(server)
         .post('/api/todolist')
         .set('x-auth-token', token)
-        .send({ name });
+        .send({ name, user_id });
     }
+    
 
     beforeEach(() => {
       token = new User().generateAuthToken();      
-      name = 'todo1'; 
+      name = 'todo1';
     })
 
     it('should return 401 if client is not logged in', async () => {
@@ -84,7 +46,6 @@ describe('/api/todolist', () => {
       name = '1234'; 
       
       const res = await exec();
-
       expect(res.status).toBe(400);
     });
 
@@ -104,161 +65,14 @@ describe('/api/todolist', () => {
       expect(todo).not.toBeNull();
     });
 
-    it('should return the todo if it is valid', async () => {
-      const res = await exec();
+    it('should return 404 if user not exist', async () => {
+      user_id = mongoose.Types.ObjectId('4edd40c86762e0fb12000003');
 
-      expect(res.body).toHaveProperty('_id');
-      expect(res.body).toHaveProperty('name', 'todo1');
+      const res = await exec();
+      expect(res.status).toBe(404);
     });
+     
+
   });
 
-  describe('PUT /:id', () => {
-    let token; 
-    let newName; 
-    let todo; 
-    let id; 
-
-    const exec = async () => {
-      return await request(server)
-        .put('/api/todolist/' + id)
-        .set('x-auth-token', token)
-        .send({ name: newName });
-    }
-
-    beforeEach(async () => {
-      // Before each test we need to create a todo and 
-      // put it in the database.      
-      todo = new Todo({ name: 'todo1' });
-      await todo.save();
-      
-      token = new User().generateAuthToken();     
-      id = todo._id; 
-      newName = 'updatedName'; 
-    })
-
-    it('should return 401 if client is not logged in', async () => {
-      token = ''; 
-
-      const res = await exec();
-
-      expect(res.status).toBe(401);
-    });
-
-    it('should return 400 if todo is less than 5 characters', async () => {
-      newName = '1234'; 
-      
-      const res = await exec();
-
-      expect(res.status).toBe(400);
-    });
-
-    it('should return 400 if todo is more than 50 characters', async () => {
-      newName = new Array(52).join('a');
-
-      const res = await exec();
-
-      expect(res.status).toBe(400);
-    });
-
-    it('should return 404 if id is invalid', async () => {
-      id = 1;
-
-      const res = await exec();
-
-      expect(res.status).toBe(404);
-    });
-
-    it('should return 404 if todo with the given id was not found', async () => {
-      id = mongoose.Types.ObjectId();
-
-      const res = await exec();
-
-      expect(res.status).toBe(404);
-    });
-
-    it('should update the todo if input is valid', async () => {
-      await exec();
-
-      const updatedGenre = await Todo.findById(todo._id);
-
-      expect(updatedGenre.name).toBe(newName);
-    });
-
-    it('should return the updated todo if it is valid', async () => {
-      const res = await exec();
-
-      expect(res.body).toHaveProperty('_id');
-      expect(res.body).toHaveProperty('name', newName);
-    });
-  });  
-
-  describe('DELETE /:id', () => {
-    let token; 
-    let todo; 
-    let id; 
-
-    const exec = async () => {
-      return await request(server)
-        .delete('/api/todolist/' + id)
-        .set('x-auth-token', token)
-        .send();
-    }
-
-    beforeEach(async () => {
-      // Before each test we need to create a todo and 
-      // put it in the database.      
-      todo = new Todo({ name: 'todo1' });
-      await todo.save();
-      
-      id = todo._id; 
-      token = new User({ isAdmin: true }).generateAuthToken();     
-    })
-
-    it('should return 401 if client is not logged in', async () => {
-      token = ''; 
-
-      const res = await exec();
-
-      expect(res.status).toBe(401);
-    });
-
-    it('should return 403 if the user is not an admin', async () => {
-      token = new User({ isAdmin: false }).generateAuthToken(); 
-
-      const res = await exec();
-
-      expect(res.status).toBe(403);
-    });
-
-    it('should return 404 if id is invalid', async () => {
-      id = 1; 
-      
-      const res = await exec();
-
-      expect(res.status).toBe(404);
-    });
-
-    it('should return 404 if no todo with the given id was found', async () => {
-      id = mongoose.Types.ObjectId();
-
-      const res = await exec();
-
-      expect(res.status).toBe(404);
-    });
-
-    it('should delete the todo if input is valid', async () => {
-      await exec();
-
-      const todoInDb = await Todo.findById(id);
-
-      expect(todoInDb).toBeNull();
-    });
-
-    it('should return the removed todo', async () => {
-      const res = await exec();
-
-      expect(res.body).toHaveProperty('_id', todo._id.toHexString());
-      expect(res.body).toHaveProperty('name', todo.name);
-    });
-  });  
 });
