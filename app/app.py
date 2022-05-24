@@ -9,9 +9,11 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 
 db = SQLAlchemy(app)
 
+
 # Setup database
 def initialize_database():
     db.create_all()
+
 
 def run():
     initialize_database()

@@ -1,15 +1,17 @@
 from sqlalchemy import ForeignKey, PrimaryKeyConstraint
 from app.app import db
 
+
 # User model
 class Users(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     public_id = db.Column(db.Integer)
-    name = db.Column(db.String(50))
+    name = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(50))
     limit_per_day = db.Column(db.Integer, nullable=False)
     tasks = db.relationship("Todos")
+
 
 # Todo task model
 class Todos(db.Model):
