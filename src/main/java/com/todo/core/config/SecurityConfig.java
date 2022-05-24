@@ -22,7 +22,9 @@ public class SecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().antMatchers("/api/v1/version");
+        return (web) -> web.ignoring().antMatchers(
+            "/api/v1/version",
+            "/api/v1/users/create");
     }
 
 }

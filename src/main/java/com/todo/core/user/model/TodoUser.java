@@ -1,5 +1,7 @@
 package com.todo.core.user.model;
 
+import com.todo.core.user.application.dto.UserRegistrationDTO;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,6 +31,12 @@ public class TodoUser {
         this.username = username;
         this.password = password;
         this.todoLimit = todoLimit;
+    }
+
+    public TodoUser(UserRegistrationDTO dto) {
+        this.username = dto.getUsername();
+        this.password = dto.getPassword();
+        this.todoLimit = (long) dto.getTodoLimit();
     }
 
     public Long getId() {

@@ -2,7 +2,8 @@ package com.todo.core.commons;
 
 public enum Messages {
 
-    SAVE_SUCCESSFUL ("Save Successful");
+    SAVE_SUCCESSFUL ("Save Successful"),
+    USER_CREATE_SUCCESSFUL ("User Create Successful");
 
     private final String content;
 
@@ -13,4 +14,5 @@ public enum Messages {
     public String getContent() {
         return content;
     }
+
 }
