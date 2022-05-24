@@ -4,7 +4,7 @@ databaseChangeLog:
       author: red
       changes:
         - createTable:
-            tableName: user
+            tableName: todo_user
             columns:
               - column:
                   name: id

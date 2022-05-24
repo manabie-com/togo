@@ -23,9 +23,9 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: user_id
+                  name: todo_user_id
                   type: INT
                   constraints:
                     nullable: false
                     foreignKeyName: fk_user_id
-                    references: user(id)
+                    references: todo_user(id)
