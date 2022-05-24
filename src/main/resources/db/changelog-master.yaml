@@ -1,0 +1,6 @@
+databaseChangeLog:
+    - include:
+        file: db/changelogs/2022/ch-may-24.yaml
+    - include:
+        file: db/changelogs/2022/ch-may-25.yaml
+
