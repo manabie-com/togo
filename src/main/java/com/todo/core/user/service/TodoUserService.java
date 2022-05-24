@@ -23,7 +23,7 @@ public class TodoUserService implements UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = false)
     public GenericResponse<Boolean> createUser(UserRegistrationDTO userDto) {
         final String desiredUsername = userDto.getUsername();
 

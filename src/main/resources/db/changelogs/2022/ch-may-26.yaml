@@ -9,5 +9,5 @@ databaseChangeLog:
               - column:
                   name: date_created
                   type: DATE
-                  - constraints:
-                      nullable: false
+                  constraints:
+                    nullable: false
