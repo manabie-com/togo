@@ -1,6 +1,6 @@
-package com.todo.core.config;
+package com.todo.core;
 
-import com.todo.core.config.commons.model.GenericResponse;
+import com.todo.core.commons.model.GenericResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

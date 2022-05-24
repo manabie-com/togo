@@ -1,4 +1,4 @@
-package com.todo.core.config.commons.model;
+package com.todo.core.commons.model;
 
 public class GenericResponse<T> {
     public T data;
