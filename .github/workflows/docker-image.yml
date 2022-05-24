@@ -1,0 +1,30 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-docker-image:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+    steps:
+    # Run unit test and intergration test
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm i && npm run test
+    # Build docker image
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      run:  
+        echo ${{secrets.CR_PAT}} | docker login ghcr.io --username ${{secrets.USER_NAME}} --password-stdin &&
+        chmod +x ./local-build.sh && ./local-build.sh
+    
