@@ -1,3 +1,31 @@
+### How to run your code locally?
+
+  - Run `bundle` to install needed gems
+  - Run `rails s` to start the server
+  - RUn `rails db:seed` to populate db with test data
+
+### A sample “curl” command to call your API
+
+Sample "curl" command for User
+
+`curl -H "Content-Type: application/json" \
+-X POST 'http://localhost:3000/api/user' \
+-d '{ "user": { "name" : "User1", "task_limit": 2} }'`
+
+Sample "curl" command for Task
+
+`curl -H "Content-Type: application/json" \
+-X POST 'http://localhost:3000/api/task' \
+-d '{ "task": { "title": "In a Dry Season", "body": "Delectus nihil eaque voluptatem.", "user_id": 18 } }'`
+
+### How to run your unit tests locally?
+
+  - Run `rspec` to run tests
+
+### What do you love about your solution?
+
+  - My solution is fairly simple and easy to do. It is also readable and maintanable. 
+
 ### Requirements
 
 - Implement one single API which accepts a todo task and records it
