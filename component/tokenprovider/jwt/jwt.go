@@ -48,7 +48,7 @@ func (j *jwtProvider) Validate(myToken string) (*tokenprovider.TokenPayload, err
 		return []byte(j.secret), nil
 	})
 	if err != nil {
-		return nil, tokenprovider.ErrInvalidToken
+		return nil, tokenprovider.ErrNotFound
 	}
 
 	// validate the token
