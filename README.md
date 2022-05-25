@@ -8,15 +8,15 @@
 
 Sample "curl" command for User
 
-curl -H "Content-Type: application/json" \
+`curl -H "Content-Type: application/json" \
 -X POST 'http://localhost:3000/api/user' \
--d '{ "user": { "name" : "User1", "task_limit": 2} }'
+-d '{ "user": { "name" : "User1", "task_limit": 2} }'`
 
 Sample "curl" command for Task
 
-curl -H "Content-Type: application/json" \
+`curl -H "Content-Type: application/json" \
 -X POST 'http://localhost:3000/api/task' \
--d '{ "task": { "title": "In a Dry Season", "body": "Delectus nihil eaque voluptatem.", "user_id": 18 } }'
+-d '{ "task": { "title": "In a Dry Season", "body": "Delectus nihil eaque voluptatem.", "user_id": 18 } }'`
 
 ### How to run your unit tests locally?
 
@@ -24,7 +24,7 @@ curl -H "Content-Type: application/json" \
 
 ### What do you love about your solution?
 
-  - My solution is fairly simple and easy to do. 
+  - My solution is fairly simple and easy to do. It is also readable and maintanable. 
 
 ### Requirements
 
