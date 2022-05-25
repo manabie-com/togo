@@ -13,18 +13,72 @@
   - What do you love about your solution?
   - What else do you want us to know about however you do not have enough time to complete?
 
-### Notes
+## README PROPER
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+### Requirements
+ * [Jdk 11+](https://www.oracle.com/ph/java/technologies/javase/jdk11-archive-downloads.html)
+ * [Maven 3.8.5](https://maven.apache.org/download.cgi)
+ * [Postgres Server 11+](https://www.postgresql.org/download/)
 
-### How to submit your solution?
+### Environment Setup
+1) Ensure that the specified versions of requirements are installed.
+2) Ensure postgres server connectivity
+LinuxOS/MacOS:
+> `psql -h localhost -U $psql_user`
+3) create database
+> `CREATE DATABASE todo_test`
 
-- Fork this repo and show us your development progress via a PR
+### Running the server locally
+1) navigate into project's root 
+> `cd $projectDir\`
+2) install dependencies 
+> `mvn clean install` 
+3) Run the project
+> `mvn spring-boot:run`
 
-### Interesting facts about Manabie
+### Sample cURL command for testing
+> `curl --location --request GET 'http://localhost:8008/api/v1/version'`
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+#### Sequenced Tests using cURL
+- create a user
+  > `curl --location --request POST 'http://localhost:8008/api/v1/users/create' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+  "username" : "user123x",
+  "password" : "pass123",
+  "todoLimit" : 3
+  }'`
+- login 
+  > `curl --location --request POST 'http://localhost:8008/api/v1/users/login' \
+ --header 'Content-Type: application/json' \
+ --data-raw '{
+ "username" : "user123x",
+ "password" : "pass123"
+ }'`
+- copy *$token* from `message` property of the response body. (This will serve as auth/jwt)
+- create a task
+  > `curl --location --request GET 'http://localhost:8008/api/v1/todos/create' \
+ --header 'Authorization: Bearer $token' \
+ --header 'Content-Type: application/json' \
+ --data-raw '{
+ "task": "ask for money again"
+ }
+ '`
+- list all tasks
+  > `curl --location --request GET 'http://localhost:8008/api/v1/todos/list?page=0&size=3' \
+ --header 'Authorization: Bearer $token'`
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+ 
+### Running Tests
+1) navigate into project's root
+> `cd $projectDir\`
+2) run test command
+> `mvn clean test`
+
+### Troubleshooting | FAQ
+1) Changing datasource
+* To change the datasource, navigate to `src/main/resources/application.properties` 
+and modify `spring.datasource.*` properties as needed
+2) Change deployment port
+* To change the deployment port, navigate to `src/main/resources/application.properties`
+and modify `server.port`
