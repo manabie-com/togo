@@ -3,7 +3,6 @@ package tokenprovider
 import (
 	"errors"
 	"github.com/japananh/togo/common"
-	"strconv"
 	"time"
 )
 
@@ -12,11 +11,6 @@ var (
 		errors.New("token not found"),
 		"token not found",
 		"ErrNotFound",
-	)
-	ErrEncodingToken = common.NewCustomError(
-		errors.New("error encoding the token"),
-		"error encoding the token",
-		"ErrEncodingToken",
 	)
 	ErrInvalidToken = common.NewCustomError(
 		errors.New("invalid token provided"),
@@ -40,19 +34,9 @@ type TokenConfig struct {
 	RefreshTokenExpiry int
 }
 
-func NewTokenConfig(ate, rte string) (*TokenConfig, error) {
-	AccessTokenExpiry, err := strconv.Atoi(ate)
-	if err != nil {
-		return nil, err
-	}
-
-	RefreshTokenExpiry, err := strconv.Atoi(rte)
-	if err != nil {
-		return nil, err
-	}
-
+func NewTokenConfig(atExpiry, rtExpiry int) (*TokenConfig, error) {
 	return &TokenConfig{
-		AccessTokenExpiry:  AccessTokenExpiry,
-		RefreshTokenExpiry: RefreshTokenExpiry,
+		AccessTokenExpiry:  atExpiry,
+		RefreshTokenExpiry: rtExpiry,
 	}, nil
 }

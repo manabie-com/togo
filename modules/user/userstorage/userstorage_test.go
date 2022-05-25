@@ -13,6 +13,7 @@ import (
 	"testing"
 )
 
+// replace loadEnv with app config
 func loadEnv() error {
 	re := regexp.MustCompile(`^(.*` + "manabie-interview-test" + `)`)
 	cwd, _ := os.Getwd()
@@ -23,7 +24,7 @@ func loadEnv() error {
 func setUpTest(t *testing.T) (*gorm.DB, error) {
 	err := loadEnv()
 	require.Nil(t, err)
-	db, err := gorm.Open(mysql.Open(os.Getenv("TEST_DB_CONNECTION_STR")), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(os.Getenv("DB_CONNECTION_STR_TEST")), &gorm.Config{})
 	require.Nil(t, err, "cannot open database connection")
 	if db == nil {
 		return nil, errors.New("gorm db is null")

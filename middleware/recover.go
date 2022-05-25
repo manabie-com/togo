@@ -9,8 +9,8 @@ import (
 
 // Recover needs AppContext due to 2 reasons below
 // - Log error to DB
-// - Get enviroment settings (prod/staging/dev)
-func Recover(appCtx component.AppContext) gin.HandlerFunc {
+// - Get environment settings (prod/stag/dev)
+func Recover(_ component.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {
 			if err := recover(); err != nil {
@@ -26,7 +26,7 @@ func Recover(appCtx component.AppContext) gin.HandlerFunc {
 					panic(err)
 				}
 
-				appErr := common.ErrInternal((err.(error)))
+				appErr := common.ErrInternal(err.(error))
 				c.AbortWithStatusJSON(appErr.StatusCode, appErr)
 				panic(err)
 			}
