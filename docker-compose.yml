@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+   mongo:
+      image: mongo:latest
+      ports:
+         - "27017:27017"
+      logging:
+         driver: none
+
+   node:
+      container_name: togo_manabie_server
+      build:
+         context: .
+         dockerfile: ./Dockerfile
+      restart: on-failure
+      ports:
+         - ${PORT}:${PORT}
+      environment:
+         - PORT=${PORT}
+         - DATABASE_URL=${DATABASE_URL}
+      volumes:
+         - .:/togo-manabie
+      command: yarn start
+      depends_on:
+         - mongo
+

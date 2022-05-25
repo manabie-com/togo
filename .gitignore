@@ -17,3 +17,46 @@
 out/
 
 .idea
+
+# Dependency directories
+node_modules
+node_modules/
+
+# Optional npm cache directory
+.npm
+.npmrc
+
+# dotenv environment variables file
+
+.env.prod
+.env.dev
+.env.test
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+npm-debug.log
+npm-error.log
+npm-warning.log
+
+yarn-debug.log
+yarn-error.log
+yarn-warning.log
+
+# Lock package
+package-lock.json
+yarn.lock
+.sonar_lock
+.scannerwork
+
+# Coverage directory
+coverage
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional eslint cache
+.eslintcache
+
+#OS
+.DS_Store
