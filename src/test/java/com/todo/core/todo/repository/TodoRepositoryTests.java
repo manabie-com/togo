@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -19,6 +22,8 @@ import java.time.ZoneId;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
@@ -53,7 +58,38 @@ public class TodoRepositoryTests {
             .get()
             .getId();
 
+        final Pageable pageable = mock(Pageable.class);
+        when(pageable.getOffset()).thenReturn(0L);
+        when(pageable.getPageNumber()).thenReturn(1);
+        when(pageable.getPageSize()).thenReturn(3);
+        when(pageable.getSort()).thenReturn(Sort.by("dateCreated"));
+
+
         todoRepository.saveAll(Lists.list(
+                new Todo(
+                    "not-completed",
+                    "task-test",
+                    id,
+                    LocalDate.now(ZoneId.of("Asia/Manila"))
+                ),
+                new Todo(
+                    "not-completed",
+                    "task-test-2",
+                    id,
+                    LocalDate.now(ZoneId.of("Asia/Manila"))
+                ),
+                new Todo(
+                    "not-completed",
+                    "task-test",
+                    id,
+                    LocalDate.now(ZoneId.of("Asia/Manila"))
+                ),
+                new Todo(
+                    "not-completed",
+                    "task-test-2",
+                    id,
+                    LocalDate.now(ZoneId.of("Asia/Manila"))
+                ),
                 new Todo(
                     "not-completed",
                     "task-test",
@@ -75,8 +111,10 @@ public class TodoRepositoryTests {
 
         ));
 
-        List<Todo> todoList = todoRepository.findAllByTodoUserId(id);
-        assertThat(todoList.size()).isEqualTo(2);
+        Page<Todo> todoList = todoRepository.findAllByTodoUserId(id, pageable);
+        assertThat(todoList.getNumberOfElements()).isEqualTo(3);
+        assertThat(todoList.getTotalElements()).isEqualTo(6);
+        assertThat(todoList.getTotalPages()).isEqualTo(2);
     }
 
     @Test
