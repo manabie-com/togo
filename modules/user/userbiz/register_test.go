@@ -29,7 +29,7 @@ func (mockHash) Hash(data string) string {
 	return data
 }
 
-func TestUserBiz_RegisterSuccess(t *testing.T) {
+func TestUserBiz_RegisterSucceed(t *testing.T) {
 	biz := userbiz.NewRegisterBiz(mockRegisterStore{}, mockHash{})
 	err := biz.Register(nil, &usermodel.UserCreate{Email: "user1@gmail.com", Password: "user@123"})
 	assert.Nil(t, err)

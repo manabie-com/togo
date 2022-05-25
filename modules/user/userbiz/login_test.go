@@ -34,7 +34,7 @@ func (mockProvider) Validate(_ string) (*tokenprovider.TokenPayload, error) {
 	return &tokenprovider.TokenPayload{}, nil
 }
 
-func TestLoginBiz_LoginSuccess(t *testing.T) {
+func TestLoginBiz_LoginSucceed(t *testing.T) {
 	biz := userbiz.NewLoginBiz(
 		mockLoginStore{},
 		mockProvider{},
