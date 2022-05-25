@@ -12,6 +12,9 @@
 
 #### Setup Database
 - Install MySQL
+```sh
+docker run --name mysql -e MYSQL_ROOT_PASSWORD=password123 bitnami/mysql:latest
+``` 
 - Set MySQL's URI (MYSQL_URI) in .env file
 
 #### Build
