@@ -8,6 +8,8 @@ import com.todo.core.todo.model.Todo;
 import com.todo.core.todo.repository.TodoRepository;
 import com.todo.core.user.model.TodoUser;
 import com.todo.core.user.repository.TodoUserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +44,17 @@ public class TodoServiceImpl implements TodoService {
             throw new LimitForTodayReachedException("User has exceeded limit for today!");
         }
 
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public GenericResponse<Page<Todo>> retrieveAllTodoByUser(Long userId, Pageable pageable) {
+        final Page<Todo> pagedTodos = this.todoRepository.findAllByTodoUserId(userId, pageable);
+
+        return new GenericResponse<>(
+            pagedTodos,
+            Messages.PAGES_RETRIEVE_SUCCESSFUL.getContent()
+        );
     }
 
     private int getAddableToday(Long userId) {

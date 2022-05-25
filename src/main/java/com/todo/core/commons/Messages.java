@@ -4,7 +4,8 @@ public enum Messages {
 
     SAVE_SUCCESSFUL ("Save Successful"),
     USER_CREATE_SUCCESSFUL ("User Create Successful"),
-    ERROR_ON_LOGIN ("Error on Login");
+    ERROR_ON_LOGIN ("Error on Login"),
+    PAGES_RETRIEVE_SUCCESSFUL ("Pages Retrieved for User");
 
     private final String content;
 

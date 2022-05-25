@@ -15,7 +15,7 @@ public class JwtUtils {
     private String secret;
 
     public Long getUserIdFromJwt(String jwt) {
-        return (Long) getClaim(jwt, "todoUserId");
+        return Long.valueOf(((Integer) getClaim(jwt, "todoUserId")).toString());
     }
 
     public Object getClaim(String token, String claim) {

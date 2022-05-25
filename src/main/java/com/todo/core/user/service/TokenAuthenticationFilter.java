@@ -47,7 +47,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
                 logger.info("Username from Token: " + username);
 
-//                SecurityContextHolder.getContext().setAuthentication(authentication);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
 
             }
         }catch(Exception e) {
