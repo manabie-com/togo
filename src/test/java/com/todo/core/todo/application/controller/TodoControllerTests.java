@@ -1,5 +1,7 @@
 package com.todo.core.todo.application.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.todo.core.todo.application.dto.TodoDTO;
 import com.todo.core.todo.model.Todo;
 import com.todo.core.todo.service.TodoServiceImpl;
 import com.todo.core.user.model.TodoUser;
@@ -61,17 +63,14 @@ public class TodoControllerTests {
             .webAppContextSetup(context)
             .apply(springSecurity())
             .build();
+        this.todoUserRepository.deleteAll();
     }
 
     @Test
-    public void testGetAllUserOk() throws Exception {
-
+    public void testGetAllTodoOfUserOk() throws Exception {
         doSaveMockUser();
 
-        final String mockJwt = "mockJwt";
-        final Long mockId = 1L;
         final Pageable pageable = mock(Pageable.class);
-        final Page<Todo> mockPage = mock(Page.class);
 
         when(pageable.getOffset()).thenReturn(0L);
         when(pageable.getPageNumber()).thenReturn(1);
@@ -91,6 +90,34 @@ public class TodoControllerTests {
                 .queryParam("page", "0")
                 .queryParam("size", "3")
                 .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andDo(print());
+    }
+
+    @Test
+    public void createTodoForUserOk() throws Exception {
+        doSaveMockUser();
+        Authentication authentication = authenticationConfiguration.getAuthenticationManager().authenticate(
+            new UsernamePasswordAuthenticationToken(
+                "usertest",
+                "passtest"
+            )
+        );
+        String jwt = tokenProvider.generateToken(authentication);
+
+
+        TodoDTO todoDTO = new TodoDTO();
+        todoDTO.setTodoUserId(1L);
+        todoDTO.setStatus("not-completed");
+        todoDTO.setTask("Task-test 1");
+
+        String payload = new ObjectMapper().writeValueAsString(todoDTO);
+
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/v1/todos/create")
+                .header("Authorization", "Bearer " + jwt)
+                .queryParam("page", "0")
+                .queryParam("size", "3")
+                .contentType(MediaType.APPLICATION_JSON).content(payload))
             .andExpect(status().isOk())
             .andDo(print());
     }

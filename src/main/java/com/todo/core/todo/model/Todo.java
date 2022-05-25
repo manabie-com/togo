@@ -2,17 +2,15 @@ package com.todo.core.todo.model;
 
 import com.todo.core.todo.application.dto.TodoDTO;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
 public class Todo {
 
     @Id
-    @GeneratedValue
+    @SequenceGenerator(name = "TODO_SEQ", sequenceName = "TODO_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TODO_SEQ")
     private Long id;
 
     @Column(nullable = false)
@@ -37,10 +35,11 @@ public class Todo {
         this.dateCreated = dateCreated;
     }
 
-    public Todo(TodoDTO todoDTO, Long todoUserId) {
+    public Todo(TodoDTO todoDTO, Long todoUserId, LocalDate dateCreated) {
         this.task = todoDTO.getTask();
         this.status = todoDTO.getStatus();
         this.todoUserId = todoUserId;
+        this.dateCreated = dateCreated;
     }
 
     public Long getId() {

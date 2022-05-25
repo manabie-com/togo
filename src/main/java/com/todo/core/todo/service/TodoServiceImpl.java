@@ -32,7 +32,7 @@ public class TodoServiceImpl implements TodoService {
     @Override
     @Transactional(readOnly = false)
     public GenericResponse<Integer> addTodo(Long todoUserId, TodoDTO todoDto) {
-        final Todo todoForSave = new Todo(todoDto, todoUserId);
+        final Todo todoForSave = new Todo(todoDto, todoUserId, LocalDate.now());
 
         if (getAddableToday(todoUserId) > 0) {
             todoRepository.save(todoForSave);

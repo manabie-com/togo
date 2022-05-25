@@ -2,16 +2,14 @@ package com.todo.core.user.model;
 
 import com.todo.core.user.application.dto.UserRegistrationDTO;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class TodoUser {
 
     @Id
-    @GeneratedValue
+    @SequenceGenerator(name = "USER_SEQ", sequenceName = "USER_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "USER_SEQ")
     private Long id;
 
     @Column(nullable = false)
