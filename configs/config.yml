@@ -1,0 +1,3 @@
+db:
+  user: "dbuser"
+  password: "dbpwd"

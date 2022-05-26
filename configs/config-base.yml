@@ -1,0 +1,22 @@
+server:
+  addr: ""
+  port: "8080"
+  shutdown_timeout: 10s
+  read_header_timeout: 10s
+  write_timeout: 10s
+  read_timeout: 10s
+
+env: "dev"
+
+db:
+  host: "custom url"
+  port: 5432
+  user: "users"
+  password: ""
+  name: "togo"
+  driver: "postgres"
+
+log:
+  level: "debug" # [debug, info,warn, error]
+  encode: "console" # json or console
+  file: "log.log"
