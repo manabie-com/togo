@@ -11,6 +11,7 @@ from .models import Users, Todos
 
 
 def init_routes(app):
+
     def token_required(f):
         @wraps(f)
         def decorator(*args, **kwargs):
@@ -63,7 +64,10 @@ def init_routes(app):
             token = jwt.encode({"public_id": user.public_id,
                                 "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
                                app.config["SECRET_KEY"])
-            return jsonify({"token": token})
+
+            response = make_response(jsonify({"token": token}, 200))
+            response.set_cookie("user_id", str(user.id))
+            return response
 
         return make_response("Verification Error", 401, {"WWW.Authentication": "Basic realm: 'login required'"})
 
@@ -73,7 +77,8 @@ def init_routes(app):
 
         data = request.get_json()
         # retrieve tasks of current user added today
-        current_no_task = Todos.query.filter_by(user_id=current_user.id, date_time=datetime.date.today()).count()
+        current_no_task = Todos.query.filter_by(user_id=current_user.id,
+                                                date_time=datetime.date.today()).count()
 
         # return message if limit has been reached
         if current_no_task >= current_user.limit_per_day:
