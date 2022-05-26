@@ -1,19 +1,18 @@
 const app = require('../app')
 const request = require('supertest')
-const {connect} = require('../bootstrap/mongoose')
+const {connect, mongoose} = require('../bootstrap/mongoose')
 const {init, listDummyUser} = require('../init/user.init')
 const User = require('../models/user.model')
 const UserSetting = require('../models/userSetting.model')
 const ToDo = require('../models/todo.model')
 
+beforeAll(async () => {
+    await connect()
+    await mongoose.connection.dropDatabase()
+    await init()
+})
 describe('Todo Applications', () => {
-    beforeAll(() => {
-        return new Promise(async (resolve, reject) => {
-            await connect()
-            await init()
-            resolve()
-        })
-    })
+
 
     it("should jest work", () => {
         expect(1).toBe(1)

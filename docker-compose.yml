@@ -18,6 +18,7 @@ services:
       dockerfile: compose-files/express/Dockerfile
     environment:
       - MONGODB_URI=mongodb://vnhd:123456@mongodb:27017/todo_app?authSource=admin
+      - MONGODB_URI_TEST=mongodb://vnhd:123456@mongodb:27017/todo_app_test?authSource=admin
       - PORT=3000
     depends_on:
       - mongodb

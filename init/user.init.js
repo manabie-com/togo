@@ -62,6 +62,7 @@ const init = async () => {
             return `There are ${numUser} dummy users`
         }
     } catch (err) {
+        console.log(err)
         throw err
     }
 
