@@ -1,5 +1,5 @@
 from sqlalchemy import ForeignKey, PrimaryKeyConstraint
-from app.app import db
+from .app import db
 
 
 # User model
