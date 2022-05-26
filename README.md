@@ -6,8 +6,8 @@
 - Write integration (functional) tests
 - Write unit tests
 - Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
+- Write a concise README (see readme proper)
+  - How to run your code locally? 
   - A sample “curl” command to call your API
   - How to run your unit tests locally?
   - What do you love about your solution?
@@ -71,9 +71,23 @@ LinuxOS/MacOS:
  
 ### Running Tests
 1) navigate into project's root
-> `cd $projectDir\`
+> `cd $projectDir\ `
 2) run test command
 > `mvn clean test`
+
+### What do I love about my solution?
+- A decent testsuite, I also tried to make layers decoupled from one another 
+<br>in the event there is a change in business process or datasource, or drivers,
+<br>among other things.
+- Having a uniform convention in messages, responses and neat place 
+<br>on where exceptions should occur (ie. on `@ControllerAdvice`).
+- Architecture is suited for microservices delegation.
+
+### What could have been done better?
+- A larger testsuite coverage definitely. This isn't production ready, ideally it should
+<br> have environment variables from environment and NOT from property files.
+- Maybe a little dockerization would have helped in terms of local environment running, 
+<br >and CI/CD.
 
 ### Troubleshooting | FAQ
 1) Changing datasource
