@@ -16,6 +16,11 @@
 * requires node version 12
 * install packages: npm i
 * run unit tests: npm run test
+* [Optional] running test in docker container
+  * get docker container name of expressjs: "docker ps"
+  * docker name eg: "togo_expressjs_1"
+  * login to the container: "docker exec -it togo_expressjs_1 bash"
+  * run unit test: "npm run test"
 
 
 ### 4. What do you love about your solution?
