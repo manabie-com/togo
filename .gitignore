@@ -15,5 +15,5 @@
 # vendor/
 
 out/
-
+deployment/data/
 .idea

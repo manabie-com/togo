@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"math/rand"
 	"togo/domain/model"
 	"togo/domain/repository"
 )
@@ -17,7 +18,10 @@ type userService struct {
 }
 
 func (this userService) Register(ctx context.Context, user model.User) error {
-	err := this.db.Create(user)
+	if user.Limit == 0 {
+		user.Limit = rand.Intn(3) + 2
+	}
+	err := this.db.Create(ctx, user)
 	return err
 }
 
@@ -27,7 +31,7 @@ func (this *userService) createToken(ctx context.Context, user *model.User) (str
 }
 
 func (this userService) Login(ctx context.Context, username string, password string) (model.User, error) {
-	user, err := this.db.Get(username)
+	user, err := this.db.Get(ctx, username)
 	if err != nil {
 		return model.User{}, err
 	}

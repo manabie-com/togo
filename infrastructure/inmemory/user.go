@@ -1,6 +1,7 @@
 package inmemory
 
 import (
+	"context"
 	"errors"
 	"sync"
 	"togo/domain/model"
@@ -12,7 +13,7 @@ type inmemoryUserRepo struct {
 	mtx   sync.RWMutex
 }
 
-func (this *inmemoryUserRepo) Create(u model.User) error {
+func (this *inmemoryUserRepo) Create(ctx context.Context, u model.User) error {
 	this.mtx.Lock()
 	defer this.mtx.Unlock()
 	if _, ok := this.users[u.Username]; ok {
@@ -22,7 +23,7 @@ func (this *inmemoryUserRepo) Create(u model.User) error {
 	return nil
 }
 
-func (this *inmemoryUserRepo) Get(username string) (u model.User, err error) {
+func (this *inmemoryUserRepo) Get(ctx context.Context, username string) (u model.User, err error) {
 	//TODO implement me
 	this.mtx.Lock()
 	defer this.mtx.Unlock()
