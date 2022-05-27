@@ -16,4 +16,25 @@
 
 out/
 
-.idea
+# Ignore bundler config.
+/.bundle
+
+# Ignore all logfiles and tempfiles.
+.idea/
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+# Ignore pidfiles, but keep the directory.
+/tmp/pids/*
+!/tmp/pids/
+!/tmp/pids/.keep
+/public/uploads/*
+
+# Ignore uploaded files in development.
+/storage/*
+!/storage/.keep
+/tmp/storage/*
+!/tmp/storage/
+!/tmp/storage/.keep
