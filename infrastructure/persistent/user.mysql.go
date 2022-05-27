@@ -26,8 +26,6 @@ func (this *userMysqlRepo) Create(ctx context.Context, u model.User) error {
 }
 
 func (this *userMysqlRepo) Get(ctx context.Context, username string) (u model.User, err error) {
-	//TODO implement me
-
 	stmt, err := this.db.Prepare("select * from tbl_user WHERE username = ? LIMIT 1")
 	if err != nil {
 		return u, err
