@@ -33,7 +33,9 @@ LinuxOS/MacOS:
 > `cd $projectDir\`
 2) install dependencies 
 > `mvn clean install` 
-3) Run the project
+3) run migration scripts
+> `mvn liquibase:update`
+4) Run the project
 > `mvn spring-boot:run`
 
 ### Sample cURL command for testing
