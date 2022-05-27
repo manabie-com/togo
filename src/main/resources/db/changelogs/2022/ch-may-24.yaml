@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: red
+      changes:
+        - createTable:
+            tableName: todo_user
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: todo_limit
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - createSequence:
+            schemaName: public
+            startValue: 1
+            incrementBy: 1
+            sequenceName: user_seq
