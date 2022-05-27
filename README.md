@@ -46,5 +46,5 @@ $ rspec spec/requests/api
 
 #### Remarks:
 > I love my solution because I followed the Ruby on Rails standards and bes practices. <br/> <br/>
-> Anti patterns was practiced in my solution by not having an Overweight Models and Controllers. <br/>
-> I also used interactor for my design pattern. It is a simple, single-purpose object. Interactors are used to encapsulate your application's business logic. Each interactor represents one thing that your application does.  <br/>
+> Anti patterns was strictly observed in my solution by not having an overweight Models and Controllers. <br/>
+> I also used interactor for my design patterns. It is a simple, single-purpose object. Interactors are used to encapsulate your application's business logic. Each interactor represents one thing that your application does.  <br/>
