@@ -17,6 +17,7 @@ migrate_init:
 	docker run --rm --network host -v ${MIGRATION_PATH}:/migration/ ${IMAGE_MIGRATE} \
 	create -ext sql -dir /migration/schema ${NAME}
 db_up:
+	chmod +x ./scripts/wait-for.sh
 	./scripts/wait-for.sh localhost:5432 -t 60
 	sleep 2
 	docker run --rm --network host -v ${MIGRATION_PATH}/:/repository ${IMAGE_MIGRATE} \

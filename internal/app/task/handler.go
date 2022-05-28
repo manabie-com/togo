@@ -63,8 +63,7 @@ func (h *Handler) CreateTask(gc *gin.Context) {
 
 	ctx := gc.Request.Context()
 
-	_, err := h.userSvc.GetByUserName(ctx, &user.GetUserByUserNameReq{UserName: req.Assignee})
-	if err != nil {
+	if err := h.checkLimit(ctx, req.Assignee); err != nil {
 		response.Error(gc, err)
 		return
 	}
@@ -105,29 +104,7 @@ func (h *Handler) AssignTask(gc *gin.Context) {
 		return
 	}
 
-	u, err := h.userSvc.GetByUserName(ctx, &user.GetUserByUserNameReq{UserName: req.Assignee})
-	if err != nil {
-		return
-	}
-
-	l, err := h.limitSvc.GetLimit(ctx, &limit.GetLimitReq{
-		TierID: int(u.TierID),
-		Action: limit.ReceiveTaskAction,
-	})
-	if err != nil {
-		return
-	}
-
-	c, err := h.taskSvc.CountTasksOfUserToDay(ctx, u.Username)
-	if err != nil {
-		return
-	}
-
-	if c > l.Value {
-		err = &errors.Error{
-			Code:    http.StatusUnauthorized,
-			Message: fmt.Sprintf("user %[1]s cannot receive tasks today anymore, the maximum task of user %[1]s is %d", u.Username, l.Value),
-		}
+	if err = h.checkLimit(ctx, req.Assignee); err != nil {
 		return
 	}
 
@@ -136,4 +113,33 @@ func (h *Handler) AssignTask(gc *gin.Context) {
 		return
 	}
 
+}
+
+func (h *Handler) checkLimit(ctx context.Context, username string) error {
+	usr, err := h.userSvc.GetByUserName(ctx, &user.GetUserByUserNameReq{UserName: username})
+	if err != nil {
+		return err
+	}
+
+	l, err := h.limitSvc.GetLimit(ctx, &limit.GetLimitReq{
+		TierID: int(usr.TierID),
+		Action: limit.ReceiveTaskAction,
+	})
+	if err != nil {
+		return err
+	}
+
+	c, err := h.taskSvc.CountTasksOfUserToDay(ctx, usr.Username)
+	if err != nil {
+		return err
+	}
+
+	if c >= l.Value {
+		err = &errors.Error{
+			Code:    http.StatusForbidden,
+			Message: fmt.Sprintf("user %[1]s cannot receive tasks today anymore, the maximum task of user %[1]s is %d", usr.Username, l.Value),
+		}
+		return err
+	}
+	return nil
 }

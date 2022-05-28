@@ -57,6 +57,16 @@ curl --location --request POST 'localhost:8080/api/v1/auth/login' \
     "assignee": "free1"
 }'
 ```
+  - Retry with standard tier user:
+```bash
+curl --location --request PATCH 'localhost:8080/api/v1/tasks' \
+--header 'Authorization: Bearer ADD-TOKEN-HERE' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "id":6,
+    "assignee": "standard1"
+}'
+```
 
 ## How to run unit tests locally?
 
