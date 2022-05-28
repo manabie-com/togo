@@ -38,8 +38,10 @@ func (DailyLimit) TableName() string {
 
 var db *gorm.DB
 var sqlDB *sql.DB
+var defaultLimit int
 
 func init() {
+	defaultLimit = 10
 	connect()
 }
 
@@ -62,7 +64,7 @@ func (t *Task) Submit(ctx *context.Context) (err error) {
 	var daily DailyLimit
 	var tasks []Task
 	// Todo: implement user management to get default number of daily tasks
-	limit := 10
+	limit := defaultLimit
 	// Todo: try to implement db function
 	return db.Transaction(func(tx *gorm.DB) error {
 		select {
