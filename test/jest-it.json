@@ -1,0 +1,17 @@
+{
+    "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
+  "moduleNameMapper": {
+    "@modules/(.+)": "<rootDir>/src/modules/$1",
+    "@env/(.+)": "<rootDir>/src/env/$1",
+    "@test/(.+)": "<rootDir>/src/test/$1"
+  },
+  "rootDir": "../",
+  "testRegex": "it.spec.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  }
+}
