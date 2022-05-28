@@ -86,6 +86,10 @@
     go mod tidy
   ### Run
     bee run
+  ### CURL
+    Healthcheck: curl -X GET http://localhost:8080
+    Submit task: 
+      curl -H "Content-Type: application/json" -X POST -d '{"summary":"Todo task 2022-05-27","description":"do something","assignee":"IYadf5AYZYZByyTTl1f5QqxOGx13","taskDate":"2022-05-27"}' http://localhost:8080/v1/tasks
   ### Testing
   #### Unit test
     cd $GOPATH/togo
