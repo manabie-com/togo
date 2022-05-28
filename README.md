@@ -72,10 +72,6 @@
     INSERT INTO public.daily_limit
     (uid, task_limit, task_date, updated_by)
     VALUES('IYadf5AYZYZByyTTl1f5QqxOGx13', 19, '2022-05-31', 'IYadf5AYZYZByyTTl1f5QqxOGx13');
-
-- user = tasker
-  - 
-
 ## Run & Test
   ### Prerequisite: 
     go 1.16
