@@ -18,6 +18,7 @@
 - Go [1.18](https://go.dev/dl/)
 - [Docker](https://docs.docker.com/engine/install/)
 - [Docker compose](https://docs.docker.com/compose/install/)
+- [Netcat](https://www.cyberithub.com/how-to-install-netcat-command-on-linux-ubuntu/)
 
 ## How to run source code locally?
 
