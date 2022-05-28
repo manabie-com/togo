@@ -55,7 +55,7 @@ func newAppLogger() *appLogger {
 // newAppLoggerWithField return a new appLogger instance with field
 func newAppLoggerWithField(args Fields) *appLogger {
 	return &appLogger{
-		logger: newLogger().With(ToSlice(args)),
+		logger: newLogger().With(ToSlice(args)...),
 	}
 }
 

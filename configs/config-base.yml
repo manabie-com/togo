@@ -6,13 +6,13 @@ server:
   write_timeout: 10s
   read_timeout: 10s
 
-env: "dev"
+env: "dev" # release
 
 db:
-  host: "custom url"
+  host: "localhost"
   port: 5432
-  user: "users"
-  password: ""
+  user: "username"
+  password: "password"
   name: "togo"
   driver: "postgres"
 
@@ -20,3 +20,7 @@ log:
   level: "debug" # [debug, info,warn, error]
   encode: "console" # json or console
   file: "log.log"
+
+token:
+  secret_key: "Xhu091or5QiwwpxrAGxNaz09+AlVbi9t9HiJmBknsOA="
+  duration: 60m

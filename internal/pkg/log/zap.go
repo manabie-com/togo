@@ -24,7 +24,7 @@ func newLogger() *zap.SugaredLogger {
 	}
 
 	core := zapcore.NewCore(encoder, ws, l)
-	logger := zap.New(core)
+	logger := zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1))
 	return logger.Sugar()
 }
 

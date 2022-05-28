@@ -36,11 +36,16 @@ type (
 		Encoder string `mapstructure:"encode"`
 		File    string `mapstructure:"file"`
 	}
+	Token struct {
+		SecretKey string         `mapstructure:"secret_key"`
+		Duration  *time.Duration `mapstructure:"duration"`
+	}
 	Config struct {
 		Server Server `mapstructure:"server"`
 		DB     DB     `mapstructure:"db"`
 		Log    Log    `mapstructure:"log"`
 		Env    string `mapstructure:"env"`
+		Token  Token  `mapstructure:"token"`
 	}
 )
 

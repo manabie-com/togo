@@ -3,6 +3,8 @@ package log
 import (
 	"context"
 	"sync"
+
+	"github.com/gin-gonic/gin"
 )
 
 var (
@@ -83,5 +85,8 @@ func With(fields Fields) Logger {
 
 // WithCtx return a logger from the given context
 func WithCtx(ctx context.Context) Logger {
+	if gc, ok := ctx.(*gin.Context); ok {
+		ctx = gc.Request.Context()
+	}
 	return FromCtx(ctx)
 }

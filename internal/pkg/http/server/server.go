@@ -29,6 +29,8 @@ func Start(conf *config.Server, router http.Handler) {
 		}
 	}()
 
+	log.Infof("server is listening at %s", addr)
+
 	// Wait for interrupt signal to gracefully shut down the server
 	quit := make(chan os.Signal, 1)
 
