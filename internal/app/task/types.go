@@ -6,9 +6,9 @@ import (
 
 type (
 	CreateTaskReq struct {
-		Name        string    `json:"name" binding:"required"`
-		Assignee    string    `json:"assignee,omitempty"`
-		AssignDate  time.Time `json:"assign_date,omitempty"`
+		Name        string `json:"name" binding:"required"`
+		Assignee    string `json:"assignee,omitempty"`
+		AssignDate  time.Time
 		Description string    `json:"description,omitempty"`
 		Status      string    `json:"status"  binding:"required"`
 		StartDate   time.Time `json:"start_date,omitempty"`

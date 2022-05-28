@@ -27,14 +27,14 @@
 
 ## A sample “curl” command to call APIs
 
-- Login to get JWT token. I created the mock users:
-  - free tier: the limit tasks is **5**
+- Login to get a JWT token. I created the mock users:
+  - free tier: the limit of tasks is **5**
     - username: **free1**
     - password: **password**
-  - standard tier: the limit tasks is **10**
+  - standard tier: the limit of tasks is **10**
     - username: **standard1**
     - password: **password**
-  - Since the system does not implement policy feature yet, so the user can assign any task to another user
+  - Since the system does not implement policy features yet, the user can assign any task to another user
 ```bash
 curl --location --request POST 'localhost:8080/api/v1/auth/login' \
 --header 'Content-Type: application/json' \
@@ -45,9 +45,9 @@ curl --location --request POST 'localhost:8080/api/v1/auth/login' \
 ```
 
 - Assign a task. I created the mock tasks [id: 1-> 6] for user **free1** have (**5**) tasks, id [1-5].
-  The user **standard1** have (**0**) task.
+  The user **standard1** has (**0**) tasks.
   - If we assign one more task to user **free1** the system will return error limit message.
-  - Assign task: you need to replace **ADD-TOKEN-HERE** with the token got in the login API.
+  - Assign task: you need to replace **ADD-TOKEN-HERE** which is the token you got in the login API.
 ```bash
   curl --location --request PATCH 'localhost:8080/api/v1/tasks' \
 --header 'Authorization: Bearer ADD-TOKEN-HERE' \

@@ -60,13 +60,13 @@ func (h *Handler) CreateUser(gc *gin.Context) {
 }
 
 func (h *Handler) UpdateUser(gc *gin.Context) {
-	var req CreateUserReq
+	var req UpdateUserTierReq
 	if err := gc.ShouldBindJSON(&req); err != nil {
 		response.Error(gc, err)
 		return
 	}
 
-	task, err := h.svc.Create(gc.Request.Context(), &req)
+	task, err := h.svc.UpdateUserTier(gc.Request.Context(), &req)
 	if err != nil {
 		response.Error(gc, err)
 		return

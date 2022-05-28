@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	"github.com/dinhquockhanh/togo/internal/pkg/errors"
 	db "github.com/dinhquockhanh/togo/internal/pkg/sql/sqlc"
@@ -25,7 +26,7 @@ func (r *PostgresRepository) CreateTask(ctx context.Context, req *CreateTaskReq)
 	task, err := r.q.CreateTask(ctx, &db.CreateTaskParams{
 		Name:        req.Name,
 		Assignee:    sql.NullString{String: req.Assignee, Valid: req.Assignee != ""},
-		AssignDate:  req.AssignDate,
+		AssignDate:  time.Now(),
 		Description: sql.NullString{String: req.Description, Valid: req.Description != ""},
 		Status:      req.Status,
 		StartDate:   req.StartDate,
