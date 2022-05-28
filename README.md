@@ -139,12 +139,12 @@ docker-compose down
  > - In this project I used JWT to authenticate user, used typeorm to migrate and seed database, used swagger to create API docs. I also tried to create github action to run build and run test.
 
 ## What else do I want you to know?
-> Write more test cases to increase test coverage.
-> Write end to end test case.
-> Update swagger for more detail include the request and response sample.
-> Do performance testing using JMeter.
-> Create script to build and push docker image to docker hub.
-> Create script to deploy project to AWS or Digital Ocean or Self server.
+> - Write more test cases to increase test coverage.
+> - Write end to end test case.
+> - Update swagger for more detail include the request and response sample.
+> - Do performance testing using JMeter.
+> - Create script to build and push docker image to docker hub.
+> - Create script to deploy project to AWS or Digital Ocean or Self server.
 
 ---
 _*I spent 3 days for this assignment, I have 2 days left. But I think it is enough for this project. I used to work like a machine and forgot my family. My health was down. I don't want it happen again. I should balance between my work and family. So I decided submit what I have done.*_
