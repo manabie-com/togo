@@ -1,0 +1,8 @@
+[
+    "Permission",
+    "Role",
+    "RolePermission",
+    "User",
+    "TodoTask",
+    "UserTaskConfig"
+]

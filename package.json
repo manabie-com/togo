@@ -1,0 +1,142 @@
+{
+  "name": "todo-app-api",
+  "version": "0.0.1",
+  "description": "Simple todo app",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:kiettanle/togo.git"
+  },
+  "license": "MIT",
+  "scripts": {
+    "prebuild": "rm -rf dist",
+    "build": "nest build",
+    "start": "nest start",
+    "start:dev": "nest start --watch",
+    "lint": "eslint '{src,apps,libs,test}/**/*.ts'",
+    "format": "eslint '{src,apps,libs,test}/**/*.ts' --fix",
+    "test": "npm run test:ut && npm run test:it",
+    "test:ut": "jest --errorOnDeprecated --runInBand --no-cache",
+    "test:ut:watch": "jest --errorOnDeprecated --runInBand --no-cache --watch",
+    "test:it": "jest --config ./test/jest-it.json",
+    "test:it:watch": "jest --config ./test/jest-it.json --watch",
+    "test:cov": "jest --coverage --errorOnDeprecated",
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "migration": "npm run migration:up",
+    "migration:up": "ts-node -r tsconfig-paths/register node_modules/typeorm/cli.js migration:run -f ormconfig.cli.js",
+    "migration:down": "ts-node -r tsconfig-paths/register node_modules/typeorm/cli.js schema:drop -f ormconfig.js",
+    "migration:seed": "ts-node -r tsconfig-paths/register ./node_modules/typeorm-seeding/dist/cli.js seed -n ormconfig.cli.js",
+    "migration:generate": "ts-node -r tsconfig-paths/register node_modules/typeorm/cli.js migration:generate -d src/database/migrations/mssql -f ormconfig.cli.js -n",
+    "mssql:initialize": "rm -f ./src/database/migrations/mssql/*.ts && npm run migration:down && npm run migration:generate Initial && npm run migration:up && npm run format"
+  },
+  "engines": {
+    "node": "14"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^7.1.0",
+    "@nestjs-plus/discovery": "2.0.2",
+    "@nestjs/common": "^7.6.17",
+    "@nestjs/config": "0.5.0",
+    "@nestjs/core": "7.4.4",
+    "@nestjs/jwt": "7.1.0",
+    "@nestjs/mapped-types": "^0.3.0",
+    "@nestjs/passport": "7.1.0",
+    "@nestjs/platform-express": "7.4.4",
+    "@nestjs/swagger": "^4.8.0",
+    "@nestjs/typeorm": "7.1.4",
+    "class-transformer": "^0.3.1",
+    "class-validator": "0.12.2",
+    "compression": "^1.7.4",
+    "date-fns": "^2.28.0",
+    "date-fns-tz": "^1.3.4",
+    "ejs": "3.1.5",
+    "es6-shim": "^0.35.6",
+    "morgan": "^1.10.0",
+    "mssql": "^7.1.0",
+    "nest-access-control": "2.0.2",
+    "passport": "0.4.1",
+    "passport-custom": "1.1.1",
+    "passport-jwt": "4.0.0",
+    "passport-local": "1.0.0",
+    "reflect-metadata": "^0.1.13",
+    "request": "^2.88.2",
+    "rxjs": "6.6.3",
+    "server-timing": "3.2.2",
+    "sqlite3": "^5.0.8",
+    "strict-event-emitter-types": "2.0.0",
+    "swagger-ui-express": "4.1.4",
+    "tedious": "^11.0.8",
+    "typeorm": "^0.2.32",
+    "typeorm-seeding": "^1.6.1"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "11.0.0",
+    "@commitlint/config-conventional": "11.0.0",
+    "@microsoft/tsdoc": "0.12.21",
+    "@nestjs/cli": "7.6.0",
+    "@nestjs/schematics": "7.3.0",
+    "@nestjs/testing": "7.4.4",
+    "@types/ejs": "3.0.4",
+    "@types/express": "4.17.8",
+    "@types/jest": "^26.0.23",
+    "@types/jsonwebtoken": "8.5.0",
+    "@types/node": "^14.18",
+    "@types/superagent": "4.1.10",
+    "@types/passport-jwt": "3.0.3",
+    "@types/passport-local": "1.0.33",
+    "@types/supertest": "^2.0.11",
+    "@typescript-eslint/eslint-plugin": "4.1.1",
+    "@typescript-eslint/parser": "4.1.1",
+    "@types/prettier": "2.6.0",
+    "eslint": "7.9.0",
+    "eslint-config-prettier": "6.11.0",
+    "eslint-plugin-import": "2.22.0",
+    "eslint-plugin-prettier": "3.1.4",
+    "eslint-plugin-security": "1.4.0",
+    "eslint-plugin-tsdoc": "0.2.7",
+    "html-encoder-decoder": "1.3.9",
+    "jest": "26.6.3",
+    "prettier": "2.1.2",
+    "supertest": "4.0.2",
+    "ts-jest": "26.5.3",
+    "ts-loader": "8.0.3",
+    "ts-node": "9.0.0",
+    "tsconfig-paths": "3.9.0",
+    "typescript": "4.0.2"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "moduleNameMapper": {
+      "@modules/(.+)": "<rootDir>/modules/$1",
+      "@env/(.+)": "<rootDir>/env/$1",
+      "@testing/(.+)": "<rootDir>/testing/$1",
+      "@test/(.+)": "<rootDir>/test/$1"
+    },
+    "rootDir": "src",
+    "testRegex": "ut.spec.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "coverageThreshold": {
+      "global": {
+        "branches": 50,
+        "functions": 50,
+        "lines": 80,
+        "statements": 80
+      }
+    },
+    "coverageReporters": [
+      "json",
+      "lcov"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node",
+    "testTimeout": 60000
+  },
+  "optionalDependencies": {
+    "fsevents": "^2.2"
+  }
+}
