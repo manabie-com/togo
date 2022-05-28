@@ -1,0 +1,49 @@
+version: "3.9"
+
+services:
+  db:
+    container_name: ${POSTGRES_CONTAINER}
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    networks:
+      - backend
+
+  backend:
+    build:
+      context: .
+    container_name: ${BACKEND_CONTAINER}
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+    entrypoint:
+      [
+        "/wait-for.sh",
+        "db:${POSTGRES_PORT}",
+        "--",
+        "/start.sh"
+      ]
+    command: [ "/togo" ]
+    environment:
+      GIN_MODE: release
+      TOGO_ENV: ${BACKEND_ENV}
+      TOGO_LOG_ENCODE: ${BACKEND_LOG_ENCODE}
+      TOGO_DB_HOST: db
+      TOGO_DB_PORT: ${POSTGRES_PORT}
+      TOGO_DB_USER: ${POSTGRES_USER}
+      TOGO_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      TOGO_DB_NAME: ${POSTGRES_DB}
+
+      TOGO_TOKEN_SECRET_KEY: ${BACKEND_TOKEN_SECRET_KEY}
+
+
+networks:
+  backend:
+    name: 'backend'
+
