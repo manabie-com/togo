@@ -13,8 +13,8 @@ FROM alpine
 WORKDIR /
 
 COPY configs /configs
-COPY scripts/start.sh .
-COPY scripts/wait-for.sh .
+COPY --chmod=755 scripts/start.sh .
+COPY --chmod=755 scripts/wait-for.sh .
 COPY --from=build /togo /togo
 
 EXPOSE 8080
