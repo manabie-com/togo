@@ -1,0 +1,8 @@
+I listed my working step i will do:
+1. Creating High Level Design (x)
+2. Developing Domain and core service with unit test (x)
+3. Injecting data source and implement consumer with integrated testing. (x)
+4. Benchmark performance test and profiling.
+5. Disgnosing the slowly computing or memory leak and fixing it.
+6. Creating sizing and hardware requirement for the application.
+

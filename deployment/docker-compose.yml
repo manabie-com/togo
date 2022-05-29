@@ -1,0 +1,13 @@
+version: '3.7'
+services:
+  mysql:
+    image: mysql
+    command:
+      - --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456aA
+    ports:
+      - "3308:3306"
+    volumes:
+      - /home/hoaibd/data/mysql:/var/lib/mysql
