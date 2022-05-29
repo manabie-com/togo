@@ -10,5 +10,4 @@ services:
     ports:
       - "3309:3306"
     volumes:
-      - /home/hoaibd/data/mysql:/var/lib/mysql
-      - ./migrations/000001_tbl_user.up.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./migrations/init.sql:/docker-entrypoint-initdb.d/init.sql

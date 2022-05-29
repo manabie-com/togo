@@ -19,8 +19,8 @@ type tokenServiceImpl struct {
 
 func (this *tokenServiceImpl) CreateToken(ctx context.Context, u model.User) (string, error) {
 	t := model.UserClaim{
-		Username: u.Username,
-		Limit:    u.Limit,
+		UserId: u.Id,
+		Limit:  u.Limit,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(60 * time.Minute).UnixMilli(),
 		},

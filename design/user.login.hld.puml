@@ -6,7 +6,7 @@ autonumber
 User -> TodoApp: POST /users/login?username=Alice&password=XXXX
 
 group successful case
-User <-- TodoApp: 200 OK
+User <-- TodoApp: 200 OK With Token
 end
 
 group failed validation case

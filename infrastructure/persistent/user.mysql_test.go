@@ -15,6 +15,11 @@ import (
 )
 
 var db *sql.DB
+var user = model.User{
+	Username: "admin",
+	Password: "admin",
+	Limit:    10,
+}
 
 func TestMain(m *testing.M) {
 	var err error
@@ -22,29 +27,8 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		log.Fatalf("Cant connect to db: %s", err)
 	}
-	//driver, _ := mysql.WithInstance(db, &mysql.Config{})
-	//migrateIns, err := migrate.NewWithDatabaseInstance(
-	//	"file://migrations",
-	//	"todo",
-	//	driver,
-	//)
-	//if err != nil {
-	//	log.Fatalf("Cant create migrate Instance: %s", err)
-	//}
-	////migrateIns.Drop()
-	//err = migrateIns.Up()
-	//if err != nil {
-	//	log.Fatalf("migrateIns fail: %s", err)
-	//}
-	//err = db.Ping()
-	//if err != nil {
-	//	log.Fatalf("Cant connect to db: %s", err)
-	//}
 	log.Println("Connect success")
 	code := m.Run()
-	//
-	//err = migrateIns.Down()
-	//migrateIns.Close()
 	os.Exit(code)
 }
 
@@ -55,11 +39,7 @@ func TestNewUserMysqlRepository(t *testing.T) {
 
 func TestUserMysqlRepo_Create(t *testing.T) {
 	repo := persistent.NewUserMysqlRepository(db)
-	user := model.User{
-		Username: "admin",
-		Password: "admin",
-		Limit:    10,
-	}
+	repo.Delete(context.Background(), user.Username)
 	err := repo.Create(context.Background(), user)
 	if err != nil {
 		t.Errorf("%s", err.Error())
@@ -70,11 +50,6 @@ func TestUserMysqlRepo_Create(t *testing.T) {
 
 func TestUserMysqlRepo_Get(t *testing.T) {
 	repo := persistent.NewUserMysqlRepository(db)
-	user := model.User{
-		Username: "admin",
-		Password: "admin",
-		Limit:    10,
-	}
 	u2, err := repo.Get(context.Background(), user.Username)
 	if err != nil {
 		t.Errorf("%s", err.Error())

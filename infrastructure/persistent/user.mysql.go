@@ -12,6 +12,19 @@ type userMysqlRepo struct {
 	db *sql.DB
 }
 
+func (this *userMysqlRepo) Delete(ctx context.Context, username string) error {
+	//TODO implement me
+	stmt, err := this.db.Prepare("delete from todo.tbl_user where username = ?")
+	if err != nil {
+		return err
+	}
+	_, err = stmt.ExecContext(ctx, username)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (this *userMysqlRepo) Create(ctx context.Context, u model.User) error {
 	stmt, err := this.db.Prepare("insert into todo.tbl_user(username, password, limit_per_day) VALUES (?, ?, ?);")
 	if err != nil {

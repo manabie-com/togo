@@ -13,6 +13,16 @@ type inmemoryUserRepo struct {
 	mtx   sync.RWMutex
 }
 
+func (this *inmemoryUserRepo) Delete(ctx context.Context, username string) error {
+	//TODO implement me
+	this.mtx.Lock()
+	defer this.mtx.Unlock()
+	if _, ok := this.users[username]; ok {
+		delete(this.users, username)
+	}
+	return nil
+}
+
 func (this *inmemoryUserRepo) Create(ctx context.Context, u model.User) error {
 	this.mtx.Lock()
 	defer this.mtx.Unlock()

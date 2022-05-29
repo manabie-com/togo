@@ -12,6 +12,7 @@ import (
 	"togo/domain/service"
 	"togo/infrastructure/persistent"
 	"togo/interface/http"
+	"togo/interface/http/middleware"
 	configLib "togo/pkg/config"
 )
 
@@ -35,11 +36,17 @@ func main() {
 		}
 	}(db)
 	userRepo := persistent.NewUserMysqlRepository(db)
-	userService := service.NewUserService(userRepo)
+	taskRepo := persistent.NewTaskMySQLRepository(db)
+	tokenService := service.NewTokenService("sdasdasdasd")
+	userService := service.NewUserService(userRepo, tokenService)
+	taskSvc := service.NewTaskService(taskRepo)
+	taskHttpController := httpInterface.NewTaskController(taskSvc)
 	userHttpController := httpInterface.NewUserController(userService)
-	e := gin.New()
+	e := gin.Default()
 	userGroup := e.Group("/users")
 	userGroup.POST("/register", userHttpController.Register)
 	userGroup.POST("/login", userHttpController.Login)
+	taskGroup := e.Group("/task").Use(middleware.AuthMiddleware(tokenService))
+	taskGroup.POST("/create", taskHttpController.Create)
 	e.Run(fmt.Sprintf("0.0.0.0:%d", 8080))
 }

@@ -13,6 +13,10 @@ group failed validation case
 User <-- TodoApp: 400 Bad Request
 end
 
+group failed validation token case
+User <-- TodoApp: 400 Bad Request
+end
+
 group other failure case
 User <-- TodoApp: 500 Internal Server Error
 

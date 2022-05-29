@@ -1,5 +1,5 @@
 
-.PHONY: test integrated_test test_coverage migrate_up migrate_down
+.PHONY: test integrated_test test_coverage migrate_up migrate_down setup_test_env remove_test_env
 
 #migrate_up:
 #
@@ -8,9 +8,9 @@
 #migrate_down:
 #	migrate -source file://deployment/migrations -database "mysql://root:123456aA@(localhost:3309)/todo?multiStatements=true" -verbose down
 
-setup_test_env:
+setup_env:
 	docker-compose -f ./deployment/docker-compose.test.yml up
-remove_test_env:
+remove_env:
 	docker-compose -f ./deployment/docker-compose.test.yml down
 
 test:
@@ -23,3 +23,6 @@ coverage:
 
 integrated_test:
 	go test ./...
+
+local_run:
+	go run main.go

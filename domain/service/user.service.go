@@ -2,8 +2,9 @@ package service
 
 import (
 	"context"
-	"errors"
+	"golang.org/x/crypto/bcrypt"
 	"math/rand"
+	"togo/domain/errdef"
 	"togo/domain/model"
 	"togo/domain/repository"
 )
@@ -14,14 +15,17 @@ type UserService interface {
 }
 
 type userService struct {
-	db repository.UserRepository
+	db           repository.UserRepository
+	tokenService TokenService
 }
 
 func (this userService) Register(ctx context.Context, user model.User) error {
 	if user.Limit == 0 {
 		user.Limit = rand.Intn(3) + 2
 	}
-	err := this.db.Create(ctx, user)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	user.Password = string(hashedPassword)
+	err = this.db.Create(ctx, user)
 	return err
 }
 
@@ -35,16 +39,15 @@ func (this userService) Login(ctx context.Context, username string, password str
 	if err != nil {
 		return model.User{}, err
 	}
-
-	if user.Password != password {
-		return model.User{}, errors.New("username or password is incorrect")
+	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
+		return model.User{}, errdef.InvalidUsernameOrPassword
 	}
 	// create token for this session
-	token, err := this.createToken(ctx, &user)
+	token, err := this.tokenService.CreateToken(ctx, user)
 	user.Token = token
 	return user, nil
 }
 
-func NewUserService(userRepo repository.UserRepository) UserService {
-	return &userService{db: userRepo}
+func NewUserService(userRepo repository.UserRepository, tokenService TokenService) UserService {
+	return &userService{db: userRepo, tokenService: tokenService}
 }
