@@ -13,7 +13,7 @@ type userMysqlRepo struct {
 }
 
 func (this *userMysqlRepo) Create(ctx context.Context, u model.User) error {
-	stmt, err := this.db.Prepare("insert into tbl_user(username, password, limit_per_day) VALUES (?, ?, ?);")
+	stmt, err := this.db.Prepare("insert into todo.tbl_user(username, password, limit_per_day) VALUES (?, ?, ?);")
 	if err != nil {
 		return err
 	}
@@ -26,7 +26,7 @@ func (this *userMysqlRepo) Create(ctx context.Context, u model.User) error {
 }
 
 func (this *userMysqlRepo) Get(ctx context.Context, username string) (u model.User, err error) {
-	stmt, err := this.db.Prepare("select * from tbl_user WHERE username = ? LIMIT 1")
+	stmt, err := this.db.Prepare("select * from todo.tbl_user WHERE username = ? LIMIT 1")
 	if err != nil {
 		return u, err
 	}
