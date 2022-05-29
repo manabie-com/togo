@@ -17,7 +17,7 @@ func TestPostTaskHappy(t *testing.T) {
 	body := `{
 		"summary": 		"Todo task 2022-05-27",
 		"description": 	"do something",
-		"assignee": 	"IYadf5AYZYZByyTTl1f5QqxOGx13",
+		"assignee": 	1,
 		"taskDate": 	"2022-05-27"
 	}`
 	r, _ := http.NewRequest("POST", "/v1/tasks", strings.NewReader(body))
@@ -36,11 +36,34 @@ func TestPostTaskHappy(t *testing.T) {
 	})
 }
 
+func TestPostTaskLimitExceed(t *testing.T) {
+	body := `{
+		"summary": 		"Todo task 2022-05-27",
+		"description": 	"do something",
+		"assignee": 	1,
+		"taskDate": 	"2022-05-27"
+	}`
+	r, _ := http.NewRequest("POST", "/v1/tasks", strings.NewReader(body))
+	w := httptest.NewRecorder()
+	for i := 0; i < 6; i++ {
+		beego.BeeApp.Handlers.ServeHTTP(w, r)
+	}
+	logs.Trace("testing", "TestPostTaskLimitExceed", "Code[%d]\n%s", w.Code, w.Body.String())
+
+	Convey("Subject: Test Endpoint\n", t, func() {
+		Convey("Status Code Should Be 200", func() {
+			So(w.Code, ShouldEqual, 200)
+		})
+		Convey("The Result Should Not Be Empty", func() {
+			So(w.Body.Len(), ShouldBeGreaterThan, 0)
+		})
+	})
+}
 // Test post task bad request
 func TestPostTaskBadRequest(t *testing.T) {
 	body := `{
 		"description": 	"do something",
-		"assignee": 	"IYadf5AYZYZByyTTl1f5QqxOGx13",
+		"assignee": 	1,
 		"taskDate": 	"2022-05-27"
 	}`
 	r, _ := http.NewRequest("POST", "/v1/tasks", strings.NewReader(body))

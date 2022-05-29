@@ -25,7 +25,7 @@ func (t *TaskController) Post() {
 		if err = json.Unmarshal(t.Ctx.Input.RequestBody, &task); err != nil || !task.IsValidTask() {
 			t.Ctx.Output.SetStatus(http.StatusBadRequest)
 			t.Data["json"] = map[string]interface{}{"err": "bad body request"}
-		} else if err = task.Submit(t.Ctx); err != nil {
+		} else if err = task.Submit(); err != nil {
 			t.Ctx.Output.SetStatus(http.StatusInternalServerError)
 			t.Data["json"] = map[string]interface{}{"err": err.Error()}
 		} else {

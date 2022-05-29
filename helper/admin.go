@@ -20,12 +20,9 @@ func BeforeTask(ctx *context.Context) (accepted bool, code int, err error) {
 				wg.Done()
 				return
 			default:
-				if valid, token := verifyToken(ctx); !valid {
+				if !verifyUser(ctx) {
 					code = http.StatusUnauthorized
-					err = errors.New("token unauthorized")
-				} else if !checkRole(token, ctx.Request.Method) {
-					code = http.StatusForbidden
-					err = errors.New("user not allowed")
+					err = errors.New("invalid user")
 				} else {
 					accepted = true
 				}
@@ -38,12 +35,9 @@ func BeforeTask(ctx *context.Context) (accepted bool, code int, err error) {
 	return
 }
 
-func verifyToken(header *context.Context) (bool, interface{}) {
-	// Todo: implement verify user authentication
-	return true, nil
-}
-
-func checkRole(token interface{}, method string) bool {
-	// Todo: implement check user permission
+func verifyUser(ctx *context.Context) bool {
+	// Todo: implement verify user authentication and role
+	// This action just to follow diagram
+	// Micro-service should have security layer
 	return true
 }

@@ -22,25 +22,25 @@ func TestValidTask(t *testing.T) {
 		{models.Task{
 			Summary: "",
 			Description: "",
-			Assignee: "IYadf5AYZYZByyTTl1f5QqxOGx13",
+			Assignee: 1,
 			TaskDate: "2022-05-27",
 		}, false},
 		{models.Task{
 			Summary: "Todo task",
 			Description: "",
-			Assignee: "",
+			Assignee: 0,
 			TaskDate: "2022-05-27",
 		}, false},
 		{models.Task{
 			Summary: "Todo task",
 			Description: "",
-			Assignee: "IYadf5AYZYZByyTTl1f5QqxOGx13",
+			Assignee: 1,
 			TaskDate: "2022-05-32",
 		}, false},
 		{models.Task{
 			Summary: "Todo task",
 			Description: "",
-			Assignee: "IYadf5AYZYZByyTTl1f5QqxOGx13",
+			Assignee: 1,
 			TaskDate: "2022-05-31",
 		}, true},
 	}
