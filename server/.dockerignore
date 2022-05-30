@@ -1,0 +1,5 @@
+# Environment variables and settings
+.env 
+
+# executable file
+togo

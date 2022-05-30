@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  server:
+    build: ./server
+    image: togo:latest
+    container_name: togo-server
+    env_file:
+      - .env
+    ports:
+      - ${PORT}:${PORT}
+    volumes:
+      - ./server:/app
+     
