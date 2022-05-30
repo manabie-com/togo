@@ -10,4 +10,16 @@ services:
       - ${PORT}:${PORT}
     volumes:
       - ./server:/app
+    depends_on:
+      - mongodb-togo
+  mongodb-togo:
+    image: mongo:latest
+    container_name: mongodb-togo
+    ports:
+      - ${DATABASE_PORT}:${DATABASE_PORT}
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
      
