@@ -1,0 +1,23 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:latest
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: todo_api_development
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgres://postgres:root@db:5432/todo_api_development
+volumes:
+  dbdata:
