@@ -44,6 +44,8 @@ $ docker-compose run web rake db:migrate db:seed
 $ rspec spec/requests/api
 ```
 
+## API Documentation: https://documenter.getpostman.com/view/19923371/Uz5AsKPM
+
 #### Remarks:
 > I love my solution because I followed the Ruby on Rails standards and bes practices. <br/> <br/>
 > Anti patterns was strictly observed in my solution by not having an overweight Models and Controllers. <br/>
