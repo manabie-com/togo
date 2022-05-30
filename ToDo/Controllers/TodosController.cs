@@ -35,7 +35,7 @@ namespace ToDo.Api.Controllers
             var validate = await _validationRules.ValidateAsync(request);
             if (!validate.IsValid)
             {
-                throw new ArgumentException("Input is incorect");
+                return BadRequest("Input is incorect");
             }
             try
             {
