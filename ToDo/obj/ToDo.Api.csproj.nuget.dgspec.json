@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Learning\\ToGo\\ToDo\\ToDo.Api.csproj": {}
+    "F:\\Workspaces\\Togo\\ToDo\\ToDo.Api.csproj": {}
   },
   "projects": {
-    "E:\\Learning\\ToGo\\ToDo\\ToDo.Api.csproj": {
+    "F:\\Workspaces\\Togo\\ToDo\\ToDo.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Learning\\ToGo\\ToDo\\ToDo.Api.csproj",
+        "projectUniqueName": "F:\\Workspaces\\Togo\\ToDo\\ToDo.Api.csproj",
         "projectName": "ToDo.Api",
-        "projectPath": "E:\\Learning\\ToGo\\ToDo\\ToDo.Api.csproj",
-        "packagesPath": "C:\\Users\\binhl\\.nuget\\packages\\",
-        "outputPath": "E:\\Learning\\ToGo\\ToDo\\obj\\",
+        "projectPath": "F:\\Workspaces\\Togo\\ToDo\\ToDo.Api.csproj",
+        "packagesPath": "C:\\Users\\Binhlv2607\\.nuget\\packages\\",
+        "outputPath": "F:\\Workspaces\\Togo\\ToDo\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\binhl\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Binhlv2607\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\DevExpress 18.1.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -73,7 +73,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.300\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.201\\RuntimeIdentifierGraph.json"
         }
       }
     }
