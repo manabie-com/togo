@@ -1,30 +1,56 @@
-### Requirements
+### Evironments
+- .NET 6.0
+- Database : MongoDB Server
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+### How to test
+- In the root folder (containing the ToDo.sln file), run the following in the terminal:
+dotnet test 
 
-### Notes
+### How to run
+- In the root folder (containing the ToDo.sln file), run the following in the terminal:
+dotnet run --project .\ToDo\ToDo.Api.csproj
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+### View Swagger Doc
+- While running, open a browser and navigate to:
+https://localhost:7161/swagger/index.html
 
-### How to submit your solution?
+### Sample Curl
+- Creat User : 
+curl -X 'POST' \
+  'https://localhost:7161/api/users' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "fullName": "Le Van Binh",
+  "dailyTaskLimit": 10
+}'
 
-- Fork this repo and show us your development progress via a PR
+- Get User
+curl -X 'GET' \
+  'https://localhost:7161/api/users?userId=e7e1ff8a-e045-4188-974b-24f750a9bdb8' \
+  -H 'accept: */*'
+  
+- Create task
+curl -X 'POST' \
+  'https://localhost:7161/api/todos' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "userId": "e7e1ff8a-e045-4188-974b-24f750a9bdb8",
+  "status": 0,
+  "todoName": "implement todo project",
+  "todoDescription": "do somethings"
+}'
 
-### Interesting facts about Manabie
+- Get task
+curl -X 'GET' \
+  'https://localhost:7161/api/todos?ToDoId=c8a73ed4-4098-4850-8a2e-a7a70da6f36b' \
+  -H 'accept: */*'
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+### What I love about my solution
+- I choose MongoDb to be easily extensible when the client has requirements to change in the future: for example adding new properties in user or task.
+- Support Swagger.
+- DI very easy to use, hence testing is easy.
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+### What else do you want us to know about however you do not have enough time to complete?
+- To be honest, I just started writing unit tests and have never written integration tests. I tried to have high coverage for the main API. I have learned about integration tests but haven't had enough time to do them.
