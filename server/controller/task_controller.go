@@ -40,6 +40,7 @@ func (c *taskcontroller) CreateTask(w http.ResponseWriter, r *http.Request) {
 			Code:    http.StatusInternalServerError,
 			Message: err.Error(),
 		})
+		return
 	}
 
 	// Validate Task
@@ -51,6 +52,7 @@ func (c *taskcontroller) CreateTask(w http.ResponseWriter, r *http.Request) {
 			Code:    http.StatusBadRequest,
 			Message: err.Error(),
 		})
+		return
 	}
 
 	// Create Task
