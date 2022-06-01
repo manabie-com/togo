@@ -9,5 +9,5 @@ type ErrorResponse struct {
 type SuccessResponse struct {
 	Status string      `json:"status"`
 	Code   int         `json:"code"`
-	Data   interface{} `json:"message"`
+	Data   interface{} `json:"message,omitempty"`
 }
