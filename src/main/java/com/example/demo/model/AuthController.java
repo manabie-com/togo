@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.example.demo.model;
 
 import com.example.demo.model.RegisterRequest;
 import com.example.demo.model.AuthRequest;

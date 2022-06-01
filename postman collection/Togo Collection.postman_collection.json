@@ -217,12 +217,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8443/auth",
+							"raw": "http://localhost:8080/auth",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "8443",
+							"port": "8080",
 							"path": [
 								"auth"
 							]

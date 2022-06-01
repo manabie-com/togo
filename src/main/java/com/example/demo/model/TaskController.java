@@ -1,6 +1,7 @@
-package com.example.demo.controller;
+package com.example.demo.model;
 
 
+import com.example.demo.exception.TaskException;
 import com.example.demo.model.CompleteTaskRequest;
 import com.example.demo.model.CreateTaskRequest;
 import com.example.demo.model.DeleteTaskRequest;
@@ -11,14 +12,18 @@ import com.example.demo.repository.TaskRepository;
 import com.example.demo.service.UserService;
 import com.example.demo.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -62,7 +67,7 @@ public class TaskController {
         List<Task> tasks = tasksRepository.findByUser(user);
 
         if (tasks.size() >= userSettings.getDailyLimit()) {
-            throw new Exception("User has reached daily limit of tasks");
+            throw new TaskException("User has reached daily limit of tasks");
         }
 
         Task task = new Task();
@@ -83,10 +88,10 @@ public class TaskController {
         if (opTask.isPresent()) {
             task = opTask.get();
         } else {
-            throw new Exception("Task does not exist");
+            throw new TaskException("Task does not exist");
         }
         if (!user.getUsername().equals(task.getUser().getUsername())) {
-            throw new Exception("This task does not belong to this user!");
+            throw new TaskException("This task does not belong to this user!");
         }
         task.setIsCompleted(completeTaskRequest.getIsTaskCompleted());
         tasksRepository.save(task);
@@ -111,10 +116,10 @@ public class TaskController {
         if (opTask.isPresent()) {
             task = opTask.get();
         } else {
-            throw new Exception("Task does not exist");
+            throw new TaskException("Task does not exist");
         }
         if (!user.getUsername().equals(task.getUser().getUsername())) {
-            throw new Exception("This task does not belong to this user!");
+            throw new TaskException("This task does not belong to this user!");
         }
         tasksRepository.delete(task);
         return ResponseEntity.ok().build();
