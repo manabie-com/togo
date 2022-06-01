@@ -1,3 +1,37 @@
+### Instructions
+- This app is can be used using Java 8/11
+- to run, first execute "mvn clean install" then "mvn spring-boot:run"
+- I have added a postman collection for authentication and task endpoint: https://github.com/plurantee/togo/blob/master/postman%20collection/Togo%20Collection.postman_collection.json
+- default user is "florante" and password is "password"
+- Sample curl command for user registration:
+  ``
+  curl --location --request POST 'http://localhost:8080/register' \
+  --header 'Content-Type: application/json' \
+  --header 'Cookie: JSESSIONID=07446863A868BC86414DAFC270DAC644' \
+  --data-raw '{
+  "username": "user123",
+  "password": "password",
+  "limit": 2
+  }'
+  ``
+- Sample login - this will return a token response, and it must be used for the task endpoints:
+  ``
+  curl --location --request POST 'http://localhost:8080/auth' \
+  --header 'Content-Type: application/json' \
+  --header 'Cookie: JSESSIONID=07446863A868BC86414DAFC270DAC644' \
+  --data-raw '{
+  "username": "florante",
+  "password":  "password"
+  }'
+  ``
+
+- Get tasks for a user (task is filtered using the JWT token)
+  ``
+  curl --location --request GET 'localhost:8080/api/tasks' \
+  --header 'Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmbG9yYW50ZSIsImV4cCI6MTY1NDA3ODgxMywiaWF0IjoxNjU0MDYwODEzfQ.NeOfAPH-vo44HAfghOPBqsd8SucPNRMRjY0Qy-afIYP1uepaVHPR7GvqebUDwdgGhSM1oqXBh02rZonFV7xG8g' \
+  --header 'Cookie: JSESSIONID=07446863A868BC86414DAFC270DAC644'
+  ``
+
 ### Requirements
 
 - Implement one single API which accepts a todo task and records it
@@ -28,3 +62,4 @@
 - We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
 
 Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+
