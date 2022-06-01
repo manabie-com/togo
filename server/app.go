@@ -7,7 +7,8 @@ import (
 
 	"togo/config"
 	"togo/controller"
-	repository "togo/repository/task"
+	taskRepo "togo/repository/task"
+	userRepo "togo/repository/user"
 	"togo/router"
 	"togo/service"
 
@@ -16,9 +17,12 @@ import (
 
 var (
 	connection     *mongo.Client             = config.ConnectMongo(os.Getenv("DATABASE_URI"), os.Getenv("DATABASE_PORT"))
-	taskrepository repository.TaskRepository = repository.NewMongoRepository(connection)
+	taskrepository taskRepo.TaskRepository   = taskRepo.NewMongoRepository(connection)
+	userrepository userRepo.UserRepository   = userRepo.NewMongoRepository(connection)
 	taskservice    service.TaskService       = service.NewTaskService(taskrepository)
+	userservice    service.UserService       = service.NewUserService(userrepository)
 	taskController controller.TaskController = controller.NewTaskController(taskservice)
+	userController controller.UserController = controller.NewUserController(userservice)
 	httpRouter     router.Router             = router.NewChiRouter()
 )
 
@@ -28,6 +32,8 @@ func main() {
 	port := os.Getenv("PORT")
 
 	httpRouter.POST("/tasks", taskController.CreateTask)
+	httpRouter.POST("/register", userController.Register)
+	httpRouter.PUT("/login", userController.Login)
 
 	logger.Info().Msgf("Serving at %v", port)
 	httpRouter.SERVE(port)
