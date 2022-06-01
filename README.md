@@ -34,7 +34,7 @@ NOTE: For the sake of this exam, I included the `.env` file in my commits for yo
 
 ### II. Sample Request
 
-Once the server is running you may make a simple post request to create a task
+Once the server is running, open a new terminal make a simple post request to create a task.
 
 ```Shell
 $ curl -X POST http://localhost:8080/tasks -H 'Content-Type: application/json' -d '{"title":"sample title","description":"sample description"}'
@@ -78,3 +78,10 @@ The **Service** layer is responsible for the business logic. This is the layer i
 The **Repository** layer is responsible for the data access or the interaction with the database.
 
 The main benefit of this approach is to divide the application by layers to encourage long-term maintainability of the codebase. By abstracting each layer from the other, you will be able to easily test and/or to easily refactor the code. For example, since the Repository layer is abstracted from the Service layer, the Service layer does not have to worry which database I use--in this case, MongoDB.
+
+## TODO
+
+- Authenticate POST request for `CreateTask` by using custom middleware
+- Improve Task Validation by calculating the remaining number of task a user is allowed per day.
+- Implement unit tests by using **testify**
+- Include logger in all the layers via Dependency Injection
