@@ -3,9 +3,11 @@ package com.example.demo.config;
 import com.example.demo.model.MyAuthorities;
 import com.example.demo.model.Task;
 import com.example.demo.model.User;
+import com.example.demo.model.UserSettings;
 import com.example.demo.repository.AuthorityRepository;
 import com.example.demo.repository.TaskRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.repository.UserSettingsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +25,9 @@ public class InitConfig {
 
     @Autowired
     private TaskRepository taskRepository;
+
+    @Autowired
+    private UserSettingsRepository userSettingsRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -44,6 +49,8 @@ public class InitConfig {
         task.setTaskDetails("Task 1");
         task.setUser(user);
         taskRepository.save(task);
+        userSettingsRepository.save(new UserSettings(user, Long.valueOf(3)));
+
 
     }
 

@@ -1,0 +1,236 @@
+{
+	"info": {
+		"_postman_id": "5b149d76-4be7-460b-b156-82a2ea8539f9",
+		"name": "Togo Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Task",
+			"item": [
+				{
+					"name": "Get Tasks",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmbG9yYW50ZSIsImV4cCI6MTY1NDA2NjMyMywiaWF0IjoxNjU0MDQ4MzIzfQ.cx-skLvq0OWCFWIWL597ItBycSjSs7t-4qAsp8b__T5tthTP7oW1SB6YWD7n_WoTyLNTJc5UyNoyAkKfQYpCzg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/tasks",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Task",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmbG9yYW50ZSIsImV4cCI6MTY1NDA2NjMyMywiaWF0IjoxNjU0MDQ4MzIzfQ.cx-skLvq0OWCFWIWL597ItBycSjSs7t-4qAsp8b__T5tthTP7oW1SB6YWD7n_WoTyLNTJc5UyNoyAkKfQYpCzg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authentication",
+								"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmbG9yYW50ZSIsImV4cCI6MTY1NDA2NjMyMywiaWF0IjoxNjU0MDQ4MzIzfQ.cx-skLvq0OWCFWIWL597ItBycSjSs7t-4qAsp8b__T5tthTP7oW1SB6YWD7n_WoTyLNTJc5UyNoyAkKfQYpCzg",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 2,\n    \"isTaskCompleted\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/tasks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Task",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmbG9yYW50ZSIsImV4cCI6MTY1NDA2NjMyMywiaWF0IjoxNjU0MDQ4MzIzfQ.cx-skLvq0OWCFWIWL597ItBycSjSs7t-4qAsp8b__T5tthTP7oW1SB6YWD7n_WoTyLNTJc5UyNoyAkKfQYpCzg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"taskDetail\": \"Test 2\",\n    \"isCompleted\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/tasks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Task",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmbG9yYW50ZSIsImV4cCI6MTY1NDA2NjMyMywiaWF0IjoxNjU0MDQ4MzIzfQ.cx-skLvq0OWCFWIWL597ItBycSjSs7t-4qAsp8b__T5tthTP7oW1SB6YWD7n_WoTyLNTJc5UyNoyAkKfQYpCzg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/tasks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"user 2\",\n    \"password\": \"password\",\n    \"limit\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Limit",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"florante\",\n    \"password\":  \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8443/auth",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8443",
+							"path": [
+								"auth"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

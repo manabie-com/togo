@@ -48,6 +48,11 @@ public class User implements UserDetails {
         this.username = username;
     }
 
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
     public void addAuthority(MyAuthorities auth) {
         if (authorities == null) {
             authorities = new ArrayList<>();
@@ -55,8 +60,5 @@ public class User implements UserDetails {
         authorities.add(auth);
     }
 
-    public User(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
+
 }

@@ -50,7 +50,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
 
         httpSecurity.csrf().disable()
-                .authorizeRequests().antMatchers("/auth").permitAll()
+                .authorizeRequests().antMatchers("/auth", "/register").permitAll()
                 .antMatchers("/api/tasks/**").hasRole("ADMIN")
                 .anyRequest().authenticated().and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
