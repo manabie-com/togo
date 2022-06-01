@@ -28,6 +28,10 @@ $ cd togo
 $ docker compose up
 ```
 
+By now you must be able to see Docker running the containers after building the images.
+
+NOTE: For the sake of this exam, I included the `.env` file in my commits for you to observe successful results when testing and making a simple post request to the application. However, it is bad practice to commit the environment variables to the code repository.
+
 ### II. Sample Request
 
 Once the server is running you may make a simple post request to create a task
@@ -50,3 +54,27 @@ You should have received a response such as this:
   }
 }
 ```
+
+## Solution
+
+### Deployment: Docker
+
+This approach deploys the Golang Backend via **Docker**. Subsequently, I am able to utilize `docker compose` to run a MongoDB container which resolves compatibility issues.
+
+### Design Pattern: Repository Pattern
+
+This approach uses the **Repository Pattern**.
+
+> Repositories are classes or components that encapsulate the logic required to access data sources. They centralize common data access functionality, providing better maintainability and decoupling the infrastructure or technology used to access databases from the domain model layer.
+
+\- [Microsoft Documentation](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design)
+
+This pattern is usually made up of three main layers: **Repository**, **Service**, and **Controller**.
+
+The **Controller** layer is responsible for handling the request and for returning the response.
+
+The **Service** layer is responsible for the business logic. This is the layer in which you manipulate the data. In this case, this is where the and retrieve the _current_ time.
+
+The **Repository** layer is responsible for the data access or the interaction with the database.
+
+The main benefit of this approach is to divide the application by layers to encourage long-term maintainability of the codebase. By abstracting each layer from the other, you will be able to easily test and/or to easily refactor the code. For example, since the Repository layer is abstracted from the Service layer, the Service layer does not have to worry which database I use--in this case, MongoDB.
