@@ -1,9 +1,6 @@
 package com.example.demo.util;
 
 import com.example.demo.model.User;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.StringUtils;
@@ -13,7 +10,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.example.demo.util.JwtTokenUtil.JWT_TOKEN_VALIDITY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;

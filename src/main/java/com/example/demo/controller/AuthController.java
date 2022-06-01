@@ -1,10 +1,9 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.RegisterRequest;
 import com.example.demo.model.AuthRequest;
 import com.example.demo.model.AuthResponse;
 import com.example.demo.model.MyAuthorities;
-import com.example.demo.model.Task;
+import com.example.demo.model.RegisterRequest;
 import com.example.demo.model.UpdateLimitRequest;
 import com.example.demo.model.User;
 import com.example.demo.model.UserSettings;
