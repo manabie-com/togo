@@ -23,6 +23,9 @@ func (r *chiRouter) GET(uri string, f func(w http.ResponseWriter, r *http.Reques
 func (r *chiRouter) POST(uri string, f func(w http.ResponseWriter, r *http.Request)) {
 	chiDispatcher.Post(uri, f)
 }
+func (r *chiRouter) PUT(uri string, f func(w http.ResponseWriter, r *http.Request)) {
+	chiDispatcher.Put(uri, f)
+}
 func (r *chiRouter) SERVE(port string) {
 	port = fmt.Sprintf(":%v", port)
 	http.ListenAndServe(port, chiDispatcher)
