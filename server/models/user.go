@@ -6,5 +6,4 @@ type User struct {
 	Password string `json:"password,omitempty" bson:"password, omitempty"`
 	Token    string `json:"token,omitempty" bson:"token, omitempty"`
 	Limit    int    `json:"limit,omitempty" bson:"limit, omitempty"`
-	Tasks    []Task `json:"tasks,omitempty" bson:"tasks, omitempty"`
 }
