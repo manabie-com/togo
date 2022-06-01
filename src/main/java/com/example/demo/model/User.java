@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,12 +27,19 @@ public class User implements UserDetails {
     // Sprint Security Default
     @Id
     private String username;
+
+    @JsonIgnore
     private String password;
+    @JsonIgnore
     private boolean enabled = true;
     @OneToMany(fetch = FetchType.EAGER)
+    @JsonIgnore
     private List<MyAuthorities> authorities;
+    @JsonIgnore
     private boolean accountNonExpired = true;
+    @JsonIgnore
     private boolean accountNonLocked = true;
+    @JsonIgnore
     private boolean credentialsNonExpired = true;
 
     //

@@ -1,14 +1,14 @@
 package com.example.demo.config;
 
 import com.example.demo.model.MyAuthorities;
+import com.example.demo.model.Task;
 import com.example.demo.model.User;
 import com.example.demo.repository.AuthorityRepository;
+import com.example.demo.repository.TaskRepository;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -20,6 +20,9 @@ public class InitConfig {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TaskRepository taskRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -37,6 +40,10 @@ public class InitConfig {
         User user = new User("florante", password);
         user.addAuthority(adminAuth);
         userRepository.save(user);
+        Task task = new Task();
+        task.setTaskDetails("Task 1");
+        task.setUser(user);
+        taskRepository.save(task);
 
     }
 
