@@ -42,6 +42,7 @@ func (c *usercontroller) Register(w http.ResponseWriter, r *http.Request) {
 			Code:    http.StatusInternalServerError,
 			Message: err.Error(),
 		})
+		return
 	}
 
 	// Validate User
@@ -53,10 +54,20 @@ func (c *usercontroller) Register(w http.ResponseWriter, r *http.Request) {
 			Code:    http.StatusBadRequest,
 			Message: err.Error(),
 		})
+		return
 	}
 
 	// Register User
-	c.userservice.Register(&user)
+	_, err = c.userservice.Register(&user)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(response.ErrorResponse{
+			Status:  "Fail",
+			Code:    http.StatusBadRequest,
+			Message: err.Error(),
+		})
+		return
+	}
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response.SuccessResponse{
 		Status: "Success",
@@ -81,6 +92,7 @@ func (c *usercontroller) Login(w http.ResponseWriter, r *http.Request) {
 			Code:    http.StatusInternalServerError,
 			Message: err.Error(),
 		})
+		return
 	}
 
 	// Validate User Login
@@ -92,6 +104,7 @@ func (c *usercontroller) Login(w http.ResponseWriter, r *http.Request) {
 			Code:    http.StatusBadRequest,
 			Message: err.Error(),
 		})
+		return
 	}
 
 	// Set expiration time of the token
@@ -106,6 +119,7 @@ func (c *usercontroller) Login(w http.ResponseWriter, r *http.Request) {
 			Code:    http.StatusBadRequest,
 			Message: err.Error(),
 		})
+		return
 	}
 
 	// Set cookie
@@ -117,7 +131,7 @@ func (c *usercontroller) Login(w http.ResponseWriter, r *http.Request) {
 			HttpOnly: true,
 		})
 
-	// Lgoin
+	// Login
 	c.userservice.Login(&user)
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response.SuccessResponse{
