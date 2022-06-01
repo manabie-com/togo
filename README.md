@@ -1,30 +1,52 @@
-### Requirements
+# Togo
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+Golang application which accepts a todo task and records it if the user has not yet reached the limited number of tasks per day.
 
-### Notes
+## Usage
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+### I. Run server
 
-### How to submit your solution?
+Make sure you have Docker installed, otherwise you may download it from this [link](https://www.docker.com/products/docker-desktop/).
 
-- Fork this repo and show us your development progress via a PR
+If you already have Docker, simply follow the steps to deploy the code.
 
-### Interesting facts about Manabie
+1. Clone the repository
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+```Shell
+$ git clone git@github.com:jrpespinas/togo.git
+```
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+2. Change directory
+
+```Shell
+$ cd togo
+```
+
+3. Run docker compose to deploy the application
+
+```Shell
+$ docker compose up
+```
+
+### II. Sample Request
+
+Once the server is running you may make a simple post request to create a task
+
+```Shell
+$ curl -X POST http://localhost:8080/tasks -H 'Content-Type: application/json' -d '{"title":"sample title","description":"sample description"}'
+```
+
+You should have received a response such as this:
+
+```json
+{
+  "status": "Success",
+  "code": 200,
+  "message": {
+    "id": "cabhte81hrh6mgum9d7g",
+    "title": "sample title",
+    "description": "sample description",
+    "created_at": "2022-06-01T08:09:29.0564148Z"
+  }
+}
+```
