@@ -1,4 +1,4 @@
-package com.example.demo.model;
+package com.example.demo.controller;
 
 import com.example.demo.exception.TaskException;
 import com.example.demo.exception.TaskExceptionResponse;
