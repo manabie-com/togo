@@ -3,6 +3,7 @@ package com.example.demo;
 import com.example.demo.config.JwtAuthenticationEntryPoint;
 import com.example.demo.config.JwtRequestFilter;
 import com.example.demo.controller.TaskController;
+import com.example.demo.model.Task;
 import com.example.demo.model.User;
 import com.example.demo.repository.AuthorityRepository;
 import com.example.demo.repository.TaskRepository;
@@ -10,6 +11,7 @@ import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.UserSettingsRepository;
 import com.example.demo.service.UserService;
 import com.example.demo.util.JwtTokenUtil;
+import org.hibernate.mapping.Any;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,11 +34,18 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
 import javax.sql.DataSource;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @ExtendWith(SpringExtension.class)
@@ -91,7 +100,6 @@ public class TaskIntegrationTesting {
         Map<String, Object> claims = new HashMap<>();
         User user = new User("test", "password");
         jwt = jwtTokenUtil.generateToken(user);
-        String username = jwtTokenUtil.getUsernameFromToken(jwt);
     }
 
     @Test
@@ -104,8 +112,24 @@ public class TaskIntegrationTesting {
     }
 
     @Test
-    public void givenHomePageURI_whenMockMVC_thenReturnsIndexJSPViewName() throws Exception {
-        this.mockMvc.perform(get("/api/tasks").header("Authorization", "Bearer "+jwt)).andDo(print());
+    public void test_200() throws Exception {
+        this.mockMvc.perform(get("/api/tasks").header("Authorization", "Bearer "+jwt))
+                .andDo(print()).andExpect(status().isOk());
+    }
+
+    @Test
+    public void test_200_with_result() throws Exception {
+        User user = new User("test", "password");
+        Task task = new Task();
+        task.setTaskDetails("Test");
+        task.setUser(user);
+        List<Task> tasks = new ArrayList();
+        tasks.add(task);
+        Mockito.when(userService.loadUserByUsername(anyString())).thenReturn(user);
+        Mockito.when(taskRepository.findByUser(any(User.class))).thenReturn(tasks);
+        this.mockMvc.perform(get("/api/tasks").header("Authorization", "Bearer "+jwt))
+                .andDo(print()).andExpect(content().json("[{\"id\":null,\"taskDetails\":\"Test\"," +
+                        "\"user\":{\"username\":\"test\"},\"isCompleted\":null}]"));
     }
 
 }
