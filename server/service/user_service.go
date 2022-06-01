@@ -10,7 +10,7 @@ import (
 	"togo/service/key"
 	"togo/utils/security"
 
-	repository "togo/repository/task"
+	repository "togo/repository/user"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/rs/xid"
@@ -20,7 +20,7 @@ var jwtKey = []byte(os.Getenv("JWT_KEY"))
 
 // Define User Service Interface
 type UserService interface {
-	Register(user *models.User) error
+	Register(user *models.User) (*models.User, error)
 	Login(user *models.User) error
 	ValidateRegistration(user *models.User) error
 	ValidateLogin(user *models.User) error
@@ -57,21 +57,22 @@ func (s *userservice) ValidateRegistration(user *models.User) error {
 // Validate Login user
 func (s *userservice) ValidateLogin(user *models.User) error {
 	// Check if user exists in the database
-	foundUser, err := s.userrepository.GetUser(user.Email)
+	foundUser, err := s.userrepository.GetUser(user.Email, user)
 	if err != nil {
-		return errors.New("User not found")
+		return errors.New("user not found")
 	}
 
 	// Check if password provided by the user matches the password in the database
-	if err = security.CheckPasswordHash(user.Password, foundUser.Password); !err {
-		return errors.New("Password incorrect")
+	if ok := security.CheckPasswordHash(user.Password, foundUser.Password); !ok {
+		return errors.New("password incorrect")
 	}
 
+	user.ID = foundUser.ID
 	return nil
 }
 
 // Register new users
-func (s *userservice) Register(user *models.User) error {
+func (s *userservice) Register(user *models.User) (*models.User, error) {
 	// Generate xid using 3rd party library
 	guid := xid.New()
 
@@ -85,7 +86,7 @@ func (s *userservice) Register(user *models.User) error {
 	// Hash password using bcrypt
 	password, err := security.HashPassword(user.Password)
 	if err != nil {
-		return errors.New("Unable to hash password")
+		return user, errors.New("unable to hash password")
 	}
 	user.Password = password
 
@@ -107,7 +108,7 @@ func (s *userservice) GenerateJWT(user *models.User, expiration time.Time) (stri
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(jwtKey)
 	if err != nil {
-		return "", errors.New("Unable to generate JWT token")
+		return "", errors.New("unable to generate JWT token")
 	}
 
 	// Token
