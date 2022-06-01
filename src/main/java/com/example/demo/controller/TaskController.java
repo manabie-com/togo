@@ -85,7 +85,7 @@ public class TaskController {
         } else {
             throw new TaskException("Task does not exist");
         }
-        if (!user.getUsername().equals(task.getUser().getUsername())) {
+        if (!jwtTokenUtil.getUsernameFromToken(jwtToken).equals(task.getUser().getUsername())) {
             throw new TaskException("This task does not belong to this user!");
         }
         task.setIsCompleted(completeTaskRequest.getIsTaskCompleted());
@@ -113,7 +113,7 @@ public class TaskController {
         } else {
             throw new TaskException("Task does not exist");
         }
-        if (!user.getUsername().equals(task.getUser().getUsername())) {
+        if (!jwtTokenUtil.getUsernameFromToken(jwtToken).equals(task.getUser().getUsername())) {
             throw new TaskException("This task does not belong to this user!");
         }
         tasksRepository.delete(task);
