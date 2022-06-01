@@ -7,7 +7,7 @@ import (
 
 	"togo/config"
 	"togo/controller"
-	"togo/repository"
+	repository "togo/repository/task"
 	"togo/router"
 	"togo/service"
 

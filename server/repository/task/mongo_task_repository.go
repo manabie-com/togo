@@ -20,7 +20,7 @@ func NewMongoRepository(conn *mongo.Client) TaskRepository {
 }
 
 // Implement Create method for Task Repository
-func (db *mongodb) Create(task *models.Task) (*models.Task, error) {
+func (db *mongodb) CreateTask(task *models.Task) (*models.Task, error) {
 	collection := db.conn.Database(os.Getenv("DATABASE_NAME")).Collection("task")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
