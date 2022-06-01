@@ -5,7 +5,7 @@ import (
 	"time"
 	"togo/models"
 
-	"togo/repository"
+	repository "togo/repository/task"
 
 	"github.com/rs/xid"
 )
@@ -48,5 +48,5 @@ func (s *taskservice) Create(task *models.Task) (*models.Task, error) {
 	// Get current time
 	task.CreatedAt = time.Now()
 
-	return s.taskrepository.Create(task)
+	return s.taskrepository.CreateTask(task)
 }
