@@ -8,23 +8,28 @@ import (
 	"togo/service"
 )
 
+// Define an interface for the task controller
+// `CreateTask` will be the entry point for creating tasks
 type TaskController interface {
+	// Accept POST body, validate `Task`, then create `Task`
 	CreateTask(w http.ResponseWriter, r *http.Request)
 }
 
+// Define a Controller struct that contains
+// the `Task` Service (business logic for `Task`) attribute
 type taskcontroller struct {
 	taskservice service.TaskService
 }
 
 // Define a Constructor
-// Dependency Injection for Task Controller
+// Dependency Injection for `Task` Controller
 func NewTaskController(service service.TaskService) TaskController {
 	return &taskcontroller{
 		taskservice: service,
 	}
 }
 
-// Create a task record
+// Create a `Task` record
 // Route: POST /tasks
 // Access: protected
 func (c *taskcontroller) CreateTask(w http.ResponseWriter, r *http.Request) {

@@ -11,10 +11,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// Define a MongoDB struct with the mongo.Client as the attribute
 type mongodb struct {
 	conn *mongo.Client
 }
 
+// Define a Constructor to inject the connection to the repository
 func NewMongoRepository(conn *mongo.Client) UserRepository {
 	return &mongodb{
 		conn: conn,
@@ -33,14 +35,15 @@ func (db *mongodb) Register(user *models.User) (*models.User, error) {
 	return user, nil
 }
 
+// Update token field
 func (db *mongodb) Login(user *models.User) error {
 	collection := db.conn.Database(os.Getenv("DATABASE_NAME")).Collection("user")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
+	// Update only the token field
 	filter := bson.M{"_id": user.ID}
 	update := bson.D{{"$set", bson.D{{Key: "token", Value: user.Token}}}}
-
 	result, _ := collection.UpdateOne(ctx, filter, update)
 	if result.MatchedCount == 0 {
 		return errors.New("unable to Login user")

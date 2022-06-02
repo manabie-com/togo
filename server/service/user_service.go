@@ -18,22 +18,33 @@ import (
 
 var jwtKey = []byte(os.Getenv("JWT_KEY"))
 
-// Define User Service Interface
+// Define `User` Service Interface with the following
+// Methods which will be utilized by the `UserController`
 type UserService interface {
+	// Generate ID, generate random limit, hash password
 	Register(user *models.User) (*models.User, error)
+
+	// Pass the `user` to the User repository
 	Login(user *models.User) error
+
+	// Check for missing fields upon registration
 	ValidateRegistration(user *models.User) error
+
+	// Check for missing fields upon login
 	ValidateLogin(user *models.User) error
+
+	// Set claims and generate JWT token
 	GenerateJWT(user *models.User, expiration time.Time) (string, error)
 }
 
 // Define Struct with UserRepository as the attribute
+// This attribute is responsible for `User` database interactions
 type userservice struct {
 	userrepository repository.UserRepository
 }
 
 // Define a Constructor
-// Dependency Injection for User Service
+// Dependency Injection for `User` Service
 func NewUserService(repo repository.UserRepository) UserService {
 	return &userservice{
 		userrepository: repo,
@@ -54,7 +65,7 @@ func (s *userservice) ValidateRegistration(user *models.User) error {
 	return nil
 }
 
-// Validate Login user
+// Validate Login `User`
 func (s *userservice) ValidateLogin(user *models.User) error {
 	// Check if user exists in the database
 	foundUser, err := s.userrepository.GetUser(user.Email, user)
@@ -71,7 +82,7 @@ func (s *userservice) ValidateLogin(user *models.User) error {
 	return nil
 }
 
-// Register new users
+// Register a new `User`
 func (s *userservice) Register(user *models.User) (*models.User, error) {
 	// Generate xid using 3rd party library
 	guid := xid.New()
@@ -116,7 +127,7 @@ func (s *userservice) GenerateJWT(user *models.User, expiration time.Time) (stri
 	return tokenString, nil
 }
 
-// Login existing users
+// Login existing `User`
 func (s *userservice) Login(user *models.User) error {
 	return s.userrepository.Login(user)
 }

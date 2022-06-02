@@ -9,24 +9,31 @@ import (
 	"togo/service"
 )
 
+// Define an interface for the `User` controller
+// `Register` and `Login` will be used by the endpoints for `User` related actions
 type UserController interface {
+	// Accept POST body, validate `User`, then register new `User`
 	Register(w http.ResponseWriter, r *http.Request)
+
+	// Accept POST body, validate `User`, generate JWT token, set cookie, then Login
 	Login(w http.ResponseWriter, r *http.Request)
 }
 
+// Define a Controller struct that contains
+// the `User` Service (business logic for `User`) attribute
 type usercontroller struct {
 	userservice service.UserService
 }
 
 // Define a Constructor
-// Dependency Injection for Task Controller
+// Dependency Injection for `User` Controller
 func NewUserController(service service.UserService) UserController {
 	return &usercontroller{
 		userservice: service,
 	}
 }
 
-// Create a task record
+// Register a new `User`
 // Route: POST /register
 // Access: public
 func (c *usercontroller) Register(w http.ResponseWriter, r *http.Request) {
@@ -76,8 +83,8 @@ func (c *usercontroller) Register(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// Create a task record
-// Route: POST /register
+// Login existing `User`
+// Route: POST /login
 // Access: public
 func (c *usercontroller) Login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -111,6 +118,7 @@ func (c *usercontroller) Login(w http.ResponseWriter, r *http.Request) {
 	expiration := time.Now().Add(time.Minute * 60)
 
 	// Generate JWT token
+	// Return token string to set Cookie
 	token, err := c.userservice.GenerateJWT(&user, expiration)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)

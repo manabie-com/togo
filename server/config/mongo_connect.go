@@ -10,6 +10,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// Establish Connection to MongoDB
+// This function will be used to instantiate the Mongo Repositories
 func ConnectMongo(uri, port string) *mongo.Client {
 	mongodb_uri := fmt.Sprintf("%v:%v", os.Getenv("MONGODB_URI"), os.Getenv("DATABASE_PORT"))
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
