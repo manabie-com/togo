@@ -1,12 +1,9 @@
 package dynamodb
 
 import (
-	"context"
 	"database/sql"
-	"fmt"
 	"os"
 
-	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/jssoriao/todo-go/storage"
 )
@@ -25,13 +22,8 @@ type Storage struct {
 var _ storage.Storage = (*Storage)(nil)
 
 // NewStorage returns a new dynamodb Storage
-func NewStorage(dbstring string) (*Storage, error) {
-	var cfg, err = config.LoadDefaultConfig(context.Background())
-	if err != nil {
-		return nil, fmt.Errorf("unable to load AWS config, %w", err)
-	}
-	client := dynamodb.NewFromConfig(cfg)
-	return &Storage{client: client}, nil
+func NewStorage(client *dynamodb.Client) *Storage {
+	return &Storage{client: client}
 }
 
 // GetDBConn returns nil for the dynamodb storage

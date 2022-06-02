@@ -19,7 +19,7 @@ export function CoreStack({ stack }: StackContext) {
     cdk: { table: { pointInTimeRecovery: isProd } },
   });
 
-  new Api(stack, "Api", {
+  const api = new Api(stack, "Api", {
     defaults: {
       function: {
         environment: {
@@ -27,6 +27,7 @@ export function CoreStack({ stack }: StackContext) {
           USERS_TABLE_NAME: usersTable.tableName,
           TASKS_TABLE_NAME: tasksTable.tableName,
         },
+        permissions: [usersTable, tasksTable],
       },
     },
     accessLog: {
@@ -36,5 +37,9 @@ export function CoreStack({ stack }: StackContext) {
       "POST /users": "functions/users/create/lambda.go",
       "POST /users/{userId}/tasks": "functions/tasks/create/lambda.go",
     },
+  });
+
+  stack.addOutputs({
+    apiUrl: api.url,
   });
 }
