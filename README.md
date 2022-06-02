@@ -73,7 +73,7 @@ This pattern is usually made up of three main layers: **Repository**, **Service*
 
 The **Controller** layer is responsible for handling the request and for returning the response.
 
-The **Service** layer is responsible for the business logic. This is the layer in which you manipulate the data. In this case, this is where the and retrieve the _current_ time.
+The **Service** layer is responsible for the business logic. This is the layer in which you manipulate the data. In this case, this is where the id and the JWT token is generated. This is also where the validation of tasks and users occur.
 
 The **Repository** layer is responsible for the data access or the interaction with the database.
 
