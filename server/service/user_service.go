@@ -66,7 +66,7 @@ func (s *userservice) ValidateRegistration(user *models.User) error {
 // Validate Login `User`
 func (s *userservice) ValidateLogin(user *models.User) error {
 	// Check if user exists in the database
-	foundUser, err := s.userrepository.GetUser(user.Email, user)
+	foundUser, err := s.userrepository.GetUserByEmail(user.Email, user)
 	if err != nil {
 		return errors.New("user not found")
 	}
