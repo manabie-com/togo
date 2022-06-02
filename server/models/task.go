@@ -9,5 +9,5 @@ type Task struct {
 	Title       string    `json:"title,omitempty" bson:"title,omitempty"`
 	Description string    `json:"description,omitempty" bson:"description,omitempty"`
 	CreatedAt   time.Time `json:"created_at,omitempty" bson:"created_at,omitempty"`
-	CreatedBy   string    `json:"user_id,omitempty" bson:"user_ids,omitempty"`
+	CreatedBy   string    `json:"created_by,omitempty" bson:"created_by,omitempty"`
 }
