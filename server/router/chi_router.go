@@ -1,32 +1,36 @@
 package router
 
 import (
-	"fmt"
 	"net/http"
+
+	"togo/controller"
+	"togo/middleware"
 
 	"github.com/go-chi/chi/v5"
 )
 
-type chiRouter struct{}
-
-var (
-	chiDispatcher = chi.NewRouter()
-)
-
-func NewChiRouter() Router {
-	return &chiRouter{}
+type routes struct {
+	Tasks controller.TaskController
+	Users controller.UserController
 }
 
-func (r *chiRouter) GET(uri string, f func(w http.ResponseWriter, r *http.Request)) {
-	chiDispatcher.Get(uri, f)
+func NewChiRouter(tasks controller.TaskController, users controller.UserController) RouterInterface {
+	return &routes{
+		Tasks: tasks,
+		Users: users,
+	}
 }
-func (r *chiRouter) POST(uri string, f func(w http.ResponseWriter, r *http.Request)) {
-	chiDispatcher.Post(uri, f)
-}
-func (r *chiRouter) PUT(uri string, f func(w http.ResponseWriter, r *http.Request)) {
-	chiDispatcher.Put(uri, f)
-}
-func (r *chiRouter) SERVE(port string) {
-	port = fmt.Sprintf(":%v", port)
-	http.ListenAndServe(port, chiDispatcher)
+
+func (route *routes) Router() http.Handler {
+	r := chi.NewRouter()
+
+	r.Post("/registeration", route.Users.Register)
+	r.Put("/login", route.Users.Login)
+
+	r.Route("/tasks", func(r chi.Router) {
+		r.Use(middleware.AuthenticateRequest)
+		r.Post("/", route.Tasks.CreateTask)
+	})
+
+	return r
 }

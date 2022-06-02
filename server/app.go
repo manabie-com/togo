@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"net/http"
 	"os"
 
 	lr "togo/utils/logger"
@@ -23,18 +25,14 @@ var (
 	userservice    service.UserService       = service.NewUserService(userrepository)
 	taskController controller.TaskController = controller.NewTaskController(taskservice)
 	userController controller.UserController = controller.NewUserController(userservice)
-	httpRouter     router.Router             = router.NewChiRouter()
+	httpRouter     router.RouterInterface    = router.NewChiRouter(taskController, userController)
 )
 
 func main() {
 	// Set logging
 	logger := lr.NewLogger(os.Getenv("LOG_LEVEL"))
-	port := os.Getenv("PORT")
-
-	httpRouter.POST("/tasks", taskController.CreateTask)
-	httpRouter.POST("/register", userController.Register)
-	httpRouter.PUT("/login", userController.Login)
+	port := fmt.Sprintf(":%v", os.Getenv("PORT"))
 
 	logger.Info().Msgf("Serving at %v", port)
-	httpRouter.SERVE(port)
+	http.ListenAndServe(port, httpRouter.Router())
 }
