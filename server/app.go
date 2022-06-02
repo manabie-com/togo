@@ -21,7 +21,7 @@ var (
 	connection     *mongo.Client             = config.ConnectMongo(os.Getenv("DATABASE_URI"), os.Getenv("DATABASE_PORT"))
 	taskrepository taskRepo.TaskRepository   = taskRepo.NewMongoRepository(connection)
 	userrepository userRepo.UserRepository   = userRepo.NewMongoRepository(connection)
-	taskservice    service.TaskService       = service.NewTaskService(taskrepository)
+	taskservice    service.TaskService       = service.NewTaskService(taskrepository, userrepository)
 	userservice    service.UserService       = service.NewUserService(userrepository)
 	taskController controller.TaskController = controller.NewTaskController(taskservice)
 	userController controller.UserController = controller.NewUserController(userservice)
