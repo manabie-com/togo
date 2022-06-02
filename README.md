@@ -85,3 +85,5 @@ The main benefit of this approach is to divide the application by layers to enco
 - Improve Task Validation by calculating the remaining number of task a user is allowed per day.
 - Add more unit tests
 - Include logger in all the layers via Dependency Injection
+
+#### Total Working Time: 13 hours
