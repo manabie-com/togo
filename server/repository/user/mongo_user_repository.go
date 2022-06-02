@@ -52,13 +52,26 @@ func (db *mongodb) Login(user *models.User) error {
 	}
 }
 
-// Get existing user by Email
-func (db *mongodb) GetUser(email string, user *models.User) (models.User, error) {
+// Get existing user by Username
+func (db *mongodb) GetUserByEmail(email string, user *models.User) (models.User, error) {
 	collection := db.conn.Database(os.Getenv("DATABASE_NAME")).Collection("user")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	var found models.User
 	err := collection.FindOne(ctx, bson.M{"email": email}).Decode(&found)
+	if err != nil {
+		return found, err
+	}
+	return found, nil
+}
+
+// Get existing user by Token
+func (db *mongodb) GetUserByToken(token string) (models.User, error) {
+	collection := db.conn.Database(os.Getenv("DATABASE_NAME")).Collection("user")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	var found models.User
+	err := collection.FindOne(ctx, bson.M{"token": token}).Decode(&found)
 	if err != nil {
 		return found, err
 	}
