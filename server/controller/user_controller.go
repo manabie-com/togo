@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"time"
-	"togo/controller/response"
+	"togo/common/response"
 	"togo/models"
 	"togo/service"
 )

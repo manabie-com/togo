@@ -3,7 +3,7 @@ package controller
 import (
 	"encoding/json"
 	"net/http"
-	"togo/controller/response"
+	"togo/common/response"
 	"togo/models"
 	"togo/service"
 )
