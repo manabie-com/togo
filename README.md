@@ -83,5 +83,5 @@ The main benefit of this approach is to divide the application by layers to enco
 
 - Authenticate POST request for `CreateTask` by using custom middleware
 - Improve Task Validation by calculating the remaining number of task a user is allowed per day.
-- Implement unit tests by using **testify**
+- Add more unit tests
 - Include logger in all the layers via Dependency Injection
