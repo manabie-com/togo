@@ -17,3 +17,8 @@
 out/
 
 .idea
+
+.vscode/
+node_modules/
+logs
+*.log
