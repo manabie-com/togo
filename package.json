@@ -1,0 +1,35 @@
+{
+  "name": "togo",
+  "version": "1.0.0",
+  "description": "This is the assignment for backend position",
+  "main": "server.js",
+  "scripts": {
+    "start": "SET NODE_ENV=dev && node server.js",
+    "test": "mocha --exit --colors --parallel 'test/**/*.js'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quancntt05/togo.git"
+  },
+  "author": "Quan Le",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/quancntt05/togo/issues"
+  },
+  "homepage": "https://github.com/quancntt05/togo#readme",
+  "dependencies": {
+    "async-mutex": "^0.3.2",
+    "crypto-js": "^4.1.1",
+    "express": "^4.18.1",
+    "jsonwebtoken": "^8.5.1",
+    "moment": "^2.29.3",
+    "mongoose": "^6.3.5",
+    "sinon": "^14.0.0"
+  },
+  "devDependencies": {
+    "chai": "^4.3.6",
+    "chai-http": "^4.3.0",
+    "eslint": "^8.16.0",
+    "mocha": "^10.0.0"
+  }
+}
