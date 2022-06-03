@@ -87,12 +87,14 @@ func (s *taskservice) GetUser(token string, task *models.Task) error {
 func (s *taskservice) GetLimit(token string) error {
 	// Get current date
 	now := time.Now()
+	year, month, day := now.Date()
+	today := time.Date(year, month, day, 0, 0, 0, 0, now.Location())
 
 	// Get `User` limit
 	user, _ := s.userrepository.GetUserByToken(token)
 
-	// Get number of `Tasks` by `User` by current date
-	count, err := s.taskrepository.CountTask(user.ID, now)
+	// Get `User` tasks by current date
+	count, err := s.taskrepository.CountTask(user.ID, today)
 	if err != nil {
 		return err
 	}

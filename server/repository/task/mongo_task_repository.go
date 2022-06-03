@@ -39,12 +39,9 @@ func (db *mongodb) CountTask(userid string, now time.Time) (int, error) {
 	defer cancel()
 
 	// Define filter
-	year, month, day := now.Date()
-	today := time.Date(year, month, day, 0, 0, 0, 0, now.Location())
-	log.Println(userid)
 	filter := bson.D{
 		{"created_by", userid},
-		{"created_at", bson.D{{"$gte", today}}},
+		{"created_at", bson.D{{"$gte", now}}},
 	}
 
 	cursor, err := collection.Find(ctx, filter)
@@ -52,11 +49,9 @@ func (db *mongodb) CountTask(userid string, now time.Time) (int, error) {
 		return 0, err
 	}
 	var found []models.Task
-	// var found []bson.M
 	if err := cursor.All(context.TODO(), &found); err != nil {
 		log.Fatal(err)
 	}
 
-	log.Println(len(found))
 	return len(found), nil
 }
