@@ -25,7 +25,7 @@ func (route *routes) Router() http.Handler {
 	r := chi.NewRouter()
 
 	r.Post("/registration", route.Users.Register)
-	r.Put("/login", route.Users.Login)
+	r.Post("/login", route.Users.Login)
 
 	r.Route("/tasks", func(r chi.Router) {
 		r.Use(middleware.AuthenticateRequest)
