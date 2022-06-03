@@ -79,7 +79,7 @@ func (c *usercontroller) Register(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response.SuccessResponse{
 		Status: "Success",
 		Code:   http.StatusOK,
-		Data:   user.Email,
+		Data:   map[string]int{"tasks per day": user.Limit},
 	})
 }
 
