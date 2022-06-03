@@ -13,13 +13,3 @@ maintainable
   d. What do you love about your solution?
   e. What else do you want us to know about however you do not have
 enough time to complete?
-
-
-
-* Create a user model (id, daily_limit, created_at, updated_at)
-* Create a task model (id, user_id, title, done, created_at, updated_at)
-* Limitations
-    - Task is only valid for current day. User will not be able to create task for future dates
-    - We are not paginating dynamodb queries so max of 1mb of data will be received when getting the count of tasks for a given date.
-
-POST /users/{userId}/tasks

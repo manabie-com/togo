@@ -4,7 +4,10 @@ import (
 	"time"
 
 	"github.com/jssoriao/todo-go/storage"
+	"github.com/jssoriao/todo-go/storage/dynamodb"
 )
+
+var _ TasksStore = (*dynamodb.Storage)(nil)
 
 type Task struct {
 	ID      string
