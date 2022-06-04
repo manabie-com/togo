@@ -1,0 +1,5 @@
+{
+  "name": "ToDoGo",
+  "region": "ap-southeast-1",
+  "main": "stacks/index.ts"
+}

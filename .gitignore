@@ -17,3 +17,7 @@
 out/
 
 .idea
+
+.sst
+.build
+node_modules
