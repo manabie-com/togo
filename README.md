@@ -67,6 +67,44 @@ You should have received a response such as this:
 }
 ```
 
+### III. Run sample test
+
+In a separater terminal, head to `service` folder
+
+```Shell
+$ cd ~/togo/server/service
+```
+
+Run the following command to test the code
+
+```Shell
+$ go test -v
+```
+
+You will see the following output
+
+```Shell
+=== RUN   TestValidateEmptyTask
+--- PASS: TestValidateEmptyTask (0.00s)
+=== RUN   TestValidateEmptyTaskTitle
+--- PASS: TestValidateEmptyTaskTitle (0.00s)
+=== RUN   TestCreateTask
+    task_service_test.go:78: PASS:      CreateTask()
+--- PASS: TestCreateTask (0.00s)
+=== RUN   TestGetLimitNoToken
+--- PASS: TestGetLimitNoToken (0.00s)
+=== RUN   TestValidateRegistration
+--- PASS: TestValidateRegistration (0.00s)
+=== RUN   TestValidateLogin
+--- PASS: TestValidateLogin (2.70s)
+=== RUN   TestValidateLoginIncorrectPassword
+--- PASS: TestValidateLoginIncorrectPassword (2.55s)
+=== RUN   TestGenerateJWT
+--- PASS: TestGenerateJWT (0.00s)
+PASS
+ok      togo/service    5.265s
+```
+
 ## Solution
 
 ### Deployment: Docker
