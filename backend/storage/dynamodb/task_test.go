@@ -96,6 +96,9 @@ func TestCreateTask(t *testing.T) {
 	if diff := cmp.Diff(err, nil); diff != "" {
 		t.Errorf("error mismatch %s", diff)
 	}
+	if len(task.ID) != 12 {
+		t.Error("length of ID should be 12")
+	}
 	v, ok := table[task.UserID]
 	if diff := cmp.Diff(ok, true); diff != "" {
 		t.Error("partitionKey not found in table")
