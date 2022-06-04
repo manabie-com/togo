@@ -32,8 +32,6 @@ func Handler(request events.APIGatewayV2HTTPRequest) (*events.APIGatewayProxyRes
 		}
 	)
 
-	// TODO: Add validation
-
 	var payload RequestBody
 	if err := json.Unmarshal([]byte(request.Body), &payload); err != nil {
 		return &events.APIGatewayProxyResponse{
