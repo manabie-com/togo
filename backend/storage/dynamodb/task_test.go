@@ -2,6 +2,7 @@ package dynamodb_test
 
 import (
 	"context"
+	"errors"
 	"log"
 	"testing"
 	"time"
@@ -51,7 +52,34 @@ func (m taskMockDynamoDBAPI) PutItem(ctx context.Context, params *dynamodb.PutIt
 	return &dynamodb.PutItemOutput{}, nil
 }
 
+type QueryExprAttrValues struct {
+	UserID string `dynamodbav:":userID"`
+	Date1  string `dynamodbav:":dt1"`
+	Date2  string `dynamodbav:":dt2"`
+}
+
 func (m taskMockDynamoDBAPI) Query(ctx context.Context, params *dynamodb.QueryInput, optFns ...func(*dynamodb.Options)) (*dynamodb.QueryOutput, error) {
+	// This will only mock the response to the CountTasksForTheDay storage method
+	var exprAttrValues QueryExprAttrValues
+	err := attributevalue.UnmarshalMap(params.ExpressionAttributeValues, &exprAttrValues)
+	if err != nil {
+		log.Fatal(err)
+	}
+	switch exprAttrValues.UserID {
+	case "4":
+		tasks := []storage.Task{{}, {}, {}, {}}
+		var items []map[string]types.AttributeValue
+		for i := range tasks {
+			item, err := attributevalue.MarshalMap(tasks[i])
+			if err != nil {
+				log.Fatal(err)
+			}
+			items = append(items, item)
+		}
+		return &dynamodb.QueryOutput{Items: items}, nil
+	case "error":
+		return nil, errors.New("non-nil error")
+	}
 	return &dynamodb.QueryOutput{}, nil
 }
 
@@ -197,6 +225,48 @@ func TestGetTask(t *testing.T) {
 		}
 		if diff := cmp.Diff(retrievedTask, test.want, cmpCompare); diff != "" {
 			t.Errorf("result mismatch %s %s", test.name, diff)
+		}
+	}
+}
+
+func TestCountTasksForTheDay(t *testing.T) {
+	tests := []struct {
+		name   string
+		req    string
+		want   int
+		hasErr bool
+	}{
+		{
+			name:   "CountIs4",
+			req:    "4",
+			want:   4,
+			hasErr: false,
+		},
+		{
+			name:   "CountIs0",
+			req:    "0",
+			want:   0,
+			hasErr: false,
+		},
+		{
+			name:   "HasError",
+			req:    "error",
+			want:   0,
+			hasErr: true,
+		},
+	}
+
+	table := map[string][]map[string]types.AttributeValue{}
+	client := taskMockDynamoDBAPI{table}
+	store := ddb.NewStorage(client)
+
+	for _, test := range tests {
+		count, err := store.CountTasksForTheDay(test.req, time.Now())
+		if test.hasErr != (err != nil) {
+			t.Errorf("has error mismatch, actual %t: expected %t", err != nil, test.hasErr)
+		}
+		if count != test.want {
+			t.Errorf("result mismatch, actual %d: expected %d", count, test.want)
 		}
 	}
 }
