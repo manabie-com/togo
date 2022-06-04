@@ -73,7 +73,7 @@ func (db *mongodb) GetUserByToken(token string) (models.User, error) {
 	var found models.User
 	err := collection.FindOne(ctx, bson.M{"token": token}).Decode(&found)
 	if err != nil {
-		return found, err
+		return found, errors.New("user not found")
 	}
 	return found, nil
 }

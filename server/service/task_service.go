@@ -85,13 +85,21 @@ func (s *taskservice) GetUser(token string, task *models.Task) error {
 
 // Retrieve user by token
 func (s *taskservice) GetLimit(token string) error {
+	// Check if token exist
+	if token == "" {
+		return errors.New("token is empty")
+	}
+
 	// Get current date
 	now := time.Now()
 	year, month, day := now.Date()
 	today := time.Date(year, month, day, 0, 0, 0, 0, now.Location())
 
 	// Get `User` limit
-	user, _ := s.userrepository.GetUserByToken(token)
+	user, err := s.userrepository.GetUserByToken(token)
+	if err != nil {
+		return err
+	}
 
 	// Get `User` tasks by current date
 	count, err := s.taskrepository.CountTask(user.ID, today)
