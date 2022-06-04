@@ -41,7 +41,10 @@ func (m userMockDynamoDBAPI) GetItem(ctx context.Context, params *dynamodb.GetIt
 	if err != nil {
 		log.Fatal(err)
 	}
-	item := m.table[id]
+	item := make(map[string]types.AttributeValue)
+	for key, value := range m.table[id] {
+		item[key] = value
+	}
 	return &dynamodb.GetItemOutput{Item: item}, nil
 }
 
