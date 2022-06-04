@@ -91,9 +91,10 @@ The **Repository** layer is responsible for the data access or the interaction w
 
 The main benefit of this approach is to divide the application by layers to encourage long-term maintainability of the codebase. By abstracting each layer from the other, you will be able to easily test and/or to easily refactor the code. For example, since the Repository layer is abstracted from the Service layer, the Service layer does not have to worry which database I use--in this case, MongoDB.
 
-## TODO
+## Things to improve
 
-- Add more unit tests
-- Include logger in all the layers via Dependency Injection
+- Follow file structure best practices
+- Learn about proper logging
+- implement CRUD
 
-#### Total Working Time: 19 hours
+#### Total Working Time: 22 hours
