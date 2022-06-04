@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  server:
+    build: ./server
+    image: togo:latest
+    container_name: togo-server
+    env_file:
+      - .env
+    ports:
+      - ${PORT}:${PORT}
+    volumes:
+      - ./server:/app
+    depends_on:
+      - mongodb-togo
+  mongodb-togo:
+    image: mongo:latest
+    container_name: mongodb-togo
+    ports:
+      - ${DATABASE_PORT}:${DATABASE_PORT}
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
+     

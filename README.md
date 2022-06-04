@@ -1,30 +1,138 @@
-### Requirements
+# Togo
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+Golang application which accepts a todo task and records it if the user has not yet reached the limited number of tasks per day.
 
-### Notes
+## Usage
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+### I. Run server
 
-### How to submit your solution?
+Make sure you have Docker installed, otherwise you may download it from this [link](https://www.docker.com/products/docker-desktop/).
 
-- Fork this repo and show us your development progress via a PR
+If you already have Docker, simply follow the steps to deploy the code.
 
-### Interesting facts about Manabie
+1. Clone the repository
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+```Shell
+$ git clone git@github.com:jrpespinas/togo.git
+```
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+2. Change directory
+
+```Shell
+$ cd togo
+```
+
+3. Run docker compose to deploy the application
+
+```Shell
+$ docker compose up
+```
+
+By now you must be able to see Docker running the containers after building the images.
+
+NOTE: For the sake of this exam, I included the `.env` file in my commits for you to observe successful results when testing and making a simple post request to the application. However, it is bad practice to commit the environment variables to the code repository.
+
+### II. Sample Request
+
+1. You need to register a new user to create tasks.
+
+```Shell
+$ curl -X POST http://localhost:8080/registration -H 'Content-Type: application/json' -d '{"email":"admin@gmail.com","password":"password"}'
+```
+
+2. Login to start your session
+
+```Shell
+$ curl -X POST http://localhost:8080/login -H 'Content-Type: application/json' -d '{"email":"admin@gmail.com","password":"password"}'
+```
+
+Finally, make a simple post request to create a task.
+
+```Shell
+$ curl -X POST http://localhost:8080/tasks -H 'Content-Type: application/json' -d '{"title":"sample title","description":"sample description"}'
+```
+
+You should have received a response such as this:
+
+```json
+{
+  "status": "Success",
+  "code": 200,
+  "message": {
+    "id": "cabhte81hrh6mgum9d7g",
+    "title": "sample title",
+    "description": "sample description",
+    "created_at": "2022-06-01T08:09:29.0564148Z"
+  }
+}
+```
+
+### III. Run sample test
+
+In a separater terminal, head to `service` folder
+
+```Shell
+$ cd ~/togo/server/service
+```
+
+Run the following command to test the code
+
+```Shell
+$ go test -v
+```
+
+You will see the following output
+
+```Shell
+=== RUN   TestValidateEmptyTask
+--- PASS: TestValidateEmptyTask (0.00s)
+=== RUN   TestValidateEmptyTaskTitle
+--- PASS: TestValidateEmptyTaskTitle (0.00s)
+=== RUN   TestCreateTask
+    task_service_test.go:78: PASS:      CreateTask()
+--- PASS: TestCreateTask (0.00s)
+=== RUN   TestGetLimitNoToken
+--- PASS: TestGetLimitNoToken (0.00s)
+=== RUN   TestValidateRegistration
+--- PASS: TestValidateRegistration (0.00s)
+=== RUN   TestValidateLogin
+--- PASS: TestValidateLogin (2.70s)
+=== RUN   TestValidateLoginIncorrectPassword
+--- PASS: TestValidateLoginIncorrectPassword (2.55s)
+=== RUN   TestGenerateJWT
+--- PASS: TestGenerateJWT (0.00s)
+PASS
+ok      togo/service    5.265s
+```
+
+## Solution
+
+### Deployment: Docker
+
+This approach deploys the Golang Backend via **Docker**. Subsequently, I am able to utilize `docker compose` to run a MongoDB container which resolves compatibility issues.
+
+### Design Pattern: Repository Pattern
+
+This approach uses the **Repository Pattern**.
+
+> Repositories are classes or components that encapsulate the logic required to access data sources. They centralize common data access functionality, providing better maintainability and decoupling the infrastructure or technology used to access databases from the domain model layer.
+
+\- [Microsoft Documentation](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design)
+
+This pattern is usually made up of three main layers: **Repository**, **Service**, and **Controller**.
+
+The **Controller** layer is responsible for handling the request and for returning the response.
+
+The **Service** layer is responsible for the business logic. This is the layer in which you manipulate the data. In this case, this is where the id and the JWT token is generated. This is also where the validation of tasks and users occur.
+
+The **Repository** layer is responsible for the data access or the interaction with the database.
+
+The main benefit of this approach is to divide the application by layers to encourage long-term maintainability of the codebase. By abstracting each layer from the other, you will be able to easily test and/or to easily refactor the code. For example, since the Repository layer is abstracted from the Service layer, the Service layer does not have to worry which database I use--in this case, MongoDB.
+
+## Things to improve
+
+- Follow file structure best practices
+- Learn about proper logging
+- implement CRUD
+
+#### Total Working Time: 22 hours
