@@ -119,3 +119,81 @@ func TestCreateTask(t *testing.T) {
 		t.Errorf("result mismatch %s", diff)
 	}
 }
+
+func TestGetTask(t *testing.T) {
+	timestamp := time.Now()
+	userId := "userId1"
+	id := "id1"
+	task := storage.Task{
+		UserID:  userId,
+		ID:      id,
+		Title:   "title1",
+		Done:    false,
+		DueDate: timestamp.Unix(),
+		Created: timestamp,
+		Updated: timestamp,
+	}
+	item, _ := attributevalue.MarshalMap(task)
+	table := make(map[string][]map[string]types.AttributeValue)
+	table[userId] = []map[string]types.AttributeValue{item}
+	client := taskMockDynamoDBAPI{table}
+	store := ddb.NewStorage(client)
+
+	tests := []struct {
+		name string
+		req  struct {
+			userId string
+			id     string
+		}
+		want    *storage.Task
+		wantErr error
+	}{
+		{
+			name: "Found",
+			req: struct {
+				userId string
+				id     string
+			}{userId, id},
+			want:    &task,
+			wantErr: nil,
+		},
+		{
+			name: "Not Found Partition Key",
+			req: struct {
+				userId string
+				id     string
+			}{"notFound", "id"},
+			want:    nil,
+			wantErr: nil,
+		},
+		{
+			name: "Not Found Sort Key",
+			req: struct {
+				userId string
+				id     string
+			}{userId, "notFound"},
+			want:    nil,
+			wantErr: nil,
+		},
+	}
+
+	cmpCompare := cmp.Comparer(func(actual, want *storage.Task) bool {
+		if want == nil {
+			if actual != nil {
+				return false
+			}
+			return true
+		}
+		return cmp.Equal(*actual, *want)
+	})
+
+	for _, test := range tests {
+		retrievedTask, err := store.GetTask(test.req.userId, test.req.id)
+		if diff := cmp.Diff(err, test.wantErr); diff != "" {
+			t.Errorf("error mismatch %s", diff)
+		}
+		if diff := cmp.Diff(retrievedTask, test.want, cmpCompare); diff != "" {
+			t.Errorf("result mismatch %s %s", test.name, diff)
+		}
+	}
+}
