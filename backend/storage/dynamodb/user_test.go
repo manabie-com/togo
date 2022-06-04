@@ -63,6 +63,9 @@ func TestCreateUser(t *testing.T) {
 	if diff := cmp.Diff(err, nil); diff != "" {
 		t.Errorf("error mismatch %s", diff)
 	}
+	if len(user.ID) != 21 {
+		t.Error("length of ID should be 21")
+	}
 	v, ok := table[user.ID]
 	if diff := cmp.Diff(ok, true); diff != "" {
 		t.Error("user not found in table")
@@ -110,14 +113,14 @@ func TestGetUser(t *testing.T) {
 		},
 	}
 
-	cmpCompare := cmp.Comparer(func(actual, want *storage.User) bool {
-		if want == nil {
-			if actual != nil {
-				return false
+	cmpCompare := cmp.Comparer(func(x, y *storage.User) bool {
+		if x == nil || y == nil {
+			if x == nil && y == nil {
+				return true
 			}
-			return true
+			return false
 		}
-		return cmp.Equal(*actual, *want)
+		return cmp.Equal(*x, *y)
 	})
 
 	for _, test := range tests {
