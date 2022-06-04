@@ -41,28 +41,34 @@ func (m userMockDynamoDBAPI) GetItem(ctx context.Context, params *dynamodb.GetIt
 	if err != nil {
 		log.Fatal(err)
 	}
-	var item map[string]types.AttributeValue
-	var ok bool
-	if item, ok = m.table[id]; !ok {
-		item = nil
-	}
+	item := m.table[id]
 	return &dynamodb.GetItemOutput{Item: item}, nil
 }
 
 func TestCreateUser(t *testing.T) {
+	// cmpCompare := cmp.Comparer(func(x, y storage.User) bool {
+	// 	return x.ID == y.ID &&
+	// 		x.DailyLimit == y.DailyLimit &&
+	// 		x.Created.Sub(y.Created) < time.Duration(1*time.Millisecond)
+	// })
+
 	table := map[string]map[string]types.AttributeValue{}
 	client := userMockDynamoDBAPI{table}
 	store := ddb.NewStorage(client)
-	t.Run("UserCreated", func(t *testing.T) {
-		user, err := store.CreateUser(storage.User{DailyLimit: 10})
-		if diff := cmp.Diff(err, nil); diff != "" {
-			t.Errorf("error mismatch %s", diff)
-		}
-		_, ok := table[user.ID]
-		if diff := cmp.Diff(ok, true); diff != "" {
-			t.Errorf("contains mismatch %s", diff)
-		}
-	})
+
+	user, err := store.CreateUser(storage.User{DailyLimit: 10})
+	if diff := cmp.Diff(err, nil); diff != "" {
+		t.Errorf("error mismatch %s", diff)
+	}
+	v, ok := table[user.ID]
+	if diff := cmp.Diff(ok, true); diff != "" {
+		t.Error("user not found in table")
+	}
+	var _user storage.User
+	attributevalue.UnmarshalMap(v, &_user)
+	if diff := cmp.Diff(_user, user); diff != "" {
+		t.Errorf("result mismatch %s", diff)
+	}
 }
 
 func TestGetUser(t *testing.T) {
@@ -80,13 +86,44 @@ func TestGetUser(t *testing.T) {
 	}
 	client := userMockDynamoDBAPI{table}
 	store := ddb.NewStorage(client)
-	t.Run("UserRetrieved", func(t *testing.T) {
-		retrievedUser, err := store.GetUser(id)
-		if diff := cmp.Diff(err, nil); diff != "" {
+
+	tests := []struct {
+		name    string
+		req     string
+		want    *storage.User
+		wantErr error
+	}{
+		{
+			name:    "Found",
+			req:     id,
+			want:    &user,
+			wantErr: nil,
+		},
+		{
+			name:    "Not Found",
+			req:     "notFound",
+			want:    nil,
+			wantErr: nil,
+		},
+	}
+
+	cmpCompare := cmp.Comparer(func(actual, want *storage.User) bool {
+		if want == nil {
+			if actual != nil {
+				return false
+			}
+			return true
+		}
+		return cmp.Equal(*actual, *want)
+	})
+
+	for _, test := range tests {
+		retrievedUser, err := store.GetUser(test.req)
+		if diff := cmp.Diff(err, test.wantErr); diff != "" {
 			t.Errorf("error mismatch %s", diff)
 		}
-		if diff := cmp.Diff(retrievedUser.ID, user.ID); diff != "" {
-			t.Errorf("id mismatch %s", diff)
+		if diff := cmp.Diff(retrievedUser, test.want, cmpCompare); diff != "" {
+			t.Errorf("result mismatch %s %s", test.name, diff)
 		}
-	})
+	}
 }
