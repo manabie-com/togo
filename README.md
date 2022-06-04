@@ -34,7 +34,19 @@ NOTE: For the sake of this exam, I included the `.env` file in my commits for yo
 
 ### II. Sample Request
 
-Once the server is running, open a new terminal make a simple post request to create a task.
+1. You need to register a new user to create tasks.
+
+```Shell
+$ curl -X POST http://localhost:8080/registration -H 'Content-Type: application/json' -d '{"email":"admin@gmail.com","password":"password"}'
+```
+
+2. Login to start your session
+
+```Shell
+$ curl -X POST http://localhost:8080/login -H 'Content-Type: application/json' -d '{"email":"admin@gmail.com","password":"password"}'
+```
+
+Finally, make a simple post request to create a task.
 
 ```Shell
 $ curl -X POST http://localhost:8080/tasks -H 'Content-Type: application/json' -d '{"title":"sample title","description":"sample description"}'
