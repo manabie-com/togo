@@ -38,14 +38,32 @@ func Handler(request events.APIGatewayV2HTTPRequest) (*events.APIGatewayProxyRes
 		}
 	)
 
-	// TODO: Add validation
-
 	var payload RequestBody
 	if err := json.Unmarshal([]byte(request.Body), &payload); err != nil {
 		return &events.APIGatewayProxyResponse{
 			StatusCode: 400,
 			Headers:    headers,
 			Body:       "\"message\": \"Invalid request body\"",
+		}, nil
+	}
+
+	// Payload title must be minimum of 1 character and maximum of 200 characters
+	lenTitle := len(payload.Title)
+	if lenTitle < 1 || lenTitle > 200 {
+		return &events.APIGatewayProxyResponse{
+			StatusCode: 400,
+			Headers:    headers,
+			Body:       "\"message\": \"Title character length out of range [1, 200]\"",
+		}, nil
+	}
+	// Due Date must be today or a future date
+	y, m, d := time.Now().Date()
+	today := time.Date(y, m, d, 0, 0, 0, 0, time.Now().Location())
+	if payload.DueDate.Before(today) {
+		return &events.APIGatewayProxyResponse{
+			StatusCode: 400,
+			Headers:    headers,
+			Body:       "\"message\": \"Due date cannot be set to a past date\"",
 		}, nil
 	}
 

@@ -43,6 +43,14 @@ func Handler(request events.APIGatewayV2HTTPRequest) (*events.APIGatewayProxyRes
 		}, nil
 	}
 
+	if payload.DailyLimit < 1 || payload.DailyLimit > 20 {
+		return &events.APIGatewayProxyResponse{
+			StatusCode: 400,
+			Headers:    headers,
+			Body:       "\"message\": \"Daily limit must be in the range [1, 20]\"",
+		}, nil
+	}
+
 	store := ddb.NewStorage(ddbClient)
 	usersSvc, err := users.NewHandler(store)
 	if err != nil {

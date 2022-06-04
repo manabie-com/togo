@@ -72,7 +72,7 @@ The services folder also contains reusable code. If I decide to use a golang lib
 
 ## What else do you want us to know about however you do not have enough time to complete?
 
-I wasn't able to add input validation in the lambda handlers nor as middlewares but this is a priority addition.
+I'm thinking of improving validation like using jsonschema validator library.
 
 The logging is also lacking. Monitoring is a very important part of applications so it would be great if there is tracing, correlation ids, and metrics added in this application.
 
