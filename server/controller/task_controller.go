@@ -6,6 +6,8 @@ import (
 	"togo/common/response"
 	"togo/models"
 	"togo/service"
+
+	"github.com/rs/zerolog"
 )
 
 // Define an interface for the task controller
@@ -19,13 +21,15 @@ type TaskController interface {
 // the `Task` Service (business logic for `Task`) attribute
 type taskcontroller struct {
 	taskservice service.TaskService
+	logger      zerolog.Logger
 }
 
 // Define a Constructor
 // Dependency Injection for `Task` Controller
-func NewTaskController(service service.TaskService) TaskController {
+func NewTaskController(service service.TaskService, logger zerolog.Logger) TaskController {
 	return &taskcontroller{
 		taskservice: service,
+		logger:      logger,
 	}
 }
 

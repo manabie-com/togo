@@ -7,6 +7,8 @@ import (
 	"togo/common/response"
 	"togo/models"
 	"togo/service"
+
+	"github.com/rs/zerolog"
 )
 
 // Define an interface for the `User` controller
@@ -23,13 +25,15 @@ type UserController interface {
 // the `User` Service (business logic for `User`) attribute
 type usercontroller struct {
 	userservice service.UserService
+	logger      zerolog.Logger
 }
 
 // Define a Constructor
 // Dependency Injection for `User` Controller
-func NewUserController(service service.UserService) UserController {
+func NewUserController(service service.UserService, logger zerolog.Logger) UserController {
 	return &usercontroller{
 		userservice: service,
+		logger:      logger,
 	}
 }
 
@@ -41,8 +45,10 @@ func (c *usercontroller) Register(w http.ResponseWriter, r *http.Request) {
 
 	// Get POST body
 	var user models.User
+	c.logger.Info().Msg("parsing post request")
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
+		c.logger.Info().Msgf("parsing unsuccessful: %v", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(response.ErrorResponse{
 			Status:  "Fail",
@@ -53,8 +59,10 @@ func (c *usercontroller) Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Validate User
+	c.logger.Info().Msg("validating registration")
 	err = c.userservice.ValidateRegistration(&user)
 	if err != nil {
+		c.logger.Info().Msgf("validating registration failed: %v", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(response.ErrorResponse{
 			Status:  "Fail",
@@ -65,8 +73,10 @@ func (c *usercontroller) Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Register User
+	c.logger.Info().Msg("registering new user")
 	_, err = c.userservice.Register(&user)
 	if err != nil {
+		c.logger.Info().Msgf("registration failed: %v", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(response.ErrorResponse{
 			Status:  "Fail",
@@ -75,6 +85,7 @@ func (c *usercontroller) Register(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+	c.logger.Info().Msg("registration successful")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response.SuccessResponse{
 		Status: "Success",
@@ -91,8 +102,10 @@ func (c *usercontroller) Login(w http.ResponseWriter, r *http.Request) {
 
 	// Get POST body
 	var user models.User
+	c.logger.Info().Msg("parsing post request")
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
+		c.logger.Info().Msgf("parsing unsuccessful: %v", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(response.ErrorResponse{
 			Status:  "Fail",
@@ -103,8 +116,10 @@ func (c *usercontroller) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Validate User Login
+	c.logger.Info().Msg("validating login unsuccessful")
 	err = c.userservice.ValidateLogin(&user)
 	if err != nil {
+		c.logger.Info().Msgf("validating login failed: %v", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(response.ErrorResponse{
 			Status:  "Fail",
@@ -119,8 +134,10 @@ func (c *usercontroller) Login(w http.ResponseWriter, r *http.Request) {
 
 	// Generate JWT token
 	// Return token string to set Cookie
+	c.logger.Info().Msg("generating jwt token")
 	token, err := c.userservice.GenerateJWT(&user, expiration)
 	if err != nil {
+		c.logger.Info().Msgf("generating jwt token failed: %v", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(response.ErrorResponse{
 			Status:  "Fail",
@@ -131,6 +148,7 @@ func (c *usercontroller) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Set cookie
+	c.logger.Info().Msg("setting http-only cookie")
 	http.SetCookie(w,
 		&http.Cookie{
 			Name:     "token",
@@ -140,6 +158,7 @@ func (c *usercontroller) Login(w http.ResponseWriter, r *http.Request) {
 		})
 
 	// Login
+	c.logger.Info().Msg("login successful")
 	c.userservice.Login(&user)
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response.SuccessResponse{
