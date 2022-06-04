@@ -14,7 +14,7 @@ import (
 type mockTasksStore struct{}
 
 func (m mockTasksStore) CreateTask(task storage.Task) (storage.Task, error) {
-	timestamp := time.Unix(task.DueDate, 0)
+	timestamp := time.Now()
 	task.ID = "taskId"
 	task.Created = timestamp
 	task.Updated = timestamp
@@ -91,16 +91,6 @@ func TestCreateTask(t *testing.T) {
 		return x.Error() == y.Error()
 	})
 
-	resultComparer := cmp.Comparer(func(x, y *tasks.Task) bool {
-		if x == nil || y == nil {
-			if x == nil && y == nil {
-				return true
-			}
-			return false
-		}
-		return cmp.Equal(*x, *y)
-	})
-
 	store := mockTasksStore{}
 	h, _ := tasks.NewHandler(store)
 	for _, test := range tests {
@@ -108,7 +98,7 @@ func TestCreateTask(t *testing.T) {
 		if diff := cmp.Diff(err, test.wantErr, errComparer); diff != "" {
 			t.Errorf("error mismatch %s", diff)
 		}
-		if diff := cmp.Diff(task, test.want, resultComparer); diff != "" {
+		if diff := cmp.Diff(task, test.want); diff != "" {
 			t.Errorf("result mismatch %s", diff)
 		}
 	}
