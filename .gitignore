@@ -17,3 +17,7 @@
 out/
 
 .idea
+
+# prevent file cython system
+*.pyc
+
