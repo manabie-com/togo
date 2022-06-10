@@ -2,9 +2,9 @@ package mysql
 
 import (
 	"errors"
-	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"os"
 	"togo/common"
 )
@@ -30,7 +30,9 @@ func (s *mySQL) Run() error {
 		return err
 	}
 
-	db, err := gorm.Open(mysql.Open(s.uri))
+	db, err := gorm.Open(mysql.Open(s.uri), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
 	if err != nil {
 		return err
 	}
@@ -46,25 +48,24 @@ func (s *mySQL) initFlags() {
 
 func (s *mySQL) configure() error {
 	if s.prefix == "" {
-		return errors.New(common.MySQLUriNullErr)
+		return errors.New(common.DataIsNullErr(s.prefix))
 	}
 
 	if s.uri == "" {
-		return errors.New(common.MySQLUriNullErr)
+		return errors.New(common.DataIsNullErr("Mysql's URI"))
 	}
 
 	return nil
 }
 
-func (s *mySQL) GetPrefix() string{
+func (s *mySQL) GetPrefix() string {
 	return s.prefix
 }
 
-func (s *mySQL) Stop() <-chan bool{
+func (s *mySQL) Stop() <-chan bool {
 	stop := make(chan bool)
 	go func() {
 		stop <- true
 	}()
-	fmt.Printf("%v is stopped\n", s.GetPrefix())
 	return stop
 }

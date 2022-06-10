@@ -9,10 +9,9 @@ import (
 	"togo/server"
 )
 
-func RestHandler(sc server.ServerContext) func() *gin.Engine{
-	return func() *gin.Engine{
+func RestHandler(sc server.ServerContext) func() *gin.Engine {
+	return func() *gin.Engine {
 		router := gin.Default()
-		router.Use(gin.Logger())
 		router.Use(middleware.Recovery())
 		users := router.Group("/users")
 		{

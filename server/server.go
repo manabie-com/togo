@@ -4,16 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
 	"togo/common"
+	logger2 "togo/pkg/logger"
 )
-
-type ServerContext interface {
-	GetService(prefix string) (interface{})
-}
 
 type service interface {
 	Run() error
@@ -27,6 +23,7 @@ type server struct {
 	port        uint
 	services    map[string]service
 	restHandler func() *gin.Engine
+	logger      logger2.Loggers
 }
 
 func NewServer(prefix string, port uint) *server {
@@ -46,8 +43,12 @@ func (s *server) Run() error {
 
 	for _, svc := range s.services {
 		go func(sv service) {
-			fmt.Printf("%v is running\n", sv.GetPrefix())
-			stop <- sv.Run()
+			if err := sv.Run(); err != nil {
+				stop <- err
+			} else {
+				s.logger.Info().Println(fmt.Sprintf("%v is running", sv.GetPrefix()))
+			}
+
 		}(svc)
 	}
 
@@ -57,15 +58,20 @@ func (s *server) Run() error {
 		}
 	}()
 
-	for  {
+	for {
 		select {
-		case err := <- stop:
+		case err := <-stop:
 			if err != nil {
 				return err
 			}
 
 		case sig := <-sigs:
 			if sig != nil {
+				for _, svc := range s.services {
+					svc.Stop()
+					s.logger.Info().Println(fmt.Sprintf("%v is stopped", svc.GetPrefix()))
+				}
+
 				return errors.New(sig.String())
 			}
 		}
@@ -80,11 +86,11 @@ func (s *server) configure() error {
 	}
 
 	if s.port == 0 {
-		return errors.New(common.PortNullErr)
+		return errors.New(common.DataIsNullErr("Port"))
 	}
 
 	if s.restHandler == nil {
-		return errors.New(common.ServiceNullErr)
+		return errors.New(common.DataIsNullErr("RestAPI"))
 	}
 
 	return nil
@@ -96,7 +102,7 @@ func (s *server) initFlags() error {
 
 func (s *server) InitService(svc service) {
 	if has, ok := s.services[svc.GetPrefix()]; ok {
-		log.Fatal(fmt.Sprintf("Service %v is duplicated", has.GetPrefix()))
+		s.logger.Error().Fatal(fmt.Sprintf("Service %v is duplicated", has.GetPrefix()))
 	}
 
 	s.services[svc.GetPrefix()] = svc
@@ -106,10 +112,18 @@ func (s *server) AddHandler(hdl func() *gin.Engine) {
 	s.restHandler = hdl
 }
 
-func (s *server) GetService(prefix string) (interface{}) {
+func (s *server) AddLogger(loggers logger2.Loggers) {
+	s.logger = loggers
+}
+
+func (s *server) GetService(prefix string) interface{} {
 	if svc, ok := s.services[prefix]; ok {
 		return svc.Get()
 	}
 
 	return nil
+}
+
+func (s *server) GetLogger() logger2.Loggers {
+	return s.logger
 }

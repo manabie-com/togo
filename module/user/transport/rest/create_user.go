@@ -8,15 +8,15 @@ import (
 	"togo/module/user/handler"
 	"togo/module/user/model"
 	"togo/module/user/repo"
-	"togo/module/user/store"
+	mysql2 "togo/module/user/store/mysql"
 	"togo/module/userconfig/store/mysql"
-
 	"togo/server"
 )
 
 func CreateUser(sc server.ServerContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := context.Background()
+
 		var data model.CreateUser
 		if err := c.ShouldBind(&data); err != nil {
 			c.AbortWithStatusJSON(common.BAD_REQUEST_STATUS, common.ResponseError(common.BAD_REQUEST_STATUS, err.Error()))
@@ -24,7 +24,8 @@ func CreateUser(sc server.ServerContext) gin.HandlerFunc {
 
 		db := sc.GetService("MYSQL").(*gorm.DB)
 
-		userStore := store.NewUserSQL(db)
+		userStore := mysql2.NewUserSQL(db)
+		//mongoStore := mysql3.NewUserMongo(db)
 		userCfgStore := mysql.NewUserConfigSQL(db)
 		userRepo := repo.NewCreateUserRepo(userStore, userCfgStore)
 		userHdl := handler.NewCreateUserHdl(userRepo)

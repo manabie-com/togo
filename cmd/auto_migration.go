@@ -10,8 +10,8 @@ import (
 )
 
 var autoMigrationCmd = &cobra.Command{
-	Use: "auto-migration",
-	Short: "Run auto migration",
+	Use:   "auto-migration",
+	Short: "Run auto migration to setup database",
 	Run: func(cmd *cobra.Command, args []string) {
 		mySql := mysql.NewMySQL(common.MySQL_Key)
 		if err := mySql.Run(); err != nil {

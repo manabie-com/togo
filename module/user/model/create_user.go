@@ -1,10 +1,11 @@
 package model
 
+import "togo/common"
+
 type CreateUser struct {
-	Name   *string `json:"name" gorm:"name"`
-	Email  *string `json:"email" gorm:"email"`
-	Status int     `json:"status" gorm:"status"`
-	Id     *uint   `json:"id" gorm:"id"`
+	Name  *string `json:"name" gorm:"name"`
+	Email *string `json:"email" gorm:"email"`
+	*common.Model
 }
 
 func (CreateUser) TableName() string {
