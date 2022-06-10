@@ -12,14 +12,21 @@ module.exports = class TaskClass {
     async createTask() {
         let res = {};
         try {
+            //obj task
             let obj = this.data_obj;
+            console.log(obj.userName);
+            //find user
             const getUser = await this.mdb_user.findByUser(obj.userName);
-            console.log(getUser);
+            //get the limit and add 1
+            console.log(getUser.limit);
             let limit = getUser.limit + 1;
+            console.log(limit);
             const filter = { userName: obj.userName };
             const update = { limit };
+
             let data = await this.mdb_todo.add(obj);
             await this.mdb_user.findOneAndUpdate(filter, update);
+
             res.status = "success";
             res.data = data;
          
@@ -42,7 +49,22 @@ module.exports = class TaskClass {
             res.data = data;
 
         }catch(error){
-            console.log(error);
+
+            res.status = "error";
+            res.message = error.message;
+        }
+
+        return res;
+    }
+
+    async resetDailyLimit() {
+        let res = {};
+
+        try {
+            await this.mdb_user.findAllAndResetLimit();
+            res.status = "success";
+        }
+        catch (error) {
             res.status = "error";
             res.message = error.message;
         }

@@ -6,7 +6,7 @@ AKARU Todo API
 
 `cd backend` to go into the project root
 
-#npm to install the backend's npm dependencies
+# npm to install the backend's npm dependencies
 `npm install`
 
 ## Running Locally
@@ -60,8 +60,7 @@ AKARU Todo API
         "userName":"akaruadmin",
         "_id":"62a2b2c0a0295faf6ca23b1e",
         "created_at":"2022-06-10T02:56:00.028Z",
-        "updated_at":"2022-06-10T02:56:00.028Z","__v":0
-        
+        "updated_at":"2022-06-10T02:56:00.028Z","__v":0       
     }
 }
 
@@ -75,7 +74,8 @@ AKARU Todo API
 
 ## How to run your unit tests locally?
 
-TODO: Write here
+`cd backend`
+`npm run test`
 
 ## What do you love about your solution?
 

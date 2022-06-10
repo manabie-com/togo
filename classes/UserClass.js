@@ -84,9 +84,7 @@ module.exports = class TaskClass {
             res.message = "You need to fill up all fields in order to proceed.";
         }
         else {
-            console.log(obj.username);
             let check_account = await this.mdb_user.findByUser(obj.username);
-            console.log(check_account);
             if (check_account) {
                 const result = await bcrypt.compare(obj.password, check_account.password);
                 if (!result) {

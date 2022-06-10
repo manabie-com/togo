@@ -41,6 +41,11 @@ class MDB_USER extends MODEL {
         return res;
     }
 
+    async findAllAndResetLimit() {
+        const res = await this.collection.updateMany({}, { $set: { limit: 0 } });
+        return res ? res : null;
+    }
+
 }
 
 module.exports = MDB_USER;
