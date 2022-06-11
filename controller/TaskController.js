@@ -9,6 +9,7 @@ module.exports =
 {
     async addTask(req, res)
     {
+        //Checking the token from headers, if none then you are not allowed to add task
         let token = req.headers['x-auth-token'];
         if (!token) return res.status(401).json({
             status: 401,
@@ -28,7 +29,7 @@ module.exports =
 
     async getTask(req, res)
     {
-        
+        //getting all task
         let data = req.body;
         let task_class = new TaskClass(data);
 

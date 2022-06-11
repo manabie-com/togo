@@ -14,6 +14,7 @@ module.exports  = class MODEL
         try
         {
             const collection    = this.collection;
+            //find by id
             const res           = await collection.findById(id);
 
             return res;
@@ -29,6 +30,7 @@ module.exports  = class MODEL
         try
         {
             const collection     = this.collection;
+            //find all
             const res            = await collection.find();
 
             return res;
@@ -41,9 +43,7 @@ module.exports  = class MODEL
     {
         try {
             const collection     = this.collection;
-            // sets object to insert
             const modelObj       = new collection(data);
-
             // confirms the insertion
             const modelRes       = await modelObj.save();
 
@@ -59,7 +59,7 @@ module.exports  = class MODEL
         try
         {
             const collection     = this.collection;
-
+            //find by id and update
             const modelRes       = await collection.findByIdAndUpdate({_id}, options, {new: true});
 
             return modelRes;
@@ -73,7 +73,7 @@ module.exports  = class MODEL
         try
         {
             const collection     = this.collection;
-
+            //delete by filter
             const modelRes       = await collection.deleteOne(filter);
             return modelRes;
         } catch (error) {
@@ -85,6 +85,7 @@ module.exports  = class MODEL
     {
         try
         {
+            //drop collection
             const modelRes       = await MONGOOSE.con.db.dropCollection(collection, callback);
             return modelRes;
         } catch (error) {

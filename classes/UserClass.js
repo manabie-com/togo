@@ -13,10 +13,9 @@ module.exports = class TaskClass {
     async validate() {
         let res = {};
         let obj = this.data_obj;
-        // console.log(obj.username);
-        // let check_user = await this.mdb_user.findByUser(obj.username);
-        // console.log(check_user.username);
-        // console.log(check_user.username == obj.username);
+        //check if the username is alreay exist
+        let check_user = await this.mdb_user.findByUser(obj.username);
+        //validation of inputs
         if (obj.fullname.trim() == '' || obj.confirmpassword.trim() == '' || obj.password.trim() == '' || obj.username.trim() == '') {
             res.status = "error";
             res.message = "You need to fill up all fields in order to proceed.";
@@ -33,10 +32,10 @@ module.exports = class TaskClass {
             res.status = "error";
             res.message = "The password you entered didn't match.";
         }
-        // else if (check_user.username == obj.username) {
-        //     res.status = "error";
-        //     res.message = "The username you entered already exists.";
-        // }
+        else if (check_user) {
+            res.status = "error";
+            res.message = "The username you entered already exists.";
+        }
         else {
             res.status = "success";
             res.data = obj;
@@ -53,21 +52,21 @@ module.exports = class TaskClass {
         
         try {
 
+            //inputs to be created
             let add_form =
             {
                 fullname: obj.fullname,
                 password: hashed_password,
                 username: obj.username
             }
+
+            //creating of user
             let data = await this.mdb_user.add(add_form);
             
             res.data = data;
-
-
-            res.status = "successfuly registered";
+            res.status = "Success";
         }
         catch (error) {
-            console.log(error);
             res.status = "error";
             res.message = error.message;
         }
@@ -79,19 +78,23 @@ module.exports = class TaskClass {
         let res = {};
         let obj = this.data_obj;
 
+        //checking if the following inputs are empty
         if (obj.password.trim() == '' || obj.username.trim() == '') {
             res.status = "error";
             res.message = "You need to fill up all fields in order to proceed.";
         }
         else {
+            //find if the account is existing
             let check_account = await this.mdb_user.findByUser(obj.username);
             if (check_account) {
+                //checking if the password is matched
                 const result = await bcrypt.compare(obj.password, check_account.password);
                 if (!result) {
                     res.status = "error";
                     res.message = "Invalid Credentials";
                 }
                 else {
+                    //if no error, it will successfuly login and will produce token that valid for 1hr
                     check_account.token = jwt.sign(obj, 'akaru-todo', { expiresIn: '1h' })
                     res.status = "success";
                     res.data = check_account;

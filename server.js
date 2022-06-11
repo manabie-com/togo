@@ -16,9 +16,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//route
+//routes
+//task
 app.post("/api/task/addTask", TaskController.addTask);
 app.get("/api/task/getTask", TaskController.getTask);
+//Uyser
 app.post("/api/user/register", UserController.registration);
 app.post("/api/user/login", UserController.login);
 

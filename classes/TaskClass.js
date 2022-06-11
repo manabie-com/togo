@@ -14,24 +14,31 @@ module.exports = class TaskClass {
         try {
             //obj task
             let obj = this.data_obj;
-            console.log(obj.userName);
             //find user
             const getUser = await this.mdb_user.findByUser(obj.userName);
+            
+            //condition: if limit is already 5, you cannot add more task.
+            //It will reset evey 8AM via Cron Job    
+            if(getUser.limit == 5){
+                return res = {
+                    message: "You have reached the maximum adding of task per day",
+                    data: getUser
+                }
+            }
             //get the limit and add 1
-            console.log(getUser.limit);
             let limit = getUser.limit + 1;
-            console.log(limit);
-            const filter = { userName: obj.userName };
+            //filter and update for query
+            const filter = { username: obj.userName };
             const update = { limit };
-
+            //Will record the task to database
             let data = await this.mdb_todo.add(obj);
+            //Will update limit, increment limit
             await this.mdb_user.findOneAndUpdate(filter, update);
 
             res.status = "success";
             res.data = data;
          
         }catch(error){
-            console.log(error);
             res.status = "error";
             res.message = error.message;
         }
@@ -42,7 +49,7 @@ module.exports = class TaskClass {
     async getTask() {
         let res = {};
         try{
-            // let obj = this.data_obj;
+            //Getting all the documents from table todo
             let data = await this.mdb_todo.docs();
             
             res.status = "success";
@@ -61,6 +68,7 @@ module.exports = class TaskClass {
         let res = {};
 
         try {
+            //Will reset the limit to 0 every 8 AM
             await this.mdb_user.findAllAndResetLimit();
             res.status = "success";
         }

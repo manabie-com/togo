@@ -1,6 +1,5 @@
 const dotenv    = require('dotenv').config();
 const MONGOOSE  = require('mongoose');
-// require('mongoose-double')(MONGOOSE);
 
 try {
     if(dotenv.error) {
@@ -17,9 +16,9 @@ try {
         async function(error) {
             if (error) {
                 console.log("ERROR", error);
-                console.log('access denied');
+                console.log('Access denied');
             } else {
-                console.log("access granted");
+                console.log("Db connection already established.");
             }
         }
     );
