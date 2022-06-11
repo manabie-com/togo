@@ -1,30 +1,88 @@
-### Requirements
+# Project Name
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+AKARU Todo API
 
-### Notes
+## Installation
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+`cd backend` to go into the project root
 
-### How to submit your solution?
+#npm to install the backend's npm dependencies
+`npm install`
 
-- Fork this repo and show us your development progress via a PR
+## Running Locally
 
-### Interesting facts about Manabie
+`nodemon server` to start the development server
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+## Curl Commands
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+### Register 
+`curl -d "username=sampleuser&password=samplepassword&fullname=samplefullname&confirmpassword=samplepassword" http://localhost:5000/api/user/register` supply username, password, confirmpassword and fullname.
+### Sample JSON 
+{
+    "data": {
+        "fullname": "Akaru Admin",
+        "username": "akaruadmin",
+        "password": "$2a$10$I.4.2LcYM9N3bDRc1nDhDuvOz3QoHnW5ozOLp5lo75GTfjx59guQi",
+        "limit": 0,
+        "_id": "62a2b1a2a0295faf6ca23b1a",
+        "created_at": "2022-06-10T02:51:14.626Z",
+        "updated_at": "2022-06-10T02:51:14.626Z",
+        "__v": 0
+    },
+    "status": "successfuly registered"
+}
+
+### Login
+`curl -d "username=pergent100&password=password12345" http://localhost:5000/api/user/login` token key will use for adding a task as HEADER
+### Sample JSON
+{
+    "status": "success",
+    "data": {
+        "_id": "62a2b1a2a0295faf6ca23b1a",
+        "fullname": "Akaru Admin",
+        "username": "akaruadmin",
+        "password": "$2a$10$I.4.2LcYM9N3bDRc1nDhDuvOz3QoHnW5ozOLp5lo75GTfjx59guQi",
+        "limit": 0,
+        "created_at": "2022-06-10T02:51:14.626Z",
+        "updated_at": "2022-06-10T02:51:14.626Z",
+        "__v": 0,
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFrYXJ1YWRtaW4iLCJwYXNzd29yZCI6IlBhc3N3b3JkMTIzNDUiLCJpYXQiOjE2NTQ4Mjk1NTUsImV4cCI6MTY1NDgzMzE1NX0.jV0id-DgeINGv18M0in601tn-SI7dnpEoE7Faphjldg"
+    }
+}
+
+### Adding a task with token
+`curl -d "task=play" http://localhost:5000/api/task/addTask -H "x-auth-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFrYXJ1YWRtaW4iLCJwYXNzd29yZCI6IlBhc3N3b3JkMTIzNDUiLCJpYXQiOjE2NTQ4Mjk1NTUsImV4cCI6MTY1NDgzMzE1NX0.jV0id-DgeINGv18M0in601tn-SI7dnpEoE7Faphjldg"`
+### Sample JSON
+{   
+    "status":"success",
+    "data": {
+        "task":"play",
+        "userName":"akaruadmin",
+        "_id":"62a2b2c0a0295faf6ca23b1e",
+        "created_at":"2022-06-10T02:56:00.028Z",
+        "updated_at":"2022-06-10T02:56:00.028Z","__v":0
+        
+    }
+}
+
+### Adding a task without token
+`curl -d "task=play" http://localhost:5000/api/task/addTask`
+### Sample JSON
+{   
+    "status":401,
+    "message":"You are not logged in"
+}
+
+## How to run your unit tests locally?
+
+TODO: Write here
+
+## What do you love about your solution?
+
+TODO: Write here
+
+## What else do you want us to know about however you do not have enough time to complete?
+
+TODO: Write here
+
+
