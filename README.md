@@ -24,6 +24,7 @@ AKARU Todo API
 ### Register 
 `curl -d "username=admin&password=password12345&fullname=Admin&confirmpassword=password12345" http://localhost:5000/api/user/register` supply username, password, confirmpassword and fullname.
 ### Sample JSON 
+```javascript
 {
     "data": {
         "fullname": "Akaru Admin",
@@ -37,10 +38,12 @@ AKARU Todo API
     },
     "status": "successfuly registered"
 }
+```
 
 ### Login
 `curl -d "username=admin&password=password12345" http://localhost:5000/api/user/login` token key will use for adding a task as HEADER
 ### Sample JSON
+```javascript
 {
     "status": "success",
     "data": {
@@ -55,10 +58,12 @@ AKARU Todo API
         "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFrYXJ1YWRtaW4iLCJwYXNzd29yZCI6IlBhc3N3b3JkMTIzNDUiLCJpYXQiOjE2NTQ4Mjk1NTUsImV4cCI6MTY1NDgzMzE1NX0.jV0id-DgeINGv18M0in601tn-SI7dnpEoE7Faphjldg"
     }
 }
+```
 
 ### Adding a task with token
 `curl -d "task=coding and sleeping" http://localhost:5000/api/task/addTask -H "x-auth-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicGFzc3dvcmQiOiJwYXNzd29yZDEyMzQ1IiwiaWF0IjoxNjU0OTIxMDQxLCJleHAiOjE2NTQ5MjQ2NDF9.lhI3ePCzm8Ixhln8LIXoB7Qjp_j2Nd2y4cP38Oiv63E"`
 ### Sample JSON
+```javascript
 {   
     "status":"success",
     "data": {
@@ -69,14 +74,44 @@ AKARU Todo API
         "updated_at":"2022-06-10T02:56:00.028Z","__v":0       
     }
 }
+```
 
 ### Adding a task without token
 `curl -d "task=play" http://localhost:5000/api/task/addTask`
 ### Sample JSON
+```javascript
 {   
     "status":401,
     "message":"You are not logged in"
 }
+```
+
+### Getting all the task
+`curl http://localhost:5000/api/task/getTask`
+### Sample JSON
+```javascript
+{
+    "status": "success",
+    "data": [
+        {
+            "_id": "62a426713910f3ed137b5ed4",
+            "task": "coding and sleeping",
+            "userName": "admin",
+            "created_at": "2022-06-11T05:21:53.054Z",
+            "updated_at": "2022-06-11T05:21:53.054Z",
+            "__v": 0
+        },
+        {
+            "_id": "62a426953910f3ed137b5ed8",
+            "task": "eating",
+            "userName": "admin",
+            "created_at": "2022-06-11T05:22:29.229Z",
+            "updated_at": "2022-06-11T05:22:29.229Z",
+            "__v": 0
+        }
+    ]
+}
+```
 
 ## How to run your unit tests locally?
 
