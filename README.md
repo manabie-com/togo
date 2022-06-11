@@ -81,6 +81,7 @@ AKARU Todo API
 ## How to run your unit tests locally?
 
 `cd backend`
+
 `npm run test`
 
 ## What do you love about your solution?
@@ -102,5 +103,5 @@ AKARU Todo API
 <p> ATLAS_URI = mongodb+srv://{username}:{password}@cluster0.3nk8zqt.mongodb.net/akaru?retryWrites=true&w=majority. </p>
 
 <p> I will attach the username and password of my database in the email. <p>
-<details>
+
 
