@@ -3,10 +3,10 @@
 AKARU Todo API
 
 ## Technologies
-Nodejs
-Express
-Mongodb
-Mongodb Atlas
+* Nodejs
+* Express
+* Mongodb
+* Mongodb Atlas
 
 ## Installation
 
@@ -85,21 +85,22 @@ Mongodb Atlas
 
 ## What do you love about your solution?
 
-What I love about my journey developing the backend challenge is I have learned a lot of things. This is the first time I used the curl commands and also the cron job for scheduling the reset limit per day.
+<p> What I love about my journey developing the backend challenge is I have learned a lot of things. This is the first time I used the curl commands and also the cron job for scheduling the reset limit per day. <p>
 
 ## What else do you want us to know about however you do not have enough time to complete?
 
-A task can be completed.
-A task can be updated.
-A task can be deleted.
-A task can have subtasks.
-Individual user can get task
+* A task can be completed.
+* A task can be updated.
+* A task can be deleted.
+* A task can have subtasks.
+* Individual user can get task
 
 ## Note
 
 ### Add ENV file
-ATLAS_URI = mongodb+srv://{username}:{password}@cluster0.3nk8zqt.mongodb.net/akaru?retryWrites=true&w=majority
+<details>
+<p> ATLAS_URI = mongodb+srv://{username}:{password}@cluster0.3nk8zqt.mongodb.net/akaru?retryWrites=true&w=majority. </p>
 
-I will attach the username and password of my database in the email
-
+<p> I will attach the username and password of my database in the email. <p>
+<details>
 
