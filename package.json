@@ -4,7 +4,8 @@
   "description": "- Implement one single API which accepts a todo task and records it   - There is a maximum **limit of N tasks per user** that can be added **per day**.   - Different users can have **different** maximum daily limit. - Write integration (functional) tests - Write unit tests - Choose a suitable architecture to make your code simple, organizable, and maintainable - Write a concise README   - How to run your code locally?   - A sample “curl” command to call your API   - How to run your unit tests locally?   - What do you love about your solution?   - What else do you want us to know about however you do not have enough time to complete?",
   "main": "server.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node server.ts",
+    "test": "mocha --timeout 60000 --config=test/.mocharc.json 'test/**/*.spec.ts' --exit --debug",
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js --config config/ormconfig.ts",
     "seed:run": "ts-node ./node_modules/.bin/knex --knexfile config/knexfile.ts seed:run"
   },
@@ -20,13 +21,18 @@
   "homepage": "https://github.com/ctalampas/togo#readme",
   "dependencies": {
     "express": "^4.18.1",
+    "lodash": "^4.17.21",
     "mysql": "^2.18.1",
-    "ts-node": "^10.8.1",
     "typeorm": "0.2.41",
     "typeorm-naming-strategies": "^2.0.0"
   },
   "devDependencies": {
+    "@types/chai": "^4.3.1",
+    "@types/mocha": "^9.1.1",
     "@types/node": "^17.0.42",
+    "chai": "^4.3.6",
+    "mocha": "^10.0.0",
+    "ts-node": "^10.8.1",
     "typescript": "^4.7.3"
   }
 }
