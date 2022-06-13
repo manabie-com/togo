@@ -37,11 +37,11 @@ python3 app.py
 ### Call API
 #### User register
 ```cosole
-curl -X POST http://127.0.0.1:8000/signup -H 'content-type: application/json' -d '{ "user_name": "quan", "password": "1234"}'
+curl -X POST http://127.0.0.1:8000/user_register -H 'content-type: application/json' -d '{ "username": "quan", "password": "1234"}'
 ```
 #### Login
 ```cosole
-curl -X POST http://127.0.0.1:8000/login -H 'cache-control: no-cache' -H 'content-type: application/json'-d '{"username": "quan", "password": "1234"}'
+curl -X POST   http://127.0.0.1:8000/login   -H 'content-type: application/json'   -d '{"username": "quan", "password": "aaaaa"}'
 ```
 #### Create task
 ```cosole
