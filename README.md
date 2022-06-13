@@ -1,30 +1,39 @@
-### Requirements
+# Todo-Service
+# System Infrastructure and Integration
+![alt text](docs/Diagram-Page-7.drawio.png)
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+#For deployment to production API
+1. API Gateway :  http://localhost:7070
+2. Service Discovery :  http://localhost:8080
+3. Todo API :  http://localhost:9090/swagger-ui.html
 
-### Notes
+#For run test on locally:
+1. Todo API :  http://localhost:9090/swagger-ui.html
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+#Spring Boot Profiles for DEV and PROD Environments
+-Dspring.profiles.active=dev
 
-### How to submit your solution?
+#How to run your code locally?
+- Change the config path to database in the resources/application.properties
+- ./gradlew clean build -x test
+- cd build/libs -> java -jar todo_api-0.1.0.jar
+#A sample “curl” command to call your API
+- We are use swagger as the API document, you can find curl on swagger : http://localhost:9090/swagger-ui.html
+#How to run your unit tests locally?
+- /gradlew clean build
+#What do you love about your solution?
+- I designed a service-oriented structure and the system can auto-scaling when overloaded, this solution to solve the problem with a large number of users accessing the system.
+#What else do you want us to know about however you do not have enough time to complete?
+- The system still has many functions to complete such as:
+    - Event-driven architecture
+    - Monitoring Prometheus + Grafana
+    - SSO
+#Swagger UI
 
-- Fork this repo and show us your development progress via a PR
+![alt text](docs/Screenshot%20from%202022-06-13%2007-37-25.png)
+![alt text](docs/Screenshot%20from%202022-06-13%2007-37-52.png)
+![alt text](docs/Screenshot%20from%202022-06-13%2007-38-05.png)
+![alt text](docs/Screenshot%20from%202022-06-13%2007-38-13.png)
 
-### Interesting facts about Manabie
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
