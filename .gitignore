@@ -17,3 +17,6 @@
 out/
 
 .idea
+
+build
+node_modules
