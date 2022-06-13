@@ -6,4 +6,5 @@ export class Todo implements ITodo {
   @PrimaryGeneratedColumn() id: number;
   @Column() task: string;
   @Column() userId: number;
+  @Column() creationDate?: string;
 }
