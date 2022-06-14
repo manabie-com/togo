@@ -1,30 +1,104 @@
-### Requirements
+# TOGO PROJECT
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+## Install requirement
 
-### Notes
+- **Nodejs**: 12.16.0 (every version >= 12.\* is OK)
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+## Development environments
 
-### How to submit your solution?
+- **LCL**: Local environment
 
-- Fork this repo and show us your development progress via a PR
+- The configuration file with the corresponding environments is located in the directory `env`.
 
-### Interesting facts about Manabie
+## Install project and run server & run unit tests
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+- **Step 1:** Clone git repository:
+  `git clone https://github.com/TTKirito/togo.git`
+- **Step 2:** Install packages:
+  `npm install`
+- **Step 3:** In env.example:
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+  - Copy file `LCL.env.example`
+  - Rename to `LCL.env`
+
+    Change configuration to connect database , mongo at local, ...
+
+- **Step 4:** Running server
+  - Normal run: `npm start`
+
+- **Step 5:** Running unit tests
+  - Normal run: `npm run test`
+
+
+### Explore Rest APIs
+- The app defines following CRUD APIs.
+
+	`POST /users/signup`
+
+  ```
+  curl --location --request POST 'http://localhost:3000/api/users/signup' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+      "email": "thuanton983@gmail.com",
+      "password": "password"
+    }'
+
+  ```
+
+	`POST /users/signin`
+
+  ```
+  curl --location --request POST 'http://localhost:3000/api/users/signin' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+      "email": "thuanton985@gmail.com",
+      "password": "password"
+    }'
+
+  ```
+
+
+	`GET /users/currentuser`
+
+  ```
+  curl --location --request GET 'http://localhost:3000/api/users/currentuser' \
+  --header 'Content-Type: application/json' 
+
+  ```
+
+	`POST /users/signout`
+
+  ```
+  curl --location --request POST 'http://localhost:3000/api/users/signout'
+  ```
+
+  `POST /api/tasks`
+
+  ```
+  curl --location --request POST 'http://localhost:3000/api/tasks' \
+  --header 'Content-Type: application/json' \
+  --header 'Cookie: express:sess=eyJqd3QiOiJleUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKcFpDSTZJall5WVRoak1qVmhZbVZqTUdZMFpUY3lPRGM1T0RNMk1pSXNJbVZ0WVdsc0lqb2lkR2gxWVc1MGIyNDVPRE5BWjIxaGFXd3VZMjl0SWl3aWFXRjBJam94TmpVMU1qTTBORGc0ZlEua2tlRnBoMTlTbUl4ampTR0hVZkdmQUJnS2JBTENTcktqX19sd2xkd3BGNCJ9' \
+  --data-raw '[
+    {
+        "description": "test1",
+        "title": "title1"
+    }
+  ]'
+
+  ```
+  `GET /api/tasks`
+
+  ```
+  curl --location --request GET 'http://localhost:3000/api/tasks' \
+  --header 'Content-Type: application/json' \
+  --header 'Cookie: express:sess=eyJqd3QiOiJleUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKcFpDSTZJall5WVRoa1pETmlaV0k1TURRMllqTmpZV1l4T0dWaFlpSXNJbVZ0WVdsc0lqb2lkR2gxWVc1MGIyNDVPRFZBWjIxaGFXd3VZMjl0SWl3aWFXRjBJam94TmpVMU1qTTBOVFl4ZlEuX00yREFJSmpxTWhBSWdhcWd2OG1pSFpkWThvVnhtQmt2UHhQZENzNWpidyJ9' 
+  ```
+
+
+You can test them using postman or any other rest client.
+
+
+# What else do you want us to know about however you do not have enough time to complete?
+- handler and define error for return 
+- add document (ex: swagger)
+- deploy by k8s 
