@@ -7,6 +7,7 @@ const app = express();
 // Middleware
 app.use(express.json());
 
+// Make `todo` routes available
 app.use("/api/todos", todos);
 
 app.listen(5000, async (error) => {

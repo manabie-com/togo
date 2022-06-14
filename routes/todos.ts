@@ -11,6 +11,13 @@ router.route("/").post(async (req: Request, res: Response) => {
     const userRepository = await UserRepositoryFactory.createInstance();
     const { userId, task } = params;
 
+    /**
+     * Basic rules covered
+     * 1. User ID is required.
+     * 2. Task is required.
+     * 3. Maximum daily limit per user is observed.
+     */
+
     if (!userId) {
       throw new Error("User ID is missing");
     }

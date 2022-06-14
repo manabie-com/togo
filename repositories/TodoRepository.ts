@@ -3,12 +3,18 @@ import { ITodoRepository } from "../core/repository/ITodoRepository";
 import { Todo } from "../entity/Todo";
 import _ from "lodash";
 import moment from "moment";
+import { ITodoParams } from "../core/models/ITodo";
 
 @EntityRepository()
 export class TodoRepository implements ITodoRepository {
   constructor(private manager: EntityManager) {}
 
-  async saveTodo(params) {
+  /**
+   *
+   * @param params
+   * @returns created record
+   */
+  async saveTodo(params: ITodoParams) {
     if (_.isEmpty(params)) {
       return {};
     }
@@ -19,7 +25,12 @@ export class TodoRepository implements ITodoRepository {
     return await this.manager.save(data);
   }
 
-  async getCurrentTasksByUserId(userId) {
+  /**
+   *
+   * @param userId
+   * @returns a count of user's current day tasks
+   */
+  async getCurrentTasksByUserId(userId: number) {
     const startOfDay = moment().startOf("day").toISOString();
     const endOfDay = moment().endOf("day").toISOString();
 

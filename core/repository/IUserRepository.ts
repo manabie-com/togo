@@ -1,5 +1,9 @@
 import { IUser } from "../models/IUser";
 
 export interface IUserRepository {
-  getUserById(): Promise<IUser | boolean>;
+  /**
+   *
+   * @param userId
+   */
+  getUserById(userId): Promise<IUser | boolean>;
 }
