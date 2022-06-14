@@ -1,30 +1,31 @@
-### Requirements
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+1. setup env: run cmd bellow
 
-### Notes
+mpm install
+node migrations/database.js
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+2. run locally
 
-### How to submit your solution?
+npm start
 
-- Fork this repo and show us your development progress via a PR
+- api get all user: GET: http://localhost:3000/user/list
+   response:
+    [
+        {
+            "_id": "62a8d6faecf2e20029fd3435",      => user_id used for todo api
+            "user_name": "user01",
+            "email": "user01@gmail.com",
+            "limit_task_per_day": 1                 => limited user todo tasks per day
+        },
+        ...
+    ]
 
-### Interesting facts about Manabie
+- api create a todo task
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+    params: {
+        title: 
+        description:
+        user_id:   // user_id is user unique ID get from api get all user.
+    }
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+    curl -d "title=title 1&description=description 1&user_id=62a8d6faecf2e20029fd3435" -X POST http://localhost:3000/todo/add
