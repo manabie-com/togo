@@ -17,7 +17,7 @@ type CreateUserStore interface {
 }
 
 type createUserRepo struct {
-	store CreateUserStore
+	store        CreateUserStore
 	userCfgStore CreateUserConfigStore
 }
 
@@ -30,8 +30,13 @@ func (u *createUserRepo) CreateUser(ctx context.Context, data *model.CreateUser)
 		"name": *data.Name,
 	}
 
-	if usr, err := u.store.Get(ctx, cond); usr != nil || err != gorm.ErrRecordNotFound {
+	usr, err := u.store.Get(ctx, cond);
+	if err != gorm.ErrRecordNotFound {
 		return err
+	}
+
+	if usr == nil || err == gorm.ErrRecordNotFound {
+		return gorm.ErrRecordNotFound
 	}
 
 	if err := u.store.Create(ctx, data); err != nil {
