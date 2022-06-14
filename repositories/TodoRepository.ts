@@ -1,4 +1,4 @@
-import { EntityManager, EntityRepository, Equal } from "typeorm";
+import { EntityManager, EntityRepository, Between } from "typeorm";
 import { ITodoRepository } from "../core/repository/ITodoRepository";
 import { Todo } from "../entity/Todo";
 import _ from "lodash";
@@ -20,21 +20,16 @@ export class TodoRepository implements ITodoRepository {
   }
 
   async getCurrentTasksByUserId(userId) {
-    const filters = {
-      userId,
-      creationDate: moment().format("YYYY-MM-DD"),
-    };
-    const [data] = await this.manager
-      .getRepository(Todo)
-      .createQueryBuilder()
-      .select("COUNT(id)", "tasks")
-      .andWhere("user_id = :userId")
-      .andWhere("DATE(creation_date) = :creationDate")
-      .setParameters(filters)
-      .execute();
+    const startOfDay = moment().startOf("day").toISOString();
+    const endOfDay = moment().endOf("day").toISOString();
 
-    const { tasks } = data;
+    const [, count] = await this.manager.findAndCount(Todo, {
+      where: {
+        userId,
+        creationDate: Between(startOfDay, endOfDay),
+      },
+    });
 
-    return tasks;
+    return count;
   }
 }

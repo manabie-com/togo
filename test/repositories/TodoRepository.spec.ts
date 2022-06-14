@@ -62,8 +62,8 @@ describe("Todo Repository is able to save and fetch data", () => {
       await todoRepository.saveTodo(item);
     }
 
-    // const data = await todoRepository.getCurrentTasksByUserId(userId);
+    const count = await todoRepository.getCurrentTasksByUserId(userId);
 
-    // expect(data).to.equal(params.length);
+    expect(count).to.equal(params.length);
   });
 });
