@@ -6,8 +6,7 @@
   "scripts": {
     "start": "ts-node server.ts",
     "test": "mocha --timeout 60000 --config=test/.mocharc.json 'test/**/*.spec.ts' --exit --debug",
-    "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js --config config/ormconfig.ts",
-    "seed:run": "ts-node ./node_modules/.bin/knex --knexfile config/knexfile.ts seed:run"
+    "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js --config config/ormconfig.ts"
   },
   "repository": {
     "type": "git",

@@ -1,30 +1,59 @@
 ### Requirements
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+1. MySQL Server, create a database called `todo_db`.
+2. [Node.js](https://nodejs.org/en/download/) installation. You can use the latest LTS version as of this writing (16.15.1).
 
-### Notes
+### How to setup in local machine
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+Make sure you're in the root folder of the project.
 
-### How to submit your solution?
+```bash
+$ cd togo
+```
 
-- Fork this repo and show us your development progress via a PR
+Use the package manager [npm](https://www.npmjs.com/) to install dependencies. Run this command in your terminal.
 
-### Interesting facts about Manabie
+```bash
+$ npm install
+```
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+Configure MySQL connection host, user and password in this file:
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+```
+togo/config/ormconfig.ts
+```
+
+Run migration scripts.
+
+```bash
+npm run typeorm migration:run
+```
+
+Run the server.
+
+```bash
+$ npm run start
+```
+
+### Usage
+
+Once the server is running, you may now send POST requests to `/api/todos`.
+For this iteration please use userId=10172512 when sending the requests. This is a sample cURL command for the API:
+
+```bash
+curl -X POST localhost:5000/api/todos \
+  -H "content-type: application/json" \
+  -d '{"task":"Some task","userId": 10172512}'
+```
+
+### How run the tests
+
+Run the following command in your terminal.
+
+```bash
+$ npm run test
+```
+
+### What I love about my solution
+
+During the building of the solution, it made me appreciate the creation of tests even more. Thanks for this challenge!
