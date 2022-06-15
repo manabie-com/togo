@@ -8,21 +8,27 @@ import {
   ForeignKey,
 } from 'sequelize-typescript';
 import { Optional } from 'sequelize/types';
-import { LIMIT_TASK } from 'src/constance/variable';
+import { LIMIT_TASK } from '../../../constance/variable';
 import { User } from '../../user/schema/user.entity';
 
 export interface LimitTaskAttributes {
-  id: number
+  id: number;
   limitNumber: number;
   creationDate?: Date;
   userId: string;
 }
-export type LimitTaskOptionalAttributes = "id" | "creationDate";
+export type LimitTaskOptionalAttributes = 'id' | 'creationDate';
 
-export type LimitTaskCreationAttributes = Optional<LimitTaskAttributes, LimitTaskOptionalAttributes>
+export type LimitTaskCreationAttributes = Optional<
+  LimitTaskAttributes,
+  LimitTaskOptionalAttributes
+>;
 
 @Table({ modelName: LIMIT_TASK, updatedAt: false, createdAt: false })
-export class LimitTask extends Model<LimitTaskAttributes, LimitTaskCreationAttributes> {
+export class LimitTask extends Model<
+  LimitTaskAttributes,
+  LimitTaskCreationAttributes
+> {
   @Column({
     allowNull: false,
     primaryKey: true,
@@ -31,10 +37,14 @@ export class LimitTask extends Model<LimitTaskAttributes, LimitTaskCreationAttri
   })
   id: string;
 
-  @Column({ allowNull: false, type: DataType.INTEGER  })
+  @Column({ allowNull: false, type: DataType.INTEGER })
   limitNumber: number;
 
-  @Column({ allowNull: false, type: DataType.DATE, defaultValue: Sequelize.fn('now') })
+  @Column({
+    allowNull: false,
+    type: DataType.DATE,
+    defaultValue: Sequelize.fn('now'),
+  })
   creationDate: Date;
 
   // foreignKey

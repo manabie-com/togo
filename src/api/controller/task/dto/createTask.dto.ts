@@ -1,19 +1,19 @@
-import { Type } from "class-transformer";
-import { IsNotEmpty, IsString } from "class-validator";
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateTaskDto {
   @IsString()
-  @IsNotEmpty()
   @Type(() => String)
+  @IsNotEmpty()
   userId: string;
 
   @IsString()
-  @IsNotEmpty()
   @Type(() => String)
+  @IsNotEmpty()
   title: string;
 
   @IsString()
-  @IsNotEmpty()
   @Type(() => String)
+  @IsNotEmpty()
   desc: string;
 }

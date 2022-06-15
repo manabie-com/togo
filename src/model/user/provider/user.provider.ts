@@ -1,5 +1,5 @@
-import { USER } from "src/constance/variable";
-import { User } from "../schema/user.entity";
+import { USER } from '../../../constance/variable';
+import { User } from '../schema/user.entity';
 
 export const userProviders = [
   {

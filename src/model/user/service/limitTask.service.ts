@@ -1,12 +1,12 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { USER } from 'src/constance/variable';
+import { USER } from '../../../constance/variable';
 import { User } from '../schema/user.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @Inject(USER)
-    private userModel: typeof User
+    private userModel: typeof User,
   ) {}
 
   async findAll(): Promise<User[]> {

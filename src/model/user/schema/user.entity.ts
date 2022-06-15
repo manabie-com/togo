@@ -1,12 +1,5 @@
-
-import {
-  Table,
-  Column,
-  Model,
-  DataType,
-  HasMany,
-} from 'sequelize-typescript';
-import { USER } from 'src/constance/variable';
+import { Table, Column, Model, DataType, HasMany } from 'sequelize-typescript';
+import { USER } from '../../../constance/variable';
 import { LimitTask } from '../../limit-task/schema/limitTask.entity';
 import { Task } from '../../task/schema/task.entity';
 
@@ -16,7 +9,7 @@ export class User extends Model {
     allowNull: false,
     primaryKey: true,
     type: DataType.INTEGER,
-    autoIncrement: true
+    autoIncrement: true,
   })
   id?: string;
 

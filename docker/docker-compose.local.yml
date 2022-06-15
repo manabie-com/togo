@@ -3,6 +3,8 @@ services:
   mysql:
     container_name: mysql-local
     image: mysql:8.0.28
+    volumes:
+      - ../schema:/docker-entrypoint-initdb.d
     ports:
       - '3306:3306'
     environment:

@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import * as moment from 'moment';
 import { Op } from 'sequelize';
-import { LimitTaskService } from 'src/model/limit-task/service/limitTask.service';
-import { TaskService } from 'src/model/task/service/task.service';
+import { LimitTaskService } from '../../../model/limit-task/service/limitTask.service';
+import { TaskService } from '../../../model/task/service/task.service';
 import { CreateTaskDto } from './dto/createTask.dto';
 
 @Controller('task')

@@ -1,8 +1,8 @@
 import { Sequelize } from 'sequelize-typescript';
-import { ENV } from 'src/constance/variable';
-import { LimitTask } from 'src/model/limit-task/schema/limitTask.entity';
-import { Task } from 'src/model/task/schema/task.entity';
-import { User } from 'src/model/user/schema/user.entity';
+import { ENV } from '../constance/variable';
+import { LimitTask } from '../model/limit-task/schema/limitTask.entity';
+import { Task } from '../model/task/schema/task.entity';
+import { User } from '../model/user/schema/user.entity';
 import { databaseConfig } from './database.config';
 
 export const databaseProviders = [

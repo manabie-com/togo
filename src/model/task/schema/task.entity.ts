@@ -6,23 +6,24 @@ import {
   DataType,
   BelongsTo,
   ForeignKey,
-  CreatedAt,
 } from 'sequelize-typescript';
 import { Optional } from 'sequelize/types';
-import { TASK } from 'src/constance/variable';
+import { TASK } from '../../../constance/variable';
 import { User } from '../../user/schema/user.entity';
 
-
 export interface TaskAttributes {
-  id: number
+  id: number;
   title: string;
   desc: string;
   creationDate?: Date;
   userId: string;
 }
-export type TaskOptionalAttributes = "id" | "creationDate";
+export type TaskOptionalAttributes = 'id' | 'creationDate';
 
-export type TaskCreationAttributes = Optional<TaskAttributes, TaskOptionalAttributes>
+export type TaskCreationAttributes = Optional<
+  TaskAttributes,
+  TaskOptionalAttributes
+>;
 
 @Table({ modelName: TASK, updatedAt: false, createdAt: false })
 export class Task extends Model<TaskAttributes, TaskCreationAttributes> {
@@ -34,13 +35,17 @@ export class Task extends Model<TaskAttributes, TaskCreationAttributes> {
   })
   id: string;
 
-  @Column({ allowNull: false, type: DataType.STRING(100)  })
+  @Column({ allowNull: false, type: DataType.STRING(100) })
   title: string;
 
   @Column({ allowNull: false, type: DataType.TEXT })
   desc: string;
 
-  @Column({ allowNull: false, type: DataType.DATE, defaultValue: Sequelize.fn('now') })
+  @Column({
+    allowNull: false,
+    type: DataType.DATE,
+    defaultValue: Sequelize.fn('now'),
+  })
   creationDate: Date;
 
   // foreignKey
