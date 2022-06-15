@@ -1,7 +1,9 @@
 
 ### How to run your code locally?
 mpm install
+
 node migrations/database.js
+
 npm start
 
 ### A sample “curl” command to call your API
