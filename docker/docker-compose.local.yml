@@ -1,0 +1,14 @@
+version: '3.6'
+services:
+  mysql:
+    container_name: mysql-local
+    image: mysql:8.0.28
+    volumes:
+      - ../schema:/docker-entrypoint-initdb.d
+    ports:
+      - '3306:3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=sapassword
+      - MYSQL_DATABASE=togo-app
+      - COMPOSE_PROJECT_NAME=togo-app
+    restart: unless-stopped
