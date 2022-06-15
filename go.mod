@@ -3,16 +3,17 @@ module github.com/manabie-com/togo
 go 1.14
 
 require (
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/go-redis/redis v6.15.9+incompatible // indirect
-	github.com/go-redis/redis/v8 v8.3.4
-	github.com/go-redis/redis_rate v6.5.0+incompatible // indirect
-	github.com/go-redis/redis_rate/v9 v9.1.1
+	github.com/go-redis/redis/v8 v8.11.5
+	github.com/go-redis/redis_rate/v9 v9.1.2
+	github.com/golang-jwt/jwt/v4 v4.4.1
 	github.com/golang/mock v1.5.0
-	github.com/google/uuid v1.1.1
-	github.com/joho/godotenv v1.3.0
-	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
-	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
-	gorm.io/driver/postgres v1.0.8
-	gorm.io/gorm v1.21.7
+	github.com/google/go-cmp v0.5.7 // indirect
+	github.com/google/uuid v1.3.0
+	github.com/jinzhu/now v1.1.5 // indirect
+	github.com/joho/godotenv v1.4.0
+	github.com/stretchr/testify v1.7.1 // indirect
+	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
+	golang.org/x/xerrors v0.0.0-20220609144429-65e65417b02f // indirect
+	gorm.io/driver/postgres v1.3.7
+	gorm.io/gorm v1.23.6
 )
