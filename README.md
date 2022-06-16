@@ -3,6 +3,8 @@
 ## Install requirement
 
 - **Nodejs**: 12.16.0 (every version >= 12.\* is OK)
+- **Docker**: 20.10.12 (required if setup database)
+- **Docker-compose**: 1.25.0 (required if setup database)
 
 ## Development environments
 
