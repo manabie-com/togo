@@ -10,13 +10,25 @@
 
 - The configuration file with the corresponding environments is located in the directory `env`.
 
+## Run docker and setup database
+
+- **Step 1:** Go to folder docker:
+  `cd docker`
+- **Step 2:** Run docker compose:
+  `sudo docker-compose up -d`
+- **Step 3:** Check database is running by command:
+  - **1** `sudo docker-compose exec mongodb /bin/sh`
+  - **2** `mongo`
+- **Step 4:** Get uri in connecting to: mongodb://127.0.0.1:27017/  and add to LCL.env
+- **Note**: uri: take the part before the question mark
+
 ## Install project and run server & run unit tests
 
 - **Step 1:** Clone git repository:
   `git clone https://github.com/TTKirito/togo.git`
 - **Step 2:** Install packages:
   `npm install`
-- **Step 3:** In env.example:
+- **Step 3:** In LCL.env.example:
 
   - Copy file `LCL.env.example`
   - Rename to `LCL.env`
