@@ -1,0 +1,48 @@
+server:
+  port: ${PORT:7070}
+
+spring:
+  application:
+    name: Api-Gateway
+
+swagger:
+  enabled: true
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 30000
+ribbon:
+  ReadTimeout: 60000
+  connection-timeout: 3000
+  eureka:
+    enabled: true
+
+zuul:
+  ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
+  sensitiveHeaders: Cookie,Set-Cookie
+  host:
+    time-to-live: -1
+    connect-timeout-millis: 60000
+    max-per-route-connections: 10000
+    max-total-connections: 60000
+    socket-timeout-millis: 60000
+  semaphore:
+    max-semaphores: 500
+  #prefix: /api/v1
+  routes:
+    containerized-todo:
+      path: /gateway/**
+      url: http://localhost:9090
+      serviceId: TODO-SERVICE
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    register-with-eureka: true
+    fetch-registry: false
+    serviceUrl:
+      defaultZone: http://localhost:8080/eureka/
