@@ -11,5 +11,5 @@ RUN ./gradlew clean build -x test
 FROM openjdk:11-slim as runtime
 WORKDIR /home/root/todo/
 COPY --from=builder /home/root/build/build/libs/todo_api-0.1.0.jar $WORKDIR
-EXPOSE 8080
+EXPOSE 9090
 ENTRYPOINT [ "sh", "-c", "java -jar $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom todo_api-0.1.0.jar" ]

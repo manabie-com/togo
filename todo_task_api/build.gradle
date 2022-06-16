@@ -38,7 +38,6 @@ bootJar {
         attributes(
                 'Built-By': System.properties['user.name'],
                 "Specification-Version": version,
-                'Build-Timestamp': new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date(System.currentTimeMillis())),
                 'Build-Revision': version,
                 'Created-By': "Gradle ${gradle.gradleVersion}",
                 'Build-Jdk': "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
@@ -52,8 +51,6 @@ repositories {
 }
 
 dependencies {
-    compile files(fileTree(dir: 'libs', includes: ['*.jar']))
-
     compile('org.springframework.boot:spring-boot-starter-web')
 
     testCompile('org.springframework.boot:spring-boot-starter-test')

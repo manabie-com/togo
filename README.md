@@ -8,7 +8,11 @@
 3. Todo API :  http://localhost:9090/swagger-ui.html
 
 #For run test on locally:
-1. Todo API :  http://localhost:9090/swagger-ui.html
+1. sudo docker-compose up -d --build / docker-compose up -d --build
+   ![alt text](docs/Screenshot from 2022-06-16 19-37-13.png)
+   ![alt text](docs/Screenshot from 2022-06-16 19-35-54.png)
+2. Todo API :  http://localhost:9090/swagger-ui.html
+
 
 #Spring Boot Profiles for DEV and PROD Environments
 -Dspring.profiles.active=dev
