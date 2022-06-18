@@ -30,8 +30,8 @@ app.use(
   })
 );
 
-app.get('/', function (req, res) {
-    res.send('Hello world! This is Togo backend server!');
+app.get("/", function (req, res) {
+  res.send("Hello world! This is Togo backend server!");
 });
 
 router(app);
