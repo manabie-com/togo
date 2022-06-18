@@ -1,0 +1,36 @@
+{
+  "name": "togo",
+  "version": "1.0.0",
+  "description": "[Manabie] - Technical Assignment for Back-end Engineer Position",
+  "main": "index.js",
+  "scripts": {
+    "test": "nyc mocha",
+    "test:reportHTML": "nyc --reporter=html mocha",
+    "start": "node index",
+    "dev": "export NODE_ENV=development && nodemon index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/m3721017/togo.git"
+  },
+  "author": "Nguyễn Minh Tâm",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/m3721017/togo/issues"
+  },
+  "homepage": "https://github.com/m3721017/togo#readme",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "express": "^4.18.1",
+    "http": "^0.0.1-security"
+  },
+  "devDependencies": {
+    "chai": "^4.3.6",
+    "chai-http": "^4.3.0",
+    "mocha": "^10.0.0",
+    "nodemon": "^2.0.16",
+    "nyc": "^15.1.0"
+  }
+}
