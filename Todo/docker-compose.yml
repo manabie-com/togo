@@ -1,0 +1,28 @@
+version: '3.4'
+
+services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+    networks:
+      - todo-network
+    ports:
+      - "5432:5432"
+  todo.api:
+    image: ${DOCKER_REGISTRY-}todoapi
+    build:
+      context: .
+      dockerfile: Todo.Api/Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+    networks:
+      - todo-network
+networks:
+  todo-network:
+    driver: bridge
