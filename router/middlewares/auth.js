@@ -8,6 +8,7 @@ const user = {
   // token -> userId,
   "userA:password": "A",
   "userB:password": "B",
+  "userC:password": "C",
 };
 
 /**

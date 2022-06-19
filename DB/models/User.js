@@ -1,3 +1,7 @@
+/**
+ * @author Nguyen Minh Tam / ngmitamit@gmail.com
+ */
+
 // mock User data
 const Users = {
   A: {

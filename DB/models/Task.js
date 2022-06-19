@@ -1,3 +1,11 @@
+/**
+ * @author Nguyen Minh Tam / ngmitamit@gmail.com
+ */
+
+const { v4: uuidv4 } = require("uuid");
+
+const { getTodayString } = require("../../utils/index");
+
 // mock Task data
 const TaskMetaData = {
   A: {
@@ -13,6 +21,25 @@ const Task = {
   },
 };
 
+/**
+ *
+ * @param {string} userId
+ * @returns list of task user who is the owner of this userId
+ */
+const getTaskListByUserId = (userId) => {
+  const userTask = TaskMetaData[userId];
+
+  if (!userTask) return [];
+
+  const taskList = [];
+
+  for (const taskId in userTask) {
+    taskList.push(Task[taskId]);
+  }
+
+  return taskList;
+};
+
 module.exports = {
   /**
    *
@@ -23,22 +50,45 @@ module.exports = {
     return Task[id];
   },
 
+  getTaskListByUserId,
+
+  /**
+   * 
+   * @param {string} userId 
+   * @param {string} day - dd-mm-yyyy
+   * @returns 
+   */
+  getNumberOfTaskByUserIdAndDay: (userId, day) => {
+    const taskList = getTaskListByUserId(userId) || [];
+
+    const result = taskList.reduce((total, task) => {
+      return total + (task.createdAt === day);
+    }, 0);
+
+    return result;
+  },
+
   /**
    *
    * @param {string} userId
-   * @returns list of task user who is the owner of this userId
+   * @param {object} task
+   * @returns task id
    */
-  getTaskListByUserId: (userId) => {
-    const userTask = TaskMetaData[userId];
+  insertTaskByUserId: (userId, task) => {
+    const content = "" + task.content;
+    const id = uuidv4();
 
-    if (!userTask) return [];
+    Task[id] = {
+      id,
+      content,
+      userId,
+      createdAt: getTodayString(),
+    };
 
-    const taskList = [];
+    if (!TaskMetaData[userId]) TaskMetaData[userId] = {};
 
-    for (const taskId in userTask) {
-      taskList.push(Task[taskId]);
-    }
+    TaskMetaData[userId][id] = true;
 
-    return taskList;
+    return id;
   },
 };
