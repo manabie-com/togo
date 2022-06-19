@@ -70,3 +70,4 @@ I decided to add a property `dueDate`, so user can create a task that end in the
   - Add priority to task
   - Repeating task
 - Unit tests and integration tests are not fully tested all the cases
+- Error are not handled carefully, response message is not friendly. It takes times to do this.
