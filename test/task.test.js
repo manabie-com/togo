@@ -91,7 +91,7 @@ describe("Task", () => {
         });
     });
 
-    it("it should GET list of task of userB (0 task)", (done) => {
+    it("it should GET list of task of userB (1 task)", (done) => {
       chai
         .request(server)
         .get("/api/tasks")
@@ -99,7 +99,7 @@ describe("Task", () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.data.should.be.a("array");
-          res.body.data.length.should.be.eql(0);
+          res.body.data.length.should.be.eql(1);
           done();
         });
     });
