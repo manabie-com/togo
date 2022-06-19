@@ -1,30 +1,45 @@
 ### Requirements
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+- NPM >= 8.11.0
+- Nodejs >= v16.15.1
 
-### Notes
+### Install
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+```bash
+npm i
+```
 
-### How to submit your solution?
+### Run (port: 3000)
 
-- Fork this repo and show us your development progress via a PR
+```bash
+npm start
+```
 
-### Interesting facts about Manabie
+### Test
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+```bash
+npm test
+```
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+### Demo
+#### Accounts
+- user A
+  - access_token: userA:password
+  - limit: 5
+- user B
+  - access_token: userA:password
+  - limit: 10
+- user C
+  - access_token: userC:password
+  - limit: 0
+
+#### Get list task of user
+
+```bash
+curl --cookie "access_token=[access_token]" http://localhost:3000/api/tasks
+```
+
+#### Add task
+```bash
+curl --cookie "access_token=[access_token]" http://localhost:3000/api/task -H 'Content-Type: application/json' -d '{"content":"task content"}'
+```
