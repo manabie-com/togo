@@ -9,9 +9,12 @@ module.exports = {
    */
   getTodayString: () => {
     const today = new Date();
-    const todayString = `${today.getDate()}-${
-      today.getMonth() + 1
-    }-${today.getFullYear()}`;
+
+    const dd = `${today.getDate()}`.padStart(2, 0);
+    const mm = `${today.getMonth() + 1}`.padStart(2, 0);
+    const yyyy = today.getFullYear();
+
+    const todayString = `${dd}-${mm}-${yyyy}`;
 
     return todayString;
   },
