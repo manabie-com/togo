@@ -1,0 +1,17 @@
+version: "3.3"
+
+services:
+  web:
+    build: .
+    volumes:
+      - .:/src
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=1
+    networks:
+      - togo_network
+
+networks:
+  togo_network:
+    driver: bridge
