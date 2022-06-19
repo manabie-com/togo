@@ -19,6 +19,7 @@ cp .env-example .env
 ```bash
 docker-compose up
 ```
+Server now running on http://localhost:8080
 
 ### Run migration to create db tables
 ```bash
@@ -59,8 +60,10 @@ go test -v -cover ./...
 ```
 
 ## What do you love about your solution?
-It is simple and clear. Data is verified carefully when creating new task.
-I decided to add a property `dueDate`, so user can create a task that end in the future.
+- It is simple and clear. Data is verified carefully when creating new task.
+- I decided to add a property `dueDate`, so user can create a task that end in the future.
+- Project structure are follow [golang-standard/project-layout](https://github.com/golang-standards/project-layout)
+- Services in `internal` are managed follow `clean-architecture`
 
 ## What else do you want us to know about however you do not have enough time to complete?
 - With the scope in requirement, I think my solution is good enough.
