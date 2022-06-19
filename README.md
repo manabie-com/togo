@@ -1,30 +1,72 @@
-### Requirements
+## How to run your code locally?
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+### Install docker
+Follow Docker document and install Docker Desktop: https://docs.docker.com/engine/install/
 
-### Notes
+### Install `sql-migrate`
+```bash
+go get -v github.com/rubenv/sql-migrate/...
+```
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+### `cd` to the project directory
 
-### How to submit your solution?
+### Copy environment variables from .env.example to .env - do some edit if you want or just keep sample env
+```bash
+cp .env-example .env
+```
 
-- Fork this repo and show us your development progress via a PR
+### Start Docker
+```bash
+docker-compose up
+```
 
-### Interesting facts about Manabie
+### Run migration to create db tables
+```bash
+make migrate
+```
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+## A sample “curl” command to call your API
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+- You have to call create new user API first to get user id, then put user id in create new task API
+- Due date in create new task API muse be in the future, update it if necessary
+
+### Create a new user
+```bash
+curl --location --request POST 'http://localhost:8080/users' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "dailyTaskLimit": 10
+}'
+```
+
+### Create a new task
+```bash
+curl --location --request POST 'http://localhost:8080/tasks' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "userId": "7f572763-2079-4002-929e-5ae6eeefee9a",
+    "title": "Learn Golang Course",
+    "description": "Learn Golang Course on Udemy for 1 hour",
+    "dueDate": "2022-06-25T20:10:10Z"
+}'
+```
+
+## How to run your unit tests locally?
+- Keep docker running, we need to keep database running
+- Run this command to run unit tests
+```bash
+go test -v -cover ./...
+```
+
+## What do you love about your solution?
+It is simple and clear. Data is verified carefully when creating new task.
+I decided to add a property `dueDate`, so user can create a task that end in the future.
+
+## What else do you want us to know about however you do not have enough time to complete?
+- With the scope in requirement, I think my solution is good enough.
+- But I want to put some extra features if I have more time, like:
+  - Implement authentication when user create task
+  - Add attachment to task
+  - Add priority to task
+  - Repeating task
+- Unit tests and integration tests are not fully tested all the cases

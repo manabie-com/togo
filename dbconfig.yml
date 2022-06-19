@@ -1,0 +1,5 @@
+development:
+  dialect: postgres
+  datasource: host=localhost port=${POSTGRESQL_PORT} user=${POSTGRESQL_USERNAME} password=${POSTGRESQL_PASSWORD} dbname=${POSTGRESQL_DATABASE} sslmode=disable
+  dir: migrations
+  table: migrations
