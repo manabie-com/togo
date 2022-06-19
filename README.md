@@ -32,12 +32,10 @@ Thank you for spending time to read and attempt our take-home assessment. We are
 
 ### Installation
 - Run code locally
-  - cd Todo
   - docker-compose up -d
   - access link: http://localhost:5000/swagger/index.html
 - Run unit test 
   - Download Dotnet SDK and install: https://dotnet.microsoft.com/en-us/download
-  - cd Todo
   - dotnet test Todo.Application.Test
   - dotnet test Todo.Api.Test
 - My solution is:
