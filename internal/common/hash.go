@@ -1,6 +1,8 @@
 package common
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"golang.org/x/crypto/bcrypt"
+)
 
 const hashCost = bcrypt.DefaultCost + 5
 

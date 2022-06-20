@@ -11,21 +11,12 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/manabie-com/togo/internal/storages/redis"
-
-	"github.com/manabie-com/togo/internal/storages/postgres"
-
 	"github.com/manabie-com/togo/internal/services"
-
-	"github.com/joho/godotenv"
+	"github.com/manabie-com/togo/internal/storages/postgres"
+	"github.com/manabie-com/togo/internal/storages/redis"
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		fmt.Printf("Load .env file failed. Use default config")
-	}
-
 	storeManager := postgres.GetStorageManager(
 		os.Getenv("POSTGRES_HOST"),
 		os.Getenv("POSTGRES_PORT"),

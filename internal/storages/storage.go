@@ -2,7 +2,7 @@ package storages
 
 import (
 	"context"
-	"database/sql"
+	"time"
 
 	"github.com/manabie-com/togo/internal/storages/entities"
 )
@@ -10,8 +10,8 @@ import (
 //go:generate mockgen -source=storage.go -destination=./mocks/storage_mock.go
 
 type StorageManager interface {
-	RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*entities.Task, error)
-	AddTask(ctx context.Context, t *entities.Task) error
-	ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool
+	RetrieveTasks(ctx context.Context, userID string, date time.Time) ([]*entities.Task, error)
+	AddTask(ctx context.Context, task *entities.Task) error
+	ValidateUser(ctx context.Context, userID, pwd string) bool
 	AddUser(ctx context.Context, userID, pwd string) error
 }

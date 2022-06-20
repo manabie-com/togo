@@ -17,3 +17,8 @@ vendor/
 out/
 
 .idea
+
+# Docker data 
+data
+.vscode/.editorconfig
+.vscode/launch.json

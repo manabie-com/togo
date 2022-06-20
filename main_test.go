@@ -1,8 +1,8 @@
 package main
 
 import (
+	"bytes"
 	"context"
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -16,25 +16,30 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
 	"github.com/manabie-com/togo/internal/services"
 	"github.com/manabie-com/togo/internal/storages/entities"
-	dbPostgres "github.com/manabie-com/togo/internal/storages/postgres"
-	dbRedis "github.com/manabie-com/togo/internal/storages/redis"
+	db "github.com/manabie-com/togo/internal/storages/postgres"
+	cache "github.com/manabie-com/togo/internal/storages/redis"
 )
 
 var service *services.ToDoService
 
 func TestMain(m *testing.M) {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalln("Load .env file failed. Use default config")
-	}
+	os.Setenv("POSTGRES_HOST", "localhost")
+	os.Setenv("POSTGRES_PORT", "5432")
+	os.Setenv("POSTGRES_USER", "postgres")
+	os.Setenv("POSTGRES_PASSWORD", "changeme")
+	os.Setenv("POSTGRES_DBNAME", "postgres")
+	os.Setenv("REDIS_HOST", "localhost")
+	os.Setenv("REDIS_PORT", "6379")
+	os.Setenv("MAX_REQ_PER_HOUR", "5")
+	os.Setenv("SERVER_ADDR", "8080")
+	os.Setenv("JWT_KEY", "wqGyEBBfPK9w3Lxw")
 
-	storeManager := dbPostgres.GetStorageManager(
+	storeManager := db.GetStorageManager(
 		os.Getenv("POSTGRES_HOST"),
 		os.Getenv("POSTGRES_PORT"),
 		os.Getenv("POSTGRES_USER"),
@@ -46,7 +51,7 @@ func TestMain(m *testing.M) {
 	if err != nil || maxRequestPeHour <= 0 {
 		log.Fatalln("Invalid rate limit config")
 	}
-	rateLimiter := dbRedis.GetRateLimiter(
+	rateLimiter := cache.GetRateLimiter(
 		os.Getenv("REDIS_HOST"),
 		os.Getenv("REDIS_PORT"),
 		maxRequestPeHour,
@@ -108,18 +113,21 @@ func TestLogin(t *testing.T) {
 	// Setup DB
 	err := service.Store.AddUser(context.Background(), "test_user_1", "p@ssworD!")
 	if err != nil {
-		t.Fatalf("Init database failed, err %s", err)
+		t.Fatalf(err.Error())
 	}
 
 	for _, tt := range testCases {
 		t.Run(tt.name, func(t *testing.T) {
-			request, _ := http.NewRequest(http.MethodPost, fmt.Sprintf("/login?user_id=%s&password=%s", tt.args.username, tt.args.password), nil)
+			user := entities.User{
+				ID:       tt.args.username,
+				Password: tt.args.password,
+			}
+			body, _ := json.Marshal(&user)
+			request, _ := http.NewRequest(http.MethodPost, "/login", bytes.NewReader(body))
 			response := httptest.NewRecorder()
-
 			service.ServeHTTP(response, request)
 
-			gotCode := response.Code
-			if gotCode != tt.wantResp.Code {
+			if gotCode := response.Code; gotCode != tt.wantResp.Code {
 				t.Errorf("Login failed. Expected http code %d, but got %d\n", tt.wantResp.Code, gotCode)
 			}
 		})
@@ -191,7 +199,12 @@ func TestListTask(t *testing.T) {
 
 	for _, tt := range testCases {
 		t.Run(tt.name, func(t *testing.T) {
-			loginReq, _ := http.NewRequest(http.MethodPost, fmt.Sprintf("/login?user_id=%s&password=%s", tt.args.username, tt.args.password), nil)
+			user := entities.User{
+				ID:       tt.args.username,
+				Password: tt.args.password,
+			}
+			body, _ := json.Marshal(&user)
+			loginReq, _ := http.NewRequest(http.MethodPost, "/login", bytes.NewReader(body))
 			loginResp := httptest.NewRecorder()
 
 			service.ServeHTTP(loginResp, loginReq)
@@ -329,7 +342,12 @@ func TestCreateTask(t *testing.T) {
 				t.Fatalf("Init database failed, err %s", err)
 			}
 
-			loginReq, _ := http.NewRequest(http.MethodPost, fmt.Sprintf("/login?user_id=%s&password=%s", tt.args.username, tt.args.password), nil)
+			user := entities.User{
+				ID:       tt.args.username,
+				Password: tt.args.password,
+			}
+			body, _ := json.Marshal(&user)
+			loginReq, _ := http.NewRequest(http.MethodPost, "/login", bytes.NewReader(body))
 			loginResp := httptest.NewRecorder()
 
 			service.ServeHTTP(loginResp, loginReq)
@@ -353,22 +371,12 @@ func TestCreateTask(t *testing.T) {
 				taskResp := httptest.NewRecorder()
 				service.ServeHTTP(taskResp, taskReq)
 
-				gotCode := taskResp.Code
-				if gotCode != http.StatusOK && gotCode != tt.wantResp.Code {
+				if gotCode := taskResp.Code; gotCode != http.StatusOK && gotCode != tt.wantResp.Code {
 					t.Errorf("Get task failed. Expected http code %d, but got %d\n", tt.wantResp.Code, gotCode)
 				}
 			}
 
-			gotTask, err := service.Store.RetrieveTasks(context.Background(),
-				sql.NullString{
-					String: "test_user_1",
-					Valid:  true,
-				}, sql.NullString{
-					String: time.Now().Format("2006-01-02"),
-					Valid:  true,
-				},
-			)
-
+			gotTask, err := service.Store.RetrieveTasks(context.Background(), "test_user_1", time.Now())
 			if err != nil {
 				t.Errorf("get tasks failed, err %s", err)
 			}

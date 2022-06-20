@@ -28,10 +28,9 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	switch req.URL.Path {
 	case "/login":
 		s.getAuthToken(resp, req)
-		return
+
 	case "/tasks":
-		var ok bool
-		req, ok = s.validToken(req)
+		req, ok := s.validToken(req)
 		if !ok {
 			resp.WriteHeader(http.StatusUnauthorized)
 			return
@@ -43,7 +42,6 @@ func (s *ToDoService) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		case http.MethodPost:
 			s.addTask(resp, req)
 		}
-		return
 	}
 }
 

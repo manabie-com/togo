@@ -2,12 +2,12 @@ package postgres
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"log"
 	"os"
 	"strings"
 	"sync"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/postgres"
@@ -20,6 +20,7 @@ import (
 var (
 	storageManager *StorageManager
 	once           sync.Once
+	queryLimit     = 1000
 )
 
 // GetStorageManager init singleton of Postgres Impl for StorageManager
@@ -30,17 +31,28 @@ func GetStorageManager(host, port, username, pwd, dbname string) *StorageManager
 			host, port, username, pwd, dbname,
 		)
 
-		db, err := gorm.Open(postgres.Open(psqlInfo), &gorm.Config{})
-		if err != nil {
-			log.Fatalln("Init DB connection failed", err)
-		}
+		retry := 0
+		for {
+			// Connect to db, retry 3 times
+			db, err := gorm.Open(postgres.Open(psqlInfo), &gorm.Config{})
+			if err != nil {
+				if retry >= 3 {
+					log.Fatalln("Failed to connect to db after 3 retries")
+				}
 
-		if strings.EqualFold(os.Getenv("DB_DEBUG"), "true") {
-			db = db.Debug()
-		}
+				retry++
+				time.Sleep(time.Second * time.Duration(retry+1))
+				continue
+			}
 
-		storageManager = &StorageManager{
-			db: db,
+			if strings.EqualFold(os.Getenv("DB_DEBUG"), "true") {
+				db = db.Debug()
+			}
+
+			storageManager = &StorageManager{
+				db: db,
+			}
+			break
 		}
 
 		if err := Migrate(storageManager); err != nil {
@@ -54,11 +66,14 @@ type StorageManager struct {
 	db *gorm.DB
 }
 
-func (s *StorageManager) RetrieveTasks(ctx context.Context, userID, createdDate sql.NullString) ([]*entities.Task, error) {
+func (s *StorageManager) RetrieveTasks(ctx context.Context, userID string, date time.Time) ([]*entities.Task, error) {
 	var tasks []*entities.Task
 	result := s.db.WithContext(ctx).
-		Where("user_id = ? AND created_date = ?", userID, createdDate).
-		Limit(1000).Find(&tasks)
+		Where(&entities.Task{
+			UserID:      userID,
+			CreatedDate: date.Format("2006-01-02"),
+		}).
+		Limit(queryLimit).Find(&tasks)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -74,14 +89,14 @@ func (s *StorageManager) AddTask(ctx context.Context, task *entities.Task) error
 	return nil
 }
 
-func (s *StorageManager) ValidateUser(ctx context.Context, userID, pwd sql.NullString) bool {
-	user := entities.User{}
-	result := s.db.WithContext(ctx).First(&user, "id = ?", userID)
+func (s *StorageManager) ValidateUser(ctx context.Context, userID, pwd string) bool {
+	var user entities.User
+	result := s.db.WithContext(ctx).First(&user, &entities.User{ID: userID})
 	if result.Error != nil {
 		return false
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(pwd.String)); err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(pwd)); err != nil {
 		return false
 	}
 
@@ -89,12 +104,12 @@ func (s *StorageManager) ValidateUser(ctx context.Context, userID, pwd sql.NullS
 }
 
 func (s *StorageManager) AddUser(ctx context.Context, userID, pwd string) error {
-	result := s.db.WithContext(ctx).Where("id = ?", userID)
+	result := s.db.WithContext(ctx).Where(&entities.User{ID: userID})
 	if result.Error != nil {
 		return result.Error
 	}
 
-	// User exist
+	// User existed
 	if result.RowsAffected > 0 {
 		return fmt.Errorf("user is already existed")
 	}

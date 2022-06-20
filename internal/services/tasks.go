@@ -1,25 +1,29 @@
 package services
 
 import (
-	"database/sql"
 	"encoding/json"
 	"net/http"
 	"time"
 
 	"github.com/google/uuid"
-
 	"github.com/manabie-com/togo/internal/storages/entities"
 )
 
 func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	id, _ := userIDFromCtx(req.Context())
+	date, err := time.Parse("2006-01-02", req.URL.Query().Get("created_date"))
+	if err != nil {
+		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"message": "date should follow the format YYYY-MM-DD",
+		})
+		return
+	}
+
 	tasks, err := s.Store.RetrieveTasks(
 		req.Context(),
-		sql.NullString{
-			String: id,
-			Valid:  true,
-		},
-		value(req, "created_date"),
+		id,
+		date,
 	)
 
 	resp.Header().Set("Content-Type", "application/json")
@@ -27,7 +31,7 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
+			"message": err.Error(),
 		})
 		return
 	}
@@ -38,11 +42,14 @@ func (s *ToDoService) listTasks(resp http.ResponseWriter, req *http.Request) {
 }
 
 func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
-	t := &entities.Task{}
-	err := json.NewDecoder(req.Body).Decode(t)
 	defer req.Body.Close()
-	if err != nil {
+
+	var task entities.Task
+	if err := json.NewDecoder(req.Body).Decode(&task); err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(resp).Encode(map[string]string{
+			"message": "invalid request body",
+		})
 		return
 	}
 
@@ -54,7 +61,7 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
-			"data": "an internal server error occurred",
+			"message": "an internal server error occurred",
 		})
 		return
 	}
@@ -62,25 +69,27 @@ func (s *ToDoService) addTask(resp http.ResponseWriter, req *http.Request) {
 	if !isAllowed {
 		resp.WriteHeader(http.StatusTooManyRequests)
 		json.NewEncoder(resp).Encode(map[string]string{
-			"data": "user has created max task for today",
+			"message": "user has created max task for today",
 		})
 		return
 	}
 
-	t.ID = uuid.New().String()
-	t.UserID = userID
-	t.CreatedDate = now.Format("2006-01-02")
-
-	err = s.Store.AddTask(req.Context(), t)
+	task = entities.Task{
+		ID:          uuid.New().String(),
+		UserID:      userID,
+		Content:     task.Content,
+		CreatedDate: now.Format("2006-01-02"),
+	}
+	err = s.Store.AddTask(req.Context(), &task)
 	if err != nil {
 		resp.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(resp).Encode(map[string]string{
-			"error": err.Error(),
+			"message": "failed to add task",
 		})
 		return
 	}
 
 	json.NewEncoder(resp).Encode(map[string]*entities.Task{
-		"data": t,
+		"data": &task,
 	})
 }

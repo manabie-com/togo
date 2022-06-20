@@ -1,32 +1,45 @@
 {
 	"info": {
-		"_postman_id": "05327fec-8670-470b-8253-f27686acf809",
-		"name": "Test togo",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"_postman_id": "195a232a-2d09-4b64-89a8-4c0476319caf",
+		"name": "Togo Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20939296"
 	},
 	"item": [
 		{
 			"name": "Login",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
 				"method": "GET",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"manabie\",\n    \"password\": \"manabie\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "localhost:5050/login?user_id=firstUser&password=example",
+					"raw": "localhost:8080/login?user_id=manabie&password=manabie",
 					"host": [
 						"localhost"
 					],
-					"port": "5050",
+					"port": "8080",
 					"path": [
 						"login"
 					],
 					"query": [
 						{
 							"key": "user_id",
-							"value": "firstUser"
+							"value": "manabie"
 						},
 						{
 							"key": "password",
-							"value": "example"
+							"value": "manabie"
 						}
 					]
 				}
@@ -41,7 +54,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTYzOTg2ODgsInVzZXJfaWQiOiJtYW5hYmllIn0.fDpXrhj7pWI7Pm2_7SuezA8YHNhdwo86j5YnMwgQMa4",
 							"type": "string"
 						}
 					]
@@ -55,18 +68,18 @@
 					}
 				],
 				"url": {
-					"raw": "localhost:5050/tasks?created_date=2020-06-29",
+					"raw": "localhost:8080/tasks?created_date=2022-06-20",
 					"host": [
 						"localhost"
 					],
-					"port": "5050",
+					"port": "8080",
 					"path": [
 						"tasks"
 					],
 					"query": [
 						{
 							"key": "created_date",
-							"value": "2020-06-29"
+							"value": "2022-06-20"
 						}
 					]
 				}
@@ -76,6 +89,16 @@
 		{
 			"name": "Create task",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTYzOTg2ODgsInVzZXJfaWQiOiJtYW5hYmllIn0.fDpXrhj7pWI7Pm2_7SuezA8YHNhdwo86j5YnMwgQMa4",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [
 					{
@@ -86,7 +109,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"content\": \"another content\"\n}",
+					"raw": "{\n    \"content\": \"another content ahaha\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -94,11 +117,11 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:5050/tasks",
+					"raw": "localhost:8080/tasks",
 					"host": [
 						"localhost"
 					],
-					"port": "5050",
+					"port": "8080",
 					"path": [
 						"tasks"
 					]
@@ -106,6 +129,5 @@
 			},
 			"response": []
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }
