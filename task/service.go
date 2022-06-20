@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
-
-	"togo/cache"
 )
+
+
 
 //go:generate mockery -name=Repository
 type Repository interface {
@@ -15,12 +15,18 @@ type Repository interface {
 	InsertUserTask(userId, task string, updatedAt time.Time) error
 }
 
-type Service struct {
-	repo Repository
-	cache cache.Redis
+//go:generate mockery -name=CacheService
+type CacheService interface {
+	GetInt(key string) (int, error)
+	SetExpire(key string, value int, expire time.Duration) error
 }
 
-func NewService(repo Repository, cache cache.Redis) *Service {
+type Service struct {
+	repo Repository
+	cache CacheService
+}
+
+func NewService(repo Repository, cache CacheService) *Service {
 	return &Service{
 		repo: repo,
 		cache: cache,
