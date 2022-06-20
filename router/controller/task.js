@@ -2,7 +2,7 @@
  * @author Nguyen Minh Tam / ngmitamit@gmail.com
  */
 
-const Tasks = require("../../DB/models/Task");
+const Tasks = require("../../repository/Task");
 const CustomError = require("../middlewares/customeError");
 
 const { getTodayString } = require("../../utils/index");

@@ -17,7 +17,7 @@ chai.use(chaiHttp);
 
 describe("Task", () => {
   describe("Unit Test", () => {
-    const TaskMock = require("../DB/models/Task");
+    const TaskMock = require("../repository/Task");
 
     it("it should add new task", (done) => {
       const numberOfTaskOfUserA = TaskMock.getTaskListByUserId("testA")?.length;

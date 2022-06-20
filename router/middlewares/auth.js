@@ -2,7 +2,7 @@
  * @author Nguyen Minh Tam / ngmitamit@gmail.com
  */
 
-const Users = require("../../DB/models/User");
+const Users = require("../../repository/User");
 
 const user = {
   // token -> userId,

@@ -19,12 +19,5 @@ const Users = {
 };
 
 module.exports = {
-  /**
-   *
-   * @param {string} id
-   * @returns user's data or undefined if id is invalid
-   */
-  getUserById: (id) => {
-    return Users[id];
-  },
-};
+  Users,
+}
