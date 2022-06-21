@@ -6,7 +6,6 @@ require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-redis/redis_rate/v9 v9.1.2
 	github.com/golang-jwt/jwt/v4 v4.4.1
-	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
 	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
 	gorm.io/driver/postgres v1.3.7

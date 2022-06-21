@@ -13,10 +13,15 @@
 
 ### Start Postgres and Redis for testing
 ```bash
- docker-compose up -d postgres redis
+docker-compose up -d postgres redis
 ```
 
 ### Start togo service
 ```bash
- docker-compose up -d togo
+docker-compose up -d togo
+```
+
+### Run integration test
+```bash
+docker-compose up -d postgres redis && go test -v ./...
 ```
