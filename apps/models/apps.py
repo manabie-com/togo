@@ -6,3 +6,4 @@ class ModelsConfig(AppConfig):
     label = 'Models'
     name = 'apps.models'
     verbose_name = _('Models')
+    default_auto_field = 'django.db.models.AutoField'

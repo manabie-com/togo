@@ -8,7 +8,7 @@ schema_view = get_schema_view(
    openapi.Info(
       title="API",
       default_version="v1",
-      description="Description: The system api developing for tiktok and facebook",
+      description="Description: The system api ToGo",
       contact=openapi.Contact(email="trinct1412@gmail.com"),
        # terms_of_service="https://www.google.com/policies/terms/",
        # license=openapi.License(name="BSD License"),
@@ -16,7 +16,6 @@ schema_view = get_schema_view(
    public=True,
    permission_classes=(permissions.AllowAny,),
 )
-
 
 urlpatterns = [
     # define url swagger
