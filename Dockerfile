@@ -13,4 +13,5 @@ RUN pip install -r requirements.txt
 
 ADD . /src/
 
-ENTRYPOINT ["bash", "/src/entrypoint.sh"]
+USER root
+RUN  chmod +x /src/entrypoint.sh
