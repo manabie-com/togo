@@ -25,7 +25,7 @@ func (h *Handler) HandleRecordTask(c *gin.Context) {
 	var reqBody RecordRequest
 	if err := c.BindJSON(&reqBody); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": fmt.Sprintf("validate request body error: %v", err),
+			"message": "invalid request body",
 		})
 		return
 	}

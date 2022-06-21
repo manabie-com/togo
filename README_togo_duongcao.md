@@ -5,7 +5,7 @@
 
 ### A sample “curl” command to call your API
 ```
-curl --location --request POST 'localhost:8080/api/v1/task/record' \
+curl --location --request POST 'localhost:8083/api/v1/task/record' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "user_id": "3",

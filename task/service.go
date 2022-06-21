@@ -46,7 +46,7 @@ func (s *Service) RecordTask(userId, task string) error {
 	if err != nil {
 		return fmt.Errorf("get redis error: %v", err)
 	}
-	if userConfig.Limit == cachedLimit {
+	if cachedLimit >= userConfig.Limit {
 		return fmt.Errorf("user task record reached limit: %d", cachedLimit)
 	}
 

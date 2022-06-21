@@ -1,13 +1,14 @@
 package cache
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
 	"strconv"
 	"time"
 
-	"github.com/go-redis/redis"
+	"github.com/go-redis/redis/v8"
 )
 
 type Redis struct {
@@ -19,7 +20,7 @@ func StartRedis() *redis.Client {
 		Addr: fmt.Sprintf("%s:%d", RedisHost, RedisPort),
 	})
 
-	_, err := c.Ping().Result()
+	_, err := c.Ping(context.Background()).Result()
 
 	if err != nil {
 		log.Fatal(err)
@@ -36,7 +37,7 @@ func NewRedis(client *redis.Client) *Redis {
 
 func (r *Redis) GetInt(key string) (int, error) {
 	var limit int
-	v, err := r.client.Get(key).Result()
+	v, err := r.client.Get(context.Background(),key).Result()
 	if err != nil {
 		if !errors.Is(err, redis.Nil) {
 			return limit, err
@@ -51,6 +52,9 @@ func (r *Redis) GetInt(key string) (int, error) {
 }
 
 func (r *Redis) SetExpire(key string, value int, expire time.Duration) error {
-	_, err := r.client.Set(key, value, expire).Result()
+	result, err := r.client.SetEX(context.Background(), key, value, expire).Result()
+	if result == "OK" {
+		return nil
+	}
 	return err
 }

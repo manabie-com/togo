@@ -2,38 +2,40 @@ package main
 
 import (
 	"context"
-
-	taskHandler "togo/handler/task"
-	"togo/cache"
-	"togo/task"
-
 	"log"
 
+	"togo/cache"
+	taskHandler "togo/handler/task"
+	"togo/task"
+
 	"github.com/gin-gonic/gin"
+
 	"togo/storage"
 )
 
-func main() {
+func setUpRoute() *gin.Engine {
 	r := gin.Default()
 
 	mongoClient := storage.StartMongo()
-	ctx, cancel := context.WithTimeout(context.Background(), storage.MongoClientTimeout)
-	defer cancel()
+	ctx, _ := context.WithTimeout(context.Background(), storage.MongoClientTimeout)
 	err := mongoClient.Connect(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
 	storage.MongoClient = mongoClient
-	defer mongoClient.Disconnect(ctx)
 
 	cache.RedisClient = cache.StartRedis()
 	redisCache := cache.NewRedis(cache.RedisClient)
 
 	repository := task.NewRepository(mongoClient)
-	service := task.NewService(repository, *redisCache)
+	service := task.NewService(repository, redisCache)
 	taskHandler := taskHandler.NewHandler(service)
 
 	r.POST("/api/v1/task/record", taskHandler.HandleRecordTask)
+	return r
+}
 
-	r.Run() // listen and serve on 0.0.0.0:8080
+func main() {
+	r := setUpRoute()
+	r.Run(":8083") // listen and serve on 0.0.0.0:8083
 }
