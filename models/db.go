@@ -9,13 +9,15 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+var DB *sql.DB
+
 func Connect() {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Failed to load env")
 	}
 
-	DB, err = sql.Open("postgres", os.Getenv("DATABASE_URL"))
+	DB, err = sql.Open("postgres", os.Getenv("DB_URI"))
 	if err != nil {
 		log.Fatal("Connect to database failed")
 	}

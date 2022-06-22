@@ -6,8 +6,6 @@ import (
 	"log"
 )
 
-var DB *sql.DB
-
 type User struct {
 	Id       int64
 	Username string

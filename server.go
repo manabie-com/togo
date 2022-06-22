@@ -18,7 +18,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	port := os.Getenv("PORT")
+	port := os.Getenv("PORT") // Load PORT from env file (if it had)
 	if port == "" {
 		port = defaultPort
 	}
@@ -26,5 +26,5 @@ func main() {
 	models.Connect() // connect to database
 
 	http.HandleFunc("/", routers.Handle)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Fatal(http.ListenAndServe(":"+defaultPort, nil))
 }

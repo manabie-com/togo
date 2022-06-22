@@ -9,8 +9,7 @@ import (
 
 func OneUserHandle(w http.ResponseWriter, r *http.Request, params []string) { // Handle query for one user
 	id, err := strconv.Atoi(params[2])
-	controllers.ErrorHandle(w, err, http.StatusMethodNotAllowed)
-
+	controllers.ErrorHandle(w, err,"convert string to int failed" ,http.StatusMethodNotAllowed)
 	switch r.Method {
 	case http.MethodGet:
 		controllers.ResponeOneUser(w, r, id)

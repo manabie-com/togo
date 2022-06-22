@@ -20,7 +20,7 @@ func Handle(w http.ResponseWriter, r *http.Request) { // routing for different r
 			AllUserHandle(w, r)
 		}
 	case authURL:
-		AuthHandle(w, r)
+		AuthHandle(w, r, params)
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}

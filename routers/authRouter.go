@@ -6,8 +6,8 @@ import (
 	"github.com/huynhhuuloc129/todo/controllers"
 )
 
-func AuthHandle(w http.ResponseWriter, r *http.Request) { // Handle different request
-	switch r.RequestURI {
+func AuthHandle(w http.ResponseWriter, r *http.Request, params []string) { // Handle different request
+	switch params[2] {
 	case "register":
 		switch r.Method {
 		case http.MethodPost:
