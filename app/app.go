@@ -26,7 +26,6 @@ func (a *App) Init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
 
 	fmt.Println("Database is connected!")
 	a.DB = db
@@ -39,7 +38,7 @@ func (a *App) Routes() {
 	router := a.Router
 	// sub router like http://<HOST>:<PORT>/api/users
 	userRouter := router.PathPrefix("/api/users").Subrouter()
-	userRouter.HandleFunc("/", a.GetMe).Methods("GET")
+	userRouter.HandleFunc("/me", a.GetMe).Methods("GET")
 	userRouter.HandleFunc("/signup", a.SignUp).Methods("POST")
 	userRouter.HandleFunc("/login", a.Login).Methods("POST")
 	userRouter.HandleFunc("/", a.UpdateMe).Methods("PATCH")
@@ -53,6 +52,7 @@ func (a *App) Routes() {
 }
 
 func (a *App) GetMe(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("From GetMe Function")
 	c.GetMe(a.DB, w, r)
 }
 
@@ -61,27 +61,27 @@ func (a *App) SignUp(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) Login(w http.ResponseWriter, r *http.Request) {
-	c.Login(a.DB, w, r)
+	// c.Login(a.DB, w, r)
 }
 
 func (a *App) UpdateMe(w http.ResponseWriter, r *http.Request) {
-	c.UpdateMe(a.DB, w, r)
+	// c.UpdateMe(a.DB, w, r)
 }
 
 func (a *App) GetTasks(w http.ResponseWriter, r *http.Request) {
-	c.GetTasks(a.DB, w, r)
+	// c.GetTasks(a.DB, w, r)
 }
 
 func (a *App) GetTask(w http.ResponseWriter, r *http.Request) {
-	c.GetTask(a.DB, w, r)
+	// c.GetTask(a.DB, w, r)
 }
 
 func (a *App) Add(w http.ResponseWriter, r *http.Request) {
-	c.Add(a.DB, w, r)
+	// c.Add(a.DB, w, r)
 }
 
 func (a *App) Edit(w http.ResponseWriter, r *http.Request) {
-	c.Edit(a.DB, w, r)
+	// c.Edit(a.DB, w, r)
 }
 
 func (a *App) Run(host string) {

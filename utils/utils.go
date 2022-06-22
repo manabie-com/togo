@@ -5,11 +5,18 @@ import (
 	"net/http"
 )
 
-func Message(status bool, message string) map[string]interface{} {
-	return map[string]interface{}{"status": status, "message": message}
+type response struct {
+	status  string
+	message string
+	data    interface{}
 }
 
-func Respond(w http.ResponseWriter, status int, payload map[string]interface{}) {
-	w.WriteHeader(status)
-	json.NewEncoder(w).Encode(payload)
+func Respond(w http.ResponseWriter, statusCode int, status, message string, data interface{}) {
+	res := response{
+		status:  status,
+		message: message,
+		data:    data,
+	}
+	w.WriteHeader(statusCode)
+	json.NewEncoder(w).Encode(res)
 }
