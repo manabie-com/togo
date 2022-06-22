@@ -132,6 +132,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# logging
+TOGO_TASK_PICK_LIMIT_LOGGER = "togo.tasks.task_limited_each_day"
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -155,6 +157,10 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,
+        },
+        TOGO_TASK_PICK_LIMIT_LOGGER: {
+            'handlers': ['togo_task_pick_limit_debug'],
+            'level': 'DEBUG',
         }
     },
     'handlers': {
@@ -167,6 +173,11 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
         },
+        'togo_task_pick_limit_debug': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'logging/togo_task_pick_limit_debug.log',
+        }
     },
 
 }

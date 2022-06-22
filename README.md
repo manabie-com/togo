@@ -5,14 +5,17 @@ WorkDirectory:
     │ ├─┬ apps                        # Directory for api using rest-api
     │ │ ├─┬ exceptions                  # Directory for exceptions
     │ │ ├─┬ models                      # Directory for all table
-    │ │ ├─├──┬ migrations               # Directory for migrations
-    │ │ ├─├──┬ models                   # Directory for Models
+    │ │ ├─├─┬ migrations               # Directory for migrations
+    │ │ ├─├─┬ models                   # Directory for Models
     │ │ ├─┬ urls                        # Directory for Controllers
     │ │ ├─┬ views                       # Directory for Views
     │ │ ├─┬ serializers                 # Directory for Manage request and response api
+    │ │ ├─┬ tasks                       # Directory for Manage celery task
     │ ├─┬ logging                       # Directory for manage logs
     │ ├─┬ test                          # Directory for Unit test
     │ ├─┬ toogo                         # Directory for Settings system
+    │ │ ├─┬ celery                      # Directory for Config celery
+    │ │ ├─┬ logger                      # Directory for Logger
     ├─ docker-compose.yml               # Docker build django
     ├─ Dockerfile                       # Docker build sh
     ├─ entrapoint.sh                    # Docker build sh

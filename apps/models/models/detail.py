@@ -5,6 +5,7 @@ from .task import Task
 
 
 class Detail(models.Model):
+    objects = models.Manager()
     schedule = models.ForeignKey(Schedule, related_name='details', blank=False, null=False, on_delete=models.CASCADE)
     taskmaster = models.ForeignKey(User, related_name='tasks_assignment', blank=False, null=False,
                                    on_delete=models.CASCADE)
