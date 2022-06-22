@@ -1,4 +1,4 @@
-package task
+package record
 
 import (
 	"fmt"
@@ -47,16 +47,16 @@ func (s *Service) RecordTask(userId, task string) error {
 		return fmt.Errorf("get redis error: %v", err)
 	}
 	if cachedLimit >= userConfig.Limit {
-		return fmt.Errorf("user task record reached limit: %d", cachedLimit)
+		return fmt.Errorf("user record record reached limit: %d", cachedLimit)
 	}
 
 	loc, _ := time.LoadLocation("Local")
 	now := time.Now().In(loc)
-	midnight := time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 99, loc)
+	midnight := time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 999999999, loc)
 	duration := midnight.Sub(now)
 	err = s.repo.InsertUserTask(userId, task, now)
 	if err != nil {
-		return fmt.Errorf("insert user's task error: %v", err)
+		return fmt.Errorf("insert user's record error: %v", err)
 	}
 	err = s.cache.SetExpire(userId, cachedLimit+1, duration)
 	if err != nil {

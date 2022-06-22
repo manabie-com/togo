@@ -1,4 +1,4 @@
-package task
+package record
 
 import (
 	"fmt"
@@ -7,22 +7,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type RecordService interface {
+type Service interface {
 	RecordTask(userId, task string) error
 }
 
 type Handler struct {
-	recordService RecordService
+	recordService Service
 }
 
-func NewHandler(recordService RecordService) *Handler {
+func NewHandler(recordService Service) *Handler {
 	return &Handler{
 		recordService: recordService,
 	}
 }
 
 func (h *Handler) HandleRecordTask(c *gin.Context) {
-	var reqBody RecordRequest
+	var reqBody Request
 	if err := c.BindJSON(&reqBody); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "invalid request body",
@@ -33,7 +33,7 @@ func (h *Handler) HandleRecordTask(c *gin.Context) {
 	err := h.recordService.RecordTask(reqBody.UserId, reqBody.Task)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": fmt.Sprintf("record user's task error: %v", err),
+			"message": fmt.Sprintf("record user's record error: %v", err),
 		})
 		return
 	}

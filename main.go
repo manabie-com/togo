@@ -5,8 +5,9 @@ import (
 	"log"
 
 	"togo/cache"
-	taskHandler "togo/handler/task"
-	"togo/task"
+	recordHandler "togo/handler/record"
+	"togo/record"
+
 
 	"github.com/gin-gonic/gin"
 
@@ -27,17 +28,17 @@ func SetUpRoute() *gin.Engine {
 		log.Fatal(err)
 	}
 	storage.MongoClient = mongoClient
-	task.UserCollection = storage.MongoClient.Database(storage.TogoDbName).Collection(storage.UserConfigTableName)
-	task.RecordCollection = storage.MongoClient.Database(storage.TogoDbName).Collection(storage.UserTaskTableName)
+	record.UserCollection = storage.MongoClient.Database(storage.TogoDbName).Collection(storage.UserConfigTableName)
+	record.RecCollection = storage.MongoClient.Database(storage.TogoDbName).Collection(storage.UserTaskTableName)
 
 	cache.RedisClient = cache.StartRedis()
 	redisCache := cache.NewRedis(cache.RedisClient)
 
-	repository := task.NewRepository()
-	service := task.NewService(repository, redisCache)
-	taskHandler := taskHandler.NewHandler(service)
+	repository := record.NewRepository()
+	service := record.NewService(repository, redisCache)
+	recordHandler := recordHandler.NewHandler(service)
 
-	r.POST("/api/v1/task/record", taskHandler.HandleRecordTask)
+	r.POST("/api/v1/task/record", recordHandler.HandleRecordTask)
 	return r
 }
 

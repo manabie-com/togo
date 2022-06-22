@@ -1,4 +1,4 @@
-package task
+package record
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 
 var (
 	UserCollection *mongo.Collection
-	RecordCollection *mongo.Collection
+	RecCollection *mongo.Collection
 )
 
 // UserConfig contains user limit config info
@@ -20,36 +20,36 @@ type UserConfig struct {
 	Limit  int    `bson:"limit"`
 }
 
-// UserTask contains users' task record info
+// UserTask contains users' record record info
 type UserTask struct {
 	UserId    string    `bson:"user_id"`
 	Task      string    `bson:"task"`
 	UpdatedAt time.Time `bson:"updated_at"`
 }
 
-type RecordRepository struct {
+type RecRepository struct {
 }
 
-func NewRepository() *RecordRepository {
-	return &RecordRepository{
+func NewRepository() *RecRepository {
+	return &RecRepository{
 	}
 }
 
-func (r *RecordRepository) InsertUserTask(userId, task string, updatedAt time.Time) error {
+func (r *RecRepository) InsertUserTask(userId, task string, updatedAt time.Time) error {
 	userTask := UserTask{
 		UserId: userId,
 		Task: task,
 		UpdatedAt: updatedAt,
 	}
-	_, err := RecordCollection.InsertOne(context.Background(), userTask)
+	_, err := RecCollection.InsertOne(context.Background(), userTask)
 
 	if err != nil {
-		return fmt.Errorf("insert user task error: %v", err)
+		return fmt.Errorf("insert user record error: %v", err)
 	}
 	return nil
 }
 
-func (r *RecordRepository) GetUserConfig(userId string) (*UserConfig, error) {
+func (r *RecRepository) GetUserConfig(userId string) (*UserConfig, error) {
 	filter := bson.D{{"user_id", userId}}
 	var result UserConfig
 	err := UserCollection.FindOne(context.Background(), filter).Decode(&result)

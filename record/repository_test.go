@@ -1,4 +1,4 @@
-package task
+package record
 
 import (
 	"testing"
@@ -11,21 +11,21 @@ import (
 
 func Test_NewRepository(t *testing.T) {
 	repo := NewRepository()
-	assert.IsType(t, &RecordRepository{}, repo)
+	assert.IsType(t, &RecRepository{}, repo)
 }
 
 func Test_InsertUserTask(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 	defer mt.Close()
 	mt.Run("success", func(mt *mtest.T) {
-		RecordCollection = mt.Coll
+		RecCollection = mt.Coll
 		mt.AddMockResponses(mtest.CreateSuccessResponse())
 		repo := NewRepository()
 		err := repo.InsertUserTask("1", "todo", time.Now())
 		assert.Nil(t, err)
 	})
 	mt.Run("failed with internal mongo error", func(mt *mtest.T) {
-		RecordCollection = mt.Coll
+		RecCollection = mt.Coll
 		mt.AddMockResponses(mtest.CreateWriteErrorsResponse(mtest.WriteError{
 			Index:   1,
 			Code:    11000,
@@ -33,7 +33,7 @@ func Test_InsertUserTask(t *testing.T) {
 		}))
 		repo := NewRepository()
 		err := repo.InsertUserTask("1", "todo", time.Now())
-		assert.ErrorContains(t, err, "insert user task error")
+		assert.ErrorContains(t, err, "insert user record error")
 	})
 }
 

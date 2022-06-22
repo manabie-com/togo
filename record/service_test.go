@@ -1,4 +1,4 @@
-package task
+package record
 
 import (
 	"errors"
@@ -18,8 +18,8 @@ func Test_NewService(t *testing.T) {
 
 func Test_RecordTaskSuccess(t *testing.T)  {
 	loc, _ := time.LoadLocation("Local")
-	now := time.Date(2009, 11, 17, 20, 34, 58, 651387237, loc)
-	midnight := time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 99, loc)
+	now := time.Now()
+	midnight := time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 999999999, loc)
 	duration := midnight.Sub(now)
 	monkey.Patch(time.Now, func() time.Time {
 		return now
@@ -98,7 +98,7 @@ func Test_RecordTaskSuccess(t *testing.T)  {
 			},
 		},
 		{
-			name: "when the limit reached, then the record should be failed with user task record reached limit error",
+			name: "when the limit reached, then the record should be failed with user record record reached limit error",
 			setupMock: func(mr *mockRepository, mc *mockCacheService) {
 				mr.On("GetUserConfig", testUserId).Return(&UserConfig{
 					UserId: testUserId,
@@ -110,11 +110,11 @@ func Test_RecordTaskSuccess(t *testing.T)  {
 				mc.On("SetExpire", testUserId, testCacheLimit + 1, duration).Return(nil)
 			},
 			assertErr: func(err error) {
-				assert.ErrorContains(t, err, "user task record reached limit")
+				assert.ErrorContains(t, err, "user record record reached limit")
 			},
 		},
 		{
-			name: "when insert user's task gets error, then the record should be failed with insert user's task error",
+			name: "when insert user's record gets error, then the record should be failed with insert user's record error",
 			setupMock: func(mr *mockRepository, mc *mockCacheService) {
 				mr.On("GetUserConfig", testUserId).Return(&UserConfig{
 					UserId: testUserId,
@@ -126,7 +126,7 @@ func Test_RecordTaskSuccess(t *testing.T)  {
 				mc.On("SetExpire", testUserId, testCacheLimit + 1, duration).Return(nil)
 			},
 			assertErr: func(err error) {
-				assert.ErrorContains(t, err, "insert user's task error")
+				assert.ErrorContains(t, err, "insert user's record error")
 			},
 		},
 		{

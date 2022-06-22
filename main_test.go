@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
 )
 
 func Test_Integration_BadRequest(t *testing.T) {
@@ -32,5 +33,5 @@ func Test_Integration_UserNotExist(t *testing.T) {
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
-	assert.Equal(t, "{\"message\":\"record user's task error: user id does not exist: not exist user id\"}", w.Body.String())
+	assert.Equal(t, "{\"message\":\"record user's record error: user id does not exist: not exist user id\"}", w.Body.String())
 }

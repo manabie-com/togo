@@ -1,4 +1,4 @@
-package task
+package record
 
 import (
 	"testing"
