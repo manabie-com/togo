@@ -42,3 +42,32 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	utils.JSON(w, 201, "Register Successfully")
 }
+
+func Login(w http.ResponseWriter, r *http.Request) {
+	newUser := e.NewUser()
+
+	err := json.NewDecoder(r.Body).Decode(&newUser)
+	if err != nil {
+		utils.ERROR(w, http.StatusBadRequest, err)
+		return
+	}
+
+	user, err := model.GetUserByName(newUser.Username)
+	if err != nil {
+		utils.ERROR(w, http.StatusInternalServerError, errors.New("user not found"))
+		return
+	}
+
+	if !user.ComparePassWord(newUser.Password) {
+		utils.ERROR(w, http.StatusBadRequest, errors.New("password incorrect"))
+		return
+	}
+
+	token, err := utils.GenerateToken(user.Username)
+	if err != nil {
+		utils.ERROR(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.JSON(w, http.StatusOK, map[string]string{"token": token, "message": "login successfully"})
+}
