@@ -4,7 +4,7 @@ import "time"
 
 type Task struct {
 	ID        int32     `json:"id"`
-	Name      string    `json:"name"`
+	Name      string    `json:"name" validate:"required"`
 	Content   string    `json:"content"`
 	Status    Status    `json:"status"`
 	CreatedAt time.Time `json:"createdAt"`
@@ -25,19 +25,4 @@ func (e Status) isValidStatus() bool {
 		return true
 	}
 	return false
-}
-
-type task interface {
-	/* map[string]interface{} like
-	{
-		status: "success"||"failure",
-		message: Optional
-		data: {
-			data
-		}
-	}
-	*/
-	Create() map[string]interface{}
-	GetTasks(userId int32) map[string]interface{}
-	GetTask(taskId uint32) map[string]interface{}
 }
