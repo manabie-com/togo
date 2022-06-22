@@ -13,7 +13,7 @@ import (
 	"togo/storage"
 )
 
-func setUpRoute() *gin.Engine {
+func SetUpRoute() *gin.Engine {
 	r := gin.Default()
 
 	mongoClient := storage.StartMongo()
@@ -23,11 +23,13 @@ func setUpRoute() *gin.Engine {
 		log.Fatal(err)
 	}
 	storage.MongoClient = mongoClient
+	task.UserCollection = storage.MongoClient.Database(storage.TogoDbName).Collection(storage.UserConfigTableName)
+	task.RecordCollection = storage.MongoClient.Database(storage.TogoDbName).Collection(storage.UserTaskTableName)
 
 	cache.RedisClient = cache.StartRedis()
 	redisCache := cache.NewRedis(cache.RedisClient)
 
-	repository := task.NewRepository(mongoClient)
+	repository := task.NewRepository()
 	service := task.NewService(repository, redisCache)
 	taskHandler := taskHandler.NewHandler(service)
 
@@ -36,6 +38,6 @@ func setUpRoute() *gin.Engine {
 }
 
 func main() {
-	r := setUpRoute()
+	r := SetUpRoute()
 	r.Run(":8083") // listen and serve on 0.0.0.0:8083
 }

@@ -9,6 +9,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+var (
+	UserCollection *mongo.Collection
+	RecordCollection *mongo.Collection
+)
+
 // UserConfig contains user limit config info
 type UserConfig struct {
 	UserId string `bson:"user_id"`
@@ -23,25 +28,20 @@ type UserTask struct {
 }
 
 type RecordRepository struct {
-	mongoClient *mongo.Client
 }
 
-func NewRepository(mongoClient *mongo.Client) *RecordRepository {
+func NewRepository() *RecordRepository {
 	return &RecordRepository{
-		mongoClient: mongoClient,
 	}
 }
 
 func (r *RecordRepository) InsertUserTask(userId, task string, updatedAt time.Time) error {
-	db := r.mongoClient.Database(TogoDbName)
-	coll := db.Collection(UserTaskTableName)
-
 	userTask := UserTask{
 		UserId: userId,
 		Task: task,
 		UpdatedAt: updatedAt,
 	}
-	_, err := coll.InsertOne(context.Background(), userTask)
+	_, err := RecordCollection.InsertOne(context.Background(), userTask)
 
 	if err != nil {
 		return fmt.Errorf("insert user task error: %v", err)
@@ -50,12 +50,9 @@ func (r *RecordRepository) InsertUserTask(userId, task string, updatedAt time.Ti
 }
 
 func (r *RecordRepository) GetUserConfig(userId string) (*UserConfig, error) {
-	db := r.mongoClient.Database(TogoDbName)
-	coll := db.Collection(UserConfigTableName)
-
 	filter := bson.D{{"user_id", userId}}
 	var result UserConfig
-	err := coll.FindOne(context.Background(), filter).Decode(&result)
+	err := UserCollection.FindOne(context.Background(), filter).Decode(&result)
 	if err != nil {
 		return nil, err
 	}

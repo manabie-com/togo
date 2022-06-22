@@ -11,7 +11,7 @@ import (
 )
 
 func Test_Integration_BadRequest(t *testing.T) {
-	router := setUpRoute()
+	router := SetUpRoute()
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest(http.MethodPost, "/api/v1/task/record", nil)
@@ -22,7 +22,7 @@ func Test_Integration_BadRequest(t *testing.T) {
 }
 
 func Test_Integration_UserNotExist(t *testing.T) {
-	router := setUpRoute()
+	router := SetUpRoute()
 
 	w := httptest.NewRecorder()
 	values := map[string]string{"user_id": "not exist user id", "task": "todo"}
