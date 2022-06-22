@@ -13,7 +13,7 @@ app = Celery(__name__)
 
 
 @app.task
-def callback_get_limit_task(success):
+def callback_get_limit_task(success, date_):
     if not success:
         try:
             users_schedule_success = Schedule.objects.filter(date=date_).value_list('user', flat=True)

@@ -10,7 +10,7 @@ include_tasks = (
     'apps.tasks.task_limited_each_day'
 )
 
-app = Celery(include=include_tasks, enable_utc=False, backend='django-db', broker='redis://localhost:6379/0')
+app = Celery(include=include_tasks, enable_utc=False, backend='django-db', broker='redis://redis:6379/0')
 app.config_from_object('django.conf:settings')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 

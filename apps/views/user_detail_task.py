@@ -4,14 +4,13 @@ from rest_framework.generics import CreateAPIView
 from .utils.decorator import retry_get_limit_task
 from ..exceptions.base import make_success_response
 from ..exceptions.status_code import Code404, Code400
-from ..serializers.user import DetailSerializer
+from ..serializers.user_detail_task import DetailSerializer
 from rest_framework.permissions import IsAuthenticated
 from datetime import date, datetime
 from apps.models.models.detail import Detail
 from apps.models.models.task import Task
 from apps.models.models.schedule import Schedule
 from rest_framework import status
-from rest_framework.response import Response
 
 
 class CreateDetail(CreateAPIView):

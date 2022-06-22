@@ -17,7 +17,7 @@ class DetailSerializer(serializers.ModelSerializer):
         fields = ('schedule', 'taskmaster', 'task', 'user', 'date', 'limit')
 
     def create(self, validated_data):
-        from apps.views.user import CreateDetail
+        from apps.views.user_detail_task import CreateDetail
         try:
             user = validated_data.pop('user')
             date_ = validated_data.pop('date')
