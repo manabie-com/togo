@@ -1,9 +1,9 @@
 CREATE TABLE users
 (
-    id            INTEGER PRIMARY KEY,
+    id            SERIAL  PRIMARY KEY,
     name          TEXT    NOT NULL,
     password_hash TEXT    NOT NULL,
-    plan          TEXT    NOT NULL,
+    plan          TEXT    NOT NULL DEFAULT 'free',
     max_todo      INTEGER NOT NULL DEFAULT 10
 );
 
