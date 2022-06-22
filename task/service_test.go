@@ -157,4 +157,4 @@ func Test_RecordTaskSuccess(t *testing.T)  {
 			test.assertErr(err)
 		})
 	}
-}
+} 

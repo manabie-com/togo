@@ -67,4 +67,4 @@ func Test_GetUserConfig(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Nil(t, user)
 	})
-}
+} 

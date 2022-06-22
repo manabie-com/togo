@@ -13,6 +13,10 @@ import (
 	"togo/storage"
 )
 
+const (
+	ServicePort = ":8083"
+)
+
 func SetUpRoute() *gin.Engine {
 	r := gin.Default()
 
@@ -39,5 +43,5 @@ func SetUpRoute() *gin.Engine {
 
 func main() {
 	r := SetUpRoute()
-	r.Run(":8083") // listen and serve on 0.0.0.0:8083
+	r.Run(ServicePort)
 }
