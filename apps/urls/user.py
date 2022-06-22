@@ -1,6 +1,6 @@
 from django.conf.urls import url
-from ..views.user import ListUser
+from ..views.user import CreateDetail
 
 urlpatterns = [
-    url(r'^users/$', ListUser.as_view()),
+    url(r'^assignment/$', CreateDetail.as_view()),
 ]
