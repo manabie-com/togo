@@ -7,3 +7,4 @@ class Task(models.Model):
 
     class Meta:
         db_table = 'task'
+        app_label = 'apps.models.models.task.Task'

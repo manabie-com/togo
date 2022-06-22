@@ -13,3 +13,4 @@ class Schedule(models.Model):
         db_table = 'schedule'
         unique_together = (('date', 'user'),)
         index_together = (('date', 'user'),)
+        app_label = 'apps.models.models.schedule.Schedule'

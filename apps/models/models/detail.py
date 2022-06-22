@@ -16,3 +16,5 @@ class Detail(models.Model):
         indexes = [
             models.Index(fields=['schedule', ]),
         ]
+        app_label = 'apps.models.models.detail.Detail'
+

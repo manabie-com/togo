@@ -71,7 +71,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
-
+# rest config
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
@@ -167,7 +167,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'logging/debug.log',
+            'filename': f'{BASE_DIR}/logging/debug.log',
         },
         'console': {
             'level': 'DEBUG',
@@ -176,7 +176,7 @@ LOGGING = {
         'togo_task_pick_limit_debug': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'logging/togo_task_pick_limit_debug.log',
+            'filename': f'{BASE_DIR}/logging/togo_task_pick_limit_debug.log',
         }
     },
 
