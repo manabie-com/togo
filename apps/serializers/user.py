@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.exceptions.status_code import Code500, OverTaskLimited
+from apps.exceptions.status_code import OverTaskLimited
 from apps.models.models.detail import Detail
 
 

@@ -83,7 +83,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ),
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
-    # 'EXCEPTION_HANDLER': 'apps.exceptions.base.exceptions_handler',
+    'EXCEPTION_HANDLER': 'apps.exceptions.base.exceptions_handler',
 }
 
 TEMPLATES = [

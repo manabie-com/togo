@@ -25,3 +25,10 @@ def exceptions_handler(exc, context):
         data = {'status': exc.status_code, 'message': str(exc), 'data': None}
         response = Response(data, status=exc.status_code, headers=None)
     return response
+
+
+def make_success_response(data=None, status_code=None, headers=None, message='success'):
+    data_response = {
+        'status': status_code, 'message': message, 'data': data
+    }
+    return Response(data_response, status=status_code, headers=headers)

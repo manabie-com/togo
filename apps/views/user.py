@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework.generics import CreateAPIView
 
 from .utils.decorator import retry_get_limit_task
+from ..exceptions.base import make_success_response
 from ..exceptions.status_code import Code404, Code400
 from ..serializers.user import DetailSerializer
 from rest_framework.permissions import IsAuthenticated
@@ -42,4 +43,4 @@ class CreateDetail(CreateAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return make_success_response(data=serializer.data, status_code=status.HTTP_201_CREATED, headers=headers)
