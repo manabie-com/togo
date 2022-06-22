@@ -8,14 +8,14 @@ type Task struct {
 	Description string `json:"description"`
 	CreatedAt   string `json:"created_at"`
 	Completed   bool   `json:"completed"`
-	UserID      int    `json:"user_id"`
+	UserName    int    `json:"username"`
 }
 
 func (t Task) IsValid() error {
 	if len(t.Name) == 0 {
 		return fmt.Errorf("Task name is required")
 	}
-	if t.UserID == 0 {
+	if t.UserName == 0 {
 		return fmt.Errorf("Task user id is required")
 	}
 	return nil

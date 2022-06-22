@@ -5,7 +5,9 @@ import (
 	"fmt"
 )
 
-const ()
+var (
+	DB *sql.DB
+)
 
 func GetPostgresConnectionString() string {
 	var (
@@ -22,14 +24,14 @@ func GetPostgresConnectionString() string {
 }
 
 func Connect() {
+	var err error
 	psqlInfo := GetPostgresConnectionString()
-	db, err := sql.Open("postgres", psqlInfo)
+	DB, err = sql.Open("postgres", psqlInfo)
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
 
-	err = db.Ping()
+	err = DB.Ping()
 	if err != nil {
 		panic(err)
 	}
