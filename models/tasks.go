@@ -50,7 +50,10 @@ func DeleteTask(id int, userid int) error { // Delete task from database
 	_, err := DB.Exec("DELETE FROM tasks WHERE id = $1 AND userid = $2;", id, userid)
 	return err
 }
-
+func DeleteAllTaskFromUser(userid int) error { // Delete task from database
+	_, err := DB.Exec("DELETE FROM tasks WHERE userid = $1;", userid)
+	return err
+}
 func UpdateTask(newTask NewTask, id int, userid int) error { // Update one task already exist in database
 	_, err := DB.Exec("UPDATE tasks SET status = COALESCE($1, status) , timedone = COALESCE($2, timedone) WHERE id = $3 AND userid = $4;", newTask.Status, newTask.TimeDone, id, userid)
 	if err != nil {

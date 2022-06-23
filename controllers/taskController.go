@@ -32,6 +32,7 @@ func ResponeOneTask(w http.ResponseWriter, r *http.Request) { // Get one user fr
 	userid, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "userid"))) // get userid from login 
 	id, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "id"))) // get id from url 
 
+	fmt.Println("asdfsafdasfd")
 	task, ok := models.CheckIDTaskAndReturn(w, id, userid)
 	if !ok {
 		http.Error(w, "id invalid", http.StatusBadRequest)
@@ -79,7 +80,6 @@ func CreateTask(w http.ResponseWriter, r *http.Request) { // Create a new user
 func DeleteTask(w http.ResponseWriter, r *http.Request ){ // Delete one user from database
 	userid, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "userid")))// get userid from login 
 	id, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "id"))) // get id from url 
-
 	_, ok := models.CheckIDTaskAndReturn(w, id, userid)
 	if !ok {
 		http.Error(w, "Id invalid", http.StatusBadRequest)
@@ -87,7 +87,7 @@ func DeleteTask(w http.ResponseWriter, r *http.Request ){ // Delete one user fro
 	}
 	err := models.DeleteTask(id, userid)
 	if err != nil {
-		http.Error(w, "delete task failed", http.StatusFailedDependency)
+		http.Error(w, err.Error(), http.StatusFailedDependency)
 		return
 	}
 	w.Write([]byte("message: delete success"))

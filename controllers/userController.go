@@ -17,7 +17,7 @@ func ResponeAllUser(w http.ResponseWriter, r *http.Request) { // Get all user fr
 		http.Error(w, "get all user failed", http.StatusFailedDependency)
 		return
 	}
-	
+
 	err = json.NewEncoder(w).Encode(users)
 	if err != nil {
 		http.Error(w, "encode failed", 500)
@@ -72,7 +72,13 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) { // Delete one user fro
 		return
 	}
 
-	err := models.DeleteUser(id)
+	err := models.DeleteAllTaskFromUser(id)
+	if err != nil {
+		http.Error(w, "delete task of user failed", http.StatusFailedDependency)
+		return
+	}
+
+	err = models.DeleteUser(id)
 	if err != nil {
 		http.Error(w, "delete user failed", http.StatusFailedDependency)
 		return
