@@ -13,8 +13,8 @@ import (
 )
 
 func ResponeAllTask(w http.ResponseWriter, r *http.Request) { // Get all user from database
-	userid, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "userid")))
-	
+	userid, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "userid"))) // get userid from login 
+
 	tasks, err := models.GetAllTasks(userid)
 	if err != nil {
 		http.Error(w, "get all task failed", http.StatusFailedDependency)
@@ -29,10 +29,10 @@ func ResponeAllTask(w http.ResponseWriter, r *http.Request) { // Get all user fr
 }
 
 func ResponeOneTask(w http.ResponseWriter, r *http.Request) { // Get one user from database
-	userid, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "userid")))
-	id, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "id")))
+	userid, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "userid"))) // get userid from login 
+	id, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "id"))) // get id from url 
 
-	task, ok := models.CheckIDTask(w, id, userid)
+	task, ok := models.CheckIDTaskAndReturn(w, id, userid)
 	if !ok {
 		http.Error(w, "id invalid", http.StatusBadRequest)
 		return
@@ -46,7 +46,7 @@ func ResponeOneTask(w http.ResponseWriter, r *http.Request) { // Get one user fr
 }
 
 func CreateTask(w http.ResponseWriter, r *http.Request) { // Create a new user
-	userid, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "userid")))
+	userid, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "userid"))) // get id from url 
 
 	var task models.NewTask
 	err := json.NewDecoder(r.Body).Decode(&task)
@@ -57,7 +57,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) { // Create a new user
 	task.UserId = userid
 	task.Status = "pending"
 	task.Time = time.Now()
-	ok := models.CheckTask(task)
+	ok := models.CheckTaskInput(task)
 	if !ok {
 		http.Error(w, "task field invalid", http.StatusBadRequest)
 	}
@@ -77,10 +77,10 @@ func CreateTask(w http.ResponseWriter, r *http.Request) { // Create a new user
 }
 
 func DeleteTask(w http.ResponseWriter, r *http.Request ){ // Delete one user from database
-	userid, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "userid")))
-	id, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "id")))
+	userid, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "userid")))// get userid from login 
+	id, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "id"))) // get id from url 
 
-	_, ok := models.CheckIDTask(w, id, userid)
+	_, ok := models.CheckIDTaskAndReturn(w, id, userid)
 	if !ok {
 		http.Error(w, "Id invalid", http.StatusBadRequest)
 		return
@@ -94,11 +94,11 @@ func DeleteTask(w http.ResponseWriter, r *http.Request ){ // Delete one user fro
 }
 
 func UpdateTask(w http.ResponseWriter, r *http.Request) { // Update one user already exist in database
-	userid, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "userid")))
-	id, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "id")))
+	userid, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "userid"))) // get userid from login 
+	id, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "id"))) // get id from url 
 
 	var newTask models.NewTask
-	oldTask, ok := models.CheckIDTask(w, id, userid)
+	oldTask, ok := models.CheckIDTaskAndReturn(w, id, userid) // check id task have on database or not
 	if !ok {
 		http.Error(w, "Id invalid", http.StatusBadRequest)
 		return
@@ -122,6 +122,7 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) { // Update one user alr
 		http.Error(w, "update task failed", http.StatusBadRequest)
 		return
 	}
+
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(oldTask)
 	if err != nil {

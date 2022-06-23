@@ -60,7 +60,7 @@ func UpdateUser(newUser NewUser, id int) error { // Update one user already exis
 	return nil
 }
 
-func CheckID(id int) (User, bool) { // Check ID is valid or not
+func CheckIDAndReturn(id int) (User, bool) { // Check ID is valid or not
 	user := User{}
 
 	row := DB.QueryRow("SELECT * FROM users WHERE id = $1", id)
@@ -84,7 +84,7 @@ func CheckUser(user NewUser) bool { // Check user input is valid or not
 	return true
 }
 
-func CheckUsername(username string) (User, bool) { // Check if username already exist or not
+func CheckUserInput(username string) (User, bool) { // Check if username already exist or not
 	user := User{}
 
 	row := DB.QueryRow("SELECT * FROM users WHERE username = $1", username)

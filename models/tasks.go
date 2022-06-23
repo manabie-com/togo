@@ -59,7 +59,7 @@ func UpdateTask(newTask NewTask, id int, userid int) error { // Update one task 
 	return nil
 }
 
-func CheckIDTask(w http.ResponseWriter,id int, userId int) (Task, bool) { // Check ID task is valid or not
+func CheckIDTaskAndReturn(w http.ResponseWriter,id int, userId int) (Task, bool) { // Check ID task is valid or not
 	task := Task{}
 	row := DB.QueryRow("SELECT * FROM tasks WHERE id = $1 AND userid = $2;", id, userId)
 	err := row.Scan(&task.Id, &task.Content, &task.Status, &task.Time, &task.TimeDone, &task.UserId)
@@ -73,9 +73,9 @@ func CheckIDTask(w http.ResponseWriter,id int, userId int) (Task, bool) { // Che
 	return task, true
 }
 
-func CheckTask(task NewTask) bool { // Check task input is valid or not
+func CheckTaskInput(task NewTask) bool { // Check task input value is valid or not
 	Content := strings.TrimSpace(task.Content)
-	_ ,validUserid := CheckID(task.UserId)
+	_ ,validUserid := CheckIDAndReturn(task.UserId)
 	if Content == "" || !validUserid{
 		return false
 	}

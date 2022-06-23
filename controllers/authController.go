@@ -16,8 +16,7 @@ func Register(w http.ResponseWriter, r *http.Request) { // Handle register with 
 	var user, user1 models.NewUser
 	var passwordCrypt string
 	_ = json.NewDecoder(r.Body).Decode(&user)
-	_, ok := models.CheckUsername(user.Username);
-
+	_, ok := models.CheckUserInput(user.Username);
 	if  ok { // Check username exist or not
 		http.Error(w, "this username already exist", http.StatusNotAcceptable)
 		return
@@ -46,7 +45,7 @@ func Register(w http.ResponseWriter, r *http.Request) { // Handle register with 
 func Login(w http.ResponseWriter, r *http.Request) { // handle login with method post
 	var user models.NewUser
 	_ = json.NewDecoder(r.Body).Decode(&user)
-	user1, ok := models.CheckUsername(user.Username)
+	user1, ok := models.CheckUserInput(user.Username)
 	if !ok { // check username exist or not
 		http.Error(w, "account doesn't exist", http.StatusNotFound)
 		return

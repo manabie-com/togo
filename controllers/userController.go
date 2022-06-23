@@ -26,8 +26,8 @@ func ResponeAllUser(w http.ResponseWriter, r *http.Request) { // Get all user fr
 }
 
 func ResponeOneUser(w http.ResponseWriter, r *http.Request) { // Get one user from database
-	id, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "id")))
-	user, ok := models.CheckID(id)
+	id, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "id"))) // get id from url
+	user, ok := models.CheckIDAndReturn(id)
 	if !ok {
 		http.Error(w, "id invalid", http.StatusFailedDependency)
 		return
@@ -61,13 +61,12 @@ func CreateUser(w http.ResponseWriter, r *http.Request) { // Create a new user
 		http.Error(w, "encode failed", http.StatusCreated)
 		return
 	}
-
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request) { // Delete one user from database
-	id, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "id")))
+	id, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "id"))) // get id from url
 
-	_, ok := models.CheckID(id)
+	_, ok := models.CheckIDAndReturn(id)
 	if !ok {
 		http.Error(w, "Id invalid", http.StatusBadRequest)
 		return
@@ -78,14 +77,15 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) { // Delete one user fro
 		http.Error(w, "delete user failed", http.StatusFailedDependency)
 		return
 	}
+
 	w.Write([]byte("message: delete success"))
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request) { // Update one user already exist in database
-	id, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "id")))
+	id, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "id"))) // get id from url
 
 	var newUser models.NewUser
-	_, ok := models.CheckID(id)
+	_, ok := models.CheckIDAndReturn(id)
 	if !ok {
 		http.Error(w, "Id invalid", http.StatusBadRequest)
 		return
