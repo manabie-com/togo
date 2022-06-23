@@ -21,9 +21,12 @@ func Authorization(next http.Handler) http.Handler {
 
 			token, err := utils.DecodeToken(jwtToken)
 			if err != nil {
-				utils.ERROR(w, http.StatusInternalServerError, fmt.Errorf(err.Error(), "when decode token"))
+				utils.ERROR(w, http.StatusInternalServerError, fmt.Errorf(err.Error()))
 			}
-
+			if token["username"] == nil {
+				utils.ERROR(w, http.StatusBadRequest, errors.New("malformed Token"))
+				return
+			}
 			username := token["username"].(string)
 			if model.CheckUserExist(username) {
 				context.Set(r, "username", username)
@@ -31,6 +34,7 @@ func Authorization(next http.Handler) http.Handler {
 				next.ServeHTTP(w, r)
 			} else {
 				utils.ERROR(w, http.StatusBadRequest, fmt.Errorf("authorize failed"))
+				return
 			}
 		}
 
