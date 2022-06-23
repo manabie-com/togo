@@ -25,7 +25,7 @@ func MiddlewareID(next http.Handler) http.Handler {
         params := mux.Vars(r)
         id, err := strconv.Atoi(params["id"])
         if err != nil {
-            http.Error(w, "id need to be a number", http.StatusBadRequest)
+            http.Error(w, "id url need to be a number", http.StatusBadRequest)
             return
         }
         context.Set(r, "id", id)

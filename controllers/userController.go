@@ -17,7 +17,7 @@ func ResponeAllUser(w http.ResponseWriter, r *http.Request) { // Get all user fr
 		http.Error(w, "get all user failed", http.StatusFailedDependency)
 		return
 	}
-
+	
 	err = json.NewEncoder(w).Encode(users)
 	if err != nil {
 		http.Error(w, "encode failed", 500)
