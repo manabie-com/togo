@@ -3,7 +3,6 @@ package auth
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"lntvan166/togo/model"
 	"lntvan166/togo/utils"
 	"net/http"
@@ -15,7 +14,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	user := e.NewUser()
 
 	err := json.NewDecoder(r.Body).Decode(&user)
-	fmt.Println(user)
+
 	if err != nil {
 		utils.ERROR(w, http.StatusBadRequest, err)
 		return

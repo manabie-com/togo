@@ -8,7 +8,7 @@ import (
 func TaskRoute(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
-		task.GetAllTask(w, r)
+		task.GetTaskForUser(w, r)
 	case "POST":
 
 	case "DELETE":

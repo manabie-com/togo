@@ -7,9 +7,9 @@ import (
 	"lntvan166/togo/utils"
 	"net/http"
 	"strings"
-)
 
-type HandleFunc func(w http.ResponseWriter, r *http.Request)
+	"github.com/gorilla/context"
+)
 
 func Authorization(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -18,9 +18,16 @@ func Authorization(next http.Handler) http.Handler {
 			utils.ERROR(w, http.StatusBadRequest, errors.New("malformed Token"))
 		} else {
 			jwtToken := authHeader[1]
-			token := utils.DecodeToken(jwtToken)
-			username := fmt.Sprint(token["username"])
+
+			token, err := utils.DecodeToken(jwtToken)
+			if err != nil {
+				utils.ERROR(w, http.StatusInternalServerError, fmt.Errorf(err.Error(), "when decode token"))
+			}
+
+			username := token["username"].(string)
 			if model.CheckUserExist(username) {
+				context.Set(r, "username", username)
+
 				next.ServeHTTP(w, r)
 			} else {
 				utils.ERROR(w, http.StatusBadRequest, fmt.Errorf("authorize failed"))

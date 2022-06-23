@@ -74,9 +74,11 @@ func GetAllTask() (*[]e.Task, error) {
 	return &tasks, nil
 }
 
-func GetTaskByUserID(userID int) (*[]e.Task, error) {
-	const query = `SELECT * FROM tasks WHERE user_id = $1;`
-	rows, err := db.DB.Query(query, userID)
+func GetTaskByUsername(username string) (*[]e.Task, error) {
+	const query = `SELECT t.id, t.name, t.description, t.created_at, t.completed
+					FROM tasks AS t JOIN users ON t.user_id = users.id
+					WHERE users.username = $1;`
+	rows, err := db.DB.Query(query, username)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +88,7 @@ func GetTaskByUserID(userID int) (*[]e.Task, error) {
 
 	for rows.Next() {
 		var t e.Task
-		err := rows.Scan(&t.ID, &t.Name, &t.Description, &t.CreatedAt, &t.Completed, &t.UserID)
+		err := rows.Scan(&t.ID, &t.Name, &t.Description, &t.CreatedAt, &t.Completed)
 		if err != nil {
 			return nil, err
 		}

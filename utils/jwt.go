@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"os"
 	"time"
 
@@ -17,14 +16,14 @@ func GenerateToken(username string) (string, error) {
 	return token.SignedString([]byte(os.Getenv("SECRET_JWT")))
 }
 
-func DecodeToken(tokenString string) map[string]interface{} {
+func DecodeToken(tokenString string) (map[string]interface{}, error) {
 	claims := jwt.MapClaims{}
 	_, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte("<YOUR VERIFICATION KEY>"), nil
+		return []byte(os.Getenv("SECRET_JWT")), nil
 	})
 	if err != nil {
-		fmt.Println(err)
+		return claims, err
 	}
 
-	return claims
+	return claims, nil
 }
