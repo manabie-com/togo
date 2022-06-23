@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"os"
 )
 
 var (
@@ -25,7 +26,11 @@ func GetPostgresConnectionString() string {
 
 func Connect() {
 	var err error
-	psqlInfo := GetPostgresConnectionString()
+	psqlInfo := os.Getenv("DATABASE_URL")
+	if psqlInfo == "" {
+		psqlInfo = GetPostgresConnectionString()
+	}
+
 	DB, err = sql.Open("postgres", psqlInfo)
 	if err != nil {
 		panic(err)

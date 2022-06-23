@@ -5,6 +5,17 @@ import (
 	e "lntvan166/togo/entities"
 )
 
+func GetTaskByID(id int) (*e.Task, error) {
+	const query = `SELECT * FROM tasks WHERE id = $1;`
+	row := db.DB.QueryRow(query, id)
+	var t e.Task
+	err := row.Scan(&t.ID, &t.Name, &t.Description, &t.CreatedAt, &t.Completed, &t.UserID)
+	if err != nil {
+		return nil, err
+	}
+	return &t, nil
+}
+
 func AddTask(t *e.Task) error {
 	const query = `INSERT INTO tasks (
 		name, description, created_at, completed, user_id)
@@ -96,4 +107,15 @@ func GetTaskByUsername(username string) (*[]e.Task, error) {
 	}
 
 	return &tasks, nil
+}
+
+func GetUserIDByTaskID(id int) (int, error) {
+	const query = `SELECT user_id FROM tasks WHERE id = $1;`
+	row := db.DB.QueryRow(query, id)
+	var userID int
+	err := row.Scan(&userID)
+	if err != nil {
+		return 0, err
+	}
+	return userID, nil
 }

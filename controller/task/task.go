@@ -7,8 +7,10 @@ import (
 	"lntvan166/togo/model"
 	"lntvan166/togo/utils"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/context"
+	"github.com/gorilla/mux"
 )
 
 func CreateTask(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +46,7 @@ func GetAllTask(w http.ResponseWriter, r *http.Request) {
 	utils.JSON(w, http.StatusOK, tasks)
 }
 
-func GetTaskForUser(w http.ResponseWriter, r *http.Request) {
+func GetAllTaskOfUser(w http.ResponseWriter, r *http.Request) {
 	username := context.Get(r, "username").(string)
 
 	tasks, err := model.GetTaskByUsername(username)
@@ -53,4 +55,89 @@ func GetTaskForUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	utils.JSON(w, http.StatusOK, tasks)
+}
+
+func GetTaskByID(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	fmt.Println(vars)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		utils.ERROR(w, http.StatusBadRequest, fmt.Errorf(err.Error()))
+		return
+	}
+
+	username := context.Get(r, "username").(string)
+
+	task, err := model.GetTaskByID(id)
+	if err != nil {
+		utils.ERROR(w, http.StatusInternalServerError, fmt.Errorf(err.Error()))
+		return
+	}
+
+	err = utils.CheckAccessPermission(w, username, task.UserID)
+	if err != nil {
+		return
+	}
+
+	utils.JSON(w, http.StatusOK, task)
+}
+
+func CheckTask(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	fmt.Println(vars)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		utils.ERROR(w, http.StatusBadRequest, fmt.Errorf(err.Error()))
+		return
+	}
+
+	username := context.Get(r, "username").(string)
+
+	user_id, err := model.GetUserIDByTaskID(id)
+	if err != nil {
+		utils.ERROR(w, http.StatusInternalServerError, fmt.Errorf(err.Error()))
+		return
+	}
+
+	err = utils.CheckAccessPermission(w, username, user_id)
+	if err != nil {
+		return
+	}
+
+	err = model.CheckTask(id)
+	if err != nil {
+		utils.ERROR(w, http.StatusInternalServerError, fmt.Errorf(err.Error()))
+		return
+	}
+	utils.JSON(w, http.StatusOK, "message: check task success")
+}
+
+func DeleteTask(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	fmt.Println(vars)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		utils.ERROR(w, http.StatusBadRequest, fmt.Errorf(err.Error()))
+		return
+	}
+
+	username := context.Get(r, "username").(string)
+	user_id, err := model.GetUserIDByTaskID(id)
+	if err != nil {
+		utils.ERROR(w, http.StatusInternalServerError, fmt.Errorf(err.Error()))
+		return
+	}
+
+	err = utils.CheckAccessPermission(w, username, user_id)
+	if err != nil {
+		return
+	}
+
+	err = model.DeleteTask(id)
+	if err != nil {
+		utils.ERROR(w, http.StatusInternalServerError, fmt.Errorf(err.Error()))
+		return
+	}
+
+	utils.JSON(w, http.StatusOK, "message: delete task success")
 }
