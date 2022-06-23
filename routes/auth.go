@@ -9,7 +9,8 @@ import (
 )
 
 func HandleAuthentication(route *mux.Router) {
-	route.HandleFunc("/auth/{method}", AuthRoute)
+	authRouter := route.PathPrefix("/auth").Subrouter()
+	authRouter.HandleFunc("/{method}", AuthRoute)
 }
 
 func AuthRoute(w http.ResponseWriter, r *http.Request) {

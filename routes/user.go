@@ -7,5 +7,6 @@ import (
 )
 
 func HandleUser(route *mux.Router) {
-	route.HandleFunc("/user", user.GetAllUsers).Methods("GET")
+	userRouter := route.PathPrefix("/user").Subrouter()
+	userRouter.HandleFunc("", user.GetAllUsers).Methods("GET")
 }
