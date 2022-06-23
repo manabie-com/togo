@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/huynhhuuloc129/todo/jwt"
@@ -52,24 +51,23 @@ func Login(w http.ResponseWriter, r *http.Request) { // handle login with method
 		http.Error(w, "account doesn't exist", http.StatusNotFound)
 		return
 	}
+	
 	if ok := models.CheckUser(user); !ok { // check if user input valid or not
 		http.Error(w, "account input invalid", http.StatusNotFound)
 		return
 	}
-	fmt.Println(user1.Password, user.Password)
+
 	err := models.CheckPasswordHash(user1.Password ,user.Password) // check if password correct or not
 	if err != nil {
 		http.Error(w, "password incorrect", http.StatusAccepted)
 		return
 	}
 	
-	token, err := jwt.Create(w, user.Username) // Create token
+	token, err := jwt.Create(w, user.Username, int(user1.Id)) // Create token
 	if err != nil {
 		http.Error(w,  "internal server error", 500)
 		return
 	}
-	jwt.CheckToken(token)
-
 	w.Header().Set("Content-Type", "application/json")
 	resToken := responseToken{ 
 		Message: "login success",

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"log"
+	"strings"
 )
 
 type User struct {
@@ -31,13 +32,6 @@ func GetAllUser() ([]User, error) { // Get all user from the database
 	return users, nil
 }
 
-func GetOneUser(id int) (User, error) { // Get one user from the database
-	user, ok := CheckID(id)
-	if !ok {
-		return user, errors.New("id invalid")
-	}
-	return user, nil
-}
 
 func InsertUser(user NewUser) error { // Insert one user to the database
 	if !CheckUser(user) {
@@ -82,7 +76,9 @@ func CheckID(id int) (User, bool) { // Check ID is valid or not
 }
 
 func CheckUser(user NewUser) bool { // Check user input is valid or not
-	if user.Password == "" || user.Username == "" {
+	password := strings.TrimSpace(user.Password)
+	username := strings.TrimSpace(user.Username)
+	if password == "" || username == "" {
 		return false
 	}
 	return true

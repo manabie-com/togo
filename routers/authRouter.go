@@ -6,23 +6,28 @@ import (
 	"github.com/huynhhuuloc129/todo/controllers"
 )
 
+const (
+	registerURL = "register"
+	loginURL = "login"
+)
+
 func AuthHandle(w http.ResponseWriter, r *http.Request, params []string) { // Handle different request
 	switch params[2] {
-	case "register":
+	case registerURL: 			// url match register link
 		switch r.Method {
-		case http.MethodPost:
+		case http.MethodPost: 	// and match method POST (ONLY METHOD POST)
 			controllers.Register(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
-	case "login":
+	case loginURL: 				// url match login link
 		switch r.Method {
-		case http.MethodPost:
+		case http.MethodPost:	// and match method POST (ONLY METHOD POST)
 			controllers.Login(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
-	default:
+	default: 					// not match any link
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 
