@@ -12,7 +12,7 @@ import (
 func main() {
 	db.Connect()
 
-	http.HandleFunc("/", routes.Handler)
+	routes.HandleRequest()
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		fmt.Println(err)
 	}

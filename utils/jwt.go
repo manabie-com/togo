@@ -17,7 +17,7 @@ func GenerateToken(username string) (string, error) {
 	return token.SignedString([]byte(os.Getenv("SECRET_JWT")))
 }
 
-func UseToken(tokenString string) {
+func DecodeToken(tokenString string) map[string]interface{} {
 	claims := jwt.MapClaims{}
 	_, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte("<YOUR VERIFICATION KEY>"), nil
@@ -26,8 +26,5 @@ func UseToken(tokenString string) {
 		fmt.Println(err)
 	}
 
-	// do something with decoded claims
-	for key, val := range claims {
-		fmt.Printf("Key: %v, value: %v\n", key, val)
-	}
+	return claims
 }

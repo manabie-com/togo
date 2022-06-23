@@ -1,23 +1,27 @@
 package routes
 
 import (
-	"fmt"
+	"lntvan166/togo/middleware"
 	"net/http"
-	"strings"
+
+	"github.com/gorilla/mux"
 )
 
-func Handler(w http.ResponseWriter, r *http.Request) {
-	args := strings.Split(r.URL.Path, "/")
-	fmt.Println(len(args), args)
+func Home(w http.ResponseWriter, r *http.Request) {
 
-	switch args[1] {
-	case "user":
-		UserRoute(w, r)
-	case "task":
-		TaskRoute(w, r)
-	case "auth":
-		AuthRoute(w, r)
-	default:
-		w.Write([]byte("lntvan166: Hello"))
-	}
+	w.Write([]byte("lntvan166: Hello from Home!"))
+
+}
+func HandleRequest() {
+	route := mux.NewRouter()
+
+	route.HandleFunc("/", Home)
+
+	route.HandleFunc("/user", UserRoute)
+
+	route.Handle("/task", middleware.Authorization(http.HandlerFunc(TaskRoute)))
+
+	route.HandleFunc("/auth/{method}", AuthRoute)
+
+	http.Handle("/", route)
 }
