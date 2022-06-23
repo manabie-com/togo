@@ -1,9 +1,10 @@
 CREATE TABLE users
 (
-    username      TEXT    PRIMARY KEY,
-    password      TEXT    NOT NULL,
-    plan          TEXT    NOT NULL DEFAULT 'free',
-    max_todo      INTEGER NOT NULL DEFAULT 10
+    id            SERIAL        PRIMARY KEY,
+    username      TEXT          UNIQUE NOT NULL,
+    password      TEXT          NOT NULL,
+    plan          TEXT          NOT NULL DEFAULT 'free',
+    max_todo      INTEGER       NOT NULL DEFAULT 10
 );
 
 -- password: 'example'

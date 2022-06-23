@@ -21,7 +21,7 @@ func AddUser(u *e.User) error {
 }
 
 func UpdateUser(u *e.User) error {
-	const query = `UPDATE users SET password = $1, plan = $2, max_todo = $3 WHERE username = $4`
+	const query = `UPDATE users SET username = $1, password = $2, plan = $3, max_todo = $4 WHERE id = $5`
 	tx, err := db.DB.Begin()
 	if err != nil {
 		return err
@@ -53,7 +53,7 @@ func DeleteUser(id int) error {
 func GetUserByName(username string) (*e.User, error) {
 	const query = `SELECT * FROM users WHERE username = $1`
 	u := &e.User{}
-	err := db.DB.QueryRow(query, username).Scan(&u.Username, &u.Password, &u.Plan, &u.MaxTodo)
+	err := db.DB.QueryRow(query, username).Scan(&u.ID, &u.Username, &u.Password, &u.Plan, &u.MaxTodo)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +70,7 @@ func GetAllUsers() ([]*e.User, error) {
 	users := []*e.User{}
 	for rows.Next() {
 		u := &e.User{}
-		err := rows.Scan(&u.Username, &u.Password, &u.Plan, &u.MaxTodo)
+		err := rows.Scan(&u.ID, &u.Username, &u.Password, &u.Plan, &u.MaxTodo)
 		if err != nil {
 			return nil, err
 		}
@@ -82,9 +82,6 @@ func GetAllUsers() ([]*e.User, error) {
 func CheckUserExist(username string) bool {
 	const query = `SELECT * FROM users WHERE username = $1`
 	u := &e.User{}
-	err := db.DB.QueryRow(query, username).Scan(&u.Username, &u.Password, &u.Plan, &u.MaxTodo)
-	if err != nil {
-		return false
-	}
-	return true
+	err := db.DB.QueryRow(query, username).Scan(&u.ID, &u.Username, &u.Password, &u.Plan, &u.MaxTodo)
+	return err == nil
 }

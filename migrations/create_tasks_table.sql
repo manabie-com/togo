@@ -6,7 +6,7 @@ CREATE TABLE tasks
     description  TEXT                              NOT NULL,
     created_at   TEXT                              NOT NULL,
     completed    BOOLEAN                           NOT NULL,
-    username     TEXT REFERENCES users (username)  NOT NULL
+    user_id      INTEGER REFERENCES users (id)     NOT NULL
 );
 
 -- DROP TABLE IF EXISTS tasks CASCADE;
