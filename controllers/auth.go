@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -14,15 +13,13 @@ import (
 )
 
 var JwtAuthentication = func(next http.Handler) http.Handler {
-
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		notAuth := []string{"/api/user/new", "/api/user/login"} //List of endpoints that doesn't require auth
-		requestPath := r.URL.Path                               //current request path
+		notAuth := []string{"/api/users/signup", "/api/users/login"} //List of endpoints that doesn't require auth
+		requestPath := r.URL.Path                                    //current request path
 
 		//check if request does not need authentication, serve the request if it doesn't need it
 		for _, value := range notAuth {
-
 			if value == requestPath {
 				next.ServeHTTP(w, r)
 				return
@@ -43,13 +40,11 @@ var JwtAuthentication = func(next http.Handler) http.Handler {
 
 		tokenPart := splitted[1] //Grab the token part, what we are truly interested in
 		tk := &models.Token{}
-
 		token, err := jwt.ParseWithClaims(tokenPart, tk, func(token *jwt.Token) (interface{}, error) {
-			return []byte(os.Getenv("token_password")), nil
+			return []byte(os.Getenv("SECRET_TOKEN")), nil
 		})
-
 		if err != nil { //Malformed token, returns with http code 403 as usual
-			u.Respond(w, http.StatusForbidden, "Failure", "Malformed authentication token", nil)
+			u.Respond(w, http.StatusForbidden, "Failure", "Malformed authentication token", err.Error())
 			return
 		}
 
@@ -57,11 +52,9 @@ var JwtAuthentication = func(next http.Handler) http.Handler {
 			u.Respond(w, http.StatusForbidden, "Failure", "Token is not valid.", nil)
 			return
 		}
-
 		//Everything went well, proceed with the request and set the caller to the user retrieved from the parsed token
-		fmt.Printf("User %v", tk.UserId) //Useful for monitoring
+		//Useful for monitoring
 		ctx := context.WithValue(r.Context(), "user", tk.UserId)
-		r = r.WithContext(ctx)
-		next.ServeHTTP(w, r) //proceed in the middleware chain!
+		next.ServeHTTP(w, r.WithContext(ctx)) //proceed in the middleware chain!
 	})
 }

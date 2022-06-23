@@ -6,16 +6,16 @@ import (
 )
 
 type response struct {
-	status  string
-	message string
-	data    interface{}
+	Status  string
+	Message string
+	Data    interface{}
 }
 
 func Respond(w http.ResponseWriter, statusCode int, status, message string, data interface{}) {
 	res := response{
-		status:  status,
-		message: message,
-		data:    data,
+		Status:  status,
+		Message: message,
+		Data:    data,
 	}
 	w.WriteHeader(statusCode)
 	json.NewEncoder(w).Encode(res)

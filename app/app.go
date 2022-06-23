@@ -9,6 +9,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
+	"github.com/manabie-com/togo/controllers"
 	c "github.com/manabie-com/togo/controllers"
 )
 
@@ -26,7 +27,10 @@ func (a *App) Init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println("Database is connected!")
 	a.DB = db
 	a.Router = mux.NewRouter()
@@ -49,10 +53,11 @@ func (a *App) Routes() {
 	taskRouter.HandleFunc("/add", a.Add).Methods("POST")
 	taskRouter.HandleFunc("/{id}", a.Edit).Methods("PATCH")
 	// runs database
+	router.Use(mux.CORSMethodMiddleware(router))
+	router.Use(controllers.JwtAuthentication)
 }
 
 func (a *App) GetMe(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("From GetMe Function")
 	c.GetMe(a.DB, w, r)
 }
 
@@ -61,11 +66,11 @@ func (a *App) SignUp(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) Login(w http.ResponseWriter, r *http.Request) {
-	// c.Login(a.DB, w, r)
+	c.Login(a.DB, w, r)
 }
 
 func (a *App) UpdateMe(w http.ResponseWriter, r *http.Request) {
-	// c.UpdateMe(a.DB, w, r)
+	c.UpdateMe(a.DB, w, r)
 }
 
 func (a *App) GetTasks(w http.ResponseWriter, r *http.Request) {

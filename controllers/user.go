@@ -5,85 +5,116 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 
+	"github.com/dgrijalva/jwt-go"
+	"github.com/go-playground/validator/v10"
 	"github.com/manabie-com/togo/models"
 	u "github.com/manabie-com/togo/utils"
 )
 
-var SignUp = func(db *sql.DB, w http.ResponseWriter, r *http.Request) interface{} {
-	defer db.Close()
+var SignUp = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	user := &models.User{
 		IsPayment:     false,
 		LimitDayTasks: 10,
 	}
-
+	// validate
 	err := json.NewDecoder(r.Body).Decode(user)
 	if err != nil {
-		u.Respond(w, http.StatusBadRequest, "Failure", "Invalid request, Please check your input fields!", nil)
-		return err
+		u.Respond(w, http.StatusBadRequest, "Failure", err.Error(), nil)
+		return
 	}
 
-	results, err := db.Exec(`INSERT INTO users(name, email, password) VALUES($1,$2,$3) RETURNING id`, user.Name, user.Email, user.Password)
-	if err != nil {
-		u.Respond(w, http.StatusBadRequest, "Failure", "OOPS, something were wrong, please try again", nil)
-		return err
+	validate := validator.New()
+
+	if err = validate.Struct(user); err != nil {
+		u.Respond(w, http.StatusBadRequest, "Failure", err.Error(), nil)
+		return
 	}
+	// insert database
+	err = db.QueryRow(`INSERT INTO users(name, email, password) VALUES($1, $2, $3) RETURNING id, name, email`, user.Name, user.Email, user.Password).Scan(&user.ID, &user.Name, &user.Email)
+	if err != nil {
+		u.Respond(w, http.StatusBadRequest, "Failure", err.Error(), nil)
+		return
+	}
+	fmt.Println(user)
 	// send token jwt here
-	// ...
-	u.Respond(w, http.StatusCreated, "Success", "Created Account", results)
-	return nil
+	tk := &models.Token{UserId: user.ID}
+	token := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tk)
+	tokenString, _ := token.SignedString([]byte(os.Getenv("SECRET_TOKEN")))
+	// response and send token to client
+	u.Respond(w, http.StatusCreated, "Success", "Created Account", map[string]interface{}{
+		"name":  user.Name,
+		"email": user.Email,
+		"token": tokenString,
+	})
 }
 
-// var Login = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-
-// 	// get email password
-// 	// if email and password not exist
-// 	u.Respond(w, http.StatusBadRequest, map[string]interface{}{})
-// 	// if email exist and password incorrect
-// 	u.Respond(w, http.StatusUnauthorized, map[string]interface{}{})
-// 	// if email and password OK
-// 	// send token to client
-// 	u.Respond(w, http.StatusOK, map[string]interface{}{})
-// }
+var Login = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+	user := &models.User{}
+	// validate
+	err := json.NewDecoder(r.Body).Decode(user)
+	if err != nil {
+		u.Respond(w, http.StatusBadRequest, "Failure", err.Error(), nil)
+		return
+	}
+	var (
+		email    string
+		password string
+	)
+	err = db.QueryRow(`SELECT id, name, email, password FROM users WHERE email = $1`, user.Email).Scan(&user.ID, &user.Name, &email, &password)
+	if err != nil {
+		u.Respond(w, http.StatusNotFound, "Failure", "Your email invalid", nil)
+		return
+	}
+	// if email exist and password incorrect
+	if email != user.Email || password != user.Password {
+		u.Respond(w, http.StatusUnauthorized, "Failure", "Password incorrect", nil)
+		return
+	}
+	// if email and password OK
+	//Create JWT token
+	fmt.Println(user)
+	tk := &models.Token{UserId: user.ID}
+	token := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tk)
+	fmt.Println(os.Getenv("SECRET_TOKEN"))
+	tokenString, _ := token.SignedString([]byte(os.Getenv("SECRET_TOKEN")))
+	// response and send token to client
+	u.Respond(w, http.StatusOK, "Success", "Login Success", map[string]interface{}{
+		"name":  user.Name,
+		"email": user.Email,
+		"token": tokenString,
+	})
+}
 
 var GetMe = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	// decode jwt => userId
+	var userID = r.Context().Value("user").(uint32)
 
-	// data := db.QueryRow("SELECT name, email, is_payment, limit_day_tasks FROM users WHERE id = $1", 1)
-	var id int = 1
-	rows, err := db.Query(`SELECT name, email, is_payment FROM users WHERE id = $1`, id)
+	var user = &models.User{
+		ID: userID,
+	}
+
+	err := db.QueryRow(`SELECT name, email, is_payment, limit_day_tasks FROM users WHERE id = $1`, user.ID).Scan(&user.Name, &user.Email, &user.IsPayment, &user.LimitDayTasks)
+
 	if err != nil {
-		fmt.Println(err)
+		u.Respond(w, http.StatusNotFound, "Failure", err.Error(), nil)
+		return
 	}
-
-	var user models.User
-
-	for rows.Next() {
-		var (
-			id    int = 1
-			name  string
-			email string
-		)
-		err = rows.Scan(&id, &name, &email)
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Println(user)
-		// check errors
-		user = models.User{Name: name, Email: email}
-		fmt.Println(user)
-	}
-
-	// var user User
-
-	u.Respond(w, http.StatusOK, "Success", "Success", user)
-	// if jwt  invalid
-	// u.Respond(w, http.StatusBadRequest, , )
-	// decode jwt -> get userID -> get user
-	// u.Respond(w, http.StatusOK, map[string]interface{}{})
+	u.Respond(w, http.StatusOK, "Success", "Success", map[string]interface{}{
+		"name":            user.Name,
+		"email":           user.Email,
+		"is_payment":      user.IsPayment,
+		"limit_day_tasks": user.LimitDayTasks,
+	})
 }
 
-// var UpdateMe = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-// 	// success
-// 	u.Respond(w, http.StatusOK, map[string]interface{}{})
-// }
+var UpdateMe = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+	user := models.User{}
+	// success
+	u.Respond(w, http.StatusOK, "Success", "Success", map[string]interface{}{
+		"name":            user.Name,
+		"email":           user.Email,
+		"is_payment":      user.IsPayment,
+		"limit_day_tasks": user.LimitDayTasks,
+	})
+}

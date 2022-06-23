@@ -18,6 +18,7 @@ func main() {
 		port = "8000"
 	}
 	app := &app.App{}
+	defer app.DB.Close()
 	app.Init()
 	app.Run(":" + port)
 }
