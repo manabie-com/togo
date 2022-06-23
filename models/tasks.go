@@ -3,24 +3,24 @@ package models
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type Task struct {
 	Id int
 	Content string
 	Status string
-	Time string
-	TimeDone string
+	Time time.Time
+	TimeDone time.Time
 	UserId int
 }
 type NewTask struct {
 	Content string
 	Status string
-	Time string
-	TimeDone string
+	Time time.Time
+	TimeDone time.Time
 	UserId int
 }
 
@@ -35,12 +35,11 @@ func GetAllTasks(userId int) ([]Task, error) { // Get all task from the database
 		rows.Scan(&task.Id, &task.Content, &task.Status, &task.Time, &task.TimeDone, &task.UserId)
 		tasks = append(tasks, task)
 	}
-	fmt.Println(tasks[0].Time)
 	return tasks, nil
 }
 
 func InsertTask(task NewTask) error { // Insert one task to the database
-	_, err := DB.Exec("INSERT INTO tasks(content, status,time, timedone, userid) VALUES ($1, $2, $3, NULL, $4);", task.Content,task.Status ,task.Time, task.UserId)
+	_, err := DB.Exec("INSERT INTO tasks(content, status,time, timedone, userid) VALUES ($1, $2, $3, $4, $5);", task.Content,task.Status ,task.Time, task.TimeDone, task.UserId)
 	if err != nil {
 		return errors.New("insert database failed")
 	}
@@ -48,7 +47,7 @@ func InsertTask(task NewTask) error { // Insert one task to the database
 }
 
 func DeleteTask(id int, userid int) error { // Delete task from database
-	_, err := DB.Exec("DELETE FROM tasks WHERE id = $1 && userid = $2;", id, userid)
+	_, err := DB.Exec("DELETE FROM tasks WHERE id = $1 AND userid = $2;", id, userid)
 	return err
 }
 
@@ -62,7 +61,6 @@ func UpdateTask(newTask NewTask, id int, userid int) error { // Update one task 
 
 func CheckIDTask(w http.ResponseWriter,id int, userId int) (Task, bool) { // Check ID task is valid or not
 	task := Task{}
-	fmt.Println(id, userId)
 	row := DB.QueryRow("SELECT * FROM tasks WHERE id = $1 AND userid = $2;", id, userId)
 	err := row.Scan(&task.Id, &task.Content, &task.Status, &task.Time, &task.TimeDone, &task.UserId)
 	if err != nil {

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gorilla/mux"
 	"github.com/huynhhuuloc129/todo/models"
 	"github.com/huynhhuuloc129/todo/routers"
 	"github.com/joho/godotenv"
@@ -22,9 +23,9 @@ func main() {
 	if port == "" {
 		port = defaultPort
 	}
-
 	models.Connect() // connect to database
 
-	http.HandleFunc("/", routers.Handle)
-	log.Fatal(http.ListenAndServe(":"+defaultPort, nil))
+	r := mux.NewRouter().StrictSlash(true)
+	routers.Routing(r)
+    log.Fatal(http.ListenAndServe(":"+port, r))
 }

@@ -2,19 +2,19 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
+	"github.com/gorilla/context"
 	"github.com/huynhhuuloc129/todo/models"
 )
 
-const (
-	dateformat = "01-02-2006"
-)
-
-
-func ResponeAllTask(w http.ResponseWriter, r *http.Request, userid int) { // Get all user from database
+func ResponeAllTask(w http.ResponseWriter, r *http.Request) { // Get all user from database
+	userid, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "userid")))
+	
 	tasks, err := models.GetAllTasks(userid)
 	if err != nil {
 		http.Error(w, "get all task failed", http.StatusFailedDependency)
@@ -28,13 +28,15 @@ func ResponeAllTask(w http.ResponseWriter, r *http.Request, userid int) { // Get
 	}
 }
 
-func ResponeOneTask(w http.ResponseWriter, r *http.Request, id int, userid int) { // Get one user from database
+func ResponeOneTask(w http.ResponseWriter, r *http.Request) { // Get one user from database
+	userid, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "userid")))
+	id, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "id")))
+
 	task, ok := models.CheckIDTask(w, id, userid)
 	if !ok {
 		http.Error(w, "id invalid", http.StatusBadRequest)
 		return
 	}
-
 	w.Header().Set("Content-Type", "application/json")
 	err := json.NewEncoder(w).Encode(task)
 	if err != nil {
@@ -43,7 +45,9 @@ func ResponeOneTask(w http.ResponseWriter, r *http.Request, id int, userid int) 
 	}
 }
 
-func CreateTask(w http.ResponseWriter, r *http.Request, userid int) { // Create a new user
+func CreateTask(w http.ResponseWriter, r *http.Request) { // Create a new user
+	userid, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "userid")))
+
 	var task models.NewTask
 	err := json.NewDecoder(r.Body).Decode(&task)
 	if err != nil {
@@ -52,7 +56,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request, userid int) { // Create 
 	}
 	task.UserId = userid
 	task.Status = "pending"
-	task.Time = time.Now().Format(dateformat)
+	task.Time = time.Now()
 	ok := models.CheckTask(task)
 	if !ok {
 		http.Error(w, "task field invalid", http.StatusBadRequest)
@@ -72,13 +76,15 @@ func CreateTask(w http.ResponseWriter, r *http.Request, userid int) { // Create 
 	}
 }
 
-func DeleteTask(w http.ResponseWriter, r *http.Request, id int, userid int) { // Delete one user from database
+func DeleteTask(w http.ResponseWriter, r *http.Request ){ // Delete one user from database
+	userid, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "userid")))
+	id, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "id")))
+
 	_, ok := models.CheckIDTask(w, id, userid)
 	if !ok {
 		http.Error(w, "Id invalid", http.StatusBadRequest)
 		return
 	}
-
 	err := models.DeleteTask(id, userid)
 	if err != nil {
 		http.Error(w, "delete task failed", http.StatusFailedDependency)
@@ -87,32 +93,37 @@ func DeleteTask(w http.ResponseWriter, r *http.Request, id int, userid int) { //
 	w.Write([]byte("message: delete success"))
 }
 
-func UpdateTask(w http.ResponseWriter, r *http.Request, id int, userid int) { // Update one user already exist in database
+func UpdateTask(w http.ResponseWriter, r *http.Request) { // Update one user already exist in database
+	userid, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "userid")))
+	id, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "id")))
+
 	var newTask models.NewTask
-	_, ok := models.CheckIDTask(w, id, userid)
+	oldTask, ok := models.CheckIDTask(w, id, userid)
 	if !ok {
 		http.Error(w, "Id invalid", http.StatusBadRequest)
 		return
 	}
 	err := json.NewDecoder(r.Body).Decode(&newTask)
 	if err != nil {
-		http.Error(w, "decode failed", http.StatusBadRequest)
+		http.Error(w, "decode failed, input invalid", http.StatusBadRequest)
 		return
 	}
 	if strings.ToLower(newTask.Status) == "done" {
-		newTask.TimeDone = time.Now().Format(dateformat)
+		newTask.TimeDone = time.Now()
 	} else {
-		newTask.Status = "pending"
+		http.Error(w, "status can only be done or pending", http.StatusBadRequest)
+		return
 	}
 
 	err = models.UpdateTask(newTask, id, userid)
+	oldTask.Status = newTask.Status
+	oldTask.TimeDone = newTask.TimeDone
 	if err != nil {
 		http.Error(w, "update task failed", http.StatusBadRequest)
 		return
 	}
-
 	w.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(w).Encode(newTask)
+	err = json.NewEncoder(w).Encode(oldTask)
 	if err != nil {
 		http.Error(w, "encode failed.", http.StatusBadRequest)
 		return

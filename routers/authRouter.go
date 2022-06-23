@@ -3,6 +3,7 @@ package routers
 import (
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/huynhhuuloc129/todo/controllers"
 )
 
@@ -11,22 +12,16 @@ const (
 	loginURL = "login"
 )
 
-func AuthHandle(w http.ResponseWriter, r *http.Request, params []string) { // Handle different request
-	switch params[2] {
-	case registerURL: 			// url match register link
-		switch r.Method {
-		case http.MethodPost: 	// and match method POST (ONLY METHOD POST)
-			controllers.Register(w, r)
-		default:
-			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		}
-	case loginURL: 				// url match login link
-		switch r.Method {
-		case http.MethodPost:	// and match method POST (ONLY METHOD POST)
-			controllers.Login(w, r)
-		default:
-			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		}
+func AuthHandle(w http.ResponseWriter, r *http.Request) { // Handle different request
+	params := mux.Vars(r)
+	path := params["path"]
+
+	switch path {
+	case registerURL: 			// url match register link	
+		controllers.Register(w, r)
+
+	case loginURL: 				// url match login link	
+		controllers.Login(w, r)
 	default: 					// not match any link
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}

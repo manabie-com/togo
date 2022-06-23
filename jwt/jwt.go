@@ -31,7 +31,6 @@ func CheckToken(w http.ResponseWriter, r *http.Request)(string, int, bool){
 	result := ParseToken(token)
 	username := fmt.Sprintf("%v",result["username"])
 	id, err := strconv.Atoi(fmt.Sprintf("%v", result["id"]))
-	fmt.Println()
 	if result["username"] == nil || err != nil{
 		return username, id,false
 	} 
