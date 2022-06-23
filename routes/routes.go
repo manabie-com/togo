@@ -12,8 +12,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("lntvan166: Hello from Home!"))
 
 }
-func HandleRequest() {
-	route := mux.NewRouter()
+func HandleRequest(route *mux.Router) {
 
 	route.HandleFunc("/", Home)
 

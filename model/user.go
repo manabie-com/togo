@@ -85,3 +85,13 @@ func CheckUserExist(username string) bool {
 	err := db.DB.QueryRow(query, username).Scan(&u.ID, &u.Username, &u.Password, &u.Plan, &u.MaxTodo)
 	return err == nil
 }
+
+func GetUserIDByUsername(username string) (int, error) {
+	const query = `SELECT id FROM users WHERE username = $1`
+	var id int
+	err := db.DB.QueryRow(query, username).Scan(&id)
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
+}

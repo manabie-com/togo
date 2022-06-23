@@ -6,13 +6,16 @@ import (
 	"lntvan166/togo/routes"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
 
 func main() {
 	db.Connect()
 
-	routes.HandleRequest()
+	route := mux.NewRouter()
+	routes.HandleRequest(route)
+
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		fmt.Println(err)
 	}

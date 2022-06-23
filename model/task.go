@@ -13,7 +13,7 @@ func AddTask(t *e.Task) error {
 	if err != nil {
 		return err
 	}
-	_, err = tx.Exec(query, t.Name, t.Description, t.UserID)
+	_, err = tx.Exec(query, t.Name, t.Description, t.CreatedAt, t.Completed, t.UserID)
 	if err != nil {
 		tx.Rollback()
 		return err

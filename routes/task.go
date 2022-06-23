@@ -10,7 +10,7 @@ func TaskRoute(w http.ResponseWriter, r *http.Request) {
 	case "GET":
 		task.GetTaskForUser(w, r)
 	case "POST":
-
+		task.CreateTask(w, r)
 	case "DELETE":
 
 	default:
