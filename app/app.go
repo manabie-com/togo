@@ -45,10 +45,10 @@ func (a *App) Routes() {
 	userRouter.HandleFunc("/me", a.GetMe).Methods("GET")
 	userRouter.HandleFunc("/signup", a.SignUp).Methods("POST")
 	userRouter.HandleFunc("/login", a.Login).Methods("POST")
-	userRouter.HandleFunc("/", a.UpdateMe).Methods("PATCH")
+	userRouter.HandleFunc("/edit", a.UpdateMe).Methods("PATCH")
 	// sub router like http://<HOST>:<PORT>/api/tasks
 	taskRouter := router.PathPrefix("/api/tasks").Subrouter()
-	taskRouter.HandleFunc("/", a.GetTasks).Methods("GET")
+	taskRouter.HandleFunc("", a.GetTasks).Methods("GET")
 	taskRouter.HandleFunc("/{id}", a.GetTask).Methods("GET")
 	taskRouter.HandleFunc("/add", a.Add).Methods("POST")
 	taskRouter.HandleFunc("/{id}", a.Edit).Methods("PATCH")
@@ -74,19 +74,19 @@ func (a *App) UpdateMe(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) GetTasks(w http.ResponseWriter, r *http.Request) {
-	// c.GetTasks(a.DB, w, r)
+	c.GetTasks(a.DB, w, r)
 }
 
 func (a *App) GetTask(w http.ResponseWriter, r *http.Request) {
-	// c.GetTask(a.DB, w, r)
+	c.GetTask(a.DB, w, r)
 }
 
 func (a *App) Add(w http.ResponseWriter, r *http.Request) {
-	// c.Add(a.DB, w, r)
+	c.Add(a.DB, w, r)
 }
 
 func (a *App) Edit(w http.ResponseWriter, r *http.Request) {
-	// c.Edit(a.DB, w, r)
+	c.Edit(a.DB, w, r)
 }
 
 func (a *App) Run(host string) {

@@ -5,7 +5,8 @@ import (
 )
 
 type Token struct {
-	UserId uint32
+	UserId        uint32
+	LimitDayTasks uint
 	jwt.StandardClaims
 }
 type User struct {

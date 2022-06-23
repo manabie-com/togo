@@ -37,9 +37,9 @@ var SignUp = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		u.Respond(w, http.StatusBadRequest, "Failure", err.Error(), nil)
 		return
 	}
-	fmt.Println(user)
+
 	// send token jwt here
-	tk := &models.Token{UserId: user.ID}
+	tk := &models.Token{UserId: user.ID, LimitDayTasks: user.LimitDayTasks}
 	token := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tk)
 	tokenString, _ := token.SignedString([]byte(os.Getenv("SECRET_TOKEN")))
 	// response and send token to client
@@ -62,7 +62,7 @@ var Login = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		email    string
 		password string
 	)
-	err = db.QueryRow(`SELECT id, name, email, password FROM users WHERE email = $1`, user.Email).Scan(&user.ID, &user.Name, &email, &password)
+	err = db.QueryRow(`SELECT id, name, email, password, limit_day_tasks FROM users WHERE email = $1`, user.Email).Scan(&user.ID, &user.Name, &email, &password, &user.LimitDayTasks)
 	if err != nil {
 		u.Respond(w, http.StatusNotFound, "Failure", "Your email invalid", nil)
 		return
@@ -75,7 +75,10 @@ var Login = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// if email and password OK
 	//Create JWT token
 	fmt.Println(user)
-	tk := &models.Token{UserId: user.ID}
+	tk := &models.Token{
+		UserId:        user.ID,
+		LimitDayTasks: user.LimitDayTasks,
+	}
 	token := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), tk)
 	fmt.Println(os.Getenv("SECRET_TOKEN"))
 	tokenString, _ := token.SignedString([]byte(os.Getenv("SECRET_TOKEN")))
@@ -88,13 +91,10 @@ var Login = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 }
 
 var GetMe = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	var userID = r.Context().Value("user").(uint32)
 
-	var user = &models.User{
-		ID: userID,
-	}
-
-	err := db.QueryRow(`SELECT name, email, is_payment, limit_day_tasks FROM users WHERE id = $1`, user.ID).Scan(&user.Name, &user.Email, &user.IsPayment, &user.LimitDayTasks)
+	decoded := r.Context().Value("user").(*models.Token)
+	user := &models.User{}
+	err := db.QueryRow(`SELECT name, email, is_payment, limit_day_tasks FROM users WHERE id = $1`, decoded.UserId).Scan(&user.Name, &user.Email, &user.IsPayment, &user.LimitDayTasks)
 
 	if err != nil {
 		u.Respond(w, http.StatusNotFound, "Failure", err.Error(), nil)
@@ -109,8 +109,20 @@ var GetMe = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 }
 
 var UpdateMe = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+	decoded := r.Context().Value("user").(*models.Token)
+
 	user := models.User{}
-	// success
+	err := json.NewDecoder(r.Body).Decode(user)
+	if err != nil {
+		u.Respond(w, http.StatusBadRequest, "Failure", err.Error(), nil)
+		return
+	}
+	err = db.QueryRow(`UPDATE tasks SET name = $2 WHERE id = $1 RETURNING name, email`, decoded.UserId, user.Name).Scan(&user.Name, &user.Email)
+	if err != nil {
+		u.Respond(w, http.StatusNotFound, "Failure", err.Error(), nil)
+		return
+	}
+
 	u.Respond(w, http.StatusOK, "Success", "Success", map[string]interface{}{
 		"name":            user.Name,
 		"email":           user.Email,

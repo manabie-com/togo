@@ -7,5 +7,5 @@ type Task struct {
 	Name      string    `json:"name" validate:"required"`
 	Content   string    `json:"content"`
 	CreatedAt time.Time `json:"createdAt"`
-	UserId    int32     `json:"userId"`
+	UserId    uint32    `json:"userId"`
 }
