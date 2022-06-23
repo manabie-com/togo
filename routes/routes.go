@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"lntvan166/togo/middleware"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -16,11 +15,9 @@ func HandleRequest(route *mux.Router) {
 
 	route.HandleFunc("/", Home)
 
-	route.HandleFunc("/user", UserRoute)
-
-	route.Handle("/task", middleware.Authorization(http.HandlerFunc(TaskRoute)))
-
-	route.HandleFunc("/auth/{method}", AuthRoute)
+	HandleUser(route)
+	HandleAuthentication(route)
+	HandleTask(route)
 
 	http.Handle("/", route)
 }
