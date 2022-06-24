@@ -178,3 +178,18 @@ func DeleteAllTask() error {
 	tx.Commit()
 	return nil
 }
+
+func DeleteAllTaskOfUser(userID int) error {
+	const query = `DELETE FROM tasks WHERE user_id = $1;`
+	tx, err := db.DB.Begin()
+	if err != nil {
+		return err
+	}
+	_, err = tx.Exec(query, userID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	tx.Commit()
+	return nil
+}

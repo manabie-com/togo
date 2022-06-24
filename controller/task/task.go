@@ -112,7 +112,7 @@ func CheckTask(w http.ResponseWriter, r *http.Request) {
 
 	user_id, err := model.GetUserIDByTaskID(id)
 	if err != nil {
-		utils.ERROR(w, http.StatusInternalServerError, err, "get user id by task id failed!")
+		utils.ERROR(w, http.StatusInternalServerError, err, "task does not exist!")
 		return
 	}
 
@@ -141,7 +141,7 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	username := context.Get(r, "username").(string)
 	user_id, err := model.GetUserIDByTaskID(id)
 	if err != nil {
-		utils.ERROR(w, http.StatusInternalServerError, err, "get user id by task id failed!")
+		utils.ERROR(w, http.StatusInternalServerError, err, "task does not exist!")
 		return
 	}
 
@@ -179,7 +179,7 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	username := context.Get(r, "username").(string)
 	user_id, err := model.GetUserIDByTaskID(id)
 	if err != nil {
-		utils.ERROR(w, http.StatusInternalServerError, err, "get user id by task id failed!")
+		utils.ERROR(w, http.StatusInternalServerError, err, "task does not exist!")
 		return
 	}
 

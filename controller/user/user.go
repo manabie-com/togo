@@ -46,6 +46,12 @@ func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	err = model.DeleteAllTaskOfUser(id)
+	if err != nil {
+		utils.ERROR(w, http.StatusInternalServerError, err, "failed to delete user!")
+		return
+	}
+
 	err = model.DeleteUserByID(id)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "failed to delete user!")
