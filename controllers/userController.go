@@ -24,7 +24,6 @@ func ResponeAllUser(w http.ResponseWriter, r *http.Request) { // Get all user fr
 		return
 	}
 }
-
 func ResponeOneUser(w http.ResponseWriter, r *http.Request) { // Get one user from database
 	id, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "id"))) // get id from url
 	user, ok := models.CheckIDUserAndReturn(id)
@@ -46,24 +45,24 @@ func CreateUser(w http.ResponseWriter, r *http.Request) { // Create a new user
 		http.Error(w, "decode failed", http.StatusFailedDependency)
 		return
 	}
-	if _, ok := models.CheckUserInput(user.Username); ok { // Check username exist or not
+	if _, ok := models.CheckUserNameExist(user.Username); ok { // Check username exist or not
 		http.Error(w, "this username already exist", http.StatusNotAcceptable)
 		return
 	}
 
-	if strings.ToLower(user.Username) != "admin" {
+	if strings.ToLower(user.Username) != "admin" { // check admin or not
 		user.LimitTask = 10
 	} else {
 		user.LimitTask = 0
 	}
 
 	user.Password, _ = models.Hash(user.Password)
-	if err := models.InsertUser(user); err != nil {
+	if err := models.InsertUser(user); err != nil { // insert user to database
 		http.Error(w, "insert user failed", http.StatusFailedDependency)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(user); err != nil {
+	if err := json.NewEncoder(w).Encode(user); err != nil { // return response
 		http.Error(w, "encode failed", http.StatusCreated)
 		return
 	}
@@ -94,13 +93,14 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) { // Update one user alr
 	user, ok := models.CheckIDUserAndReturn(id)
 	newUser.Username = user.Username
 	newUser.Password = user.Password
+	newUser.LimitTask = user.LimitTask
 
 	if !ok {
 		http.Error(w, "Id invalid", http.StatusBadRequest)
 		return
 	}
 	if err := json.NewDecoder(r.Body).Decode(&newUser); err != nil {
-		http.Error(w, "decode failed", http.StatusBadRequest)
+		http.Error(w, "decode failed, input invalid", http.StatusBadRequest)
 		return
 	}
 

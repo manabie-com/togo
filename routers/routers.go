@@ -10,5 +10,3 @@ func Routing(r *mux.Router){
     authRouting := r.PathPrefix("/auth").Subrouter()
     authRouting.HandleFunc("/{path}", AuthHandle).Methods("POST")
 }
-
-

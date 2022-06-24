@@ -73,7 +73,10 @@ func CheckIDTaskAndReturn(w http.ResponseWriter, id int, userId int) (Task, bool
 }
 
 func CheckTaskInput(task NewTask) bool { // Check task input value is valid or not
-	Content := strings.TrimSpace(task.Content)
+	var Content string
+	if task.Content != ""{
+		Content = strings.TrimSpace(task.Content)
+	}
 	_, validUserid := CheckIDUserAndReturn(task.UserId)
 	if Content == "" || !validUserid {
 		return false

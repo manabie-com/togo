@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/huynhhuuloc129/todo/jwt"
 )
+
 func AdminVerified(next http.Handler) http.Handler { // check if logging as admin or not
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         username, userid, ok := jwt.CheckToken(w, r)
@@ -29,6 +30,8 @@ func Logging(next http.Handler) http.Handler { // check if logging or not
             return
         }
         context.Set(r, "userid", userid)
+        context.Set(r, "id", userid)
+
         next.ServeHTTP(w, r)
     })
 }
