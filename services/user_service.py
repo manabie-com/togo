@@ -1,7 +1,8 @@
+from django.http import response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import AccessToken
 
-from utils import response_formatting
+from utils import encrypting, response_formatting
 
 from baseuser.serializers import UserSerializer
 from baseuser.models import BaseUser
@@ -16,6 +17,11 @@ class UserService:
 
     def get_user_object(self, user_id):
         return BaseUser.objects.get(pk=user_id)
+
+    def get_single_user(self, user_id):
+        user = BaseUser.objects.get(pk=self.__decrypt_data(user_id))
+        serializer = UserSerializer(user)
+        return serializer.data, status.HTTP_200_OK
 
     def get(self, request) -> tuple:
         user = self.get_user_from_access_token(request)
@@ -57,7 +63,7 @@ class UserService:
                 HTTPReponseMessage.MISSING_FIELD, status.HTTP_400_BAD_REQUEST
             )
 
-        updating_user = BaseUser.objects.get(pk=user_id)
+        updating_user = self.__get_user_by_id(user_id)
         serializer = UserSerializer(
             updating_user,
             data=request.data,
@@ -72,3 +78,12 @@ class UserService:
     def __is_super_user(self, user) -> bool:
         user_object = BaseUser.objects.get(pk=user["user_id"])
         return user_object.is_superuser
+
+    def __get_user_by_id(self, user_id):
+        try:
+            return BaseUser.objects.get(pk=self.__decrypt_data(user_id))
+        except BaseUser.DoesNotExist:
+            raise response.Http404
+
+    def __decrypt_data(self, id):
+        return encrypting.decrypt(id)[0]
