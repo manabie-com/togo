@@ -12,4 +12,4 @@ class TaskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Task
-        exclude = ("created_by",)
+        fields = "__all__"

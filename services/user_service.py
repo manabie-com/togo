@@ -29,7 +29,7 @@ class UserService:
             return serializer.data, status.HTTP_200_OK
 
         return response_formatting.get_format_message(
-            HTTPReponseMessage.NOT_ALLOWED, status.HTTP_403_FORBIDDEN
+            HTTPReponseMessage.NOT_ALLOWED_VIEW, status.HTTP_403_FORBIDDEN
         )
 
     def get(self, request) -> tuple:

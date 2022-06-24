@@ -95,5 +95,5 @@ class TaskService:
 
     def __get_single_or_list(self, user_id, is_list, task_id):
         if is_list is True:
-            return Task.objects.filter(created_by=user_id).values()
+            return Task.objects.filter(created_by=user_id)
         return self.__get_task_by_id(task_id, user_id)
