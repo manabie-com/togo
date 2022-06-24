@@ -5,6 +5,8 @@ import (
 	e "lntvan166/togo/entities"
 )
 
+// CREATE
+
 func AddUser(u *e.User) error {
 	const query = `INSERT INTO users (username, password, plan, max_todo) VALUES ($1, $2, $3, $4)`
 	tx, err := db.DB.Begin()
@@ -20,45 +22,7 @@ func AddUser(u *e.User) error {
 	return nil
 }
 
-func UpdateUser(u *e.User) error {
-	const query = `UPDATE users SET username = $1, password = $2, plan = $3, max_todo = $4 WHERE id = $5`
-	tx, err := db.DB.Begin()
-	if err != nil {
-		return err
-	}
-	_, err = tx.Exec(query, u.Username, u.Password, u.Plan, u.MaxTodo, u.ID)
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-	tx.Commit()
-	return nil
-}
-
-func DeleteUser(id int) error {
-	const query = `DELETE FROM users WHERE id = $1`
-	tx, err := db.DB.Begin()
-	if err != nil {
-		return err
-	}
-	_, err = tx.Exec(query, id)
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-	tx.Commit()
-	return nil
-}
-
-func GetUserByName(username string) (*e.User, error) {
-	const query = `SELECT * FROM users WHERE username = $1`
-	u := &e.User{}
-	err := db.DB.QueryRow(query, username).Scan(&u.ID, &u.Username, &u.Password, &u.Plan, &u.MaxTodo)
-	if err != nil {
-		return nil, err
-	}
-	return u, nil
-}
+// READ
 
 func GetAllUsers() ([]*e.User, error) {
 	const query = `SELECT * FROM users`
@@ -79,14 +43,24 @@ func GetAllUsers() ([]*e.User, error) {
 	return users, nil
 }
 
-func CheckUserExist(username string) (bool, error) {
+func GetUserByName(username string) (*e.User, error) {
 	const query = `SELECT * FROM users WHERE username = $1`
 	u := &e.User{}
 	err := db.DB.QueryRow(query, username).Scan(&u.ID, &u.Username, &u.Password, &u.Plan, &u.MaxTodo)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
-	return true, nil
+	return u, nil
+}
+
+func GetUserByID(id int) (*e.User, error) {
+	const query = `SELECT * FROM users WHERE id = $1`
+	u := &e.User{}
+	err := db.DB.QueryRow(query, id).Scan(&u.ID, &u.Username, &u.Password, &u.Plan, &u.MaxTodo)
+	if err != nil {
+		return nil, err
+	}
+	return u, nil
 }
 
 func GetUserIDByUsername(username string) (int, error) {
@@ -109,6 +83,16 @@ func GetMaxTaskByUserID(id int) (int, error) {
 	return max, nil
 }
 
+func GetNumberOfTaskToday(id int) (int, error) {
+	const query = `SELECT COUNT(*) FROM tasks WHERE user_id = $1 AND DATE(created_at) = CURRENT_DATE`
+	var count int
+	err := db.DB.QueryRow(query, id).Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 func GetPlanByID(id int) (string, error) {
 	const query = `SELECT plan FROM users WHERE id = $1`
 	var plan string
@@ -129,6 +113,33 @@ func GetPlanByUsername(username string) (string, error) {
 	return plan, nil
 }
 
+func CheckUserExist(username string) (bool, error) {
+	const query = `SELECT * FROM users WHERE username = $1`
+	u := &e.User{}
+	err := db.DB.QueryRow(query, username).Scan(&u.ID, &u.Username, &u.Password, &u.Plan, &u.MaxTodo)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+// UPDATE
+
+func UpdateUser(u *e.User) error {
+	const query = `UPDATE users SET username = $1, password = $2, plan = $3, max_todo = $4 WHERE id = $5`
+	tx, err := db.DB.Begin()
+	if err != nil {
+		return err
+	}
+	_, err = tx.Exec(query, u.Username, u.Password, u.Plan, u.MaxTodo, u.ID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	tx.Commit()
+	return nil
+}
+
 func UpgradePlan(id int, plan string, limit int) error {
 	const query = `UPDATE users SET plan = $1, max_todo = $2 WHERE id = $3`
 	tx, err := db.DB.Begin()
@@ -144,12 +155,19 @@ func UpgradePlan(id int, plan string, limit int) error {
 	return nil
 }
 
-func GetNumberOfTaskToday(id int) (int, error) {
-	const query = `SELECT COUNT(*) FROM tasks WHERE user_id = $1 AND DATE(created_at) = CURRENT_DATE`
-	var count int
-	err := db.DB.QueryRow(query, id).Scan(&count)
+// DELETE
+
+func DeleteUserByID(id int) error {
+	const query = `DELETE FROM users WHERE id = $1`
+	tx, err := db.DB.Begin()
 	if err != nil {
-		return 0, err
+		return err
 	}
-	return count, nil
+	_, err = tx.Exec(query, id)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	tx.Commit()
+	return nil
 }
