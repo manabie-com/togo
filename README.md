@@ -1,30 +1,35 @@
-### Requirements
+### How to run your code locally?
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+- B1. Clone project
+- B2. go into folder challenge\target
+- B3. open command line screen at that folder
+- B4. run command to execute app java
+   - command: java -jar challenge-0.0.1-SNAPSHOT.jar
+- B5 use command curl the other cmd screen to test
 
-### Notes
+### A sample “curl” command to call your API
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+- curl -i -X POST localhost:8080/api/login -H "Content-Type: application/json" -d "{\\"username\\":\\"hungnk\\",\\"password\\":\\"admin123\\"}"
+- As soon as run this command it will generate Jwt Token
+- assign to "Authorization": "Bearer {#token}" to api createTask, createUser called after login;
+  - Ex call api after login: 
+    - curl -i -X POST localhost:8080/api/createTask -H "Content-Type: application/json" -H "Authorization: Bearer {#token}" -d "{\\"id\\":\\"M01\\",\\"content\\":\\"doning01\\",\\"userId\\":\\"hungnk\\",\\"createdDate\\":\\"2022-06-24\\" }"
+    - {#token} is token received at the time login
+    - create user with the following curl: 
+	- curl -i -X POST localhost:8080/api/createUser -H "Content-Type: application/json" -H "Authorization: Bearer {#token}" -d "{\\"username\\":\\"trungst\\",\\"password\\":\\"admin1234\\",\\"maxLimitTodo\\": 2}"
+    - You can check the database at: http://localhost:8080/h2-console
+	   - JDBC URL: jdbc:h2:mem:chanllengesdb
+	   - User Name: sa
+	   - no Password
 
-### How to submit your solution?
+### How to run your unit tests locally?
 
-- Fork this repo and show us your development progress via a PR
+- Currently, I can't run unit tests in cmd, if you want to run then open java IDE like Eclipse, Intellij... I apologize for the inconvenience.
 
-### Interesting facts about Manabie
+### What do you love about your solution?
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+- Currently this project I am using MVC pattern, it divides the structure very clearly so it is easy to change and maintain.
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+### What else do you want us to know about however you do not have enough time to complete?
+
+   - I still can't configure unit test to run on cmd, I feel pretty bad for this.
