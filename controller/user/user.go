@@ -9,7 +9,7 @@ import (
 func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := model.GetAllUsers()
 	if err != nil {
-		utils.ERROR(w, http.StatusInternalServerError, err)
+		utils.ERROR(w, http.StatusInternalServerError, err, "failed to get users!")
 		return
 	}
 

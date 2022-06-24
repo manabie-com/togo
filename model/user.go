@@ -79,11 +79,14 @@ func GetAllUsers() ([]*e.User, error) {
 	return users, nil
 }
 
-func CheckUserExist(username string) bool {
+func CheckUserExist(username string) (bool, error) {
 	const query = `SELECT * FROM users WHERE username = $1`
 	u := &e.User{}
 	err := db.DB.QueryRow(query, username).Scan(&u.ID, &u.Username, &u.Password, &u.Plan, &u.MaxTodo)
-	return err == nil
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 func GetUserIDByUsername(username string) (int, error) {

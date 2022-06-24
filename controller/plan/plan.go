@@ -23,7 +23,7 @@ func GetPlan(w http.ResponseWriter, r *http.Request) {
 	username := context.Get(r, "username").(string)
 	plan, err := model.GetPlanByUsername(username)
 	if err != nil {
-		utils.ERROR(w, http.StatusInternalServerError, fmt.Errorf(err.Error()))
+		utils.ERROR(w, http.StatusInternalServerError, err, "failed to get plan!")
 		return
 	}
 
@@ -35,35 +35,33 @@ func UpgradePlan(w http.ResponseWriter, r *http.Request) {
 	admin := config.ADMIN
 
 	if username != admin {
-		utils.ERROR(w, http.StatusBadRequest, fmt.Errorf("you are not admin"))
+		utils.ERROR(w, http.StatusBadRequest, fmt.Errorf("you are not admin"), "")
 		return
 	}
 
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		utils.ERROR(w, http.StatusBadRequest, fmt.Errorf(err.Error()))
+		utils.ERROR(w, http.StatusBadRequest, err, "invalid plan id!")
 		return
 	}
 
 	plan, err := model.GetPlanByID(id)
 	if err != nil {
-		utils.ERROR(w, http.StatusInternalServerError, fmt.Errorf(err.Error()))
+		utils.ERROR(w, http.StatusInternalServerError, err, "failed to get plan!")
 		return
 	}
 
 	if plan == string(vip) {
-		utils.ERROR(w, http.StatusBadRequest, fmt.Errorf("this user have already vip plan"))
+		utils.ERROR(w, http.StatusBadRequest, fmt.Errorf("this user have already vip plan"), "")
 		return
 	}
 
 	err = model.UpgradePlan(id, string(vip), config.VIP_LIMIT)
 	if err != nil {
-		utils.ERROR(w, http.StatusInternalServerError, fmt.Errorf(err.Error()))
+		utils.ERROR(w, http.StatusInternalServerError, err, "failed to upgrade plan!")
 		return
 	}
-
-	fmt.Println(username, id, string(vip), config.VIP_LIMIT, plan)
 
 	utils.JSON(w, http.StatusOK, "message: upgrade plan success")
 }

@@ -140,3 +140,18 @@ func CheckLimitTaskToday(userID int) (bool, error) {
 
 	return false, nil
 }
+
+func UpdateTask(t *e.Task) error {
+	const query = `UPDATE tasks SET name = $1, description = $2, created_at = $3, completed = $4, user_id = $5 WHERE id = $6;`
+	tx, err := db.DB.Begin()
+	if err != nil {
+		return err
+	}
+	_, err = tx.Exec(query, t.Name, t.Description, t.CreatedAt, t.Completed, t.UserID, t.ID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	tx.Commit()
+	return nil
+}

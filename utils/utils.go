@@ -16,13 +16,11 @@ func GetCurrentTime() string {
 func CheckAccessPermission(w http.ResponseWriter, username string, taskUserID int) error {
 	userID, err := model.GetUserIDByUsername(username)
 	if err != nil {
-		ERROR(w, http.StatusInternalServerError, fmt.Errorf(err.Error()))
 		return err
 	}
 
 	if userID != taskUserID {
-		ERROR(w, http.StatusBadRequest, fmt.Errorf("you are not allowed to access this task"))
-		return err
+		return fmt.Errorf("you are not allowed to access this task")
 	}
 
 	return nil

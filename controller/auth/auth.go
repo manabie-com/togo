@@ -12,16 +12,22 @@ import (
 
 func Register(w http.ResponseWriter, r *http.Request) {
 	user := e.NewUser()
+	var err error
 
-	err := json.NewDecoder(r.Body).Decode(&user)
+	err = json.NewDecoder(r.Body).Decode(&user)
 
 	if err != nil {
-		utils.ERROR(w, http.StatusBadRequest, err)
+		utils.ERROR(w, http.StatusBadRequest, err, "invalid request body!")
 		return
 	}
 
-	if model.CheckUserExist(user.Username) {
-		utils.ERROR(w, http.StatusBadRequest, errors.New("user already exist"))
+	checkUserExist, err := model.CheckUserExist(user.Username)
+	if err != nil {
+		utils.ERROR(w, http.StatusInternalServerError, err, "failed to check user exist!")
+		return
+	}
+	if checkUserExist {
+		utils.ERROR(w, http.StatusBadRequest, errors.New("user already exist"), "")
 		return
 	}
 
@@ -29,13 +35,13 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	err = user.IsValid()
 	if err != nil {
-		utils.ERROR(w, http.StatusBadRequest, err)
+		utils.ERROR(w, http.StatusBadRequest, err, "invalid user data!")
 		return
 	}
 
 	err = model.AddUser(user)
 	if err != nil {
-		utils.ERROR(w, http.StatusInternalServerError, err)
+		utils.ERROR(w, http.StatusInternalServerError, err, "failed to add user!")
 		return
 	}
 
@@ -47,24 +53,24 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&newUser)
 	if err != nil {
-		utils.ERROR(w, http.StatusBadRequest, err)
+		utils.ERROR(w, http.StatusBadRequest, err, "invalid request body!")
 		return
 	}
 
 	user, err := model.GetUserByName(newUser.Username)
 	if err != nil {
-		utils.ERROR(w, http.StatusInternalServerError, errors.New("user not found"))
+		utils.ERROR(w, http.StatusInternalServerError, err, "user not found!")
 		return
 	}
 
 	if !user.ComparePassWord(newUser.Password) {
-		utils.ERROR(w, http.StatusBadRequest, errors.New("password incorrect"))
+		utils.ERROR(w, http.StatusBadRequest, errors.New("password incorrect"), "")
 		return
 	}
 
 	token, err := utils.GenerateToken(user.Username)
 	if err != nil {
-		utils.ERROR(w, http.StatusInternalServerError, err)
+		utils.ERROR(w, http.StatusInternalServerError, err, "failed to generate token!")
 		return
 	}
 

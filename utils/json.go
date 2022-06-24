@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -17,8 +18,9 @@ func JSON(w http.ResponseWriter, statusCode int, data interface{}) error {
 	return nil
 }
 
-func ERROR(w http.ResponseWriter, statusCode int, err error) {
+func ERROR(w http.ResponseWriter, statusCode int, err error, description string) {
 	if err != nil {
+		err = fmt.Errorf("%s %s", description, err)
 		JSON(w, statusCode, struct {
 			Error string `json:"error"`
 		}{
