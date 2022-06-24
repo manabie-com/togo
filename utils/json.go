@@ -2,18 +2,19 @@ package utils
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
-func JSON(w http.ResponseWriter, statusCode int, data interface{}) {
+func JSON(w http.ResponseWriter, statusCode int, data interface{}) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 	err := json.NewEncoder(w).Encode(data)
 
 	if err != nil {
-		fmt.Fprintf(w, "%s", err.Error())
+		return err
 	}
+
+	return nil
 }
 
 func ERROR(w http.ResponseWriter, statusCode int, err error) {

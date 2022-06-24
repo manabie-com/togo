@@ -18,6 +18,7 @@ func HandleRequest(route *mux.Router) {
 	HandleUser(route)
 	HandleAuthentication(route)
 	HandleTask(route)
+	HandlePlan(route)
 
 	http.Handle("/", route)
 }

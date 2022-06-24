@@ -95,3 +95,48 @@ func GetUserIDByUsername(username string) (int, error) {
 	}
 	return id, nil
 }
+
+func GetMaxTaskByUserID(id int) (int, error) {
+	const query = `SELECT max_todo FROM users WHERE id = $1`
+	var max int
+	err := db.DB.QueryRow(query, id).Scan(&max)
+	if err != nil {
+		return 0, err
+	}
+	return max, nil
+}
+
+func GetPlanByID(id int) (string, error) {
+	const query = `SELECT plan FROM users WHERE id = $1`
+	var plan string
+	err := db.DB.QueryRow(query, id).Scan(&plan)
+	if err != nil {
+		return "", err
+	}
+	return plan, nil
+}
+
+func GetPlanByUsername(username string) (string, error) {
+	const query = `SELECT plan FROM users WHERE username = $1`
+	var plan string
+	err := db.DB.QueryRow(query, username).Scan(&plan)
+	if err != nil {
+		return "", err
+	}
+	return plan, nil
+}
+
+func UpgradePlan(username string, plan string) error {
+	const query = `UPDATE users SET plan = $1 WHERE username = $2`
+	tx, err := db.DB.Begin()
+	if err != nil {
+		return err
+	}
+	_, err = tx.Exec(query, plan, username)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	tx.Commit()
+	return nil
+}

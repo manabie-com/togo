@@ -119,3 +119,24 @@ func GetUserIDByTaskID(id int) (int, error) {
 	}
 	return userID, nil
 }
+
+func CheckLimitTaskToday(userID int) (bool, error) {
+	const query = `SELECT COUNT(*) FROM tasks WHERE user_id = $1 AND created_at >= current_date;`
+	row := db.DB.QueryRow(query, userID)
+	var count int
+	err := row.Scan(&count)
+	if err != nil {
+		return false, err
+	}
+
+	maxTask, err := GetMaxTaskByUserID(userID)
+	if err != nil {
+		return false, err
+	}
+
+	if count >= maxTask {
+		return true, nil
+	}
+
+	return false, nil
+}

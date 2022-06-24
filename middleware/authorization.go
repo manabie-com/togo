@@ -22,6 +22,7 @@ func Authorization(next http.Handler) http.Handler {
 			token, err := utils.DecodeToken(jwtToken)
 			if err != nil {
 				utils.ERROR(w, http.StatusInternalServerError, fmt.Errorf(err.Error()))
+				return
 			}
 			if token["username"] == nil {
 				utils.ERROR(w, http.StatusBadRequest, errors.New("malformed Token"))

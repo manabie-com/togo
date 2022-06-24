@@ -14,10 +14,22 @@ import (
 )
 
 func CreateTask(w http.ResponseWriter, r *http.Request) {
+
 	username := context.Get(r, "username").(string)
 	id, err := model.GetUserIDByUsername(username)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, fmt.Errorf(err.Error()))
+		return
+	}
+
+	isLimit, err := model.CheckLimitTaskToday(id)
+	if err != nil {
+		utils.ERROR(w, http.StatusInternalServerError, fmt.Errorf(err.Error()))
+		return
+	}
+
+	if isLimit {
+		utils.ERROR(w, http.StatusBadRequest, fmt.Errorf("you have reached the limit of task today"))
 		return
 	}
 
@@ -27,13 +39,12 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 
 	task.CreatedAt = utils.GetCurrentTime()
 	task.UserID = id
-	fmt.Println(task)
 	err = model.AddTask(&task)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, fmt.Errorf(err.Error()))
 		return
 	}
-	utils.JSON(w, http.StatusOK, task)
+	utils.JSON(w, http.StatusOK, "message: create task success")
 
 }
 
@@ -59,7 +70,6 @@ func GetAllTaskOfUser(w http.ResponseWriter, r *http.Request) {
 
 func GetTaskByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	fmt.Println(vars)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		utils.ERROR(w, http.StatusBadRequest, fmt.Errorf(err.Error()))
@@ -84,7 +94,6 @@ func GetTaskByID(w http.ResponseWriter, r *http.Request) {
 
 func CheckTask(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	fmt.Println(vars)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		utils.ERROR(w, http.StatusBadRequest, fmt.Errorf(err.Error()))
@@ -114,7 +123,6 @@ func CheckTask(w http.ResponseWriter, r *http.Request) {
 
 func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	fmt.Println(vars)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		utils.ERROR(w, http.StatusBadRequest, fmt.Errorf(err.Error()))
