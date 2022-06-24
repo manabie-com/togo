@@ -5,16 +5,7 @@ import (
 	e "lntvan166/togo/entities"
 )
 
-func GetTaskByID(id int) (*e.Task, error) {
-	const query = `SELECT * FROM tasks WHERE id = $1;`
-	row := db.DB.QueryRow(query, id)
-	var t e.Task
-	err := row.Scan(&t.ID, &t.Name, &t.Description, &t.CreatedAt, &t.Completed, &t.UserID)
-	if err != nil {
-		return nil, err
-	}
-	return &t, nil
-}
+// CREATE
 
 func AddTask(t *e.Task) error {
 	const query = `INSERT INTO tasks (
@@ -33,35 +24,7 @@ func AddTask(t *e.Task) error {
 	return nil
 }
 
-func DeleteTask(id int) error {
-	const query = `DELETE FROM tasks WHERE id = $1;`
-	tx, err := db.DB.Begin()
-	if err != nil {
-		return err
-	}
-	_, err = tx.Exec(query, id)
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-	tx.Commit()
-	return nil
-}
-
-func CheckTask(id int) error {
-	const query = `UPDATE tasks SET completed = true WHERE id = $1;`
-	tx, err := db.DB.Begin()
-	if err != nil {
-		return err
-	}
-	_, err = tx.Exec(query, id)
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-	tx.Commit()
-	return nil
-}
+// READ
 
 func GetAllTask() (*[]e.Task, error) {
 	const query = `SELECT * FROM tasks;`
@@ -83,6 +46,17 @@ func GetAllTask() (*[]e.Task, error) {
 	}
 
 	return &tasks, nil
+}
+
+func GetTaskByID(id int) (*e.Task, error) {
+	const query = `SELECT * FROM tasks WHERE id = $1;`
+	row := db.DB.QueryRow(query, id)
+	var t e.Task
+	err := row.Scan(&t.ID, &t.Name, &t.Description, &t.CreatedAt, &t.Completed, &t.UserID)
+	if err != nil {
+		return nil, err
+	}
+	return &t, nil
 }
 
 func GetTaskByUsername(username string) (*[]e.Task, error) {
@@ -120,7 +94,7 @@ func GetUserIDByTaskID(id int) (int, error) {
 	return userID, nil
 }
 
-func CheckLimitTaskToday(userID int) (bool, error) {
+func GetLimitTaskToday(userID int) (bool, error) {
 	const query = `SELECT COUNT(*) FROM tasks WHERE user_id = $1 AND created_at >= current_date;`
 	row := db.DB.QueryRow(query, userID)
 	var count int
@@ -141,6 +115,8 @@ func CheckLimitTaskToday(userID int) (bool, error) {
 	return false, nil
 }
 
+// UPDATE
+
 func UpdateTask(t *e.Task) error {
 	const query = `UPDATE tasks SET name = $1, description = $2, created_at = $3, completed = $4, user_id = $5 WHERE id = $6;`
 	tx, err := db.DB.Begin()
@@ -148,6 +124,53 @@ func UpdateTask(t *e.Task) error {
 		return err
 	}
 	_, err = tx.Exec(query, t.Name, t.Description, t.CreatedAt, t.Completed, t.UserID, t.ID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	tx.Commit()
+	return nil
+}
+
+func CheckTask(id int) error {
+	const query = `UPDATE tasks SET completed = true WHERE id = $1;`
+	tx, err := db.DB.Begin()
+	if err != nil {
+		return err
+	}
+	_, err = tx.Exec(query, id)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	tx.Commit()
+	return nil
+}
+
+// DELETE
+
+func DeleteTask(id int) error {
+	const query = `DELETE FROM tasks WHERE id = $1;`
+	tx, err := db.DB.Begin()
+	if err != nil {
+		return err
+	}
+	_, err = tx.Exec(query, id)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	tx.Commit()
+	return nil
+}
+
+func DeleteAllTask() error {
+	const query = `DELETE FROM tasks;`
+	tx, err := db.DB.Begin()
+	if err != nil {
+		return err
+	}
+	_, err = tx.Exec(query)
 	if err != nil {
 		tx.Rollback()
 		return err

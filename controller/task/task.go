@@ -22,7 +22,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	isLimit, err := model.CheckLimitTaskToday(id)
+	isLimit, err := model.GetLimitTaskToday(id)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "check limit task today failed")
 		return
@@ -130,35 +130,6 @@ func CheckTask(w http.ResponseWriter, r *http.Request) {
 	utils.JSON(w, http.StatusOK, "message: check task success")
 }
 
-func DeleteTask(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		utils.ERROR(w, http.StatusBadRequest, err, "id is not a number!")
-		return
-	}
-
-	username := context.Get(r, "username").(string)
-	user_id, err := model.GetUserIDByTaskID(id)
-	if err != nil {
-		utils.ERROR(w, http.StatusInternalServerError, err, "get user id by task id failed!")
-		return
-	}
-
-	err = utils.CheckAccessPermission(w, username, user_id)
-	if err != nil {
-		return
-	}
-
-	err = model.DeleteTask(id)
-	if err != nil {
-		utils.ERROR(w, http.StatusInternalServerError, err, "delete task failed!")
-		return
-	}
-
-	utils.JSON(w, http.StatusOK, "message: delete task success")
-}
-
 func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -195,4 +166,33 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.JSON(w, http.StatusOK, "message: update task success")
+}
+
+func DeleteTask(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		utils.ERROR(w, http.StatusBadRequest, err, "id is not a number!")
+		return
+	}
+
+	username := context.Get(r, "username").(string)
+	user_id, err := model.GetUserIDByTaskID(id)
+	if err != nil {
+		utils.ERROR(w, http.StatusInternalServerError, err, "get user id by task id failed!")
+		return
+	}
+
+	err = utils.CheckAccessPermission(w, username, user_id)
+	if err != nil {
+		return
+	}
+
+	err = model.DeleteTask(id)
+	if err != nil {
+		utils.ERROR(w, http.StatusInternalServerError, err, "delete task failed!")
+		return
+	}
+
+	utils.JSON(w, http.StatusOK, "message: delete task success")
 }
