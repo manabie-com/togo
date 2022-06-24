@@ -100,9 +100,13 @@
 
 #### 1. User APIs:
 
-    - Can create a new user.
+    - Allow create a new user for any user.
     - Can login with new user(username / password).
     - JWT pair tokens should be in response after login successful.
+    - Only admin can update maximum_number_of_task per day for other users.
+    - Only admin can get list of users.
+    - Only admin can get detail of users.
+    - The current user cannot get detail of others.
 
 #### 2. Task APIs:
 
