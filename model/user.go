@@ -126,17 +126,27 @@ func GetPlanByUsername(username string) (string, error) {
 	return plan, nil
 }
 
-func UpgradePlan(username string, plan string) error {
-	const query = `UPDATE users SET plan = $1 WHERE username = $2`
+func UpgradePlan(id int, plan string, limit int) error {
+	const query = `UPDATE users SET plan = $1, max_todo = $2 WHERE id = $3`
 	tx, err := db.DB.Begin()
 	if err != nil {
 		return err
 	}
-	_, err = tx.Exec(query, plan, username)
+	_, err = tx.Exec(query, plan, limit, id)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
 	tx.Commit()
 	return nil
+}
+
+func GetNumberOfTaskToday(id int) (int, error) {
+	const query = `SELECT COUNT(*) FROM tasks WHERE user_id = $1 AND DATE(created_at) = CURRENT_DATE`
+	var count int
+	err := db.DB.QueryRow(query, id).Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
 }

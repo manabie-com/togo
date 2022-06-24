@@ -39,7 +39,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.JSON(w, 201, "Register Successfully")
+	utils.JSON(w, http.StatusCreated, "Register Successfully")
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {

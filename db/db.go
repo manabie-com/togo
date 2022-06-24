@@ -3,7 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"os"
+	"lntvan166/togo/config"
 )
 
 var (
@@ -26,7 +26,7 @@ func GetPostgresConnectionString() string {
 
 func Connect() {
 	var err error
-	psqlInfo := os.Getenv("DATABASE_URL")
+	psqlInfo := config.DATABASE_URL
 	if psqlInfo == "" {
 		psqlInfo = GetPostgresConnectionString()
 	}

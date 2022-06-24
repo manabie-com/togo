@@ -2,10 +2,10 @@ package plan
 
 import (
 	"fmt"
+	"lntvan166/togo/config"
 	"lntvan166/togo/model"
 	"lntvan166/togo/utils"
 	"net/http"
-	"os"
 	"strconv"
 
 	"github.com/gorilla/context"
@@ -32,7 +32,7 @@ func GetPlan(w http.ResponseWriter, r *http.Request) {
 
 func UpgradePlan(w http.ResponseWriter, r *http.Request) {
 	username := context.Get(r, "username").(string)
-	admin := os.Getenv("ADMIN")
+	admin := config.ADMIN
 
 	if username != admin {
 		utils.ERROR(w, http.StatusBadRequest, fmt.Errorf("you are not admin"))
@@ -57,11 +57,13 @@ func UpgradePlan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = model.UpgradePlan(username, string(vip))
+	err = model.UpgradePlan(id, string(vip), config.VIP_LIMIT)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, fmt.Errorf(err.Error()))
 		return
 	}
+
+	fmt.Println(username, id, string(vip), config.VIP_LIMIT, plan)
 
 	utils.JSON(w, http.StatusOK, "message: upgrade plan success")
 }

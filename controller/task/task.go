@@ -44,7 +44,14 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 		utils.ERROR(w, http.StatusInternalServerError, fmt.Errorf(err.Error()))
 		return
 	}
-	utils.JSON(w, http.StatusOK, "message: create task success")
+
+	numberTask, err := model.GetNumberOfTaskToday(id)
+	if err != nil {
+		utils.ERROR(w, http.StatusInternalServerError, fmt.Errorf(err.Error()))
+		return
+	}
+
+	utils.JSON(w, http.StatusOK, map[string]interface{}{"number_task_today": numberTask, "message": "create task success"})
 
 }
 

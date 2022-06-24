@@ -2,21 +2,19 @@ package main
 
 import (
 	"fmt"
+	"lntvan166/togo/config"
 	"lntvan166/togo/db"
 	"lntvan166/togo/routes"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+
+	config.Load()
 
 	db.Connect()
 
