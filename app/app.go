@@ -46,6 +46,7 @@ func (a *App) Routes() {
 	userRouter.HandleFunc("/signup", a.SignUp).Methods("POST")
 	userRouter.HandleFunc("/login", a.Login).Methods("POST")
 	userRouter.HandleFunc("/edit", a.UpdateMe).Methods("PATCH")
+	userRouter.HandleFunc("/delete", a.DeleteMe).Methods("DELETE")
 	// sub router like http://<HOST>:<PORT>/api/tasks
 	taskRouter := router.PathPrefix("/api/tasks").Subrouter()
 	taskRouter.HandleFunc("", a.GetTasks).Methods("GET")
@@ -62,7 +63,6 @@ func (a *App) Routes() {
 }
 
 func (a *App) GetMe(w http.ResponseWriter, r *http.Request) {
-	c.GetTasks(a.DB, w, r)
 	c.GetMe(a.DB, w, r)
 }
 
@@ -76,6 +76,10 @@ func (a *App) Login(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) UpdateMe(w http.ResponseWriter, r *http.Request) {
 	c.UpdateMe(a.DB, w, r)
+}
+
+func (a *App) DeleteMe(w http.ResponseWriter, r *http.Request) {
+	c.DeleteMe(a.DB, w, r)
 }
 
 func (a *App) GetTasks(w http.ResponseWriter, r *http.Request) {

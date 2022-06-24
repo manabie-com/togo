@@ -15,5 +15,6 @@ type User struct {
 	Name          string `json:"name" validate:"required,min=5,max=20"`
 	Password      string `json:"password" validate:"required,min=6,max=20"`
 	IsPayment     bool   `json:"isPayment" validate:"omitempty"`
+	IsActive      bool   `json:"isActive"`
 	LimitDayTasks uint   `json:"limitDayTasks" validate:"omitempty"`
 }

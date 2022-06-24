@@ -40,7 +40,7 @@ var GetTask = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 	err := db.QueryRow(`SELECT name, content, created_at FROM tasks WHERE id = $1 AND user_id = $2`, id, decoded.UserId).Scan(&task.Name, &task.Content, &task.CreatedAt)
 	if err != nil {
-		u.Respond(w, http.StatusNotFound, "Failure", err.Error(), nil)
+		u.Respond(w, http.StatusNotFound, "Failure", "Not found task", nil)
 		return
 	}
 
