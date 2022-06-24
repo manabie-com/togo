@@ -52,12 +52,17 @@ func (a *App) Routes() {
 	taskRouter.HandleFunc("/{id}", a.GetTask).Methods("GET")
 	taskRouter.HandleFunc("/add", a.Add).Methods("POST")
 	taskRouter.HandleFunc("/{id}", a.Edit).Methods("PATCH")
+	taskRouter.HandleFunc("/{id}", a.Delete).Methods("DELETE")
+	// sub routes like http://<HOST>:<PORT>/api/payments
+	paymentRouter := router.PathPrefix("/api/payments").Subrouter()
+	paymentRouter.HandleFunc("", a.Payment).Methods("POST")
 	// runs database
 	router.Use(mux.CORSMethodMiddleware(router))
 	router.Use(controllers.JwtAuthentication)
 }
 
 func (a *App) GetMe(w http.ResponseWriter, r *http.Request) {
+	c.GetTasks(a.DB, w, r)
 	c.GetMe(a.DB, w, r)
 }
 
@@ -87,6 +92,14 @@ func (a *App) Add(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) Edit(w http.ResponseWriter, r *http.Request) {
 	c.Edit(a.DB, w, r)
+}
+
+func (a *App) Delete(w http.ResponseWriter, r *http.Request) {
+	c.Delete(a.DB, w, r)
+}
+
+func (a *App) Payment(w http.ResponseWriter, r *http.Request) {
+	c.Payment(a.DB, w, r)
 }
 
 func (a *App) Run(host string) {

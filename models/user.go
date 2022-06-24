@@ -16,5 +16,4 @@ type User struct {
 	Password      string `json:"password" validate:"required,min=6,max=20"`
 	IsPayment     bool   `json:"isPayment" validate:"omitempty"`
 	LimitDayTasks uint   `json:"limitDayTasks" validate:"omitempty"`
-	Task          *[]Task
 }
