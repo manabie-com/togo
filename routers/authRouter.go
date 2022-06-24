@@ -25,5 +25,4 @@ func AuthHandle(w http.ResponseWriter, r *http.Request) { // Handle different re
 	default: // not match any link
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
-
 }

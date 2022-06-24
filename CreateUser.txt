@@ -1,0 +1,6 @@
+CREATE TABLE users (
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    username VARCHAR(150) NOT NULL,
+    password VARCHAR(150) NOT NULL,
+    limittask INTEGER NOT NULL
+);

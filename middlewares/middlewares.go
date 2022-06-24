@@ -32,6 +32,7 @@ func Logging(next http.Handler) http.Handler { // check if logging or not
         next.ServeHTTP(w, r)
     })
 }
+
 func MiddlewareID(next http.Handler) http.Handler { // check ID is a number or not
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         params := mux.Vars(r)

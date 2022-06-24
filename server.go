@@ -15,8 +15,8 @@ import (
 const defaultPort = "8000"
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
+
+	if err := godotenv.Load(); err != nil {
 		log.Fatal(err)
 	}
 	port := os.Getenv("PORT") // Load PORT from env file (if it had)
@@ -27,5 +27,5 @@ func main() {
 
 	r := mux.NewRouter().StrictSlash(true)
 	routers.Routing(r)
-    log.Fatal(http.ListenAndServe(":"+port, r))
+	log.Fatal(http.ListenAndServe(":"+port, r))
 }
