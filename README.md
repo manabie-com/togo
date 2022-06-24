@@ -89,27 +89,28 @@
 
 #### 4. Noted:
 
-    - After login successfull <access_token> and <refresh_token> will be included in response
-    - Get <task_id> after make a request GET list of tasks
+    - After login successfull <access_token> and <refresh_token> will be included in response.
+    - Get <task_id> after make a request GET list of tasks.
 
 ### 7. Unit Test:
 
 **Assumptions:**
 
-> Only admin user can change maximum of task per day for normal user
+> Only admin user can change maximum of task per day for normal user.
 
 #### 1. User APIs:
 
-    - Can create a new user
-    - Can login with new user(username / password)
-    - JWT pair tokens should be in response after login successful
+    - Can create a new user.
+    - Can login with new user(username / password).
+    - JWT pair tokens should be in response after login successful.
 
 #### 2. Task APIs:
 
-- Authorize by JWT Access Token(Bearer as a prefix).
-- Only authenticated user can call APIs(GET | POST | PUT | DELETE).
-- Curl GET should be return list of tasks from the current user(assert fail if in the response include others).
-- Curl PUT should be updating the task from the current user(assert fail if can update from others).
-- Curl DELETE should be deleting the task from the current user(assert fail if trying to delete from others).
-- Curl POST should be creating a new task for the current user.
-- Should have validate number of tasks smaller or equals maximum tasks per day.
+    - Authorize by JWT Access Token(Bearer as a prefix).
+    - Only authenticated user can call APIs(GET | POST | PUT | DELETE).
+    - GET list of tasks should be return list of tasks from the current user(assert fail if in the response include others).
+    - GET single task should be return a task from the current user(assert fail if in the response include others).
+    - PUT should be updating the task from the current user(assert fail if it can update from others).
+    - DELETE should be deleting the task from the current user(assert fail if trying to delete from others).
+    - POST should be creating a new task for the current user.
+    - Should have validate number of tasks smaller or equals maximum tasks per day.
