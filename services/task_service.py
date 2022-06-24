@@ -18,7 +18,8 @@ class TaskService:
     def get(self, request, is_list=False, task_id=None) -> tuple:
         user = self.__get_user_from_token(request)
         serializer = TaskSerializer(
-            self.__get_single_or_list(user["user_id"], is_list, task_id), many=is_list
+            self.__get_single_or_list(user["user_id"], is_list, task_id),
+            many=is_list,
         )
 
         return serializer.data, status.HTTP_200_OK
@@ -38,21 +39,26 @@ class TaskService:
         if serializer.is_valid():
             serializer.save()
             return serializer.data, status.HTTP_201_CREATED
+
         return serializer.errors, status.HTTP_400_BAD_REQUEST
 
     def update(self, request, task_id) -> tuple:
         user = self.__get_user_from_token(request)
         task = self.__get_task_by_id(task_id, user["user_id"])
         serializer = TaskSerializer(task, data=request.data, partial=True)
+
         if serializer.is_valid():
             serializer.save()
             return serializer.data, status.HTTP_200_OK
+
         return serializer.errors, status.HTTP_400_BAD_REQUEST
 
     def delete(self, request, task_id) -> tuple:
         user = self.__get_user_from_token(request)
         task = self.__get_task_by_id(task_id, user["user_id"])
+
         task.delete()
+
         return response_formatting.get_format_message(
             HTTPReponseMessage.DELETE_SUCCESSFULL, status.HTTP_204_NO_CONTENT
         )

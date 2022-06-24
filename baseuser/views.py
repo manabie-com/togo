@@ -34,7 +34,7 @@ class UserDetailAPIView(BaseUserAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, id):
-        data, http_code = self.user_service.get_single_user(user_id=id)
+        data, http_code = self.user_service.get_single_user(request, user_id=id)
         return Response(data, status=http_code)
 
     def put(self, request, id):

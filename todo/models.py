@@ -11,10 +11,7 @@ class Task(models.Model):
     title = models.CharField(max_length=150)
     description = models.TextField(max_length=500)
     created_by = models.ForeignKey(
-        BaseUser,
-        on_delete=models.CASCADE,
-        related_name="task_created",
-        default=2,
+        BaseUser, on_delete=models.CASCADE, related_name="tasks"
     )
     priority = models.PositiveIntegerField(choices=priority_options, default=3)
     status = models.PositiveIntegerField(choices=status_options, default=1)

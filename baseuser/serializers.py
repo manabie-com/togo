@@ -2,9 +2,12 @@ from rest_framework import serializers
 from .models import BaseUser
 
 from utils import encrypting
+from todo.serializers import TaskSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
+    tasks = TaskSerializer(many=True, read_only=True)
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data["id"] = encrypting.encrypt(data["id"])
@@ -15,8 +18,8 @@ class UserSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "username",
-            "password",
             "maximum_task_per_day",
+            "tasks",
         )
         extra_kwargs = {"password": {"write_only": True}}
 
