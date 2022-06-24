@@ -1,0 +1,33 @@
+version: "3.8"
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: >
+      sh -c "python manage.py makemigrations baseuser && 
+             python manage.py makemigrations todo && 
+             python manage.py migrate && 
+             python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/app
+    env_file:
+      - ./.env/dev.env
+    depends_on:
+      - db
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DATABASE: manabie
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_ROOT_PASSWORD: admin123
+    volumes:
+      - ./database:/var/lib/postgres
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - 54322:5432
