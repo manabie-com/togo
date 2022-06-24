@@ -2,27 +2,18 @@ package routes
 
 import (
 	"lntvan166/togo/controller/auth"
-	"net/http"
-	"strings"
+	"lntvan166/togo/middleware"
 
 	"github.com/gorilla/mux"
 )
 
-func HandleAuthentication(route *mux.Router) {
-	authRouter := route.PathPrefix("/auth").Subrouter()
-	authRouter.HandleFunc("/{method}", AuthRoute)
-}
+func HandleAuthentication(router *mux.Router) {
+	authRouter := router.PathPrefix("/auth").Subrouter()
+	authRouter.HandleFunc("/register", auth.Register).Methods("POST")
+	authRouter.HandleFunc("/login", auth.Login).Methods("POST")
 
-func AuthRoute(w http.ResponseWriter, r *http.Request) {
-	args := strings.Split(r.URL.Path, "/")
+	passwordRouter := authRouter.PathPrefix("/password").Subrouter()
 
-	switch args[2] {
-	case "register":
-		auth.Register(w, r)
-	case "login":
-		auth.Login(w, r)
-	default:
-		w.Write([]byte("lntvan166: invalid authentication method"))
-	}
-
+	passwordRouter.Use(middleware.Authorization)
+	passwordRouter.HandleFunc("", auth.UpdatePassword).Methods("POST")
 }

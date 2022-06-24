@@ -26,7 +26,7 @@ func UpdateUser(u *e.User) error {
 	if err != nil {
 		return err
 	}
-	_, err = tx.Exec(query, u.Password, u.Plan, u.MaxTodo, u.Username)
+	_, err = tx.Exec(query, u.Username, u.Password, u.Plan, u.MaxTodo, u.ID)
 	if err != nil {
 		tx.Rollback()
 		return err

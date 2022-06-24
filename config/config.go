@@ -37,12 +37,5 @@ func Load() error {
 		return err
 	}
 
-	// print all
-	log.Println("DATABASE_URL:", DATABASE_URL)
-	log.Println("PORT:", PORT)
-	log.Println("ADMIN:", ADMIN)
-	log.Println("FREE_LIMIT:", FREE_LIMIT)
-	log.Println("VIP_LIMIT:", VIP_LIMIT)
-
 	return nil
 }

@@ -8,6 +8,8 @@ import (
 	"net/http"
 
 	e "lntvan166/togo/entities"
+
+	"github.com/gorilla/context"
 )
 
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -75,4 +77,34 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.JSON(w, http.StatusOK, map[string]string{"token": token, "message": "login successfully"})
+}
+
+func UpdatePassword(w http.ResponseWriter, r *http.Request) {
+	user, err := model.GetUserByName(context.Get(r, "username").(string))
+	if err != nil {
+		utils.ERROR(w, http.StatusInternalServerError, err, "failed to get user!")
+		return
+	}
+
+	err = json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		utils.ERROR(w, http.StatusBadRequest, err, "invalid request body!")
+		return
+	}
+
+	err = user.IsValid()
+	if err != nil {
+		utils.ERROR(w, http.StatusBadRequest, err, "invalid user data!")
+		return
+	}
+
+	user.PreparePassword()
+
+	err = model.UpdateUser(user)
+	if err != nil {
+		utils.ERROR(w, http.StatusInternalServerError, err, "failed to update user!")
+		return
+	}
+
+	utils.JSON(w, http.StatusOK, "Update Password Successfully")
 }
