@@ -11,7 +11,7 @@ import (
 
 var DB *sql.DB
 
-func Connect() {
+func Connect() { // connect to database
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Failed to load env")
@@ -22,10 +22,11 @@ func Connect() {
 		log.Fatal("Connect to database failed")
 	}
 }
-func Hash(password string) (string, error) {
+func Hash(password string) (string, error) { // Hash password into a crypt text
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return string(bytes), err
 }
-func CheckPasswordHash(hashedPassword, password string) error {
+
+func CheckPasswordHash(hashedPassword, password string) error { // check a crypted text and a password user enter
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 }

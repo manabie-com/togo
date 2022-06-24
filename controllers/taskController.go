@@ -47,7 +47,7 @@ func ResponeOneTask(w http.ResponseWriter, r *http.Request) { // Get one user fr
 }
 
 func CreateTask(w http.ResponseWriter, r *http.Request) { // Create a new user
-	userid, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "userid"))) // get id from url 
+	userid, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "userid"))) // get userid from login 
 
 	var task models.NewTask
 	err := json.NewDecoder(r.Body).Decode(&task)
@@ -80,7 +80,8 @@ func CreateTask(w http.ResponseWriter, r *http.Request) { // Create a new user
 func DeleteTask(w http.ResponseWriter, r *http.Request ){ // Delete one user from database
 	userid, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "userid")))// get userid from login 
 	id, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "id"))) // get id from url 
-	_, ok := models.CheckIDTaskAndReturn(w, id, userid)
+
+	_, ok := models.CheckIDTaskAndReturn(w, id, userid) // Check task id exist or not and return that task
 	if !ok {
 		http.Error(w, "Id invalid", http.StatusBadRequest)
 		return
@@ -93,31 +94,31 @@ func DeleteTask(w http.ResponseWriter, r *http.Request ){ // Delete one user fro
 	w.Write([]byte("message: delete success"))
 }
 
-func UpdateTask(w http.ResponseWriter, r *http.Request) { // Update one user already exist in database
+func UpdateEntireTask(w http.ResponseWriter, r *http.Request) { // Update one user already exist in database
 	userid, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "userid"))) // get userid from login 
 	id, _ := strconv.Atoi(fmt.Sprintf("%v",context.Get(r, "id"))) // get id from url 
 
-	var newTask models.NewTask
-	oldTask, ok := models.CheckIDTaskAndReturn(w, id, userid) // check id task have on database or not
+	oldTask, ok := models.CheckIDTaskAndReturn(w, id, userid) // Check task id exist or not and return that task
 	if !ok {
 		http.Error(w, "Id invalid", http.StatusBadRequest)
 		return
 	}
-	err := json.NewDecoder(r.Body).Decode(&newTask)
+
+	err := json.NewDecoder(r.Body).Decode(&oldTask)
 	if err != nil {
 		http.Error(w, "decode failed, input invalid", http.StatusBadRequest)
 		return
 	}
-	if strings.ToLower(newTask.Status) == "done" {
-		newTask.TimeDone = time.Now()
-	} else {
+	if strings.ToLower(oldTask.Status) == "done" {
+		oldTask.TimeDone = time.Now()
+	} else if strings.ToLower(oldTask.Status) == "pending"{
+		oldTask.TimeDone = time.Date(0001,01,01,0,0,0,0,time.Local)
+	} else{
 		http.Error(w, "status can only be done or pending", http.StatusBadRequest)
 		return
 	}
 
-	err = models.UpdateTask(newTask, id, userid)
-	oldTask.Status = newTask.Status
-	oldTask.TimeDone = newTask.TimeDone
+	err = models.UpdateTask(oldTask, id, userid)
 	if err != nil {
 		http.Error(w, "update task failed", http.StatusBadRequest)
 		return

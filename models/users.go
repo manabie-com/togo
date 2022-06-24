@@ -44,7 +44,7 @@ func InsertUser(user NewUser) error { // Insert one user to the database
 	return nil
 }
 
-func DeleteUser(id int) error {
+func DeleteUser(id int) error { // delete 1 user
 	_, err := DB.Exec("DELETE FROM users WHERE id = $1", id)
 	return err
 }
@@ -62,7 +62,6 @@ func UpdateUser(newUser NewUser, id int) error { // Update one user already exis
 
 func CheckIDAndReturn(id int) (User, bool) { // Check ID is valid or not
 	user := User{}
-
 	row := DB.QueryRow("SELECT * FROM users WHERE id = $1", id)
 	err := row.Scan(&user.Id, &user.Username, &user.Password)
 	if err != nil {

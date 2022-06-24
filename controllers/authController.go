@@ -7,17 +7,18 @@ import (
 	"github.com/huynhhuuloc129/todo/jwt"
 	"github.com/huynhhuuloc129/todo/models"
 )
-type responseToken struct{ //response token
+
+type responseToken struct { //response token
 	Message string
-	Token string
+	Token   string
 }
 
 func Register(w http.ResponseWriter, r *http.Request) { // Handle register with method post
 	var user, user1 models.NewUser
 	var passwordCrypt string
 	_ = json.NewDecoder(r.Body).Decode(&user)
-	_, ok := models.CheckUserInput(user.Username);
-	if  ok { // Check username exist or not
+	_, ok := models.CheckUserInput(user.Username)
+	if ok { // Check username exist or not
 		http.Error(w, "this username already exist", http.StatusNotAcceptable)
 		return
 	}
@@ -50,29 +51,30 @@ func Login(w http.ResponseWriter, r *http.Request) { // handle login with method
 		http.Error(w, "account doesn't exist", http.StatusNotFound)
 		return
 	}
-	
+
 	if ok := models.CheckUser(user); !ok { // check if user input valid or not
 		http.Error(w, "account input invalid", http.StatusNotFound)
 		return
 	}
 
-	err := models.CheckPasswordHash(user1.Password ,user.Password) // check if password correct or not
+	err := models.CheckPasswordHash(user1.Password, user.Password) // check if password correct or not
 	if err != nil {
 		http.Error(w, "password incorrect", http.StatusAccepted)
 		return
 	}
-	
+
 	token, err := jwt.Create(w, user.Username, int(user1.Id)) // Create token
 	if err != nil {
-		http.Error(w,  "internal server error", 500)
+		http.Error(w, "internal server error", 500)
 		return
 	}
+
 	w.Header().Set("Content-Type", "application/json")
-	resToken := responseToken{ 
+	resToken := responseToken{
 		Message: "login success",
-		Token: token,
+		Token:   token,
 	}
-	err = json.NewEncoder(w).Encode(resToken)// response token back to client
+	err = json.NewEncoder(w).Encode(resToken) // response token back to client
 	if err != nil {
 		http.Error(w, "encode failed", http.StatusFailedDependency)
 	}

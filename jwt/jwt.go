@@ -20,19 +20,19 @@ func Create(w http.ResponseWriter, username string, id int) (string, error) {
 	return token.SignedString([]byte(os.Getenv("SECRET_JWT")))
 }
 
-func ParseToken(tokenString string) jwt.MapClaims{
+func ParseToken(tokenString string) jwt.MapClaims {
 	claims := jwt.MapClaims{}
 	_, _ = jwt.ParseWithClaims(tokenString, claims, nil)
 	return claims
 }
 
-func CheckToken(w http.ResponseWriter, r *http.Request)(string, int, bool){
+func CheckToken(w http.ResponseWriter, r *http.Request) (string, int, bool) {
 	token := r.Header.Get("token")
 	result := ParseToken(token)
-	username := fmt.Sprintf("%v",result["username"])
+	username := fmt.Sprintf("%v", result["username"])
 	id, err := strconv.Atoi(fmt.Sprintf("%v", result["id"]))
-	if result["username"] == nil || err != nil{
-		return username, id,false
-	} 
-	return username,id ,true
+	if result["username"] == nil || err != nil {
+		return username, id, false
+	}
+	return username, id, true
 }

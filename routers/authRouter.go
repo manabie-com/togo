@@ -9,7 +9,7 @@ import (
 
 const (
 	registerURL = "register"
-	loginURL = "login"
+	loginURL    = "login"
 )
 
 func AuthHandle(w http.ResponseWriter, r *http.Request) { // Handle different request
@@ -17,12 +17,12 @@ func AuthHandle(w http.ResponseWriter, r *http.Request) { // Handle different re
 	path := params["path"]
 
 	switch path {
-	case registerURL: 			// url match register link	
+	case registerURL: // url match register link
 		controllers.Register(w, r)
 
-	case loginURL: 				// url match login link	
+	case loginURL: // url match login link
 		controllers.Login(w, r)
-	default: 					// not match any link
+	default: // not match any link
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 
