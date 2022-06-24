@@ -1,0 +1,74 @@
+from rest_framework import status
+from rest_framework_simplejwt.tokens import AccessToken
+
+from utils import response_formatting
+
+from baseuser.serializers import UserSerializer
+from baseuser.models import BaseUser
+from constants import HTTPReponseMessage
+
+
+class UserService:
+    def get_user_from_access_token(self, request):
+        content = {"auth": str(request.auth)}
+        access_token = AccessToken(content["auth"])
+        return access_token
+
+    def get_user_object(self, user_id):
+        return BaseUser.objects.get(pk=user_id)
+
+    def get(self, request) -> tuple:
+        user = self.get_user_from_access_token(request)
+        is_super_user = self.__is_super_user(user=user)
+
+        if not is_super_user:
+            return response_formatting.get_format_message(
+                HTTPReponseMessage.NOT_ALLOWED, status.HTTP_403_FORBIDDEN
+            )
+
+        users = BaseUser.objects.all()
+        serializer = UserSerializer(users, many=True)
+
+        return serializer.data, status.HTTP_200_OK
+
+    def create(self, request) -> tuple:
+        username = request.data.get("username", None)
+        password = request.data.get("password", None)
+        serializer = UserSerializer(data={"username": username, "password": password})
+
+        if serializer.is_valid():
+            serializer.save()
+            return serializer.data, status.HTTP_201_CREATED
+        return serializer.errors, status.HTTP_400_BAD_REQUEST
+
+    def update(self, request, user_id) -> tuple:
+        user = self.get_user_from_access_token(request)
+        is_super_user = self.__is_super_user(user=user)
+
+        if not is_super_user:
+            return response_formatting.get_format_message(
+                HTTPReponseMessage.NOT_ALLOWED, status.HTTP_403_FORBIDDEN
+            )
+
+        allow_updated_field = request.data.get("maximum_task_per_day", None)
+
+        if allow_updated_field is None:
+            return response_formatting.get_format_message(
+                HTTPReponseMessage.MISSING_FIELD, status.HTTP_400_BAD_REQUEST
+            )
+
+        updating_user = BaseUser.objects.get(pk=user_id)
+        serializer = UserSerializer(
+            updating_user,
+            data=request.data,
+            partial=True,
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return serializer.data, status.HTTP_200_OK
+        return serializer.errors, status.HTTP_400_BAD_REQUEST
+
+    def __is_super_user(self, user) -> bool:
+        user_object = BaseUser.objects.get(pk=user["user_id"])
+        return user_object.is_superuser
