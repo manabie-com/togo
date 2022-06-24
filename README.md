@@ -9,14 +9,14 @@
 
 ### A sample “curl” command to call your API
 
-- curl -i -X POST localhost:8080/api/login -H "Content-Type: application/json" -d "{\"username\":\"hungnk\",\"password\":\"admin123\"}"
+- curl -i -X POST localhost:8080/api/login -H "Content-Type: application/json" -d "{\\"username\\":\\"hungnk\\",\\"password\\":\\"admin123\\"}"
 - As soon as run this command it will generate Jwt Token
 - assign to "Authorization": "Bearer {#token}" to api createTask, createUser called after login;
   - Ex call api after login: 
-    - curl -i -X POST localhost:8080/api/createTask -H "Content-Type: application/json" -H "Authorization: Bearer {#token}" -d "{\"id\":\"M01\",\"content\":\"doning01\",\"userId\":\"hungnk\",\"createdDate\":\"2022-06-24\" }"
+    - curl -i -X POST localhost:8080/api/createTask -H "Content-Type: application/json" -H "Authorization: Bearer {#token}" -d "{\\"id\\":\\"M01\\",\\"content\\":\\"doning01\\",\\"userId\\":\\"hungnk\\",\\"createdDate\\":\\"2022-06-24\\" }"
     - {#token} is token received at the time login
     - create user with the following curl: 
-	- curl -i -X POST localhost:8080/api/createUser -H "Content-Type: application/json" H "Authorization: Bearer {#token}" -d "{\"username\":\"trungst\",\"password\":\"admin1234\",\"maxLimitTodo\": 2}"
+	- curl -i -X POST localhost:8080/api/createUser -H "Content-Type: application/json" H "Authorization: Bearer {#token}" -d "{\\"username\\":\\"trungst\\",\\"password\\":\\"admin1234\\",\\"maxLimitTodo\\": 2}"
     - You can check the database at: http://localhost:8080/h2-console
 	   - JDBC URL: jdbc:h2:mem:chanllengesdb
 	   - User Name: sa
