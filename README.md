@@ -54,7 +54,7 @@
       - GET | POST: /api/tasks/
       - GET | PUT | DELETE: /api/tasks/<task_id>/
       - GET: /api/users/
-      - PUT: /api/users/<user_id>
+      - PUT: /api/users/<user_id>/
     - Only admin can change maximum of tasks of user per day
 
 ### 6. Curl guideline:
@@ -108,10 +108,8 @@
 
 - Authorize by JWT Access Token(Bearer as a prefix).
 - Only authenticated user can call APIs(GET | POST | PUT | DELETE).
-- Curl GET should be return list of tasks from the current user(raise error if in the response include others).
-- Curl PUT should be updating the task from the current user(raise error if can update from others).
-- Curl DELETE should be deleting the task from the current user(raise error if trying to delete from others).
+- Curl GET should be return list of tasks from the current user(assert fail if in the response include others).
+- Curl PUT should be updating the task from the current user(assert fail if can update from others).
+- Curl DELETE should be deleting the task from the current user(assert fail if trying to delete from others).
 - Curl POST should be creating a new task for the current user.
 - Should have validate number of tasks smaller or equals maximum tasks per day.
-- Adding => Equals maximum tasks(should be raise an error)
-  => Delete existed task => Adding a new task(should be response HTTP_201_CREATED).
