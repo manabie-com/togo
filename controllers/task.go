@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
@@ -27,19 +28,28 @@ var GetTasks = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		rows.Scan(&task.ID, &task.Name, &task.Content, &task.CreatedAt, &task.UserId)
 		tasks = append(tasks, task)
 	}
-
+	//Everything OK
 	u.Respond(w, http.StatusOK, "Success", "Success", tasks)
 }
 
 var GetTask = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// decode token from middleware
 	decoded := r.Context().Value("user").(*models.Token)
-	task := &models.Task{}
+	// convert id params string -> uint32
+	id := func(id string) uint32 {
+		u64, err := strconv.ParseUint(id, 10, 32)
+		if err != nil {
+			u.Respond(w, http.StatusBadRequest, "Failure", "ID must be a number type.", nil)
+		}
+		return uint32(u64)
+	}(mux.Vars(r)["id"])
 
-	id := mux.Vars(r)["id"] // get id from url param
+	task := &models.Task{
+		ID:     id,
+		UserId: decoded.UserId,
+	}
 
-	err := db.QueryRow(`SELECT name, content, created_at FROM tasks WHERE id = $1 AND user_id = $2`, id, decoded.UserId).Scan(&task.Name, &task.Content, &task.CreatedAt)
-	if err != nil {
+	if err := task.GetOneByUserId(db); err != nil {
 		u.Respond(w, http.StatusNotFound, "Failure", "Not found task", nil)
 		return
 	}
@@ -79,11 +89,11 @@ var Add = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// insert database
-	err = db.QueryRow(`INSERT INTO tasks(name, content, user_id) VALUES($3, $2, $1) RETURNING name, content, created_at`, task.UserId, task.Content, task.Name).Scan(&task.Name, &task.Content, &task.CreatedAt)
-	if err != nil {
+	if task.InsertOne(db); err != nil {
 		u.Respond(w, http.StatusBadRequest, "Failure", err.Error(), nil)
 		return
 	}
+	//everything OK
 	u.Respond(w, http.StatusCreated, "Success", "Success create task", map[string]interface{}{
 		"name":       task.Name,
 		"content":    task.Content,
@@ -93,8 +103,10 @@ var Add = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 var Edit = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	decoded := r.Context().Value("user").(*models.Token)
-	task := &models.Task{}
 	id := mux.Vars(r)["id"] // get id from url params
+	task := &models.Task{
+		UserId: decoded.UserId,
+	}
 	err := json.NewDecoder(r.Body).Decode(task)
 	if err != nil {
 		u.Respond(w, http.StatusBadRequest, "Failure", err.Error(), nil)

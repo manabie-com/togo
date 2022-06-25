@@ -1,14 +1,9 @@
 package models
 
 import (
-	"github.com/dgrijalva/jwt-go"
+	"database/sql"
 )
 
-type Token struct {
-	UserId        uint32
-	LimitDayTasks uint
-	jwt.StandardClaims
-}
 type User struct {
 	ID            uint32 `json:"id" validate:"omitempty"`
 	Email         string `json:"email" validate:"required,email"`
@@ -17,4 +12,28 @@ type User struct {
 	IsPayment     bool   `json:"isPayment" validate:"omitempty"`
 	IsActive      bool   `json:"isActive"`
 	LimitDayTasks uint   `json:"limitDayTasks" validate:"omitempty"`
+}
+
+func (u *User) InsertOne(db *sql.DB) error {
+	err := db.QueryRow(`INSERT INTO users(name, email, password) VALUES($1, $2, $3) RETURNING id, name, email`, u.Name, u.Email, u.Password).Scan(&u.ID, &u.Name, &u.Email)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (u *User) GetOneById(db *sql.DB) error {
+	err := db.QueryRow(`SELECT id, name, email, password, is_payment, is_active, limit_day_tasks FROM users WHERE id = $1`, u.ID).Scan(&u.ID, &u.Name, &u.Email, &u.Password, &u.IsPayment, &u.IsActive, &u.LimitDayTasks)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (u *User) GetOneByEmail(db *sql.DB) error {
+	err := db.QueryRow(`SELECT id, name, email, password, is_payment, is_active, limit_day_tasks FROM users WHERE email = $1`, u.Email).Scan(&u.ID, &u.Name, &u.Email, &u.Password, &u.IsPayment, &u.IsActive, &u.LimitDayTasks)
+	if err != nil {
+		return err
+	}
+	return nil
 }
