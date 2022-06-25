@@ -12,7 +12,7 @@ WorkDirectory:
     │ │ ├─┬ tasks                       # Directory for Manage celery task
     │ ├─┬ logging                       # Directory for manage logs
     │ ├─┬ test                          # Directory for Unit test
-    │ ├─┬ togo                         # Directory for Settings system
+    │ ├─┬ togo                          # Directory for Settings system
     │ │ ├─┬ celery                      # Directory for Config celery
     ├─ docker-compose.yml               # Docker build django
     ├─ Dockerfile                       # Docker build sh
@@ -31,21 +31,19 @@ Requiments:
 
 Run Project:
 
-    1. pip install virtualenv
-    2. python -m virtualenv env
-    3. source env/bin/activate
-    4. pip install -r requirements.txt
-    5. brew install redis
-    6. brew services start redis
-    7. python manage.py runserver
+    1. mkdir logging public public/media public/static public/staticfiles
+    2. pip install virtualenv
+    3. python -m virtualenv env
+    4. source env/bin/activate
+    5. pip install -r requirements.txt
+    6. brew install redis
+    7. brew services start redis
+    8. celery -A togo.celery worker -B -l info
+    9. python manage.py runserver
 
 Run Project By Docker:
 
-    mkdir logging
-    mkdir public
-    mkdir public/media
-    mkdir public/static
-    mkdir public/staticfiles
+    mkdir logging public public/media public/static public/staticfiles
     pip freeze > requirements.txt
     docker-compose up
 
@@ -74,9 +72,36 @@ Example Test Was Config in db.sqlite3:
        - task_test_2 : {'id':'2', 'name':'booking'}
        - task_test_3 : {'id':'3', 'name':'reading'}
        - task_test_4 : {'id':'4', 'name':'learning'}
-       - task_test_5 : {'id':'8', 'name':'bokking'}
-       - task_test_6 : {'id':'9', 'name':'playing'}
-       - task_test_7 : {'id':'10', 'name':'watching'}
-       - task_test_8 : {'id':'11', 'name':'moving'}
+       - task_test_5 : {'id':'5', 'name':'bokking'}
+       - task_test_6 : {'id':'6', 'name':'playing'}
+       - task_test_7 : {'id':'7', 'name':'watching'}
+       - task_test_8 : {'id':'8', 'name':'moving'}
 
-What do you love about your solution?
+###What do you love about your solution?
+ - About design:
+   - I choose the MVC design for the project because suitable architecture to make code simple, organizable, and maintainable.
+   - I make the name file has the same for each the api because we can easy to find all the file need replace.
+   - I choose db sqlite for project because it's so simple for mini project and can change another db maybe MySql in settings.py.
+   - I choose redis for message queue to coordinator set the limit task for user per day because it's so familiar with me.
+   
+ - About the Project:
+   - The celery will pick task set limit per day for each user.
+   - If the limit for user does not set when assign the task celery will set task for user and create the job for set limit task for all another user.
+   - About the index on db fit the problem so query in db will fast.
+   - The logger will give system's error for debug.log and the togo_task for togo_task_pick_limit_debug.log.
+   - I choose the Hard Delete because the task can assign again for user.
+ 
+### What else do you want us to know about however you do not have enough time to complete?
+ - About Requirement:
+   - In fact, i have many the ideal for resolve the project.
+   - The ideal above fit the project need to atomicity, consistency, isolation, durability like the System banking...
+   - The Another ideal maybe develop Schedule like:
+     - class Schedule:
+       - taskmaster: user 
+       - task: JSONField
+     - task has structure like { "2022-02-02" : ([1,2,3,4,5], 2) }
+     - task is [1,2,3,4,5]  
+     - the limit task is 2
+     - but it doesn't consistency.
+   - Maybe consider NoSQL for the ideal above if the project need developed faster.
+ - Write the command, input the example for db.
