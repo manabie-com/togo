@@ -35,3 +35,8 @@ class Code500(APIException):
 class OverTaskLimited(APIException):
     status_code = 500
     default_detail = _("user can't assign because over task limited")
+
+
+class TaskAssigned(APIException):
+    status_code = 500
+    default_detail = _("the task was assigned")

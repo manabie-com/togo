@@ -3,14 +3,15 @@ from rest_framework.generics import CreateAPIView
 
 from .utils.decorator import retry_get_limit_task
 from ..exceptions.base import make_success_response
-from ..exceptions.status_code import Code404, Code400
+from ..exceptions.status_code import Code404, Code400, TaskAssigned
 from ..serializers.user_detail_task import DetailSerializer
 from rest_framework.permissions import IsAuthenticated
 from datetime import date, datetime
-from apps.models.models.detail import Detail
-from apps.models.models.task import Task
-from apps.models.models.schedule import Schedule
+from apps.models.detail import Detail
+from apps.models.task import Task
+from apps.models.schedule import Schedule
 from rest_framework import status
+from django.db import IntegrityError
 
 
 class CreateDetail(CreateAPIView):
@@ -34,8 +35,10 @@ class CreateDetail(CreateAPIView):
             if not task.exists() or not user.exists():
                 raise Code404
             return serializer.save(task=task.first(), user=user.first())
+        except IntegrityError:
+            raise TaskAssigned
         except Exception as e:
-            raise
+            raise e
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from apps.exceptions.status_code import OverTaskLimited
-from apps.models.models.detail import Detail
+from apps.models.detail import Detail
 
 
 class DetailSerializer(serializers.ModelSerializer):
@@ -34,4 +34,4 @@ class DetailSerializer(serializers.ModelSerializer):
             }
             return Detail.objects.create(**detail)
         except Exception as e:
-            raise
+            raise e

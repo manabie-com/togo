@@ -13,8 +13,8 @@ class Detail(models.Model):
 
     class Meta:
         db_table = 'detail'
+        unique_together = (('schedule', 'task'),)
         indexes = [
             models.Index(fields=['schedule', ]),
         ]
-        app_label = 'apps.models.models.detail.Detail'
-
+        # app_label = 'apps.models.models.detail.Detail'

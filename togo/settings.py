@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import sys
+import logging
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -40,8 +42,9 @@ INSTALLED_APPS = [
     'drf_yasg',
     'django_celery_results',
     'django_celery_beat',
+    'rest_framework_simplejwt',
     # start app
-    'apps.models',
+    'apps'
 ]
 
 MIDDLEWARE = [
@@ -77,11 +80,18 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ),
+    'TEST_REQUEST_RENDERER_CLASSES': (
+        'rest_framework.renderers.MultiPartRenderer',
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.TemplateHTMLRenderer',
+    ),
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'EXCEPTION_HANDLER': 'apps.exceptions.base.exceptions_handler',
 }
@@ -134,6 +144,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # logging
 TOGO_TASK_PICK_LIMIT_LOGGER = "togo.tasks.task_limited_each_day"
+TOGO_TASK_PICK_LIMIT_MANUALLY_LOGGER = "togo.tasks.task_pick_limit_manually"
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -161,6 +172,10 @@ LOGGING = {
         TOGO_TASK_PICK_LIMIT_LOGGER: {
             'handlers': ['togo_task_pick_limit_debug'],
             'level': 'DEBUG',
+        },
+        TOGO_TASK_PICK_LIMIT_MANUALLY_LOGGER: {
+            'handlers': ['togo_task_pick_limit_manually_debug'],
+            'level': 'DEBUG',
         }
     },
     'handlers': {
@@ -177,6 +192,11 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
             'filename': f'{BASE_DIR}/logging/togo_task_pick_limit_debug.log',
+        },
+        'togo_task_pick_limit_manually_debug': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': f'{BASE_DIR}/logging/togo_task_pick_limit_manually_debug.log',
         }
     },
 
@@ -196,10 +216,19 @@ USE_L10N = True
 USE_TZ = True
 
 # celery
-CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
-CELERY_BACKEND_URL = os.getenv('CELERY_BACKEND_URL')
-CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_BACKEND_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'django-db'
+
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+DJANGO_SETTINGS_MODULE = 'togo.settings'
+
+# turn off logging and set celery when test
+if len(sys.argv) > 1 and sys.argv[1] == 'test':
+    logging.disable(logging.CRITICAL)
+    CELERY_TASK_ALWAYS_EAGER = True
+    CELERY_TASK_EAGER_PROPAGATES = True
