@@ -14,7 +14,6 @@ WorkDirectory:
     │ ├─┬ test                          # Directory for Unit test
     │ ├─┬ togo                         # Directory for Settings system
     │ │ ├─┬ celery                      # Directory for Config celery
-    │ │ ├─┬ logger                      # Directory for Logger
     ├─ docker-compose.yml               # Docker build django
     ├─ Dockerfile                       # Docker build sh
     ├─ entrapoint.sh                    # Docker build sh
@@ -28,6 +27,7 @@ Requiments:
 
     - python: 3.8.6
     - django: 3.2.5
+    - redis : 7.0.0
 
 Run Project:
 
@@ -35,7 +35,9 @@ Run Project:
     2. python -m virtualenv env
     3. source env/bin/activate
     4. pip install -r requirements.txt
-    5. python manage.py runserver
+    5. brew install redis
+    6. brew services start redis
+    7. python manage.py runserver
 
 Run Project By Docker:
 
@@ -44,11 +46,37 @@ Run Project By Docker:
     mkdir public/media
     mkdir public/static
     mkdir public/staticfiles
+    pip freeze > requirements.txt
     docker-compose up
 
 Tutorial Curl :
     
     1. First you need call api to get Token:
        - curl -X POST "http://localhost:8000/api/users/token/" -H  "accept: application/json" -H  "Content-Type: application/json" -H  "X-CSRFToken: O8AESU8podSIZYorLrwc162N7ZdvVkdZpmouAROiTo9BzOSeGjRcBq9oljKG58i8" -d "{  \"username\": \"a\",  \"password\": \"1\"}"
-    2 .Second you change token below after beer:
-       - curl -X POST "http://localhost:8000/api/users/assignment/" -H  "accept: application/json" -H  "Content-Type: application/json" -H  "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjU2MTI5MDA3LCJpYXQiOjE2NTYxMjg3MDcsImp0aSI6IjdkMDBlNGM3YjBjMjRiYjk4M2Y1MjdiY2E0ZmM5OWY3IiwidXNlcl9pZCI6MX0.83ItP5Jr2E7zXrvwtEqUG4jCaSkM-LwBve8mDl2hDD0" -d "{  \"task\": 1,  \"user\": 2,  \"date\": \"2022-06-23\"}"
+    2. Second you change token below after beer:
+       - curl -X POST "http://localhost:8000/api/users/assignment/" -H  "accept: application/json" -H  "Content-Type: application/json" -H  "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjU2MTMzNjk3LCJpYXQiOjE2NTYxMzMzOTcsImp0aSI6IjM2Y2I4ZjI5ZjU4MTQ5OTM4Zjk2MmQzY2YwN2M0M2QyIiwidXNlcl9pZCI6MX0.wdalVmB7jSka1gWiBCvtxgBqP9jrwNP6Ml9TI8SPsc4" -d "{  \"task\": 1,  \"user\": 2,  \"date\": \"2022-06-23\"}"
+
+Tutorial Test :
+
+    1. Unit test:
+       - python manage.py test tests.unit_test.user_detail_task
+    2. Intergration test:
+       - redis-server
+       - python manage.py test tests.api_test.user_detail_task
+
+Example Test Was Config in db.sqlite3:
+    
+    1. User:
+       - user_test_1 : {'username':'a', 'password':'1'}
+       - user_test_2 : {'username':'b', 'password':'1'}
+    2. Intergration test:
+       - task_test_1 : {'id':'1', 'name':'cooking'}
+       - task_test_2 : {'id':'2', 'name':'booking'}
+       - task_test_3 : {'id':'3', 'name':'reading'}
+       - task_test_4 : {'id':'4', 'name':'learning'}
+       - task_test_5 : {'id':'8', 'name':'bokking'}
+       - task_test_6 : {'id':'9', 'name':'playing'}
+       - task_test_7 : {'id':'10', 'name':'watching'}
+       - task_test_8 : {'id':'11', 'name':'moving'}
+
+What do you love about your solution?

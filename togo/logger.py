@@ -1,7 +1,6 @@
 import logging
 
-
-from ..settings import (
+from togo.settings import (
     TOGO_TASK_PICK_LIMIT_LOGGER,
     TOGO_TASK_PICK_LIMIT_MANUALLY_LOGGER
 )

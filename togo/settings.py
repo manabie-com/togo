@@ -216,8 +216,8 @@ USE_L10N = True
 USE_TZ = True
 
 # celery
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_BACKEND_URL = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = 'redis://localhost:6379/0' if not os.environ.get('CELERY_BROKER_URL') else os.environ.get('CELERY_BROKER_URL')
+CELERY_BACKEND_URL = 'redis://localhost:6379/0' if not os.environ.get('CELERY_BACKEND_URL') else os.environ.get('CELERY_BACKEND_URL')
 CELERY_RESULT_BACKEND = 'django-db'
 
 CELERY_ACCEPT_CONTENT = ['application/json']

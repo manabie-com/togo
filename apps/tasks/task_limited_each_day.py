@@ -10,7 +10,7 @@ app.conf.broker_url = CELERY_BROKER_URL
 
 @app.task
 def pick_limit_for_user(date_):
-    from togo.logger.base import togo_task_pick_limit_logger
+    from togo.logger import togo_task_pick_limit_logger
     from apps.models.schedule import Schedule
     from django.contrib.auth.models import User
     try:
@@ -31,7 +31,7 @@ def pick_limit_for_user(date_):
 
 @app.task
 def callback_get_limit_task(success, date_):
-    from togo.logger.base import togo_task_pick_limit_logger
+    from togo.logger import togo_task_pick_limit_logger
     from django.contrib.auth.models import User
     from apps.models.schedule import Schedule
     if not success:

@@ -11,15 +11,14 @@ services:
   web:
     build: .
     entrypoint: /src/entrypoint.sh
+    environment:
+      - DEBUG=1
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_BACKEND_URL=redis://redis:6379/0
     volumes:
       - .:/src
     ports:
       - "8000:8000"
-    environment:
-      - DEBUG=1
-      - CELERY_BROKER_URL=redis://redis:6379
-      - CELERY_BACKEND_URL=redis://redis:6379
-      - CELERY_RESULT_BACKEND=redis://redis:6379
     networks:
       - togo_network
     depends_on:
@@ -28,12 +27,15 @@ services:
   celery:
     build: .
     command: celery -A togo worker -B -l info
+    environment:
+      - DEBUG=1
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_BACKEND_URL=redis://redis:6379/0
     volumes:
       - .:/src
     networks:
       - togo_network
     depends_on:
-      - redis
       - web
 
 networks:

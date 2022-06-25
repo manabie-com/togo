@@ -9,6 +9,7 @@ from datetime import date
 
 from apps.models.schedule import Schedule
 from apps.models.task import Task
+from apps.views.user_detail_task import CreateDetail
 
 
 class UserDetailTaskAPITest(APITestCase):
@@ -109,6 +110,13 @@ class UserDetailTaskAPITest(APITestCase):
         }
         response = self.client.post(reverse('assignment'), example, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_get_schedule_does_not_exists(self):
+        date_ = str(date.today())
+        user_test_3 = User.objects.create(username='test_user_3')
+        schedule = CreateDetail.get_schedule_task(user_test_3, date_)
+        schedule_compare = Schedule.objects.get(id=schedule.id)
+        self.assertEqual(schedule_compare, schedule)
 
 
 if __name__ == '__main__':

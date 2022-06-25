@@ -24,7 +24,7 @@ class DetailSerializer(serializers.ModelSerializer):
             schedule_task = CreateDetail.get_schedule_task(user, date_)
             limit_number_task = schedule_task.limit
             current_number_task = len(schedule_task.details.all())
-            if current_number_task > limit_number_task:
+            if current_number_task >= limit_number_task:
                 raise OverTaskLimited
 
             detail = {
