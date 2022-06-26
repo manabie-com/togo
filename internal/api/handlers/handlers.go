@@ -91,7 +91,7 @@ func GetUserInfoFromToken(ctx *gin.Context) (*UserInfoFromToken, error) {
 	}
 
 	if utils.SafeString(tokenStr) == "" {
-		return nil, errors.New(fmt.Sprintf("Don't have cookie with Key2: %s", constants.CookieTokenKey))
+		return nil, errors.New("Token is empty")
 	}
 
 	claims := make(jwt.MapClaims)
@@ -100,21 +100,21 @@ func GetUserInfoFromToken(ctx *gin.Context) (*UserInfoFromToken, error) {
 	})
 
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Don't have cookie with Key3: %s", constants.CookieTokenKey))
+		return nil, errors.Wrap(err, "Fail ParseWithClaims")
 	}
 
 	if tkn == nil || !tkn.Valid {
-		return nil, errors.New(fmt.Sprintf("Don't have cookie with Key4: %s", constants.CookieTokenKey))
+		return nil, errors.New("Token is valid")
 	}
 
 	id, ok := claims["user_id"].(string)
 	if !ok {
-		return nil, errors.New(fmt.Sprintf("Don't have cookie with Key5: %s", constants.CookieTokenKey))
+		return nil, errors.New("Fail Claims user_id")
 	}
 
 	maxTaskPerDay, ok := claims["max_task_per_day"].(string)
 	if !ok {
-		return nil, errors.New(fmt.Sprintf("Don't have cookie with Key6: %s", constants.CookieTokenKey))
+		return nil, errors.New("Fail Claims max_task_per_day")
 	}
 
 	userInfo := &UserInfoFromToken{

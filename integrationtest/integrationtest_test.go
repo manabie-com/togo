@@ -45,6 +45,7 @@ func TestIntegrationSuite(t *testing.T) {
 	suite.Run(t, &IntegrationTestSuite{})
 }
 
+//Login: Success case
 func (s *IntegrationTestSuite) TestIntegration_Login_Success() {
 	reqBodyStr := `{"username": "manabie", "password": "example"}`
 	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("http://%s:%d/login", s.host, s.port), bytes.NewBuffer([]byte(reqBodyStr)))
@@ -59,6 +60,7 @@ func (s *IntegrationTestSuite) TestIntegration_Login_Success() {
 	s.Require().Equal(http.StatusOK, response.StatusCode)
 }
 
+//Login: Fail case. Fail Find not have user
 func (s *IntegrationTestSuite) TestIntegration_Login_Error() {
 	reqBodyStr := `{"username": "username1", "password": "123456"}`
 	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("http://%s:%d/login", s.host, s.port), bytes.NewBuffer([]byte(reqBodyStr)))
@@ -71,7 +73,7 @@ func (s *IntegrationTestSuite) TestIntegration_Login_Error() {
 	s.Require().NoError(err)
 	defer response.Body.Close()
 
-	s.Require().Equal(http.StatusBadRequest, response.StatusCode)
+	s.Require().Equal(response.StatusCode, http.StatusBadRequest)
 }
 
 func (s *IntegrationTestSuite) TestIntegration_AddTaskSuccess() {
@@ -83,7 +85,7 @@ func (s *IntegrationTestSuite) TestIntegration_AddTaskSuccess() {
 
 	reqBodyStr := `{
 		"content": "task_success",
-		"create_date": "2022-06-22",
+		"create_date": "2022-06-24",
 		"userID": "firstUser"
 		}`
 
@@ -113,7 +115,7 @@ func (s *IntegrationTestSuite) TestIntegration_AddTaskFail() {
 
 	reqBodyStr := `{
 		"content": "task_success",
-		"create_date": "2022-06-22",
+		"create_date": "2022-06-24",
 		"userID": "firstUser1"
 		}`
 
@@ -132,12 +134,42 @@ func (s *IntegrationTestSuite) TestIntegration_AddTaskFail() {
 	s.Require().NoError(err)
 	defer response.Body.Close()
 	s.Require().Equal(response.StatusCode, http.StatusBadRequest)
-
 }
 
+func (s *IntegrationTestSuite) TestIntegration_AddTaskFail_NotLogin() {
+	// get token
+	repositories := handlers.NewRepositories(s.dbConn)
+	authUsecase := auth.NewAuthUseCase(repositories.Auth)
+	_, err := authUsecase.GenerateToken("user-success-1", "5")
+	s.Require().NoError(err)
+
+	reqBodyStr := `{
+		"content": "task-fail-1",
+		"create_date": "2022-06-24",
+		"userID": "user1"
+		}`
+
+	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("http://%s:%d/tasks", s.host, s.port), bytes.NewBuffer([]byte(reqBodyStr)))
+	s.Require().NoError(err)
+	req.Header.Set("Content-Type", "application/json")
+	cookie := &http.Cookie{
+		Name:   constants.CookieTokenKey,
+		Value:  "",
+		MaxAge: 300,
+	}
+	req.AddCookie(cookie)
+
+	client := http.Client{}
+	response, err := client.Do(req)
+	s.Require().NoError(err)
+	defer response.Body.Close()
+	s.Require().Equal(response.StatusCode, http.StatusUnauthorized)
+}
+
+// CreateUser: Success case
 func (s *IntegrationTestSuite) TestIntegration_CreateUser_Success() {
 	reqBodyStr := `{
-		"username": "manabie2",
+		"username": "manabie-new-1",
 		"password": "123456",
 		"max_task_per_day": 2
 		}`
@@ -168,6 +200,7 @@ func (s *IntegrationTestSuite) TestIntegration_CreateUser_Success() {
 	s.Require().Equal(user.Username, "manabie2")
 }
 
+// CreateUser: Fail case - Conflict User
 func (s *IntegrationTestSuite) TestIntegration_CreateUser_Fail() {
 	// get token
 	repositories := handlers.NewRepositories(s.dbConn)
