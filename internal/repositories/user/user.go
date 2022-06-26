@@ -28,23 +28,6 @@ func New(user *models.User) *models.User {
 	}
 }
 
-// GetByUsername implements user.UserRepository
-func (r *repository) GetByUsername(username string) (*models.User, error) {
-	if username == "" {
-		return nil, errors.New("Input empty")
-	}
-
-	user := &models.User{}
-	if err := r.DB.Where("username = ?", username).First(user).Error; err != nil {
-		return nil, errors.Wrap(err, "Fail query user")
-	}
-
-	if user == nil {
-		return nil, errors.New("User is not exists")
-	}
-	return user, nil
-}
-
 // Create implements user.UserRepository
 func (r *repository) Create(inputUser *models.User) error {
 	if inputUser == nil || inputUser.Username == "" || inputUser.Password == "" {

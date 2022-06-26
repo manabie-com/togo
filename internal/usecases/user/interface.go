@@ -5,7 +5,6 @@ import (
 )
 
 type Reader interface {
-	GetByUsername(username string) (*models.User, error)
 	Login(username, password string) (*models.User, error)
 }
 

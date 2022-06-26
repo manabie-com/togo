@@ -7,7 +7,6 @@ import (
 // UserUsecase is the definition for collection of methods related to the `users` table use case
 type UserUseCase interface {
 	Login(username, password string) (*models.User, error)
-	GetUserByUsername(username string) (*models.User, error)
 	Create(u *models.User) error
 }
 
@@ -18,11 +17,6 @@ type userUseCaseRepository struct {
 // NewUserUsecase returns a UserUsecase attached with methods related to the `users` table use case
 func NewUserUseCase(repository UserRepository) UserUseCase {
 	return &userUseCaseRepository{repository: repository}
-}
-
-// GetUserByUsername implements UserUseCase
-func (uc *userUseCaseRepository) GetUserByUsername(username string) (*models.User, error) {
-	return uc.repository.GetByUsername(username)
 }
 
 // Login implements UserUseCase
