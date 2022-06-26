@@ -17,8 +17,7 @@ test-migration:
 	@echo migrate -database ${POSTGRESQL_URL_MIGRATION} -path db/migrations up
 
 integration-test:
-	cd cmd && go run main.go
-	cd .. && go test ./integrationtest
+ 	go test ./integrationtest
 
 nodemon:
 	nodemon --exec go run cmd/main.go --signal SIGTERM

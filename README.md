@@ -65,8 +65,28 @@ The repository have a few main features
 ```bash
 git clone https://github.com/DuongThanhTin/togo.git
 ```
-2. Run main.go
+
+2. Create Database postgres with your config
+
+3. Go to folder project
+
+4. Change data variable in file .env with your config
+
+5. Migration database with terminal
 ```bash
-cd togo
+make migration-up
+```
+6. Run main.go
+```bash
 go run cmd/main.go
+```
+
+7. If you want to integration test after run projection
+```bash
+make integration-test
+```
+
+8. If you want to remove table database
+```bash
+make migration-down
 ```
