@@ -7,5 +7,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Create connection to database postgres
-- Create `main`
+- Create func for Load file and get variable from `.env`
