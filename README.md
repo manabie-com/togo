@@ -52,21 +52,21 @@
 
     - End points:
       - GET | POST: /api/tasks/
-      - GET | PUT | DELETE: /api/tasks/<task_id>/
+      - GET | PUT | DELETE: /api/tasks/{task_id}/
       - GET: /api/users/
-      - PUT: /api/users/<user_id>/
+      - PUT: /api/users/{user_id}/
     - Only admin can change maximum of tasks of user per day
 
 ### 6. Curl guideline:
 
 #### 1. Users:
 
-    - GET:
-      - curl -X GET "http://localhost:8000/api/users/" -H "Authorization: Bearer {access_token}"
     - POST:
       - curl -X POST "http://localhost:8000/api/users/registration/" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"username\": \"user_001\", \"password\": \"Aa123456\"}"
+    - GET(Allow for admin user only):
+      - curl -X GET "http://localhost:8000/api/users/" -H "Authorization: Bearer {access_token}"
     - PUT(Allow for admin user only):
-      - curl -X PUT "http://localhost:8000/api/users/<user_id>/" "Authorization: Bearer {access_token}" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"maximum_task_per_day\": 15}"
+      - curl -X PUT "http://localhost:8000/api/users/{user_id}/" -H "Authorization: Bearer {access_token}" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"maximum_task_per_day\": 15}"
 
 #### 2. Login:
 
@@ -74,53 +74,57 @@
       - curl -X POST "http://localhost:8000/api/login/" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"username\": \"user_001\", \"password\": \"Aa123456\"}"
     - Admin user:
       - curl -X POST "http://localhost:8000/api/login/" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"username\": \"admin\", \"password\": \"admin\"}"
+    - Get refresh_token:
+      - curl -X POST "http://localhost:8000/api/token/refresh/" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"refresh\": \"{refresh_token}\"}"
 
 #### 3. Tasks:
 
     - POST:
-      - curl -X POST "http://localhost:8000/api/tasks/" -H "Authorization: Bearer {access_token}" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"title\": \"test adding task 003\", \"description\": \"testing api\"}"
+      - curl -X POST "http://localhost:8000/api/tasks/" -H "Authorization: Bearer {access_token}" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"title\": \"test adding task 001\", \"description\": \"test adding task 001\"}"
     - GET:
       - curl -X GET "http://localhost:8000/api/tasks/" -H "Authorization: Bearer {access_token}"
       - curl -X GET "http://localhost:8000/api/tasks/{task_id}/" -H "Authorization: Bearer {access_token}"
     - PUT:
-      - curl -X PUT "http://localhost:8000/api/tasks/{task_id}/" -H "Authorization: Bearer {access_token}" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"title\": \"updating task\"}"
+      - curl -X PUT "http://localhost:8000/api/tasks/{task_id}/" -H "Authorization: Bearer {access_token}" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"title\": \"updating task 001\"}"
     - DELETE:
       - curl -X DELETE "http://localhost:8000/api/tasks/{task_id}/" -H "Authorization: Bearer {access_token}"
 
 #### 4. Noted:
 
     - After login successfull <access_token> and <refresh_token> will be included in response.
+    - Get <user_id> after make a request GET list of users.
     - Get <task_id> after make a request GET list of tasks.
 
-### 7. Unit Test:
+### 7. Unit Test and Integration Test:
 
-**Assumptions:**
+#### Assumptions:
 
 > Only admin user can change maximum of task per day for normal user.
 
-#### 1. User APIs:
+##### 1. User APIs:
 
     - [ x ] Allow create a new user for any user.
     - [ x ] Username should be unique.
     - [ x ] Username and password fields should not be null.
     - [ x ] Username and password fields should not be blank.
-    - [ x ] Can login with new user(username / password).
+    - [ x ] Can login with a created user(username / password).
     - [ x ] JWT pair tokens should be in response after login successful.
-    - [ x ] Only admin can update maximum_number_of_task per day for other users.
+    - [ x ] Only admin can update <maximum_tasks_per_day> per day for other users.
+    - [ x ] Only allow update <maximum_tasks_per_day>.
     - [ x ] Only admin can get list of users.
-    - [ x ] Only admin can get detail of users.
-    - [ x ] Only current users can get details of them.
+    - [ x ] Only admin can get detail of a user.
+    - [ x ] Only current user can get detail of that user.
     - [ x ] The current user cannot get detail of others.
     - Noted: you should use the admin account that was created before by this command <python manage.py createsuperuser>. You cannot create an new user as admin by <registration endpoint>.
 
-#### 2. Task APIs:
+##### 2. Task APIs:
 
     - [ x ] Authorize by JWT Access Token(Bearer as a prefix).
     - [ x ] Only authenticated user can call APIs(GET | POST | PUT | DELETE).
-    - [ x ] GET list of tasks should be return list of tasks from the current user(assert fail if in the response include others).
-    - [ x ] GET single task should be return a task from the current user(assert fail if in the response include others).
+    - [ x ] GET list of tasks should be return list of tasks from the current user(assert fail if in the response includes others).
+    - [ x ] GET single task should be return a task from the current user(assert fail if in the response includes others).
     - [ x ] PUT should be updating the task from the current user(assert fail if it can update from others).
     - [ x ] DELETE should be deleting the task from the current user(assert fail if trying to delete from others).
     - [ x ] POST should be creating a new task for the current user.
     - [ x ] Validate <number_of_current_tasks> smaller or equals <maximum_tasks_per_day> of the current user.
-    - [ x ] New value of maximum_task_per_day should be greater or equal to the current value.
+    - [ x ] New value of <maximum_task_per_day> should be greater or equal to the current value.
