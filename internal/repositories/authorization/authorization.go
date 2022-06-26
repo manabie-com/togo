@@ -1,4 +1,4 @@
-package auth
+package authorization
 
 import (
 	"os"
@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/manabie-com/togo/internal/models"
-	"github.com/manabie-com/togo/internal/usecases/auth"
+	"github.com/manabie-com/togo/internal/usecases/authorization"
 	"github.com/manabie-com/togo/utils"
 
 	"github.com/dgrijalva/jwt-go"
@@ -18,7 +18,7 @@ type repository struct {
 	DB *gorm.DB
 }
 
-func NewAuthRepository(db *gorm.DB) auth.AuthRepository {
+func NewAuthRepository(db *gorm.DB) authorization.AuthRepository {
 	return &repository{
 		DB: db,
 	}

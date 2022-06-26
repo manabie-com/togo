@@ -1,4 +1,4 @@
-package auth
+package authorization
 
 type Common interface {
 	ValidateUser(username string) (bool, error)

@@ -1,4 +1,4 @@
-package auth
+package authorization
 
 // AuthUsecase is the definition for collection of methods related to the `auths` table use case
 type AuthUseCase interface {

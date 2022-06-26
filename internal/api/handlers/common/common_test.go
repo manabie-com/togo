@@ -32,7 +32,7 @@ func TestLogin(t *testing.T) {
 
 	{ //Success case
 		user := models.User{
-			Username: "manabie321",
+			Username: "manabie-test-2",
 			Password: "123456",
 		}
 
@@ -45,8 +45,8 @@ func TestLogin(t *testing.T) {
 		err := recordStats(db, user.Username, user.Password)
 		require.Nil(t, err)
 
-		rows := sqlmock.NewRows([]string{"username"}).
-			AddRow(user.Username)
+		rows := sqlmock.NewRows([]string{"id", "username", "password", "max_task_per_day"}).
+			AddRow("1", user.Username, user.Password, 5)
 
 		mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "users" WHERE (username = $1 and password = $2) LIMIT 1`)).
 			WithArgs(user.Username, user.Password).

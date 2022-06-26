@@ -4,12 +4,12 @@ import (
 	"fmt"
 
 	"github.com/manabie-com/togo/constants"
-	authRepo "github.com/manabie-com/togo/internal/repositories/auth"
+	authRepo "github.com/manabie-com/togo/internal/repositories/authorization"
 	taskRepo "github.com/manabie-com/togo/internal/repositories/task"
 	userRepo "github.com/manabie-com/togo/internal/repositories/user"
 	"github.com/manabie-com/togo/utils"
 
-	authService "github.com/manabie-com/togo/internal/usecases/auth"
+	authService "github.com/manabie-com/togo/internal/usecases/authorization"
 	taskService "github.com/manabie-com/togo/internal/usecases/task"
 	userService "github.com/manabie-com/togo/internal/usecases/user"
 
