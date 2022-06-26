@@ -4,3 +4,7 @@ class HTTPReponseMessage:
     EXCEED_MAXIMUM_ERROR = "The number of tasks has exceeded the limit of per day"
     DELETE_SUCCESSFULL = "Delete successfully"
     NOT_ALLOWED_VIEW = "This user does not have permission to get information of others"
+    INVALID_MAXIMUM_TASK_FIELD = (
+        "The new value should be greater or equal to the current value"
+    )
+    NOT_ALLOWED_UPDATE_FIELD = "Not allowed to update %s field"

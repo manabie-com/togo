@@ -66,14 +66,22 @@ class UserService:
                 HTTPReponseMessage.NOT_ALLOWED, status.HTTP_403_FORBIDDEN
             )
 
-        allow_updated_field = request.data.get("maximum_task_per_day", None)
+        maximum_task_per_day_from_request = request.data.get(
+            "maximum_task_per_day", None
+        )
 
-        if allow_updated_field is None:
+        if maximum_task_per_day_from_request is None:
             return response_formatting.get_format_message(
                 HTTPReponseMessage.MISSING_FIELD, status.HTTP_400_BAD_REQUEST
             )
 
         updating_user = self.__get_user_by_id(user_id)
+        if updating_user.maximum_task_per_day > maximum_task_per_day_from_request:
+            return response_formatting.get_format_message(
+                HTTPReponseMessage.INVALID_MAXIMUM_TASK_FIELD,
+                status.HTTP_400_BAD_REQUEST,
+            )
+
         serializer = UserSerializer(
             updating_user,
             data=request.data,

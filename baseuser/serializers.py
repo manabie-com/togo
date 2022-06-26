@@ -1,8 +1,9 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from .models import BaseUser
 
 from utils import encrypting
-from todo.serializers import TaskSerializer
+from constants import HTTPReponseMessage
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -18,7 +19,6 @@ class UserSerializer(serializers.ModelSerializer):
             "username",
             "password",
             "maximum_task_per_day",
-            "tasks",
         )
         extra_kwargs = {"password": {"write_only": True}}
 
@@ -29,3 +29,15 @@ class UserSerializer(serializers.ModelSerializer):
             instance.set_password(password)
         instance.save()
         return instance
+
+    def update(self, instance, validated_data):
+        for field in validated_data:
+            if not self.is_allow_updated(field):
+                raise ValidationError(
+                    HTTPReponseMessage.NOT_ALLOWED_UPDATE_FIELD % field
+                )
+        return super().update(instance, validated_data)
+
+    def is_allow_updated(self, field_name):
+        allowed_fields = ("maximum_task_per_day",)
+        return field_name in allowed_fields

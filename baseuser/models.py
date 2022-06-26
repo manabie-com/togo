@@ -34,7 +34,7 @@ class CustomAccountManager(BaseUserManager):
 
 class BaseUser(AbstractBaseUser, PermissionsMixin):
 
-    username = models.CharField(max_length=150, unique=True)
+    username = models.CharField(max_length=150, unique=True, blank=False)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     maximum_task_per_day = models.PositiveIntegerField(default=10)

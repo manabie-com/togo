@@ -100,21 +100,27 @@
 
 #### 1. User APIs:
 
-    - Allow create a new user for any user.
-    - Can login with new user(username / password).
-    - JWT pair tokens should be in response after login successful.
-    - Only admin can update maximum_number_of_task per day for other users.
-    - Only admin can get list of users.
-    - Only admin can get detail of users.
-    - The current user cannot get detail of others.
+    - [ x ] Allow create a new user for any user.
+    - [ x ] Username should be unique.
+    - [ x ] Username and password fields should not be null.
+    - [ x ] Username and password fields should not be blank.
+    - [ x ] Can login with new user(username / password).
+    - [ x ] JWT pair tokens should be in response after login successful.
+    - [ x ] Only admin can update maximum_number_of_task per day for other users.
+    - [ x ] Only admin can get list of users.
+    - [ x ] Only admin can get detail of users.
+    - [ x ] Only current users can get details of them.
+    - [ x ] The current user cannot get detail of others.
+    - Noted: you should use the admin account that was created before by this command <python manage.py createsuperuser>. You cannot create an new user as admin by <registration endpoint>.
 
 #### 2. Task APIs:
 
-    - Authorize by JWT Access Token(Bearer as a prefix).
-    - Only authenticated user can call APIs(GET | POST | PUT | DELETE).
-    - GET list of tasks should be return list of tasks from the current user(assert fail if in the response include others).
-    - GET single task should be return a task from the current user(assert fail if in the response include others).
-    - PUT should be updating the task from the current user(assert fail if it can update from others).
-    - DELETE should be deleting the task from the current user(assert fail if trying to delete from others).
-    - POST should be creating a new task for the current user.
-    - Should have validate number of tasks smaller or equals maximum tasks per day.
+    - [ x ] Authorize by JWT Access Token(Bearer as a prefix).
+    - [ x ] Only authenticated user can call APIs(GET | POST | PUT | DELETE).
+    - [ x ] GET list of tasks should be return list of tasks from the current user(assert fail if in the response include others).
+    - [ x ] GET single task should be return a task from the current user(assert fail if in the response include others).
+    - [ x ] PUT should be updating the task from the current user(assert fail if it can update from others).
+    - [ x ] DELETE should be deleting the task from the current user(assert fail if trying to delete from others).
+    - [ x ] POST should be creating a new task for the current user.
+    - [ x ] Validate <number_of_current_tasks> smaller or equals <maximum_tasks_per_day> of the current user.
+    - [ x ] New value of maximum_task_per_day should be greater or equal to the current value.
