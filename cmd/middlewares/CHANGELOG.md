@@ -7,6 +7,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Make create folder `middlewares`
-- Create connection to database postgres
-- Create `main`
+- Make create  `SetDefaultMiddleWare` and `ValidateToken` from Cookie
+
