@@ -7,4 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Make create unit test
+- Make create func `Create`, `Login` and `GetUser`
 - Create file `user.go`
