@@ -1,30 +1,74 @@
-### Requirements
+# Duong Thanh Tin - Test Manabie
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+## Togo Respository
 
-### Notes
+### Features
+The repository have a few main features
+```
+- Login
+- Create user
+- Add task by user and create date
+```
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+### Diagrams
 
-### How to submit your solution?
+1. #### Sequence Diagram For Flow Feature
+- Feature Login
+![Sequence](https://raw.githubusercontent.com/DuongThanhTin/togo/master/document/Flow-Login.svg)
 
-- Fork this repo and show us your development progress via a PR
+- Feature Create User
+![Sequence](https://raw.githubusercontent.com/DuongThanhTin/togo/master/document/Flow-CreateUser.svg)
 
-### Interesting facts about Manabie
+- Feature Add Task
+![Sequence](https://raw.githubusercontent.com/DuongThanhTin/togo/master/document/Flow-AddTask.svg)
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+2. #### ERD Diagram
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+![ERD](https://raw.githubusercontent.com/DuongThanhTin/togo/master/document/ERD.svg)
+
+###  Structure Project
+
+```
+- api --> You can create different output commands like Api rest, web, GRPC or any other technology.
+  |- fiber --> structure fiber api
+- cmd --> Main applications for this project.
+  |- middlewares --> Middlewares for this project
+- constants --> Contain variable common
+- db --> Data for migrations
+  |- migrations -> You can migration up or down data
+- documents --> Contain detail documents for this project
+- integrationtest --> Run integration test
+- internal
+  |- api --> You can create different output commands like Api rest, web, GRPC or any other technology.
+    |- handlers --> Contain API
+      |- common --> API for common
+      |- task --> API for task
+      |- user --> API for user
+    |- routes --> Make create route for API
+  |- driver --> Config connection to database
+  |- models --> Application models
+  |- pkg --> Make create function to use common
+    |- id --> Make create uuid
+    |- responses --> Make create many response data
+    |- repositories --> Repositoryies will action to database (CRUD)
+      |- auth --> Repository for auth
+      |- task --> Repository for task
+      |- user --> Repository for user
+  |- usecases --> Usecases to implement action for application
+    |- auth --> Usecase for auth
+      |- task --> Usecase for task
+      |- user --> Usecase for user
+```
+
+### How to start
+
+#### Start local
+1. Clone repository
+```bash
+git clone https://github.com/DuongThanhTin/togo.git
+```
+2. Run main.go
+```bash
+cd togo
+go run cmd/main.go
+```
