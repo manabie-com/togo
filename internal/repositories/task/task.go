@@ -1,9 +1,9 @@
 package task
 
 import (
-	"example.com/m/v2/internal/models"
-	"example.com/m/v2/internal/pkg/id"
-	"example.com/m/v2/internal/usecases/task"
+	"github.com/manabie-com/togo/internal/models"
+	"github.com/manabie-com/togo/internal/pkg/id"
+	"github.com/manabie-com/togo/internal/usecases/task"
 
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"

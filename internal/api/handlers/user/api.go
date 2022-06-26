@@ -1,7 +1,7 @@
 package user
 
 import (
-	"example.com/m/v2/internal/api/handlers"
+	"github.com/manabie-com/togo/internal/api/handlers"
 
 	"github.com/gin-gonic/gin"
 )

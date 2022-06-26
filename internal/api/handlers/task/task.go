@@ -5,10 +5,10 @@ import (
 	"strconv"
 	"time"
 
-	"example.com/m/v2/internal/api/handlers"
-	"example.com/m/v2/internal/models"
-	"example.com/m/v2/internal/pkg/responses"
-	"example.com/m/v2/internal/repositories/task"
+	"github.com/manabie-com/togo/internal/api/handlers"
+	"github.com/manabie-com/togo/internal/models"
+	"github.com/manabie-com/togo/internal/pkg/responses"
+	"github.com/manabie-com/togo/internal/repositories/task"
 
 	"github.com/gin-gonic/gin"
 )
@@ -44,8 +44,8 @@ func AddTask(service handlers.MainUseCase) gin.HandlerFunc {
 
 		// Mapping Request
 		input := models.Task{}
-		if err := ctx.ShouldBindJSON(&input); err != nil {
-			responses.ResponseForError(ctx, err, http.StatusBadRequest, "Fail BindJSON user")
+		if err := ctx.BindJSON(&input); err != nil {
+			responses.ResponseForError(ctx, err, http.StatusBadRequest, "Fail BindJSON task")
 			return
 		}
 		input.UserID = userInfo.ID

@@ -1,9 +1,9 @@
 package user
 
 import (
-	"example.com/m/v2/internal/models"
-	"example.com/m/v2/internal/pkg/id"
-	"example.com/m/v2/internal/usecases/user"
+	"github.com/manabie-com/togo/internal/models"
+	"github.com/manabie-com/togo/internal/pkg/id"
+	"github.com/manabie-com/togo/internal/usecases/user"
 
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"

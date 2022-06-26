@@ -5,8 +5,8 @@ import (
 	"regexp"
 	"testing"
 
-	"example.com/m/v2/utils"
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/manabie-com/togo/utils"
 	"github.com/stretchr/testify/require"
 )
 
@@ -60,7 +60,7 @@ func Test_repository_ValidateUser(t *testing.T) {
 			t.Errorf("at least 1 expectation was not met: %s", err)
 		}
 	}
-	{ // Fail case
+	{ // Success case: Not have user
 		user := userValidate{
 			Username: "fail_name",
 			Password: "fail_pass",
@@ -71,8 +71,7 @@ func Test_repository_ValidateUser(t *testing.T) {
 			WithArgs(user.Username).
 			WillReturnError(fmt.Errorf("invalid user"))
 
-		actual, err := authRepository.ValidateUser(user.Username)
-		require.NotNil(t, err)
+		actual, _ := authRepository.ValidateUser(user.Username)
 		require.Equal(t, user.Expect, actual)
 
 		if err := mock.ExpectationsWereMet(); err != nil {

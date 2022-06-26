@@ -1,10 +1,10 @@
 package routes
 
 import (
-	"example.com/m/v2/internal/api/handlers"
-	"example.com/m/v2/internal/api/handlers/common"
-	"example.com/m/v2/internal/api/handlers/task"
-	"example.com/m/v2/internal/api/handlers/user"
+	"github.com/manabie-com/togo/internal/api/handlers"
+	"github.com/manabie-com/togo/internal/api/handlers/common"
+	"github.com/manabie-com/togo/internal/api/handlers/task"
+	"github.com/manabie-com/togo/internal/api/handlers/user"
 
 	"github.com/gin-gonic/gin"
 )

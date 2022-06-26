@@ -1,7 +1,7 @@
 package user
 
 import (
-	"example.com/m/v2/internal/models"
+	"github.com/manabie-com/togo/internal/models"
 )
 
 type Reader interface {

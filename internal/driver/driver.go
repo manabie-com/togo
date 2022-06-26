@@ -3,7 +3,7 @@ package driver
 import (
 	"fmt"
 
-	"example.com/m/v2/utils"
+	"github.com/manabie-com/togo/utils"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"

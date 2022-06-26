@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"time"
 
-	"example.com/m/v2/internal/models"
-	"example.com/m/v2/internal/usecases/auth"
-	"example.com/m/v2/utils"
+	"github.com/manabie-com/togo/internal/models"
+	"github.com/manabie-com/togo/internal/usecases/auth"
+	"github.com/manabie-com/togo/utils"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
@@ -31,12 +31,10 @@ func (r *repository) ValidateUser(username string) (bool, error) {
 	}
 
 	user := &models.User{}
-	if err := r.DB.Where("username = ?", username).First(user).Error; err != nil {
-		return false, err
-	}
+	r.DB.Where("username = ?", username).First(user)
 
-	if user != nil && user.Username != "" {
-		return true, nil
+	if user == nil || user.Username == "" {
+		return false, nil
 	}
 
 	return true, nil

@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"github.com/pkg/errors"
 )
@@ -22,6 +23,11 @@ func setupMock() (*gorm.DB, sqlmock.Sqlmock, error) {
 	}
 
 	return db, mock, nil
+}
+
+func SetUpRouter() *gin.Engine {
+	router := gin.Default()
+	return router
 }
 
 // func recordStats(db *gorm.DB, username, password string) (err error) {

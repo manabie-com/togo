@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"example.com/m/v2/internal/models"
+	"github.com/manabie-com/togo/internal/models"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/require"

@@ -3,15 +3,15 @@ package handlers
 import (
 	"fmt"
 
-	"example.com/m/v2/constants"
-	authRepo "example.com/m/v2/internal/repositories/auth"
-	taskRepo "example.com/m/v2/internal/repositories/task"
-	userRepo "example.com/m/v2/internal/repositories/user"
-	"example.com/m/v2/utils"
+	"github.com/manabie-com/togo/constants"
+	authRepo "github.com/manabie-com/togo/internal/repositories/auth"
+	taskRepo "github.com/manabie-com/togo/internal/repositories/task"
+	userRepo "github.com/manabie-com/togo/internal/repositories/user"
+	"github.com/manabie-com/togo/utils"
 
-	authService "example.com/m/v2/internal/usecases/auth"
-	taskService "example.com/m/v2/internal/usecases/task"
-	userService "example.com/m/v2/internal/usecases/user"
+	authService "github.com/manabie-com/togo/internal/usecases/auth"
+	taskService "github.com/manabie-com/togo/internal/usecases/task"
+	userService "github.com/manabie-com/togo/internal/usecases/user"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -25,6 +25,12 @@ type MainUseCase struct {
 	Task taskService.TaskUseCase
 }
 
+type MainRepository struct {
+	Auth authService.AuthRepository
+	User userService.UserRepository
+	Task taskService.TaskRepository
+}
+
 var MainUC = &MainUseCase{}
 
 func SetMainUseCase(muc *MainUseCase) {
@@ -33,19 +39,29 @@ func SetMainUseCase(muc *MainUseCase) {
 
 func NewUseCase(db *gorm.DB) MainUseCase {
 	// Create repositories.
-	authRepository := authRepo.NewAuthRepository(db)
-	userRepository := userRepo.NewUserRepository(db)
-	taskRepository := taskRepo.NewTaskRepository(db)
+	mainRepositories := NewRepositories(db)
 
 	//Create UseCase
-	authUseCase := authService.NewAuthUseCase(authRepository)
-	userUseCase := userService.NewUserUseCase(userRepository)
-	taskUseCase := taskService.NewTaskUseCase(taskRepository)
+	authUseCase := authService.NewAuthUseCase(mainRepositories.Auth)
+	userUseCase := userService.NewUserUseCase(mainRepositories.User)
+	taskUseCase := taskService.NewTaskUseCase(mainRepositories.Task)
 
 	return MainUseCase{
 		Auth: authUseCase,
 		User: userUseCase,
 		Task: taskUseCase,
+	}
+}
+
+func HandleService(db *gorm.DB) MainUseCase {
+	return NewUseCase(db)
+}
+
+func NewRepositories(db *gorm.DB) *MainRepository {
+	return &MainRepository{
+		Auth: authRepo.NewAuthRepository(db),
+		User: userRepo.NewUserRepository(db),
+		Task: taskRepo.NewTaskRepository(db),
 	}
 }
 

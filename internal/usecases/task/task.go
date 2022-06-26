@@ -1,7 +1,7 @@
 package task
 
 import (
-	"example.com/m/v2/internal/models"
+	"github.com/manabie-com/togo/internal/models"
 )
 
 // TaskUseCaseUsecase is the definition for collection of methods related to the `users` table use case

@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"log"
 
-	"example.com/m/v2/cmd/middlewares"
-	"example.com/m/v2/constants"
-	"example.com/m/v2/internal/api/handlers"
-	"example.com/m/v2/internal/api/routes"
-	"example.com/m/v2/internal/driver"
-	"example.com/m/v2/utils"
+	"github.com/manabie-com/togo/cmd/middlewares"
+	"github.com/manabie-com/togo/constants"
+	"github.com/manabie-com/togo/internal/api/handlers"
+	"github.com/manabie-com/togo/internal/api/routes"
+	"github.com/manabie-com/togo/internal/driver"
+	"github.com/manabie-com/togo/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
@@ -34,11 +34,9 @@ func run() error {
 
 	{ // Set Middlewares
 		// Midlewares
-		r.Use(gin.Logger())
 		// Recovery middleware recovers from any panics and writes a 500 if there was one.
 		r.Use(gin.Recovery())
 		r.Use(middlewares.SetDefaultMiddleWare())
-		r.Use(middlewares.ValidateToken())
 	}
 
 	{ //Set Repository

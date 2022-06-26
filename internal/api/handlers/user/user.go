@@ -3,10 +3,10 @@ package user
 import (
 	"net/http"
 
-	"example.com/m/v2/internal/api/handlers"
-	"example.com/m/v2/internal/models"
-	"example.com/m/v2/internal/pkg/responses"
-	"example.com/m/v2/internal/repositories/user"
+	"github.com/manabie-com/togo/internal/api/handlers"
+	"github.com/manabie-com/togo/internal/models"
+	"github.com/manabie-com/togo/internal/pkg/responses"
+	"github.com/manabie-com/togo/internal/repositories/user"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,19 +20,19 @@ type Input struct {
 func CreateUser(service handlers.MainUseCase) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var inputUser Input
-		if err := ctx.Bind(&inputUser); err != nil {
+		if err := ctx.ShouldBindJSON(&inputUser); err != nil {
 			responses.ResponseForError(ctx, err, http.StatusInternalServerError, "Fail BindJSON user")
 			return
 		}
 
 		isExistUser, err := service.Auth.ValidateUser(inputUser.Username)
 		if err != nil {
-			responses.ResponseForError(ctx, err, http.StatusBadRequest, "Fail ValidateUser")
+			responses.ResponseForError(ctx, err, http.StatusInternalServerError, "Fail ValidateUser")
 			return
 		}
 
 		if isExistUser {
-			responses.ResponseForError(ctx, nil, http.StatusForbidden, "User is exists")
+			responses.ResponseForError(ctx, nil, http.StatusConflict, "User is exists")
 			return
 		}
 

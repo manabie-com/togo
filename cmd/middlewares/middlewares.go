@@ -3,9 +3,9 @@ package middlewares
 import (
 	"log"
 
-	"example.com/m/v2/constants"
-	"example.com/m/v2/internal/api/handlers"
-	"example.com/m/v2/utils"
+	"github.com/manabie-com/togo/constants"
+	"github.com/manabie-com/togo/internal/api/handlers"
+	"github.com/manabie-com/togo/utils"
 
 	"github.com/gin-gonic/gin"
 )

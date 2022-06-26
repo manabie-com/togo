@@ -34,6 +34,7 @@ func RemoveDuplicate(s []string) []string {
 }
 
 type Environment struct {
+	Host        string `env:"HOST"`
 	Port        string `env:"PORT"`
 	JwtKey      string `env:"JWT_KEY"`
 	JwtTimeout  string `env:"JWT_TIMEOUT"`

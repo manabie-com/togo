@@ -1,7 +1,7 @@
 package responses
 
 import (
-	"example.com/m/v2/constants"
+	"github.com/manabie-com/togo/constants"
 
 	"github.com/gin-gonic/gin"
 )

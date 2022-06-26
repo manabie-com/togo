@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"example.com/m/v2/constants"
-	"example.com/m/v2/internal/api/handlers"
-	"example.com/m/v2/internal/pkg/responses"
-	"example.com/m/v2/utils"
+	"github.com/manabie-com/togo/constants"
+	"github.com/manabie-com/togo/internal/api/handlers"
+	"github.com/manabie-com/togo/internal/pkg/responses"
+	"github.com/manabie-com/togo/utils"
 
 	"github.com/gin-gonic/gin"
 )
