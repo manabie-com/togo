@@ -7,5 +7,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Implement `TaskRepository` and `TaskUseCase`
-- Create file `interface.go` and `task.go`
+- Create folder `user`, `task`, `auth`
