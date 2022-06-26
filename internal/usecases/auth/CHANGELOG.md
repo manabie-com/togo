@@ -7,4 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Make create func for `authUseCase`
+- Implement `AuthUseCase`
 - Create file `interface.go` and `auth.go`
