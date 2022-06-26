@@ -7,5 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Make create terminal in `Makefile`
-- Initial and structure for project
+- Added migration data for `tasks`
+- Added migration data for `users`
+- Added migration table `users` and `tasks`
