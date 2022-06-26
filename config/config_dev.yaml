@@ -1,0 +1,28 @@
+database:
+  driver: "mysql"
+  dbname: "db_test_manabie_todo"
+  username: "user"
+  password: "password"
+  host: "127.0.0.1"
+  port: "3306"
+  charset: "utf8mb4"
+  max_lifetime: 7200
+  max_open_conns: 150
+  max_idle_conns: 50
+server:
+  server_port: "8080"
+  jwt_secret: "jdnfksdmfksda"
+  #release | debug
+  gin_mode: "debug"
+cors:
+  allowed_origins:
+    - http://localhost:3000
+    - http://127.0.0.1:3000
+  allowed_methods:
+    - GET
+    - POST
+    - PUT
+    - DELETE
+  allowed_headers:
+    - Authorization
+    - Content-Type

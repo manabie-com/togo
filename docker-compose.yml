@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+  manbaie_todo_db:
+    container_name: "db_test_manabie_todo"
+    platform: linux/x86_64
+    build:
+      context: .
+      dockerfile: ./database/docker/dev/Dockerfile
+    networks:
+      - default
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "secret"
+      MYSQL_DATABASE: "db_test_manabie_todo"
+      MYSQL_USER: "user"
+      MYSQL_PASSWORD: "password"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+networks:
+  default:
+volumes:
+  mysql_data:
