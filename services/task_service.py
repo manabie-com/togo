@@ -72,7 +72,7 @@ class TaskService:
         yesterday = today - timedelta(days=1)
 
         return Task.objects.filter(
-            created_by=user_id, created_at__range=(yesterday, tomorrow)
+            created_by=user_id, created_at__gt=yesterday, created_at__lt=tomorrow
         ).count()
 
     def __can_be_added(self, user_id) -> bool:

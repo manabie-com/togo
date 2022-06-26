@@ -1,6 +1,5 @@
 from django.db import models
 from baseuser.models import BaseUser
-from datetime import timezone
 
 
 class Task(models.Model):
