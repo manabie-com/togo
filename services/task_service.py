@@ -1,3 +1,4 @@
+from typing import OrderedDict
 from django.http import response
 from rest_framework import status
 from todo.serializers import TaskSerializer
@@ -32,7 +33,8 @@ class TaskService:
                 HTTPReponseMessage.EXCEED_MAXIMUM_ERROR, status.HTTP_400_BAD_REQUEST
             )
 
-        data = request.data
+        data = OrderedDict()
+        data.update(request.data)
         data["created_by"] = user["user_id"]
         serializer = TaskSerializer(data=data)
 
