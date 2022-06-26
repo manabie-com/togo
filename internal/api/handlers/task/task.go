@@ -60,7 +60,7 @@ func AddTask(service handlers.MainUseCase) gin.HandlerFunc {
 			return
 		}
 
-		responses.ResponseForOK(ctx, http.StatusOK, nil, "Success")
+		responses.ResponseForOK(ctx, http.StatusCreated, nil, "Success")
 	}
 }
 

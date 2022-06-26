@@ -120,7 +120,7 @@ func (s *IntegrationTestSuite) TestIntegration_AddTaskSuccess() {
 	response, err := client.Do(req)
 	s.Require().NoError(err)
 	defer response.Body.Close()
-	s.Require().Equal(http.StatusOK, response.StatusCode)
+	s.Require().Equal(http.StatusCreated, response.StatusCode)
 }
 
 // AddTask: Fail case - Wrong userID
@@ -200,7 +200,7 @@ func (s *IntegrationTestSuite) TestIntegration_CreateUser_Success() {
 	response, err := client.Do(req)
 	s.Require().NoError(err)
 	defer response.Body.Close()
-	s.Require().Equal(http.StatusOK, response.StatusCode)
+	s.Require().Equal(http.StatusCreated, response.StatusCode)
 
 	byteResBody, err := ioutil.ReadAll(response.Body)
 	s.Require().NoError(err)

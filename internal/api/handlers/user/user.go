@@ -47,6 +47,6 @@ func CreateUser(service handlers.MainUseCase) gin.HandlerFunc {
 			return
 		}
 
-		responses.ResponseForOK(ctx, http.StatusOK, inputUser, "Success")
+		responses.ResponseForOK(ctx, http.StatusCreated, inputUser, "Success")
 	}
 }
