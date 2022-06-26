@@ -118,7 +118,7 @@ var Edit = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	u.Respond(w, http.StatusCreated, "Success", "Success create task", map[string]interface{}{
+	u.Respond(w, http.StatusCreated, "Success", "Success update task", map[string]interface{}{
 		"name":       task.Name,
 		"content":    task.Content,
 		"created_at": task.CreatedAt,

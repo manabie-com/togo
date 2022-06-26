@@ -3,6 +3,7 @@ package controllers
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -50,7 +51,7 @@ var Login = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		u.Respond(w, http.StatusBadRequest, "Failure", "Invalid input format: "+err.Error(), nil)
 		return
 	}
-
+	fmt.Println(user)
 	var (
 		email    string = user.Email
 		password string = user.Password
@@ -124,16 +125,6 @@ var UpdateMe = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		email    string = user.Email
 		password string = user.Password
 	)
-
-	if err := user.GetOneById(db); err != nil {
-		u.Respond(w, http.StatusBadRequest, "Failure", "Something went wrong when collect your account. Please try again", nil)
-		return
-	}
-	// confirm password
-	if password != user.Password {
-		u.Respond(w, http.StatusUnauthorized, "Failure", "Password incorrect. Please try again", nil)
-		return
-	}
 	// validate input
 	validate := validator.New()
 	if err := validate.Var(email, "email"); email != "" && err != nil {
@@ -145,8 +136,25 @@ var UpdateMe = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		u.Respond(w, http.StatusBadRequest, "Failure", "Invalid input name: "+err.Error(), nil)
 		return
 	}
+
+	if err := user.GetOneById(db); err != nil {
+		u.Respond(w, http.StatusBadRequest, "Failure", "Something went wrong when collect your account. Please try again", nil)
+		return
+	}
+	// confirm password
+	if password != user.Password {
+		u.Respond(w, http.StatusUnauthorized, "Failure", "Password incorrect. Please try again", nil)
+		return
+	}
+	// if valid value => overwrite new value
+	if name != "" {
+		user.Name = name
+	}
+	if email != "" {
+		user.Email = email
+	}
 	// update me
-	_, err = db.Exec(`UPDATE users SET name = $1, email = $2 WHERE id = $3`, user.Name, user.Email, decoded.UserId)
+	_, err = db.Exec(`UPDATE users SET name = $1, email = $2 WHERE id = $3`, user.Name, user.Email, user.ID)
 	if err != nil {
 		u.Respond(w, http.StatusBadRequest, "Failure", "Something went wrong when update your account. Please try again", nil)
 		return
