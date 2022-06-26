@@ -29,8 +29,6 @@ The repository have a few main features
 ###  Structure Project
 
 ```
-- api --> You can create different output commands like Api rest, web, GRPC or any other technology.
-  |- fiber --> structure fiber api
 - cmd --> Main applications for this project.
   |- middlewares --> Middlewares for this project
 - constants --> Contain variable common
