@@ -138,7 +138,7 @@ var UpdateMe = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := user.GetOneById(db); err != nil {
-		u.Respond(w, http.StatusBadRequest, "Failure", "Something went wrong when collect your account. Please try again", nil)
+		u.Respond(w, http.StatusBadRequest, "Failure", "Your email invalid. Please try again", nil)
 		return
 	}
 	// confirm password
@@ -161,9 +161,8 @@ var UpdateMe = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 	// everything Ok
 	u.Respond(w, http.StatusOK, "Success", "Success update your account!", map[string]interface{}{
-		"name":       user.Name,
-		"email":      user.Email,
-		"is_payment": user.IsPayment,
+		"name":  user.Name,
+		"email": user.Email,
 	})
 }
 
@@ -198,5 +197,5 @@ var DeleteMe = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// everything Ok
-	u.Respond(w, http.StatusOK, "Success", "Success delete your account!", nil)
+	u.Respond(w, http.StatusNoContent, "Success", "Success delete your account!", nil)
 }
