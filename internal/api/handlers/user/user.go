@@ -3,12 +3,11 @@ package user
 import (
 	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"github.com/manabie-com/togo/internal/api/handlers"
 	"github.com/manabie-com/togo/internal/models"
 	"github.com/manabie-com/togo/internal/pkg/responses"
 	"github.com/manabie-com/togo/internal/repositories/user"
-
-	"github.com/gin-gonic/gin"
 )
 
 type Input struct {

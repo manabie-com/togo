@@ -1,6 +1,7 @@
 package common
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -31,6 +32,8 @@ func Login(service handlers.MainUseCase) gin.HandlerFunc {
 			responses.ResponseForError(ctx, err, http.StatusBadRequest, "Fail Login")
 			return
 		}
+		test, _ := json.Marshal(user)
+		fmt.Println("test ", string(test))
 
 		if user == nil {
 			responses.ResponseForError(ctx, nil, http.StatusBadRequest, "Fail Login")
@@ -51,7 +54,7 @@ func Login(service handlers.MainUseCase) gin.HandlerFunc {
 		}
 
 		//Set Cookie
-		ctx.SetCookie(constants.CookieTokenKey, utils.SafeString(token), 60*60*24, "/", fmt.Sprintf("%s:%s", utils.Env.DBHost, utils.Env.DBPort), true, true)
+		ctx.SetCookie(constants.CookieTokenKey, utils.SafeString(token), 60*60*24, "/", utils.Env.Host, true, true)
 
 		responses.ResponseForOK(ctx, http.StatusOK, nil, "Success")
 	}

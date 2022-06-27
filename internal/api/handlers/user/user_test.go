@@ -11,7 +11,6 @@ import (
 
 	"github.com/manabie-com/togo/internal/api/handlers"
 	"github.com/manabie-com/togo/internal/models"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
