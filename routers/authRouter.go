@@ -12,7 +12,8 @@ const (
 	loginURL    = "login"
 )
 
-func AuthHandle(w http.ResponseWriter, r *http.Request) { // Handle different request
+// Handle different request
+func AuthHandle(w http.ResponseWriter, r *http.Request) { 
 	params := mux.Vars(r)
 	path := params["path"]
 

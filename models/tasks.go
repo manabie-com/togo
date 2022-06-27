@@ -2,7 +2,7 @@ package models
 
 import (
 	"database/sql"
-	"net/http"
+	"errors"
 	"strings"
 	"time"
 )
@@ -23,7 +23,8 @@ type NewTask struct {
 	UserId   int
 }
 
-func (r *Repository)GetAllTasks(userId int) ([]Task, error) { // Get all task from the database with user id
+// Get all task from the database with user id
+func (r *Repository)GetAllTasks(userId int) ([]Task, error) { 
 	rows, err := r.DB.Query("SELECT * FROM tasks WHERE userid = $1;", userId)
 	
 	var tasks []Task
@@ -40,31 +41,37 @@ func (r *Repository)GetAllTasks(userId int) ([]Task, error) { // Get all task fr
 	return tasks, nil
 }
 
-func (r *Repository)InsertTask(task NewTask) error { // Insert one task to the database
+ // Insert one task to the database
+func (r *Repository)InsertTask(task NewTask) error {
 	_, err := r.DB.Exec("INSERT INTO tasks(content, status,time, timedone, userid) VALUES ($1, $2, $3, $4, $5);", task.Content, task.Status, task.Time, task.TimeDone, task.UserId)
 	return err
 }
 
-func (r *Repository)DeleteTask(id int, userid int) error { // Delete task from database
+// Delete task from database
+func (r *Repository)DeleteTask(id int, userid int) error { 
 	_, err := r.DB.Exec("DELETE FROM tasks WHERE id = $1 AND userid = $2;", id, userid)
 	return err
 }
-func (r *Repository)DeleteAllTaskFromUser(userid int) error { // Delete task from database
+
+// Delete task from database
+func (r *Repository)DeleteAllTaskFromUser(userid int) error { 
 	_, err := r.DB.Exec("DELETE FROM tasks WHERE userid = $1;", userid)
 	return err
 }
-func (r *Repository)UpdateTask(newTask Task, id int, userid int) error { // Update one task already exist in database
+
+ // Update one task already exist in database
+func (r *Repository)UpdateTask(newTask Task, id int, userid int) error {
 	_, err := r.DB.Exec("UPDATE tasks SET content =COALESCE($1, content), status = COALESCE($2, status), timedone = COALESCE($3, timedone) WHERE id = $4 AND userid = $5;", newTask.Content, newTask.Status, newTask.TimeDone, id, userid)
 	return err
 }
 
-func (r *Repository)CheckIDTaskAndReturn(w http.ResponseWriter, id int, userId int) (Task, bool) { // Check ID task is valid or not
+ // Check ID task is valid or not
+func (r *Repository)FindTaskByID(id int, userId int) (Task, bool) {
 	task := Task{}
 	row := r.DB.QueryRow("SELECT * FROM tasks WHERE id = $1 AND userid = $2;", id, userId)
 	err := row.Scan(&task.Id, &task.Content, &task.Status, &task.Time, &task.TimeDone, &task.UserId)
 	if err != nil {
 		if err != sql.ErrNoRows {
-			http.Error(w, "can't find row", http.StatusFailedDependency)
 			return task, false
 		}
 		return task, false
@@ -76,27 +83,31 @@ func (r *Repository)UpdateStatusAllTask() error {
 	return err
 }
 
-func (r *Repository)CheckTaskInput(task NewTask) bool { // Check task input value is valid or not
+// Check task input value is valid or not
+func CheckTaskInput(task NewTask) bool { 
 	var Content string
 	if task.Content != ""{
 		Content = strings.TrimSpace(task.Content)
 	}
-	_, validUserid := r.FindUserByID(task.UserId)
-	if Content == "" || !validUserid {
+	if Content == "" {
 		return false
 	}
 	return true
 }
 
-func (r *Repository)CheckLimitTaskUser(userid int) bool { // check task per day pass limit of user or not
+// check task per day pass limit of user or not
+func (r *Repository)CheckLimitTaskUser(userid int) (bool, error) { 
 	user, ok := r.FindUserByID(userid)
+	if !ok {
+		return false, errors.New("userid Wrong")
+	}
 	tasks, err := r.GetAllTasks(userid)
 	countLimit :=0
 	if strings.ToLower(user.Username) =="admin"{ // if admin then don't need to check
-		return true
+		return true, nil
 	}
 	if err != nil || !ok{
-		return false
+		return false, err
 	}
 
 	for _, task := range tasks{
@@ -105,5 +116,5 @@ func (r *Repository)CheckLimitTaskUser(userid int) bool { // check task per day 
 			countLimit++;
 		}
 	}
-	return countLimit < user.LimitTask
+	return countLimit < user.LimitTask, nil
 }

@@ -14,7 +14,8 @@ type Repository struct {
 }
 var Repo Repository
 
-func Connect() { // connect to database
+// connect to database
+func Connect() { 
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Failed to load env")
@@ -24,18 +25,20 @@ func Connect() { // connect to database
 	if err != nil {
 		log.Fatal("Connect to database failed")
 	}
-	// defer Repo.Close()
 }
 
-func Hash(password string) (string, error) { // Hash password into a crypt text
+// Hash password into a crypt text
+func Hash(password string) (string, error) { 
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return string(bytes), err
 }
 
-func CheckPasswordHash(hashedPassword, password string) error { // check a crypted text and a password user enter
+ // check a crypted text and a password user enter
+func CheckPasswordHash(hashedPassword, password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 }
 
+// interface implement
 func (r *Repository)Close() {
 	r.DB.Close()
 }

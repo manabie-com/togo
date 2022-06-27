@@ -10,7 +10,9 @@ import (
 	"github.com/gorilla/context"
 	"github.com/huynhhuuloc129/todo/models"
 )
-func ResponeAllUser(w http.ResponseWriter, r *http.Request) { // Get all user from database
+
+// Get all user from database
+func ResponeAllUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	users, err := models.Repo.GetAllUser()
 	if err != nil {
@@ -23,7 +25,9 @@ func ResponeAllUser(w http.ResponseWriter, r *http.Request) { // Get all user fr
 		return
 	}
 }
-func ResponeOneUser(w http.ResponseWriter, r *http.Request) { // Get one user from database
+
+ // Get one user from database
+func ResponeOneUser(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "id"))) // get id from url
 	user, ok := models.Repo.FindUserByID(id)
 	if !ok {
@@ -38,7 +42,9 @@ func ResponeOneUser(w http.ResponseWriter, r *http.Request) { // Get one user fr
 	}
 }
 
-func CreateUser(w http.ResponseWriter, r *http.Request) { // Create a new user
+
+// Create a new user
+func CreateUser(w http.ResponseWriter, r *http.Request) { 
 	var user models.NewUser
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		http.Error(w, "decode failed", http.StatusFailedDependency)
@@ -67,7 +73,9 @@ func CreateUser(w http.ResponseWriter, r *http.Request) { // Create a new user
 	}
 }
 
-func DeleteUser(w http.ResponseWriter, r *http.Request) { // Delete one user from database
+
+// Delete user from database
+func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "id"))) // get id from url
 	if _, ok := models.Repo.FindUserByID(id); !ok {
 		http.Error(w, "Id invalid", http.StatusBadRequest)
@@ -85,7 +93,8 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) { // Delete one user fro
 	w.Write([]byte("message: delete success"))
 }
 
-func UpdateUser(w http.ResponseWriter, r *http.Request) { // Update one user already exist in database
+// Update one user already exist in database
+func UpdateUser(w http.ResponseWriter, r *http.Request) { 
 	id, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "id"))) // get id from url
 
 	var newUser models.NewUser

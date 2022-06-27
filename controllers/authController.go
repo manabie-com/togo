@@ -9,11 +9,14 @@ import (
 	"github.com/huynhhuuloc129/todo/models"
 )
 
-type responseToken struct { //response token
+//response token
+type responseToken struct {
 	Message string
 	Token   string
 }
-func Register(w http.ResponseWriter, r *http.Request) { // Handle register with method post
+
+// Handle register with method post
+func Register(w http.ResponseWriter, r *http.Request) { 
 	var user, user1 models.NewUser
 	var passwordCrypt string
 
@@ -47,7 +50,8 @@ func Register(w http.ResponseWriter, r *http.Request) { // Handle register with 
 	}
 }
 
-func Login(w http.ResponseWriter, r *http.Request) { // handle login with method post
+// handle login with method post
+func Login(w http.ResponseWriter, r *http.Request) { 
 	var user models.NewUser
 
 	_ = json.NewDecoder(r.Body).Decode(&user)

@@ -19,7 +19,8 @@ type NewUser struct {
 	LimitTask int
 }
 
-func (r *Repository)GetAllUser() ([]User, error) { // Get all user from the database
+// Get all user from the database
+func (r *Repository) GetAllUser() ([]User, error) {
 	rows, err := r.DB.Query("SELECT * FROM users;")
 	var users []User
 	if err != nil {
@@ -36,7 +37,8 @@ func (r *Repository)GetAllUser() ([]User, error) { // Get all user from the data
 	return users, nil
 }
 
-func (r *Repository)InsertUser(user NewUser) error { // Insert one user to the database
+// Insert one user to the database
+func (r *Repository) InsertUser(user NewUser) error {
 	if !CheckUserInput(user) {
 		return errors.New("decode failed")
 	}
@@ -44,12 +46,14 @@ func (r *Repository)InsertUser(user NewUser) error { // Insert one user to the d
 	return err
 }
 
-func (r *Repository)DeleteUser(id int) error { // delete 1 user
+// delete 1 user
+func (r *Repository) DeleteUser(id int) error {
 	_, err := r.DB.Exec("DELETE FROM users WHERE id = $1", id)
 	return err
 }
 
-func (r *Repository)UpdateUser(newUser NewUser, id int) error { // Update one user already exist in database
+// Update one user already exist in database
+func (r *Repository) UpdateUser(newUser NewUser, id int) error {
 	if !CheckUserInput(newUser) {
 		return errors.New("user input invalid")
 	}
@@ -57,7 +61,8 @@ func (r *Repository)UpdateUser(newUser NewUser, id int) error { // Update one us
 	return err
 }
 
-func (r *Repository)FindUserByID(id int) (User, bool) { // Check ID is valid or not
+// Check ID is valid or not
+func (r *Repository) FindUserByID(id int) (User, bool) {
 	user := User{}
 	row := r.DB.QueryRow("SELECT * FROM users WHERE id = $1", id)
 	err := row.Scan(&user.Id, &user.Username, &user.Password, &user.LimitTask)
@@ -70,16 +75,18 @@ func (r *Repository)FindUserByID(id int) (User, bool) { // Check ID is valid or 
 	return user, true
 }
 
-func CheckUserInput(user NewUser) bool { // Check user input is valid or not
+// Check user input is valid or not
+func CheckUserInput(user NewUser) bool {
 	password := strings.TrimSpace(user.Password)
 	username := strings.TrimSpace(user.Username)
-	if password == "" || username == ""{
+	if password == "" || username == "" {
 		return false
 	}
 	return true
 }
 
-func (r *Repository)CheckUserNameExist(username string) (User, bool) { // Check if username already exist or not
+// Check if username already exist or not
+func (r *Repository) CheckUserNameExist(username string) (User, bool) {
 	user := User{}
 	row := r.DB.QueryRow("SELECT * FROM users WHERE username = $1", username)
 	err := row.Scan(&user.Id, &user.Username, &user.Password, &user.LimitTask)
