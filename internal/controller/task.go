@@ -22,7 +22,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	isLimit, err := repo.Repository.GetLimitTaskToday(id)
+	isLimit, err := repo.Repository.CheckLimitTaskToday(id)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "check limit task today failed")
 		return
@@ -45,7 +45,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	numberTask, err := repo.Repository.GetNumberOfTaskToday(id)
+	numberTask, err := repo.Repository.GetNumberOfTaskTodayByUserID(id)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "get number of task today failed")
 		return
@@ -67,7 +67,7 @@ func GetAllTask(w http.ResponseWriter, r *http.Request) {
 func GetAllTaskOfUser(w http.ResponseWriter, r *http.Request) {
 	username := context.Get(r, "username").(string)
 
-	tasks, err := repo.Repository.GetTaskByUsername(username)
+	tasks, err := repo.Repository.GetTasksByUsername(username)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "get all task of user failed!")
 		return
@@ -122,7 +122,7 @@ func CheckTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = repo.Repository.CheckTask(id)
+	err = repo.Repository.CompleteTask(id)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "complete task failed!")
 		return

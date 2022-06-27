@@ -82,7 +82,7 @@ func (r *repository) GetMaxTaskByUserID(id int) (int, error) {
 	return max, nil
 }
 
-func (r *repository) GetNumberOfTaskToday(id int) (int, error) {
+func (r *repository) GetNumberOfTaskTodayByUserID(id int) (int, error) {
 	const query = `SELECT COUNT(*) FROM tasks WHERE user_id = $1 AND DATE(created_at) = CURRENT_DATE`
 	var count int
 	err := r.DB.QueryRow(query, id).Scan(&count)

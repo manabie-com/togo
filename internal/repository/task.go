@@ -58,7 +58,7 @@ func (r *repository) GetTaskByID(id int) (*e.Task, error) {
 	return &t, nil
 }
 
-func (r *repository) GetTaskByUsername(username string) (*[]e.Task, error) {
+func (r *repository) GetTasksByUsername(username string) (*[]e.Task, error) {
 	const query = `SELECT t.id, t.name, t.description, t.created_at, t.completed
 					FROM tasks AS t JOIN users ON t.user_id = users.id
 					WHERE users.username = $1;`
@@ -93,7 +93,7 @@ func (r *repository) GetUserIDByTaskID(id int) (int, error) {
 	return userID, nil
 }
 
-func (r *repository) GetLimitTaskToday(userID int) (bool, error) {
+func (r *repository) CheckLimitTaskToday(userID int) (bool, error) {
 	const query = `SELECT COUNT(*) FROM tasks WHERE user_id = $1 AND created_at >= current_date;`
 	row := r.DB.QueryRow(query, userID)
 	var count int
@@ -131,7 +131,7 @@ func (r *repository) UpdateTask(t *e.Task) error {
 	return nil
 }
 
-func (r *repository) CheckTask(id int) error {
+func (r *repository) CompleteTask(id int) error {
 	const query = `UPDATE tasks SET completed = true WHERE id = $1;`
 	tx, err := r.DB.Begin()
 	if err != nil {
