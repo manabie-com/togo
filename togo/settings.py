@@ -216,8 +216,10 @@ USE_L10N = True
 USE_TZ = True
 
 # celery
-CELERY_BROKER_URL = 'redis://localhost:6379/0' if not os.environ.get('CELERY_BROKER_URL') else os.environ.get('CELERY_BROKER_URL')
-CELERY_BACKEND_URL = 'redis://localhost:6379/0' if not os.environ.get('CELERY_BACKEND_URL') else os.environ.get('CELERY_BACKEND_URL')
+CELERY_BROKER_URL = 'redis://localhost:6379/0' if not os.environ.get('CELERY_BROKER_URL') else os.environ.get(
+    'CELERY_BROKER_URL')
+CELERY_BACKEND_URL = 'redis://localhost:6379/0' if not os.environ.get('CELERY_BACKEND_URL') else os.environ.get(
+    'CELERY_BACKEND_URL')
 CELERY_RESULT_BACKEND = 'django-db'
 
 CELERY_ACCEPT_CONTENT = ['application/json']
@@ -232,3 +234,5 @@ if len(sys.argv) > 1 and sys.argv[1] == 'test':
     logging.disable(logging.CRITICAL)
     CELERY_TASK_ALWAYS_EAGER = True
     CELERY_TASK_EAGER_PROPAGATES = True
+    CELERY_BROKER_URL = 'memory://'
+    BROKER_BACKEND = 'memory://'

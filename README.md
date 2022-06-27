@@ -59,7 +59,6 @@ Tutorial Test :
     1. Unit test:
        - python manage.py test tests.unit_test.user_detail_task
     2. Intergration test:
-       - redis-server
        - python manage.py test tests.api_test.user_detail_task
 
 Example Test Was Config in db.sqlite3:
