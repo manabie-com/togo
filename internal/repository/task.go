@@ -6,7 +6,7 @@ import (
 
 // CREATE
 
-func (r *repository) AddTask(t *e.Task) error {
+func (r *repository) CreateTask(t *e.Task) error {
 	const query = `INSERT INTO tasks (
 		name, description, created_at, completed, user_id)
 		VALUES ($1, $2, $3, $4, $5);`
@@ -58,11 +58,9 @@ func (r *repository) GetTaskByID(id int) (*e.Task, error) {
 	return &t, nil
 }
 
-func (r *repository) GetTasksByUsername(username string) (*[]e.Task, error) {
-	const query = `SELECT t.id, t.name, t.description, t.created_at, t.completed
-					FROM tasks AS t JOIN users ON t.user_id = users.id
-					WHERE users.username = $1;`
-	rows, err := r.DB.Query(query, username)
+func (r *repository) GetTasksByUserID(id int) (*[]e.Task, error) {
+	const query = `SELECT * FROM tasks WHERE user_id = $1;`
+	rows, err := r.DB.Query(query, id)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +70,7 @@ func (r *repository) GetTasksByUsername(username string) (*[]e.Task, error) {
 
 	for rows.Next() {
 		var t e.Task
-		err := rows.Scan(&t.ID, &t.Name, &t.Description, &t.CreatedAt, &t.Completed)
+		err := rows.Scan(&t.ID, &t.Name, &t.Description, &t.CreatedAt, &t.Completed, &t.UserID)
 		if err != nil {
 			return nil, err
 		}
@@ -80,38 +78,6 @@ func (r *repository) GetTasksByUsername(username string) (*[]e.Task, error) {
 	}
 
 	return &tasks, nil
-}
-
-func (r *repository) GetUserIDByTaskID(id int) (int, error) {
-	const query = `SELECT user_id FROM tasks WHERE id = $1;`
-	row := r.DB.QueryRow(query, id)
-	var userID int
-	err := row.Scan(&userID)
-	if err != nil {
-		return 0, err
-	}
-	return userID, nil
-}
-
-func (r *repository) CheckLimitTaskToday(userID int) (bool, error) {
-	const query = `SELECT COUNT(*) FROM tasks WHERE user_id = $1 AND created_at >= current_date;`
-	row := r.DB.QueryRow(query, userID)
-	var count int
-	err := row.Scan(&count)
-	if err != nil {
-		return false, err
-	}
-
-	maxTask, err := r.GetMaxTaskByUserID(userID)
-	if err != nil {
-		return false, err
-	}
-
-	if count >= maxTask {
-		return true, nil
-	}
-
-	return false, nil
 }
 
 // UPDATE

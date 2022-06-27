@@ -89,34 +89,6 @@ func TestGetUserByID(t *testing.T) {
 	assert.Equal(t, u.ID, user.ID)
 }
 
-func TestGetUserIDByUsername(t *testing.T) {
-	db, mock := NewMock()
-	repo := &repository{db}
-	defer db.Close()
-
-	query := regexp.QuoteMeta(`SELECT id FROM users WHERE username = $1`)
-
-	mock.ExpectQuery(query).WithArgs(u.Username).WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(u.ID))
-
-	id, err := repo.GetUserIDByUsername(u.Username)
-	assert.NoError(t, err)
-	assert.Equal(t, u.ID, id)
-}
-
-func TestGetMaxTaskByUserID(t *testing.T) {
-	db, mock := NewMock()
-	repo := &repository{db}
-	defer db.Close()
-
-	query := regexp.QuoteMeta(`SELECT max_todo FROM users WHERE id = $1`)
-
-	mock.ExpectQuery(query).WithArgs(u.ID).WillReturnRows(sqlmock.NewRows([]string{"max_todo"}).AddRow(u.MaxTodo))
-
-	max, err := repo.GetMaxTaskByUserID(u.ID)
-	assert.NoError(t, err)
-	assert.EqualValues(t, u.MaxTodo, max)
-}
-
 func TestGetNumberOfTaskTodayByUserID(t *testing.T) {
 	db, mock := NewMock()
 	repo := &repository{db}
@@ -157,20 +129,6 @@ func TestGetPlanByUsername(t *testing.T) {
 	plan, err := repo.GetPlanByUsername(u.Username)
 	assert.NoError(t, err)
 	assert.Equal(t, u.Plan, plan)
-}
-
-func TestCheckUserExist(t *testing.T) {
-	db, mock := NewMock()
-	repo := &repository{db}
-	defer db.Close()
-
-	query := regexp.QuoteMeta(`SELECT * FROM users WHERE username = $1`)
-
-	mock.ExpectQuery(query).WithArgs(u.Username).WillReturnRows(sqlmock.NewRows([]string{"id", "username", "password", "plan", "max_todo"}).AddRow(u.ID, u.Username, u.Password, u.Plan, u.MaxTodo))
-
-	exist, err := repo.CheckUserExist(u.Username)
-	assert.NoError(t, err)
-	assert.True(t, exist)
 }
 
 func TestUpdateUser(t *testing.T) {

@@ -31,7 +31,7 @@ func TestAddTask(t *testing.T) {
 	mock.ExpectExec(query).WithArgs(task.Name, task.Description, task.CreatedAt, task.Completed, task.UserID).WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
-	err := repo.AddTask(task)
+	err := repo.CreateTask(task)
 	assert.NoError(t, err)
 }
 
@@ -67,43 +67,6 @@ func TestGetTaskByID(t *testing.T) {
 	newTask, err := repo.GetTaskByID(task.ID)
 	assert.NoError(t, err)
 	assert.Equal(t, task, newTask)
-}
-
-func TestGetTasksByUsername(t *testing.T) {
-	db, mock := NewMock()
-	repo := &repository{db}
-	defer db.Close()
-	t.Log("TestGet=")
-	query := regexp.QuoteMeta(`SELECT t.id, t.name, t.description, t.created_at, t.completed
-								FROM tasks AS t JOIN users ON t.user_id = users.id
-								WHERE users.username = $1;`)
-
-	rows := sqlmock.NewRows([]string{"id", "name", "description", "created_at", "completed"}).
-		AddRow(task.ID, task.Name, task.Description, task.CreatedAt, task.Completed)
-
-	mock.ExpectQuery(query).WithArgs(u.Username).WillReturnRows(rows)
-
-	tasks, err := repo.GetTasksByUsername(u.Username)
-	t.Log(tasks)
-	assert.NoError(t, err)
-	assert.Equal(t, 1, len(*tasks))
-}
-
-func TestGetUserIDByTaskID(t *testing.T) {
-	db, mock := NewMock()
-	repo := &repository{db}
-	defer db.Close()
-
-	query := regexp.QuoteMeta(`SELECT user_id FROM tasks WHERE id = $1;`)
-
-	rows := sqlmock.NewRows([]string{"user_id"}).
-		AddRow(task.UserID)
-
-	mock.ExpectQuery(query).WithArgs(task.ID).WillReturnRows(rows)
-
-	userID, err := repo.GetUserIDByTaskID(task.ID)
-	assert.NoError(t, err)
-	assert.Equal(t, task.UserID, userID)
 }
 
 // TODO: Check limit task today

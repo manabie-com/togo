@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	e "lntvan166/togo/internal/entities"
-	repo "lntvan166/togo/internal/repository"
+	"lntvan166/togo/internal/usecase"
 	"lntvan166/togo/pkg"
 	"net/http"
 	"strconv"
@@ -16,13 +16,13 @@ import (
 func CreateTask(w http.ResponseWriter, r *http.Request) {
 
 	username := context.Get(r, "username").(string)
-	id, err := repo.Repository.GetUserIDByUsername(username)
+	id, err := usecase.GetUserIDByUsername(username)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "get user id failed")
 		return
 	}
 
-	isLimit, err := repo.Repository.CheckLimitTaskToday(id)
+	isLimit, err := usecase.CheckLimitTaskToday(id)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "check limit task today failed")
 		return
@@ -39,13 +39,13 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 
 	task.CreatedAt = pkg.GetCurrentTime()
 	task.UserID = id
-	err = repo.Repository.AddTask(&task)
+	err = usecase.AddTask(&task)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "add task failed")
 		return
 	}
 
-	numberTask, err := repo.Repository.GetNumberOfTaskTodayByUserID(id)
+	numberTask, err := usecase.GetNumberOfTaskTodayByUserID(id)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "get number of task today failed")
 		return
@@ -56,7 +56,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAllTask(w http.ResponseWriter, r *http.Request) {
-	tasks, err := repo.Repository.GetAllTask()
+	tasks, err := usecase.GetAllTask()
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "get all task failed")
 		return
@@ -67,7 +67,7 @@ func GetAllTask(w http.ResponseWriter, r *http.Request) {
 func GetAllTaskOfUser(w http.ResponseWriter, r *http.Request) {
 	username := context.Get(r, "username").(string)
 
-	tasks, err := repo.Repository.GetTasksByUsername(username)
+	tasks, err := usecase.GetTasksByUsername(username)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "get all task of user failed!")
 		return
@@ -85,13 +85,13 @@ func GetTaskByID(w http.ResponseWriter, r *http.Request) {
 
 	username := context.Get(r, "username").(string)
 
-	task, err := repo.Repository.GetTaskByID(id)
+	task, err := usecase.GetTaskByID(id)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "get task by id failed!")
 		return
 	}
 
-	err = pkg.CheckAccessPermission(w, username, task.UserID)
+	err = usecase.CheckAccessPermission(w, username, task.UserID)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "check access permission failed: ")
 		return
@@ -100,7 +100,7 @@ func GetTaskByID(w http.ResponseWriter, r *http.Request) {
 	pkg.JSON(w, http.StatusOK, task)
 }
 
-func CheckTask(w http.ResponseWriter, r *http.Request) {
+func CompleteTask(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -110,19 +110,19 @@ func CheckTask(w http.ResponseWriter, r *http.Request) {
 
 	username := context.Get(r, "username").(string)
 
-	user_id, err := repo.Repository.GetUserIDByTaskID(id)
+	user_id, err := usecase.GetUserIDByTaskID(id)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "task does not exist!")
 		return
 	}
 
-	err = pkg.CheckAccessPermission(w, username, user_id)
+	err = usecase.CheckAccessPermission(w, username, user_id)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "check access permission failed: ")
 		return
 	}
 
-	err = repo.Repository.CompleteTask(id)
+	err = usecase.CompleteTask(id)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "complete task failed!")
 		return
@@ -139,19 +139,19 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	username := context.Get(r, "username").(string)
-	user_id, err := repo.Repository.GetUserIDByTaskID(id)
+	user_id, err := usecase.GetUserIDByTaskID(id)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "task does not exist!")
 		return
 	}
 
-	err = pkg.CheckAccessPermission(w, username, user_id)
+	err = usecase.CheckAccessPermission(w, username, user_id)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "check access permission failed: ")
 		return
 	}
 
-	task, err := repo.Repository.GetTaskByID(id)
+	task, err := usecase.GetTaskByID(id)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "get task by id failed!")
 		return
@@ -159,7 +159,7 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 
 	json.NewDecoder(r.Body).Decode(&task)
 
-	err = repo.Repository.UpdateTask(task)
+	err = usecase.UpdateTask(task)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "update task failed!")
 		return
@@ -177,18 +177,18 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	username := context.Get(r, "username").(string)
-	user_id, err := repo.Repository.GetUserIDByTaskID(id)
+	user_id, err := usecase.GetUserIDByTaskID(id)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "task does not exist!")
 		return
 	}
 
-	err = pkg.CheckAccessPermission(w, username, user_id)
+	err = usecase.CheckAccessPermission(w, username, user_id)
 	if err != nil {
 		return
 	}
 
-	err = repo.Repository.DeleteTask(id)
+	err = usecase.DeleteTask(id)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "delete task failed!")
 		return

@@ -62,26 +62,6 @@ func (r *repository) GetUserByID(id int) (*e.User, error) {
 	return u, nil
 }
 
-func (r *repository) GetUserIDByUsername(username string) (int, error) {
-	const query = `SELECT id FROM users WHERE username = $1`
-	var id int
-	err := r.DB.QueryRow(query, username).Scan(&id)
-	if err != nil {
-		return 0, err
-	}
-	return id, nil
-}
-
-func (r *repository) GetMaxTaskByUserID(id int) (int, error) {
-	const query = `SELECT max_todo FROM users WHERE id = $1`
-	var max int
-	err := r.DB.QueryRow(query, id).Scan(&max)
-	if err != nil {
-		return 0, err
-	}
-	return max, nil
-}
-
 func (r *repository) GetNumberOfTaskTodayByUserID(id int) (int, error) {
 	const query = `SELECT COUNT(*) FROM tasks WHERE user_id = $1 AND DATE(created_at) = CURRENT_DATE`
 	var count int
@@ -112,15 +92,15 @@ func (r *repository) GetPlanByUsername(username string) (string, error) {
 	return plan, nil
 }
 
-func (r *repository) CheckUserExist(username string) (bool, error) {
-	const query = `SELECT * FROM users WHERE username = $1`
-	u := &e.User{}
-	err := r.DB.QueryRow(query, username).Scan(&u.ID, &u.Username, &u.Password, &u.Plan, &u.MaxTodo)
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
+// func (r *repository) CheckUserExist(username string) (bool, error) {
+// 	const query = `SELECT * FROM users WHERE username = $1`
+// 	u := &e.User{}
+// 	err := r.DB.QueryRow(query, username).Scan(&u.ID, &u.Username, &u.Password, &u.Plan, &u.MaxTodo)
+// 	if err != nil {
+// 		return false, err
+// 	}
+// 	return true, nil
+// }
 
 // UPDATE
 

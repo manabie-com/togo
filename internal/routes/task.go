@@ -13,6 +13,6 @@ func HandleTask(route *mux.Router) {
 	taskRouter.HandleFunc("/{id}", controller.GetTaskByID).Methods("GET")
 	taskRouter.HandleFunc("", controller.GetAllTaskOfUser).Methods("GET")
 	taskRouter.HandleFunc("", controller.CreateTask).Methods("POST")
-	taskRouter.HandleFunc("/{id}", controller.CheckTask).Methods("PUT")
+	taskRouter.HandleFunc("/{id}", controller.CompleteTask).Methods("PUT")
 	taskRouter.HandleFunc("/{id}", controller.DeleteTask).Methods("DELETE")
 }

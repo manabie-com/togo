@@ -3,7 +3,7 @@ package controller
 import (
 	"encoding/json"
 	"errors"
-	"lntvan166/togo/internal/repository"
+	"lntvan166/togo/internal/usecase"
 	"lntvan166/togo/pkg"
 	"net/http"
 
@@ -23,7 +23,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	checkUserExist, err := repository.Repository.CheckUserExist(user.Username)
+	checkUserExist, err := usecase.CheckUserExist(user.Username)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to check user exist!")
 		return
@@ -41,7 +41,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = repository.Repository.AddUser(user)
+	err = usecase.AddUser(user)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to add user!")
 		return
@@ -59,7 +59,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := repository.Repository.GetUserByName(newUser.Username)
+	user, err := usecase.GetUserByName(newUser.Username)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "user not found!")
 		return
@@ -80,7 +80,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdatePassword(w http.ResponseWriter, r *http.Request) {
-	user, err := repository.Repository.GetUserByName(context.Get(r, "username").(string))
+	user, err := usecase.GetUserByName(context.Get(r, "username").(string))
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to get user!")
 		return
@@ -100,7 +100,7 @@ func UpdatePassword(w http.ResponseWriter, r *http.Request) {
 
 	user.PreparePassword()
 
-	err = repository.Repository.UpdateUser(user)
+	err = usecase.UpdateUser(user)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to update user!")
 		return
