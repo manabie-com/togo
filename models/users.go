@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"log"
-	"strings"
 )
 
 type User struct {
@@ -73,16 +72,6 @@ func (r *Repository) FindUserByID(id int) (User, bool) {
 		return user, false
 	}
 	return user, true
-}
-
-// Check user input is valid or not
-func CheckUserInput(user NewUser) bool {
-	password := strings.TrimSpace(user.Password)
-	username := strings.TrimSpace(user.Username)
-	if password == "" || username == "" {
-		return false
-	}
-	return true
 }
 
 // Check if username already exist or not

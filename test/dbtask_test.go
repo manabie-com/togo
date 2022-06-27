@@ -120,4 +120,3 @@ func TestUpdateTask(t *testing.T) {
 	err := repo.UpdateTask(task, task.Id, task.UserId)
 	assert.NoError(t, err)
 }
-

@@ -7,7 +7,7 @@ import (
 	"github.com/huynhhuuloc129/todo/models"
 )
 
-func TestCheckUserInput(t *testing.T){
+func TestCheckUserInput(t *testing.T) {
 	user1 := models.NewUser{
 		Username: "",
 		Password: "",
@@ -32,5 +32,5 @@ func TestCheckUserInput(t *testing.T){
 	if result1 || result2 || result3 || !result4 {
 		log.Fatal("Check user input failed")
 	}
-	
+
 }

@@ -8,34 +8,34 @@ import (
 	"github.com/huynhhuuloc129/todo/models"
 )
 
-func TestCheckTaskInput(t *testing.T){
+func TestCheckTaskInput(t *testing.T) {
 	task1 := models.NewTask{
-		Content: "sadfsaf",
-		Status: "pending",
-		Time: time.Now(),
+		Content:  "sadfsaf",
+		Status:   "pending",
+		Time:     time.Now(),
 		TimeDone: time.Now(),
-		UserId: 1,
+		UserId:   1,
 	}
 	task2 := models.NewTask{
-		Content: "",
-		Status: "pending",
-		Time: time.Now(),
+		Content:  "",
+		Status:   "pending",
+		Time:     time.Now(),
 		TimeDone: time.Now(),
-		UserId: 1,
+		UserId:   1,
 	}
 	task3 := models.NewTask{
-		Content: "sadfsaf",
-		Status: "pending",
-		Time: time.Now(),
+		Content:  "sadfsaf",
+		Status:   "pending",
+		Time:     time.Now(),
 		TimeDone: time.Now(),
-		UserId: 1,
+		UserId:   1,
 	}
 	task4 := models.NewTask{
-		Content: "admin Task",
-		Status: "pending",
-		Time: time.Now(),
+		Content:  "admin Task",
+		Status:   "pending",
+		Time:     time.Now(),
 		TimeDone: time.Now(),
-		UserId: 1,
+		UserId:   1,
 	}
 	result1 := models.CheckTaskInput(task1)
 	result2 := models.CheckTaskInput(task2)

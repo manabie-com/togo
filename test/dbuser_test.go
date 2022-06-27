@@ -11,6 +11,7 @@ import (
 	"github.com/huynhhuuloc129/todo/util"
 	"github.com/stretchr/testify/assert"
 )
+
 func NewMock() (*sql.DB, sqlmock.Sqlmock) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -19,28 +20,27 @@ func NewMock() (*sql.DB, sqlmock.Sqlmock) {
 
 	return db, mock
 }
+
 // create random user
-func RandomUser() models.User{
+func RandomUser() models.User {
 	user := models.User{
-		Id: util.RandomId(),
-		Username: util.RandomUsername(),
-		Password: util.RandomPassword(),
+		Id:        util.RandomId(),
+		Username:  util.RandomUsername(),
+		Password:  util.RandomPassword(),
 		LimitTask: int(util.RandomLimittask()),
 	}
-	return user 
+	return user
 }
 
 // create random new user
-func RandomNewUser() models.NewUser{
+func RandomNewUser() models.NewUser {
 	newUser := models.NewUser{
-		Username: util.RandomUsername(),
-		Password: util.RandomPassword(),
+		Username:  util.RandomUsername(),
+		Password:  util.RandomPassword(),
 		LimitTask: int(util.RandomLimittask()),
 	}
-	return newUser 
+	return newUser
 }
-
-
 
 // unit test for get all user
 func TestGetAllUser(t *testing.T) {
@@ -49,7 +49,7 @@ func TestGetAllUser(t *testing.T) {
 	defer repo.Close()
 
 	rows := sqlmock.NewRows([]string{"id", "username", "password", "limittask"})
-	for i:=0; i<10; i++{
+	for i := 0; i < 10; i++ {
 		user := RandomUser()
 		rows.AddRow(user.Id, user.Username, user.Password, user.LimitTask)
 	}
@@ -76,7 +76,7 @@ func TestFindUserById(t *testing.T) {
 
 	mock.ExpectQuery(query).WithArgs(user.Id).WillReturnRows(rows)
 	user, valid := repo.FindUserByID(int(user.Id))
-	
+
 	assert.NotNil(t, user)
 	assert.NotEqual(t, false, valid)
 }
@@ -94,7 +94,7 @@ func TestCheckUserNameExist(t *testing.T) {
 
 	user, valid := repo.CheckUserNameExist(user.Username)
 	assert.NotNil(t, user)
-	assert.NotEqual(t, false ,valid)
+	assert.NotEqual(t, false, valid)
 }
 
 // unit test for delete user
