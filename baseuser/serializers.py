@@ -19,12 +19,19 @@ class UserSerializer(serializers.ModelSerializer):
             "username",
             "password",
             "maximum_task_per_day",
+            "is_superuser",
         )
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
         password = validated_data.get("password", None)
+        is_superuser = validated_data.get("is_superuser", None)
+
+        if is_superuser is not None and not is_superuser:
+            validated_data.pop("is_superuser")
+
         instance = self.Meta.model(**validated_data)
+
         if password is not None:
             instance.set_password(password)
         instance.save()

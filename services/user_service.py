@@ -47,9 +47,7 @@ class UserService:
         return serializer.data, status.HTTP_200_OK
 
     def create(self, request) -> tuple:
-        username = request.data.get("username", None)
-        password = request.data.get("password", None)
-        serializer = UserSerializer(data={"username": username, "password": password})
+        serializer = UserSerializer(data=request.data)
 
         if serializer.is_valid():
             serializer.save()

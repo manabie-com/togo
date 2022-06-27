@@ -1,24 +1,24 @@
 from django.test import TestCase, Client
-from django.urls import reverse
 from django.utils import timezone
 
-from todo.models import Task
 from utils import encrypting
 
-import json
+
+class UserDataTest:
+    USER_USERNAME = "user_test_001"
+    USER_PASSWORD = "Aa123456"
 
 
 class TestViews(TestCase):
     def setUp(self):
         self.client = Client()
-        self.registration_url = reverse("user_registration")
-        self.login_url = reverse("token_obtain_pair")
-        self.list_url = reverse("task_list")
-        self.detail_url = reverse("task_detail", args=["task_id"])
-        self.username = "user_test_001"
-        self.password = "Aa123456"
-        self.new_user = self.__register_new_user(self.username, self.password)
-        self.tokens = self.__get_access_token(self.username, self.password)
+        self.registration_url = "/api/users/registration/"
+        self.login_url = "/api/login/"
+        self.list_url = "/api/tasks/"
+        self.detail_url = "/api/tasks/{0}/"
+        self.tokens = self.__register_and_login(
+            UserDataTest.USER_USERNAME, UserDataTest.USER_PASSWORD
+        )
 
     def test_GET_task_list_without_authentication(self):
         response = self.client.get(self.list_url)
@@ -66,7 +66,7 @@ class TestViews(TestCase):
         list_of_tasks = self.__get_list_of_tasks(auth_header)
         task = list_of_tasks.data[0]
 
-        response = self.client.get("/api/tasks/{0}/".format(task["id"]), **auth_header)
+        response = self.client.get(self.detail_url.format(task["id"]), **auth_header)
 
         self.assertEquals(response.status_code, 200)
         self.assertEquals(
@@ -92,6 +92,29 @@ class TestViews(TestCase):
             len(list_of_tasks_after_delete_task.data),
         )
 
+    def test_POST_add_task_exceed_maximum_tasks_per_day(self):
+        pass
+
+    def __register_new_user(self, username, password):
+        response = self.client.post(
+            self.registration_url, {"username": username, "password": password}
+        )
+        return response
+
+    def __login(self, username, password):
+        response = self.client.post(
+            self.login_url, {"username": username, "password": password}
+        )
+        return response
+
+    def __register_and_login(self, username, password):
+        self.__register_new_user(username, password)
+        response = self.__login(username, password)
+        return response.data
+
+    def __get_auth_header(self, access_token):
+        return {"HTTP_AUTHORIZATION": "Bearer " + access_token}
+
     def __delete_task(self, task_id, auth_header):
         return self.client.delete("/api/tasks/{0}/".format(task_id), **auth_header)
 
@@ -108,21 +131,3 @@ class TestViews(TestCase):
             **auth_header
         )
         return response
-
-    def __get_auth_header(self, access_token):
-        return {"HTTP_AUTHORIZATION": "Bearer " + access_token}
-
-    def __register_new_user(self, username, password):
-        response = self.client.post(
-            self.registration_url, {"username": username, "password": password}
-        )
-        return response
-
-    def __get_access_token(self, username, password):
-        response = self.client.post(
-            self.login_url, {"username": username, "password": password}
-        )
-        return response.data
-
-    def __register_and_login(self):
-        pass
