@@ -2,8 +2,8 @@
 
 ### 1. Installation:
 
-- OS for development: Windows 10.
-- Install docker desktop.
+    - OS for development: Windows 10.
+    - Install docker desktop.
 
 ### 2. How to run the app on local machine:
 
@@ -14,15 +14,15 @@
 #### Step 2:
 
     - Cd to folder that contains source code of application(pull from GIT).
-    - Run this command: `docker-compose up`. Todo app will be setup and migrate automatically.
-    - After above command done: 2 services will be created that are **backend** and **db**.
+    - Run this command: docker-compose up. Todo app will be setup and migrate automatically.
+    - After above command done: 2 services will be created that are <backend> and <db>.
 
 #### Step 3:
 
     - Make sure you are in Todo project folder
-    - Access docker container of **backend** and create super user:
-      - `docker-compose exec backend sh`
-      - run this command: `python manage.py createsuperuser`. Now you can set `username` and `password` for this super user.
+    - Access docker container of <backend> and create super user:
+      - docker-compose exec backend sh
+      - run this command: python manage.py createsuperuser. Now you can set <username> and <password> for this super user.
 
 #### Step 4(Optional):
 
