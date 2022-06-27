@@ -1,7 +1,7 @@
 package constants
 
 const (
-	FileEnvironment = "../.env"
+	FileEnvironment = ".env"
 	DsnEnvironment  = "DSN_POSTGRES"
 )
 

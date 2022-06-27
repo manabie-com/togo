@@ -1,8 +1,10 @@
 package utils
 
 import (
+	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/caarlos0/env"
 	"github.com/joho/godotenv"
@@ -51,7 +53,8 @@ type Environment struct {
 var Env *Environment
 
 func LoadEnv(file string) {
-	err := godotenv.Load(file)
+	fileName := getPathfile(file)
+	err := godotenv.Load(fileName)
 	if err != nil {
 		log.Fatalf("Some error occured. Err: %s", err)
 	}
@@ -76,4 +79,13 @@ func getEnvironmentFromEnv(object *Environment) {
 		return
 	}
 	env.Parse(object)
+}
+
+func getPathfile(fileName string) string {
+	path, err := os.Getwd()
+	if err != nil {
+		log.Println(err)
+	}
+	curArr := strings.Split(path, "/cmd")
+	return fmt.Sprintf("%s/%s", curArr[0], fileName)
 }
