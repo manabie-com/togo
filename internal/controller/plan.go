@@ -21,7 +21,7 @@ const (
 
 func GetPlan(w http.ResponseWriter, r *http.Request) {
 	username := context.Get(r, "username").(string)
-	plan, err := repository.GetPlanByUsername(username)
+	plan, err := repository.Repository.GetPlanByUsername(username)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "failed to get plan!")
 		return
@@ -46,7 +46,7 @@ func UpgradePlan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	plan, err := repository.GetPlanByID(id)
+	plan, err := repository.Repository.GetPlanByID(id)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "failed to get plan!")
 		return
@@ -57,7 +57,7 @@ func UpgradePlan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = repository.UpgradePlan(id, string(vip), config.VIP_LIMIT)
+	err = repository.Repository.UpgradePlan(id, string(vip), config.VIP_LIMIT)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "failed to upgrade plan!")
 		return

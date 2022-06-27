@@ -12,7 +12,7 @@ import (
 type userController struct{}
 
 func GetAllUsers(w http.ResponseWriter, r *http.Request) {
-	users, err := repository.GetAllUsers()
+	users, err := repository.Repository.GetAllUsers()
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "failed to get users!")
 		return
@@ -30,7 +30,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := repository.GetUserByID(id)
+	user, err := repository.Repository.GetUserByID(id)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "failed to get user!")
 		return
@@ -48,13 +48,13 @@ func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = repository.DeleteAllTaskOfUser(id)
+	err = repository.Repository.DeleteAllTaskOfUser(id)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "failed to delete user!")
 		return
 	}
 
-	err = repository.DeleteUserByID(id)
+	err = repository.Repository.DeleteUserByID(id)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "failed to delete user!")
 		return

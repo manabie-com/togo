@@ -30,7 +30,7 @@ func Authorization(next http.Handler) http.Handler {
 			}
 			username := token["username"].(string)
 
-			checkUserExist, err := repository.CheckUserExist(username)
+			checkUserExist, err := repository.Repository.CheckUserExist(username)
 			if err != nil {
 				utils.ERROR(w, http.StatusInternalServerError, err, "failed to check user exist!")
 				return
@@ -68,7 +68,7 @@ func AdminAuthorization(next http.Handler) http.Handler {
 			}
 			username := token["username"].(string)
 
-			checkUserExist, err := repository.CheckUserExist(username)
+			checkUserExist, err := repository.Repository.CheckUserExist(username)
 			if err != nil {
 				utils.ERROR(w, http.StatusInternalServerError, err, "failed to check user exist!")
 				return

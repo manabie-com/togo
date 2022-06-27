@@ -23,7 +23,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	checkUserExist, err := repository.CheckUserExist(user.Username)
+	checkUserExist, err := repository.Repository.CheckUserExist(user.Username)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "failed to check user exist!")
 		return
@@ -41,7 +41,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = repository.AddUser(user)
+	err = repository.Repository.AddUser(user)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "failed to add user!")
 		return
@@ -59,7 +59,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := repository.GetUserByName(newUser.Username)
+	user, err := repository.Repository.GetUserByName(newUser.Username)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "user not found!")
 		return
@@ -80,7 +80,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdatePassword(w http.ResponseWriter, r *http.Request) {
-	user, err := repository.GetUserByName(context.Get(r, "username").(string))
+	user, err := repository.Repository.GetUserByName(context.Get(r, "username").(string))
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "failed to get user!")
 		return
@@ -100,7 +100,7 @@ func UpdatePassword(w http.ResponseWriter, r *http.Request) {
 
 	user.PreparePassword()
 
-	err = repository.UpdateUser(user)
+	err = repository.Repository.UpdateUser(user)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "failed to update user!")
 		return

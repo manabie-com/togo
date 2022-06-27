@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"lntvan166/togo/internal/config"
-	"lntvan166/togo/internal/db"
+	"lntvan166/togo/internal/repository"
 	"lntvan166/togo/internal/routes"
 	"log"
 	"net/http"
@@ -16,7 +16,7 @@ func main() {
 
 	config.Load()
 
-	db.Connect()
+	repository.Connect()
 
 	route := mux.NewRouter()
 	routes.HandleRequest(route)

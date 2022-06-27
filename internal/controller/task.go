@@ -16,13 +16,13 @@ import (
 func CreateTask(w http.ResponseWriter, r *http.Request) {
 
 	username := context.Get(r, "username").(string)
-	id, err := repository.GetUserIDByUsername(username)
+	id, err := repository.Repository.GetUserIDByUsername(username)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "get user id failed")
 		return
 	}
 
-	isLimit, err := repository.GetLimitTaskToday(id)
+	isLimit, err := repository.Repository.GetLimitTaskToday(id)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "check limit task today failed")
 		return
@@ -39,13 +39,13 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 
 	task.CreatedAt = utils.GetCurrentTime()
 	task.UserID = id
-	err = repository.AddTask(&task)
+	err = repository.Repository.AddTask(&task)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "add task failed")
 		return
 	}
 
-	numberTask, err := repository.GetNumberOfTaskToday(id)
+	numberTask, err := repository.Repository.GetNumberOfTaskToday(id)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "get number of task today failed")
 		return
@@ -56,7 +56,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAllTask(w http.ResponseWriter, r *http.Request) {
-	tasks, err := repository.GetAllTask()
+	tasks, err := repository.Repository.GetAllTask()
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "get all task failed")
 		return
@@ -67,7 +67,7 @@ func GetAllTask(w http.ResponseWriter, r *http.Request) {
 func GetAllTaskOfUser(w http.ResponseWriter, r *http.Request) {
 	username := context.Get(r, "username").(string)
 
-	tasks, err := repository.GetTaskByUsername(username)
+	tasks, err := repository.Repository.GetTaskByUsername(username)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "get all task of user failed!")
 		return
@@ -85,7 +85,7 @@ func GetTaskByID(w http.ResponseWriter, r *http.Request) {
 
 	username := context.Get(r, "username").(string)
 
-	task, err := repository.GetTaskByID(id)
+	task, err := repository.Repository.GetTaskByID(id)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "get task by id failed!")
 		return
@@ -110,7 +110,7 @@ func CheckTask(w http.ResponseWriter, r *http.Request) {
 
 	username := context.Get(r, "username").(string)
 
-	user_id, err := repository.GetUserIDByTaskID(id)
+	user_id, err := repository.Repository.GetUserIDByTaskID(id)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "task does not exist!")
 		return
@@ -122,7 +122,7 @@ func CheckTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = repository.CheckTask(id)
+	err = repository.Repository.CheckTask(id)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "complete task failed!")
 		return
@@ -139,7 +139,7 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	username := context.Get(r, "username").(string)
-	user_id, err := repository.GetUserIDByTaskID(id)
+	user_id, err := repository.Repository.GetUserIDByTaskID(id)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "task does not exist!")
 		return
@@ -151,7 +151,7 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	task, err := repository.GetTaskByID(id)
+	task, err := repository.Repository.GetTaskByID(id)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "get task by id failed!")
 		return
@@ -159,7 +159,7 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 
 	json.NewDecoder(r.Body).Decode(&task)
 
-	err = repository.UpdateTask(task)
+	err = repository.Repository.UpdateTask(task)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "update task failed!")
 		return
@@ -177,7 +177,7 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	}
 
 	username := context.Get(r, "username").(string)
-	user_id, err := repository.GetUserIDByTaskID(id)
+	user_id, err := repository.Repository.GetUserIDByTaskID(id)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "task does not exist!")
 		return
@@ -188,7 +188,7 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = repository.DeleteTask(id)
+	err = repository.Repository.DeleteTask(id)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "delete task failed!")
 		return

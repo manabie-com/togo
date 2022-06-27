@@ -1,4 +1,4 @@
-package db
+package repository
 
 import (
 	"database/sql"
@@ -6,9 +6,11 @@ import (
 	"lntvan166/togo/internal/config"
 )
 
-var (
+type repository struct {
 	DB *sql.DB
-)
+}
+
+var Repository repository
 
 func GetPostgresConnectionString() string {
 	var (
@@ -31,12 +33,12 @@ func Connect() {
 		psqlInfo = GetPostgresConnectionString()
 	}
 
-	DB, err = sql.Open("postgres", psqlInfo)
+	Repository.DB, err = sql.Open("postgres", psqlInfo)
 	if err != nil {
 		panic(err)
 	}
 
-	err = DB.Ping()
+	err = Repository.DB.Ping()
 	if err != nil {
 		panic(err)
 	}

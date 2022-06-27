@@ -14,7 +14,7 @@ func GetCurrentTime() string {
 }
 
 func CheckAccessPermission(w http.ResponseWriter, username string, taskUserID int) error {
-	userID, err := repository.GetUserIDByUsername(username)
+	userID, err := repository.Repository.GetUserIDByUsername(username)
 	if err != nil {
 		return err
 	}

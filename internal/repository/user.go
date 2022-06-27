@@ -1,15 +1,14 @@
 package repository
 
 import (
-	"lntvan166/togo/internal/db"
 	e "lntvan166/togo/internal/entities"
 )
 
 // CREATE
 
-func AddUser(u *e.User) error {
+func (r *repository) AddUser(u *e.User) error {
 	const query = `INSERT INTO users (username, password, plan, max_todo) VALUES ($1, $2, $3, $4)`
-	tx, err := db.DB.Begin()
+	tx, err := r.DB.Begin()
 	if err != nil {
 		return err
 	}
@@ -24,9 +23,9 @@ func AddUser(u *e.User) error {
 
 // READ
 
-func GetAllUsers() ([]*e.User, error) {
+func (r *repository) GetAllUsers() ([]*e.User, error) {
 	const query = `SELECT * FROM users`
-	rows, err := db.DB.Query(query)
+	rows, err := r.DB.Query(query)
 	if err != nil {
 		return nil, err
 	}
@@ -43,80 +42,80 @@ func GetAllUsers() ([]*e.User, error) {
 	return users, nil
 }
 
-func GetUserByName(username string) (*e.User, error) {
+func (r *repository) GetUserByName(username string) (*e.User, error) {
 	const query = `SELECT * FROM users WHERE username = $1`
 	u := &e.User{}
-	err := db.DB.QueryRow(query, username).Scan(&u.ID, &u.Username, &u.Password, &u.Plan, &u.MaxTodo)
+	err := r.DB.QueryRow(query, username).Scan(&u.ID, &u.Username, &u.Password, &u.Plan, &u.MaxTodo)
 	if err != nil {
 		return nil, err
 	}
 	return u, nil
 }
 
-func GetUserByID(id int) (*e.User, error) {
+func (r *repository) GetUserByID(id int) (*e.User, error) {
 	const query = `SELECT * FROM users WHERE id = $1`
 	u := &e.User{}
-	err := db.DB.QueryRow(query, id).Scan(&u.ID, &u.Username, &u.Password, &u.Plan, &u.MaxTodo)
+	err := r.DB.QueryRow(query, id).Scan(&u.ID, &u.Username, &u.Password, &u.Plan, &u.MaxTodo)
 	if err != nil {
 		return nil, err
 	}
 	return u, nil
 }
 
-func GetUserIDByUsername(username string) (int, error) {
+func (r *repository) GetUserIDByUsername(username string) (int, error) {
 	const query = `SELECT id FROM users WHERE username = $1`
 	var id int
-	err := db.DB.QueryRow(query, username).Scan(&id)
+	err := r.DB.QueryRow(query, username).Scan(&id)
 	if err != nil {
 		return 0, err
 	}
 	return id, nil
 }
 
-func GetMaxTaskByUserID(id int) (int, error) {
+func (r *repository) GetMaxTaskByUserID(id int) (int, error) {
 	const query = `SELECT max_todo FROM users WHERE id = $1`
 	var max int
-	err := db.DB.QueryRow(query, id).Scan(&max)
+	err := r.DB.QueryRow(query, id).Scan(&max)
 	if err != nil {
 		return 0, err
 	}
 	return max, nil
 }
 
-func GetNumberOfTaskToday(id int) (int, error) {
+func (r *repository) GetNumberOfTaskToday(id int) (int, error) {
 	const query = `SELECT COUNT(*) FROM tasks WHERE user_id = $1 AND DATE(created_at) = CURRENT_DATE`
 	var count int
-	err := db.DB.QueryRow(query, id).Scan(&count)
+	err := r.DB.QueryRow(query, id).Scan(&count)
 	if err != nil {
 		return 0, err
 	}
 	return count, nil
 }
 
-func GetPlanByID(id int) (string, error) {
+func (r *repository) GetPlanByID(id int) (string, error) {
 	const query = `SELECT plan FROM users WHERE id = $1`
 	var plan string
-	err := db.DB.QueryRow(query, id).Scan(&plan)
+	err := r.DB.QueryRow(query, id).Scan(&plan)
 	if err != nil {
 		return "", err
 	}
 	return plan, nil
 }
 
-func GetPlanByUsername(username string) (string, error) {
+func (r *repository) GetPlanByUsername(username string) (string, error) {
 	const query = `SELECT plan FROM users WHERE username = $1`
 	var plan string
-	err := db.DB.QueryRow(query, username).Scan(&plan)
+	err := r.DB.QueryRow(query, username).Scan(&plan)
 	if err != nil {
 		return "", err
 	}
 	return plan, nil
 }
 
-func CheckUserExist(username string) (bool, error) {
+func (r *repository) CheckUserExist(username string) (bool, error) {
 	const query = `SELECT * FROM users WHERE username = $1`
 	u := &e.User{}
-	err := db.DB.QueryRow(query, username).Scan(&u.ID, &u.Username, &u.Password, &u.Plan, &u.MaxTodo)
+	err := r.DB.QueryRow(query, username).Scan(&u.ID, &u.Username, &u.Password, &u.Plan, &u.MaxTodo)
 	if err != nil {
 		return false, err
 	}
@@ -125,9 +124,9 @@ func CheckUserExist(username string) (bool, error) {
 
 // UPDATE
 
-func UpdateUser(u *e.User) error {
+func (r *repository) UpdateUser(u *e.User) error {
 	const query = `UPDATE users SET username = $1, password = $2, plan = $3, max_todo = $4 WHERE id = $5`
-	tx, err := db.DB.Begin()
+	tx, err := r.DB.Begin()
 	if err != nil {
 		return err
 	}
@@ -140,9 +139,9 @@ func UpdateUser(u *e.User) error {
 	return nil
 }
 
-func UpgradePlan(id int, plan string, limit int) error {
+func (r *repository) UpgradePlan(id int, plan string, limit int) error {
 	const query = `UPDATE users SET plan = $1, max_todo = $2 WHERE id = $3`
-	tx, err := db.DB.Begin()
+	tx, err := r.DB.Begin()
 	if err != nil {
 		return err
 	}
@@ -157,9 +156,9 @@ func UpgradePlan(id int, plan string, limit int) error {
 
 // DELETE
 
-func DeleteUserByID(id int) error {
+func (r *repository) DeleteUserByID(id int) error {
 	const query = `DELETE FROM users WHERE id = $1`
-	tx, err := db.DB.Begin()
+	tx, err := r.DB.Begin()
 	if err != nil {
 		return err
 	}
