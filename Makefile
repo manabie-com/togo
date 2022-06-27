@@ -16,11 +16,11 @@ test-migration:
 	@echo migrate -database ${POSTGRESQL_URL_MIGRATION} -path db/migrations down
 	@echo migrate -database ${POSTGRESQL_URL_MIGRATION} -path db/migrations up
 
-integration-test:
- 	go test ./integrationtest
-
-test:
+test-all:
 	go test ./...
+
+integration-test:
+	go test ./integrationtest
 
 nodemon:
 	nodemon --exec go run cmd/main.go --signal SIGTERM

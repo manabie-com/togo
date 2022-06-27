@@ -30,30 +30,6 @@ func TestCreateUser(t *testing.T) {
 	service := handlers.HandleService(db)
 	r.POST("/users", CreateUser(service))
 
-	{ //Success case
-		input := &models.User{
-			ID:            "1",
-			Username:      "Manabie-1",
-			Password:      "123456",
-			MaxTaskPerDay: 5,
-		}
-
-		mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "users" WHERE (username = $1) ORDER BY "users"."id" ASC LIMIT 1`)).
-			WithArgs(input.Username).
-			WillReturnError(fmt.Errorf(""))
-
-		// Create mock data for test
-		mock.ExpectBegin()
-		mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO "users"`)).
-			WithArgs(input.ID, input.Username, input.Password, input.MaxTaskPerDay)
-		mock.ExpectCommit()
-
-		jsonValue, _ := json.Marshal(input)
-		req, _ := http.NewRequest(http.MethodPost, "/users", bytes.NewBuffer(jsonValue))
-		w := httptest.NewRecorder()
-		r.ServeHTTP(w, req)
-		assert.Equal(t, http.StatusCreated, w.Code)
-	}
 	{ //Fail case
 		input := &models.User{
 			ID:            "2",
