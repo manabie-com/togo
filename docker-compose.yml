@@ -1,0 +1,43 @@
+version: "3.3"
+
+services:
+  redis:
+    image: "redis"
+    ports:
+      - "6379:6379"
+    networks:
+      - togo_network
+
+  web:
+    build: .
+    entrypoint: /src/entrypoint.sh
+    environment:
+      - DEBUG=1
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_BACKEND_URL=redis://redis:6379/0
+    volumes:
+      - .:/src
+    ports:
+      - "8000:8000"
+    networks:
+      - togo_network
+    depends_on:
+      - redis
+
+  celery:
+    build: .
+    command: celery -A togo worker -B -l info
+    environment:
+      - DEBUG=1
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_BACKEND_URL=redis://redis:6379/0
+    volumes:
+      - .:/src
+    networks:
+      - togo_network
+    depends_on:
+      - web
+
+networks:
+  togo_network:
+    driver: bridge
