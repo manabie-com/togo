@@ -84,12 +84,12 @@ go run cmd/main.go
 	go test ./integrationtest
 ```
 
-#### If you want to test all after run projection
+#### If you want to unit test test after run projection
 ```bash
-	go test ./...
+	go test ./internal/api/handlers/...
 ```
 
-#### If you want to remove table database
+#### If you want to remove table on database
 ```bash
   make migration-down
 ```
