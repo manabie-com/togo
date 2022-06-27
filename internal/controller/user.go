@@ -1,24 +1,22 @@
 package controller
 
 import (
-	"lntvan166/togo/internal/repository"
-	"lntvan166/togo/internal/utils"
+	repo "lntvan166/togo/internal/repository"
+	"lntvan166/togo/pkg"
 	"net/http"
 	"strconv"
 
 	"github.com/gorilla/mux"
 )
 
-type userController struct{}
-
 func GetAllUsers(w http.ResponseWriter, r *http.Request) {
-	users, err := repository.Repository.GetAllUsers()
+	users, err := repo.Repository.GetAllUsers()
 	if err != nil {
-		utils.ERROR(w, http.StatusInternalServerError, err, "failed to get users!")
+		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to get users!")
 		return
 	}
 
-	utils.JSON(w, http.StatusOK, users)
+	pkg.JSON(w, http.StatusOK, users)
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
@@ -26,17 +24,17 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		utils.ERROR(w, http.StatusBadRequest, err, "invalid user id!")
+		pkg.ERROR(w, http.StatusBadRequest, err, "invalid user id!")
 		return
 	}
 
-	user, err := repository.Repository.GetUserByID(id)
+	user, err := repo.Repository.GetUserByID(id)
 	if err != nil {
-		utils.ERROR(w, http.StatusInternalServerError, err, "failed to get user!")
+		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to get user!")
 		return
 	}
 
-	utils.JSON(w, http.StatusOK, user)
+	pkg.JSON(w, http.StatusOK, user)
 }
 
 func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
@@ -44,21 +42,21 @@ func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
 
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		utils.ERROR(w, http.StatusBadRequest, err, "invalid user id!")
+		pkg.ERROR(w, http.StatusBadRequest, err, "invalid user id!")
 		return
 	}
 
-	err = repository.Repository.DeleteAllTaskOfUser(id)
+	err = repo.Repository.DeleteAllTaskOfUser(id)
 	if err != nil {
-		utils.ERROR(w, http.StatusInternalServerError, err, "failed to delete user!")
+		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to delete user!")
 		return
 	}
 
-	err = repository.Repository.DeleteUserByID(id)
+	err = repo.Repository.DeleteUserByID(id)
 	if err != nil {
-		utils.ERROR(w, http.StatusInternalServerError, err, "failed to delete user!")
+		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to delete user!")
 		return
 	}
 
-	utils.JSON(w, http.StatusOK, "Delete Successfully")
+	pkg.JSON(w, http.StatusOK, "Delete Successfully")
 }

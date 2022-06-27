@@ -3,8 +3,8 @@ package controller
 import (
 	"fmt"
 	"lntvan166/togo/internal/config"
-	"lntvan166/togo/internal/repository"
-	"lntvan166/togo/internal/utils"
+	repo "lntvan166/togo/internal/repository"
+	"lntvan166/togo/pkg"
 	"net/http"
 	"strconv"
 
@@ -21,13 +21,13 @@ const (
 
 func GetPlan(w http.ResponseWriter, r *http.Request) {
 	username := context.Get(r, "username").(string)
-	plan, err := repository.Repository.GetPlanByUsername(username)
+	plan, err := repo.Repository.GetPlanByUsername(username)
 	if err != nil {
-		utils.ERROR(w, http.StatusInternalServerError, err, "failed to get plan!")
+		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to get plan!")
 		return
 	}
 
-	utils.JSON(w, http.StatusOK, plan)
+	pkg.JSON(w, http.StatusOK, plan)
 }
 
 func UpgradePlan(w http.ResponseWriter, r *http.Request) {
@@ -35,33 +35,33 @@ func UpgradePlan(w http.ResponseWriter, r *http.Request) {
 	admin := config.ADMIN
 
 	if username != admin {
-		utils.ERROR(w, http.StatusBadRequest, fmt.Errorf("you are not admin"), "")
+		pkg.ERROR(w, http.StatusBadRequest, fmt.Errorf("you are not admin"), "")
 		return
 	}
 
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		utils.ERROR(w, http.StatusBadRequest, err, "invalid plan id!")
+		pkg.ERROR(w, http.StatusBadRequest, err, "invalid plan id!")
 		return
 	}
 
-	plan, err := repository.Repository.GetPlanByID(id)
+	plan, err := repo.Repository.GetPlanByID(id)
 	if err != nil {
-		utils.ERROR(w, http.StatusInternalServerError, err, "failed to get plan!")
+		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to get plan!")
 		return
 	}
 
 	if plan == string(vip) {
-		utils.ERROR(w, http.StatusBadRequest, fmt.Errorf("this user have already vip plan"), "")
+		pkg.ERROR(w, http.StatusBadRequest, fmt.Errorf("this user have already vip plan"), "")
 		return
 	}
 
-	err = repository.Repository.UpgradePlan(id, string(vip), config.VIP_LIMIT)
+	err = repo.Repository.UpgradePlan(id, string(vip), config.VIP_LIMIT)
 	if err != nil {
-		utils.ERROR(w, http.StatusInternalServerError, err, "failed to upgrade plan!")
+		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to upgrade plan!")
 		return
 	}
 
-	utils.JSON(w, http.StatusOK, "message: upgrade plan success")
+	pkg.JSON(w, http.StatusOK, "message: upgrade plan success")
 }
