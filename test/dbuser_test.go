@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/huynhhuuloc129/todo/controllers"
 	"github.com/huynhhuuloc129/todo/models"
 	"github.com/huynhhuuloc129/todo/util"
 	"github.com/stretchr/testify/assert"
@@ -45,8 +46,7 @@ func RandomNewUser() models.NewUser {
 // unit test for get all user
 func TestGetAllUser(t *testing.T) {
 	db, mock := NewMock()
-	repo := &models.Repository{DB: db}
-	defer repo.Close()
+	h := controllers.NewBaseHandler(db) 
 
 	rows := sqlmock.NewRows([]string{"id", "username", "password", "limittask"})
 	for i := 0; i < 10; i++ {
@@ -57,7 +57,7 @@ func TestGetAllUser(t *testing.T) {
 	query := regexp.QuoteMeta(`SELECT * FROM users`)
 	mock.ExpectQuery(query).WillReturnRows(rows)
 
-	users, err := repo.GetAllUser()
+	users, err := models.GetAllUser(h.DB)
 	assert.NotEmpty(t, users)
 	assert.NoError(t, err)
 	assert.Len(t, users, 10)
@@ -66,8 +66,7 @@ func TestGetAllUser(t *testing.T) {
 // unit test for get user by id
 func TestFindUserById(t *testing.T) {
 	db, mock := NewMock()
-	repo := &models.Repository{DB: db}
-	defer repo.Close()
+	h := controllers.NewBaseHandler(db) 
 
 	user := RandomUser()
 	rows := sqlmock.NewRows([]string{"id", "username", "password", "limittask"}).AddRow(user.Id, user.Username, user.Password, user.LimitTask)
@@ -75,7 +74,7 @@ func TestFindUserById(t *testing.T) {
 	query := regexp.QuoteMeta(`SELECT * FROM users WHERE id = $1`)
 
 	mock.ExpectQuery(query).WithArgs(user.Id).WillReturnRows(rows)
-	user, valid := repo.FindUserByID(int(user.Id))
+	user, valid := models.FindUserByID(h.DB, int(user.Id))
 
 	assert.NotNil(t, user)
 	assert.NotEqual(t, false, valid)
@@ -84,15 +83,14 @@ func TestFindUserById(t *testing.T) {
 // unit test check username exist
 func TestCheckUserNameExist(t *testing.T) {
 	db, mock := NewMock()
-	repo := models.Repository{DB: db}
-	defer repo.Close()
+	h := controllers.NewBaseHandler(db) 
 
 	user := RandomUser()
 	rows := sqlmock.NewRows([]string{"id", "username", "password", "limittask"}).AddRow(user.Id, user.Username, user.Password, user.LimitTask)
 	query := regexp.QuoteMeta(`SELECT * FROM users WHERE username = $1`)
 	mock.ExpectQuery(query).WithArgs(user.Username).WillReturnRows(rows)
 
-	user, valid := repo.CheckUserNameExist(user.Username)
+	user, valid := models.CheckUserNameExist(h.DB, user.Username)
 	assert.NotNil(t, user)
 	assert.NotEqual(t, false, valid)
 }
@@ -100,36 +98,34 @@ func TestCheckUserNameExist(t *testing.T) {
 // unit test for delete user
 func TestDeleteUser(t *testing.T) {
 	db, mock := NewMock()
-	repo := models.Repository{DB: db}
-	defer repo.Close()
+	h := controllers.NewBaseHandler(db) 
 
 	user := RandomUser()
 	query := regexp.QuoteMeta(`DELETE FROM users WHERE id = $1`)
 	mock.ExpectExec(query).WithArgs(user.Id).WillReturnResult(sqlmock.NewResult(0, 1))
 
-	err := repo.DeleteUser(int(user.Id))
+	err := models.DeleteUser(h.DB, int(user.Id))
 	assert.NoError(t, err)
 }
 
 // unit test for insert user
 func TestInsertUser(t *testing.T) {
 	db, mock := NewMock()
-	repo := &models.Repository{DB: db}
-	defer repo.Close()
+	h := controllers.NewBaseHandler(db) 
 
 	query := regexp.QuoteMeta(`INSERT INTO users(username, password, limittask) VALUES ($1, $2, $3);`)
 
 	newUser := RandomNewUser()
 	mock.ExpectExec(query).WithArgs(newUser.Username, newUser.Password, newUser.LimitTask).WillReturnResult(sqlmock.NewResult(0, 1))
 
-	err := repo.InsertUser(newUser)
+	err := models.InsertUser(h.DB, newUser)
 	assert.NoError(t, err)
 }
 
 // unit test for delete user
 func TestUpdateUser(t *testing.T) {
 	db, mock := NewMock()
-	repo := models.Repository{DB: db}
+	h := controllers.NewBaseHandler(db) 
 
 	query := regexp.QuoteMeta(`UPDATE users SET username = $1, password = $2, limittask = $3 WHERE id = $4`)
 
@@ -137,6 +133,6 @@ func TestUpdateUser(t *testing.T) {
 	newUser := RandomNewUser()
 	mock.ExpectExec(query).WithArgs(newUser.Username, newUser.Password, newUser.LimitTask, user.Id).WillReturnResult(sqlmock.NewResult(0, 1))
 
-	err := repo.UpdateUser(newUser, int(user.Id))
+	err := models.UpdateUser(h.DB, newUser, int(user.Id))
 	assert.NoError(t, err)
 }

@@ -9,22 +9,18 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type Repository struct {
-	DB *sql.DB
-}
-var Repo Repository
-
 // connect to database
-func Connect() { 
+func Connect() *sql.DB{ 
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Failed to load env")
 	}	
 	
-	Repo.DB, err = sql.Open("postgres", os.Getenv("DB_URI"))
+	db, err := sql.Open("postgres", os.Getenv("DB_URI"))
 	if err != nil {
 		log.Fatal("Connect to database failed")
 	}
+	return db
 }
 
 // Hash password into a crypt text
@@ -39,6 +35,6 @@ func CheckPasswordHash(hashedPassword, password string) error {
 }
 
 // interface implement
-func (r *Repository)Close() {
-	r.DB.Close()
-}
+// func (r *Repository)Close() {
+// 	r.DB.Close()
+// }
