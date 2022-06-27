@@ -3,7 +3,7 @@ package controller
 import (
 	"fmt"
 	"lntvan166/togo/internal/config"
-	"lntvan166/togo/internal/model"
+	"lntvan166/togo/internal/repository"
 	"lntvan166/togo/internal/utils"
 	"net/http"
 	"strconv"
@@ -21,7 +21,7 @@ const (
 
 func GetPlan(w http.ResponseWriter, r *http.Request) {
 	username := context.Get(r, "username").(string)
-	plan, err := model.GetPlanByUsername(username)
+	plan, err := repository.GetPlanByUsername(username)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "failed to get plan!")
 		return
@@ -46,7 +46,7 @@ func UpgradePlan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	plan, err := model.GetPlanByID(id)
+	plan, err := repository.GetPlanByID(id)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "failed to get plan!")
 		return
@@ -57,7 +57,7 @@ func UpgradePlan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = model.UpgradePlan(id, string(vip), config.VIP_LIMIT)
+	err = repository.UpgradePlan(id, string(vip), config.VIP_LIMIT)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "failed to upgrade plan!")
 		return

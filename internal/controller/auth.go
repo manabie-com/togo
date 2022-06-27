@@ -3,7 +3,7 @@ package controller
 import (
 	"encoding/json"
 	"errors"
-	"lntvan166/togo/internal/model"
+	"lntvan166/togo/internal/repository"
 	"lntvan166/togo/internal/utils"
 	"net/http"
 
@@ -23,7 +23,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	checkUserExist, err := model.CheckUserExist(user.Username)
+	checkUserExist, err := repository.CheckUserExist(user.Username)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "failed to check user exist!")
 		return
@@ -41,7 +41,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = model.AddUser(user)
+	err = repository.AddUser(user)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "failed to add user!")
 		return
@@ -59,7 +59,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := model.GetUserByName(newUser.Username)
+	user, err := repository.GetUserByName(newUser.Username)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "user not found!")
 		return
@@ -80,7 +80,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdatePassword(w http.ResponseWriter, r *http.Request) {
-	user, err := model.GetUserByName(context.Get(r, "username").(string))
+	user, err := repository.GetUserByName(context.Get(r, "username").(string))
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "failed to get user!")
 		return
@@ -100,7 +100,7 @@ func UpdatePassword(w http.ResponseWriter, r *http.Request) {
 
 	user.PreparePassword()
 
-	err = model.UpdateUser(user)
+	err = repository.UpdateUser(user)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "failed to update user!")
 		return

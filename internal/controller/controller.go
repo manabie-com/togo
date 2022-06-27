@@ -1,4 +1,5 @@
 package controller
 
-type Controller struct {
+type controller struct {
+	userController
 }

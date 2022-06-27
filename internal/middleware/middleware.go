@@ -3,7 +3,7 @@ package middleware
 import (
 	"errors"
 	"lntvan166/togo/internal/config"
-	"lntvan166/togo/internal/model"
+	"lntvan166/togo/internal/repository"
 	"lntvan166/togo/internal/utils"
 	"net/http"
 	"strings"
@@ -30,7 +30,7 @@ func Authorization(next http.Handler) http.Handler {
 			}
 			username := token["username"].(string)
 
-			checkUserExist, err := model.CheckUserExist(username)
+			checkUserExist, err := repository.CheckUserExist(username)
 			if err != nil {
 				utils.ERROR(w, http.StatusInternalServerError, err, "failed to check user exist!")
 				return
@@ -68,7 +68,7 @@ func AdminAuthorization(next http.Handler) http.Handler {
 			}
 			username := token["username"].(string)
 
-			checkUserExist, err := model.CheckUserExist(username)
+			checkUserExist, err := repository.CheckUserExist(username)
 			if err != nil {
 				utils.ERROR(w, http.StatusInternalServerError, err, "failed to check user exist!")
 				return

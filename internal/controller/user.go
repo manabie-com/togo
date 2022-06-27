@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"lntvan166/togo/internal/model"
+	"lntvan166/togo/internal/repository"
 	"lntvan166/togo/internal/utils"
 	"net/http"
 	"strconv"
@@ -9,8 +9,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
+type userController struct{}
+
 func GetAllUsers(w http.ResponseWriter, r *http.Request) {
-	users, err := model.GetAllUsers()
+	users, err := repository.GetAllUsers()
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "failed to get users!")
 		return
@@ -28,7 +30,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := model.GetUserByID(id)
+	user, err := repository.GetUserByID(id)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "failed to get user!")
 		return
@@ -46,13 +48,13 @@ func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = model.DeleteAllTaskOfUser(id)
+	err = repository.DeleteAllTaskOfUser(id)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "failed to delete user!")
 		return
 	}
 
-	err = model.DeleteUserByID(id)
+	err = repository.DeleteUserByID(id)
 	if err != nil {
 		utils.ERROR(w, http.StatusInternalServerError, err, "failed to delete user!")
 		return

@@ -2,7 +2,7 @@ package utils
 
 import (
 	"fmt"
-	"lntvan166/togo/internal/model"
+	"lntvan166/togo/internal/repository"
 	"net/http"
 	"time"
 )
@@ -14,7 +14,7 @@ func GetCurrentTime() string {
 }
 
 func CheckAccessPermission(w http.ResponseWriter, username string, taskUserID int) error {
-	userID, err := model.GetUserIDByUsername(username)
+	userID, err := repository.GetUserIDByUsername(username)
 	if err != nil {
 		return err
 	}

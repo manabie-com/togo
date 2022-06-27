@@ -1,4 +1,4 @@
-package model
+package repository
 
 import (
 	"lntvan166/togo/internal/db"
