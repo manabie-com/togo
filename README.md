@@ -18,7 +18,13 @@
   - Access docker container of **backend** and create super user:
     - `docker-compose exec backend sh`
     - run this command: `python manage.py createsuperuser`. Now you can set `username` and `password` for this super user.
-- At this step TODO APIs are ready for use.
+- Step 4(Optional):
+  - If you want to create a user as super user, you can make a POST request to create a new user and add <is_superuser> field to payload.
+  - Endpoint: POST /api/users/registration/
+  - Example:
+    - curl -X POST "http://localhost:8000/api/users/registration/" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"username\": \"admin\", \"password\": \"admin\", \"is_superuser\": true}"
+- Step 5:
+  - At this step TODO APIs are ready for use.
 
 ### 3. In case you want to run migration manually(Optional):
 
@@ -41,7 +47,7 @@
 #### 1. Registration:
 
     - End point: POST /api/users/registration/
-    - Create a new user(not superuser or admin)
+    - Create a new user
 
 #### 2. Login:
 
@@ -101,7 +107,18 @@
 
 > Only admin user can change maximum of task per day for normal user.
 
-##### 1. User APIs:
+##### 1. How to run test:
+
+    - Access docker container <backend>:
+      - Cd to folder contains source code of Todo Application
+      - Run command: `docker-compose exec backend sh`
+    - Run all of tests in one time:
+      - Run command: `python manage.py test`
+    - Run specific module:
+      - Run test for **baseuser** module: `python manage.py test baseuser`
+      - Run test for **todo** module: `python manage.py test todo`
+
+##### 2. User Scenario:
 
     - [ x ] Allow create a new user for any user.
     - [ x ] Username should be unique.
@@ -115,9 +132,8 @@
     - [ x ] Only admin can get detail of a user.
     - [ x ] Only current user can get detail of that user.
     - [ x ] The current user cannot get detail of others.
-    - Noted: you should use the admin account that was created before by this command <python manage.py createsuperuser>. You cannot create an new user as admin by <registration endpoint>.
 
-##### 2. Task APIs:
+##### 3. Task Scenario:
 
     - [ x ] Authorize by JWT Access Token(Bearer as a prefix).
     - [ x ] Only authenticated user can call APIs(GET | POST | PUT | DELETE).
