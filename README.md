@@ -40,8 +40,8 @@ The repository have a few main features
   |- api --> You can create different output commands like Api rest, web, GRPC or any other technology.
     |- handlers --> Contain API
       |- common --> API for common
-      |- task --> API for task
-      |- user --> API for user
+      |- tasks --> API for task
+      |- users --> API for user
     |- routes --> Make create route for API
   |- driver --> Config connection to database
   |- models --> Application models
@@ -49,13 +49,13 @@ The repository have a few main features
     |- id --> Make create uuid
     |- responses --> Make create many response data
     |- repositories --> Repositoryies will action to database (CRUD)
-      |- auth --> Repository for auth
+      |- authorization --> Repository for auth
       |- task --> Repository for task
       |- user --> Repository for user
   |- usecases --> Usecases to implement action for application
-    |- auth --> Usecase for auth
-      |- task --> Usecase for task
-      |- user --> Usecase for user
+    |- authorization --> Usecase for auth
+    |- task --> Usecase for task
+    |- user --> Usecase for user
 ```
 
 ### How to start

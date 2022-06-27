@@ -1,4 +1,4 @@
-package task
+package tasks
 
 import (
 	"github.com/manabie-com/togo/cmd/middlewares"

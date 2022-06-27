@@ -1,4 +1,4 @@
-package user
+package users
 
 import (
 	"github.com/manabie-com/togo/internal/api/handlers"
