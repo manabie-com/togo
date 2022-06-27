@@ -14,7 +14,7 @@ type Todo struct {
 
 func (t Todo) Validate() error {
 	if t.UserID <= 0 {
-		return errors.New("invalid user_id")
+		return errors.New("invalid userId")
 	}
 	if len(t.Name) == 0 {
 		return errors.New("name is empty")

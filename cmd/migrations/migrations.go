@@ -6,6 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"io/ioutil"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -30,6 +31,24 @@ func MigrateCommand(sourceUrl string, databaseUrl string) *cobra.Command {
 			}
 			logrus.Info("migration up")
 			if err := m.Up(); err != nil && err != migrateV4.ErrNoChange {
+				logrus.Fatal(err)
+			}
+		},
+	}, &cobra.Command{
+		Use:   "down",
+		Short: "step down migration by N(int)",
+		Args:  cobra.ExactArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			m, err := migrateV4.New(sourceUrl, databaseUrl)
+			if err != nil {
+				logrus.Fatal(err)
+			}
+			down, err := strconv.Atoi(args[0])
+			if err != nil {
+				logrus.Fatal("rev should be a number", err)
+			}
+			logrus.Infof("migration down %d", -down)
+			if err := m.Steps(-down); err != nil {
 				logrus.Fatal(err)
 			}
 		},

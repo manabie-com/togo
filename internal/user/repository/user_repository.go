@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"gorm.io/gorm"
 	"manabieAssignment/internal/core/repository"
 	"manabieAssignment/internal/user/repository/dao"
@@ -19,8 +20,12 @@ func NewUserRepository(gormDB *gorm.DB) repository.UserRepository {
 
 const DateFormat = "01-02-2006"
 
-func (u *userRepository) CountTodosByDay(userID int64, date time.Time) (int64, error) {
-	var numOfTodos int64
-	err := u.gormDB.Model(&dao.User{}).Where("CAST(created_at as DATE) = ? AND ID = ?", date.Format(DateFormat), userID).Count(&numOfTodos).Error
-	return numOfTodos, err
+func (u *userRepository) IsUserHavingMaxTodo(userID int64, date time.Time) error {
+	var user dao.User
+	countTodosQuery := u.gormDB.Select("COUNT(*)").Where("CAST(created_at as DATE) = ? AND user_id = ?", date.Format(DateFormat), userID).Table("todos")
+	rows := u.gormDB.Where("id = ? AND max_todo > (?)", userID, countTodosQuery).Take(&user).RowsAffected
+	if rows == 0 {
+		return errors.New("user have too many todos")
+	}
+	return nil
 }

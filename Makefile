@@ -9,3 +9,6 @@ migrate:
 
 migrate-up:
 	go run $(CMD_MAIN) migrate up
+
+migrate-down:
+	go run $(CMD_MAIN) migrate down 1
