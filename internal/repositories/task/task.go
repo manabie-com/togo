@@ -20,8 +20,12 @@ func NewTaskRepository(db *gorm.DB) task.TaskUseCase {
 }
 
 func NewTask(task models.Task) *models.Task {
+	taskID := id.NewID().String()
+	if task.ID != "" {
+		taskID = task.ID
+	}
 	return &models.Task{
-		ID:         id.NewID().String(),
+		ID:         taskID,
 		Content:    task.Content,
 		CreateDate: task.CreateDate,
 		UserID:     task.UserID,

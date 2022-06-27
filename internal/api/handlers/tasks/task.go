@@ -52,10 +52,10 @@ func AddTask(service handlers.MainUseCase) gin.HandlerFunc {
 		input.CreateDate = createDate
 
 		// New
-		out := task.NewTask(input)
+		newTask := task.NewTask(input)
 
 		// Create Task
-		if err := service.Task.AddTask(out); err != nil {
+		if err := service.Task.AddTask(newTask); err != nil {
 			responses.ResponseForError(ctx, err, http.StatusBadRequest, "Fail Add Task")
 			return
 		}

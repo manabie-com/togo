@@ -12,15 +12,15 @@ migration-down:
 	@echo migrate -database ${POSTGRESQL_URL_MIGRATION} -path db/migrations down
 	@migrate -database ${POSTGRESQL_URL_MIGRATION} -path db/migrations down
 
-test-migration:
-	@echo migrate -database ${POSTGRESQL_URL_MIGRATION} -path db/migrations down
-	@echo migrate -database ${POSTGRESQL_URL_MIGRATION} -path db/migrations up
+### Test
+test-api-common:
+	go test -cover -coverprofile coverage.log ./internal/api/handlers/common/...
 
-test-all:
-	go test ./...
+test-api-task:
+	go test -cover -coverprofile coverage.log ./internal/api/handlers/tasks/...
 
-integration-test:
-	go test ./integrationtest
+test-api-user:
+	go test -cover -coverprofile coverage.log ./internal/api/handlers/users/...
 
 nodemon:
 	nodemon --exec go run cmd/main.go --signal SIGTERM

@@ -20,8 +20,12 @@ func NewUserRepository(db *gorm.DB) user.UserRepository {
 }
 
 func New(user *models.User) *models.User {
+	userID := id.NewID().String()
+	if user.ID != "" {
+		userID = user.ID
+	}
 	return &models.User{
-		ID:            id.NewID().String(),
+		ID:            userID,
 		Username:      user.Username,
 		Password:      user.Password,
 		MaxTaskPerDay: user.MaxTaskPerDay,

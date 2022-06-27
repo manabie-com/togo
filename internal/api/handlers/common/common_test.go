@@ -61,4 +61,29 @@ func TestLogin(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code)
 	}
 
+	{ //Fail case
+		user := models.User{
+			Username: "manabie-test",
+			Password: "123456",
+		}
+
+		jsonValue, _ := json.Marshal(user)
+		req, _ := http.NewRequest(http.MethodPost, "/example", bytes.NewBuffer(jsonValue))
+		w := httptest.NewRecorder()
+		r.ServeHTTP(w, req)
+		assert.Equal(t, http.StatusNotFound, w.Code)
+	}
+
+	{ //Fail case
+		user := models.User{
+			Username: "manabie-test",
+			Password: "123456",
+		}
+
+		jsonValue, _ := json.Marshal(user)
+		req, _ := http.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(jsonValue))
+		w := httptest.NewRecorder()
+		r.ServeHTTP(w, req)
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	}
 }

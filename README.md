@@ -83,10 +83,15 @@ go run cmd/main.go
 
 7. If you want to integration test after run projection
 ```bash
-make integration-test
+	go test ./integrationtest
 ```
 
-8. If you want to remove table database
+8. If you want to test all after run projection
+```bash
+	go test ./...
+```
+
+9. If you want to remove table database
 ```bash
 make migration-down
 ```

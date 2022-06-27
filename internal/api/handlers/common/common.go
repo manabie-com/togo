@@ -1,8 +1,6 @@
 package common
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -32,8 +30,6 @@ func Login(service handlers.MainUseCase) gin.HandlerFunc {
 			responses.ResponseForError(ctx, err, http.StatusBadRequest, "Fail Login")
 			return
 		}
-		test, _ := json.Marshal(user)
-		fmt.Println("test ", string(test))
 
 		if user == nil {
 			responses.ResponseForError(ctx, nil, http.StatusBadRequest, "Fail Login")
