@@ -1,11 +1,11 @@
-package task
+package controller
 
 import (
 	"encoding/json"
 	"fmt"
-	e "lntvan166/togo/entities"
-	"lntvan166/togo/model"
-	"lntvan166/togo/utils"
+	e "lntvan166/togo/internal/entities"
+	"lntvan166/togo/internal/model"
+	"lntvan166/togo/internal/utils"
 	"net/http"
 	"strconv"
 

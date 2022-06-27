@@ -1,8 +1,8 @@
-package user
+package controller
 
 import (
-	"lntvan166/togo/model"
-	"lntvan166/togo/utils"
+	"lntvan166/togo/internal/model"
+	"lntvan166/togo/internal/utils"
 	"net/http"
 	"strconv"
 

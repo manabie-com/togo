@@ -2,9 +2,9 @@ package middleware
 
 import (
 	"errors"
-	"lntvan166/togo/config"
-	"lntvan166/togo/model"
-	"lntvan166/togo/utils"
+	"lntvan166/togo/internal/config"
+	"lntvan166/togo/internal/model"
+	"lntvan166/togo/internal/utils"
 	"net/http"
 	"strings"
 

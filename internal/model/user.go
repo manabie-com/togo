@@ -1,8 +1,8 @@
 package model
 
 import (
-	"lntvan166/togo/db"
-	e "lntvan166/togo/entities"
+	"lntvan166/togo/internal/db"
+	e "lntvan166/togo/internal/entities"
 )
 
 // CREATE

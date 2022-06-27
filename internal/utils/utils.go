@@ -2,7 +2,7 @@ package utils
 
 import (
 	"fmt"
-	"lntvan166/togo/model"
+	"lntvan166/togo/internal/model"
 	"net/http"
 	"time"
 )

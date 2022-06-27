@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"lntvan166/togo/config"
-	"lntvan166/togo/db"
-	"lntvan166/togo/routes"
+	"lntvan166/togo/internal/config"
+	"lntvan166/togo/internal/db"
+	"lntvan166/togo/internal/routes"
 	"log"
 	"net/http"
 

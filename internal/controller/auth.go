@@ -1,13 +1,13 @@
-package auth
+package controller
 
 import (
 	"encoding/json"
 	"errors"
-	"lntvan166/togo/model"
-	"lntvan166/togo/utils"
+	"lntvan166/togo/internal/model"
+	"lntvan166/togo/internal/utils"
 	"net/http"
 
-	e "lntvan166/togo/entities"
+	e "lntvan166/togo/internal/entities"
 
 	"github.com/gorilla/context"
 )

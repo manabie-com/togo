@@ -3,7 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"lntvan166/togo/config"
+	"lntvan166/togo/internal/config"
 )
 
 var (
