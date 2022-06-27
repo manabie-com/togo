@@ -65,6 +65,7 @@ The repository have a few main features
 ```bash
 git clone https://github.com/DuongThanhTin/togo.git
 cd togo
+cp .env.example .env
 ```
 
 2. Create Database postgres with your config
