@@ -13,7 +13,7 @@ import (
 	"github.com/manabie-com/togo/constants"
 	"github.com/manabie-com/togo/internal/api/handlers"
 	"github.com/manabie-com/togo/internal/models"
-	"github.com/manabie-com/togo/internal/usecases/auth"
+	"github.com/manabie-com/togo/internal/usecases/authorization"
 	"github.com/manabie-com/togo/utils"
 
 	"github.com/jinzhu/gorm"
@@ -96,8 +96,8 @@ func (s *IntegrationTestSuite) TestIntegration_Login_Fail_Validate() {
 func (s *IntegrationTestSuite) TestIntegration_AddTaskSuccess() {
 	// get token
 	repositories := handlers.NewRepositories(s.dbConn)
-	authUsecase := auth.NewAuthUseCase(repositories.Auth)
-	token, err := authUsecase.GenerateToken("firstUser", "5")
+	authUsecase := authorization.NewAuthUseCase(repositories.Auth)
+	token, err := authUsecase.GenerateToken("firstUser", "10")
 	s.Require().NoError(err)
 
 	reqBodyStr := `{
@@ -127,7 +127,7 @@ func (s *IntegrationTestSuite) TestIntegration_AddTaskSuccess() {
 func (s *IntegrationTestSuite) TestIntegration_AddTaskFail() {
 	// get token
 	repositories := handlers.NewRepositories(s.dbConn)
-	authUsecase := auth.NewAuthUseCase(repositories.Auth)
+	authUsecase := authorization.NewAuthUseCase(repositories.Auth)
 	token, err := authUsecase.GenerateToken("firstUser1", "5")
 	s.Require().NoError(err)
 
@@ -158,7 +158,7 @@ func (s *IntegrationTestSuite) TestIntegration_AddTaskFail() {
 func (s *IntegrationTestSuite) TestIntegration_AddTaskFail_ValidateMaxTaskPerDay() {
 	// get token
 	repositories := handlers.NewRepositories(s.dbConn)
-	authUsecase := auth.NewAuthUseCase(repositories.Auth)
+	authUsecase := authorization.NewAuthUseCase(repositories.Auth)
 	token, err := authUsecase.GenerateToken("secondUser", "0")
 	s.Require().NoError(err)
 
@@ -223,7 +223,7 @@ func (s *IntegrationTestSuite) TestIntegration_CreateUser_Success() {
 func (s *IntegrationTestSuite) TestIntegration_CreateUser_Fail_Conflict() {
 	// get token
 	repositories := handlers.NewRepositories(s.dbConn)
-	authUsecase := auth.NewAuthUseCase(repositories.Auth)
+	authUsecase := authorization.NewAuthUseCase(repositories.Auth)
 	token, err := authUsecase.GenerateToken("firstUser1", "5")
 	s.Require().NoError(err)
 
@@ -252,7 +252,7 @@ func (s *IntegrationTestSuite) TestIntegration_CreateUser_Fail_Conflict() {
 func (s *IntegrationTestSuite) TestIntegration_CreateUser_Fail_ValidateUser() {
 	// get token
 	repositories := handlers.NewRepositories(s.dbConn)
-	authUsecase := auth.NewAuthUseCase(repositories.Auth)
+	authUsecase := authorization.NewAuthUseCase(repositories.Auth)
 	token, err := authUsecase.GenerateToken("firstUser1", "5")
 	s.Require().NoError(err)
 

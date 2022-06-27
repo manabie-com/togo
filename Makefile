@@ -19,5 +19,8 @@ test-migration:
 integration-test:
  	go test ./integrationtest
 
+test:
+	go test ./...
+
 nodemon:
 	nodemon --exec go run cmd/main.go --signal SIGTERM
