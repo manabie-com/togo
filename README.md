@@ -64,17 +64,23 @@ The repository have a few main features
 1. Clone repository
 ```bash
 git clone https://github.com/DuongThanhTin/togo.git
+cd togo
 ```
 
 2. Create Database postgres with your config
 
 3. Change data variable in file .env with your config on step 2
 
-4. Migration database with terminal
+4. Install package
+```bash
+go get -v github.com/manabie-com/togo/...
+```
+
+5. Migration database with terminal
 ```bash
 make migration-up
 ```
-5. Run main.go
+6. Run main.go
 ```bash
 go run cmd/main.go
 ```
