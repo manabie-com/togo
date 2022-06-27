@@ -13,13 +13,12 @@ type responseToken struct { //response token
 	Message string
 	Token   string
 }
-
 func Register(w http.ResponseWriter, r *http.Request) { // Handle register with method post
 	var user, user1 models.NewUser
 	var passwordCrypt string
 
 	_ = json.NewDecoder(r.Body).Decode(&user)
-	if _, ok := models.CheckUserNameExist(user.Username); ok { // Check username exist or not
+	if _, ok := models.Repo.CheckUserNameExist(user.Username); ok { // Check username exist or not
 		http.Error(w, "this username already exist", http.StatusNotAcceptable)
 		return
 	}
@@ -36,7 +35,7 @@ func Register(w http.ResponseWriter, r *http.Request) { // Handle register with 
 		user1.LimitTask = 0
 	}
 
-	if err := models.InsertUser(user1); err != nil { // insert new user to database
+	if err := models.Repo.InsertUser(user1); err != nil { // insert new user to database
 		http.Error(w, "insert user failed.", http.StatusBadRequest)
 		return
 	}
@@ -52,7 +51,7 @@ func Login(w http.ResponseWriter, r *http.Request) { // handle login with method
 	var user models.NewUser
 
 	_ = json.NewDecoder(r.Body).Decode(&user)
-	user1, ok := models.CheckUserNameExist(user.Username)
+	user1, ok := models.Repo.CheckUserNameExist(user.Username)
 	if !ok { // check username exist or not
 		http.Error(w, "account doesn't exist", http.StatusNotFound)
 		return

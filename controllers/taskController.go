@@ -15,12 +15,13 @@ import (
 func ResponeAllTask(w http.ResponseWriter, r *http.Request) { // Get all user from database
 	userid, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "userid"))) // get userid from login
 
-	tasks, err := models.GetAllTasks(userid)
+	tasks, err := models.Repo.GetAllTasks(userid)
 	if err != nil {
 		http.Error(w, "get all task failed", http.StatusFailedDependency)
 		return
 	}
 
+	// tasks = ChangeStatusAllTasksAfterDay(tasks)
 	w.Header().Set("Content-Type", "application/json")
 	if err = json.NewEncoder(w).Encode(tasks); err != nil {
 		http.Error(w, "encode tasks failed", 500)
@@ -32,12 +33,13 @@ func ResponeOneTask(w http.ResponseWriter, r *http.Request) { // Get one user fr
 	userid, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "userid"))) // get userid from login
 	id, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "id")))         // get id from url
 
-	task, ok := models.CheckIDTaskAndReturn(w, id, userid)
+	task, ok := models.Repo.CheckIDTaskAndReturn(w, id, userid)
 	if !ok {
 		http.Error(w, "id invalid", http.StatusBadRequest)
 		return
 	}
-
+	
+	// task = ChangeStatusOneTaskAfterDay(task)
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(task); err != nil {
 		http.Error(w, "encode task failed", http.StatusFailedDependency)
@@ -47,7 +49,7 @@ func ResponeOneTask(w http.ResponseWriter, r *http.Request) { // Get one user fr
 
 func CreateTask(w http.ResponseWriter, r *http.Request) { // Create a new user
 	userid, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "userid"))) // get userid from login
-	if ok := models.CheckLimitTaskUser(userid); !ok {
+	if ok := models.Repo.CheckLimitTaskUser(userid); !ok {
 		http.Error(w, "the limit of today is full, come back and add task tomorrow", http.StatusFailedDependency)
 		return
 	}
@@ -61,10 +63,10 @@ func CreateTask(w http.ResponseWriter, r *http.Request) { // Create a new user
 	task.UserId = userid
 	task.Status = "pending"
 	task.Time = time.Now()
-	if ok := models.CheckTaskInput(task); !ok {
+	if ok := models.Repo.CheckTaskInput(task); !ok {
 		http.Error(w, "task field invalid", http.StatusBadRequest)
 	}
-	if err := models.InsertTask(task); err != nil {
+	if err := models.Repo.InsertTask(task); err != nil {
 		http.Error(w, "insert task failed", http.StatusFailedDependency)
 		return
 	}
@@ -80,12 +82,12 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) { // Delete one user fro
 	userid, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "userid"))) // get userid from login
 	id, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "id")))         // get id from url
 
-	if _, ok := models.CheckIDTaskAndReturn(w, id, userid); !ok { // Check task id exist or not and return that task
+	if _, ok := models.Repo.CheckIDTaskAndReturn(w, id, userid); !ok { // Check task id exist or not and return that task
 		http.Error(w, "Id invalid", http.StatusBadRequest)
 		return
 	}
 
-	if err := models.DeleteTask(id, userid); err != nil {
+	if err := models.Repo.DeleteTask(id, userid); err != nil {
 		http.Error(w, err.Error(), http.StatusFailedDependency)
 		return
 	}
@@ -96,7 +98,7 @@ func UpdateEntireTask(w http.ResponseWriter, r *http.Request) { // Update one us
 	userid, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "userid"))) // get userid from login
 	id, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "id")))         // get id from url
 
-	oldTask, ok := models.CheckIDTaskAndReturn(w, id, userid) // Check task id exist or not and return that task
+	oldTask, ok := models.Repo.CheckIDTaskAndReturn(w, id, userid) // Check task id exist or not and return that task
 	if !ok {
 		http.Error(w, "Id invalid", http.StatusBadRequest)
 		return
@@ -115,7 +117,7 @@ func UpdateEntireTask(w http.ResponseWriter, r *http.Request) { // Update one us
 		return
 	}
 
-	if err := models.UpdateTask(oldTask, id, userid); err != nil {
+	if err := models.Repo.UpdateTask(oldTask, id, userid); err != nil {
 		http.Error(w, "update task failed", http.StatusBadRequest)
 		return
 	}
@@ -125,3 +127,5 @@ func UpdateEntireTask(w http.ResponseWriter, r *http.Request) { // Update one us
 		return
 	}
 }
+
+

@@ -10,10 +10,9 @@ import (
 	"github.com/gorilla/context"
 	"github.com/huynhhuuloc129/todo/models"
 )
-
 func ResponeAllUser(w http.ResponseWriter, r *http.Request) { // Get all user from database
 	w.Header().Set("Content-Type", "application/json")
-	users, err := models.GetAllUser()
+	users, err := models.Repo.GetAllUser()
 	if err != nil {
 		http.Error(w, "get all user failed", http.StatusFailedDependency)
 		return
@@ -26,7 +25,7 @@ func ResponeAllUser(w http.ResponseWriter, r *http.Request) { // Get all user fr
 }
 func ResponeOneUser(w http.ResponseWriter, r *http.Request) { // Get one user from database
 	id, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "id"))) // get id from url
-	user, ok := models.CheckIDUserAndReturn(id)
+	user, ok := models.Repo.FindUserByID(id)
 	if !ok {
 		http.Error(w, "id invalid", http.StatusFailedDependency)
 		return
@@ -45,7 +44,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) { // Create a new user
 		http.Error(w, "decode failed", http.StatusFailedDependency)
 		return
 	}
-	if _, ok := models.CheckUserNameExist(user.Username); ok { // Check username exist or not
+	if _, ok := models.Repo.CheckUserNameExist(user.Username); ok { // Check username exist or not
 		http.Error(w, "this username already exist", http.StatusNotAcceptable)
 		return
 	}
@@ -57,7 +56,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) { // Create a new user
 	}
 
 	user.Password, _ = models.Hash(user.Password)
-	if err := models.InsertUser(user); err != nil { // insert user to database
+	if err := models.Repo.InsertUser(user); err != nil { // insert user to database
 		http.Error(w, "insert user failed", http.StatusFailedDependency)
 		return
 	}
@@ -70,16 +69,16 @@ func CreateUser(w http.ResponseWriter, r *http.Request) { // Create a new user
 
 func DeleteUser(w http.ResponseWriter, r *http.Request) { // Delete one user from database
 	id, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "id"))) // get id from url
-	if _, ok := models.CheckIDUserAndReturn(id); !ok {
+	if _, ok := models.Repo.FindUserByID(id); !ok {
 		http.Error(w, "Id invalid", http.StatusBadRequest)
 		return
 	}
 
-	if err := models.DeleteAllTaskFromUser(id); err != nil {
+	if err := models.Repo.DeleteAllTaskFromUser(id); err != nil {
 		http.Error(w, "delete all task of user failed", http.StatusFailedDependency)
 		return
 	}
-	if err := models.DeleteUser(id); err != nil {
+	if err := models.Repo.DeleteUser(id); err != nil {
 		http.Error(w, "delete user failed", http.StatusFailedDependency)
 		return
 	}
@@ -90,7 +89,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) { // Update one user alr
 	id, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "id"))) // get id from url
 
 	var newUser models.NewUser
-	user, ok := models.CheckIDUserAndReturn(id)
+	user, ok := models.Repo.FindUserByID(id)
 	newUser.Username = user.Username
 	newUser.Password = user.Password
 	newUser.LimitTask = user.LimitTask
@@ -107,7 +106,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) { // Update one user alr
 	if newUser.Password != user.Password {
 		newUser.Password, _ = models.Hash(newUser.Password)
 	}
-	if err := models.UpdateUser(newUser, id); err != nil {
+	if err := models.Repo.UpdateUser(newUser, id); err != nil {
 		http.Error(w, "update user failed", http.StatusBadRequest)
 		return
 	}
