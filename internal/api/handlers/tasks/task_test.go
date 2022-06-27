@@ -53,7 +53,7 @@ func TestAddTask(t *testing.T) {
 		err := recordStatsUser(db, user.Username, user.Password)
 		require.Nil(t, err)
 
-		input := models.Task{
+		input := &models.Task{
 			Content:    "Test Interview",
 			CreateDate: time.Now().Format("2006-01-02"),
 			UserID:     "1",
