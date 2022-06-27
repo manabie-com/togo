@@ -17,3 +17,6 @@
 out/
 
 .idea
+.env
+app-exe
+.DS_Store
