@@ -1,0 +1,10 @@
+celery==5.1.2
+Flask==2.0.1
+flask_bcrypt==1.0.1
+Flask-JWT-Extended==4.2.3
+marshmallow==3.13.0
+mongoengine==0.23.1
+mongomock==3.23.0
+PyJWT==2.3.0
+pytest==6.2.5
+redis==3.5.3
