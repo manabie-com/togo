@@ -68,30 +68,28 @@ git clone https://github.com/DuongThanhTin/togo.git
 
 2. Create Database postgres with your config
 
-3. Go to folder project
+3. Change data variable in file .env with your config on step 2
 
-4. Change data variable in file .env with your config
-
-5. Migration database with terminal
+4. Migration database with terminal
 ```bash
 make migration-up
 ```
-6. Run main.go
+5. Run main.go
 ```bash
 go run cmd/main.go
 ```
 
-7. If you want to integration test after run projection
+#### If you want to integration test after run projection
 ```bash
 	go test ./integrationtest
 ```
 
-8. If you want to test all after run projection
+#### If you want to test all after run projection
 ```bash
 	go test ./...
 ```
 
-9. If you want to remove table database
+#### If you want to remove table database
 ```bash
-make migration-down
+  make migration-down
 ```
