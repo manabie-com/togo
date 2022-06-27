@@ -22,5 +22,5 @@ test-api-task:
 test-api-user:
 	go test -cover -coverprofile coverage.log ./internal/api/handlers/users/...
 
-nodemon:
-	nodemon --exec go run cmd/main.go --signal SIGTERM
+test:
+	go test ./internal/api/handlers/...
