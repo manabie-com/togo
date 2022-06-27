@@ -20,6 +20,13 @@ class TestViews(TestCase):
         self.list_url = "/api/users/"
         self.detail_url = "/api/users/{0}/"
 
+    def tearDown(self):
+        del self.client
+        del self.registration_url
+        del self.login_url
+        del self.list_url
+        del self.detail_url
+
     def test_POST_registration(self):
         response = self.__login(
             UserDataTest.USER_USERNAME_1, UserDataTest.USER_PASSWORD

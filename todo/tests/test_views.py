@@ -5,7 +5,8 @@ from utils import encrypting
 
 
 class UserDataTest:
-    USER_USERNAME = "user_test_001"
+    USER_USERNAME_1 = "user_test_001"
+    USER_USERNAME_2 = "user_test_002"
     USER_PASSWORD = "Aa123456"
 
 
@@ -17,8 +18,16 @@ class TestViews(TestCase):
         self.list_url = "/api/tasks/"
         self.detail_url = "/api/tasks/{0}/"
         self.tokens = self.__register_and_login(
-            UserDataTest.USER_USERNAME, UserDataTest.USER_PASSWORD
+            UserDataTest.USER_USERNAME_1, UserDataTest.USER_PASSWORD
         )
+
+    def tearDown(self):
+        del self.client
+        del self.registration_url
+        del self.login_url
+        del self.list_url
+        del self.detail_url
+        del self.tokens
 
     def test_GET_task_list_without_authentication(self):
         response = self.client.get(self.list_url)
@@ -92,7 +101,39 @@ class TestViews(TestCase):
             len(list_of_tasks_after_delete_task.data),
         )
 
-    def test_POST_add_task_exceed_maximum_tasks_per_day(self):
+    def test_POST_add_task_exceed_maximum_tasks_per_day_scenario_1(self):
+        tasks = list()
+        task_title = "test get task detail %s"
+        task_description = "get task detail description"
+
+        user = self.__register_new_user(
+            UserDataTest.USER_USERNAME_2, UserDataTest.USER_PASSWORD
+        )
+        user_login_response = self.__login(
+            UserDataTest.USER_USERNAME_2, UserDataTest.USER_PASSWORD
+        )
+
+        auth_header = self.__get_auth_header(user_login_response.data["access"])
+        maximum_task_per_day = user.data["maximum_task_per_day"]
+
+        for i in range(maximum_task_per_day + 10):
+            tasks.append(
+                self.__add_task(task_title % str(i + 1), task_description, auth_header)
+            )
+        response = self.__add_task(
+            task_title % str(i + 1), task_description, auth_header
+        )
+
+        self.assertEquals(response.status_code, 400)
+        self.assertNotEquals(maximum_task_per_day, len(tasks))
+
+    def test_POST_add_task_exceed_maximum_tasks_per_day_scenario_2(self):
+        # Add task to maximum of tasks per day
+        # Delete a task
+        # Add task again
+        # Update maximum of tasks value
+        # Validate this value must be greater than the current value
+        # Add task again then new task should be added at this time
         pass
 
     def __register_new_user(self, username, password):
