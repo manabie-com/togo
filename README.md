@@ -48,8 +48,8 @@
 
 ### 4. Util commands:
 
-- How to identify docker container ip address:
-  - docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <container_id>
+    - How to identify docker container ip address:
+      - docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <container_id>
 
 ### 5. Todo task APIs:
 
