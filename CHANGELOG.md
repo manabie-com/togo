@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Create README
 - Make create `integrationtest`
 - Make create terminal in `Makefile`
 - Initial and structure for project
