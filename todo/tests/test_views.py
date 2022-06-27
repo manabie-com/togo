@@ -116,7 +116,7 @@ class TestViews(TestCase):
         return {"HTTP_AUTHORIZATION": "Bearer " + access_token}
 
     def __delete_task(self, task_id, auth_header):
-        return self.client.delete("/api/tasks/{0}/".format(task_id), **auth_header)
+        return self.client.delete(self.detail_url.format(task_id), **auth_header)
 
     def __get_list_of_tasks(self, auth_header):
         return self.client.get(self.list_url, **auth_header)
