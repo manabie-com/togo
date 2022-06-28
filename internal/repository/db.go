@@ -6,12 +6,6 @@ import (
 	"lntvan166/togo/internal/config"
 )
 
-type repository struct {
-	DB *sql.DB
-}
-
-var Repository repository
-
 func GetPostgresConnectionString() string {
 	var (
 		host     = "localhost"
@@ -26,22 +20,26 @@ func GetPostgresConnectionString() string {
 	return psqlInfo
 }
 
-func Connect() {
-	var err error
+func Connect() *sql.DB {
+	var (
+		err error
+		db  *sql.DB
+	)
 	psqlInfo := config.DATABASE_URL
 	if psqlInfo == "" {
 		psqlInfo = GetPostgresConnectionString()
 	}
 
-	Repository.DB, err = sql.Open("postgres", psqlInfo)
+	db, err = sql.Open("postgres", psqlInfo)
 	if err != nil {
 		panic(err)
 	}
 
-	err = Repository.DB.Ping()
+	err = db.Ping()
 	if err != nil {
 		panic(err)
 	}
 
 	fmt.Println("Successfully connected!")
+	return db
 }

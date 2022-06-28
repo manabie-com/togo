@@ -29,13 +29,15 @@ func (u *userUsecase) Register(user *e.User) error {
 
 	user.PreparePassword()
 
-	err := user.IsValid()
-	if err != nil {
-		// pkg.ERROR(w, http.StatusBadRequest, err, "invalid user data!")
-		return err
-	}
+	// err := user.IsValid()
+	// if err != nil {
+	// 	// pkg.ERROR(w, http.StatusBadRequest, err, "invalid user data!")
+	// 	return err
+	// }
 
-	err = u.userRepo.AddUser(user)
+	// TODO: check valid user
+
+	err := u.userRepo.AddUser(user)
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "failed to add user!")
 		return err
@@ -58,7 +60,7 @@ func (u *userUsecase) Login(user *e.User) (string, error) {
 		return "", errors.New("failed to find user")
 	}
 
-	if !oldUser.ComparePassWord(user.Password) {
+	if !oldUser.ComparePassword(user.Password) {
 		// pkg.ERROR(w, http.StatusBadRequest, errors.New("password incorrect"), "")
 		return "", errors.New("password incorrect")
 	}

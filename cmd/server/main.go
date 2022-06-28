@@ -1,13 +1,11 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"lntvan166/togo/internal/config"
 	"lntvan166/togo/internal/controller"
 	"lntvan166/togo/internal/repository"
 	"lntvan166/togo/internal/routes"
-	"lntvan166/togo/internal/usecase"
 	"log"
 	"net/http"
 
@@ -19,39 +17,10 @@ func main() {
 
 	config.Load()
 
-	var db *sql.DB
-	psqlInfo := config.DATABASE_URL
-	if psqlInfo == "" {
-		psqlInfo = repository.GetPostgresConnectionString()
-	}
+	db := repository.Connect()
+	defer db.Close()
 
-	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil {
-		panic(err)
-	}
-
-	err = db.Ping()
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("Successfully connected!")
-
-	userRepository := repository.NewUserRepository(db)
-	taskRepository := repository.NewTaskRepository(db)
-
-	userUsecase := usecase.NewUserUsecase(userRepository, taskRepository)
-	taskUsecase := usecase.NewTaskUsecase(taskRepository, userRepository)
-
-	userController := controller.NewUserController(userUsecase, taskUsecase)
-	taskController := controller.NewTaskController(taskUsecase, userUsecase)
-	authController := controller.NewAuthController(userUsecase)
-
-	controller.HandlerInstance = &controller.Handler{
-		UserController: *userController,
-		TaskController: *taskController,
-		AuthController: *authController,
-	}
+	controller.NewHandler(db)
 
 	route := mux.NewRouter()
 	routes.HandleRequest(route)

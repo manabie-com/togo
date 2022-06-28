@@ -1,8 +1,6 @@
 package entities
 
 import (
-	"fmt"
-
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -23,16 +21,6 @@ func NewUser() *User {
 	}
 }
 
-func (u User) IsValid() error {
-	if len(u.Username) == 0 {
-		return fmt.Errorf("User name is required")
-	}
-	if len(u.Password) == 0 {
-		return fmt.Errorf("User password hash is required")
-	}
-	return nil
-}
-
 func (u *User) PreparePassword() {
 	u.Password = hashPassword(u.Password)
 }
@@ -45,7 +33,7 @@ func hashPassword(password string) string {
 	return string(hashedPassword)
 }
 
-func (u User) ComparePassWord(password string) bool {
+func (u User) ComparePassword(password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
 	return err == nil
 }
