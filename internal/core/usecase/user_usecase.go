@@ -1,3 +1,4 @@
 package usecase
 
-type UserUseCase interface{}
+type UserUseCase interface {
+}

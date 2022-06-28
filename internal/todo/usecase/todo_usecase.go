@@ -18,17 +18,21 @@ func NewTodoUseCase(todoRepo repository.TodoRepository, userRepo repository.User
 	}
 }
 
-func (t *todoUseCase) CreateTodo(todo entity.Todo) error {
+func (t *todoUseCase) CreateTodo(todo entity.Todo) (uint, error) {
 	if err := todo.Validate(); err != nil {
-		return err
+		return 0, err
 	}
-	err := t.userRepo.IsUserHavingMaxTodo(todo.UserID, todo.CreatedAt)
+	err := t.userRepo.IsUserExisted(todo.UserID)
 	if err != nil {
-		return err
+		return 0, err
 	}
-	err = t.todoRepo.CreateTodo(todo)
+	err = t.userRepo.IsUserHavingMaxTodo(todo.UserID, todo.CreatedAt)
 	if err != nil {
-		return err
+		return 0, err
 	}
-	return nil
+	todoId, err := t.todoRepo.CreateTodo(todo)
+	if err != nil {
+		return 0, err
+	}
+	return todoId, err
 }

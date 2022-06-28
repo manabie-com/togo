@@ -25,10 +25,13 @@ func (t *TodoHandler) CreateTodo(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
-	err = t.todoUC.CreateTodo(todo.ToDomainModel())
+	todoId, err := t.todoUC.CreateTodo(todo.ToDomainModel())
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, "Success")
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Success",
+		"todoId":  todoId,
+	})
 }

@@ -17,13 +17,18 @@ func NewTodoRepository(gormDB *gorm.DB) repository.TodoRepository {
 	}
 }
 
-func (t *todoRepository) CreateTodo(todo entity.Todo) error {
-	return t.gormDB.Create(&dao.Todo{
+func (t *todoRepository) CreateTodo(todo entity.Todo) (uint, error) {
+	todoDao := dao.Todo{
 		UserID:  todo.UserID,
 		Name:    todo.Name,
 		Content: todo.Content,
 		Model: gorm.Model{
 			CreatedAt: todo.CreatedAt,
 		},
-	}).Error
+	}
+	err := t.gormDB.Create(&todoDao).Error
+	if err != nil {
+		return 0, err
+	}
+	return todoDao.ID, nil
 }
