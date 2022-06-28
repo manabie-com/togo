@@ -60,6 +60,11 @@ The repository have a few main features
 
 ### How to start
 
+#### Prepare
+
+- Install golang [golang](https://go.dev/doc/install)
+- Install postgres
+
 #### Start local
 1. Clone repository
 ```bash
@@ -72,16 +77,11 @@ cp .env.example .env
 
 3. Change data variable in file .env with your config on step 2
 
-4. Install package
-```bash
-go get -v github.com/manabie-com/togo/...
-```
-
-5. Migration database with terminal
+4. Migration database with terminal
 ```bash
 make migration-up
 ```
-6. Run main.go
+5. Run main.go
 ```bash
 go run cmd/main.go
 ```
