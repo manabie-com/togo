@@ -15,7 +15,7 @@
 
     - Cd to folder that contains source code of application(pulled from GIT).
     - Run this command: docker-compose up. Todo app will be setup and migrate automatically.
-    - If the docker desktop asks for permission then just allow it.
+    - If the docker desktop asks for permission to access <togo\database> and <todo> folders then just allow it.
     - After above command done: 2 services will be created that are <backend> and <db>.
 
 #### Step 3:
@@ -113,8 +113,8 @@
 #### 4. Noted:
 
     - After login successfull <access_token> and <refresh_token> will be included in response.
-    - Get <user_id> after make a request GET list of users.
-    - Get <task_id> after make a request GET list of tasks.
+    - Get <user_id> after make a request GET list of users by super user.
+    - Get <task_id> after make a request GET list of tasks by current user.
 
 ### 7. Unit Test and Integration Test:
 
@@ -159,3 +159,17 @@
     - [ x ] POST should be creating a new task for the current user.
     - [ x ] Validate <number_of_current_tasks> smaller or equals <maximum_tasks_per_day> of the current user.
     - [ x ] New value of <maximum_task_per_day> should be greater or equal to the current value.
+
+### 8. What do you love about your solution?
+
+    - The Todo application can be installed and run automatically by docker.
+    - Validate the number of tasks per day by datetime.
+    - Hide <user_id> and <task_id> in url.
+
+### 9. What else do you want us to know about however you do not have enough time to complete?
+
+> If I have more time, I will
+
+    - Implement Todo APIs as an asynchronous then it can handle multiple concurrent requests.
+    - Research more about security.
+    - Write more tests.
