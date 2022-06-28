@@ -12,3 +12,6 @@ migrate-up:
 
 migrate-down:
 	go run $(CMD_MAIN) migrate down 1
+
+test:
+	go test ./...  -count=1 -v -cover

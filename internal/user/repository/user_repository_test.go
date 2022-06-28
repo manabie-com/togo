@@ -6,8 +6,7 @@ import (
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
-	"gorm.io/gorm/schema"
+	"regexp"
 	"testing"
 	"time"
 )
@@ -18,15 +17,14 @@ func TestUserRepository_IsUserExisted_Existed(t *testing.T) {
 	gormDB, err := gorm.Open(postgres.New(postgres.Config{
 		Conn: db,
 	}), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
-		NamingStrategy: schema.NamingStrategy{
-			SingularTable: false,
-		},
+		SkipDefaultTransaction: true,
 	})
 	require.NoError(t, err)
 	userId := 1
-	mock.ExpectPrepare("SELECT * FROM \"users\" WHERE id = $1 AND \"users\".\"deleted_at\" IS NULL LIMIT 1").
-		ExpectQuery().WithArgs(userId).WillReturnError(nil)
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "users" WHERE id = $1 AND "users"."deleted_at" IS NULL LIMIT 1`)).
+		WithArgs(userId).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "name", "max_todo", "created_at", "deleted_at"}).AddRow(1, "name", 4, time.Now(), nil)).
+		WillReturnError(nil)
 	userRepo := NewUserRepository(gormDB)
 	err = userRepo.IsUserExisted(int64(userId))
 	require.NoError(t, err)
@@ -38,15 +36,12 @@ func TestUserRepository_IsUserExisted_NotExisted(t *testing.T) {
 	gormDB, err := gorm.Open(postgres.New(postgres.Config{
 		Conn: db,
 	}), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
-		NamingStrategy: schema.NamingStrategy{
-			SingularTable: false,
-		},
+		SkipDefaultTransaction: true,
 	})
 	require.NoError(t, err)
 	userId := 1
-	mock.ExpectPrepare("SELECT * FROM \"users\" WHERE id = $1 AND \"users\".\"deleted_at\" IS NULL LIMIT 1").
-		ExpectQuery().WithArgs(userId).WillReturnError(errors.New("some error"))
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "users" WHERE id = $1 AND "users"."deleted_at" IS NULL LIMIT 1`)).
+		WithArgs(userId).WillReturnError(errors.New("record not found"))
 	userRepo := NewUserRepository(gormDB)
 	err = userRepo.IsUserExisted(int64(userId))
 	require.Error(t, err)
@@ -59,16 +54,15 @@ func TestUserRepository_IsUserHavingMaxTodo_HavingMaxTodo(t *testing.T) {
 	gormDB, err := gorm.Open(postgres.New(postgres.Config{
 		Conn: db,
 	}), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
-		NamingStrategy: schema.NamingStrategy{
-			SingularTable: false,
-		},
+		SkipDefaultTransaction: true,
 	})
 	require.NoError(t, err)
-	userId := 1
+	userId := uint(1)
 	date := time.Now()
-	mock.ExpectPrepare("SELECT \\* FROM \"users\" WHERE (id = $1 AND max_todo > (SELECT COUNT(\\*) FROM \"todos\" WHERE CAST(created_at as DATE) = $2 AND user_id = $1)) AND \"users\".\"deleted_at\" IS NULL LIMIT 1").
-		ExpectQuery().WithArgs(userId, date.Format(DateFormat)).WillReturnError(errors.New("record not found"))
+	mock.MatchExpectationsInOrder(false)
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "users" WHERE (id = $1 AND max_todo > (SELECT COUNT(*) FROM "todos" WHERE CAST(created_at as DATE) = $2 AND user_id = $3)) AND "users"."deleted_at" IS NULL LIMIT 1`)).
+		WithArgs(userId, date.Format(DateFormat), userId).
+		WillReturnError(errors.New("record not found"))
 	userRepo := NewUserRepository(gormDB)
 	err = userRepo.IsUserHavingMaxTodo(int64(userId), date)
 	require.Error(t, err)
@@ -81,16 +75,16 @@ func TestUserRepository_IsUserHavingMaxTodo_NotHavingMaxTodo(t *testing.T) {
 	gormDB, err := gorm.Open(postgres.New(postgres.Config{
 		Conn: db,
 	}), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
-		NamingStrategy: schema.NamingStrategy{
-			SingularTable: false,
-		},
+		SkipDefaultTransaction: true,
 	})
 	require.NoError(t, err)
 	userId := uint(1)
 	date := time.Now()
-	mock.ExpectPrepare(`SELECT.*`).
-		ExpectQuery().WithArgs(userId, date.Format(DateFormat)).WillReturnError(nil)
+	mock.MatchExpectationsInOrder(false)
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM "users" WHERE (id = $1 AND max_todo > (SELECT COUNT(*) FROM "todos" WHERE CAST(created_at as DATE) = $2 AND user_id = $3)) AND "users"."deleted_at" IS NULL LIMIT 1`)).
+		WithArgs(userId, date.Format(DateFormat), userId).
+		WillReturnRows(sqlmock.NewRows([]string{"id", "name", "max_todo", "created_at", "deleted_at"}).AddRow(1, "name", 4, time.Now(), nil)).
+		WillReturnError(nil)
 	userRepo := NewUserRepository(gormDB)
 	err = userRepo.IsUserHavingMaxTodo(int64(userId), date)
 	require.NoError(t, err)
