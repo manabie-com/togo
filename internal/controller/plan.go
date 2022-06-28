@@ -3,7 +3,6 @@ package controller
 import (
 	"fmt"
 	"lntvan166/togo/internal/config"
-	repo "lntvan166/togo/internal/repository"
 	"lntvan166/togo/pkg"
 	"net/http"
 	"strconv"
@@ -19,9 +18,10 @@ const (
 	vip  Plan = "vip"
 )
 
-func GetPlan(w http.ResponseWriter, r *http.Request) {
+func (u *UserController) GetPlan(w http.ResponseWriter, r *http.Request) {
 	username := context.Get(r, "username").(string)
-	plan, err := repo.Repository.GetPlanByUsername(username)
+
+	plan, err := u.UserUsecase.GetPlan(username)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to get plan!")
 		return
@@ -30,7 +30,7 @@ func GetPlan(w http.ResponseWriter, r *http.Request) {
 	pkg.JSON(w, http.StatusOK, plan)
 }
 
-func UpgradePlan(w http.ResponseWriter, r *http.Request) {
+func (u *UserController) UpgradePlan(w http.ResponseWriter, r *http.Request) {
 	username := context.Get(r, "username").(string)
 	admin := config.ADMIN
 
@@ -46,18 +46,7 @@ func UpgradePlan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	plan, err := repo.Repository.GetPlanByID(id)
-	if err != nil {
-		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to get plan!")
-		return
-	}
-
-	if plan == string(vip) {
-		pkg.ERROR(w, http.StatusBadRequest, fmt.Errorf("this user have already vip plan"), "")
-		return
-	}
-
-	err = repo.Repository.UpgradePlan(id, string(vip), config.VIP_LIMIT)
+	err = u.UserUsecase.UpgradePlan(id, string(vip), config.VIP_LIMIT)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to upgrade plan!")
 		return

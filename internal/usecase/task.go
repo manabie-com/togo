@@ -1,40 +1,93 @@
 package usecase
 
 import (
+	"errors"
+	"lntvan166/togo/internal/domain"
 	e "lntvan166/togo/internal/entities"
-	repo "lntvan166/togo/internal/repository"
+	"lntvan166/togo/pkg"
+	"net/http"
 )
 
-func AddTask(t *e.Task) error {
-	return repo.Repository.CreateTask(t)
+type taskUsecase struct {
+	taskRepo domain.TaskRepository
+	userRepo domain.UserRepository
 }
 
-func GetNumberOfTaskTodayByUserID(id int) (int, error) {
-	return repo.Repository.GetNumberOfTaskTodayByUserID(id)
+func NewTaskUseCase(repo domain.TaskRepository, userRepo domain.UserRepository) *taskUsecase {
+	return &taskUsecase{
+		taskRepo: repo,
+		userRepo: userRepo,
+	}
 }
 
-func GetAllTask() (*[]e.Task, error) {
-	return repo.Repository.GetAllTask()
-}
-
-func GetTaskByID(id int) (*e.Task, error) {
-	return repo.Repository.GetTaskByID(id)
-}
-
-func GetTasksByUsername(username string) (*[]e.Task, error) {
-	userID, err := GetUserIDByUsername(username)
+func (t *taskUsecase) CreateTask(task *e.Task, username string) (int, error) {
+	id, err := t.userRepo.GetUserIDByUsername(username)
 	if err != nil {
+		// pkg.ERROR(w, http.StatusInternalServerError, err, "get user id failed")
+		return 0, err
+	}
+
+	isLimit, err := t.CheckLimitTaskToday(id)
+	if err != nil {
+		// pkg.ERROR(w, http.StatusInternalServerError, err, "check limit task today failed")
+		return 0, err
+	}
+
+	if isLimit {
+		// pkg.ERROR(w, http.StatusBadRequest, fmt.Errorf("you have reached the limit of task today"), "")
+		return 0, errors.New("you have reached the limit of task today")
+	}
+
+	task.CreatedAt = pkg.GetCurrentTime()
+	task.UserID = id
+
+	err = t.taskRepo.CreateTask(task)
+	if err != nil {
+		// pkg.ERROR(w, http.StatusInternalServerError, err, "add task failed")
+		return 0, err
+	}
+
+	numberTask, err := t.taskRepo.GetNumberOfTaskTodayByUserID(task.ID)
+	if err != nil {
+		// pkg.ERROR(w, http.StatusInternalServerError, err, "get number of task today failed")
+		return 0, err
+	}
+	return numberTask, nil
+}
+
+func (t *taskUsecase) GetAllTask() (*[]e.Task, error) {
+	return t.taskRepo.GetAllTask()
+}
+
+func (t *taskUsecase) GetTaskByID(id int, username string) (*e.Task, error) {
+	err := t.CheckAccessPermission(username, id)
+	if err != nil {
+		// pkg.ERROR(w, http.StatusInternalServerError, err, "check access permission failed: ")
 		return nil, err
 	}
-	return repo.Repository.GetTasksByUserID(userID)
+
+	task, err := t.taskRepo.GetTaskByID(id)
+	if err != nil {
+		// pkg.ERROR(w, http.StatusInternalServerError, err, "get task by id failed!")
+		return nil, err
+	}
+	return task, nil
 }
 
-func CheckLimitTaskToday(id int) (bool, error) {
-	maxTask, err := GetMaxTaskByUserID(id)
+func (t *taskUsecase) GetUserIDByTaskID(id int) (int, error) {
+	task, err := t.taskRepo.GetTaskByID(id)
+	if err != nil {
+		return 0, err
+	}
+	return task.UserID, nil
+}
+
+func (t *taskUsecase) CheckLimitTaskToday(id int) (bool, error) {
+	maxTask, err := t.taskRepo.GetMaxTaskByUserID(id)
 	if err != nil {
 		return false, err
 	}
-	numberTask, err := repo.Repository.GetNumberOfTaskTodayByUserID(id)
+	numberTask, err := t.taskRepo.GetNumberOfTaskTodayByUserID(id)
 	if err != nil {
 		return false, err
 	}
@@ -44,10 +97,84 @@ func CheckLimitTaskToday(id int) (bool, error) {
 	return false, nil
 }
 
-func UpdateTask(t *e.Task) error {
-	return repo.Repository.UpdateTask(t)
+func (t *taskUsecase) UpdateTask(id int, username string, r *http.Request) error {
+	user_id, err := t.GetUserIDByTaskID(id)
+	if err != nil {
+		// pkg.ERROR(w, http.StatusInternalServerError, err, "task does not exist!")
+		return err
+	}
+
+	err = t.CheckAccessPermission(username, user_id)
+	if err != nil {
+		// pkg.ERROR(w, http.StatusInternalServerError, err, "check access permission failed: ")
+		return err
+	}
+
+	task, err := t.taskRepo.GetTaskByID(id)
+	if err != nil {
+		// pkg.ERROR(w, http.StatusInternalServerError, err, "get task by id failed!")
+		return err
+	}
+
+	err = t.taskRepo.UpdateTask(task)
+	if err != nil {
+		// pkg.ERROR(w, http.StatusInternalServerError, err, "update task failed!")
+		return err
+	}
+	return nil
 }
 
-func DeleteTask(id int) error {
-	return repo.Repository.DeleteTask(id)
+func (t *taskUsecase) CompleteTask(id int, username string) error {
+	user_id, err := t.GetUserIDByTaskID(id)
+	if err != nil {
+		// pkg.ERROR(w, http.StatusInternalServerError, err, "task does not exist!")
+		return err
+	}
+
+	err = t.CheckAccessPermission(username, user_id)
+	if err != nil {
+		// pkg.ERROR(w, http.StatusInternalServerError, err, "check access permission failed: ")
+		return err
+	}
+
+	err = t.taskRepo.CompleteTask(id)
+	if err != nil {
+		// pkg.ERROR(w, http.StatusInternalServerError, err, "complete task failed!")
+		return err
+	}
+	return nil
+}
+
+func (t *taskUsecase) CheckAccessPermission(username string, taskUserID int) error {
+	userID, err := t.userRepo.GetUserIDByUsername(username)
+	if err != nil {
+		return err
+	}
+
+	if userID != taskUserID {
+		return errors.New("you are not allowed to access this task")
+	}
+
+	return nil
+}
+
+func (t *taskUsecase) DeleteTask(id int, username string) error {
+	user_id, err := t.GetUserIDByTaskID(id)
+	if err != nil {
+		// pkg.ERROR(w, http.StatusInternalServerError, err, "task does not exist!")
+		return err
+	}
+
+	err = t.CheckAccessPermission(username, user_id)
+	if err != nil {
+		// pkg.ERROR(w, http.StatusInternalServerError, err, "check access permission failed: ")
+		return err
+	}
+
+	err = t.taskRepo.DeleteTask(id)
+	if err != nil {
+		// pkg.ERROR(w, http.StatusInternalServerError, err, "delete task failed!")
+		return err
+	}
+	return nil
 }

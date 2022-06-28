@@ -30,7 +30,7 @@ func NewMock() (*sql.DB, sqlmock.Sqlmock) {
 
 func TestAddUser(t *testing.T) {
 	db, mock := NewMock()
-	repo := &repository{db}
+	repo := &userRepository{db}
 	defer db.Close()
 
 	query := regexp.QuoteMeta(`INSERT INTO users (username, password, plan, max_todo) VALUES ($1, $2, $3, $4)`)
@@ -46,7 +46,7 @@ func TestAddUser(t *testing.T) {
 
 func TestGetAllUser(t *testing.T) {
 	db, mock := NewMock()
-	repo := &repository{db}
+	repo := &userRepository{db}
 	defer db.Close()
 
 	query := regexp.QuoteMeta(`SELECT * FROM users`)
@@ -61,7 +61,7 @@ func TestGetAllUser(t *testing.T) {
 
 func TestGetUserByName(t *testing.T) {
 	db, mock := NewMock()
-	repo := &repository{db}
+	repo := &userRepository{db}
 	defer db.Close()
 
 	query := regexp.QuoteMeta(`SELECT * FROM users WHERE username = $1`)
@@ -76,7 +76,7 @@ func TestGetUserByName(t *testing.T) {
 
 func TestGetUserByID(t *testing.T) {
 	db, mock := NewMock()
-	repo := &repository{db}
+	repo := &userRepository{db}
 	defer db.Close()
 
 	query := regexp.QuoteMeta(`SELECT * FROM users WHERE id = $1`)
@@ -91,7 +91,7 @@ func TestGetUserByID(t *testing.T) {
 
 func TestGetNumberOfTaskTodayByUserID(t *testing.T) {
 	db, mock := NewMock()
-	repo := &repository{db}
+	repo := &userRepository{db}
 	defer db.Close()
 
 	query := regexp.QuoteMeta(`SELECT COUNT(*) FROM tasks WHERE user_id = $1 AND DATE(created_at) = CURRENT_DATE`)
@@ -105,7 +105,7 @@ func TestGetNumberOfTaskTodayByUserID(t *testing.T) {
 
 func TestGetPlanByID(t *testing.T) {
 	db, mock := NewMock()
-	repo := &repository{db}
+	repo := &userRepository{db}
 	defer db.Close()
 
 	query := regexp.QuoteMeta(`SELECT plan FROM users WHERE id = $1`)
@@ -119,7 +119,7 @@ func TestGetPlanByID(t *testing.T) {
 
 func TestGetPlanByUsername(t *testing.T) {
 	db, mock := NewMock()
-	repo := &repository{db}
+	repo := &userRepository{db}
 	defer db.Close()
 
 	query := regexp.QuoteMeta(`SELECT plan FROM users WHERE username = $1`)
@@ -133,7 +133,7 @@ func TestGetPlanByUsername(t *testing.T) {
 
 func TestUpdateUser(t *testing.T) {
 	db, mock := NewMock()
-	repo := &repository{db}
+	repo := &userRepository{db}
 	defer db.Close()
 
 	query := regexp.QuoteMeta(`UPDATE users SET username = $1, password = $2, plan = $3, max_todo = $4 WHERE id = $5`)
@@ -148,7 +148,7 @@ func TestUpdateUser(t *testing.T) {
 
 func TestUpgradePlan(t *testing.T) {
 	db, mock := NewMock()
-	repo := &repository{db}
+	repo := &userRepository{db}
 	defer db.Close()
 
 	query := regexp.QuoteMeta(`UPDATE users SET plan = $1, max_todo = $2 WHERE id = $3`)
@@ -165,7 +165,7 @@ func TestUpgradePlan(t *testing.T) {
 
 func TestDeleteUserByID(t *testing.T) {
 	db, mock := NewMock()
-	repo := &repository{db}
+	repo := &userRepository{db}
 	defer db.Close()
 
 	query := regexp.QuoteMeta(`DELETE FROM users WHERE id = $1`)

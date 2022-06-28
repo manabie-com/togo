@@ -20,7 +20,7 @@ var task = &e.Task{
 
 func TestAddTask(t *testing.T) {
 	db, mock := NewMock()
-	repo := &repository{db}
+	repo := &taskRepository{db}
 	defer db.Close()
 
 	query := regexp.QuoteMeta(`INSERT INTO tasks (
@@ -37,7 +37,7 @@ func TestAddTask(t *testing.T) {
 
 func TestGetAllTask(t *testing.T) {
 	db, mock := NewMock()
-	repo := &repository{db}
+	repo := &taskRepository{db}
 	defer db.Close()
 
 	query := regexp.QuoteMeta(`SELECT * FROM tasks;`)
@@ -54,7 +54,7 @@ func TestGetAllTask(t *testing.T) {
 
 func TestGetTaskByID(t *testing.T) {
 	db, mock := NewMock()
-	repo := &repository{db}
+	repo := &taskRepository{db}
 	defer db.Close()
 
 	query := regexp.QuoteMeta(`SELECT * FROM tasks WHERE id = $1;`)
@@ -69,27 +69,9 @@ func TestGetTaskByID(t *testing.T) {
 	assert.Equal(t, task, newTask)
 }
 
-// TODO: Check limit task today
-// func TestCheckLimitTaskToday(t *testing.T) {
-// 	db, mock := NewMock()
-// 	repo := &repository{db}
-// 	defer db.Close()
-
-// 	query := regexp.QuoteMeta(`SELECT COUNT(*) FROM tasks WHERE user_id = $1 AND created_at >= current_date;`)
-
-// 	rows := sqlmock.NewRows([]string{"count"}).
-// 		AddRow(1)
-
-// 	mock.ExpectQuery(query).WithArgs(u.ID).WillReturnRows(rows)
-
-// 	isLimit, err := repo.CheckLimitTaskToday(u.ID)
-// 	assert.NoError(t, err)
-// 	assert.Equal(t, false, isLimit)
-// }
-
 func TestUpdateTask(t *testing.T) {
 	db, mock := NewMock()
-	repo := &repository{db}
+	repo := &taskRepository{db}
 	defer db.Close()
 
 	query := regexp.QuoteMeta(`UPDATE tasks SET name = $1, description = $2, created_at = $3, completed = $4, user_id = $5 WHERE id = $6;`)
@@ -104,7 +86,7 @@ func TestUpdateTask(t *testing.T) {
 
 func TestCompleteTask(t *testing.T) {
 	db, mock := NewMock()
-	repo := &repository{db}
+	repo := &taskRepository{db}
 	defer db.Close()
 
 	query := regexp.QuoteMeta(`UPDATE tasks SET completed = true WHERE id = $1;`)
@@ -119,7 +101,7 @@ func TestCompleteTask(t *testing.T) {
 
 func TestDeleteTask(t *testing.T) {
 	db, mock := NewMock()
-	repo := &repository{db}
+	repo := &taskRepository{db}
 	defer db.Close()
 
 	query := regexp.QuoteMeta(`DELETE FROM tasks WHERE id = $1;`)
@@ -134,7 +116,7 @@ func TestDeleteTask(t *testing.T) {
 
 func TestDeleteAllTask(t *testing.T) {
 	db, mock := NewMock()
-	repo := &repository{db}
+	repo := &taskRepository{db}
 	defer db.Close()
 
 	query := regexp.QuoteMeta(`DELETE FROM tasks;`)
@@ -149,7 +131,7 @@ func TestDeleteAllTask(t *testing.T) {
 
 func TestDeleteAllTaskOfUser(t *testing.T) {
 	db, mock := NewMock()
-	repo := &repository{db}
+	repo := &taskRepository{db}
 	defer db.Close()
 
 	query := regexp.QuoteMeta(`DELETE FROM tasks WHERE user_id = $1;`)

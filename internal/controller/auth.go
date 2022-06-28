@@ -2,17 +2,18 @@ package controller
 
 import (
 	"encoding/json"
-	"errors"
-	"lntvan166/togo/internal/usecase"
+	"lntvan166/togo/internal/domain"
 	"lntvan166/togo/pkg"
 	"net/http"
 
 	e "lntvan166/togo/internal/entities"
-
-	"github.com/gorilla/context"
 )
 
-func Register(w http.ResponseWriter, r *http.Request) {
+type AuthController struct {
+	UserUsecase domain.UserUsecase
+}
+
+func (u *UserController) Register(w http.ResponseWriter, r *http.Request) {
 	user := e.NewUser()
 	var err error
 
@@ -23,34 +24,16 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	checkUserExist, err := usecase.CheckUserExist(user.Username)
+	err = u.UserUsecase.Register(user)
 	if err != nil {
-		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to check user exist!")
-		return
-	}
-	if checkUserExist {
-		pkg.ERROR(w, http.StatusBadRequest, errors.New("user already exist"), "")
-		return
-	}
-
-	user.PreparePassword()
-
-	err = user.IsValid()
-	if err != nil {
-		pkg.ERROR(w, http.StatusBadRequest, err, "invalid user data!")
-		return
-	}
-
-	err = usecase.AddUser(user)
-	if err != nil {
-		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to add user!")
+		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to register user!")
 		return
 	}
 
 	pkg.JSON(w, http.StatusCreated, "Register Successfully")
 }
 
-func Login(w http.ResponseWriter, r *http.Request) {
+func (u *UserController) Login(w http.ResponseWriter, r *http.Request) {
 	newUser := e.NewUser()
 
 	err := json.NewDecoder(r.Body).Decode(&newUser)
@@ -59,52 +42,41 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := usecase.GetUserByName(newUser.Username)
+	token, err := u.UserUsecase.Login(newUser)
 	if err != nil {
-		pkg.ERROR(w, http.StatusInternalServerError, err, "user not found!")
-		return
-	}
-
-	if !user.ComparePassWord(newUser.Password) {
-		pkg.ERROR(w, http.StatusBadRequest, errors.New("password incorrect"), "")
-		return
-	}
-
-	token, err := pkg.GenerateToken(user.Username)
-	if err != nil {
-		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to generate token!")
+		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to login user!")
 		return
 	}
 
 	pkg.JSON(w, http.StatusOK, map[string]string{"token": token, "message": "login successfully"})
 }
 
-func UpdatePassword(w http.ResponseWriter, r *http.Request) {
-	user, err := usecase.GetUserByName(context.Get(r, "username").(string))
-	if err != nil {
-		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to get user!")
-		return
-	}
+// func (u *UserController) UpdatePassword(w http.ResponseWriter, r *http.Request) {
+// 	user, err := u.UserUsecase.GetUserByName(context.Get(r, "username").(string))
+// 	if err != nil {
+// 		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to get user!")
+// 		return
+// 	}
 
-	err = json.NewDecoder(r.Body).Decode(&user)
-	if err != nil {
-		pkg.ERROR(w, http.StatusBadRequest, err, "invalid request body!")
-		return
-	}
+// 	err = json.NewDecoder(r.Body).Decode(&user)
+// 	if err != nil {
+// 		pkg.ERROR(w, http.StatusBadRequest, err, "invalid request body!")
+// 		return
+// 	}
 
-	err = user.IsValid()
-	if err != nil {
-		pkg.ERROR(w, http.StatusBadRequest, err, "invalid user data!")
-		return
-	}
+// 	err = user.IsValid()
+// 	if err != nil {
+// 		pkg.ERROR(w, http.StatusBadRequest, err, "invalid user data!")
+// 		return
+// 	}
 
-	user.PreparePassword()
+// 	user.PreparePassword()
 
-	err = usecase.UpdateUser(user)
-	if err != nil {
-		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to update user!")
-		return
-	}
+// 	err = u.UserUsecase.UpdateUser(user)
+// 	if err != nil {
+// 		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to update user!")
+// 		return
+// 	}
 
-	pkg.JSON(w, http.StatusOK, "Update Password Successfully")
-}
+// 	pkg.JSON(w, http.StatusOK, "Update Password Successfully")
+// }

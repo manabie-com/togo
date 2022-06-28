@@ -2,73 +2,159 @@ package usecase
 
 import (
 	"errors"
+	"lntvan166/togo/internal/domain"
 	e "lntvan166/togo/internal/entities"
-	repo "lntvan166/togo/internal/repository"
-	"net/http"
+	"lntvan166/togo/pkg"
 )
 
-func AddUser(u *e.User) error {
-	return repo.Repository.AddUser(u)
+type userUsecase struct {
+	userRepo domain.UserRepository
+	taskRepo domain.TaskRepository
 }
 
-func GetUserByName(username string) (*e.User, error) {
-	u, err := repo.Repository.GetUserByName(username)
+func NewUserUsecase(repo domain.UserRepository, taskRepo domain.TaskRepository) *userUsecase {
+	return &userUsecase{
+		userRepo: repo,
+		taskRepo: taskRepo,
+	}
+}
+
+func (u *userUsecase) Register(user *e.User) error {
+	checkUserExist, err := u.CheckUserExist(user.Username)
+	if err != nil {
+		// pkg.ERROR(w, http.StatusInternalServerError, err, "failed to check user exist!")
+		return err
+	}
+	if checkUserExist {
+		// pkg.ERROR(w, http.StatusBadRequest, errors.New("user already exist"), "")
+		return errors.New("user already exist")
+	}
+
+	user.PreparePassword()
+
+	err = user.IsValid()
+	if err != nil {
+		// pkg.ERROR(w, http.StatusBadRequest, err, "invalid user data!")
+		return err
+	}
+
+	err = u.userRepo.AddUser(user)
+	if err != nil {
+		// pkg.ERROR(w, http.StatusInternalServerError, err, "failed to add user!")
+		return err
+	}
+
+	return nil
+}
+
+func (u *userUsecase) Login(user *e.User) (string, error) {
+	checkUserExist, err := u.CheckUserExist(user.Username)
+	if err != nil {
+		// pkg.ERROR(w, http.StatusInternalServerError, err, "failed to check user exist!")
+		return "", err
+	}
+	if !checkUserExist {
+		// pkg.ERROR(w, http.StatusBadRequest, errors.New("user not found"), "")
+		return "", errors.New("user not found")
+	}
+
+	user, err = u.userRepo.GetUserByName(user.Username)
+	if err != nil {
+		// pkg.ERROR(w, http.StatusInternalServerError, err, "failed to get user!")
+		return "", err
+	}
+
+	if !user.ComparePassWord(user.Password) {
+		// pkg.ERROR(w, http.StatusBadRequest, errors.New("password incorrect"), "")
+		return "", errors.New("password incorrect")
+	}
+
+	token, err := pkg.GenerateToken(user.Username)
+	if err != nil {
+		// pkg.ERROR(w, http.StatusInternalServerError, err, "failed to generate token!")
+		return "", err
+	}
+
+	return token, nil
+}
+
+func (u *userUsecase) GetAllUsers() ([]*e.User, error) {
+	return u.userRepo.GetAllUsers()
+}
+
+func (u *userUsecase) GetUserByID(id int) (*e.User, error) {
+	user, err := u.userRepo.GetUserByID(id)
 	if err != nil {
 		return nil, err
 	}
-	return u, nil
+	return user, nil
 }
 
-func GetUserIDByUsername(username string) (int, error) {
-	u, err := repo.Repository.GetUserByName(username)
+func (u *userUsecase) GetUserByName(username string) (*e.User, error) {
+	user, err := u.userRepo.GetUserByName(username)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func (u *userUsecase) GetUserIDByUsername(username string) (int, error) {
+	user, err := u.userRepo.GetUserByName(username)
 	if err != nil {
 		return 0, err
 	}
-	return u.ID, nil
+	return user.ID, nil
 }
 
-func GetUserIDByTaskID(id int) (int, error) {
-	t, err := repo.Repository.GetTaskByID(id)
+func (u *userUsecase) GetMaxTaskByUserID(id int) (int, error) {
+	user, err := u.userRepo.GetUserByID(id)
 	if err != nil {
 		return 0, err
 	}
-	return t.UserID, nil
+	return int(user.MaxTodo), nil
 }
 
-func GetMaxTaskByUserID(id int) (int, error) {
-	u, err := repo.Repository.GetUserByID(id)
+func (u *userUsecase) GetPlan(username string) (string, error) {
+	user, err := u.userRepo.GetUserByName(username)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
-	return int(u.MaxTodo), nil
-}
-func UpdateUser(u *e.User) error {
-	return repo.Repository.UpdateUser(u)
-}
-func CompleteTask(id int) error {
-	return repo.Repository.CompleteTask(id)
+	return user.Plan, nil
 }
 
-func CheckUserExist(username string) (bool, error) {
-	u, err := repo.Repository.GetUserByName(username)
+func (u *userUsecase) UpdateUser(user *e.User) error {
+	return u.userRepo.UpdateUser(user)
+}
+
+func (u *userUsecase) UpgradePlan(userID int, plan string, maxTodo int) error {
+	user, err := u.userRepo.GetUserByID(userID)
+	if err != nil {
+		return err
+	}
+	if user.Plan == plan {
+		return errors.New("plan already upgraded")
+	}
+
+	user.Plan = plan
+	user.MaxTodo = int64(maxTodo)
+	return u.userRepo.UpdateUser(user)
+}
+
+func (u *userUsecase) CheckUserExist(username string) (bool, error) {
+	user, err := u.userRepo.GetUserByName(username)
 	if err != nil {
 		return false, err
 	}
-	if u.ID == 0 {
+	if user.ID == 0 {
 		return false, nil
 	}
 	return true, nil
 }
 
-func CheckAccessPermission(w http.ResponseWriter, username string, taskUserID int) error {
-	userID, err := GetUserIDByUsername(username)
+func (u *userUsecase) DeleteUserByID(id int) error {
+	err := u.taskRepo.DeleteAllTaskOfUser(id)
 	if err != nil {
 		return err
 	}
-
-	if userID != taskUserID {
-		return errors.New("you are not allowed to access this task")
-	}
-
-	return nil
+	return u.userRepo.DeleteUserByID(id)
 }

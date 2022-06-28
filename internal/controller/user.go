@@ -1,7 +1,7 @@
 package controller
 
 import (
-	repo "lntvan166/togo/internal/repository"
+	"lntvan166/togo/internal/domain"
 	"lntvan166/togo/pkg"
 	"net/http"
 	"strconv"
@@ -9,8 +9,13 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func GetAllUsers(w http.ResponseWriter, r *http.Request) {
-	users, err := repo.Repository.GetAllUsers()
+type UserController struct {
+	UserUsecase domain.UserUsecase
+	TaskUsecase domain.TaskUsecase
+}
+
+func (u *UserController) GetAllUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := u.UserUsecase.GetAllUsers()
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to get users!")
 		return
@@ -19,7 +24,7 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	pkg.JSON(w, http.StatusOK, users)
 }
 
-func GetUser(w http.ResponseWriter, r *http.Request) {
+func (u *UserController) GetUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	id, err := strconv.Atoi(vars["id"])
@@ -28,7 +33,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := repo.Repository.GetUserByID(id)
+	user, err := u.UserUsecase.GetUserByID(id)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to get user!")
 		return
@@ -37,7 +42,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	pkg.JSON(w, http.StatusOK, user)
 }
 
-func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
+func (u *UserController) DeleteUserByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	id, err := strconv.Atoi(vars["id"])
@@ -46,13 +51,7 @@ func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = repo.Repository.DeleteAllTaskOfUser(id)
-	if err != nil {
-		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to delete user!")
-		return
-	}
-
-	err = repo.Repository.DeleteUserByID(id)
+	err = u.UserUsecase.DeleteUserByID(id)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to delete user!")
 		return

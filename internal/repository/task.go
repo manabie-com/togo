@@ -1,12 +1,23 @@
 package repository
 
 import (
+	"database/sql"
 	e "lntvan166/togo/internal/entities"
 )
 
+type taskRepository struct {
+	DB *sql.DB
+}
+
+func NewTaskRepository(db *sql.DB) *taskRepository {
+	return &taskRepository{
+		DB: db,
+	}
+}
+
 // CREATE
 
-func (r *repository) CreateTask(t *e.Task) error {
+func (r *taskRepository) CreateTask(t *e.Task) error {
 	const query = `INSERT INTO tasks (
 		name, description, created_at, completed, user_id)
 		VALUES ($1, $2, $3, $4, $5);`
@@ -25,7 +36,7 @@ func (r *repository) CreateTask(t *e.Task) error {
 
 // READ
 
-func (r *repository) GetAllTask() (*[]e.Task, error) {
+func (r *taskRepository) GetAllTask() (*[]e.Task, error) {
 	const query = `SELECT * FROM tasks;`
 	rows, err := r.DB.Query(query)
 	if err != nil {
@@ -47,7 +58,7 @@ func (r *repository) GetAllTask() (*[]e.Task, error) {
 	return &tasks, nil
 }
 
-func (r *repository) GetTaskByID(id int) (*e.Task, error) {
+func (r *taskRepository) GetTaskByID(id int) (*e.Task, error) {
 	const query = `SELECT * FROM tasks WHERE id = $1;`
 	row := r.DB.QueryRow(query, id)
 	var t e.Task
@@ -58,7 +69,7 @@ func (r *repository) GetTaskByID(id int) (*e.Task, error) {
 	return &t, nil
 }
 
-func (r *repository) GetTasksByUserID(id int) (*[]e.Task, error) {
+func (r *taskRepository) GetTasksByUserID(id int) (*[]e.Task, error) {
 	const query = `SELECT * FROM tasks WHERE user_id = $1;`
 	rows, err := r.DB.Query(query, id)
 	if err != nil {
@@ -80,9 +91,51 @@ func (r *repository) GetTasksByUserID(id int) (*[]e.Task, error) {
 	return &tasks, nil
 }
 
+func (r *taskRepository) GetTasksByUsername(username string) (*[]e.Task, error) {
+	const query = `SELECT * FROM tasks WHERE user_id = (SELECT id FROM users WHERE username = $1);`
+	rows, err := r.DB.Query(query, username)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	tasks := []e.Task{}
+
+	for rows.Next() {
+		var t e.Task
+		err := rows.Scan(&t.ID, &t.Name, &t.Description, &t.CreatedAt, &t.Completed, &t.UserID)
+		if err != nil {
+			return nil, err
+		}
+		tasks = append(tasks, t)
+	}
+
+	return &tasks, nil
+}
+
+func (r *taskRepository) GetNumberOfTaskTodayByUserID(id int) (int, error) {
+	const query = `SELECT COUNT(*) FROM tasks WHERE user_id = $1 AND DATE(created_at) = CURRENT_DATE`
+	var count int
+	err := r.DB.QueryRow(query, id).Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+func (r *taskRepository) GetMaxTaskByUserID(id int) (int, error) {
+	const query = `SELECT max_todo FROM users WHERE id = $1`
+	var max int
+	err := r.DB.QueryRow(query, id).Scan(&max)
+	if err != nil {
+		return 0, err
+	}
+	return max, nil
+}
+
 // UPDATE
 
-func (r *repository) UpdateTask(t *e.Task) error {
+func (r *taskRepository) UpdateTask(t *e.Task) error {
 	const query = `UPDATE tasks SET name = $1, description = $2, created_at = $3, completed = $4, user_id = $5 WHERE id = $6;`
 	tx, err := r.DB.Begin()
 	if err != nil {
@@ -97,7 +150,7 @@ func (r *repository) UpdateTask(t *e.Task) error {
 	return nil
 }
 
-func (r *repository) CompleteTask(id int) error {
+func (r *taskRepository) CompleteTask(id int) error {
 	const query = `UPDATE tasks SET completed = true WHERE id = $1;`
 	tx, err := r.DB.Begin()
 	if err != nil {
@@ -114,7 +167,7 @@ func (r *repository) CompleteTask(id int) error {
 
 // DELETE
 
-func (r *repository) DeleteTask(id int) error {
+func (r *taskRepository) DeleteTask(id int) error {
 	const query = `DELETE FROM tasks WHERE id = $1;`
 	tx, err := r.DB.Begin()
 	if err != nil {
@@ -129,7 +182,7 @@ func (r *repository) DeleteTask(id int) error {
 	return nil
 }
 
-func (r *repository) DeleteAllTask() error {
+func (r *taskRepository) DeleteAllTask() error {
 	const query = `DELETE FROM tasks;`
 	tx, err := r.DB.Begin()
 	if err != nil {
@@ -144,7 +197,7 @@ func (r *repository) DeleteAllTask() error {
 	return nil
 }
 
-func (r *repository) DeleteAllTaskOfUser(userID int) error {
+func (r *taskRepository) DeleteAllTaskOfUser(userID int) error {
 	const query = `DELETE FROM tasks WHERE user_id = $1;`
 	tx, err := r.DB.Begin()
 	if err != nil {
