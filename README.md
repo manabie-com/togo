@@ -1,30 +1,53 @@
-### Requirements
+# Node.js project with Express, Sequelize, Jest and Postgres
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+by [Buudld]
 
-### Notes
+### Directory structure
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+```shell
+src
+  ├── app.js         app entry point
+  ├── /routes        controller layer: api routes
+  ├── /config        config settings
+  ├── /services      service layer: business logic
+  ├── /models        data access layer: database models	
+test       
+  ├── /unit          unit test suites
+  ├── /integration   test api routes
+ ```
 
-### How to submit your solution?
+### Installation and execution
 
-- Fork this repo and show us your development progress via a PR
+1. Run yarn to install dependencies: `yarn`;
+1. Config database credentials inside `/src/config/database.js`;
+1. Create database, run `yarn sequelize db:create` to create the database and run port Docker postgresql;
+1. Run `yarn dev` to start the server.
+1. Run `yarn test` to start the server.
 
-### Interesting facts about Manabie
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+### API 
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+- Sign-up: `http://localhost:3000/api/auth/signup`
+- Login: `http://localhost:3000/api/auth/signin`
+- Users: `http://localhost:3000/api/users`
+- Task: `http://localhost:3000/api/task`
+
+### Curl
+curl --location --request POST 'http://localhost:3000/api/task' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "title": "Test Todo Task",
+    "description": "Test Todo Task",
+    "text": "Test Todo Task"
+}'
+
+### What do you love about your solution?
+1. This backend is written in Nodejs:  I can write Javascript code outside the browser to create server-side web applications that are non-blocking, lightweight, fast, robust and scalable.
+2. Separation of concern principle is applied: Each component has been given a particular role. The role of the components is mutually exclusive. This makes the project easy to be unit tested.
+3. Feature encapsulation is adopted: The files or components that are related to a particular feature have been grouped unless those components are required in multiple features. This enhances the ability to share code across projects.
+4. Centralised Error handling is done: We have created a framework where all the errors are handled centrally. This reduces the ambiguity in the development when the project grows larger.
+5. Async execution is adopted: We have used async/await for the promises and made sure to use the non-blocking version of all the functions with few exceptions.
+6. Unit test is favored: The tests have been written to test the functions and routes without the need of the database server. Integration tests has also been done but the unit test is favored.
+
+### What else do you want us to know about however you do not have enough time to complete?
+1. Writting skill unit test and intergation test not perfect.
