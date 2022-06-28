@@ -13,25 +13,31 @@
 
 #### Step 2:
 
-    - Cd to folder that contains source code of application(pull from GIT).
+    - Cd to folder that contains source code of application(pulled from GIT).
     - Run this command: docker-compose up. Todo app will be setup and migrate automatically.
+    - If the docker desktop asks for permission then just allow it.
     - After above command done: 2 services will be created that are <backend> and <db>.
 
 #### Step 3:
 
-    - Make sure you are in Todo project folder
-    - Access docker container of <backend> and create super user:
-      - docker-compose exec backend sh
-      - run this command: python manage.py createsuperuser. Now you can set <username> and <password> for this super user.
+> How to create a super user in Todo application?
+> You could follow one of these ways:
 
-#### Step 4(Optional):
+##### 1. Create by registration API:
 
     - If you want to create a user as super user, you can make a POST request to create a new user and add <is_superuser> field to payload.
     - Endpoint: POST /api/users/registration/
     - Example:
       - curl -X POST "http://localhost:8000/api/users/registration/" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"username\": \"admin\", \"password\": \"admin\", \"is_superuser\": true}"
 
-#### Step 5:
+##### 2. Create by django command:
+
+    - Make sure you are in Todo project folder
+    - Access docker container of <backend> and create super user:
+      - docker-compose exec backend sh
+      - run this command: python manage.py createsuperuser. Now you can set <username> and <password> for this super user.
+
+#### Step 4:
 
     - At this step TODO APIs are ready for use.
 

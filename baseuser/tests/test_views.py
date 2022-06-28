@@ -28,6 +28,7 @@ class TestViews(TestCase):
         del self.detail_url
 
     def test_POST_registration(self):
+        print("Running test_POST_registration")
         response = self.__login(
             UserDataTest.USER_USERNAME_1, UserDataTest.USER_PASSWORD
         )
@@ -39,6 +40,7 @@ class TestViews(TestCase):
         self.assertEquals(response.status_code, 201)
 
     def test_POST_login(self):
+        print("Running test_POST_login")
         response = self.__register_new_user(
             UserDataTest.USER_USERNAME_1, UserDataTest.USER_PASSWORD
         )
@@ -48,6 +50,7 @@ class TestViews(TestCase):
         self.assertEquals(response.status_code, 200)
 
     def test_POST_registration_and_login(self):
+        print("Running test_POST_registration_and_login")
         response = self.__register_new_user(
             UserDataTest.USER_USERNAME_1, UserDataTest.USER_PASSWORD
         )
@@ -59,6 +62,7 @@ class TestViews(TestCase):
         self.assertEquals(response.status_code, 200)
 
     def test_GET_list_users(self):
+        print("Running test_GET_list_users")
         user = self.__register_and_login(
             UserDataTest.USER_USERNAME_1, UserDataTest.USER_PASSWORD
         )
@@ -76,6 +80,7 @@ class TestViews(TestCase):
         self.assertEquals(admin_get_list_response.status_code, 200)
 
     def test_GET_detail_user_by_current_user(self):
+        print("Running test_GET_detail_user_by_current_user")
         user = self.__register_new_user(
             UserDataTest.USER_USERNAME_1, UserDataTest.USER_PASSWORD
         )
@@ -86,6 +91,7 @@ class TestViews(TestCase):
         self.assertEquals(user_detail.status_code, 200)
 
     def test_GET_detail_user_by_admin_user(self):
+        print("Running test_GET_detail_user_by_admin_user")
         user = self.__register_new_user(
             UserDataTest.USER_USERNAME_1, UserDataTest.USER_PASSWORD
         )
@@ -98,6 +104,7 @@ class TestViews(TestCase):
         self.assertEquals(response.status_code, 200)
 
     def test_GET_detail_other_user_by_current_user(self):
+        print("Running test_GET_detail_other_user_by_current_user")
         user_1_login = self.__register_and_login(
             UserDataTest.USER_USERNAME_1, UserDataTest.USER_PASSWORD
         )

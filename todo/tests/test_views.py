@@ -41,14 +41,17 @@ class TestViews(TestCase):
         del self.admin_tokens
 
     def test_GET_task_list_without_authentication(self):
+        print("Running test_GET_task_list_without_authentication")
         response = self.client.get(self.list_url)
         self.assertEquals(response.status_code, 401)
 
     def test_GET_task_detail_without_authentication(self):
+        print("Running test_GET_task_detail_without_authentication")
         response = self.client.get(self.detail_url)
         self.assertEquals(response.status_code, 401)
 
     def test_POST_add_new_task_without_authentication(self):
+        print("Running test_POST_add_new_task_without_authentication")
         response = self.client.post(
             self.list_url,
             {
@@ -59,6 +62,7 @@ class TestViews(TestCase):
         self.assertEquals(response.status_code, 401)
 
     def test_POST_add_new_task_with_authentication(self):
+        print("Running test_POST_add_new_task_with_authentication")
         user_auth_header = self.__get_auth_header(self.tokens["access"])
 
         list_of_tasks_before_add_task = self.__get_list_of_tasks(user_auth_header)
@@ -76,11 +80,13 @@ class TestViews(TestCase):
         )
 
     def test_GET_task_list_with_authentication(self):
+        print("Running test_GET_task_list_with_authentication")
         user_auth_header = self.__get_auth_header(self.tokens["access"])
         response = self.__get_list_of_tasks(user_auth_header)
         self.assertEquals(response.status_code, 200)
 
     def test_GET_task_detail_with_authentication(self):
+        print("Running test_GET_task_detail_with_authentication")
         user_auth_header = self.__get_auth_header(self.tokens["access"])
 
         for i in range(2):
@@ -102,6 +108,7 @@ class TestViews(TestCase):
         )
 
     def test_DELETE_task_with_authentication(self):
+        print("Running test_DELETE_task_with_authentication")
         user_auth_header = self.__get_auth_header(self.tokens["access"])
 
         for i in range(2):
@@ -120,6 +127,7 @@ class TestViews(TestCase):
         )
 
     def test_POST_add_task_exceed_maximum_tasks_per_day_scenario_1(self):
+        print("Running test_POST_add_task_exceed_maximum_tasks_per_day_scenario_1")
         tasks = list()
 
         user = self.__register_new_user(
@@ -151,6 +159,7 @@ class TestViews(TestCase):
         self.assertNotEquals(maximum_task_per_day, len(tasks))
 
     def test_POST_add_task_exceed_maximum_tasks_per_day_scenario_2(self):
+        print("Running test_POST_add_task_exceed_maximum_tasks_per_day_scenario_2")
         tasks = list()
 
         user = self.__register_new_user(
@@ -160,7 +169,6 @@ class TestViews(TestCase):
             UserDataTest.USER_USERNAME_2, UserDataTest.USER_PASSWORD
         )
 
-        # Add task to maximum of tasks per day
         user_auth_header = self.__get_auth_header(user_login_response.data["access"])
         maximum_task_per_day = user.data["maximum_task_per_day"]
 
@@ -179,19 +187,15 @@ class TestViews(TestCase):
         )
         self.assertEquals(response.status_code, 400)
 
-        # Delete a task
         response = self.__delete_task(tasks[0].data["id"], user_auth_header)
         self.assertEquals(response.status_code, 204)
 
-        # Add task again
         response = self.__add_task(
             self.task_title.format(timezone.now()),
             self.task_description,
             user_auth_header,
         )
 
-        # Update maximum of tasks value
-        # Validate this value must be greater than the current value
         admin_auth_header = self.__get_auth_header(self.admin_tokens["access"])
 
         maximum_task_per_day -= 1
@@ -206,7 +210,6 @@ class TestViews(TestCase):
         )
         self.assertEquals(response.status_code, 200)
 
-        # Add task again then new task should be added at this time
         response = self.__add_task(
             self.task_title.format(timezone.now()),
             self.task_description,
@@ -215,6 +218,7 @@ class TestViews(TestCase):
         self.assertEquals(response.status_code, 201)
 
     def test_POST_user_cannot_get_list_tasks_of_other(self):
+        print("Running test_POST_user_cannot_get_list_tasks_of_other")
         user_1 = self.__register_and_login(
             UserDataTest.USER_USERNAME_1, UserDataTest.USER_PASSWORD
         )
@@ -249,6 +253,7 @@ class TestViews(TestCase):
         )
 
     def test_GET_user_cannot_get_detail_task_of_other(self):
+        print("Running test_GET_user_cannot_get_detail_task_of_other")
         new_user = self.__register_and_login(
             UserDataTest.USER_USERNAME_2, UserDataTest.USER_PASSWORD
         )
