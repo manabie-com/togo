@@ -10,13 +10,12 @@ type TaskRepository interface {
 	GetAllTask() (*[]e.Task, error)
 	GetTaskByID(id int) (*e.Task, error)
 	GetTasksByUserID(id int) (*[]e.Task, error)
-	GetTasksByUsername(username string) (*[]e.Task, error)
 	GetNumberOfTaskTodayByUserID(id int) (int, error)
 	GetMaxTaskByUserID(id int) (int, error)
 	UpdateTask(t *e.Task) error
 	CompleteTask(id int) error
 	DeleteTask(id int) error
-	DeleteAllTask() error
+	// DeleteAllTask() error
 	DeleteAllTaskOfUser(userID int) error
 }
 

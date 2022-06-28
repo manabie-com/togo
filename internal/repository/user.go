@@ -83,15 +83,15 @@ func (r *userRepository) GetUserIDByUsername(username string) (int, error) {
 	return id, nil
 }
 
-func (r *userRepository) GetNumberOfTaskTodayByUserID(id int) (int, error) {
-	const query = `SELECT COUNT(*) FROM tasks WHERE user_id = $1 AND DATE(created_at) = CURRENT_DATE`
-	var count int
-	err := r.DB.QueryRow(query, id).Scan(&count)
-	if err != nil {
-		return 0, err
-	}
-	return count, nil
-}
+// func (r *userRepository) GetNumberOfTaskTodayByUserID(id int) (int, error) {
+// 	const query = `SELECT COUNT(*) FROM tasks WHERE user_id = $1 AND DATE(created_at) = CURRENT_DATE`
+// 	var count int
+// 	err := r.DB.QueryRow(query, id).Scan(&count)
+// 	if err != nil {
+// 		return 0, err
+// 	}
+// 	return count, nil
+// }
 
 func (r *userRepository) GetPlanByID(id int) (string, error) {
 	const query = `SELECT plan FROM users WHERE id = $1`

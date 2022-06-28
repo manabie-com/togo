@@ -91,28 +91,6 @@ func (r *taskRepository) GetTasksByUserID(id int) (*[]e.Task, error) {
 	return &tasks, nil
 }
 
-func (r *taskRepository) GetTasksByUsername(username string) (*[]e.Task, error) {
-	const query = `SELECT * FROM tasks WHERE user_id = (SELECT id FROM users WHERE username = $1);`
-	rows, err := r.DB.Query(query, username)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	tasks := []e.Task{}
-
-	for rows.Next() {
-		var t e.Task
-		err := rows.Scan(&t.ID, &t.Name, &t.Description, &t.CreatedAt, &t.Completed, &t.UserID)
-		if err != nil {
-			return nil, err
-		}
-		tasks = append(tasks, t)
-	}
-
-	return &tasks, nil
-}
-
 func (r *taskRepository) GetNumberOfTaskTodayByUserID(id int) (int, error) {
 	const query = `SELECT COUNT(*) FROM tasks WHERE user_id = $1 AND DATE(created_at) = CURRENT_DATE`
 	var count int
@@ -174,21 +152,6 @@ func (r *taskRepository) DeleteTask(id int) error {
 		return err
 	}
 	_, err = tx.Exec(query, id)
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-	tx.Commit()
-	return nil
-}
-
-func (r *taskRepository) DeleteAllTask() error {
-	const query = `DELETE FROM tasks;`
-	tx, err := r.DB.Begin()
-	if err != nil {
-		return err
-	}
-	_, err = tx.Exec(query)
 	if err != nil {
 		tx.Rollback()
 		return err

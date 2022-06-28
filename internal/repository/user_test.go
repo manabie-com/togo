@@ -89,18 +89,18 @@ func TestGetUserByID(t *testing.T) {
 	assert.Equal(t, u.ID, user.ID)
 }
 
-func TestGetNumberOfTaskTodayByUserID(t *testing.T) {
+func TestGetUserIDByUsername(t *testing.T) {
 	db, mock := NewMock()
 	repo := &userRepository{db}
 	defer db.Close()
 
-	query := regexp.QuoteMeta(`SELECT COUNT(*) FROM tasks WHERE user_id = $1 AND DATE(created_at) = CURRENT_DATE`)
+	query := regexp.QuoteMeta(`SELECT id FROM users WHERE username = $1`)
 
-	mock.ExpectQuery(query).WithArgs(u.ID).WillReturnRows(sqlmock.NewRows([]string{"count"}).AddRow(1))
+	mock.ExpectQuery(query).WithArgs(u.Username).WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(u.ID))
 
-	count, err := repo.GetNumberOfTaskTodayByUserID(u.ID)
+	id, err := repo.GetUserIDByUsername(u.Username)
 	assert.NoError(t, err)
-	assert.Equal(t, 1, count)
+	assert.Equal(t, u.ID, id)
 }
 
 func TestGetPlanByID(t *testing.T) {
