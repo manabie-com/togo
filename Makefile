@@ -12,6 +12,10 @@ migration-down:
 	@echo migrate -database ${POSTGRESQL_URL_MIGRATION} -path db/migrations down
 	@migrate -database ${POSTGRESQL_URL_MIGRATION} -path db/migrations down
 
+### Run project
+run:
+	go run cmd/main.go
+
 ### Test
 test-api-common:
 	go test -cover -coverprofile coverage.log ./internal/api/handlers/common/...
