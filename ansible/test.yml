@@ -1,0 +1,137 @@
+- name: Test
+  hosts: all
+  become: yes
+  gather_facts: no
+
+  tasks:
+    - name: Not found a user with id 3
+      uri:
+        url: "{{ app_url }}/task/add?userId=3"
+        method: POST
+        return_content: yes
+        body_format: json
+        body: |
+          {
+            "taskName":"Task 1"
+          }
+      register: result
+      failed_when: result.content != 'Not found a user with id 3'
+
+    - name: Add task
+      uri:
+        url: "{{ app_url }}/task/add?userId=1&taskLimit=2"
+        method: POST
+        return_content: yes
+        body_format: json
+        body: |
+          {
+            "taskName":"Task {{ item }}"
+          }
+      register: result
+      failed_when: result.content != 'Saved'
+      with_items:
+        - 1
+        - 2
+
+    - name: Could not update the limit of tasks to 1 for user 1 since the number of current tasks is 2
+      uri:
+        url: "{{ app_url }}/task/add?userId=1&taskLimit=1"
+        method: POST
+        return_content: yes
+        body_format: json
+        body: |
+          {
+            "taskName":"Task 3"
+          }
+      register: result
+      failed_when: result.content != 'Could not update the limit of tasks to 1 for user 1 since the number of current tasks is 2'
+
+    - name: Could not add task more for user 1 since the limit of tasks is 2
+      uri:
+        url: "{{ app_url }}/task/add?userId=1&taskLimit=2"
+        method: POST
+        return_content: yes
+        body_format: json
+        body: |
+          {
+            "taskName":"Task 3"
+          }
+      register: result
+      failed_when: result.content != 'Could not add task more for user 1 since the limit of tasks is 2'
+
+    - name: Add task
+      uri:
+        url: "{{ app_url }}/task/add?userId=1&taskLimit=3"
+        method: POST
+        return_content: yes
+        body_format: json
+        body: |
+          {
+            "taskName":"Task 3"
+          }
+      register: result
+      failed_when: result.content != 'Saved'
+
+    - name: Get all tasks
+      uri:
+        url: "{{ app_url }}/task/all"
+        method: GET
+        return_content: yes
+      register: result
+      failed_when: result.content | from_json | length != 3
+
+    - debug:
+        var: result.content
+
+    - name: Need to set the limit of tasks per day for user 2 first
+      uri:
+        url: "{{ app_url }}/task/add?userId=2"
+        method: POST
+        return_content: yes
+        body_format: json
+        body: |
+          {
+            "taskName":"Task 1"
+          }
+      register: result
+      failed_when: result.content != 'Need to set the limit of tasks per day for user 2 first'
+
+    - name: Add task
+      uri:
+        url: "{{ app_url }}/task/add?userId=2{{ item.value }}"
+        method: POST
+        return_content: yes
+        body_format: json
+        body: |
+          {
+            "taskName":"Task {{ item.key }}"
+          }
+      register: result
+      failed_when: result.content != 'Saved'
+      with_dict:
+        - { 1: '&taskLimit=2' }
+        - { 2: '' }
+
+    - name: Could not add task more for user 2 since the limit of tasks is 2
+      uri:
+        url: "{{ app_url }}/task/add?userId=2"
+        method: POST
+        return_content: yes
+        body_format: json
+        body: |
+          {
+            "taskName":"Task 3"
+          }
+      register: result
+      failed_when: result.content != 'Could not add task more for user 2 since the limit of tasks is 2'
+
+    - name: Get all tasks
+      uri:
+        url: "{{ app_url }}/task/all"
+        method: GET
+        return_content: yes
+      register: result
+      failed_when: result.content | from_json | length != 5
+
+    - debug:
+        var: result.content

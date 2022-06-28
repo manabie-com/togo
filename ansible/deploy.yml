@@ -1,0 +1,52 @@
+- name: Deploy
+  hosts: all
+
+  tasks:
+    - name: Install system packages
+      package:
+        name: mysql-server
+        state: latest
+
+    - name: Create SQL database
+      mysql_db:
+        login_unix_socket: "{{ mysql.login_unix_socket }}"
+        name: "{{ mysql.database }}"
+        login_user: "{{ mysql.user }}"
+        login_password: "{{ mysql.password }}"
+        encoding: utf8
+        state: present
+
+    - name: Copy source code
+      synchronize:
+        src: "../{{ item }}"
+        dest: "{{ install_path }}"
+        delete: yes
+        recursive: yes
+      with_items:
+        - src
+        - pom.xml
+
+    - name: Copy properties
+      template:
+        src: application.properties
+        dest: "{{ install_path }}/src/main/resources/"
+
+    - name: Compile source code
+      become_user: "{{ ansible_user }}"
+      shell: "{{ mvn_path }} clean install -f {{ install_path }}"
+
+    - name: Get java path
+      shell: which java
+      register: java_path
+
+    - name: Create Manabie systemd unit
+      template:
+        src: manabie.service
+        dest: /etc/systemd/system/manabie.service
+        mode: 0755
+
+    - name: Start Manabie
+      systemd:
+        name: manabie
+        state: restarted
+        daemon_reload: yes
