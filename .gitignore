@@ -17,3 +17,6 @@
 out/
 
 .idea
+*.pyc
+baseuser/migrations/
+todo/migrations/
