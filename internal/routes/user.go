@@ -10,7 +10,7 @@ import (
 func HandleUser(route *mux.Router) {
 	userRouter := route.PathPrefix("/user").Subrouter()
 	userRouter.Use(middleware.AdminAuthorization)
-	userRouter.HandleFunc("", controller.GetAllUsers).Methods("GET")
-	userRouter.HandleFunc("/{id}", controller.GetUser).Methods("GET")
-	userRouter.HandleFunc("/{id}", controller.DeleteUserByID).Methods("DELETE")
+	userRouter.HandleFunc("", controller.HandlerInstance.GetAllUsers).Methods("GET")
+	userRouter.HandleFunc("/{id}", controller.HandlerInstance.GetUser).Methods("GET")
+	userRouter.HandleFunc("/{id}", controller.HandlerInstance.DeleteUserByID).Methods("DELETE")
 }

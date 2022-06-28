@@ -11,6 +11,6 @@ func HandlePlan(route *mux.Router) {
 	planRouter := route.PathPrefix("/plan").Subrouter()
 
 	planRouter.Use(middleware.Authorization)
-	planRouter.HandleFunc("", controller.GetPlan).Methods("GET")
-	planRouter.HandleFunc("/upgrade/{id}", controller.UpgradePlan).Methods("POST")
+	planRouter.HandleFunc("", controller.HandlerInstance.GetPlan).Methods("GET")
+	planRouter.HandleFunc("/upgrade/{id}", controller.HandlerInstance.UpgradePlan).Methods("POST")
 }

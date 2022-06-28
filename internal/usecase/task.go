@@ -13,7 +13,7 @@ type taskUsecase struct {
 	userRepo domain.UserRepository
 }
 
-func NewTaskUseCase(repo domain.TaskRepository, userRepo domain.UserRepository) *taskUsecase {
+func NewTaskUsecase(repo domain.TaskRepository, userRepo domain.UserRepository) *taskUsecase {
 	return &taskUsecase{
 		taskRepo: repo,
 		userRepo: userRepo,
@@ -24,13 +24,13 @@ func (t *taskUsecase) CreateTask(task *e.Task, username string) (int, error) {
 	id, err := t.userRepo.GetUserIDByUsername(username)
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "get user id failed")
-		return 0, err
+		return 0, errors.New("user does not exist")
 	}
 
 	isLimit, err := t.CheckLimitTaskToday(id)
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "check limit task today failed")
-		return 0, err
+		return 0, errors.New("check limit task today failed")
 	}
 
 	if isLimit {
@@ -47,7 +47,7 @@ func (t *taskUsecase) CreateTask(task *e.Task, username string) (int, error) {
 		return 0, err
 	}
 
-	numberTask, err := t.taskRepo.GetNumberOfTaskTodayByUserID(task.ID)
+	numberTask, err := t.taskRepo.GetNumberOfTaskTodayByUserID(id)
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "get number of task today failed")
 		return 0, err
@@ -72,6 +72,21 @@ func (t *taskUsecase) GetTaskByID(id int, username string) (*e.Task, error) {
 		return nil, err
 	}
 	return task, nil
+}
+
+func (t *taskUsecase) GetTasksByUsername(username string) (*[]e.Task, error) {
+	id, err := t.userRepo.GetUserIDByUsername(username)
+	if err != nil {
+		// pkg.ERROR(w, http.StatusInternalServerError, err, "get user id failed")
+		return nil, err
+	}
+
+	tasks, err := t.taskRepo.GetTasksByUserID(id)
+	if err != nil {
+		// pkg.ERROR(w, http.StatusInternalServerError, err, "get tasks by user id failed")
+		return nil, err
+	}
+	return tasks, nil
 }
 
 func (t *taskUsecase) GetUserIDByTaskID(id int) (int, error) {

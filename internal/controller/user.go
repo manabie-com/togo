@@ -14,6 +14,13 @@ type UserController struct {
 	TaskUsecase domain.TaskUsecase
 }
 
+func NewUserController(userUsecase domain.UserUsecase, taskUsecase domain.TaskUsecase) *UserController {
+	return &UserController{
+		UserUsecase: userUsecase,
+		TaskUsecase: taskUsecase,
+	}
+}
+
 func (u *UserController) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := u.UserUsecase.GetAllUsers()
 	if err != nil {

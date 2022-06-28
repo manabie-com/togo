@@ -20,11 +20,8 @@ func NewUserUsecase(repo domain.UserRepository, taskRepo domain.TaskRepository) 
 }
 
 func (u *userUsecase) Register(user *e.User) error {
-	checkUserExist, err := u.CheckUserExist(user.Username)
-	if err != nil {
-		// pkg.ERROR(w, http.StatusInternalServerError, err, "failed to check user exist!")
-		return err
-	}
+	checkUserExist := u.CheckUserExist(user.Username)
+
 	if checkUserExist {
 		// pkg.ERROR(w, http.StatusBadRequest, errors.New("user already exist"), "")
 		return errors.New("user already exist")
@@ -32,7 +29,7 @@ func (u *userUsecase) Register(user *e.User) error {
 
 	user.PreparePassword()
 
-	err = user.IsValid()
+	err := user.IsValid()
 	if err != nil {
 		// pkg.ERROR(w, http.StatusBadRequest, err, "invalid user data!")
 		return err
@@ -48,23 +45,20 @@ func (u *userUsecase) Register(user *e.User) error {
 }
 
 func (u *userUsecase) Login(user *e.User) (string, error) {
-	checkUserExist, err := u.CheckUserExist(user.Username)
-	if err != nil {
-		// pkg.ERROR(w, http.StatusInternalServerError, err, "failed to check user exist!")
-		return "", err
-	}
+	checkUserExist := u.CheckUserExist(user.Username)
+
 	if !checkUserExist {
 		// pkg.ERROR(w, http.StatusBadRequest, errors.New("user not found"), "")
 		return "", errors.New("user not found")
 	}
 
-	user, err = u.userRepo.GetUserByName(user.Username)
+	oldUser, err := u.userRepo.GetUserByName(user.Username)
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "failed to get user!")
-		return "", err
+		return "", errors.New("failed to find user")
 	}
 
-	if !user.ComparePassWord(user.Password) {
+	if !oldUser.ComparePassWord(user.Password) {
 		// pkg.ERROR(w, http.StatusBadRequest, errors.New("password incorrect"), "")
 		return "", errors.New("password incorrect")
 	}
@@ -85,7 +79,7 @@ func (u *userUsecase) GetAllUsers() ([]*e.User, error) {
 func (u *userUsecase) GetUserByID(id int) (*e.User, error) {
 	user, err := u.userRepo.GetUserByID(id)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("user not found")
 	}
 	return user, nil
 }
@@ -140,15 +134,15 @@ func (u *userUsecase) UpgradePlan(userID int, plan string, maxTodo int) error {
 	return u.userRepo.UpdateUser(user)
 }
 
-func (u *userUsecase) CheckUserExist(username string) (bool, error) {
+func (u *userUsecase) CheckUserExist(username string) bool {
 	user, err := u.userRepo.GetUserByName(username)
 	if err != nil {
-		return false, err
+		return false
 	}
 	if user.ID == 0 {
-		return false, nil
+		return false
 	}
-	return true, nil
+	return true
 }
 
 func (u *userUsecase) DeleteUserByID(id int) error {

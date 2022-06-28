@@ -9,11 +9,11 @@ import (
 
 func HandleAuthentication(router *mux.Router) {
 	authRouter := router.PathPrefix("/auth").Subrouter()
-	authRouter.HandleFunc("/register", controller.Register).Methods("POST")
-	authRouter.HandleFunc("/login", controller.Login).Methods("POST")
+	authRouter.HandleFunc("/register", controller.HandlerInstance.Register).Methods("POST")
+	authRouter.HandleFunc("/login", controller.HandlerInstance.Login).Methods("POST")
 
 	passwordRouter := authRouter.PathPrefix("/password").Subrouter()
 
 	passwordRouter.Use(middleware.Authorization)
-	passwordRouter.HandleFunc("", controller.UpdatePassword).Methods("POST")
+	// passwordRouter.HandleFunc("", controller.HandlerInstance.UpdatePassword).Methods("POST")
 }

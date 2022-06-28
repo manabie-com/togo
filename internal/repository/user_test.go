@@ -146,23 +146,6 @@ func TestUpdateUser(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func TestUpgradePlan(t *testing.T) {
-	db, mock := NewMock()
-	repo := &userRepository{db}
-	defer db.Close()
-
-	query := regexp.QuoteMeta(`UPDATE users SET plan = $1, max_todo = $2 WHERE id = $3`)
-
-	mock.ExpectBegin()
-	mock.ExpectExec(query).WithArgs(u.Plan, u.MaxTodo, u.ID).WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectCommit()
-
-	err := repo.UpgradePlan(u.ID, u.Plan, int(u.MaxTodo))
-	assert.NoError(t, err)
-	assert.Equal(t, u.Plan, u.Plan)
-	assert.EqualValues(t, u.MaxTodo, u.MaxTodo)
-}
-
 func TestDeleteUserByID(t *testing.T) {
 	db, mock := NewMock()
 	repo := &userRepository{db}

@@ -39,22 +39,20 @@ type UserRepository interface {
 	GetUserIDByUsername(username string) (int, error)
 	GetPlanByID(id int) (string, error)
 	UpdateUser(u *e.User) error
-	UpgradePlan(id int, plan string, limit int) error
+	// UpgradePlan(id int, plan string, limit int) error
 	DeleteUserByID(id int) error
 }
 
 type UserUsecase interface {
 	Register(user *e.User) error
 	Login(user *e.User) (string, error)
-	AddUser(u *e.User) error
 	GetAllUsers() ([]*e.User, error)
 	GetUserByID(id int) (*e.User, error)
 	GetUserIDByUsername(username string) (int, error)
-	GetUserIDByTaskID(id int) (int, error)
 	GetMaxTaskByUserID(id int) (int, error)
 	GetPlan(username string) (string, error)
 	UpdateUser(u *e.User) error
 	UpgradePlan(userID int, plan string, maxTodo int) error
 	DeleteUserByID(id int) error
-	CheckAccessPermission(w http.ResponseWriter, username string, taskUserID int) error
+	CheckUserExist(username string) bool
 }

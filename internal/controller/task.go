@@ -17,6 +17,13 @@ type TaskController struct {
 	UserUsecase domain.UserUsecase
 }
 
+func NewTaskController(taskUsecase domain.TaskUsecase, userUsecase domain.UserUsecase) *TaskController {
+	return &TaskController{
+		TaskUsecase: taskUsecase,
+		UserUsecase: userUsecase,
+	}
+}
+
 func (t *TaskController) CreateTask(w http.ResponseWriter, r *http.Request) {
 
 	username := context.Get(r, "username").(string)

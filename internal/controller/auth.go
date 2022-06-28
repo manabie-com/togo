@@ -13,6 +13,12 @@ type AuthController struct {
 	UserUsecase domain.UserUsecase
 }
 
+func NewAuthController(userUsecase domain.UserUsecase) *AuthController {
+	return &AuthController{
+		UserUsecase: userUsecase,
+	}
+}
+
 func (u *UserController) Register(w http.ResponseWriter, r *http.Request) {
 	user := e.NewUser()
 	var err error
