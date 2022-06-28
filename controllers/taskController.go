@@ -13,10 +13,10 @@ import (
 )
 
 // Get all user from database
-func (h *BaseHandler)ResponseAllTask(w http.ResponseWriter, r *http.Request) { 
+func (bh *BaseHandler)ResponseAllTask(w http.ResponseWriter, r *http.Request) { 
 	userid, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "userid"))) // get userid from login
 
-	tasks, err := models.GetAllTasks(h.DB, userid)
+	tasks, err := bh.BaseCtrl.GetAllTasks(userid)
 	if err != nil {
 		http.Error(w, "get all task failed", http.StatusFailedDependency)
 		return
@@ -31,11 +31,11 @@ func (h *BaseHandler)ResponseAllTask(w http.ResponseWriter, r *http.Request) {
 }
 
  // Get one user from database
-func (h *BaseHandler)ResponseOneTask(w http.ResponseWriter, r *http.Request) {
+func (bh *BaseHandler)ResponseOneTask(w http.ResponseWriter, r *http.Request) {
 	userid, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "userid"))) // get userid from login
 	id, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "id")))         // get id from url
 
-	task, ok := models.FindTaskByID(h.DB, id, userid)
+	task, ok := bh.BaseCtrl.FindTaskByID(id, userid)
 	if !ok {
 		http.Error(w, "id invalid", http.StatusBadRequest)
 		return
@@ -50,16 +50,8 @@ func (h *BaseHandler)ResponseOneTask(w http.ResponseWriter, r *http.Request) {
 }
 
 // Create a new user
-func (h *BaseHandler)CreateTask(w http.ResponseWriter, r *http.Request) { 
+func (bh *BaseHandler)CreateTask(w http.ResponseWriter, r *http.Request) { 
 	userid, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "userid"))) // get userid from login
-	if ok, err := models.CheckLimitTaskUser(h.DB, userid); !ok {
-		if err != nil{
-			http.Error(w, err.Error(), http.StatusFailedDependency)
-			return
-		}
-		http.Error(w, "The limit of today is full or error occur during check limit", http.StatusFailedDependency)
-		return
-	}
 
 	var task models.NewTask
 	if err := json.NewDecoder(r.Body).Decode(&task); err != nil {
@@ -73,7 +65,7 @@ func (h *BaseHandler)CreateTask(w http.ResponseWriter, r *http.Request) {
 	if ok := models.CheckTaskInput(task); !ok {
 		http.Error(w, "task field invalid", http.StatusBadRequest)
 	}
-	if err := models.InsertTask(h.DB, task); err != nil {
+	if err := bh.BaseCtrl.InsertTask(task); err != nil {
 		http.Error(w, "insert task failed", http.StatusFailedDependency)
 		return
 	}
@@ -86,16 +78,16 @@ func (h *BaseHandler)CreateTask(w http.ResponseWriter, r *http.Request) {
 }
 
 // Delete one user from database
-func (h *BaseHandler)DeleteTask(w http.ResponseWriter, r *http.Request) { 
+func (bh *BaseHandler)DeleteFromTask(w http.ResponseWriter, r *http.Request) { 
 	userid, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "userid"))) // get userid from login
 	id, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "id")))         // get id from url
 
-	if _, ok := models.FindTaskByID(h.DB, id, userid); !ok { // Check task id exist or not and return that task
+	if _, ok := bh.BaseCtrl.FindTaskByID(id, userid); !ok { // Check task id exist or not and return that task
 		http.Error(w, "Id invalid", http.StatusBadRequest)
 		return
 	}
 
-	if err := models.DeleteTask(h.DB, id, userid); err != nil {
+	if err := bh.BaseCtrl.DeleteTask(id, userid); err != nil {
 		http.Error(w, err.Error(), http.StatusFailedDependency)
 		return
 	}
@@ -103,11 +95,11 @@ func (h *BaseHandler)DeleteTask(w http.ResponseWriter, r *http.Request) {
 }
 
 // Update one user already exist in database
-func (h *BaseHandler)UpdateEntireTask(w http.ResponseWriter, r *http.Request) { 
+func (bh *BaseHandler)UpdateToTask(w http.ResponseWriter, r *http.Request) { 
 	userid, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "userid"))) // get userid from login
 	id, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "id")))         // get id from url
 
-	oldTask, ok := models.FindTaskByID(h.DB, id, userid) // Check task id exist or not and return that task
+	oldTask, ok := bh.BaseCtrl.FindTaskByID(id, userid) // Check task id exist or not and return that task
 	if !ok {
 		http.Error(w, "Id invalid", http.StatusBadRequest)
 		return
@@ -126,7 +118,7 @@ func (h *BaseHandler)UpdateEntireTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := models.UpdateTask(h.DB, oldTask, id, userid); err != nil {
+	if err := bh.BaseCtrl.UpdateTask(oldTask, id, userid); err != nil {
 		http.Error(w, "update task failed", http.StatusBadRequest)
 		return
 	}

@@ -12,9 +12,9 @@ import (
 )
 
 // Get all user from database
-func (h *BaseHandler)ResponseAllUser(w http.ResponseWriter, r *http.Request) {
+func (bh *BaseHandler) ResponseAllUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	users, err := models.GetAllUser(h.DB)
+	users, err := bh.BaseCtrl.GetAllUser()
 	if err != nil {
 		http.Error(w, "get all user failed", http.StatusFailedDependency)
 		return
@@ -26,10 +26,10 @@ func (h *BaseHandler)ResponseAllUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
- // Get one user from database
-func (h *BaseHandler)ResponseOneUser(w http.ResponseWriter, r *http.Request) {
+// Get one user from database
+func (bh *BaseHandler) ResponseOneUser(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "id"))) // get id from url
-	user, ok := models.FindUserByID(h.DB, id)
+	user, ok := bh.BaseCtrl.FindUserByID(id)
 	if !ok {
 		http.Error(w, "id invalid", http.StatusFailedDependency)
 		return
@@ -42,16 +42,11 @@ func (h *BaseHandler)ResponseOneUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-
 // Create a new user
-func (h *BaseHandler)CreateUser(w http.ResponseWriter, r *http.Request) { 
+func (bh *BaseHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var user models.NewUser
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		http.Error(w, "decode failed", http.StatusFailedDependency)
-		return
-	}
-	if _, ok := models.CheckUserNameExist(h.DB, user.Username); ok { // Check username exist or not
-		http.Error(w, "this username already exist", http.StatusNotAcceptable)
 		return
 	}
 
@@ -61,32 +56,30 @@ func (h *BaseHandler)CreateUser(w http.ResponseWriter, r *http.Request) {
 		user.LimitTask = 0
 	}
 
-	user.Password, _ = models.Hash(user.Password)
-	if err := models.InsertUser(h.DB, user); err != nil { // insert user to database
-		http.Error(w, "insert user failed", http.StatusFailedDependency)
+	if err := bh.BaseCtrl.InsertUser(user); err != nil { // insert user to database
+		http.Error(w, "insert user failed, err: "+err.Error(), http.StatusFailedDependency)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(user); err != nil { // return response
-		http.Error(w, "encode failed", http.StatusCreated)
+		http.Error(w, "encode failed, err: "+err.Error(), http.StatusCreated)
 		return
 	}
 }
 
-
 // Delete user from database
-func (h *BaseHandler)DeleteUser(w http.ResponseWriter, r *http.Request) {
+func (bh *BaseHandler) DeleteFromUser(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "id"))) // get id from url
-	if _, ok := models.FindUserByID(h.DB, id); !ok {
+	if _, ok := bh.BaseCtrl.FindUserByID(id); !ok {
 		http.Error(w, "Id invalid", http.StatusBadRequest)
 		return
 	}
 
-	if err := models.DeleteAllTaskFromUser(h.DB, id); err != nil {
+	if err := bh.BaseCtrl.DeleteAllTaskFromUser(id); err != nil {
 		http.Error(w, "delete all task of user failed", http.StatusFailedDependency)
 		return
 	}
-	if err := models.DeleteUser(h.DB, id); err != nil {
+	if err := bh.BaseCtrl.DeleteUser(id); err != nil {
 		http.Error(w, "delete user failed", http.StatusFailedDependency)
 		return
 	}
@@ -94,11 +87,11 @@ func (h *BaseHandler)DeleteUser(w http.ResponseWriter, r *http.Request) {
 }
 
 // Update one user already exist in database
-func (h *BaseHandler)UpdateUser(w http.ResponseWriter, r *http.Request) { 
+func (bh *BaseHandler) UpdateToUser(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "id"))) // get id from url
 
 	var newUser models.NewUser
-	user, ok := models.FindUserByID(h.DB, id)
+	user, ok := bh.BaseCtrl.FindUserByID(id)
 	newUser.Username = user.Username
 	newUser.Password = user.Password
 	newUser.LimitTask = user.LimitTask
@@ -115,7 +108,7 @@ func (h *BaseHandler)UpdateUser(w http.ResponseWriter, r *http.Request) {
 	if newUser.Password != user.Password {
 		newUser.Password, _ = models.Hash(newUser.Password)
 	}
-	if err := models.UpdateUser(h.DB, newUser, id); err != nil {
+	if err := bh.BaseCtrl.UpdateUser(newUser, id); err != nil {
 		http.Error(w, "update user failed", http.StatusBadRequest)
 		return
 	}

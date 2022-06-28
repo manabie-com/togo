@@ -16,7 +16,6 @@ import (
 const defaultPort = "8000"
 
 func main() {
-
 	if err := godotenv.Load(); err != nil {
 		log.Fatal(err)
 	}
@@ -24,7 +23,9 @@ func main() {
 	if port == "" {
 		port = defaultPort
 	}
-	db := models.Connect() // connect to database
+	DB_URI := os.Getenv("DB_URI")
+	
+	db := models.Connect(DB_URI) // connect to database
 	Repo := controllers.NewBaseHandler(db)
 
 	r := mux.NewRouter().StrictSlash(true)

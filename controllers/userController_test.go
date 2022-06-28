@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -16,10 +17,9 @@ import (
 )
 
 func TestResponseAllUser(t *testing.T) {
-	var users []models.User
-
 	db, mock := models.NewMock()
-	h := NewBaseHandler(db)
+	dbConn := models.NewdbConn(db)
+	h := NewBaseHandler(dbConn)
 
 	rows := sqlmock.NewRows([]string{"id", "username", "password", "limittask"})
 	for i := 0; i < 10; i++ {
@@ -38,6 +38,8 @@ func TestResponseAllUser(t *testing.T) {
 	if err != nil {
 		t.Errorf("Can't read body response")
 	}
+
+	var users []models.User
 	err = json.Unmarshal(respBody, &users)
 	if err != nil {
 		t.Errorf(err.Error())
@@ -49,17 +51,16 @@ func TestResponseAllUser(t *testing.T) {
 }
 
 func TestResponseOneUser(t *testing.T) {
-	var userfromdb models.User
-
 	db, mock := models.NewMock()
-	h := NewBaseHandler(db)
+	dbConn := models.NewdbConn(db)
+	h := NewBaseHandler(dbConn)
 
 	rows := sqlmock.NewRows([]string{"id", "username", "password", "limittask"})
 	user := models.RandomUser()
 	rows.AddRow(user.Id, user.Username, user.Password, user.LimitTask)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest("GET", "localhost:8000/users/"+fmt.Sprintf("%v",user.Id), nil)
+	req := httptest.NewRequest("GET", "localhost:8000/users/"+fmt.Sprintf("%v", user.Id), nil)
 	context.Set(req, "id", user.Id)
 
 	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM users WHERE id = $1`)).WithArgs(user.Id).WillReturnRows(rows)
@@ -71,6 +72,7 @@ func TestResponseOneUser(t *testing.T) {
 		t.Errorf("Can't read body response")
 	}
 
+	var userfromdb models.User
 	err = json.Unmarshal(respBody, &userfromdb)
 	if err != nil {
 		t.Errorf(err.Error())
@@ -84,36 +86,37 @@ func TestResponseOneUser(t *testing.T) {
 }
 
 func TestCreateUser(t *testing.T) {
-	var userfromdb models.User
-
 	db, mock := models.NewMock()
-	h := NewBaseHandler(db)
+	dbConn := models.NewdbConn(db)
+	h := NewBaseHandler(dbConn)
 
-	rows := sqlmock.NewRows([]string{"id", "username", "password", "limittask"})
 	user := models.RandomUser()
-	rows.AddRow(user.Id, user.Username, user.Password, user.LimitTask)
+	userJSON, err := json.Marshal(user)
+	if err != nil {
+		t.Errorf("Can't marshal user, err: " + err.Error())
+	}
 
-	w := httptest.NewRecorder()
-	req := httptest.NewRequest("GET", "localhost:8000/users/"+fmt.Sprintf("%v",user.Id), nil)
-	context.Set(req, "id", user.Id)
+	w := httptest.NewRecorder() // set custom writer and response
+	req := httptest.NewRequest("POST", "localhost:8000/users", bytes.NewReader(userJSON))
 
-	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM users WHERE id = $1`)).WithArgs(user.Id).WillReturnRows(rows)
+	//exec
+	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO users(username, password, limittask) VALUES ($1, $2, $3)`)).WithArgs(user.Username, user.Password, 10).WillReturnResult(sqlmock.NewResult(1, 1))
 
-	h.ResponseOneUser(w, req)
+	h.CreateUser(w, req)
 	resp := w.Result()
 	respBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		t.Errorf("Can't read body response")
 	}
 
+	var userfromdb models.NewUser
 	err = json.Unmarshal(respBody, &userfromdb)
 	if err != nil {
+		fmt.Println(userfromdb, string(respBody))
 		t.Errorf(err.Error())
 	}
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.NotEmpty(t, userfromdb)
 	assert.Equal(t, userfromdb.Username, user.Username)
-	assert.Equal(t, userfromdb.Password, user.Password)
-	assert.Equal(t, userfromdb.LimitTask, user.LimitTask)
 }

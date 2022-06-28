@@ -55,5 +55,5 @@ func RandomId() int64{
 }
 
 func RandomLimittask() int64 {
-	return RandomInt(0, 100)
+	return RandomInt(0, 15)
 }

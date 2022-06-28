@@ -3,35 +3,40 @@ package models
 import (
 	"database/sql"
 	"log"
-	"os"
 
-	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
 )
-type BaseHandler struct {
+
+// Create a Db connection
+type DbConn struct {
 	DB *sql.DB
 }
+type BaseHandler struct {
+	BaseCtrl *DbConn
+}
 
-// NewBaseHandler returns a new BaseHandler
-func NewBaseHandler(db *sql.DB) *BaseHandler {
-	return &BaseHandler{
+// newdbConn returns a new DbConn
+func NewdbConn(db *sql.DB) *DbConn {
+	return &DbConn{
 		DB: db,
 	}
 }
 
-// connect to database
-func Connect() *sql.DB{ 
-
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Failed to load env")
-	}	
-	
-	db, err := sql.Open("postgres", os.Getenv("DB_URI"))
-	if err != nil {
-		log.Fatal("Connect to database failed")
+// NewBaseHandler returns a new BaseHandler
+func NewBaseHandler(BC *DbConn) *BaseHandler {
+	return &BaseHandler{
+		BaseCtrl: BC,
 	}
-	return db
+}
+
+// connect to database
+func Connect(DB_URI string) *DbConn{ 	
+	db, err := sql.Open("postgres", DB_URI)
+	dbconn := NewdbConn(db)
+	if err != nil {
+		log.Fatal("Connect to database failed, err: "+err.Error())
+	}
+	return dbconn
 }
 
 // Hash password into a crypt text
