@@ -9,6 +9,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 	"github.com/manabie-com/togo/controllers"
 	c "github.com/manabie-com/togo/controllers"
 )
@@ -19,7 +20,7 @@ type App struct {
 }
 
 func (a *App) Init() {
-	if err := godotenv.Load(); err != nil {
+	if err := godotenv.Load("C:\\Users\\quang\\Desktop\\Project\\Go\\internship\\togo\\.env"); err != nil {
 		log.Fatal("Error loading .env file")
 	}
 	connectURL := os.Getenv("CONNECT_STR")

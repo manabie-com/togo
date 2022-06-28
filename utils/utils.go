@@ -11,11 +11,20 @@ type response struct {
 	Data    interface{}
 }
 
-func Respond(w http.ResponseWriter, statusCode int, status, message string, data interface{}) {
+func SuccessRespond(w http.ResponseWriter, statusCode int, message string, data interface{}) {
 	res := response{
-		Status:  status,
+		Status:  "Success",
 		Message: message,
 		Data:    data,
+	}
+	w.WriteHeader(statusCode)
+	json.NewEncoder(w).Encode(res)
+}
+func FailureRespond(w http.ResponseWriter, statusCode int, message string) {
+	res := response{
+		Status:  "Failure",
+		Message: message,
+		Data:    nil,
 	}
 	w.WriteHeader(statusCode)
 	json.NewEncoder(w).Encode(res)

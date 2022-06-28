@@ -3,7 +3,6 @@ package controllers
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -17,26 +16,29 @@ var SignUp = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		LimitDayTasks: 10,
 	}
 	// decode json body to user
-	if err := json.NewDecoder(r.Body).Decode(user); err != nil {
-		u.Respond(w, http.StatusBadRequest, "Failure", "Invalid input format: "+err.Error(), nil)
+	err := json.NewDecoder(r.Body).Decode(user)
+	if err != nil {
+		u.FailureRespond(w, http.StatusBadRequest, "Invalid input format: "+err.Error())
 		return
 	}
 	// validate user object
 	validate := validator.New()
-	if err := validate.Struct(user); err != nil {
-		u.Respond(w, http.StatusBadRequest, "Failure", "Invalid input field: "+err.Error(), nil)
+	err = validate.Struct(user)
+	if err != nil {
+		u.FailureRespond(w, http.StatusBadRequest, "Invalid input field: "+err.Error())
 		return
 	}
 	// insert database
-	if err := user.InsertOne(db); err != nil {
-		u.Respond(w, http.StatusBadRequest, "Failure", "Your email is duplicated, Please try again", nil)
+	err = user.InsertUser(db)
+	if err != nil {
+		u.FailureRespond(w, http.StatusBadRequest, "Your email is duplicated, Please try again")
 		return
 	}
 	// send token jwt here
 	tk := &models.Token{UserId: user.ID, LimitDayTasks: user.LimitDayTasks}
 	tokenString := tk.CreateToken()
 	// everything Ok
-	u.Respond(w, http.StatusCreated, "Success", "Created Account", map[string]interface{}{
+	u.SuccessRespond(w, http.StatusCreated, "Created Account", map[string]interface{}{
 		"name":  user.Name,
 		"email": user.Email,
 		"token": tokenString,
@@ -48,29 +50,34 @@ var Login = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// validate
 	err := json.NewDecoder(r.Body).Decode(user)
 	if err != nil {
-		u.Respond(w, http.StatusBadRequest, "Failure", "Invalid input format: "+err.Error(), nil)
+		u.FailureRespond(w, http.StatusBadRequest, "Invalid input format: "+err.Error())
 		return
 	}
-	fmt.Println(user)
+
 	var (
 		email    string = user.Email
 		password string = user.Password
 	)
 	// get user by email
-	if err := user.GetOneByEmail(db); err != nil {
-		u.Respond(w, http.StatusBadRequest, "Failure", "Not found account with your email, Please provide a valid email address!", nil)
+	err = user.GetUserByEmail(db)
+	if err != nil {
+		u.FailureRespond(w, http.StatusBadRequest, "Not found account with your email, Please provide a valid email address!")
 		return
 	}
 	// if email exist and password incorrect
 	if email != user.Email || password != user.Password {
-		u.Respond(w, http.StatusUnauthorized, "Failure", "Password incorrect", nil)
+		u.FailureRespond(w, http.StatusUnauthorized, "Password incorrect")
 		return
 	}
 	// create message case 1: Active user, case 2:  unActive user
 	var message = "Login Success"
 	if !user.IsActive {
 		message = "Welcome back"
-		_, _ = db.Exec(`UPDATE users SET is_active = $1 WHERE id = $2`, true, user.ID)
+		err = user.ActiveUser(db)
+		if err != nil {
+			u.FailureRespond(w, http.StatusInternalServerError, "Something went wrong"+err.Error())
+			return
+		}
 	}
 	// if email and password OK
 	//Create JWT token
@@ -80,7 +87,7 @@ var Login = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 	tokenString := tk.CreateToken()
 	// everything Ok
-	u.Respond(w, http.StatusOK, "Success", message, map[string]interface{}{
+	u.SuccessRespond(w, http.StatusOK, message, map[string]interface{}{
 		"name":  user.Name,
 		"email": user.Email,
 		"token": tokenString,
@@ -94,12 +101,13 @@ var GetMe = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		ID: decoded.UserId,
 	}
 	// query
-	if err := user.GetOneById(db); err != nil {
-		u.Respond(w, http.StatusBadRequest, "Failure", "Something went wrong when collect your account. Please try again", nil)
+	err := user.GetUserById(db)
+	if err != nil {
+		u.FailureRespond(w, http.StatusInternalServerError, "Something went wrong when collect your account. Please try again"+err.Error())
 		return
 	}
 	// everything Ok
-	u.Respond(w, http.StatusOK, "Success", "Success", map[string]interface{}{
+	u.SuccessRespond(w, http.StatusOK, "Success", map[string]interface{}{
 		"name":            user.Name,
 		"email":           user.Email,
 		"is_payment":      user.IsPayment,
@@ -116,7 +124,7 @@ var UpdateMe = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// convert json -> user object
 	err := json.NewDecoder(r.Body).Decode(user)
 	if err != nil {
-		u.Respond(w, http.StatusBadRequest, "Failure", "Invalid input format: "+err.Error(), nil)
+		u.FailureRespond(w, http.StatusBadRequest, "Invalid input format: "+err.Error())
 		return
 	}
 	// get user info
@@ -127,23 +135,23 @@ var UpdateMe = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	)
 	// validate input
 	validate := validator.New()
-	if err := validate.Var(email, "email"); email != "" && err != nil {
-		u.Respond(w, http.StatusBadRequest, "Failure", "Invalid input email: "+err.Error(), nil)
+	if err := validate.Var(email, "email,min=10,max=30"); email != "" && err != nil {
+		u.FailureRespond(w, http.StatusBadRequest, "Invalid input email: "+err.Error())
 		return
 	}
 
 	if err := validate.Var(name, "min=5,max=20"); name != "" && err != nil {
-		u.Respond(w, http.StatusBadRequest, "Failure", "Invalid input name: "+err.Error(), nil)
+		u.FailureRespond(w, http.StatusBadRequest, "Invalid input name: "+err.Error())
 		return
 	}
-
-	if err := user.GetOneById(db); err != nil {
-		u.Respond(w, http.StatusBadRequest, "Failure", "Your email invalid. Please try again", nil)
+	err = user.GetUserById(db)
+	if err != nil {
+		u.FailureRespond(w, http.StatusInternalServerError, "Somethings went wrong. Please try again"+err.Error())
 		return
 	}
 	// confirm password
 	if password != user.Password {
-		u.Respond(w, http.StatusUnauthorized, "Failure", "Password incorrect. Please try again", nil)
+		u.FailureRespond(w, http.StatusUnauthorized, "Password incorrect. Please try again")
 		return
 	}
 	// if valid value => overwrite new value
@@ -154,13 +162,13 @@ var UpdateMe = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		user.Email = email
 	}
 	// update me
-	_, err = db.Exec(`UPDATE users SET name = $1, email = $2 WHERE id = $3`, user.Name, user.Email, user.ID)
+	err = user.UpdateUser(db)
 	if err != nil {
-		u.Respond(w, http.StatusBadRequest, "Failure", "Something went wrong when update your account. Please try again", nil)
+		u.FailureRespond(w, http.StatusInternalServerError, "Something went wrong when update your account. Please try again"+err.Error())
 		return
 	}
 	// everything Ok
-	u.Respond(w, http.StatusOK, "Success", "Success update your account!", map[string]interface{}{
+	u.SuccessRespond(w, http.StatusOK, "Success update your account!", map[string]interface{}{
 		"name":  user.Name,
 		"email": user.Email,
 	})
@@ -176,26 +184,27 @@ var DeleteMe = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// convert json -> user object
 	err := json.NewDecoder(r.Body).Decode(user)
 	if err != nil {
-		u.Respond(w, http.StatusBadRequest, "Failure", "Invalid input format: "+err.Error(), nil)
+		u.FailureRespond(w, http.StatusBadRequest, "Invalid input format: "+err.Error())
 		return
 	}
 	// get user info
 	inputPassword := user.Password
-	if err := user.GetOneById(db); err != nil {
-		u.Respond(w, http.StatusBadRequest, "Failure", "Something went wrong when collect your account. Please try again", nil)
+	err = user.GetUserById(db)
+	if err != nil {
+		u.FailureRespond(w, http.StatusInternalServerError, "Something went wrong when collect your account. Please try again"+err.Error())
 		return
 	}
 	// if input password not equal to database password
 	if inputPassword != user.Password {
-		u.Respond(w, http.StatusUnauthorized, "Failure", "Password incorrect. Please try again", nil)
+		u.FailureRespond(w, http.StatusUnauthorized, "Password incorrect. Please try again")
 		return
 	}
 	// update field is_active to false
-	_, err = db.Exec(`UPDATE users SET is_active = $1 WHERE id = $2`, user.IsActive, user.ID)
+	err = user.DeleteUser(db)
 	if err != nil {
-		u.Respond(w, http.StatusBadRequest, "Failure", "Something went wrong when delete your account. Please try again", nil)
+		u.FailureRespond(w, http.StatusInternalServerError, "Something went wrong when delete your account. Please try again"+err.Error())
 		return
 	}
 	// everything Ok
-	u.Respond(w, http.StatusNoContent, "Success", "Success delete your account!", nil)
+	u.SuccessRespond(w, http.StatusNoContent, "Success delete your account!", nil)
 }

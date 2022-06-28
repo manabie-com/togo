@@ -28,13 +28,13 @@ var JwtAuthentication = func(next http.Handler) http.Handler {
 
 		tokenHeader := r.Header.Get("Authorization") //Grab the token from the header
 		if tokenHeader == "" {                       //Token is missing, returns with error code 403 Unauthorized
-			u.Respond(w, http.StatusForbidden, "Failure", "Missing auth token", nil)
+			u.FailureRespond(w, http.StatusForbidden, "Missing auth token")
 			return
 		}
 
 		splitted := strings.Split(tokenHeader, " ") //The token normally comes in format `Bearer {token-body}`, we check if the retrieved token matched this requirement
 		if len(splitted) != 2 {
-			u.Respond(w, http.StatusForbidden, "Failure", "Invalid/Malformed auth token", nil)
+			u.FailureRespond(w, http.StatusForbidden, "Invalid/Malformed auth token")
 			return
 		}
 
@@ -44,12 +44,12 @@ var JwtAuthentication = func(next http.Handler) http.Handler {
 			return []byte(os.Getenv("SECRET_TOKEN")), nil
 		})
 		if err != nil { //Malformed token, returns with http code 403 as usual
-			u.Respond(w, http.StatusForbidden, "Failure", "Malformed authentication token", err.Error())
+			u.FailureRespond(w, http.StatusForbidden, "Malformed authentication token")
 			return
 		}
 
 		if !token.Valid { //Token is invalid, maybe not signed on this server
-			u.Respond(w, http.StatusForbidden, "Failure", "Token is not valid.", nil)
+			u.FailureRespond(w, http.StatusForbidden, "Token is not valid.")
 			return
 		}
 		//Everything went well, proceed with the request and set the caller to the user retrieved from the parsed token

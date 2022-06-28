@@ -10,7 +10,10 @@ import (
 	"github.com/manabie-com/togo/app"
 )
 
-var a app.App
+var (
+	a app.App
+	r response
+)
 
 type response struct {
 	Status  string

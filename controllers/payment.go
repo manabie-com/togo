@@ -11,17 +11,18 @@ import (
 func Payment(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	decoded := r.Context().Value("user").(*models.Token)
 	user := &models.User{
+		ID:            decoded.UserId,
 		LimitDayTasks: 20,
 		IsPayment:     true,
 	}
 
-	err := db.QueryRow(`UPDATE users SET is_payment = $1, limit_day_tasks = $2 WHERE id = $3 RETURNING name, email, limit_day_tasks`, user.IsPayment, user.LimitDayTasks, decoded.UserId).Scan(&user.Name, &user.Email, &user.LimitDayTasks)
+	err := user.UpgradePremium(db)
 	if err != nil {
-		u.Respond(w, http.StatusBadRequest, "Failure", "Something went wrong. Please try again", nil)
+		u.FailureRespond(w, http.StatusBadRequest, "Something went wrong. Please try again")
 		return
 	}
 
-	u.Respond(w, http.StatusOK, "Success", "Success upgrade Premium account. Please login again to try new upgrade", map[string]interface{}{
+	u.SuccessRespond(w, http.StatusOK, "Success upgrade Premium account. Please login again to try new upgrade", map[string]interface{}{
 		"name":            user.Name,
 		"email":           user.Email,
 		"is_payment":      user.IsPayment,

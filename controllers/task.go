@@ -3,6 +3,7 @@ package controllers
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -15,21 +16,16 @@ import (
 var GetTasks = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// get user id here
 	decoded := r.Context().Value("user").(*models.Token)
-	rows, err := db.Query(`SELECT * FROM tasks WHERE user_id = $1`, decoded.UserId)
+	task := &models.Task{
+		UserId: decoded.UserId,
+	}
+	tasks, err := task.GetTasksByUserId(db)
 	if err != nil {
-		u.Respond(w, http.StatusNotFound, "Failure", err.Error(), nil)
+		u.FailureRespond(w, http.StatusNotFound, err.Error())
 		return
 	}
-
-	var tasks []*models.Task
-
-	for rows.Next() {
-		var task = &models.Task{}
-		rows.Scan(&task.ID, &task.Name, &task.Content, &task.CreatedAt, &task.UserId)
-		tasks = append(tasks, task)
-	}
 	//Everything OK
-	u.Respond(w, http.StatusOK, "Success", "Success", tasks)
+	u.SuccessRespond(w, http.StatusOK, "Success", tasks)
 }
 
 var GetTask = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
@@ -39,7 +35,7 @@ var GetTask = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	id := func(id string) uint32 {
 		u64, err := strconv.ParseUint(id, 10, 32)
 		if err != nil {
-			u.Respond(w, http.StatusBadRequest, "Failure", "ID must be a number type.", nil)
+			u.FailureRespond(w, http.StatusBadRequest, "ID must be a number type.")
 		}
 		return uint32(u64)
 	}(mux.Vars(r)["id"])
@@ -48,13 +44,13 @@ var GetTask = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		ID:     id,
 		UserId: decoded.UserId,
 	}
-
-	if err := task.GetOneByUserId(db); err != nil {
-		u.Respond(w, http.StatusNotFound, "Failure", "Not found task", nil)
+	err := task.GetTaskByUserId(db)
+	if err != nil {
+		u.FailureRespond(w, http.StatusNotFound, "Not found task")
 		return
 	}
 
-	u.Respond(w, http.StatusOK, "Success", "Success", map[string]interface{}{
+	u.SuccessRespond(w, http.StatusOK, "Success", map[string]interface{}{
 		"name":       task.Name,
 		"content":    task.Content,
 		"created_at": task.CreatedAt,
@@ -70,31 +66,29 @@ var Add = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// json body -> task object
 	err := json.NewDecoder(r.Body).Decode(task)
 	if err != nil {
-		u.Respond(w, http.StatusBadRequest, "Failure", "invalid request", nil)
+		u.FailureRespond(w, http.StatusBadRequest, "invalid request")
 		return
 	}
 	// validate task object
 	validate := validator.New()
-	if err = validate.Struct(task); err != nil {
-		u.Respond(w, http.StatusBadRequest, "Failure", err.Error(), nil)
+	err = validate.Struct(task)
+	if err != nil {
+		u.FailureRespond(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	// check limit day tasks
-	var recordsLength uint
-	_ = db.QueryRow(`SELECT COUNT(id)
-	FROM tasks 
-	WHERE created_at >= NOW() - INTERVAL '24 HOURS' AND user_id = $1`, decoded.UserId).Scan(&recordsLength)
-	if recordsLength == decoded.LimitDayTasks {
-		u.Respond(w, http.StatusBadRequest, "Failure", "Today tasks had limited, Please Comeback tomorrow.", nil)
+	// check today tasks limit
+	if task.IsLimit(db, decoded.LimitDayTasks) {
+		u.FailureRespond(w, http.StatusBadRequest, "Today tasks had limited, Please Comeback tomorrow.")
 		return
 	}
 	// insert database
-	if task.InsertOne(db); err != nil {
-		u.Respond(w, http.StatusBadRequest, "Failure", err.Error(), nil)
+	err = task.InsertTask(db)
+	if err != nil {
+		u.FailureRespond(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	//everything OK
-	u.Respond(w, http.StatusCreated, "Success", "Success create task", map[string]interface{}{
+	u.SuccessRespond(w, http.StatusCreated, "Success create task", map[string]interface{}{
 		"name":       task.Name,
 		"content":    task.Content,
 		"created_at": task.CreatedAt,
@@ -109,16 +103,27 @@ var Edit = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 	err := json.NewDecoder(r.Body).Decode(task)
 	if err != nil {
-		u.Respond(w, http.StatusBadRequest, "Failure", err.Error(), nil)
+		u.FailureRespond(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	err = db.QueryRow(`UPDATE tasks SET name = $3 WHERE id = $1 AND user_id = $2 RETURNING name, content, created_at`, id, decoded.UserId, task.Name).Scan(&task.Name, &task.Content, &task.CreatedAt)
+	var (
+		name    string = task.Name
+		content string = task.Content
+	)
+	fmt.Println(task)
+	if name != "" {
+		task.Name = name
+	}
+	if content != "" {
+		task.Content = content
+	}
+	err = task.UpdateTaskById(db, id)
 	if err != nil {
-		u.Respond(w, http.StatusBadRequest, "Failure", err.Error(), nil)
+		u.FailureRespond(w, http.StatusBadRequest, err.Error())
 		return
 	}
-
-	u.Respond(w, http.StatusCreated, "Success", "Success update task", map[string]interface{}{
+	fmt.Println(task)
+	u.SuccessRespond(w, http.StatusOK, "Success update task", map[string]interface{}{
 		"name":       task.Name,
 		"content":    task.Content,
 		"created_at": task.CreatedAt,
@@ -128,10 +133,16 @@ var Edit = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 var Delete = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	decoded := r.Context().Value("user").(*models.Token)
 	id := mux.Vars(r)["id"]
-	_, err := db.Exec(`DELETE FROM tasks WHERE id = $1 AND user_id = $2`, id, decoded.UserId)
+
+	task := &models.Task{
+		UserId: decoded.UserId,
+	}
+
+	err := task.DeleteTaskById(db, id)
 	if err != nil {
-		u.Respond(w, http.StatusNotFound, "Failure", err.Error(), nil)
+		u.FailureRespond(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	u.Respond(w, http.StatusCreated, "Success", "Success delete task", nil)
+
+	u.SuccessRespond(w, http.StatusNoContent, "Success delete task", nil)
 }

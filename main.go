@@ -5,7 +5,6 @@ import (
 	"syscall"
 
 	"github.com/joho/godotenv"
-	_ "github.com/lib/pq"
 	"github.com/manabie-com/togo/app"
 )
 
