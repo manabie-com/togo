@@ -160,13 +160,13 @@
     - [ x ] Validate <number_of_current_tasks> smaller or equals <maximum_tasks_per_day> of the current user.
     - [ x ] New value of <maximum_task_per_day> should be greater or equal to the current value.
 
-### 8. What do you love about your solution?
+### 8. What do I love about my solution?
 
     - The Todo application can be installed and run automatically by docker.
     - Validate the number of tasks per day by datetime.
     - Hide <user_id> and <task_id> in url.
 
-### 9. What else do you want us to know about however you do not have enough time to complete?
+### 9. What else do I want you to know about however I do not have enough time to complete?
 
 > If I have more time, I will
 
