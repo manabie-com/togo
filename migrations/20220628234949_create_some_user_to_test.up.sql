@@ -1,0 +1,1 @@
+insert into users (name, max_todo) values ('username1', 5), ('username2', 3);

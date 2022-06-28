@@ -15,3 +15,6 @@ migrate-down:
 
 test:
 	go test ./...  -count=1 -v -cover
+
+start-db:
+	docker-compose up -d
