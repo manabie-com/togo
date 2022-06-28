@@ -1,7 +1,4 @@
 from django.test import TestCase, Client
-from django.utils import timezone
-
-from utils import encrypting
 
 
 class UserDataTest:
