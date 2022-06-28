@@ -8,9 +8,20 @@ import (
 	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
 )
+type BaseHandler struct {
+	DB *sql.DB
+}
+
+// NewBaseHandler returns a new BaseHandler
+func NewBaseHandler(db *sql.DB) *BaseHandler {
+	return &BaseHandler{
+		DB: db,
+	}
+}
 
 // connect to database
 func Connect() *sql.DB{ 
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Failed to load env")

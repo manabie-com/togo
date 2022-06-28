@@ -1,34 +1,32 @@
-package test
+package models
 
 import (
 	"log"
 	"testing"
 	"time"
-
-	"github.com/huynhhuuloc129/todo/models"
 )
 
 func TestCheckUserInput(t *testing.T) {
-	user1 := models.NewUser{
+	user1 := NewUser{
 		Username: "",
 		Password: "",
 	}
-	user2 := models.NewUser{
+	user2 := NewUser{
 		Username: "",
 		Password: "asdfasf",
 	}
-	user3 := models.NewUser{
+	user3 := NewUser{
 		Username: "asdfasf",
 		Password: "",
 	}
-	user4 := models.NewUser{
+	user4 := NewUser{
 		Username: "asdfasfa",
 		Password: "asdfsafsf",
 	}
-	result1 := models.CheckUserInput(user1)
-	result2 := models.CheckUserInput(user2)
-	result3 := models.CheckUserInput(user3)
-	result4 := models.CheckUserInput(user4)
+	result1 := CheckUserInput(user1)
+	result2 := CheckUserInput(user2)
+	result3 := CheckUserInput(user3)
+	result4 := CheckUserInput(user4)
 
 	if result1 || result2 || result3 || !result4 {
 		log.Fatal("Check user input failed")
@@ -37,38 +35,38 @@ func TestCheckUserInput(t *testing.T) {
 }
 
 func TestCheckTaskInput(t *testing.T) {
-	task1 := models.NewTask{
+	task1 := NewTask{
 		Content:  "sadfsaf",
 		Status:   "pending",
 		Time:     time.Now(),
 		TimeDone: time.Now(),
 		UserId:   1,
 	}
-	task2 := models.NewTask{
+	task2 := NewTask{
 		Content:  "",
 		Status:   "pending",
 		Time:     time.Now(),
 		TimeDone: time.Now(),
 		UserId:   1,
 	}
-	task3 := models.NewTask{
+	task3 := NewTask{
 		Content:  "sadfsaf",
 		Status:   "pending",
 		Time:     time.Now(),
 		TimeDone: time.Now(),
 		UserId:   1,
 	}
-	task4 := models.NewTask{
+	task4 := NewTask{
 		Content:  "admin Task",
 		Status:   "pending",
 		Time:     time.Now(),
 		TimeDone: time.Now(),
 		UserId:   1,
 	}
-	result1 := models.CheckTaskInput(task1)
-	result2 := models.CheckTaskInput(task2)
-	result3 := models.CheckTaskInput(task3)
-	result4 := models.CheckTaskInput(task4)
+	result1 := CheckTaskInput(task1)
+	result2 := CheckTaskInput(task2)
+	result3 := CheckTaskInput(task3)
+	result4 := CheckTaskInput(task4)
 
 	if !result1 || result2 || !result3 || !result4 {
 		log.Fatal("Check user input failed")

@@ -20,7 +20,7 @@ type NewUser struct {
 
 // Get all user from the database
 func GetAllUser(DB *sql.DB) ([]User, error) {
-	rows, err := DB.Query("SELECT * FROM users;")
+	rows, err := DB.Query("SELECT * FROM users")
 	var users []User
 	if err != nil {
 		return users, err
@@ -41,7 +41,7 @@ func InsertUser(DB *sql.DB, user NewUser) error {
 	if !CheckUserInput(user) {
 		return errors.New("decode failed")
 	}
-	_, err := DB.Exec("INSERT INTO users(username, password, limittask) VALUES ($1, $2, $3);", user.Username, user.Password, user.LimitTask)
+	_, err := DB.Exec("INSERT INTO users(username, password, limittask) VALUES ($1, $2, $3)", user.Username, user.Password, user.LimitTask)
 	return err
 }
 
