@@ -64,6 +64,7 @@ The repository have a few main features
 
 - Install golang [golang](https://go.dev/doc/install)
 - Install postgres
+- Install migrate If you want to migration [migration](https://github.com/golang-migrate/migrate)
 
 #### Start local
 1. Clone repository
@@ -77,7 +78,7 @@ cp .env.example .env
 
 3. Change data variable in file .env with your config on step 2
 
-4. Migration database with terminal
+4. Migration database with terminal (If you want to migrate)
 ```bash
 make migration-up
 ```
@@ -88,12 +89,12 @@ go run cmd/main.go
 
 #### If you want to integration test after run projection
 ```bash
-	go test ./integrationtest
+go test ./integrationtest
 ```
 
 #### If you want to unit test test after run projection
 ```bash
-	go test ./internal/api/handlers/...
+go test ./internal/api/handlers/...
 ```
 
 #### If you want to remove table on database

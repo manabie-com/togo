@@ -16,15 +16,10 @@ migration-down:
 run:
 	go run cmd/main.go
 
-### Test
-test-api-common:
-	go test -cover -coverprofile coverage.log ./internal/api/handlers/common/...
+### Unit test
+test-unit:
+	go test  -cover -coverprofile coverage.log ./internal/...
 
-test-api-task:
-	go test -cover -coverprofile coverage.log ./internal/api/handlers/tasks/...
-
-test-api-user:
-	go test -cover -coverprofile coverage.log ./internal/api/handlers/users/...
-
-test-all:
-	go test  -cover -coverprofile coverage.log ./internal/api/handlers/...
+### Integraion test
+test-integration:
+	go test ./integrationtest/...
