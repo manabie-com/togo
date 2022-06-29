@@ -7,12 +7,12 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func HandleTask(route *mux.Router) {
+func HandleTask(route *mux.Router, handler *delivery.Handler) {
 	taskRouter := route.PathPrefix("/task").Subrouter()
 	taskRouter.Use(middleware.Authorization)
-	taskRouter.HandleFunc("/{id}", delivery.HandlerInstance.GetTaskByID).Methods("GET")
-	taskRouter.HandleFunc("", delivery.HandlerInstance.GetAllTaskOfUser).Methods("GET")
-	taskRouter.HandleFunc("", delivery.HandlerInstance.CreateTask).Methods("POST")
-	taskRouter.HandleFunc("/{id}", delivery.HandlerInstance.CompleteTask).Methods("PUT")
-	taskRouter.HandleFunc("/{id}", delivery.HandlerInstance.DeleteTask).Methods("DELETE")
+	taskRouter.HandleFunc("/{id}", handler.GetTaskByID).Methods("GET")
+	taskRouter.HandleFunc("", handler.GetAllTaskOfUser).Methods("GET")
+	taskRouter.HandleFunc("", handler.CreateTask).Methods("POST")
+	taskRouter.HandleFunc("/{id}", handler.CompleteTask).Methods("PUT")
+	taskRouter.HandleFunc("/{id}", handler.DeleteTask).Methods("DELETE")
 }

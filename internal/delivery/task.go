@@ -2,6 +2,8 @@ package delivery
 
 import (
 	"encoding/json"
+	"errors"
+	"lntvan166/togo/internal/config"
 	"lntvan166/togo/internal/domain"
 	e "lntvan166/togo/internal/entities"
 	"lntvan166/togo/pkg"
@@ -43,6 +45,12 @@ func (t *TaskDelivery) CreateTask(w http.ResponseWriter, r *http.Request) {
 }
 
 func (t *TaskDelivery) GetAllTask(w http.ResponseWriter, r *http.Request) {
+	username := context.Get(r, "username")
+	if username != config.ADMIN {
+		pkg.ERROR(w, http.StatusUnauthorized, errors.New("authorization failed"), "you are not admin!")
+		return
+	}
+
 	tasks, err := t.TaskUsecase.GetAllTask()
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "get all task failed")

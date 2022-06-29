@@ -15,7 +15,7 @@ type Handler struct {
 
 var HandlerInstance *Handler
 
-func NewHandler(db *sql.DB) {
+func NewHandler(db *sql.DB) *Handler {
 	userRepository := repository.NewUserRepository(db)
 	taskRepository := repository.NewTaskRepository(db)
 	crypto := pkg.NewCrypto()
@@ -27,9 +27,13 @@ func NewHandler(db *sql.DB) {
 	taskDelivery := NewTaskDelivery(taskUsecase, userUsecase)
 	authDelivery := NewAuthDelivery(userUsecase)
 
-	HandlerInstance = &Handler{
+	return &Handler{
 		UserDelivery: *userDelivery,
 		TaskDelivery: *taskDelivery,
 		AuthDelivery: *authDelivery,
 	}
+}
+
+func Setup(db *sql.DB) {
+	HandlerInstance = NewHandler(db)
 }

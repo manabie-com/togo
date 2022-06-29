@@ -7,10 +7,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func HandlePlan(route *mux.Router) {
+func HandlePlan(route *mux.Router, handler *delivery.Handler) {
 	planRouter := route.PathPrefix("/plan").Subrouter()
 
 	planRouter.Use(middleware.Authorization)
-	planRouter.HandleFunc("", delivery.HandlerInstance.GetPlan).Methods("GET")
-	planRouter.HandleFunc("/upgrade/{id}", delivery.HandlerInstance.UpgradePlan).Methods("POST")
+	planRouter.HandleFunc("", handler.GetPlan).Methods("GET")
+	planRouter.HandleFunc("/upgrade/{id}", handler.UpgradePlan).Methods("POST")
 }

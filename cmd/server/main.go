@@ -20,10 +20,10 @@ func main() {
 	db := repository.Connect()
 	defer db.Close()
 
-	delivery.NewHandler(db)
+	delivery.Setup(db)
 
 	route := mux.NewRouter()
-	routes.HandleRequest(route)
+	routes.HandleRequest(route, delivery.HandlerInstance)
 
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal(err)

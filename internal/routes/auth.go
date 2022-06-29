@@ -7,13 +7,13 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func HandleAuthentication(router *mux.Router) {
+func HandleAuthentication(router *mux.Router, handler *delivery.Handler) {
 	authRouter := router.PathPrefix("/auth").Subrouter()
-	authRouter.HandleFunc("/register", delivery.HandlerInstance.Register).Methods("POST")
-	authRouter.HandleFunc("/login", delivery.HandlerInstance.Login).Methods("POST")
+	authRouter.HandleFunc("/register", handler.Register).Methods("POST")
+	authRouter.HandleFunc("/login", handler.Login).Methods("POST")
 
 	passwordRouter := authRouter.PathPrefix("/password").Subrouter()
 
 	passwordRouter.Use(middleware.Authorization)
-	// passwordRouter.HandleFunc("", delivery.HandlerInstance.UpdatePassword).Methods("POST")
+	// passwordRouter.HandleFunc("", handler.UpdatePassword).Methods("POST")
 }

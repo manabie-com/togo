@@ -115,7 +115,7 @@ func (u *userUsecase) GetMaxTaskByUserID(id int) (int, error) {
 func (u *userUsecase) GetPlan(username string) (string, error) {
 	user, err := u.userRepo.GetUserByName(username)
 	if err != nil {
-		return "", err
+		return "", errors.New("user not found")
 	}
 	return user.Plan, nil
 }
@@ -127,7 +127,7 @@ func (u *userUsecase) UpdateUser(user *e.User) error {
 func (u *userUsecase) UpgradePlan(userID int, plan string, maxTodo int) error {
 	user, err := u.userRepo.GetUserByID(userID)
 	if err != nil {
-		return err
+		return errors.New("user not found")
 	}
 	if user.Plan == plan {
 		return errors.New("plan already upgraded")

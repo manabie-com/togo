@@ -68,7 +68,7 @@ func (t *taskUsecase) GetTaskByID(id int, username string) (*e.Task, error) {
 	task, err := t.taskRepo.GetTaskByID(id)
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "get task by id failed!")
-		return nil, err
+		return nil, errors.New("task does not exist")
 	}
 	return task, nil
 }
@@ -77,13 +77,13 @@ func (t *taskUsecase) GetTasksByUsername(username string) (*[]e.Task, error) {
 	id, err := t.userRepo.GetUserIDByUsername(username)
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "get user id failed")
-		return nil, err
+		return nil, errors.New("user does not exist")
 	}
 
 	tasks, err := t.taskRepo.GetTasksByUserID(id)
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "get tasks by user id failed")
-		return nil, err
+		return nil, errors.New("get tasks by user id failed")
 	}
 	return tasks, nil
 }
@@ -91,7 +91,7 @@ func (t *taskUsecase) GetTasksByUsername(username string) (*[]e.Task, error) {
 func (t *taskUsecase) GetUserIDByTaskID(id int) (int, error) {
 	task, err := t.taskRepo.GetTaskByID(id)
 	if err != nil {
-		return 0, err
+		return 0, errors.New("task does not exist")
 	}
 	return task.UserID, nil
 }
@@ -142,7 +142,7 @@ func (t *taskUsecase) CompleteTask(id int, username string) error {
 	user_id, err := t.GetUserIDByTaskID(id)
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "task does not exist!")
-		return err
+		return errors.New("task does not exist")
 	}
 
 	err = t.CheckAccessPermission(username, user_id)
@@ -154,7 +154,7 @@ func (t *taskUsecase) CompleteTask(id int, username string) error {
 	err = t.taskRepo.CompleteTask(id)
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "complete task failed!")
-		return err
+		return errors.New("complete task failed")
 	}
 	return nil
 }
@@ -162,7 +162,7 @@ func (t *taskUsecase) CompleteTask(id int, username string) error {
 func (t *taskUsecase) CheckAccessPermission(username string, taskUserID int) error {
 	userID, err := t.userRepo.GetUserIDByUsername(username)
 	if err != nil {
-		return err
+		return errors.New("user does not exist")
 	}
 
 	if userID != taskUserID {
@@ -188,7 +188,7 @@ func (t *taskUsecase) DeleteTask(id int, username string) error {
 	err = t.taskRepo.DeleteTask(id)
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "delete task failed!")
-		return err
+		return errors.New("delete task failed")
 	}
 	return nil
 }

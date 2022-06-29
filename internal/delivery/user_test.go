@@ -2,6 +2,7 @@ package delivery
 
 import (
 	"bytes"
+	"lntvan166/togo/internal/config"
 	e "lntvan166/togo/internal/entities"
 	"lntvan166/togo/pkg/mock"
 	"net/http"
@@ -10,9 +11,12 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 )
+
+const ADMIN = "admin"
 
 // var token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2NTY1Mjk2MzcsInVzZXJuYW1lIjoiYWRtaW45In0.eVza3kGW3x6lAkvi4wLXDjY-yRfNQBQ2VrB-aaV7QUs"
 var userToLogin = &e.User{
@@ -73,6 +77,9 @@ func TestGetAllUsers(t *testing.T) {
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("GET", LOCALHOST+"/user", nil)
 
+	context.Set(r, "username", ADMIN)
+	config.ADMIN = ADMIN
+
 	userUsecase.EXPECT().GetAllUsers().Return(users, nil)
 
 	userDelivery.GetAllUsers(w, r)
@@ -106,6 +113,9 @@ func TestGetUser(t *testing.T) {
 
 	r = mux.SetURLVars(r, vars)
 
+	context.Set(r, "username", ADMIN)
+	config.ADMIN = ADMIN
+
 	userUsecase.EXPECT().GetUserByID(user.ID).Return(user, nil)
 
 	userDelivery.GetUser(w, r)
@@ -138,6 +148,9 @@ func TestDeleteUserByID(t *testing.T) {
 	}
 
 	r = mux.SetURLVars(r, vars)
+
+	context.Set(r, "username", ADMIN)
+	config.ADMIN = ADMIN
 
 	userUsecase.EXPECT().DeleteUserByID(user.ID).Return(nil)
 

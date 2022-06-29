@@ -1,11 +1,14 @@
 package delivery
 
 import (
+	"errors"
+	"lntvan166/togo/internal/config"
 	"lntvan166/togo/internal/domain"
 	"lntvan166/togo/pkg"
 	"net/http"
 	"strconv"
 
+	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
 )
 
@@ -22,6 +25,12 @@ func NewUserDelivery(userUsecase domain.UserUsecase, taskUsecase domain.TaskUsec
 }
 
 func (u *UserDelivery) GetAllUsers(w http.ResponseWriter, r *http.Request) {
+	username := context.Get(r, "username")
+	if username != config.ADMIN {
+		pkg.ERROR(w, http.StatusUnauthorized, errors.New("authorization failed"), "you are not admin!")
+		return
+	}
+
 	users, err := u.UserUsecase.GetAllUsers()
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to get users!")
@@ -32,6 +41,12 @@ func (u *UserDelivery) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *UserDelivery) GetUser(w http.ResponseWriter, r *http.Request) {
+	username := context.Get(r, "username")
+	if username != config.ADMIN {
+		pkg.ERROR(w, http.StatusUnauthorized, errors.New("authorization failed"), "you are not admin!")
+		return
+	}
+
 	vars := mux.Vars(r)
 
 	id, err := strconv.Atoi(vars["id"])
@@ -50,6 +65,12 @@ func (u *UserDelivery) GetUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *UserDelivery) DeleteUserByID(w http.ResponseWriter, r *http.Request) {
+	username := context.Get(r, "username")
+	if username != config.ADMIN {
+		pkg.ERROR(w, http.StatusUnauthorized, errors.New("authorization failed"), "you are not admin!")
+		return
+	}
+
 	vars := mux.Vars(r)
 
 	id, err := strconv.Atoi(vars["id"])
