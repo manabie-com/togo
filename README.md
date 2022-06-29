@@ -63,9 +63,30 @@ The repository have a few main features
 #### Prepare
 
 - Install golang [golang](https://go.dev/doc/install)
-- Install postgres
+- Install postgres [postgreSQL](https://www.postgresql.org/download)
 - Install migrate If you want to migration [migration](https://github.com/golang-migrate/migrate)
+  . MacOS
 
+  ```bash
+  $ brew install golang-migrate
+  ```
+
+  . Windows
+
+  Using [scoop](https://scoop.sh/)
+
+  ```bash
+  $ scoop install migrate
+  ```
+
+  . Linux
+
+  ```bash
+  $ curl -L https://packagecloud.io/golang-migrate/migrate/gpgkey | apt-key add -
+  $ echo "deb https://packagecloud.io/golang-migrate/migrate/ubuntu/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/migrate.list
+  $ apt-get update
+  $ apt-get install -y migrate
+  ```
 #### Start local
 1. Clone repository
 ```bash
