@@ -157,6 +157,7 @@ Request JSON:
 ```
 
 2. You can login with with endpoint `POST /login`. I have validate `username` and `password` not empty in request. First of all, you must create user if you want to login with user as above.
+After login, Token will be generated and set in `Cookie`
 If you run terminal with `make migration-up`. I create example user for you.
 User example: `id: firstUser, username: manabie, password: example, max_task_per_day: 5`
 Request JSON:
