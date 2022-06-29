@@ -27,7 +27,7 @@ func (u *UserDelivery) GetPlan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pkg.JSON(w, http.StatusOK, plan)
+	pkg.JSON(w, http.StatusOK, "plan: "+plan)
 }
 
 func (u *UserDelivery) UpgradePlan(w http.ResponseWriter, r *http.Request) {

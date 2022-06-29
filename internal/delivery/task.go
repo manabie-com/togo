@@ -100,32 +100,6 @@ func (t *TaskDelivery) CompleteTask(w http.ResponseWriter, r *http.Request) {
 	pkg.JSON(w, http.StatusOK, "message: check task success")
 }
 
-func (t *TaskDelivery) UpdateTask(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		pkg.ERROR(w, http.StatusBadRequest, err, "id is not a number!")
-		return
-	}
-
-	username := context.Get(r, "username").(string)
-
-	task := e.Task{}
-	err = json.NewDecoder(r.Body).Decode(&task)
-	if err != nil {
-		pkg.ERROR(w, http.StatusBadRequest, err, "invalid body!")
-		return
-	}
-
-	err = t.TaskUsecase.UpdateTask(id, username, task)
-	if err != nil {
-		pkg.ERROR(w, http.StatusInternalServerError, err, "update task failed!")
-		return
-	}
-
-	pkg.JSON(w, http.StatusOK, "message: update task success")
-}
-
 func (t *TaskDelivery) DeleteTask(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])

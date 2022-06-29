@@ -15,6 +15,7 @@ var (
 	ADMIN        string
 	FREE_LIMIT   int
 	VIP_LIMIT    int
+	LOCALHOST    string
 )
 
 func Load() error {
@@ -36,6 +37,8 @@ func Load() error {
 	if err != nil {
 		return err
 	}
+
+	LOCALHOST = os.Getenv("LOCALHOST")
 
 	return nil
 }

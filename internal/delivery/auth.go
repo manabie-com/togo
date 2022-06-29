@@ -19,7 +19,7 @@ func NewAuthDelivery(userUsecase domain.UserUsecase) *AuthDelivery {
 	}
 }
 
-func (u *UserDelivery) Register(w http.ResponseWriter, r *http.Request) {
+func (u *AuthDelivery) Register(w http.ResponseWriter, r *http.Request) {
 	user := e.NewUser()
 	var err error
 
@@ -39,7 +39,7 @@ func (u *UserDelivery) Register(w http.ResponseWriter, r *http.Request) {
 	pkg.JSON(w, http.StatusCreated, "Register Successfully")
 }
 
-func (u *UserDelivery) Login(w http.ResponseWriter, r *http.Request) {
+func (u *AuthDelivery) Login(w http.ResponseWriter, r *http.Request) {
 	newUser := e.NewUser()
 
 	err := json.NewDecoder(r.Body).Decode(&newUser)
@@ -57,7 +57,7 @@ func (u *UserDelivery) Login(w http.ResponseWriter, r *http.Request) {
 	pkg.JSON(w, http.StatusOK, map[string]string{"token": token, "message": "login successfully"})
 }
 
-// func (u *UserDelivery) UpdatePassword(w http.ResponseWriter, r *http.Request) {
+// func (u *AuthDelivery) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 // 	user, err := u.UserUsecase.GetUserByName(context.Get(r, "username").(string))
 // 	if err != nil {
 // 		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to get user!")
