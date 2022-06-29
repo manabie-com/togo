@@ -14,17 +14,17 @@ The repository have a few main features
 
 1. #### Sequence Diagram For Flow Feature
 - Feature Login
-![Sequence](https://raw.githubusercontent.com/DuongThanhTin/togo/master/document/Flow-Login.svg)
+![Sequence](https://raw.githubusercontent.com/DuongThanhTin/togo/master/documents/Flow-Login.svg)
 
 - Feature Create User
-![Sequence](https://raw.githubusercontent.com/DuongThanhTin/togo/master/document/Flow-CreateUser.svg)
+![Sequence](https://raw.githubusercontent.com/DuongThanhTin/togo/master/documents/Flow-CreateUser.svg)
 
 - Feature Add Task
-![Sequence](https://raw.githubusercontent.com/DuongThanhTin/togo/master/document/Flow-AddTask.svg)
+![Sequence](https://raw.githubusercontent.com/DuongThanhTin/togo/master/documents/Flow-AddTask.svg)
 
 2. #### ERD Diagram
 
-![ERD](https://raw.githubusercontent.com/DuongThanhTin/togo/master/document/ERD.svg)
+![ERD](https://raw.githubusercontent.com/DuongThanhTin/togo/master/documents/ERD.svg)
 
 ###  Structure Project
 
@@ -128,3 +128,50 @@ go test ./internal/...
 ```bash
 make migration-down
 ```
+
+### Flow
+
+You can see all flow in folder `documents`. I draw three pictures for call API and one picture for ERD.
+
+#### Endpoints
+
+I make create three endpoints.
+```bash
+POST /logins -> Login
+POST /tasks  -> Create task
+POST /users  -> Create user
+```
+
+#### Call API
+1. You can create user with endpoint `POST /users`. In addtion, I have validate `username`, `password` not empty in request. If `username` is exists, you can't create user.
+Request JSON:
+```bash
+{
+	"username":"user-manabie-1",
+	"password": "123456",
+	"max_task_per_day": 10
+}
+```
+
+2. You can login with with endpoint `POST /login`. I have validate `username` and `password` not empty in request. First of all, you must create user if you want to login with user as above.
+If you run terminal with `make migration-up`. I create example user for you.
+User example: `id: firstUser, username: manabie, password: example, max_task_per_day: 5`
+Request JSON:
+```bash
+{
+	"username":"manabie",
+	"password": "example",
+}
+```
+
+3. You can create task with endpoint `POST /tasks`. First of all, you must login if you want to create task. I have create token and set it in `Cookie`. This token have the information of `user` such as:
+`user_id` and `max_task_per_day`. After that, you call API `POST /tasks`, i will parse this token to get data from this token so i need you login. I have validate number task of day if the number task of day is more than `max_task_per_day` of user, you can't create task.
+Request JSON:
+```bash
+{
+	"content":"New task 1",
+}
+```
+
+#### Collection postman
+I make create collection postman folder `collection_postman`. You can easily see the endpoint and request json for each API.

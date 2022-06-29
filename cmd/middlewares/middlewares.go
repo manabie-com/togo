@@ -1,13 +1,13 @@
 package middlewares
 
 import (
-	"log"
-
-	"github.com/manabie-com/togo/constants"
-	"github.com/manabie-com/togo/internal/api/handlers"
-	"github.com/manabie-com/togo/utils"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/manabie-com/togo/constants"
+	"github.com/manabie-com/togo/internal/api/handlers"
+	"github.com/manabie-com/togo/internal/pkg/responses"
+	"github.com/manabie-com/togo/utils"
 )
 
 func SetDefaultMiddleWare() gin.HandlerFunc {
@@ -24,11 +24,13 @@ func ValidateToken() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		value, err := handlers.GetValueCookieFromCtx(ctx, constants.CookieTokenKey)
 		if err != nil {
-			log.Fatalf("Fail GetTokenKeyFromCtx")
+			responses.ResponseForError(ctx, err, http.StatusUnauthorized, "Fail Parse token")
+			return
 		}
 
 		if utils.SafeString(value) == "" {
-			log.Fatalf("Please login")
+			responses.ResponseForError(ctx, err, http.StatusUnauthorized, "Not have token")
+			return
 		}
 	}
 }
