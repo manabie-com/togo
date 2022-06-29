@@ -178,21 +178,3 @@ Request JSON:
 
 #### Collection postman
 I make create collection postman folder `collection_postman`. You can easily see the endpoint and request json for each API.
-
-### Swagger
-I make create swagger for you
-
-#### Install swagger
-```bash
-go get -v -u github.com/swaggo/swag/cmd/swag
-```
-
-If the command for `swag` not found. You use command:
-```bash
-PATH=$(go env GOPATH)/bin:$PATH
-```
-
-For check version `swag` in your computer:
-```bash
-swag -v
-```
