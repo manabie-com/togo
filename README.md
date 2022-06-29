@@ -143,7 +143,7 @@ POST /users  -> Create user
 ```
 
 #### Authentication token
-I will create token and set data of for token in `Cookie`. You must login first if you want to create task. The task will create with data user login.
+I will create token and set data of for token in `Cookie`. You must login first if you want to create task with endpoint `POST /tasks`. The task will create with data user login.
 
 #### Call API
 1. You can create user with endpoint `POST /users`. In addtion, I have validate `username`, `password` not empty in request. If `username` is exists, you can't create user.
@@ -178,3 +178,19 @@ Request JSON:
 
 #### Collection postman
 I make create collection postman folder `collection_postman`. You can easily see the endpoint and request json for each API.
+
+#### CURL Example
+1. Create User
+```bash
+curl -XPOST -d '{ "username":"manabie-user-3", "password": "123456", "max_task_per_day": 10 }' 'http://localhost:8000/users'
+```
+
+2. Login
+```bash
+curl -XPOST -d '{ "username":"manabie", "password":"example" }' 'http://localhost:8000/login'
+```
+
+3. Create Task
+```bash
+curl -XPOST -b 'token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTY1MjIzMzYsIm1heF90YXNrX3Blcl9kYXkiOiI1IiwidXNlcl9pZCI6ImZpcnN0VXNlciJ9.RvmCCNF5vOloXQmyZEqAUcZtxQN4lN9_qhkSm4vByOE' -d '{ "content":"New task 2" }' 'http://localhost:8000/tasks'
+```

@@ -7,8 +7,8 @@ import (
 )
 
 func NewHandler(router *gin.Engine, service handlers.MainUseCase) {
-	apiUser := router.Group("/users")
+	apiUser := router.Group("/")
 	{
-		apiUser.POST("/", CreateUser(service))
+		apiUser.POST("/users", CreateUser(service))
 	}
 }

@@ -8,9 +8,9 @@ import (
 )
 
 func NewHandler(router *gin.Engine, service handlers.MainUseCase) {
-	apiTask := router.Group("/tasks")
+	apiTask := router.Group("/")
 	apiTask.Use(middlewares.ValidateToken())
 	{
-		apiTask.POST("/", AddTask(service))
+		apiTask.POST("/tasks", AddTask(service))
 	}
 }
