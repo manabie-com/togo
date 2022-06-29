@@ -142,6 +142,9 @@ POST /tasks  -> Create task
 POST /users  -> Create user
 ```
 
+#### Authentication token
+I will create token and set data of for token in `Cookie`. You must login first if you want to create task. The task will create with data user login.
+
 #### Call API
 1. You can create user with endpoint `POST /users`. In addtion, I have validate `username`, `password` not empty in request. If `username` is exists, you can't create user.
 Request JSON:
@@ -175,3 +178,21 @@ Request JSON:
 
 #### Collection postman
 I make create collection postman folder `collection_postman`. You can easily see the endpoint and request json for each API.
+
+### Swagger
+I make create swagger for you
+
+#### Install swagger
+```bash
+go get -v -u github.com/swaggo/swag/cmd/swag
+```
+
+If the command for `swag` not found. You use command:
+```bash
+PATH=$(go env GOPATH)/bin:$PATH
+```
+
+For check version `swag` in your computer:
+```bash
+swag -v
+```
