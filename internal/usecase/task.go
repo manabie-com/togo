@@ -98,7 +98,7 @@ func (t *taskUsecase) GetUserIDByTaskID(id int) (int, error) {
 }
 
 func (t *taskUsecase) CheckLimitTaskToday(id int) (bool, error) {
-	maxTask, err := t.taskRepo.GetMaxTaskByUserID(id)
+	user, err := t.userRepo.GetUserByID(id)
 	if err != nil {
 		return false, err
 	}
@@ -106,7 +106,7 @@ func (t *taskUsecase) CheckLimitTaskToday(id int) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	if numberTask >= maxTask {
+	if numberTask >= int(user.MaxTodo) {
 		return true, nil
 	}
 	return false, nil

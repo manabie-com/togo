@@ -101,15 +101,15 @@ func (r *taskRepository) GetNumberOfTaskTodayByUserID(id int) (int, error) {
 	return count, nil
 }
 
-func (r *taskRepository) GetMaxTaskByUserID(id int) (int, error) {
-	const query = `SELECT max_todo FROM users WHERE id = $1`
-	var max int
-	err := r.DB.QueryRow(query, id).Scan(&max)
-	if err != nil {
-		return 0, err
-	}
-	return max, nil
-}
+// func (r *taskRepository) GetMaxTaskByUserID(id int) (int, error) {
+// 	const query = `SELECT max_todo FROM users WHERE id = $1`
+// 	var max int
+// 	err := r.DB.QueryRow(query, id).Scan(&max)
+// 	if err != nil {
+// 		return 0, err
+// 	}
+// 	return max, nil
+// }
 
 // UPDATE
 

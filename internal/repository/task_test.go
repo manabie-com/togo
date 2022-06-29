@@ -125,7 +125,7 @@ func TestGetTaskByID(t *testing.T) {
 	assert.Equal(t, task, newTask)
 }
 
-func TestGetTaskByUserID(t *testing.T) {
+func TestGetTasksByUserID(t *testing.T) {
 	db, mock := NewMock()
 	repo := &taskRepository{db}
 	defer db.Close()
@@ -156,19 +156,19 @@ func TestGetNumberOfTaskTodayByUserID(t *testing.T) {
 	assert.Equal(t, 1, count)
 }
 
-func TestGetMaxTaskByUserID(t *testing.T) {
-	db, mock := NewMock()
-	repo := &taskRepository{db}
-	defer db.Close()
+// func TestGetMaxTaskByUserID(t *testing.T) {
+// 	db, mock := NewMock()
+// 	repo := &taskRepository{db}
+// 	defer db.Close()
 
-	query := regexp.QuoteMeta(`SELECT max_todo FROM users WHERE id = $1`)
+// 	query := regexp.QuoteMeta(`SELECT max_todo FROM users WHERE id = $1`)
 
-	mock.ExpectQuery(query).WithArgs(u.ID).WillReturnRows(sqlmock.NewRows([]string{"max_todo"}).AddRow(1))
+// 	mock.ExpectQuery(query).WithArgs(u.ID).WillReturnRows(sqlmock.NewRows([]string{"max_todo"}).AddRow(1))
 
-	max, err := repo.GetMaxTaskByUserID(u.ID)
-	assert.NoError(t, err)
-	assert.Equal(t, 1, max)
-}
+// 	max, err := repo.GetMaxTaskByUserID(u.ID)
+// 	assert.NoError(t, err)
+// 	assert.Equal(t, 1, max)
+// }
 
 func TestUpdateTask(t *testing.T) {
 	db, mock := NewMock()
