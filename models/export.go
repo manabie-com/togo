@@ -30,7 +30,7 @@ func RandomUser() User {
 		Id:        util.RandomId(),
 		Username:  util.RandomUsername(),
 		Password:  util.RandomPassword(),
-		LimitTask: int(util.RandomLimittask()),
+		LimitTask: 10,
 	}
 	return user
 }
@@ -40,7 +40,7 @@ func RandomNewUser() NewUser {
 	newUser := NewUser{
 		Username:  util.RandomUsername(),
 		Password:  util.RandomPassword(),
-		LimitTask: int(util.RandomLimittask()),
+		LimitTask: 10,
 	}
 	return newUser
 }

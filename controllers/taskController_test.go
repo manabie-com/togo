@@ -17,13 +17,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func CreateMockingDB() (sqlmock.Sqlmock, *BaseHandler) {
-	db, mock := models.NewMock()
-	dbConn := models.NewdbConn(db)
-	h := NewBaseHandler(dbConn)
-	return mock, h
-}
-
+// test controller response all task
 func TestResponseAllTask(t *testing.T) {
 	mock, h := CreateMockingDB()
 	userId := util.RandomInt(0, 100)
@@ -58,6 +52,7 @@ func TestResponseAllTask(t *testing.T) {
 	assert.Len(t, tasks, 10)
 }
 
+// test controller response one task
 func TestResponseOneTask(t *testing.T) {
 	mock, h := CreateMockingDB()
 	task := models.RandomTask()
@@ -75,24 +70,19 @@ func TestResponseOneTask(t *testing.T) {
 	h.ResponseOneTask(w, req)
 
 	resp := w.Result()
-	respBody, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		t.Errorf("Can't read body response")
-	}
-
 	var taskfromdb models.Task
-	err = json.Unmarshal(respBody, &taskfromdb)
-	if err != nil {
-		t.Errorf(err.Error())
+	if err := json.NewDecoder(resp.Body).Decode(&taskfromdb); err != nil {
+		http.Error(w, "decode failed, err: "+err.Error(), http.StatusFailedDependency)
+		return
 	}
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
-	assert.NotEmpty(t, taskfromdb)
 	assert.Equal(t, taskfromdb.Content, task.Content)
 	assert.Equal(t, taskfromdb.Status, task.Status)
 	assert.Equal(t, taskfromdb.UserId, task.UserId)
 }
 
+// test controller create task
 func TestCreateTask(t *testing.T) {
 	mock, h := CreateMockingDB()
 	task := models.RandomTask()
@@ -110,16 +100,10 @@ func TestCreateTask(t *testing.T) {
 	h.CreateTask(w, req)
 
 	resp := w.Result()
-	respBody, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		t.Errorf("Can't read body response")
-	}
-
-	var taskfromdb models.NewTask
-	err = json.Unmarshal(respBody, &taskfromdb)
-	if err != nil {
-		fmt.Println(taskfromdb, string(respBody))
-		t.Errorf(err.Error())
+	var taskfromdb models.Task
+	if err := json.NewDecoder(resp.Body).Decode(&taskfromdb); err != nil {
+		http.Error(w, "decode failed, err: "+err.Error(), http.StatusFailedDependency)
+		return
 	}
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
@@ -129,6 +113,8 @@ func TestCreateTask(t *testing.T) {
 	assert.Equal(t, taskfromdb.UserId, task.UserId)
 }
 
+
+// test controller delete from task
 func TestDeleteFromTask(t *testing.T) {
 	mock, h := CreateMockingDB()
 	task := models.RandomTask()
@@ -156,6 +142,8 @@ func TestDeleteFromTask(t *testing.T) {
 	assert.Equal(t, respBodyString, "message: delete success")
 }
 
+
+//test controller update to task
 func TestUpdateToTask(t *testing.T) {
 	mock, h := CreateMockingDB()
 
@@ -179,16 +167,10 @@ func TestUpdateToTask(t *testing.T) {
 	h.UpdateToTask(w, req)
 
 	resp := w.Result()
-	respBody, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		t.Errorf("Can't read body response, err: " + err.Error())
-	}
-
-	var taskfromdb models.NewTask
-	err = json.Unmarshal(respBody, &taskfromdb)
-	if err != nil {
-		fmt.Println(taskfromdb, string(respBody))
-		t.Errorf(err.Error())
+	var taskfromdb models.Task
+	if err := json.NewDecoder(resp.Body).Decode(&taskfromdb); err != nil {
+		http.Error(w, "decode failed, err: "+err.Error(), http.StatusFailedDependency)
+		return
 	}
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)

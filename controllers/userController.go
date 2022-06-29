@@ -95,7 +95,6 @@ func (bh *BaseHandler) UpdateToUser(w http.ResponseWriter, r *http.Request) {
 	newUser.Username = user.Username
 	newUser.Password = user.Password
 	newUser.LimitTask = user.LimitTask
-	fmt.Println(newUser)
 
 	if !ok {
 		http.Error(w, "Id invalid", http.StatusBadRequest)
@@ -105,7 +104,6 @@ func (bh *BaseHandler) UpdateToUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "decode failed, input invalid, err: " + err.Error(), http.StatusBadRequest)
 		return
 	}
-	fmt.Println(newUser)
 	if err := bh.BaseCtrl.UpdateUser(newUser, id); err != nil {
 		http.Error(w, "update user failed, err:" + err.Error(), http.StatusBadRequest)
 		return

@@ -16,6 +16,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// test controller response all user
 func TestResponseAllUser(t *testing.T) {
 	mock, h := CreateMockingDB()
 
@@ -48,6 +49,7 @@ func TestResponseAllUser(t *testing.T) {
 	assert.Len(t, users, 10)
 }
 
+// test controller response one user
 func TestResponseOneUser(t *testing.T) {
 	mock, h := CreateMockingDB()
 
@@ -62,16 +64,11 @@ func TestResponseOneUser(t *testing.T) {
 	context.Set(req, "id", user.Id)
 	h.ResponseOneUser(w, req)
 
-	resp := w.Result()
-	respBody, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		t.Errorf("Can't read body response")
-	}
-
 	var userfromdb models.User
-	err = json.Unmarshal(respBody, &userfromdb)
+	resp := w.Result()
+	err := json.NewDecoder(resp.Body).Decode(&userfromdb)
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Fatal("decode failed, err: " +err.Error())
 	}
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
@@ -81,6 +78,7 @@ func TestResponseOneUser(t *testing.T) {
 	assert.Equal(t, userfromdb.LimitTask, user.LimitTask)
 }
 
+// test controller create user
 func TestCreateUser(t *testing.T) {
 	mock, h := CreateMockingDB()
 
@@ -96,23 +94,20 @@ func TestCreateUser(t *testing.T) {
 	w := httptest.NewRecorder() // set custom writer and response
 	req := httptest.NewRequest("POST", "localhost:8000/users", bytes.NewReader(userJSON))
 	h.CreateUser(w, req)
+	
+	var userfromdb models.User
 	resp := w.Result()
-	respBody, err := ioutil.ReadAll(resp.Body)
+	err = json.NewDecoder(resp.Body).Decode(&userfromdb)
 	if err != nil {
-		t.Errorf("Can't read body response")
-	}
-
-	var userfromdb models.NewUser
-	err = json.Unmarshal(respBody, &userfromdb)
-	if err != nil {
-		fmt.Println(userfromdb, string(respBody))
-		t.Errorf(err.Error())
+		t.Fatal("decode failed, err: " +err.Error())
 	}
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.NotEmpty(t, userfromdb)
 	assert.Equal(t, userfromdb.Username, user.Username)
 }
+
+// test controller delete user
 func TestDeleteFromUser(t *testing.T) {
 	mock, h := CreateMockingDB()
 
@@ -140,6 +135,7 @@ func TestDeleteFromUser(t *testing.T) {
 	assert.Equal(t, respBodyString, "message: delete success")
 }
 
+// test controller update to user
 func TestUpdateToUser(t *testing.T) {
 	mock, h := CreateMockingDB()
 
@@ -161,17 +157,11 @@ func TestUpdateToUser(t *testing.T) {
 	context.Set(req, "id", user.Id)
 	h.UpdateToUser(w, req)
 
+	var userfromdb models.User
 	resp := w.Result()
-	respBody, err := ioutil.ReadAll(resp.Body)
+	err = json.NewDecoder(resp.Body).Decode(&userfromdb)
 	if err != nil {
-		t.Errorf("Can't read body response")
-	}
-
-	var userfromdb models.NewUser
-	err = json.Unmarshal(respBody, &userfromdb)
-	if err != nil {
-		fmt.Println(userfromdb, string(respBody))
-		t.Errorf(err.Error())
+		t.Fatal("decode failed, err: " +err.Error())
 	}
 
 	assert.Equal(t, http.StatusOK, resp.StatusCode)

@@ -50,7 +50,3 @@ func CheckPasswordHash(hashedPassword, password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 }
 
-// interface implement
-// func (r *Repository)Close() {
-// 	r.DB.Close()
-// }

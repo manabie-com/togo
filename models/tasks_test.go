@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"regexp"
 	"testing"
 
@@ -24,7 +23,6 @@ func TestGetAllTask(t *testing.T) {
 	mock.ExpectQuery(query).WithArgs(1).WillReturnRows(rows)
 
 	tasks, err := h.BaseCtrl.GetAllTasks(1)
-	fmt.Println(tasks)
 	assert.NotEmpty(t, tasks)
 	assert.NoError(t, err)
 	assert.Len(t, tasks, 10)

@@ -18,5 +18,4 @@ func taskRouter(r *mux.Router, bh *controllers.BaseHandler) {
 	taskRoutingid.HandleFunc("", bh.ResponseOneTask).Methods("GET")
 	taskRoutingid.HandleFunc("", bh.UpdateToTask).Methods("PUT")
 	taskRoutingid.HandleFunc("", bh.UpdateToTask).Methods("PATCH")
-
 }

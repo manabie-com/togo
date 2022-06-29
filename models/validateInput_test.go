@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// test function check user input
 func TestCheckUserInput(t *testing.T) {
 	user1 := NewUser{
 		Username: "",
@@ -34,6 +35,7 @@ func TestCheckUserInput(t *testing.T) {
 
 }
 
+// test function check task input
 func TestCheckTaskInput(t *testing.T) {
 	task1 := NewTask{
 		Content:  "sadfsaf",

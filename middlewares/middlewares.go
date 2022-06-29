@@ -39,7 +39,7 @@ func Logging(next http.Handler) http.Handler {
 		}
 		context.Set(r, "userid", userid)
 		context.Set(r, "id", userid)
-
+		
 		next.ServeHTTP(w, r)
 	})
 }
@@ -61,24 +61,20 @@ func MiddlewareID(next http.Handler) http.Handler {
 // check username duplicate/valid or not and hash password incoming
 func ValidUsernameAndHashPassword(bh *controllers.BaseHandler, next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		requestBody, err := ioutil.ReadAll(r.Body)
-		if err != nil {
-			http.Error(w, "read body request failed, err: "+err.Error(), http.StatusBadRequest)
+		var bodyJSON models.NewUser
+		if err := json.NewDecoder(r.Body).Decode(&bodyJSON); err != nil {
+			http.Error(w, "decode failed", http.StatusFailedDependency)
 			return
 		}
 
-		var bodyJSON models.NewUser
-		err = json.Unmarshal(requestBody, &bodyJSON)
-		if err != nil {
-			http.Error(w, "unmarshal body failed, err: "+err.Error(), http.StatusBadRequest)
-			return
-		}
-		bodyJSON.Password, err = models.Hash(bodyJSON.Password)
+		context.Set(r, "password", bodyJSON.Password)
+		newpassword, err := models.Hash(bodyJSON.Password)
+		bodyJSON.Password = newpassword
+		
 		if err != nil {
 			http.Error(w, "hash password failed, err: "+err.Error(), http.StatusBadRequest)
 			return
 		}
-
 		newRequestBody, err := json.Marshal(bodyJSON)
 		if err != nil {
 			http.Error(w, "marshal request body failed, err: "+err.Error(), http.StatusBadRequest)

@@ -29,11 +29,15 @@ type responseToken struct {
 // Handle register with method post
 func (h *BaseHandler) Register(w http.ResponseWriter, r *http.Request) {
 	var user, user1 models.NewUser
-
 	_ = json.NewDecoder(r.Body).Decode(&user)
 	user1 = models.NewUser{
 		Username: user.Username,
 		Password: user.Password,
+	}
+	ok := models.CheckUserInput(user1)
+	if !ok {
+		http.Error(w, "registered failed", http.StatusBadRequest)
+		return
 	}
 
 	if strings.ToLower(user1.Username) != "admin" {
@@ -41,14 +45,13 @@ func (h *BaseHandler) Register(w http.ResponseWriter, r *http.Request) {
 	} else {
 		user1.LimitTask = 0
 	}
-
 	if err := h.BaseCtrl.InsertUser(user1); err != nil { // insert new user to database
 		http.Error(w, "insert user failed.", http.StatusBadRequest)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(user); err != nil { // response message and token back to view
+	if err := json.NewEncoder(w).Encode(user1); err != nil { // response message and token back to view
 		http.Error(w, "encode failed.", http.StatusCreated)
 		return
 	}
@@ -69,12 +72,10 @@ func (h *BaseHandler) Login(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "account input invalid", http.StatusNotFound)
 		return
 	}
-
 	if err := models.CheckPasswordHash(user1.Password, user.Password); err != nil { // check password correct or not
-		http.Error(w, "password incorrect", http.StatusAccepted)
+		http.Error(w, "password incorrect, err:"+err.Error(), http.StatusUnauthorized)
 		return
 	}
-
 	token, err := jwt.Create(w, user.Username, int(user1.Id)) // Create token
 	if err != nil {
 		http.Error(w, "internal server error", 500)

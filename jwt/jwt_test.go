@@ -11,6 +11,7 @@ const (
 	Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2NTYxMDUzNDEsImlkIjozLCJ1c2VybmFtZSI6Imh1dWxvYyJ9.MqHypeN42fopG5jHWEjk6bu9m7wSENqLewBGq9VC3sA"
 )
 
+// test function token parse
 func TestTokenParse(t *testing.T) {
 	info := ParseToken(Token)
 	username := fmt.Sprintf("%v", info["username"])
@@ -21,6 +22,7 @@ func TestTokenParse(t *testing.T) {
 	}
 }
 
+// test function create token
 func TestCreateToken(t *testing.T) {
 	var w http.ResponseWriter
 	newToken, err := Create(w, "huuloc", 3)
