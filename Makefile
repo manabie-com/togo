@@ -22,4 +22,4 @@ test-unit:
 
 ### Integraion test
 test-integration:
-	go test ./integrationtest/...
+	go test -tags=integration ./integrationtest -v -count=1

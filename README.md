@@ -109,14 +109,19 @@ make migration-up
 go run cmd/main.go
 ```
 
+#### Install
+```bash
+go install ./...
+```
+
 #### If you want to integration test after run projection
 ```bash
-go test ./integrationtest
+go test -tags=integration ./integrationtest -v -count=1
 ```
 
 #### If you want to unit test test after run projection
 ```bash
-go test ./internal/api/handlers/...
+go test ./internal/...
 ```
 
 #### If you want to remove table on database
