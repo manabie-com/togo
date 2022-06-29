@@ -65,6 +65,7 @@ The repository have a few main features
 - Install golang [golang](https://go.dev/doc/install)
 - Install postgres [postgreSQL](https://www.postgresql.org/download)
 - Install migrate If you want to migration [migration](https://github.com/golang-migrate/migrate)
+
   . MacOS
 
   ```bash
@@ -120,5 +121,5 @@ go test ./internal/api/handlers/...
 
 #### If you want to remove table on database
 ```bash
-  make migration-down
+make migration-down
 ```
