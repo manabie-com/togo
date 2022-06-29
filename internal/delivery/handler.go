@@ -1,4 +1,4 @@
-package controller
+package delivery
 
 import (
 	"database/sql"
@@ -8,9 +8,9 @@ import (
 )
 
 type Handler struct {
-	UserController
-	TaskController
-	AuthController
+	UserDelivery
+	TaskDelivery
+	AuthDelivery
 }
 
 var HandlerInstance *Handler
@@ -23,13 +23,13 @@ func NewHandler(db *sql.DB) {
 	userUsecase := usecase.NewUserUsecase(userRepository, taskRepository, crypto)
 	taskUsecase := usecase.NewTaskUsecase(taskRepository, userRepository)
 
-	userController := NewUserController(userUsecase, taskUsecase)
-	taskController := NewTaskController(taskUsecase, userUsecase)
-	authController := NewAuthController(userUsecase)
+	userDelivery := NewUserDelivery(userUsecase, taskUsecase)
+	taskDelivery := NewTaskDelivery(taskUsecase, userUsecase)
+	authDelivery := NewAuthDelivery(userUsecase)
 
 	HandlerInstance = &Handler{
-		UserController: *userController,
-		TaskController: *taskController,
-		AuthController: *authController,
+		UserDelivery: *userDelivery,
+		TaskDelivery: *taskDelivery,
+		AuthDelivery: *authDelivery,
 	}
 }

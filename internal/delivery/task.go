@@ -1,4 +1,4 @@
-package controller
+package delivery
 
 import (
 	"encoding/json"
@@ -12,19 +12,19 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type TaskController struct {
+type TaskDelivery struct {
 	TaskUsecase domain.TaskUsecase
 	UserUsecase domain.UserUsecase
 }
 
-func NewTaskController(taskUsecase domain.TaskUsecase, userUsecase domain.UserUsecase) *TaskController {
-	return &TaskController{
+func NewTaskDelivery(taskUsecase domain.TaskUsecase, userUsecase domain.UserUsecase) *TaskDelivery {
+	return &TaskDelivery{
 		TaskUsecase: taskUsecase,
 		UserUsecase: userUsecase,
 	}
 }
 
-func (t *TaskController) CreateTask(w http.ResponseWriter, r *http.Request) {
+func (t *TaskDelivery) CreateTask(w http.ResponseWriter, r *http.Request) {
 
 	username := context.Get(r, "username").(string)
 
@@ -42,7 +42,7 @@ func (t *TaskController) CreateTask(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (t *TaskController) GetAllTask(w http.ResponseWriter, r *http.Request) {
+func (t *TaskDelivery) GetAllTask(w http.ResponseWriter, r *http.Request) {
 	tasks, err := t.TaskUsecase.GetAllTask()
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "get all task failed")
@@ -51,7 +51,7 @@ func (t *TaskController) GetAllTask(w http.ResponseWriter, r *http.Request) {
 	pkg.JSON(w, http.StatusOK, tasks)
 }
 
-func (t *TaskController) GetAllTaskOfUser(w http.ResponseWriter, r *http.Request) {
+func (t *TaskDelivery) GetAllTaskOfUser(w http.ResponseWriter, r *http.Request) {
 	username := context.Get(r, "username").(string)
 
 	tasks, err := t.TaskUsecase.GetTasksByUsername(username)
@@ -62,7 +62,7 @@ func (t *TaskController) GetAllTaskOfUser(w http.ResponseWriter, r *http.Request
 	pkg.JSON(w, http.StatusOK, tasks)
 }
 
-func (t *TaskController) GetTaskByID(w http.ResponseWriter, r *http.Request) {
+func (t *TaskDelivery) GetTaskByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -81,7 +81,7 @@ func (t *TaskController) GetTaskByID(w http.ResponseWriter, r *http.Request) {
 	pkg.JSON(w, http.StatusOK, task)
 }
 
-func (t *TaskController) CompleteTask(w http.ResponseWriter, r *http.Request) {
+func (t *TaskDelivery) CompleteTask(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -100,7 +100,7 @@ func (t *TaskController) CompleteTask(w http.ResponseWriter, r *http.Request) {
 	pkg.JSON(w, http.StatusOK, "message: check task success")
 }
 
-func (t *TaskController) UpdateTask(w http.ResponseWriter, r *http.Request) {
+func (t *TaskDelivery) UpdateTask(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -126,7 +126,7 @@ func (t *TaskController) UpdateTask(w http.ResponseWriter, r *http.Request) {
 	pkg.JSON(w, http.StatusOK, "message: update task success")
 }
 
-func (t *TaskController) DeleteTask(w http.ResponseWriter, r *http.Request) {
+func (t *TaskDelivery) DeleteTask(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {

@@ -3,7 +3,7 @@ package usecase
 import (
 	e "lntvan166/togo/internal/entities"
 	"lntvan166/togo/pkg"
-	mockdb "lntvan166/togo/pkg/mock"
+	mock "lntvan166/togo/pkg/mock"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -37,8 +37,8 @@ func TestCreateTask(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	taskRepo := mockdb.NewMockTaskRepository(ctrl)
-	userRepo := mockdb.NewMockUserRepository(ctrl)
+	taskRepo := mock.NewMockTaskRepository(ctrl)
+	userRepo := mock.NewMockUserRepository(ctrl)
 
 	taskUsecase := NewTaskUsecase(taskRepo, userRepo)
 
@@ -57,8 +57,8 @@ func TestGetAllTask(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	taskRepo := mockdb.NewMockTaskRepository(ctrl)
-	userRepo := mockdb.NewMockUserRepository(ctrl)
+	taskRepo := mock.NewMockTaskRepository(ctrl)
+	userRepo := mock.NewMockUserRepository(ctrl)
 
 	taskUsecase := NewTaskUsecase(taskRepo, userRepo)
 
@@ -74,8 +74,8 @@ func TestGetTaskByID(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	taskRepo := mockdb.NewMockTaskRepository(ctrl)
-	userRepo := mockdb.NewMockUserRepository(ctrl)
+	taskRepo := mock.NewMockTaskRepository(ctrl)
+	userRepo := mock.NewMockUserRepository(ctrl)
 
 	taskUsecase := NewTaskUsecase(taskRepo, userRepo)
 
@@ -92,8 +92,8 @@ func TestGetTasksByUsername(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	taskRepo := mockdb.NewMockTaskRepository(ctrl)
-	userRepo := mockdb.NewMockUserRepository(ctrl)
+	taskRepo := mock.NewMockTaskRepository(ctrl)
+	userRepo := mock.NewMockUserRepository(ctrl)
 
 	taskUsecase := NewTaskUsecase(taskRepo, userRepo)
 
@@ -110,8 +110,8 @@ func TestGetUserIDByTaskID(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	taskRepo := mockdb.NewMockTaskRepository(ctrl)
-	userRepo := mockdb.NewMockUserRepository(ctrl)
+	taskRepo := mock.NewMockTaskRepository(ctrl)
+	userRepo := mock.NewMockUserRepository(ctrl)
 
 	taskUsecase := NewTaskUsecase(taskRepo, userRepo)
 
@@ -127,8 +127,8 @@ func TestCheckLimitTaskToday(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	taskRepo := mockdb.NewMockTaskRepository(ctrl)
-	userRepo := mockdb.NewMockUserRepository(ctrl)
+	taskRepo := mock.NewMockTaskRepository(ctrl)
+	userRepo := mock.NewMockUserRepository(ctrl)
 
 	taskUsecase := NewTaskUsecase(taskRepo, userRepo)
 
@@ -145,8 +145,8 @@ func TestUpdateTask(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	taskRepo := mockdb.NewMockTaskRepository(ctrl)
-	userRepo := mockdb.NewMockUserRepository(ctrl)
+	taskRepo := mock.NewMockTaskRepository(ctrl)
+	userRepo := mock.NewMockUserRepository(ctrl)
 
 	taskUsecase := NewTaskUsecase(taskRepo, userRepo)
 
@@ -163,8 +163,8 @@ func TestCompleteTask(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	taskRepo := mockdb.NewMockTaskRepository(ctrl)
-	userRepo := mockdb.NewMockUserRepository(ctrl)
+	taskRepo := mock.NewMockTaskRepository(ctrl)
+	userRepo := mock.NewMockUserRepository(ctrl)
 
 	taskUsecase := NewTaskUsecase(taskRepo, userRepo)
 
@@ -181,8 +181,8 @@ func TestCheckAccessPermission(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	taskRepo := mockdb.NewMockTaskRepository(ctrl)
-	userRepo := mockdb.NewMockUserRepository(ctrl)
+	taskRepo := mock.NewMockTaskRepository(ctrl)
+	userRepo := mock.NewMockUserRepository(ctrl)
 
 	taskUsecase := NewTaskUsecase(taskRepo, userRepo)
 
@@ -197,8 +197,8 @@ func TestDeleteTask(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	taskRepo := mockdb.NewMockTaskRepository(ctrl)
-	userRepo := mockdb.NewMockUserRepository(ctrl)
+	taskRepo := mock.NewMockTaskRepository(ctrl)
+	userRepo := mock.NewMockUserRepository(ctrl)
 
 	taskUsecase := NewTaskUsecase(taskRepo, userRepo)
 

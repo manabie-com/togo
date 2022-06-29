@@ -1,4 +1,4 @@
-package controller
+package delivery
 
 import (
 	"fmt"
@@ -18,7 +18,7 @@ const (
 	vip  Plan = "vip"
 )
 
-func (u *UserController) GetPlan(w http.ResponseWriter, r *http.Request) {
+func (u *UserDelivery) GetPlan(w http.ResponseWriter, r *http.Request) {
 	username := context.Get(r, "username").(string)
 
 	plan, err := u.UserUsecase.GetPlan(username)
@@ -30,7 +30,7 @@ func (u *UserController) GetPlan(w http.ResponseWriter, r *http.Request) {
 	pkg.JSON(w, http.StatusOK, plan)
 }
 
-func (u *UserController) UpgradePlan(w http.ResponseWriter, r *http.Request) {
+func (u *UserDelivery) UpgradePlan(w http.ResponseWriter, r *http.Request) {
 	username := context.Get(r, "username").(string)
 	admin := config.ADMIN
 

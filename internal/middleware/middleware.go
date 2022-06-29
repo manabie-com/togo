@@ -3,7 +3,7 @@ package middleware
 import (
 	"errors"
 	"lntvan166/togo/internal/config"
-	"lntvan166/togo/internal/controller"
+	"lntvan166/togo/internal/delivery"
 	"lntvan166/togo/pkg"
 	"net/http"
 	"strings"
@@ -30,7 +30,7 @@ func Authorization(next http.Handler) http.Handler {
 			}
 			username := token["username"].(string)
 
-			checkUserExist := controller.HandlerInstance.UserController.UserUsecase.CheckUserExist(username)
+			checkUserExist := delivery.HandlerInstance.UserDelivery.UserUsecase.CheckUserExist(username)
 
 			if checkUserExist {
 				context.Set(r, "username", username)
@@ -64,7 +64,7 @@ func AdminAuthorization(next http.Handler) http.Handler {
 			}
 			username := token["username"].(string)
 
-			checkUserExist := controller.HandlerInstance.UserController.UserUsecase.CheckUserExist(username)
+			checkUserExist := delivery.HandlerInstance.UserDelivery.UserUsecase.CheckUserExist(username)
 
 			if checkUserExist {
 

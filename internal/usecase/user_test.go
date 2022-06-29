@@ -3,7 +3,7 @@ package usecase
 import (
 	"errors"
 	e "lntvan166/togo/internal/entities"
-	mockdb "lntvan166/togo/pkg/mock"
+	mock "lntvan166/togo/pkg/mock"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -51,9 +51,9 @@ func TestRegister(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	userRepo := mockdb.NewMockUserRepository(ctrl)
-	taskRepo := mockdb.NewMockTaskRepository(ctrl)
-	crypto := mockdb.NewMockAppCrypto(ctrl)
+	userRepo := mock.NewMockUserRepository(ctrl)
+	taskRepo := mock.NewMockTaskRepository(ctrl)
+	crypto := mock.NewMockAppCrypto(ctrl)
 
 	userUsecase := NewUserUsecase(userRepo, taskRepo, crypto)
 
@@ -70,9 +70,9 @@ func TestLogin(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	userRepo := mockdb.NewMockUserRepository(ctrl)
-	taskRepo := mockdb.NewMockTaskRepository(ctrl)
-	crypto := mockdb.NewMockAppCrypto(ctrl)
+	userRepo := mock.NewMockUserRepository(ctrl)
+	taskRepo := mock.NewMockTaskRepository(ctrl)
+	crypto := mock.NewMockAppCrypto(ctrl)
 
 	userUsecase := NewUserUsecase(userRepo, taskRepo, crypto)
 
@@ -89,9 +89,9 @@ func TestGetAllUsers(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	userRepo := mockdb.NewMockUserRepository(ctrl)
-	taskRepo := mockdb.NewMockTaskRepository(ctrl)
-	crypto := mockdb.NewMockAppCrypto(ctrl)
+	userRepo := mock.NewMockUserRepository(ctrl)
+	taskRepo := mock.NewMockTaskRepository(ctrl)
+	crypto := mock.NewMockAppCrypto(ctrl)
 
 	userUsecase := NewUserUsecase(userRepo, taskRepo, crypto)
 
@@ -107,9 +107,9 @@ func TestGetUserByID(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	userRepo := mockdb.NewMockUserRepository(ctrl)
-	taskRepo := mockdb.NewMockTaskRepository(ctrl)
-	crypto := mockdb.NewMockAppCrypto(ctrl)
+	userRepo := mock.NewMockUserRepository(ctrl)
+	taskRepo := mock.NewMockTaskRepository(ctrl)
+	crypto := mock.NewMockAppCrypto(ctrl)
 
 	userUsecase := NewUserUsecase(userRepo, taskRepo, crypto)
 
@@ -125,9 +125,9 @@ func TestGetUserByName(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	userRepo := mockdb.NewMockUserRepository(ctrl)
-	taskRepo := mockdb.NewMockTaskRepository(ctrl)
-	crypto := mockdb.NewMockAppCrypto(ctrl)
+	userRepo := mock.NewMockUserRepository(ctrl)
+	taskRepo := mock.NewMockTaskRepository(ctrl)
+	crypto := mock.NewMockAppCrypto(ctrl)
 
 	userUsecase := NewUserUsecase(userRepo, taskRepo, crypto)
 
@@ -143,9 +143,9 @@ func TestGetUserIDByUsername(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	userRepo := mockdb.NewMockUserRepository(ctrl)
-	taskRepo := mockdb.NewMockTaskRepository(ctrl)
-	crypto := mockdb.NewMockAppCrypto(ctrl)
+	userRepo := mock.NewMockUserRepository(ctrl)
+	taskRepo := mock.NewMockTaskRepository(ctrl)
+	crypto := mock.NewMockAppCrypto(ctrl)
 
 	userUsecase := NewUserUsecase(userRepo, taskRepo, crypto)
 
@@ -161,9 +161,9 @@ func TestGetMaxTaskByUserID(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	userRepo := mockdb.NewMockUserRepository(ctrl)
-	taskRepo := mockdb.NewMockTaskRepository(ctrl)
-	crypto := mockdb.NewMockAppCrypto(ctrl)
+	userRepo := mock.NewMockUserRepository(ctrl)
+	taskRepo := mock.NewMockTaskRepository(ctrl)
+	crypto := mock.NewMockAppCrypto(ctrl)
 
 	userUsecase := NewUserUsecase(userRepo, taskRepo, crypto)
 
@@ -179,9 +179,9 @@ func TestGetPlan(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	userRepo := mockdb.NewMockUserRepository(ctrl)
-	taskRepo := mockdb.NewMockTaskRepository(ctrl)
-	crypto := mockdb.NewMockAppCrypto(ctrl)
+	userRepo := mock.NewMockUserRepository(ctrl)
+	taskRepo := mock.NewMockTaskRepository(ctrl)
+	crypto := mock.NewMockAppCrypto(ctrl)
 
 	userUsecase := NewUserUsecase(userRepo, taskRepo, crypto)
 
@@ -197,9 +197,9 @@ func TestUpdateUser(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	userRepo := mockdb.NewMockUserRepository(ctrl)
-	taskRepo := mockdb.NewMockTaskRepository(ctrl)
-	crypto := mockdb.NewMockAppCrypto(ctrl)
+	userRepo := mock.NewMockUserRepository(ctrl)
+	taskRepo := mock.NewMockTaskRepository(ctrl)
+	crypto := mock.NewMockAppCrypto(ctrl)
 
 	userUsecase := NewUserUsecase(userRepo, taskRepo, crypto)
 
@@ -214,9 +214,9 @@ func TestUpgradePlan(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	userRepo := mockdb.NewMockUserRepository(ctrl)
-	taskRepo := mockdb.NewMockTaskRepository(ctrl)
-	crypto := mockdb.NewMockAppCrypto(ctrl)
+	userRepo := mock.NewMockUserRepository(ctrl)
+	taskRepo := mock.NewMockTaskRepository(ctrl)
+	crypto := mock.NewMockAppCrypto(ctrl)
 
 	userUsecase := NewUserUsecase(userRepo, taskRepo, crypto)
 
@@ -232,9 +232,9 @@ func TestCheckUserExist(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	userRepo := mockdb.NewMockUserRepository(ctrl)
-	taskRepo := mockdb.NewMockTaskRepository(ctrl)
-	crypto := mockdb.NewMockAppCrypto(ctrl)
+	userRepo := mock.NewMockUserRepository(ctrl)
+	taskRepo := mock.NewMockTaskRepository(ctrl)
+	crypto := mock.NewMockAppCrypto(ctrl)
 
 	userUsecase := NewUserUsecase(userRepo, taskRepo, crypto)
 
@@ -249,9 +249,9 @@ func TestDeleteUserByID(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	userRepo := mockdb.NewMockUserRepository(ctrl)
-	taskRepo := mockdb.NewMockTaskRepository(ctrl)
-	crypto := mockdb.NewMockAppCrypto(ctrl)
+	userRepo := mock.NewMockUserRepository(ctrl)
+	taskRepo := mock.NewMockTaskRepository(ctrl)
+	crypto := mock.NewMockAppCrypto(ctrl)
 
 	userUsecase := NewUserUsecase(userRepo, taskRepo, crypto)
 

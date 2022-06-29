@@ -1,4 +1,4 @@
-package controller
+package delivery
 
 import (
 	"lntvan166/togo/internal/domain"
@@ -9,19 +9,19 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type UserController struct {
+type UserDelivery struct {
 	UserUsecase domain.UserUsecase
 	TaskUsecase domain.TaskUsecase
 }
 
-func NewUserController(userUsecase domain.UserUsecase, taskUsecase domain.TaskUsecase) *UserController {
-	return &UserController{
+func NewUserDelivery(userUsecase domain.UserUsecase, taskUsecase domain.TaskUsecase) *UserDelivery {
+	return &UserDelivery{
 		UserUsecase: userUsecase,
 		TaskUsecase: taskUsecase,
 	}
 }
 
-func (u *UserController) GetAllUsers(w http.ResponseWriter, r *http.Request) {
+func (u *UserDelivery) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := u.UserUsecase.GetAllUsers()
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to get users!")
@@ -31,7 +31,7 @@ func (u *UserController) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	pkg.JSON(w, http.StatusOK, users)
 }
 
-func (u *UserController) GetUser(w http.ResponseWriter, r *http.Request) {
+func (u *UserDelivery) GetUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	id, err := strconv.Atoi(vars["id"])
@@ -49,7 +49,7 @@ func (u *UserController) GetUser(w http.ResponseWriter, r *http.Request) {
 	pkg.JSON(w, http.StatusOK, user)
 }
 
-func (u *UserController) DeleteUserByID(w http.ResponseWriter, r *http.Request) {
+func (u *UserDelivery) DeleteUserByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	id, err := strconv.Atoi(vars["id"])

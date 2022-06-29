@@ -1,4 +1,4 @@
-package controller
+package delivery
 
 import (
 	"encoding/json"
@@ -9,17 +9,17 @@ import (
 	e "lntvan166/togo/internal/entities"
 )
 
-type AuthController struct {
+type AuthDelivery struct {
 	UserUsecase domain.UserUsecase
 }
 
-func NewAuthController(userUsecase domain.UserUsecase) *AuthController {
-	return &AuthController{
+func NewAuthDelivery(userUsecase domain.UserUsecase) *AuthDelivery {
+	return &AuthDelivery{
 		UserUsecase: userUsecase,
 	}
 }
 
-func (u *UserController) Register(w http.ResponseWriter, r *http.Request) {
+func (u *UserDelivery) Register(w http.ResponseWriter, r *http.Request) {
 	user := e.NewUser()
 	var err error
 
@@ -39,7 +39,7 @@ func (u *UserController) Register(w http.ResponseWriter, r *http.Request) {
 	pkg.JSON(w, http.StatusCreated, "Register Successfully")
 }
 
-func (u *UserController) Login(w http.ResponseWriter, r *http.Request) {
+func (u *UserDelivery) Login(w http.ResponseWriter, r *http.Request) {
 	newUser := e.NewUser()
 
 	err := json.NewDecoder(r.Body).Decode(&newUser)
@@ -57,7 +57,7 @@ func (u *UserController) Login(w http.ResponseWriter, r *http.Request) {
 	pkg.JSON(w, http.StatusOK, map[string]string{"token": token, "message": "login successfully"})
 }
 
-// func (u *UserController) UpdatePassword(w http.ResponseWriter, r *http.Request) {
+// func (u *UserDelivery) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 // 	user, err := u.UserUsecase.GetUserByName(context.Get(r, "username").(string))
 // 	if err != nil {
 // 		pkg.ERROR(w, http.StatusInternalServerError, err, "failed to get user!")
