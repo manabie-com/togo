@@ -28,14 +28,6 @@ var task2 = &e.Task{
 	UserID:      1,
 }
 
-var user = &e.User{
-	ID:       1,
-	Username: "user",
-	Password: "user",
-	Plan:     "free",
-	MaxTodo:  10,
-}
-
 var tasks = &[]e.Task{
 	*task1,
 	*task2,

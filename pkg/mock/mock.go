@@ -626,3 +626,54 @@ func (mr *MockUserUsecaseMockRecorder) UpgradePlan(userID, plan, maxTodo interfa
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpgradePlan", reflect.TypeOf((*MockUserUsecase)(nil).UpgradePlan), userID, plan, maxTodo)
 }
+
+// MockAppCrypto is a mock of AppCrypto interface.
+type MockAppCrypto struct {
+	ctrl     *gomock.Controller
+	recorder *MockAppCryptoMockRecorder
+}
+
+// MockAppCryptoMockRecorder is the mock recorder for MockAppCrypto.
+type MockAppCryptoMockRecorder struct {
+	mock *MockAppCrypto
+}
+
+// NewMockAppCrypto creates a new mock instance.
+func NewMockAppCrypto(ctrl *gomock.Controller) *MockAppCrypto {
+	mock := &MockAppCrypto{ctrl: ctrl}
+	mock.recorder = &MockAppCryptoMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockAppCrypto) EXPECT() *MockAppCryptoMockRecorder {
+	return m.recorder
+}
+
+// ComparePassword mocks base method.
+func (m *MockAppCrypto) ComparePassword(password, hash string) bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ComparePassword", password, hash)
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// ComparePassword indicates an expected call of ComparePassword.
+func (mr *MockAppCryptoMockRecorder) ComparePassword(password, hash interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ComparePassword", reflect.TypeOf((*MockAppCrypto)(nil).ComparePassword), password, hash)
+}
+
+// HashPassword mocks base method.
+func (m *MockAppCrypto) HashPassword(password string) string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "HashPassword", password)
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// HashPassword indicates an expected call of HashPassword.
+func (mr *MockAppCryptoMockRecorder) HashPassword(password interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HashPassword", reflect.TypeOf((*MockAppCrypto)(nil).HashPassword), password)
+}

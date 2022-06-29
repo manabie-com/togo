@@ -54,3 +54,8 @@ type UserUsecase interface {
 	DeleteUserByID(id int) error
 	CheckUserExist(username string) bool
 }
+
+type AppCrypto interface {
+	HashPassword(password string) string
+	ComparePassword(password string, hash string) bool
+}

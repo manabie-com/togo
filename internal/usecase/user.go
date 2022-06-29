@@ -10,12 +10,14 @@ import (
 type userUsecase struct {
 	userRepo domain.UserRepository
 	taskRepo domain.TaskRepository
+	crypto   domain.AppCrypto
 }
 
-func NewUserUsecase(repo domain.UserRepository, taskRepo domain.TaskRepository) *userUsecase {
+func NewUserUsecase(repo domain.UserRepository, taskRepo domain.TaskRepository, crypto domain.AppCrypto) *userUsecase {
 	return &userUsecase{
 		userRepo: repo,
 		taskRepo: taskRepo,
+		crypto:   crypto,
 	}
 }
 
@@ -27,7 +29,7 @@ func (u *userUsecase) Register(user *e.User) error {
 		return errors.New("user already exist")
 	}
 
-	user.PreparePassword()
+	user.Password = u.crypto.HashPassword(user.Password)
 
 	// err := user.IsValid()
 	// if err != nil {
@@ -59,8 +61,8 @@ func (u *userUsecase) Login(user *e.User) (string, error) {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "failed to get user!")
 		return "", errors.New("failed to find user")
 	}
-
-	if !oldUser.ComparePassword(user.Password) {
+	check := u.crypto.ComparePassword(user.Password, oldUser.Password)
+	if !check {
 		// pkg.ERROR(w, http.StatusBadRequest, errors.New("password incorrect"), "")
 		return "", errors.New("password incorrect")
 	}
