@@ -35,14 +35,17 @@ func TestCreateTask(t *testing.T) {
 
 				query := regexp.QuoteMeta(`INSERT INTO tasks (
 					name, description, created_at, completed, user_id)
-					VALUES ($1, $2, $3, $4, $5);`)
+					VALUES ($1, $2, $3, $4, $5) RETURNING id;`)
 
 				mock.ExpectBegin()
-				mock.ExpectExec(query).WithArgs(task.Name, task.Description, task.CreatedAt, task.Completed, task.UserID).WillReturnResult(sqlmock.NewResult(1, 1))
+				mock.ExpectQuery(query).WithArgs(task.Name, task.Description, task.CreatedAt, task.Completed, task.UserID).
+					WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(task.ID))
 				mock.ExpectCommit()
 
-				err := repo.CreateTask(task)
+				taskID, err := repo.CreateTask(task)
 				assert.NoError(t, err)
+				assert.Equal(t, 1, taskID)
+
 			},
 			wantErr: false,
 		},
@@ -55,13 +58,13 @@ func TestCreateTask(t *testing.T) {
 
 				query := regexp.QuoteMeta(`INSERT INTO tasks (
 					name, description, created_at, completed, user_id)
-					VALUES ($1, $2, $3, $4, $5);`)
+					VALUES ($1, $2, $3, $4, $5) RETURNING id;`)
 
 				mock.ExpectBegin()
 				mock.ExpectExec(query).WithArgs(task.Name, task.Description, task.CreatedAt, task.Completed, task.UserID).WillReturnError(errors.New("error"))
 				mock.ExpectCommit()
 
-				err := repo.CreateTask(task)
+				_, err := repo.CreateTask(task)
 				assert.Error(t, err)
 			},
 			wantErr: true,

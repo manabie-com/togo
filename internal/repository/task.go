@@ -17,21 +17,22 @@ func NewTaskRepository(db *sql.DB) *taskRepository {
 
 // CREATE
 
-func (r *taskRepository) CreateTask(t *e.Task) error {
+func (r *taskRepository) CreateTask(t *e.Task) (int, error) {
 	const query = `INSERT INTO tasks (
 		name, description, created_at, completed, user_id)
-		VALUES ($1, $2, $3, $4, $5);`
+		VALUES ($1, $2, $3, $4, $5) RETURNING id;`
 	tx, err := r.DB.Begin()
 	if err != nil {
-		return err
+		return 0, err
 	}
-	_, err = tx.Exec(query, t.Name, t.Description, t.CreatedAt, t.Completed, t.UserID)
+	row := tx.QueryRow(query, t.Name, t.Description, t.CreatedAt, t.Completed, t.UserID)
+	err = row.Scan(&t.ID)
 	if err != nil {
 		tx.Rollback()
-		return err
+		return 0, err
 	}
 	tx.Commit()
-	return nil
+	return t.ID, nil
 }
 
 // READ

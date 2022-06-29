@@ -40,6 +40,5 @@ func Connect() *sql.DB {
 		panic(err)
 	}
 
-	fmt.Println("Successfully connected!")
 	return db
 }

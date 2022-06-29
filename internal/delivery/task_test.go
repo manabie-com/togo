@@ -2,6 +2,7 @@ package delivery
 
 import (
 	"bytes"
+	"encoding/json"
 	e "lntvan166/togo/internal/entities"
 	"lntvan166/togo/pkg/mock"
 	"net/http"
@@ -49,7 +50,7 @@ func TestCreateTask(t *testing.T) {
 	userUsecase := mock.NewMockUserUsecase(ctrl)
 	taskUsecase := mock.NewMockTaskUsecase(ctrl)
 	taskUsecase.EXPECT().CreateTask(taskToCreate, user.Username).
-		Return(1, nil).AnyTimes()
+		Return(task.ID, 1, nil).AnyTimes()
 
 	taskDelivery := NewTaskDelivery(taskUsecase, userUsecase)
 
@@ -64,9 +65,17 @@ func TestCreateTask(t *testing.T) {
 
 	taskDelivery.CreateTask(w, r)
 
-	// res := w.Result()
+	res := w.Result()
 
-	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, http.StatusCreated, w.Code)
+	bodyBuffer := new(bytes.Buffer)
+	bodyBuffer.ReadFrom(res.Body)
+	body := strings.TrimSpace(bodyBuffer.String())
+
+	var element map[string]interface{}
+	json.Unmarshal([]byte(body), &element)
+
+	assert.Equal(t, float64(task.ID), element["taskID"])
 }
 
 func TestGetAllTask(t *testing.T) {

@@ -3,7 +3,6 @@ package pkg
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"lntvan166/togo/internal/config"
 	"lntvan166/togo/internal/delivery"
 	"lntvan166/togo/internal/middleware"
@@ -60,7 +59,7 @@ func TestRegisterIntegration(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	route := mux.NewRouter()
-	route.HandleFunc("/auth/register", handler.Register)
+	route.HandleFunc("/auth/register", handler.Register).Methods("POST")
 	route.ServeHTTP(w, r)
 
 	assert.Equal(t, http.StatusCreated, w.Code)
@@ -86,7 +85,7 @@ func TestLoginIntegration(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	route := mux.NewRouter()
-	route.HandleFunc("/auth/login", handler.Login)
+	route.HandleFunc("/auth/login", handler.Login).Methods("POST")
 	route.ServeHTTP(w, r)
 
 	res := w.Result()
@@ -123,10 +122,8 @@ func TestGetAllUsers(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	route := mux.NewRouter()
-	route.HandleFunc("/user", handler.GetAllUsers)
+	route.HandleFunc("/user", handler.GetAllUsers).Methods("GET")
 	route.Use(middleware.Authorization)
-
-	fmt.Println(r.Header.Get("Authorization"))
 
 	route.ServeHTTP(w, r)
 
@@ -139,4 +136,285 @@ func TestGetAllUsers(t *testing.T) {
 	body := strings.TrimSpace(bodyBuffer.String())
 
 	assert.NotEmpty(t, body)
+}
+
+func TestGetUserIntegration(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping integration test")
+	}
+
+	handler := setupIntegrationTest()
+	defer teardownIntegrationTest()
+
+	r, err := http.NewRequest("GET", LOCALHOST+"/user/1", nil)
+	assert.NoError(t, err)
+
+	r.Header.Set("Authorization", "Bearer "+ADMIN_TOKEN)
+	config.ADMIN = ADMIN
+
+	w := httptest.NewRecorder()
+
+	route := mux.NewRouter()
+	route.HandleFunc("/user/{id}", handler.GetUser).Methods("GET")
+	route.Use(middleware.Authorization)
+
+	route.ServeHTTP(w, r)
+
+	res := w.Result()
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	bodyBuffer := new(bytes.Buffer)
+	bodyBuffer.ReadFrom(res.Body)
+	body := strings.TrimSpace(bodyBuffer.String())
+
+	assert.NotEmpty(t, body)
+}
+
+func TestGetAllTasksIntegration(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping integration test")
+	}
+
+	handler := setupIntegrationTest()
+	defer teardownIntegrationTest()
+
+	r, err := http.NewRequest("GET", LOCALHOST+"/task", nil)
+	assert.NoError(t, err)
+
+	r.Header.Set("Authorization", "Bearer "+ADMIN_TOKEN)
+	config.ADMIN = ADMIN
+
+	w := httptest.NewRecorder()
+
+	route := mux.NewRouter()
+	route.HandleFunc("/task", handler.GetAllTaskOfUser).Methods("GET")
+	route.Use(middleware.Authorization)
+
+	route.ServeHTTP(w, r)
+
+	res := w.Result()
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	bodyBuffer := new(bytes.Buffer)
+	bodyBuffer.ReadFrom(res.Body)
+	body := strings.TrimSpace(bodyBuffer.String())
+
+	assert.NotEmpty(t, body)
+}
+
+func TestGetTaskIntegration(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping integration test")
+	}
+
+	handler := setupIntegrationTest()
+	defer teardownIntegrationTest()
+
+	r, err := http.NewRequest("GET", LOCALHOST+"/task/10", nil)
+	assert.NoError(t, err)
+
+	r.Header.Set("Authorization", "Bearer "+ADMIN_TOKEN)
+	config.ADMIN = ADMIN
+
+	w := httptest.NewRecorder()
+
+	route := mux.NewRouter()
+	route.HandleFunc("/task/{id}", handler.GetTaskByID).Methods("GET")
+	route.Use(middleware.Authorization)
+
+	route.ServeHTTP(w, r)
+
+	res := w.Result()
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	bodyBuffer := new(bytes.Buffer)
+	bodyBuffer.ReadFrom(res.Body)
+	body := strings.TrimSpace(bodyBuffer.String())
+
+	assert.NotEmpty(t, body)
+}
+
+func TestCreateTaskIntegration(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping integration test")
+	}
+
+	handler := setupIntegrationTest()
+	defer teardownIntegrationTest()
+
+	r, err := http.NewRequest("POST", LOCALHOST+"/task", strings.NewReader(`
+	{
+		"title": "test_integration",
+		"description": "test_integration",
+	}`))
+	assert.NoError(t, err)
+
+	r.Header.Set("Authorization", "Bearer "+ADMIN_TOKEN)
+	config.ADMIN = ADMIN
+
+	w := httptest.NewRecorder()
+
+	route := mux.NewRouter()
+	route.HandleFunc("/task", handler.CreateTask).Methods("POST")
+	route.Use(middleware.Authorization)
+
+	route.ServeHTTP(w, r)
+
+	res := w.Result()
+
+	assert.Equal(t, http.StatusCreated, w.Code)
+
+	bodyBuffer := new(bytes.Buffer)
+	bodyBuffer.ReadFrom(res.Body)
+	body := strings.TrimSpace(bodyBuffer.String())
+
+	// get task id from body
+	var element map[string]interface{}
+	json.Unmarshal([]byte(body), &element)
+
+	taskID := element["taskID"].(float64)
+
+	assert.NotEmpty(t, taskID)
+
+	handler.TaskDelivery.TaskUsecase.DeleteTask(int(taskID), ADMIN)
+}
+
+func TestCompleteTaskIntegration(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping integration test")
+	}
+
+	handler := setupIntegrationTest()
+	defer teardownIntegrationTest()
+
+	r, err := http.NewRequest("POST", LOCALHOST+"/task/10", nil)
+	assert.NoError(t, err)
+
+	r.Header.Set("Authorization", "Bearer "+ADMIN_TOKEN)
+	config.ADMIN = ADMIN
+
+	w := httptest.NewRecorder()
+
+	route := mux.NewRouter()
+	route.HandleFunc("/task/{id}", handler.CompleteTask).Methods("POST")
+	route.Use(middleware.Authorization)
+
+	route.ServeHTTP(w, r)
+
+	res := w.Result()
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	bodyBuffer := new(bytes.Buffer)
+	bodyBuffer.ReadFrom(res.Body)
+	body := strings.TrimSpace(bodyBuffer.String())
+
+	assert.NotEmpty(t, body)
+}
+
+func TestDeleteTaskIntegration(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping integration test")
+	}
+
+	handler := setupIntegrationTest()
+	defer teardownIntegrationTest()
+
+	r, err := http.NewRequest("DELETE", LOCALHOST+"/task/3", nil)
+	assert.NoError(t, err)
+
+	r.Header.Set("Authorization", "Bearer "+ADMIN_TOKEN)
+	config.ADMIN = ADMIN
+
+	w := httptest.NewRecorder()
+
+	route := mux.NewRouter()
+	route.HandleFunc("/task/{id}", handler.DeleteTask).Methods("DELETE")
+	route.Use(middleware.Authorization)
+
+	route.ServeHTTP(w, r)
+
+	res := w.Result()
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	bodyBuffer := new(bytes.Buffer)
+	bodyBuffer.ReadFrom(res.Body)
+	body := strings.TrimSpace(bodyBuffer.String())
+
+	assert.NotEmpty(t, body)
+}
+
+func TestGetPlanIntegration(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping integration test")
+	}
+
+	handler := setupIntegrationTest()
+	defer teardownIntegrationTest()
+
+	r, err := http.NewRequest("GET", LOCALHOST+"/plan", nil)
+	assert.NoError(t, err)
+
+	r.Header.Set("Authorization", "Bearer "+ADMIN_TOKEN)
+	config.ADMIN = ADMIN
+
+	w := httptest.NewRecorder()
+
+	route := mux.NewRouter()
+	route.HandleFunc("/plan", handler.GetPlan).Methods("GET")
+	route.Use(middleware.Authorization)
+
+	route.ServeHTTP(w, r)
+
+	res := w.Result()
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	bodyBuffer := new(bytes.Buffer)
+	bodyBuffer.ReadFrom(res.Body)
+	body := strings.TrimSpace(bodyBuffer.String())
+
+	assert.NotEmpty(t, body)
+}
+
+func TestUpgradePlanIntegration(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping integration test")
+	}
+
+	handler := setupIntegrationTest()
+	defer teardownIntegrationTest()
+
+	r, err := http.NewRequest("POST", LOCALHOST+"/plan/upgrade/6", strings.NewReader(`
+	{
+		"plan": "premium"
+	}`))
+	assert.NoError(t, err)
+
+	r.Header.Set("Authorization", "Bearer "+ADMIN_TOKEN)
+	config.ADMIN = ADMIN
+
+	w := httptest.NewRecorder()
+
+	route := mux.NewRouter()
+	route.HandleFunc("/plan/upgrade/{id}", handler.UpgradePlan).Methods("POST")
+	route.Use(middleware.Authorization)
+
+	route.ServeHTTP(w, r)
+
+	res := w.Result()
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	bodyBuffer := new(bytes.Buffer)
+	bodyBuffer.ReadFrom(res.Body)
+	body := strings.TrimSpace(bodyBuffer.String())
+
+	assert.NotEmpty(t, body)
+
+	handler.UserDelivery.UserUsecase.UpgradePlan(6, "free", 10) // downgrade plan
 }

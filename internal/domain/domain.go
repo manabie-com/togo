@@ -5,7 +5,7 @@ import (
 )
 
 type TaskRepository interface {
-	CreateTask(t *e.Task) error
+	CreateTask(t *e.Task) (int, error)
 	GetAllTask() (*[]e.Task, error)
 	GetTaskByID(id int) (*e.Task, error)
 	GetTasksByUserID(id int) (*[]e.Task, error)
@@ -19,7 +19,7 @@ type TaskRepository interface {
 }
 
 type TaskUsecase interface {
-	CreateTask(task *e.Task, username string) (int, error)
+	CreateTask(task *e.Task, username string) (int, int, error)
 	GetAllTask() (*[]e.Task, error)
 	GetTaskByID(id int, username string) (*e.Task, error)
 	GetTasksByUsername(username string) (*[]e.Task, error)

@@ -19,39 +19,39 @@ func NewTaskUsecase(repo domain.TaskRepository, userRepo domain.UserRepository) 
 	}
 }
 
-func (t *taskUsecase) CreateTask(task *e.Task, username string) (int, error) {
+func (t *taskUsecase) CreateTask(task *e.Task, username string) (int, int, error) {
 	id, err := t.userRepo.GetUserIDByUsername(username)
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "get user id failed")
-		return 0, errors.New("user does not exist")
+		return 0, 0, errors.New("user does not exist")
 	}
 
 	isLimit, err := t.CheckLimitTaskToday(id)
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "check limit task today failed")
-		return 0, errors.New("check limit task today failed")
+		return 0, 0, errors.New("check limit task today failed")
 	}
 
 	if isLimit {
 		// pkg.ERROR(w, http.StatusBadRequest, fmt.Errorf("you have reached the limit of task today"), "")
-		return 0, errors.New("you have reached the limit of task today")
+		return 0, 0, errors.New("you have reached the limit of task today")
 	}
 
 	task.CreatedAt = pkg.GetCurrentTime()
 	task.UserID = id
 
-	err = t.taskRepo.CreateTask(task)
+	taskID, err := t.taskRepo.CreateTask(task)
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "add task failed")
-		return 0, err
+		return 0, 0, err
 	}
 
 	numberTask, err := t.taskRepo.GetNumberOfTaskTodayByUserID(id)
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "get number of task today failed")
-		return 0, err
+		return 0, 0, err
 	}
-	return numberTask, nil
+	return taskID, numberTask, nil
 }
 
 func (t *taskUsecase) GetAllTask() (*[]e.Task, error) {
@@ -59,7 +59,13 @@ func (t *taskUsecase) GetAllTask() (*[]e.Task, error) {
 }
 
 func (t *taskUsecase) GetTaskByID(id int, username string) (*e.Task, error) {
-	err := t.CheckAccessPermission(username, id)
+	user_id, err := t.GetUserIDByTaskID(id)
+	if err != nil {
+		// pkg.ERROR(w, http.StatusInternalServerError, err, "task does not exist!")
+		return nil, err
+	}
+
+	err = t.CheckAccessPermission(username, user_id)
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "check access permission failed: ")
 		return nil, err
@@ -164,7 +170,6 @@ func (t *taskUsecase) CheckAccessPermission(username string, taskUserID int) err
 	if err != nil {
 		return errors.New("user does not exist")
 	}
-
 	if userID != taskUserID {
 		return errors.New("you are not allowed to access this task")
 	}

@@ -34,13 +34,13 @@ func (t *TaskDelivery) CreateTask(w http.ResponseWriter, r *http.Request) {
 
 	json.NewDecoder(r.Body).Decode(&task)
 
-	numberTask, err := t.TaskUsecase.CreateTask(&task, username)
+	taskID, numberTask, err := t.TaskUsecase.CreateTask(&task, username)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "create task failed!")
 		return
 	}
 
-	pkg.JSON(w, http.StatusOK, map[string]interface{}{"number_task_today": numberTask, "message": "create task success"})
+	pkg.JSON(w, http.StatusCreated, map[string]interface{}{"number_task_today": numberTask, "message": "create task success", "taskID": taskID})
 
 }
 

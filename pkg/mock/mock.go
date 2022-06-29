@@ -49,11 +49,12 @@ func (mr *MockTaskRepositoryMockRecorder) CompleteTask(id interface{}) *gomock.C
 }
 
 // CreateTask mocks base method.
-func (m *MockTaskRepository) CreateTask(t *entities.Task) error {
+func (m *MockTaskRepository) CreateTask(t *entities.Task) (int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateTask", t)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // CreateTask indicates an expected call of CreateTask.
@@ -217,12 +218,13 @@ func (mr *MockTaskUsecaseMockRecorder) CompleteTask(id, username interface{}) *g
 }
 
 // CreateTask mocks base method.
-func (m *MockTaskUsecase) CreateTask(task *entities.Task, username string) (int, error) {
+func (m *MockTaskUsecase) CreateTask(task *entities.Task, username string) (int, int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateTask", task, username)
 	ret0, _ := ret[0].(int)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret1, _ := ret[1].(int)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // CreateTask indicates an expected call of CreateTask.

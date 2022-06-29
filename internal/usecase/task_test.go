@@ -46,11 +46,12 @@ func TestCreateTask(t *testing.T) {
 	userRepo.EXPECT().GetUserIDByUsername(user.Username).Return(1, nil)
 	userRepo.EXPECT().GetUserByID(user.ID).Return(user, nil)
 	taskRepo.EXPECT().GetNumberOfTaskTodayByUserID(user.ID).Return(0, nil).AnyTimes()
-	taskRepo.EXPECT().CreateTask(task1).Return(nil)
+	taskRepo.EXPECT().CreateTask(task1).Return(1, nil)
 
-	id, err := taskUsecase.CreateTask(task1, user.Username)
+	id, numberOfTaskToday, err := taskUsecase.CreateTask(task1, user.Username)
 	assert.NoError(t, err)
-	assert.Equal(t, 0, id) // number of task today = 3
+	assert.Equal(t, 0, numberOfTaskToday) // number of task today = 3
+	assert.Equal(t, 1, id)
 }
 
 func TestGetAllTask(t *testing.T) {
