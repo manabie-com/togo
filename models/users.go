@@ -19,8 +19,8 @@ type NewUser struct {
 }
 
 // Get all user from the database
-func (Conn *DbConn)GetAllUser() ([]User, error) {
-	rows, err := Conn.DB.Query("SELECT * FROM users")
+func (Conn *DbConn) GetAllUser() ([]User, error) {
+	rows, err := Conn.DB.Query(QueryAllUserText)
 	var users []User
 	if err != nil {
 		return users, err
@@ -37,33 +37,33 @@ func (Conn *DbConn)GetAllUser() ([]User, error) {
 }
 
 // Insert one user to the database
-func (Conn *DbConn)InsertUser(user NewUser) error {
+func (Conn *DbConn) InsertUser(user NewUser) error {
 	if !CheckUserInput(user) {
 		return errors.New("decode failed")
 	}
-	_, err := Conn.DB.Exec("INSERT INTO users(username, password, limittask) VALUES ($1, $2, $3)", user.Username, user.Password, user.LimitTask)
+	_, err := Conn.DB.Exec(InsertUserText, user.Username, user.Password, user.LimitTask)
 	return err
 }
 
 // delete 1 user
-func (Conn *DbConn)DeleteUser(id int) error {
-	_, err := Conn.DB.Exec("DELETE FROM users WHERE id = $1", id)
+func (Conn *DbConn) DeleteUser(id int) error {
+	_, err := Conn.DB.Exec(DeleteUserText, id)
 	return err
 }
 
 // Update one user already exist in database
-func (Conn *DbConn)UpdateUser(newUser NewUser, id int) error {
+func (Conn *DbConn) UpdateUser(newUser NewUser, id int) error {
 	if !CheckUserInput(newUser) {
 		return errors.New("user input invalid")
 	}
-	_, err := Conn.DB.Exec("UPDATE users SET username = $1, password = $2, limittask = $3 WHERE id = $4", newUser.Username, newUser.Password, newUser.LimitTask, id)
+	_, err := Conn.DB.Exec(UpdateUserText, newUser.Username, newUser.Password, newUser.LimitTask, id)
 	return err
 }
 
 // Check ID is valid or not
-func (Conn *DbConn)FindUserByID(id int) (User, bool) {
+func (Conn *DbConn) FindUserByID(id int) (User, bool) {
 	user := User{}
-	row := Conn.DB.QueryRow("SELECT * FROM users WHERE id = $1", id)
+	row := Conn.DB.QueryRow(FindUserByIDText, id)
 	err := row.Scan(&user.Id, &user.Username, &user.Password, &user.LimitTask)
 	if err != nil {
 		if err != sql.ErrNoRows {
@@ -75,13 +75,13 @@ func (Conn *DbConn)FindUserByID(id int) (User, bool) {
 }
 
 // Check if username already exist or not
-func (Conn *DbConn)CheckUserNameExist(username string) (User, bool) {
+func (Conn *DbConn) CheckUserNameExist(username string) (User, bool) {
 	user := User{}
-	row := Conn.DB.QueryRow("SELECT * FROM users WHERE username = $1", username)
+	row := Conn.DB.QueryRow(QueryAllUsernameText, username)
 	err := row.Scan(&user.Id, &user.Username, &user.Password, &user.LimitTask)
 	if err != nil {
 		if err != sql.ErrNoRows {
-			log.Fatal("Error checking if row exist, err: "+ err.Error())
+			log.Fatal("Error checking if row exist, err: " + err.Error())
 		}
 		return user, false
 	}

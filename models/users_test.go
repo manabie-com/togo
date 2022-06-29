@@ -18,7 +18,7 @@ func TestGetAllUser(t *testing.T) {
 		rows.AddRow(user.Id, user.Username, user.Password, user.LimitTask)
 	}
 
-	query := regexp.QuoteMeta(`SELECT * FROM users`)
+	query := regexp.QuoteMeta(QueryAllUserText)
 	mock.ExpectQuery(query).WillReturnRows(rows)
 
 	users, err := h.BaseCtrl.GetAllUser()
@@ -34,7 +34,7 @@ func TestFindUserById(t *testing.T) {
 	user := RandomUser()
 	rows := sqlmock.NewRows([]string{"id", "username", "password", "limittask"}).AddRow(user.Id, user.Username, user.Password, user.LimitTask)
 
-	query := regexp.QuoteMeta(`SELECT * FROM users WHERE id = $1`)
+	query := regexp.QuoteMeta(FindUserByIDText)
 
 	mock.ExpectQuery(query).WithArgs(user.Id).WillReturnRows(rows)
 	newUser, valid := h.BaseCtrl.FindUserByID(int(user.Id))
@@ -51,7 +51,7 @@ func TestCheckUserNameExist(t *testing.T) {
 
 	user := RandomUser()
 	rows := sqlmock.NewRows([]string{"id", "username", "password", "limittask"}).AddRow(user.Id, user.Username, user.Password, user.LimitTask)
-	query := regexp.QuoteMeta(`SELECT * FROM users WHERE username = $1`)
+	query := regexp.QuoteMeta(QueryAllUsernameText)
 	mock.ExpectQuery(query).WithArgs(user.Username).WillReturnRows(rows)
 
 	user, valid := h.BaseCtrl.CheckUserNameExist(user.Username)
@@ -64,7 +64,7 @@ func TestDeleteUser(t *testing.T) {
 	mock, h := CreateMockingDB()
 
 	user := RandomUser()
-	query := regexp.QuoteMeta(`DELETE FROM users WHERE id = $1`)
+	query := regexp.QuoteMeta(DeleteUserText)
 	mock.ExpectExec(query).WithArgs(user.Id).WillReturnResult(sqlmock.NewResult(0, 1))
 
 	err := h.BaseCtrl.DeleteUser(int(user.Id))
@@ -75,7 +75,7 @@ func TestDeleteUser(t *testing.T) {
 func TestInsertUser(t *testing.T) {
 	mock, h := CreateMockingDB()
 
-	query := regexp.QuoteMeta(`INSERT INTO users(username, password, limittask) VALUES ($1, $2, $3)`)
+	query := regexp.QuoteMeta(InsertUserText)
 
 	newUser := RandomNewUser()
 	mock.ExpectExec(query).WithArgs(newUser.Username, newUser.Password, newUser.LimitTask).WillReturnResult(sqlmock.NewResult(0, 1))
@@ -88,7 +88,7 @@ func TestInsertUser(t *testing.T) {
 func TestUpdateUser(t *testing.T) {
 	mock, h := CreateMockingDB()
 
-	query := regexp.QuoteMeta(`UPDATE users SET username = $1, password = $2, limittask = $3 WHERE id = $4`)
+	query := regexp.QuoteMeta(UpdateUserText)
 
 	user := RandomUser()
 	newUser := RandomNewUser()

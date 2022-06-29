@@ -35,7 +35,7 @@ func TestResponseAllTask(t *testing.T) {
 	}
 
 	//query
-	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM tasks WHERE userid = $1`)).WithArgs(userId).WillReturnRows(rows)
+	mock.ExpectQuery(regexp.QuoteMeta(models.QueryAllTaskText)).WithArgs(userId).WillReturnRows(rows)
 
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("GET", "localhost:8000/tasks", nil)
@@ -66,7 +66,7 @@ func TestResponseOneTask(t *testing.T) {
 	rows.AddRow(task.Id, task.Content, task.Status, task.Time, task.TimeDone, task.UserId)
 
 	//query
-	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM tasks WHERE id = $1 AND userid = $2`)).WithArgs(task.Id, task.UserId).WillReturnRows(rows)
+	mock.ExpectQuery(regexp.QuoteMeta(models.FindTaskByIDText)).WithArgs(task.Id, task.UserId).WillReturnRows(rows)
 
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("GET", "localhost:8000/tasks/"+fmt.Sprintf("%v", task.UserId), nil)
@@ -102,7 +102,7 @@ func TestCreateTask(t *testing.T) {
 	}
 
 	//exec
-	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO tasks(content, status,time, timedone, userid) VALUES ($1, $2, $3, $4, $5)`)).WithArgs(task.Content, task.Status, task.Time, task.TimeDone, task.UserId).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec(regexp.QuoteMeta(models.InsertTaskText)).WithArgs(task.Content, task.Status, task.Time, task.TimeDone, task.UserId).WillReturnResult(sqlmock.NewResult(1, 1))
 
 	w := httptest.NewRecorder() // set custom writer and response
 	req := httptest.NewRequest("POST", "localhost:8000/users", bytes.NewReader(taskJSON))
@@ -136,8 +136,8 @@ func TestDeleteFromTask(t *testing.T) {
 	rows := sqlmock.NewRows([]string{"id", "content", "status", "time", "timedone", "userid"})
 	rows.AddRow(task.Id, task.Content, task.Status, task.Time, task.TimeDone, task.UserId)
 
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM tasks WHERE id = $1 AND userid = $2")).WithArgs(task.Id, task.UserId).WillReturnRows(rows)
-	mock.ExpectExec(regexp.QuoteMeta("DELETE FROM tasks WHERE id = $1 AND userid = $2")).WithArgs(task.Id, task.UserId).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectQuery(regexp.QuoteMeta(models.FindTaskByIDText)).WithArgs(task.Id, task.UserId).WillReturnRows(rows)
+	mock.ExpectExec(regexp.QuoteMeta(models.DeleteTaskText)).WithArgs(task.Id, task.UserId).WillReturnResult(sqlmock.NewResult(1, 1))
 
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("DELETE", fmt.Sprintf("localhost:8000/%v", task.Id), nil)
@@ -169,10 +169,8 @@ func TestUpdateToTask(t *testing.T) {
 	rows := sqlmock.NewRows([]string{"id", "content", "status", "time", "timedone", "userid"})
 	rows.AddRow(task.Id, task.Content, task.Status, task.Time, task.TimeDone, task.UserId)
 
-	query := regexp.QuoteMeta("SELECT * FROM tasks WHERE id = $1 AND userid = $2")
-	exec := regexp.QuoteMeta("UPDATE tasks SET content =COALESCE($1, content), status = COALESCE($2, status), timedone = COALESCE($3, timedone) WHERE id = $4 AND userid = $5")
-	mock.ExpectQuery(query).WithArgs(task.Id, task.UserId).WillReturnRows(rows)
-	mock.ExpectExec(exec).WithArgs(newTask.Content, newTask.Status, newTask.TimeDone, task.Id, task.UserId).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectQuery(regexp.QuoteMeta(models.FindTaskByIDText)).WithArgs(task.Id, task.UserId).WillReturnRows(rows)
+	mock.ExpectExec(regexp.QuoteMeta(models.UpdateTaskText)).WithArgs(newTask.Content, newTask.Status, newTask.TimeDone, task.Id, task.UserId).WillReturnResult(sqlmock.NewResult(1, 1))
 
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("PUT", fmt.Sprintf("localhost:8000/%v", task.Id), bytes.NewReader(newTaskJSON))

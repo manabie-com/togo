@@ -27,7 +27,7 @@ type responseToken struct {
 }
 
 // Handle register with method post
-func (h *BaseHandler)Register(w http.ResponseWriter, r *http.Request) { 
+func (h *BaseHandler) Register(w http.ResponseWriter, r *http.Request) {
 	var user, user1 models.NewUser
 
 	_ = json.NewDecoder(r.Body).Decode(&user)
@@ -55,7 +55,7 @@ func (h *BaseHandler)Register(w http.ResponseWriter, r *http.Request) {
 }
 
 // handle login with method post
-func (h *BaseHandler)Login(w http.ResponseWriter, r *http.Request) { 
+func (h *BaseHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var user models.NewUser
 
 	_ = json.NewDecoder(r.Body).Decode(&user)

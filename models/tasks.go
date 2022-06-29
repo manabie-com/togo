@@ -25,7 +25,7 @@ type NewTask struct {
 
 // Get all task from the database with user id
 func (Conn *DbConn) GetAllTasks(userId int) ([]Task, error) {
-	rows, err := Conn.DB.Query("SELECT * FROM tasks WHERE userid = $1", userId)
+	rows, err := Conn.DB.Query(QueryAllTaskText, userId)
 
 	var tasks []Task
 	if err != nil {
@@ -43,32 +43,32 @@ func (Conn *DbConn) GetAllTasks(userId int) ([]Task, error) {
 
 // Insert one task to the database
 func (Conn *DbConn) InsertTask(task NewTask) error {
-	_, err := Conn.DB.Exec("INSERT INTO tasks(content, status,time, timedone, userid) VALUES ($1, $2, $3, $4, $5)", task.Content, task.Status, task.Time, task.TimeDone, task.UserId)
+	_, err := Conn.DB.Exec(InsertTaskText, task.Content, task.Status, task.Time, task.TimeDone, task.UserId)
 	return err
 }
 
 // Delete task from database
 func (Conn *DbConn) DeleteTask(id int, userid int) error {
-	_, err := Conn.DB.Exec("DELETE FROM tasks WHERE id = $1 AND userid = $2", id, userid)
+	_, err := Conn.DB.Exec(DeleteTaskText, id, userid)
 	return err
 }
 
 // Delete task from database
 func (Conn *DbConn) DeleteAllTaskFromUser(userid int) error {
-	_, err := Conn.DB.Exec("DELETE FROM tasks WHERE userid = $1", userid)
+	_, err := Conn.DB.Exec(DeleteAllTaskText, userid)
 	return err
 }
 
 // Update one task already exist in database
 func (Conn *DbConn) UpdateTask(newTask Task, id int, userid int) error {
-	_, err := Conn.DB.Exec("UPDATE tasks SET content =COALESCE($1, content), status = COALESCE($2, status), timedone = COALESCE($3, timedone) WHERE id = $4 AND userid = $5", newTask.Content, newTask.Status, newTask.TimeDone, id, userid)
+	_, err := Conn.DB.Exec(UpdateTaskText, newTask.Content, newTask.Status, newTask.TimeDone, id, userid)
 	return err
 }
 
 // Check ID task is valid or not
 func (Conn *DbConn) FindTaskByID(id int, userId int) (Task, bool) {
 	task := Task{}
-	row := Conn.DB.QueryRow("SELECT * FROM tasks WHERE id = $1 AND userid = $2", id, userId)
+	row := Conn.DB.QueryRow(FindTaskByIDText, id, userId)
 	err := row.Scan(&task.Id, &task.Content, &task.Status, &task.Time, &task.TimeDone, &task.UserId)
 	if err != nil {
 		if err != sql.ErrNoRows {

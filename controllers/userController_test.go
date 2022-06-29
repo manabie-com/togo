@@ -25,7 +25,7 @@ func TestResponseAllUser(t *testing.T) {
 		rows.AddRow(user.Id, user.Username, user.Password, user.LimitTask)
 	}
 
-	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM users`)).WillReturnRows(rows)
+	mock.ExpectQuery(regexp.QuoteMeta(models.QueryAllUserText)).WillReturnRows(rows)
 
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("GET", "localhost:8000/users", nil)
@@ -55,7 +55,7 @@ func TestResponseOneUser(t *testing.T) {
 	rows := sqlmock.NewRows([]string{"id", "username", "password", "limittask"})
 	rows.AddRow(user.Id, user.Username, user.Password, user.LimitTask)
 
-	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM users WHERE id = $1`)).WithArgs(user.Id).WillReturnRows(rows)
+	mock.ExpectQuery(regexp.QuoteMeta(models.FindUserByIDText)).WithArgs(user.Id).WillReturnRows(rows)
 
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("GET", "localhost:8000/users/"+fmt.Sprintf("%v", user.Id), nil)
@@ -91,7 +91,7 @@ func TestCreateUser(t *testing.T) {
 	}
 
 	//exec
-	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO users(username, password, limittask) VALUES ($1, $2, $3)`)).WithArgs(user.Username, user.Password, 10).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec(regexp.QuoteMeta(models.InsertUserText)).WithArgs(user.Username, user.Password, 10).WillReturnResult(sqlmock.NewResult(1, 1))
 
 	w := httptest.NewRecorder() // set custom writer and response
 	req := httptest.NewRequest("POST", "localhost:8000/users", bytes.NewReader(userJSON))
@@ -121,9 +121,9 @@ func TestDeleteFromUser(t *testing.T) {
 	rows := sqlmock.NewRows([]string{"id", "username", "password", "limittask"})
 	rows.AddRow(user.Id, user.Username, user.Password, user.LimitTask)
 
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM users WHERE id = $1")).WithArgs(user.Id).WillReturnRows(rows)
-	mock.ExpectExec(regexp.QuoteMeta("DELETE FROM tasks WHERE userid = $1")).WithArgs(user.Id).WillReturnResult(sqlmock.NewResult(1, 1))
-	mock.ExpectExec(regexp.QuoteMeta("DELETE FROM users WHERE id = $1")).WithArgs(user.Id).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectQuery(regexp.QuoteMeta(models.FindUserByIDText)).WithArgs(user.Id).WillReturnRows(rows)
+	mock.ExpectExec(regexp.QuoteMeta(models.DeleteAllTaskText)).WithArgs(user.Id).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec(regexp.QuoteMeta(models.DeleteUserText)).WithArgs(user.Id).WillReturnResult(sqlmock.NewResult(1, 1))
 
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("DELETE", fmt.Sprintf("localhost:8000/%v", user.Id), nil)
@@ -153,8 +153,8 @@ func TestUpdateToUser(t *testing.T) {
 	rows := sqlmock.NewRows([]string{"id", "username", "password", "limittask"})
 	rows.AddRow(user.Id, user.Username, user.Password, user.LimitTask)
 
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM users WHERE id = $1")).WithArgs(user.Id).WillReturnRows(rows)
-	mock.ExpectExec(regexp.QuoteMeta("UPDATE users SET username = $1, password = $2, limittask = $3 WHERE id = $4")).WithArgs(newUser.Username, newUser.Password, newUser.LimitTask, user.Id).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectQuery(regexp.QuoteMeta(models.FindUserByIDText)).WithArgs(user.Id).WillReturnRows(rows)
+	mock.ExpectExec(regexp.QuoteMeta(models.UpdateUserText)).WithArgs(newUser.Username, newUser.Password, newUser.LimitTask, user.Id).WillReturnResult(sqlmock.NewResult(1, 1))
 
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("PUT", fmt.Sprintf("localhost:8000/%v", user.Id), bytes.NewReader(newUserJSON))
