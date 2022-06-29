@@ -3,7 +3,6 @@ package controllers
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -110,7 +109,6 @@ var Edit = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		name    string = task.Name
 		content string = task.Content
 	)
-	fmt.Println(task)
 	if name != "" {
 		task.Name = name
 	}
@@ -122,7 +120,6 @@ var Edit = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		u.FailureRespond(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	fmt.Println(task)
 	u.SuccessRespond(w, http.StatusOK, "Success update task", map[string]interface{}{
 		"name":       task.Name,
 		"content":    task.Content,

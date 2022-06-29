@@ -10,124 +10,144 @@ import (
 // Pass ✅
 func TestSignUp(t *testing.T) {
 	payload := []byte(`{
-		"name":     "user1",
-		"email":    "user10@gmail.com",
+		"name":     "test_user",
+		"email":    "test_user@gmail.com",
 		"password": "123456"
 	}`)
 	req, _ := http.NewRequest("POST", "/api/users/signup", bytes.NewBuffer(payload))
 	req.Header.Set("Content-Type", "application/json")
 	res := executeRequest(req)
-	checkResponseCode(t, http.StatusCreated, res.Code)
-
-	var r response
 	json.Unmarshal(res.Body.Bytes(), &r)
+	checkResponseCode(t, http.StatusCreated, res.Code)
+	checkResponseStatus(t, "Success", r.Status)
+	checkResponseMessage(t, "Created Account", r.Message)
 
-	if r.Data["email"] != "user10@gmail.com" {
-		t.Errorf("Expected type of Data to be 'user10@gmail.com'. Got '%v'", r.Data["email"])
+	if r.Data["email"] != "test_user@gmail.com" {
+		t.Errorf("Expected type of Data to be 'test_user@gmail.com'. Got '%v'", r.Data["email"])
 	}
 
-	if r.Data["name"] != "user1" {
-		t.Errorf("Expected type of Data to be 'user1'. Got '%v'", r.Data["name"])
+	if r.Data["name"] != "test_user" {
+		t.Errorf("Expected type of Data to be 'test_user'. Got '%v'", r.Data["name"])
 	}
-	t.Logf("Response Message: %v", r.Message)
 }
 
 // Pass ✅
 func TestLogin(t *testing.T) {
 	payload := []byte(`{
-		"email":    "user1@gmail.com",
+		"email":    "test_user@gmail.com",
 		"password": "123456"
 	}`)
 	req, _ := http.NewRequest("POST", "/api/users/login", bytes.NewBuffer(payload))
 	req.Header.Set("Content-Type", "application/json")
 	res := executeRequest(req)
-	checkResponseCode(t, http.StatusOK, res.Code)
 
-	var r response
 	json.Unmarshal(res.Body.Bytes(), &r)
 
-	if r.Data["email"] != "user1@gmail.com" {
-		t.Errorf("Expected type of Data to be 'user1@gmail.com'. Got '%v'", r.Data["email"])
+	checkResponseCode(t, http.StatusOK, res.Code)
+	checkResponseStatus(t, "Success", r.Status)
+	checkResponseMessage(t, "Login Success", r.Message)
+
+	if r.Data["email"] != "test_user@gmail.com" {
+		t.Errorf("Expected type of Data to be 'test_user@gmail.com'. Got '%v'", r.Data["email"])
 	}
 
-	if r.Data["name"] != "user1" {
-		t.Errorf("Expected type of Data to be 'user1'. Got '%v'", r.Data["name"])
+	if r.Data["name"] != "test_user" {
+		t.Errorf("Expected type of Data to be 'test_user'. Got '%v'", r.Data["name"])
 	}
-	t.Logf("Response Message: %v", r.Message)
-	// the id is compared to 1.0 because JSON unmarshaling converts numbers to
-	// floats, when the target is a map[string]interface{}
 }
 
 // Pass ✅
 func TestGetMe(t *testing.T) {
+	// get token from test user
+	token := getToken()
 	req, _ := http.NewRequest("GET", "/api/users/me", nil)
-	token := "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOjYsIkxpbWl0RGF5VGFza3MiOjEwfQ.p71B7Pd2SydLxeVm5LqZIQXgljHAOJN9z5we4wlW2lA"
 	req.Header.Set("Authorization", token)
 	res := executeRequest(req)
-	checkResponseCode(t, http.StatusOK, res.Code)
-
 	json.Unmarshal(res.Body.Bytes(), &r)
+
+	checkResponseCode(t, http.StatusOK, res.Code)
+	checkResponseStatus(t, "Success", r.Status)
+	checkResponseMessage(t, "Success", r.Message)
 
 	// json.NewDecoder(res.Body).Decode(&m)
 
-	if r.Data["email"] != "user1@gmail.com" {
-		t.Errorf("Expected field of Data email to be 'test2@example.com'. Got '%v'", r.Data["email"])
+	if r.Data["name"] != "test_user" {
+		t.Errorf("Expected user name is 'test_user'. Got '%v'", r.Data["name"])
 	}
-
-	if r.Data["name"] != "user1" {
-		t.Errorf("Expected field of Data name to be 'user1'. Got '%v'", r.Data["name"])
+	if r.Data["email"] != "test_user@gmail.com" {
+		t.Errorf("Expected user email is 'test_user@gmail.com'. Got '%v'", r.Data["email"])
 	}
 	if r.Data["is_payment"] != false {
-		t.Errorf("Expected field of Data is_payment to be 'true'. Got '%v'", r.Data["is_payment"])
+		t.Errorf("Expected user is_payment field is 'true'. Got '%v'", r.Data["is_payment"])
 	}
 	if r.Data["limit_day_tasks"] != 10.0 {
-		t.Errorf("Expected field of Data limit_day_tasks to be '10'. Got '%v'", r.Data["limit_day_tasks"])
+		t.Errorf("Expected user limit task field is '10'. Got '%v'", r.Data["limit_day_tasks"])
 	}
-	t.Logf("Response Message: %v", r.Message)
 }
 
 // Pass ✅
 func TestUpdateMe(t *testing.T) {
+	// get token from test user
+	token := getToken()
 	payload := []byte(`{
-		"name": "updated test user",
-		"email":    "updatedtest@example.com",
+		"name": "updated_test_user",
 		"password": "123456"
 	}`)
 	req, _ := http.NewRequest("PATCH", "/api/users/edit", bytes.NewBuffer(payload))
-	token := "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOjExLCJMaW1pdERheVRhc2tzIjoxMH0.0C6oI6DMy6lKnlw8o_VOllwGz7qkGC-955rVDgzEak4"
 	req.Header.Set("Authorization", token)
 	res := executeRequest(req)
-	checkResponseCode(t, http.StatusOK, res.Code)
-
 	json.Unmarshal(res.Body.Bytes(), &r)
+
+	checkResponseCode(t, http.StatusOK, res.Code)
+	checkResponseStatus(t, "Success", r.Status)
+	checkResponseMessage(t, "Success update your account!", r.Message)
 
 	// json.NewDecoder(res.Body).Decode(&m)
 
-	if r.Data["email"] != "updatedtest@example.com" {
-		t.Errorf("Expected field of Data email to be 'updatedtest@example.com'. Got '%v'", r.Data["email"])
+	if r.Data["email"] != "test_user@gmail.com" {
+		t.Errorf("Expected field of Data email to be 'test_user@gmail.com'. Got '%v'", r.Data["email"])
 	}
 
-	if r.Data["name"] != "updated test user" {
-		t.Errorf("Expected field of Data name to be 'updated test user'. Got '%v'", r.Data["name"])
+	if r.Data["name"] != "updated_test_user" {
+		t.Errorf("Expected field of Data name to be 'updated_test_user'. Got '%v'", r.Data["name"])
 	}
-	t.Logf("Response Message: %v", r.Message)
 }
 
 // Pass ✅
 func TestDeleteMe(t *testing.T) {
+	token := getToken()
 	payload := []byte(`{
 		"password": "123456"
 	}`)
 	req, _ := http.NewRequest("DELETE", "/api/users/delete", bytes.NewBuffer(payload))
-	token := "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOjYsIkxpbWl0RGF5VGFza3MiOjEwfQ.p71B7Pd2SydLxeVm5LqZIQXgljHAOJN9z5we4wlW2lA"
 	req.Header.Set("Authorization", token)
 	res := executeRequest(req)
-	checkResponseCode(t, http.StatusNoContent, res.Code)
-
 	json.Unmarshal(res.Body.Bytes(), &r)
+
+	checkResponseCode(t, http.StatusNoContent, res.Code)
+	checkResponseStatus(t, "Success", r.Status)
+	checkResponseMessage(t, "Success delete your account!", r.Message)
 
 	if r.Data != nil {
 		t.Errorf("Expected field of Data to be 'nil'. Got '%v'", r.Data)
 	}
-	t.Logf("Response Message: %v", r.Message)
+	rollbackUser()
+}
+
+func getToken() string {
+	type predictResponse struct {
+		Status  string
+		Message string
+		Data    map[string]string
+	}
+	payload := []byte(`{
+		"email":    "test_user@gmail.com",
+		"password": "123456"
+	}`)
+	req, _ := http.NewRequest("POST", "/api/users/login", bytes.NewBuffer(payload))
+	req.Header.Set("Content-Type", "application/json")
+	res := executeRequest(req)
+	var pr predictResponse
+	json.Unmarshal(res.Body.Bytes(), &pr)
+	return "Bearer " + pr.Data["token"]
 }
