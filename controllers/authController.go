@@ -19,6 +19,7 @@ func NewBaseHandler(BC *models.DbConn) *BaseHandler {
 		BaseCtrl: BC,
 	}
 }
+
 //response token
 type responseToken struct {
 	Message string
@@ -28,18 +29,11 @@ type responseToken struct {
 // Handle register with method post
 func (h *BaseHandler)Register(w http.ResponseWriter, r *http.Request) { 
 	var user, user1 models.NewUser
-	var passwordCrypt string
 
 	_ = json.NewDecoder(r.Body).Decode(&user)
-	if _, ok := h.BaseCtrl.CheckUserNameExist(user.Username); ok { // Check username exist or not
-		http.Error(w, "this username already exist", http.StatusNotAcceptable)
-		return
-	}
-
-	passwordCrypt, _ = models.Hash(user.Password) // hash password
 	user1 = models.NewUser{
 		Username: user.Username,
-		Password: passwordCrypt,
+		Password: user.Password,
 	}
 
 	if strings.ToLower(user1.Username) != "admin" {

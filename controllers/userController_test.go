@@ -17,9 +17,7 @@ import (
 )
 
 func TestResponseAllUser(t *testing.T) {
-	db, mock := models.NewMock()
-	dbConn := models.NewdbConn(db)
-	h := NewBaseHandler(dbConn)
+	mock, h := CreateMockingDB()
 
 	rows := sqlmock.NewRows([]string{"id", "username", "password", "limittask"})
 	for i := 0; i < 10; i++ {
@@ -27,12 +25,12 @@ func TestResponseAllUser(t *testing.T) {
 		rows.AddRow(user.Id, user.Username, user.Password, user.LimitTask)
 	}
 
-	w := httptest.NewRecorder()
-	req := httptest.NewRequest("GET", "localhost:8000/users", nil)
-
 	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM users`)).WillReturnRows(rows)
 
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest("GET", "localhost:8000/users", nil)
 	h.ResponseAllUser(w, req)
+
 	resp := w.Result()
 	respBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -51,21 +49,19 @@ func TestResponseAllUser(t *testing.T) {
 }
 
 func TestResponseOneUser(t *testing.T) {
-	db, mock := models.NewMock()
-	dbConn := models.NewdbConn(db)
-	h := NewBaseHandler(dbConn)
+	mock, h := CreateMockingDB()
 
-	rows := sqlmock.NewRows([]string{"id", "username", "password", "limittask"})
 	user := models.RandomUser()
+	rows := sqlmock.NewRows([]string{"id", "username", "password", "limittask"})
 	rows.AddRow(user.Id, user.Username, user.Password, user.LimitTask)
+
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM users WHERE id = $1`)).WithArgs(user.Id).WillReturnRows(rows)
 
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("GET", "localhost:8000/users/"+fmt.Sprintf("%v", user.Id), nil)
 	context.Set(req, "id", user.Id)
-
-	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM users WHERE id = $1`)).WithArgs(user.Id).WillReturnRows(rows)
-
 	h.ResponseOneUser(w, req)
+
 	resp := w.Result()
 	respBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -86,9 +82,7 @@ func TestResponseOneUser(t *testing.T) {
 }
 
 func TestCreateUser(t *testing.T) {
-	db, mock := models.NewMock()
-	dbConn := models.NewdbConn(db)
-	h := NewBaseHandler(dbConn)
+	mock, h := CreateMockingDB()
 
 	user := models.RandomUser()
 	userJSON, err := json.Marshal(user)
@@ -96,12 +90,11 @@ func TestCreateUser(t *testing.T) {
 		t.Errorf("Can't marshal user, err: " + err.Error())
 	}
 
-	w := httptest.NewRecorder() // set custom writer and response
-	req := httptest.NewRequest("POST", "localhost:8000/users", bytes.NewReader(userJSON))
-
 	//exec
 	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO users(username, password, limittask) VALUES ($1, $2, $3)`)).WithArgs(user.Username, user.Password, 10).WillReturnResult(sqlmock.NewResult(1, 1))
 
+	w := httptest.NewRecorder() // set custom writer and response
+	req := httptest.NewRequest("POST", "localhost:8000/users", bytes.NewReader(userJSON))
 	h.CreateUser(w, req)
 	resp := w.Result()
 	respBody, err := ioutil.ReadAll(resp.Body)
@@ -119,4 +112,70 @@ func TestCreateUser(t *testing.T) {
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 	assert.NotEmpty(t, userfromdb)
 	assert.Equal(t, userfromdb.Username, user.Username)
+}
+func TestDeleteFromUser(t *testing.T) {
+	mock, h := CreateMockingDB()
+
+	user := models.RandomUser()
+
+	rows := sqlmock.NewRows([]string{"id", "username", "password", "limittask"})
+	rows.AddRow(user.Id, user.Username, user.Password, user.LimitTask)
+
+	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM users WHERE id = $1")).WithArgs(user.Id).WillReturnRows(rows)
+	mock.ExpectExec(regexp.QuoteMeta("DELETE FROM tasks WHERE userid = $1")).WithArgs(user.Id).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec(regexp.QuoteMeta("DELETE FROM users WHERE id = $1")).WithArgs(user.Id).WillReturnResult(sqlmock.NewResult(1, 1))
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest("DELETE", fmt.Sprintf("localhost:8000/%v", user.Id), nil)
+	context.Set(req, "id", user.Id)
+	h.DeleteFromUser(w, req)
+
+	resp := w.Result()
+	respBody, err := ioutil.ReadAll(resp.Body)
+	respBodyString := string(respBody)
+	if err != nil {
+		t.Errorf("Can't read body response")
+	}
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, respBodyString, "message: delete success")
+}
+
+func TestUpdateToUser(t *testing.T) {
+	mock, h := CreateMockingDB()
+
+	user := models.RandomUser()
+	newUser := models.RandomNewUser()
+	newUserJSON, err := json.Marshal(newUser)
+	if err != nil {
+		t.Errorf("Can't marshal user, err: " + err.Error())
+	}
+
+	rows := sqlmock.NewRows([]string{"id", "username", "password", "limittask"})
+	rows.AddRow(user.Id, user.Username, user.Password, user.LimitTask)
+
+	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM users WHERE id = $1")).WithArgs(user.Id).WillReturnRows(rows)
+	mock.ExpectExec(regexp.QuoteMeta("UPDATE users SET username = $1, password = $2, limittask = $3 WHERE id = $4")).WithArgs(newUser.Username, newUser.Password, newUser.LimitTask, user.Id).WillReturnResult(sqlmock.NewResult(1, 1))
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest("PUT", fmt.Sprintf("localhost:8000/%v", user.Id), bytes.NewReader(newUserJSON))
+	context.Set(req, "id", user.Id)
+	h.UpdateToUser(w, req)
+
+	resp := w.Result()
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		t.Errorf("Can't read body response")
+	}
+
+	var userfromdb models.NewUser
+	err = json.Unmarshal(respBody, &userfromdb)
+	if err != nil {
+		fmt.Println(userfromdb, string(respBody))
+		t.Errorf(err.Error())
+	}
+
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, userfromdb.Username, newUser.Username)
+	assert.Equal(t, userfromdb.Password, newUser.Password)
+	assert.Equal(t, userfromdb.LimitTask, newUser.LimitTask)
 }

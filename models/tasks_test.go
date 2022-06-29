@@ -12,9 +12,7 @@ import (
 
 // unit test for get all task
 func TestGetAllTask(t *testing.T) {
-	db, mock := NewMock()
-	DbConn := NewdbConn(db)
-	h := NewBaseHandler(DbConn)
+	mock, h := CreateMockingDB()
 
 	rows := sqlmock.NewRows([]string{"id", "content", "status", "time", "timedone", "userid"})
 	for i := 0; i < 10; i++ { // create 10 random new task and add row
@@ -34,9 +32,7 @@ func TestGetAllTask(t *testing.T) {
 
 // unit test for get task by id
 func TestFindTaskById(t *testing.T) {
-	db, mock := NewMock()
-	DbConn := NewdbConn(db)
-	h := NewBaseHandler(DbConn)
+	mock, h := CreateMockingDB()
 
 	task := RandomTask()
 	rows := sqlmock.NewRows([]string{"id", "content", "status", "time", "timedone", "userid"}).AddRow(task.Id, task.Content, task.Status, task.Time, task.TimeDone, task.UserId)
@@ -53,10 +49,7 @@ func TestFindTaskById(t *testing.T) {
 
 // unit test for delete task
 func TestDeleteTask(t *testing.T) {
-	db, mock := NewMock()
-	DbConn := NewdbConn(db)
-	h := NewBaseHandler(DbConn)
-
+	mock, h := CreateMockingDB()
 	task := RandomTask()
 	query := regexp.QuoteMeta(`DELETE FROM tasks WHERE id = $1 AND userid = $2`)
 	mock.ExpectExec(query).WithArgs(task.Id, task.UserId).WillReturnResult(sqlmock.NewResult(0, 1))
@@ -67,9 +60,7 @@ func TestDeleteTask(t *testing.T) {
 
 // unit test for delete task
 func TestDeleteAllTaskFromUser(t *testing.T) {
-	db, mock := NewMock()
-	DbConn := NewdbConn(db)
-	h := NewBaseHandler(DbConn)
+	mock, h := CreateMockingDB()
 
 	userid := util.RandomInt(1, 100)
 	rows := sqlmock.NewRows([]string{"id", "content", "status", "time", "timedone", "userid"})
@@ -87,9 +78,7 @@ func TestDeleteAllTaskFromUser(t *testing.T) {
 
 // unit test for insert task
 func TestInsertTask(t *testing.T) {
-	db, mock := NewMock()
-	DbConn := NewdbConn(db)
-	h := NewBaseHandler(DbConn)
+	mock, h := CreateMockingDB()
 
 	query := regexp.QuoteMeta(`INSERT INTO tasks(content, status,time, timedone, userid) VALUES ($1, $2, $3, $4, $5)`)
 
@@ -102,9 +91,7 @@ func TestInsertTask(t *testing.T) {
 
 // unit test for update task
 func TestUpdateTask(t *testing.T) {
-	db, mock := NewMock()
-	DbConn := NewdbConn(db)
-	h := NewBaseHandler(DbConn)
+	mock, h := CreateMockingDB()
 
 	query := regexp.QuoteMeta(`UPDATE tasks SET content =COALESCE($1, content), status = COALESCE($2, status), timedone = COALESCE($3, timedone) WHERE id = $4 AND userid = $5`)
 
@@ -117,9 +104,7 @@ func TestUpdateTask(t *testing.T) {
 
 // unit test for check limit task user
 func TestCheckLimitTaskUser(t *testing.T) {
-	db, mock := NewMock()
-	DbConn := NewdbConn(db)
-	h := NewBaseHandler(DbConn)
+	mock, h := CreateMockingDB()
 
 	user := RandomUser()
 	rows1 := sqlmock.NewRows([]string{"id", "username", "password", "limittask"})

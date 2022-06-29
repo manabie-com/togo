@@ -9,6 +9,13 @@ import (
 	"github.com/huynhhuuloc129/todo/util"
 )
 
+func CreateMockingDB()(sqlmock.Sqlmock, *BaseHandler){
+	db, mock:= NewMock()
+	dbConn := NewdbConn(db)
+	h := NewBaseHandler(dbConn)
+	return mock, h
+}
+
 func NewMock() (*sql.DB, sqlmock.Sqlmock) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -44,7 +51,8 @@ func RandomTask() Task {
 		Id:      int(util.RandomId()),
 		Content: util.RandomContent(),
 		Status:  "pending",
-		Time:    time.Now(),
+		Time:    time.Now().Round(0),
+		TimeDone: time.Date(0001, 01, 01, 0, 0, 0, 0, time.Local).Round(0),
 		UserId:  int(util.RandomUserid()),
 	}
 	return task
@@ -55,7 +63,8 @@ func RandomNewTask() NewTask {
 	task := NewTask{
 		Content: util.RandomContent(),
 		Status:  "pending",
-		Time:    time.Now(),
+		Time:    time.Now().Round(0),
+		TimeDone: time.Date(0001, 01, 01, 0, 0, 0, 0, time.Local).Round(0),
 		UserId:  int(util.RandomUserid()),
 	}
 	return task

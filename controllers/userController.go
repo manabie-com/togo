@@ -101,21 +101,17 @@ func (bh *BaseHandler) UpdateToUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := json.NewDecoder(r.Body).Decode(&newUser); err != nil {
-		http.Error(w, "decode failed, input invalid", http.StatusBadRequest)
+		http.Error(w, "decode failed, input invalid, err: " + err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	if newUser.Password != user.Password {
-		newUser.Password, _ = models.Hash(newUser.Password)
-	}
 	if err := bh.BaseCtrl.UpdateUser(newUser, id); err != nil {
-		http.Error(w, "update user failed", http.StatusBadRequest)
+		http.Error(w, "update user failed, err:" + err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(newUser); err != nil {
-		http.Error(w, "encode failed.", http.StatusBadRequest)
+		http.Error(w, "encode failed, err: "+ err.Error(), http.StatusBadRequest)
 		return
 	}
 }

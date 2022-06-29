@@ -20,6 +20,6 @@ func userRouter(r *mux.Router, bh *controllers.BaseHandler) {
 	userRoutingid.Use(middlewares.AdminVerified, middlewares.MiddlewareID)// middleware admin, only admin can be modified user and check ID
 	userRoutingid.HandleFunc("", bh.ResponseOneUser).Methods("GET")
 	userRoutingid.HandleFunc("", bh.DeleteFromUser).Methods("DELETE")
-	userRoutingid.HandleFunc("", bh.UpdateToUser).Methods("PUT")
-	userRoutingid.HandleFunc("", bh.UpdateToUser).Methods("PATCH")
+	userRoutingid.HandleFunc("", middlewares.ValidUsernameAndHashPassword(bh, bh.UpdateToUser)).Methods("PUT")
+	userRoutingid.HandleFunc("", middlewares.ValidUsernameAndHashPassword(bh, bh.UpdateToUser)).Methods("PATCH")
 }

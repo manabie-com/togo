@@ -10,9 +10,7 @@ import (
 
 // unit test for get all user
 func TestGetAllUser(t *testing.T) {
-	db, mock := NewMock()
-	DbConn := NewdbConn(db)
-	h := NewBaseHandler(DbConn)
+	mock, h := CreateMockingDB()
 
 	rows := sqlmock.NewRows([]string{"id", "username", "password", "limittask"})
 	for i := 0; i < 10; i++ {
@@ -31,9 +29,7 @@ func TestGetAllUser(t *testing.T) {
 
 // unit test for get user by id
 func TestFindUserById(t *testing.T) {
-	db, mock := NewMock()
-	DbConn := NewdbConn(db)
-	h := NewBaseHandler(DbConn)
+	mock, h := CreateMockingDB()
 
 	user := RandomUser()
 	rows := sqlmock.NewRows([]string{"id", "username", "password", "limittask"}).AddRow(user.Id, user.Username, user.Password, user.LimitTask)
@@ -51,9 +47,7 @@ func TestFindUserById(t *testing.T) {
 
 // unit test check username exist
 func TestCheckUserNameExist(t *testing.T) {
-	db, mock := NewMock()
-	DbConn := NewdbConn(db)
-	h := NewBaseHandler(DbConn)
+	mock, h := CreateMockingDB()
 
 	user := RandomUser()
 	rows := sqlmock.NewRows([]string{"id", "username", "password", "limittask"}).AddRow(user.Id, user.Username, user.Password, user.LimitTask)
@@ -67,9 +61,7 @@ func TestCheckUserNameExist(t *testing.T) {
 
 // unit test for delete user
 func TestDeleteUser(t *testing.T) {
-	db, mock := NewMock()
-	DbConn := NewdbConn(db)
-	h := NewBaseHandler(DbConn)
+	mock, h := CreateMockingDB()
 
 	user := RandomUser()
 	query := regexp.QuoteMeta(`DELETE FROM users WHERE id = $1`)
@@ -81,9 +73,7 @@ func TestDeleteUser(t *testing.T) {
 
 // unit test for insert user
 func TestInsertUser(t *testing.T) {
-	db, mock := NewMock()
-	DbConn := NewdbConn(db)
-	h := NewBaseHandler(DbConn)
+	mock, h := CreateMockingDB()
 
 	query := regexp.QuoteMeta(`INSERT INTO users(username, password, limittask) VALUES ($1, $2, $3)`)
 
@@ -96,9 +86,7 @@ func TestInsertUser(t *testing.T) {
 
 // unit test for delete user
 func TestUpdateUser(t *testing.T) {
-	db, mock := NewMock()
-	DbConn := NewdbConn(db)
-	h := NewBaseHandler(DbConn)
+	mock, h := CreateMockingDB()
 
 	query := regexp.QuoteMeta(`UPDATE users SET username = $1, password = $2, limittask = $3 WHERE id = $4`)
 

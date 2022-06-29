@@ -69,6 +69,6 @@ func TestCheckTaskInput(t *testing.T) {
 	result4 := CheckTaskInput(task4)
 
 	if !result1 || result2 || !result3 || !result4 {
-		log.Fatal("Check user input failed")
+		t.Fatal("Check user input failed")
 	}
 }
