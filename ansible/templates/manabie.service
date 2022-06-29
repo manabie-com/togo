@@ -1,0 +1,13 @@
+[Unit]
+Description=Manabie Assignment
+
+[Service]
+ExecStart={{ java_path.stdout }} -jar {{ install_path }}/target/manabie-0.0.1-SNAPSHOT.jar
+StandardOutput=file:{{ install_path }}/stdout.log
+StandardError=file:{{ install_path }}/stderr.log
+Restart=always
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target
