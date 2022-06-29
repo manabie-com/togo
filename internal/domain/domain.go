@@ -2,7 +2,6 @@ package domain
 
 import (
 	e "lntvan166/togo/internal/entities"
-	"net/http"
 )
 
 type TaskRepository interface {
@@ -25,7 +24,7 @@ type TaskUsecase interface {
 	GetTaskByID(id int, username string) (*e.Task, error)
 	GetTasksByUsername(username string) (*[]e.Task, error)
 	CheckLimitTaskToday(id int) (bool, error)
-	UpdateTask(id int, username string, r *http.Request) error
+	UpdateTask(id int, username string, newTask e.Task) error
 	CompleteTask(id int, username string) error
 	DeleteTask(id int, username string) error
 }

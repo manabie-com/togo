@@ -110,7 +110,14 @@ func (t *TaskController) UpdateTask(w http.ResponseWriter, r *http.Request) {
 
 	username := context.Get(r, "username").(string)
 
-	err = t.TaskUsecase.UpdateTask(id, username, r)
+	task := e.Task{}
+	err = json.NewDecoder(r.Body).Decode(&task)
+	if err != nil {
+		pkg.ERROR(w, http.StatusBadRequest, err, "invalid body!")
+		return
+	}
+
+	err = t.TaskUsecase.UpdateTask(id, username, task)
 	if err != nil {
 		pkg.ERROR(w, http.StatusInternalServerError, err, "update task failed!")
 		return

@@ -5,7 +5,6 @@ import (
 	"lntvan166/togo/internal/domain"
 	e "lntvan166/togo/internal/entities"
 	"lntvan166/togo/pkg"
-	"net/http"
 )
 
 type taskUsecase struct {
@@ -112,7 +111,7 @@ func (t *taskUsecase) CheckLimitTaskToday(id int) (bool, error) {
 	return false, nil
 }
 
-func (t *taskUsecase) UpdateTask(id int, username string, r *http.Request) error {
+func (t *taskUsecase) UpdateTask(id int, username string, newTask e.Task) error {
 	user_id, err := t.GetUserIDByTaskID(id)
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "task does not exist!")
@@ -125,13 +124,13 @@ func (t *taskUsecase) UpdateTask(id int, username string, r *http.Request) error
 		return err
 	}
 
-	task, err := t.taskRepo.GetTaskByID(id)
+	_, err = t.taskRepo.GetTaskByID(id)
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "get task by id failed!")
 		return err
 	}
 
-	err = t.taskRepo.UpdateTask(task)
+	err = t.taskRepo.UpdateTask(&newTask)
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "update task failed!")
 		return err
