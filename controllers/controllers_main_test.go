@@ -61,6 +61,14 @@ func rollbackUser() error {
 	return nil
 }
 
+func rollbackTask() error {
+	_, err := a.DB.Exec(`DELETE FROM tasks WHERE user_id = (SELECT users.id FROM users where email = $1)`, "test_user@gmail.com")
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func rollbackPayment(email interface{}) error {
 	_, err := a.DB.Exec(`UPDATE users SET is_payment = $1, limit_day_tasks = $2 WHERE email = $3`, false, 10, email)
 	if err != nil {

@@ -3,8 +3,8 @@ package controllers
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
-	"strconv"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
@@ -20,7 +20,7 @@ var GetTasks = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 	tasks, err := task.GetTasksByUserId(db)
 	if err != nil {
-		u.FailureRespond(w, http.StatusNotFound, err.Error())
+		u.SuccessRespond(w, http.StatusOK, "Success", nil)
 		return
 	}
 	//Everything OK
@@ -30,22 +30,20 @@ var GetTasks = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 var GetTask = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// decode token from middleware
 	decoded := r.Context().Value("user").(*models.Token)
-	// convert id params string -> uint32
-	id := func(id string) uint32 {
-		u64, err := strconv.ParseUint(id, 10, 32)
-		if err != nil {
-			u.FailureRespond(w, http.StatusBadRequest, "ID must be a number type.")
-		}
-		return uint32(u64)
-	}(mux.Vars(r)["id"])
+	// convert string id to uint32
+	id, err := u.Str2Uint32(mux.Vars(r)["id"])
+	if err != nil {
+		u.FailureRespond(w, http.StatusBadRequest, "ID must be a number type.")
+		return
+	}
 
 	task := &models.Task{
 		ID:     id,
 		UserId: decoded.UserId,
 	}
-	err := task.GetTaskByUserId(db)
+	err = task.GetTaskByUserId(db)
 	if err != nil {
-		u.FailureRespond(w, http.StatusNotFound, "Not found task")
+		u.SuccessRespond(w, http.StatusOK, "Not found task", nil)
 		return
 	}
 
@@ -88,6 +86,7 @@ var Add = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 	//everything OK
 	u.SuccessRespond(w, http.StatusCreated, "Success create task", map[string]interface{}{
+		"id":         fmt.Sprint(task.ID),
 		"name":       task.Name,
 		"content":    task.Content,
 		"created_at": task.CreatedAt,
@@ -96,26 +95,40 @@ var Add = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 var Edit = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	decoded := r.Context().Value("user").(*models.Token)
-	id := mux.Vars(r)["id"] // get id from url params
+	// convert string id to uint32
+	id, err := u.Str2Uint32(mux.Vars(r)["id"])
+	if err != nil {
+		u.FailureRespond(w, http.StatusBadRequest, "ID must be a number type.")
+		return
+	}
+
 	task := &models.Task{
+		ID:     id,
 		UserId: decoded.UserId,
 	}
-	err := json.NewDecoder(r.Body).Decode(task)
+
+	// err := GetTaskByUserId(db)
+	err = json.NewDecoder(r.Body).Decode(task)
 	if err != nil {
 		u.FailureRespond(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	var (
-		name    string = task.Name
-		content string = task.Content
+		newName    string = task.Name
+		newContent string = task.Content
 	)
-	if name != "" {
-		task.Name = name
+	err = task.GetTaskByUserId(db)
+	if err != nil {
+		u.FailureRespond(w, http.StatusInternalServerError, "Somethings went wrong. Please try again"+err.Error())
+		return
 	}
-	if content != "" {
-		task.Content = content
+	if newName != "" {
+		task.Name = newName
 	}
-	err = task.UpdateTaskById(db, id)
+	if newContent != "" {
+		task.Content = newContent
+	}
+	err = task.UpdateTaskById(db)
 	if err != nil {
 		u.FailureRespond(w, http.StatusBadRequest, err.Error())
 		return
@@ -129,13 +142,19 @@ var Edit = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 var Delete = func(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	decoded := r.Context().Value("user").(*models.Token)
-	id := mux.Vars(r)["id"]
+	// convert string id to uint32
+	id, err := u.Str2Uint32(mux.Vars(r)["id"])
+	if err != nil {
+		u.FailureRespond(w, http.StatusBadRequest, "ID must be a number type.")
+		return
+	}
 
 	task := &models.Task{
+		ID:     id,
 		UserId: decoded.UserId,
 	}
 
-	err := task.DeleteTaskById(db, id)
+	err = task.DeleteTaskById(db)
 	if err != nil {
 		u.FailureRespond(w, http.StatusBadRequest, err.Error())
 		return

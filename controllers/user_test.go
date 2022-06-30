@@ -9,6 +9,7 @@ import (
 
 // Pass ✅
 func TestSignUp(t *testing.T) {
+	_ = rollbackUser()
 	payload := []byte(`{
 		"name":     "test_user",
 		"email":    "test_user@gmail.com",
@@ -132,6 +133,7 @@ func TestDeleteMe(t *testing.T) {
 		t.Errorf("Expected field of Data to be 'nil'. Got '%v'", r.Data)
 	}
 	rollbackUser()
+	rollbackTask()
 }
 
 func getToken() string {
