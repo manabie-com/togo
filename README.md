@@ -13,14 +13,188 @@
   - What do you love about your solution?
   - What else do you want us to know about however you do not have enough time to complete?
 
-### Folder structure
+## How to run source code locally?
+- Open psql in your Terminal by:
+```bash
+  sudo -u postgres psql
+```
+- Create togo database:
+``` bash
+CREATE DATABASE togo; \c togo
+```
+- Copy and paste script in migrations/migrate.sql to generate necessary data
+
+- Run app:
+``` bash
+make run
+```
+
+## A sample “curl” command to call APIs
+
+- I created the mock users:
+  - free plan: the limit of tasks is **10**
+    - username: **free**
+    - password: **password**
+  - vip tier: the limit of tasks is **20**
+    - username: **vip**
+    - password: **password**
+
+- You can login with the above accounts or register (free plan by default) by the following
+```bash
+curl --location --request POST 'localhost:8080/auth/register' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "username": "your_name",
+    "password": "password"
+}'
+```
+
+- Or login:
 
 ```bash
+curl --location --request POST 'localhost:8080/auth/login' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "username": "free",
+    "password": "password"
+}'
+```
+- If login successfully, you can get a token:
+``` text
+{
+  "message":"login successfully",
+  "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2NTY2MjQ5MjYsInVzZXJuYW1lIjoiYWRtaW44In0.pg-JhjyxLtiHXtEQ9Xk1pbGqIFLHmbbIerlVNPgKzrE"
+}
+```
+
+- Assign a task. I created the mock tasks for user **free** have (**10**) tasks.
+  The user **vip** has (**0**) tasks.
+  - If we assign one more task to user **free** the system will return error limit message.
+  - Assign task: you need to replace **ADD-TOKEN-HERE** which is the token you got in the login API.
+```bash
+  curl --location --request POST 'localhost:8080/task' \
+--header 'Authorization: Bearer ADD-TOKEN-HERE' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name":"todo",
+    "description": "test"
+}'
+```
+  - Retry with vip user:
+```bash
+curl --location --request POST 'localhost:8080/task' \
+--header 'Authorization: Bearer ADD-TOKEN-HERE' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name":"todo",
+    "description": "test"
+}'
+```
+
+- Get every tasks you have
+``` bash
+curl --location --request GET 'localhost:8080/task' \
+--header 'Authorization: Bearer ADD-TOKEN-HERE'
+```
+
+- With operations with task, you always need token to verify. You can continue try following usecase:
+
+Get one task (replace id):
+```bash
+curl --location --request GET 'localhost:8080/task/{id}' \
+--header 'Authorization: Bearer ADD-TOKEN-HERE'
+```
+Complete task (replace id):
+```bash
+curl --location --request POST 'localhost:8080/task/{id}' \
+--header 'Authorization: Bearer ADD-TOKEN-HERE'
+```
+Delete task (replace id):
+```bash
+curl --location --request POST 'localhost:8080/task/{id}' \
+--header 'Authorization: Bearer ADD-TOKEN-HERE'
+```
+Get your plan:
+```bash
+curl --location --request GET 'localhost:8080/plan' \
+--header 'Authorization: Bearer ADD-TOKEN-HERE'
+```
+
+- I have created an admin account with Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJ1c2VybmFtZSI6ImFkbWluIn0.ei4kWxPWuJyiIQBok-ojPpwY8CA6NcFw-APrjOuI_rk
+
+have special permissions like:
+Get all users:
+```bash
+curl --location --request GET 'localhost:8080/user' \
+--header 'Authorization: Bearer ADD-ADMIN-TOKEN-HERE'
+```
+Get one user (replace id):
+```bash
+curl --location --request GET 'localhost:8080/user/{id}' \
+--header 'Authorization: Bearer ADD-ADMIN-TOKEN-HERE'
+```
+Upgrade user plan (replace id):
+```bash
+curl --location --request POST 'localhost:8080/plan/upgrade/{id}' \
+--header 'Authorization: Bearer ADD-ADMIN-TOKEN-HERE'
+```
+
+
+
+## How to run unit tests locally?
+
+- unit tests:
+
+```bash
+  make unit_test
+```
+```text
+PASS
+coverage: 72.7% of statements
+ok      lntvan166/togo/internal/usecase 0.003s  coverage: 72.7% of statements
+?       lntvan166/togo/pkg      [no test files]
+?       lntvan166/togo/pkg/mock [no test files]
+```
+
+- integration tests:
+
+```bash
+  make integration_test
+```
+```text
+example result:
+PASS
+ok      lntvan166/togo/internal/integration     (cached)
+```
+
+- all tests:
+
+```bash
+  make test
+```
+
+## What do you love about your solution?
+
+- Learning about clean architecture, I found myself able to easily manage the project
+- Using mock makes it easy to write test cases
+- Easily add new features
+
+
+## What else do you want us to know about however you do not have enough time to complete?
+
+- Write more error unit test
+- Dockerize my application
+- Deploy
+
+## Folder structure
+
+```text
 .
 ├── cmd
 │   └── server
 │       └── main.go
-├── d.md
+├── docker-compose.yml
+├── Dockerfile
 ├── go.mod
 ├── go.sum
 ├── internal
@@ -44,7 +218,8 @@
 │   ├── integration
 │   │   └── integration_test.go
 │   ├── middleware
-│   │   └── middleware.go
+│   │   ├── middleware.go
+│   │   └── middleware_test.go
 │   ├── repository
 │   │   ├── db.go
 │   │   ├── task.go
@@ -66,9 +241,10 @@
 ├── Makefile
 ├── migrations
 │   ├── create_tasks_table.sql
-│   └── create_users_table.sql
+│   ├── create_users_table.sql
+│   └── migrate.sql
 ├── pkg
-│   ├── cryto.go
+│   ├── crypto.go
 │   ├── json.go
 │   ├── jwt.go
 │   ├── mock
