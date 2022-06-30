@@ -30,7 +30,7 @@ func AdminVerified(next http.Handler) http.Handler {
 }
 
 // check if logging or not
-func Logging(next http.Handler) http.Handler {
+func LoggingVerified(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		_, userid, ok := jwt.CheckToken(w, r)
 		if !ok {
@@ -98,7 +98,7 @@ func CheckLimitTaskUserMiddleware(bh *controllers.BaseHandler, next http.Handler
 				http.Error(w, err.Error(), http.StatusFailedDependency)
 				return
 			}
-			http.Error(w, "The limit of today is full or error occur during check limit", http.StatusFailedDependency)
+			http.Error(w, "The limit of today is full", http.StatusFailedDependency)
 			return
 		}
 		next.ServeHTTP(w, r)

@@ -16,12 +16,12 @@ func (bh *BaseHandler) ResponseAllUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	users, err := bh.BaseCtrl.GetAllUser()
 	if err != nil {
-		http.Error(w, "get all user failed", http.StatusFailedDependency)
+		http.Error(w, "get all user failed, err: "+err.Error(), http.StatusFailedDependency)
 		return
 	}
 
 	if err = json.NewEncoder(w).Encode(users); err != nil {
-		http.Error(w, "encode failed", 500)
+		http.Error(w, "encode failed, err: "+err.Error(), 500)
 		return
 	}
 }
@@ -36,7 +36,7 @@ func (bh *BaseHandler) ResponseOneUser(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(user); err != nil {
-		http.Error(w, "encode failed", http.StatusFailedDependency)
+		http.Error(w, "encode failed, err:" + err.Error(), http.StatusFailedDependency)
 		return
 	}
 }
@@ -45,7 +45,7 @@ func (bh *BaseHandler) ResponseOneUser(w http.ResponseWriter, r *http.Request) {
 func (bh *BaseHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var user models.NewUser
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		http.Error(w, "decode failed", http.StatusFailedDependency)
+		http.Error(w, "decode failed, err: "+err.Error(), http.StatusFailedDependency)
 		return
 	}
 
@@ -75,11 +75,11 @@ func (bh *BaseHandler) DeleteFromUser(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println("Asdfas")
 	if err := bh.BaseCtrl.DeleteAllTaskFromUser(id); err != nil {
-		http.Error(w, "delete all task of user failed", http.StatusFailedDependency)
+		http.Error(w, "delete all task of user failed, err: " +err.Error() , http.StatusFailedDependency)
 		return
 	}
 	if err := bh.BaseCtrl.DeleteUser(id); err != nil {
-		http.Error(w, "delete user failed", http.StatusFailedDependency)
+		http.Error(w, "delete user failed, err: "+err.Error(), http.StatusFailedDependency)
 		return
 	}
 	w.Write([]byte("message: delete success"))

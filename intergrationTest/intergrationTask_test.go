@@ -27,6 +27,7 @@ func TestGetAllTasksHandle(t *testing.T) {
 	}
 	dbConn := models.Connect(os.Getenv("DB_URI"))
 	bh := controllers.NewBaseHandler(dbConn)
+	defer dbConn.DB.Close()
 
 	var tasks []models.NewTask
 	tasks = append(tasks, models.RandomNewTask(), models.RandomNewTask())
@@ -47,7 +48,7 @@ func TestGetAllTasksHandle(t *testing.T) {
 	context.Set(req, "userid", AdminID)
 
 	r := mux.NewRouter()
-	r.Use(middlewares.Logging)
+	r.Use(middlewares.LoggingVerified)
 	r.HandleFunc("/tasks", bh.ResponseAllTask).Methods("GET")
 	r.ServeHTTP(w, req)
 
@@ -86,6 +87,7 @@ func TestGetOneTaskHandle(t *testing.T) {
 	}
 	dbConn := models.Connect(os.Getenv("DB_URI"))
 	bh := controllers.NewBaseHandler(dbConn)
+	defer dbConn.DB.Close()
 
 	task := models.RandomNewTask()
 	task.UserId = AdminID
@@ -102,7 +104,7 @@ func TestGetOneTaskHandle(t *testing.T) {
 	context.Set(req, "id", tasks[len(tasks)-1].Id)
 
 	r := mux.NewRouter()
-	r.Use(middlewares.Logging, middlewares.MiddlewareID)
+	r.Use(middlewares.LoggingVerified, middlewares.MiddlewareID)
 	r.HandleFunc("/tasks/{id}", bh.ResponseOneTask).Methods("GET")
 	r.ServeHTTP(w, req)
 
@@ -130,6 +132,7 @@ func TestDeleteTaskHandle(t *testing.T) {
 	}
 	dbConn := models.Connect(os.Getenv("DB_URI"))
 	bh := controllers.NewBaseHandler(dbConn)
+	defer dbConn.DB.Close()
 
 	task := models.RandomNewTask()
 	task.UserId = AdminID
@@ -177,6 +180,7 @@ func TestUpdateTaskHandle(t *testing.T) {
 	}
 	dbConn := models.Connect(os.Getenv("DB_URI"))
 	bh := controllers.NewBaseHandler(dbConn)
+	defer dbConn.DB.Close()
 
 	task := models.RandomNewTask()
 	tasks, err := bh.BaseCtrl.GetAllTasks(AdminID)
@@ -228,6 +232,7 @@ func TestCreateTaskHandle(t *testing.T) {
 	}
 	dbConn := models.Connect(os.Getenv("DB_URI"))
 	bh := controllers.NewBaseHandler(dbConn)
+	defer dbConn.DB.Close()
 
 	w := httptest.NewRecorder()
 	req, err := http.NewRequest("POST", "/tasks", nil)
@@ -247,7 +252,7 @@ func TestCreateTaskHandle(t *testing.T) {
 	req.Body = ioutil.NopCloser(bytes.NewBuffer(newRequestBody))
 
 	r := mux.NewRouter()
-	r.Use(middlewares.Logging)
+	r.Use(middlewares.LoggingVerified)
 	r.HandleFunc("/tasks", bh.CreateTask).Methods("POST")
 	r.ServeHTTP(w, req)
 

@@ -46,13 +46,13 @@ func (h *BaseHandler) Register(w http.ResponseWriter, r *http.Request) {
 		user1.LimitTask = 0
 	}
 	if err := h.BaseCtrl.InsertUser(user1); err != nil { // insert new user to database
-		http.Error(w, "insert user failed.", http.StatusBadRequest)
+		http.Error(w, "insert user failed, err: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(user1); err != nil { // response message and token back to view
-		http.Error(w, "encode failed.", http.StatusCreated)
+		http.Error(w, "encode failed, err: "+err.Error(), http.StatusCreated)
 		return
 	}
 }
@@ -73,12 +73,12 @@ func (h *BaseHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := models.CheckPasswordHash(user1.Password, user.Password); err != nil { // check password correct or not
-		http.Error(w, "password incorrect, err:"+err.Error(), http.StatusUnauthorized)
+		http.Error(w, "password incorrect, err: "+err.Error(), http.StatusUnauthorized)
 		return
 	}
-	token, err := jwt.Create(w, user.Username, int(user1.Id)) // Create token
+	token, err := jwt.Create(user.Username, int(user1.Id)) // Create token
 	if err != nil {
-		http.Error(w, "internal server error", 500)
+		http.Error(w, "internal server error, err: "+err.Error(), 500)
 		return
 	}
 
@@ -89,6 +89,6 @@ func (h *BaseHandler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = json.NewEncoder(w).Encode(resToken); err != nil { // response token back to client
-		http.Error(w, "encode failed", http.StatusFailedDependency)
+		http.Error(w, "encode failed, err: " + err.Error(), http.StatusFailedDependency)
 	}
 }

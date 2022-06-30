@@ -8,12 +8,12 @@ import (
 
 func taskRouter(r *mux.Router, bh *controllers.BaseHandler) {
 	taskRouting := r.PathPrefix("/tasks").Subrouter()
-	taskRouting.Use(middlewares.Logging) // only logging can check task
+	taskRouting.Use(middlewares.LoggingVerified) // only logging can check task
 	taskRouting.HandleFunc("", bh.ResponseAllTask).Methods("GET")
 	taskRouting.HandleFunc("", middlewares.CheckLimitTaskUserMiddleware(bh, bh.CreateTask)).Methods("POST")
 
 	taskRoutingid := r.PathPrefix("/tasks/{id}").Subrouter()
-	taskRoutingid.Use(middlewares.Logging, middlewares.MiddlewareID) // only logging and ID valid can check task
+	taskRoutingid.Use(middlewares.LoggingVerified, middlewares.MiddlewareID) // only logging and ID valid can check task
 	taskRoutingid.HandleFunc("", bh.DeleteFromTask).Methods("DELETE")
 	taskRoutingid.HandleFunc("", bh.ResponseOneTask).Methods("GET")
 	taskRoutingid.HandleFunc("", bh.UpdateToTask).Methods("PUT")

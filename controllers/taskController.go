@@ -25,7 +25,7 @@ func (bh *BaseHandler) ResponseAllTask(w http.ResponseWriter, r *http.Request) {
 	// tasks = ChangeStatusAllTasksAfterDay(tasks)
 	w.Header().Set("Content-Type", "application/json")
 	if err = json.NewEncoder(w).Encode(tasks); err != nil {
-		http.Error(w, "encode tasks failed", 500)
+		http.Error(w, "encode tasks failed, err: "+err.Error(), 500)
 		return
 	}
 }
@@ -44,7 +44,7 @@ func (bh *BaseHandler) ResponseOneTask(w http.ResponseWriter, r *http.Request) {
 	// task = ChangeStatusOneTaskAfterDay(task)
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(task); err != nil {
-		http.Error(w, "encode task failed", http.StatusFailedDependency)
+		http.Error(w, "encode task failed, err: "+err.Error(), http.StatusFailedDependency)
 		return
 	}
 }

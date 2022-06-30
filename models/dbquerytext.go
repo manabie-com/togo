@@ -1,5 +1,8 @@
 package models
 
+// All query text use for a whole project to change database
+
+
 const ( // query for task
 	QueryAllTaskText  = "SELECT * FROM tasks WHERE userid = $1"
 	FindTaskByIDText  = "SELECT * FROM tasks WHERE id = $1 AND userid = $2"

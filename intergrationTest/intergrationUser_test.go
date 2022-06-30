@@ -32,6 +32,7 @@ func TestGetAllUsersHandle(t *testing.T) {
 	}
 	dbConn := models.Connect(os.Getenv("DB_URI"))
 	bh := controllers.NewBaseHandler(dbConn)
+	defer dbConn.DB.Close()
 
 	var users []models.NewUser
 	users = append(users, models.RandomNewUser(), models.RandomNewUser())
@@ -91,6 +92,7 @@ func TestGetOneUserHandle(t *testing.T) {
 	}
 	dbConn := models.Connect(os.Getenv("DB_URI"))
 	bh := controllers.NewBaseHandler(dbConn)
+	defer dbConn.DB.Close()
 
 	w := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "/users/1", nil)
@@ -128,6 +130,7 @@ func TestDeleteUserHandle(t *testing.T) {
 	}
 	dbConn := models.Connect(os.Getenv("DB_URI"))
 	bh := controllers.NewBaseHandler(dbConn)
+	defer dbConn.DB.Close()
 
 	user := models.RandomNewUser()
 	bh.BaseCtrl.InsertUser(user)
@@ -171,6 +174,7 @@ func TestUpdateUserHandle(t *testing.T) {
 	}
 	dbConn := models.Connect(os.Getenv("DB_URI"))
 	bh := controllers.NewBaseHandler(dbConn)
+	defer dbConn.DB.Close()
 
 	user := models.RandomNewUser()
 	users, err := bh.BaseCtrl.GetAllUser()
@@ -220,6 +224,7 @@ func TestCreateUserHandle(t *testing.T) {
 	}
 	dbConn := models.Connect(os.Getenv("DB_URI"))
 	bh := controllers.NewBaseHandler(dbConn)
+	defer dbConn.DB.Close()
 
 	w := httptest.NewRecorder()
 	req, err := http.NewRequest("POST", "/users", nil)

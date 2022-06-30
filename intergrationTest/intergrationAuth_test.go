@@ -24,6 +24,7 @@ func TestRegisterHandle(t *testing.T) {
 	}
 	dbConn := models.Connect(os.Getenv("DB_URI"))
 	bh := controllers.NewBaseHandler(dbConn)
+	defer dbConn.DB.Close()
 
 	w := httptest.NewRecorder()
 	req, err := http.NewRequest("POST", "/register", nil)
@@ -55,7 +56,6 @@ func TestRegisterHandle(t *testing.T) {
 	}
 
 	bh.BaseCtrl.DeleteUser(int(users[len(users)-1].Id))
-
 	if strings.Compare(returnedUsers.Username, users[len(users)-1].Username) != 0 {
 		t.Fatal("Get return wrong user expected: " + users[len(users)-1].Username + ", got: " + returnedUsers.Username)
 	}
@@ -68,6 +68,7 @@ func TestLoginHandle(t *testing.T) {
 	}
 	dbConn := models.Connect(os.Getenv("DB_URI"))
 	bh := controllers.NewBaseHandler(dbConn)
+	defer dbConn.DB.Close()
 
 	w := httptest.NewRecorder()
 	req, err := http.NewRequest("POST", "/register", nil)

@@ -29,7 +29,7 @@ type httptestHandler struct {
 }
 
 // test middleware Logging
-func TestLogging(t *testing.T) {
+func TestLoggingVerified(t *testing.T) {
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "localhost:8000/users/", nil)
 	req.Header.Add("token", Token) // add token to header
@@ -38,7 +38,7 @@ func TestLogging(t *testing.T) {
 		r: req,
 	}
 
-	logging := Logging(Handler)
+	logging := LoggingVerified(Handler)
 	logging.ServeHTTP(Handler.w, Handler.r)
 
 	userid := context.Get(Handler.r, "userid")
@@ -123,5 +123,5 @@ func TestValidUsernameAndHashPassword(t *testing.T) {
 	assert.Equal(t, bodyJSON.LimitTask, newUser.LimitTask)
 }
 
-func (l httptestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (l httptestHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) { // function to implement interface
 }

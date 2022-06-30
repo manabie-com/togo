@@ -13,7 +13,7 @@ func userRouter(r *mux.Router, bh *controllers.BaseHandler) {
 	UserRouting.HandleFunc("", middlewares.ValidUsernameAndHashPassword(bh, bh.CreateUser)).Methods("POST")
 	
 	userRoutingGetme := r.PathPrefix("/users/info").Subrouter()
-	userRoutingGetme.Use(middlewares.Logging)
+	userRoutingGetme.Use(middlewares.LoggingVerified)
 	userRoutingGetme.HandleFunc("", bh.ResponseOneUser).Methods("GET")
 
 	userRoutingid := r.PathPrefix("/users/{id}").Subrouter()
