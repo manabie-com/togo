@@ -12,7 +12,7 @@ import (
 	"github.com/huynhhuuloc129/todo/models"
 )
 
-// Get all user from database
+// Get all task from database
 func (bh *BaseHandler) ResponseAllTask(w http.ResponseWriter, r *http.Request) {
 	userid, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "userid"))) // get userid from login
 
@@ -30,7 +30,7 @@ func (bh *BaseHandler) ResponseAllTask(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Get one user from database
+// Get one task from database
 func (bh *BaseHandler) ResponseOneTask(w http.ResponseWriter, r *http.Request) {
 	userid, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "userid"))) // get userid from login
 	id, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "id")))         // get id from url
@@ -49,7 +49,7 @@ func (bh *BaseHandler) ResponseOneTask(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Create a new user
+// Create a new task
 func (bh *BaseHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	userid, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "userid"))) // get userid from login
 
@@ -81,7 +81,7 @@ func (bh *BaseHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Delete one user from database
+// Delete one task from database
 func (bh *BaseHandler) DeleteFromTask(w http.ResponseWriter, r *http.Request) {
 	userid, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "userid"))) // get userid from login
 	id, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "id")))         // get id from url
@@ -98,7 +98,7 @@ func (bh *BaseHandler) DeleteFromTask(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("message: delete success"))
 }
 
-// Update one user already exist in database
+// Update one task already exist in database
 func (bh *BaseHandler) UpdateToTask(w http.ResponseWriter, r *http.Request) {
 	userid, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "userid"))) // get userid from login
 	id, _ := strconv.Atoi(fmt.Sprintf("%v", context.Get(r, "id")))         // get id from url

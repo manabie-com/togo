@@ -21,7 +21,7 @@ func NewBaseHandler(BC *models.DbConn) *BaseHandler {
 }
 
 //response token
-type responseToken struct {
+type ResponseToken struct {
 	Message string
 	Token   string
 }
@@ -83,7 +83,7 @@ func (h *BaseHandler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	resToken := responseToken{
+	resToken := ResponseToken{
 		Message: "login success",
 		Token:   token,
 	}

@@ -81,7 +81,7 @@ func TestLogin(t *testing.T) {
 		t.Errorf("Can't read body response")
 	}
 
-	var resToken responseToken
+	var resToken ResponseToken
 	err = json.Unmarshal(respBody, &resToken)
 	if err != nil {
 		t.Errorf(err.Error())

@@ -47,12 +47,18 @@ func (Conn *DbConn) InsertUser(user NewUser) error {
 
 // delete 1 user
 func (Conn *DbConn) DeleteUser(id int) error {
+	if id == 1 {
+		return errors.New("can't delete admin")
+	}
 	_, err := Conn.DB.Exec(DeleteUserText, id)
 	return err
 }
 
 // Update one user already exist in database
 func (Conn *DbConn) UpdateUser(newUser NewUser, id int) error {
+	if id ==1 {
+		return errors.New("can't update admin account")
+	}
 	if !CheckUserInput(newUser) {
 		return errors.New("user input invalid")
 	}

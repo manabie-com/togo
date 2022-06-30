@@ -19,7 +19,7 @@ func TestGetAllTask(t *testing.T) {
 		rows.AddRow(task.Id, task.Content, task.Status, task.Time, task.TimeDone, 1)
 	}
 
-	query := regexp.QuoteMeta(`SELECT * FROM tasks WHERE userid = $1`)
+	query := regexp.QuoteMeta(QueryAllTaskText)
 	mock.ExpectQuery(query).WithArgs(1).WillReturnRows(rows)
 
 	tasks, err := h.BaseCtrl.GetAllTasks(1)
@@ -35,7 +35,7 @@ func TestFindTaskById(t *testing.T) {
 	task := RandomTask()
 	rows := sqlmock.NewRows([]string{"id", "content", "status", "time", "timedone", "userid"}).AddRow(task.Id, task.Content, task.Status, task.Time, task.TimeDone, task.UserId)
 
-	query := regexp.QuoteMeta(`SELECT * FROM tasks WHERE id = $1 AND userid = $2`)
+	query := regexp.QuoteMeta(FindTaskByIDText)
 	mock.ExpectQuery(query).WithArgs(task.Id, task.UserId).WillReturnRows(rows)
 	newTask, valid := h.BaseCtrl.FindTaskByID(int(task.Id), task.UserId)
 
@@ -49,7 +49,7 @@ func TestFindTaskById(t *testing.T) {
 func TestDeleteTask(t *testing.T) {
 	mock, h := CreateMockingDB()
 	task := RandomTask()
-	query := regexp.QuoteMeta(`DELETE FROM tasks WHERE id = $1 AND userid = $2`)
+	query := regexp.QuoteMeta(DeleteTaskText)
 	mock.ExpectExec(query).WithArgs(task.Id, task.UserId).WillReturnResult(sqlmock.NewResult(0, 1))
 
 	err := h.BaseCtrl.DeleteTask(task.Id, task.UserId)
@@ -67,7 +67,7 @@ func TestDeleteAllTaskFromUser(t *testing.T) {
 		rows.AddRow(task.Id, task.Content, task.Status, task.Time, task.TimeDone, userid)
 	}
 
-	query := regexp.QuoteMeta(`DELETE FROM tasks WHERE userid = $1`)
+	query := regexp.QuoteMeta(DeleteAllTaskText)
 	mock.ExpectExec(query).WithArgs(userid).WillReturnResult(sqlmock.NewResult(0, 1))
 
 	err := h.BaseCtrl.DeleteAllTaskFromUser(int(userid))
@@ -78,10 +78,8 @@ func TestDeleteAllTaskFromUser(t *testing.T) {
 func TestInsertTask(t *testing.T) {
 	mock, h := CreateMockingDB()
 
-	query := regexp.QuoteMeta(`INSERT INTO tasks(content, status,time, timedone, userid) VALUES ($1, $2, $3, $4, $5)`)
-
 	newTask := RandomNewTask()
-	mock.ExpectExec(query).WithArgs(newTask.Content, newTask.Status, newTask.Time, newTask.TimeDone, newTask.UserId).WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectExec(regexp.QuoteMeta(InsertTaskText)).WithArgs(newTask.Content, newTask.Status, newTask.Time, newTask.TimeDone, newTask.UserId).WillReturnResult(sqlmock.NewResult(0, 1))
 
 	err := h.BaseCtrl.InsertTask(newTask)
 	assert.NoError(t, err)
@@ -91,7 +89,7 @@ func TestInsertTask(t *testing.T) {
 func TestUpdateTask(t *testing.T) {
 	mock, h := CreateMockingDB()
 
-	query := regexp.QuoteMeta(`UPDATE tasks SET content =COALESCE($1, content), status = COALESCE($2, status), timedone = COALESCE($3, timedone) WHERE id = $4 AND userid = $5`)
+	query := regexp.QuoteMeta(UpdateTaskText)
 
 	task := RandomTask()
 	mock.ExpectExec(query).WithArgs(task.Content, task.Status, task.TimeDone, task.Id, task.UserId).WillReturnResult(sqlmock.NewResult(0, 1))
@@ -114,11 +112,8 @@ func TestCheckLimitTaskUser(t *testing.T) {
 		rows2.AddRow(task.Id, task.Content, task.Status, task.Time, task.TimeDone, user.Id)
 	}
 
-	queryUser := regexp.QuoteMeta(`SELECT * FROM users WHERE id = $1`)
-	queryAllTask := regexp.QuoteMeta(`SELECT * FROM tasks WHERE userid = $1`)
-
-	mock.ExpectQuery(queryUser).WithArgs(user.Id).WillReturnRows(rows1)
-	mock.ExpectQuery(queryAllTask).WithArgs(user.Id).WillReturnRows(rows2)
+	mock.ExpectQuery(regexp.QuoteMeta(FindUserByIDText)).WithArgs(user.Id).WillReturnRows(rows1)
+	mock.ExpectQuery(regexp.QuoteMeta(QueryAllTaskText)).WithArgs(user.Id).WillReturnRows(rows2)
 
 	valid, err := h.BaseCtrl.CheckLimitTaskUser(int(user.Id))
 
