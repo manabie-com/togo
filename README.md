@@ -25,12 +25,14 @@
   CONNECT_STR=postgres://<your_username>:<your_password>@localhost/<your_db_name>?sslmode=disable
   SECRET_TOKEN=<your_secret_token>
 	```
-- go run main.go
 
+  ```bash
+  go run main.go
+	```
+  OR
 	```bash
-  OR 
+  go run github.com/manabie-com/togo
   ```
-- go run github.com/manabie-com/togo
 
 ## Sample “curl” Command:** [here](https://documenter.getpostman.com/view/15522883/UzBvHPBC)
 
