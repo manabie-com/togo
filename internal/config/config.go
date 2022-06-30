@@ -27,16 +27,24 @@ var (
 	VIP_LIMIT  int
 )
 
-func Load() error {
+func Load(method string) error {
 	var err error
-	projectDirName := "togo"
-	projectName := regexp.MustCompile(`^(.*` + projectDirName + `)`)
-	currentWorkDirectory, _ := os.Getwd()
-	rootPath := projectName.Find([]byte(currentWorkDirectory))
 
-	err = godotenv.Load(string(rootPath) + `/.env`)
-	if err != nil {
-		log.Fatal("Error loading .env file")
+	if method == "testing" {
+		projectDirName := "togo"
+		projectName := regexp.MustCompile(`^(.*` + projectDirName + `)`)
+		currentWorkDirectory, _ := os.Getwd()
+		rootPath := projectName.Find([]byte(currentWorkDirectory))
+
+		err = godotenv.Load(string(rootPath) + `/.env`)
+		if err != nil {
+			log.Fatal("Error loading .env file")
+		}
+	} else {
+		err = godotenv.Load()
+		if err != nil {
+			log.Fatal("Error loading .env file")
+		}
 	}
 	DATABASE_URL = os.Getenv("DATABASE_URL")
 	PORT = os.Getenv("PORT")

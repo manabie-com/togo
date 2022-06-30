@@ -15,7 +15,7 @@ import (
 
 func main() {
 
-	config.Load()
+	config.Load(".")
 
 	db := repository.Connect()
 	defer db.Close()

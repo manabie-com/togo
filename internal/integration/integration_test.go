@@ -32,7 +32,7 @@ const (
 var Handler *delivery.Handler
 
 func setupIntegrationTest() *delivery.Handler {
-	config.Load()
+	config.Load("testing")
 
 	db := repository.Connect()
 
@@ -212,7 +212,7 @@ func TestGetTaskIntegration(t *testing.T) {
 	handler := setupIntegrationTest()
 	defer teardownIntegrationTest()
 
-	r, err := http.NewRequest("GET", HOST+"/task/10", nil)
+	r, err := http.NewRequest("GET", HOST+"/task/1", nil)
 	assert.NoError(t, err)
 
 	r.Header.Set("Authorization", "Bearer "+ADMIN_TOKEN)
@@ -290,7 +290,7 @@ func TestCompleteTaskIntegration(t *testing.T) {
 	handler := setupIntegrationTest()
 	defer teardownIntegrationTest()
 
-	r, err := http.NewRequest("POST", HOST+"/task/10", nil)
+	r, err := http.NewRequest("POST", HOST+"/task/1", nil)
 	assert.NoError(t, err)
 
 	r.Header.Set("Authorization", "Bearer "+ADMIN_TOKEN)
@@ -323,9 +323,9 @@ func TestDeleteTaskIntegration(t *testing.T) {
 	handler := setupIntegrationTest()
 	defer teardownIntegrationTest()
 
-	task, _ := handler.TaskDelivery.TaskUsecase.GetTaskByID(4, ADMIN) // prepare for rollback
+	task, _ := handler.TaskDelivery.TaskUsecase.GetTaskByID(1, ADMIN) // prepare for rollback
 
-	r, err := http.NewRequest("DELETE", HOST+"/task/4", nil)
+	r, err := http.NewRequest("DELETE", HOST+"/task/1", nil)
 	assert.NoError(t, err)
 
 	r.Header.Set("Authorization", "Bearer "+ADMIN_TOKEN)
@@ -394,7 +394,7 @@ func TestUpgradePlanIntegration(t *testing.T) {
 	handler := setupIntegrationTest()
 	defer teardownIntegrationTest()
 
-	r, err := http.NewRequest("POST", HOST+"/plan/upgrade/6", strings.NewReader(`
+	r, err := http.NewRequest("POST", HOST+"/plan/upgrade/2", strings.NewReader(`
 	{
 		"plan": "premium"
 	}`))
@@ -421,5 +421,5 @@ func TestUpgradePlanIntegration(t *testing.T) {
 
 	assert.NotEmpty(t, body)
 
-	handler.UserDelivery.UserUsecase.UpgradePlan(6, "free", 10) // downgrade plan
+	handler.UserDelivery.UserUsecase.UpgradePlan(2, "free", 10) // downgrade plan
 }
