@@ -167,6 +167,8 @@ Request JSON:
 	"password": "example",
 }
 ```
+
+More detail:
 I will this response which have token for you. You can easily set this token in `Cookie` with key `token` if you call API with `curl`.
 
 3. You can create task with endpoint `POST /tasks`. First of all, you must login if you want to create task. I have create token and set it in `Cookie`. This token have the information of `user` such as:
