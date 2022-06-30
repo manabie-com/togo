@@ -52,6 +52,6 @@ func Login(service handlers.MainUseCase) gin.HandlerFunc {
 		//Set Cookie
 		ctx.SetCookie(constants.CookieTokenKey, utils.SafeString(token), 60*60*24, "/", utils.Env.Host, true, true)
 
-		responses.ResponseForOK(ctx, http.StatusOK, nil, "Success")
+		responses.ResponseForOK(ctx, http.StatusOK, utils.SafeString(token), "Success")
 	}
 }
