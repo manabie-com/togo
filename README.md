@@ -17,23 +17,23 @@
 	```
 - Configuration Server
 
-	create `.env` file
+    create `.env` file
 	
-	add your secret enviroment variables below
+    and add your secret enviroment variables below
     ```
   PORT=3000
   CONNECT_STR=postgres://<your_username>:<your_password>@localhost/<your_db_name>?sslmode=disable
   SECRET_TOKEN=<your_secret_token>
 	```
-
+- Run Server
   ```bash
   go run main.go
 	```
-  OR
+    OR
 	```bash
   go run github.com/manabie-com/togo
   ```
-
+- Go to Sample 'cur' in below document 
 ## Sample “curl” Command:** [here](https://documenter.getpostman.com/view/15522883/UzBvHPBC)
 
 ## How to run your unit tests locally?
