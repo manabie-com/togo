@@ -3,7 +3,6 @@ package config
 import (
 	"log"
 	"os"
-	"regexp"
 	"strconv"
 
 	"github.com/joho/godotenv"
@@ -29,20 +28,13 @@ var (
 
 func Load() error {
 	var err error
-	projectDirName := "togo"
-	projectName := regexp.MustCompile(`^(.*` + projectDirName + `)`)
-	currentWorkDirectory, _ := os.Getwd()
-	rootPath := projectName.Find([]byte(currentWorkDirectory))
 
-	err = godotenv.Load(string(rootPath) + `/.env`)
-
+	err = godotenv.Load()
 	if err != nil {
-		log.Fatalf("Error loading .env file")
+		log.Fatal("Error loading .env file")
 	}
-
-	HOST = os.Getenv("HOST")
+	DATABASE_URL = os.Getenv("DATABASE_URL")
 	PORT = os.Getenv("PORT")
-
 	ADMIN = os.Getenv("ADMIN")
 
 	DATABASE_URL = os.Getenv("DATABASE_URL")
@@ -61,6 +53,8 @@ func Load() error {
 	if err != nil {
 		return err
 	}
+
+	HOST = os.Getenv("LOCALHOST")
 
 	return nil
 }

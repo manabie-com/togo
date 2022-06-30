@@ -26,13 +26,12 @@ const (
 	PORT         string = ""
 	FREE_LIMIT   int    = 0
 	VIP_LIMIT    int    = 0
-	HOST         string = "http://localhost:8080"
+	LOCALHOST    string = "http://localhost:8080"
 )
 
 var Handler *delivery.Handler
 
 func setupIntegrationTest() *delivery.Handler {
-	config.Load()
 
 	db := repository.Connect()
 
@@ -40,6 +39,7 @@ func setupIntegrationTest() *delivery.Handler {
 }
 
 func teardownIntegrationTest() {
+
 }
 
 func TestRegisterIntegration(t *testing.T) {
@@ -50,7 +50,7 @@ func TestRegisterIntegration(t *testing.T) {
 	handler := setupIntegrationTest()
 	defer teardownIntegrationTest()
 
-	r, err := http.NewRequest("POST", HOST+"/auth/register", strings.NewReader(`
+	r, err := http.NewRequest("POST", LOCALHOST+"/auth/register", strings.NewReader(`
 	{
 		"username": "test_integration",
 		"password":"admin"
@@ -76,7 +76,7 @@ func TestLoginIntegration(t *testing.T) {
 	handler := setupIntegrationTest()
 	defer teardownIntegrationTest()
 
-	r, err := http.NewRequest("POST", HOST+"/auth/login", strings.NewReader(`
+	r, err := http.NewRequest("POST", LOCALHOST+"/auth/login", strings.NewReader(`
 	{
 		"username": "admin",
 		"password":"admin"
@@ -113,7 +113,7 @@ func TestGetAllUsers(t *testing.T) {
 	handler := setupIntegrationTest()
 	defer teardownIntegrationTest()
 
-	r, err := http.NewRequest("GET", HOST+"/user", nil)
+	r, err := http.NewRequest("GET", LOCALHOST+"/user", nil)
 	assert.NoError(t, err)
 
 	r.Header.Set("Authorization", "Bearer "+ADMIN_TOKEN)
@@ -146,7 +146,7 @@ func TestGetUserIntegration(t *testing.T) {
 	handler := setupIntegrationTest()
 	defer teardownIntegrationTest()
 
-	r, err := http.NewRequest("GET", HOST+"/user/1", nil)
+	r, err := http.NewRequest("GET", LOCALHOST+"/user/1", nil)
 	assert.NoError(t, err)
 
 	r.Header.Set("Authorization", "Bearer "+ADMIN_TOKEN)
@@ -179,7 +179,7 @@ func TestGetAllTasksIntegration(t *testing.T) {
 	handler := setupIntegrationTest()
 	defer teardownIntegrationTest()
 
-	r, err := http.NewRequest("GET", HOST+"/task", nil)
+	r, err := http.NewRequest("GET", LOCALHOST+"/task", nil)
 	assert.NoError(t, err)
 
 	r.Header.Set("Authorization", "Bearer "+ADMIN_TOKEN)
@@ -212,7 +212,7 @@ func TestGetTaskIntegration(t *testing.T) {
 	handler := setupIntegrationTest()
 	defer teardownIntegrationTest()
 
-	r, err := http.NewRequest("GET", HOST+"/task/10", nil)
+	r, err := http.NewRequest("GET", LOCALHOST+"/task/10", nil)
 	assert.NoError(t, err)
 
 	r.Header.Set("Authorization", "Bearer "+ADMIN_TOKEN)
@@ -245,7 +245,7 @@ func TestCreateTaskIntegration(t *testing.T) {
 	handler := setupIntegrationTest()
 	defer teardownIntegrationTest()
 
-	r, err := http.NewRequest("POST", HOST+"/task", strings.NewReader(`
+	r, err := http.NewRequest("POST", LOCALHOST+"/task", strings.NewReader(`
 	{
 		"title": "test_integration",
 		"description": "test_integration",
@@ -290,7 +290,7 @@ func TestCompleteTaskIntegration(t *testing.T) {
 	handler := setupIntegrationTest()
 	defer teardownIntegrationTest()
 
-	r, err := http.NewRequest("POST", HOST+"/task/10", nil)
+	r, err := http.NewRequest("POST", LOCALHOST+"/task/10", nil)
 	assert.NoError(t, err)
 
 	r.Header.Set("Authorization", "Bearer "+ADMIN_TOKEN)
@@ -325,7 +325,7 @@ func TestDeleteTaskIntegration(t *testing.T) {
 
 	task, _ := handler.TaskDelivery.TaskUsecase.GetTaskByID(4, ADMIN) // prepare for rollback
 
-	r, err := http.NewRequest("DELETE", HOST+"/task/4", nil)
+	r, err := http.NewRequest("DELETE", LOCALHOST+"/task/4", nil)
 	assert.NoError(t, err)
 
 	r.Header.Set("Authorization", "Bearer "+ADMIN_TOKEN)
@@ -361,7 +361,7 @@ func TestGetPlanIntegration(t *testing.T) {
 	handler := setupIntegrationTest()
 	defer teardownIntegrationTest()
 
-	r, err := http.NewRequest("GET", HOST+"/plan", nil)
+	r, err := http.NewRequest("GET", LOCALHOST+"/plan", nil)
 	assert.NoError(t, err)
 
 	r.Header.Set("Authorization", "Bearer "+ADMIN_TOKEN)
@@ -394,7 +394,7 @@ func TestUpgradePlanIntegration(t *testing.T) {
 	handler := setupIntegrationTest()
 	defer teardownIntegrationTest()
 
-	r, err := http.NewRequest("POST", HOST+"/plan/upgrade/6", strings.NewReader(`
+	r, err := http.NewRequest("POST", LOCALHOST+"/plan/upgrade/6", strings.NewReader(`
 	{
 		"plan": "premium"
 	}`))
