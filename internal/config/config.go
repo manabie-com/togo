@@ -16,12 +16,12 @@ var (
 
 	ADMIN string
 
-	DATABASE_URL string
-	DB_HOST      string
-	DB_PORT      string
-	DB_USER      string
-	DB_PASSWORD  string
-	DB_NAME      string
+	DATABASE_URL      string
+	DATABASE_HOST     string
+	DATABASE_PORT     string
+	POSTGRES_USER     string
+	POSTGRES_PASSWORD string
+	DB_NAME           string
 
 	FREE_LIMIT int
 	VIP_LIMIT  int
@@ -46,11 +46,11 @@ func Load() error {
 	ADMIN = os.Getenv("ADMIN")
 
 	DATABASE_URL = os.Getenv("DATABASE_URL")
-	DB_HOST = os.Getenv("DB_HOST")
-	DB_PORT = os.Getenv("DB_PORT")
-	DB_USER = os.Getenv("DB_USER")
-	DB_PASSWORD = os.Getenv("DB_PASSWORD")
-	DB_NAME = os.Getenv("DB_NAME")
+	DATABASE_HOST = os.Getenv("DATABASE_HOST")
+	DATABASE_PORT = os.Getenv("DATABASE_PORT")
+	POSTGRES_USER = os.Getenv("POSTGRES_USER")
+	POSTGRES_PASSWORD = os.Getenv("POSTGRES_PASSWORD")
+	DB_NAME = os.Getenv("POSTGRES_DB")
 
 	FREE_LIMIT, err = strconv.Atoi(os.Getenv("FREE_LIMIT"))
 	if err != nil {

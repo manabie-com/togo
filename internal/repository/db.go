@@ -7,10 +7,10 @@ import (
 )
 
 func GetPostgresConnectionString() string {
-	host := config.DB_HOST
-	port := config.DB_PORT
-	user := config.DB_USER
-	password := config.DB_PASSWORD
+	host := config.DATABASE_HOST
+	port := config.DATABASE_PORT
+	user := config.POSTGRES_USER
+	password := config.POSTGRES_PASSWORD
 	dbname := config.DB_NAME
 
 	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+
