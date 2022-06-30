@@ -167,6 +167,7 @@ Request JSON:
 	"password": "example",
 }
 ```
+I will this response which have token for you. You can easily set this token in `Cookie` with key `token` if you call API with `curl`.
 
 3. You can create task with endpoint `POST /tasks`. First of all, you must login if you want to create task. I have create token and set it in `Cookie`. This token have the information of `user` such as:
 `user_id` and `max_task_per_day`. After that, you call API `POST /tasks`, i will parse this token to get data from this token so i need you login. I have validate number task of day if the number task of day is more than `max_task_per_day` of user, you can't create task.
@@ -201,7 +202,7 @@ curl -XPOST -d '{ "username":"manabie", "password":"example" }' 'http://localhos
 ```
 Response:
 ```bash
-{"data":null,"message":"Success","status":200}
+{"data":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTY1NTE4NDcsIm1heF90YXNrX3Blcl9kYXkiOiI1IiwidXNlcl9pZCI6ImZpcnN0VXNlciJ9.qwHLe5Nd1lxUJlHPh3LtJUsX68ML2foMv_yjD4x5VJY","message":"Success","status":200}
 ```
 
 3. Create Task
