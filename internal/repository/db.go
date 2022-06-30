@@ -7,14 +7,13 @@ import (
 )
 
 func GetPostgresConnectionString() string {
-	var (
-		host     = "localhost"
-		port     = 5432
-		user     = "postgres"
-		password = "handsome2022"
-		dbname   = "togo"
-	)
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+	host := config.DB_HOST
+	port := config.DB_PORT
+	user := config.DB_USER
+	password := config.DB_PASSWORD
+	dbname := config.DB_NAME
+
+	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
 	return psqlInfo

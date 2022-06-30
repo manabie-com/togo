@@ -75,7 +75,7 @@ func TestGetAllUsers(t *testing.T) {
 	userDelivery := NewUserDelivery(userUsecase, taskDelivery)
 
 	w := httptest.NewRecorder()
-	r := httptest.NewRequest("GET", LOCALHOST+"/user", nil)
+	r := httptest.NewRequest("GET", HOST+"/user", nil)
 
 	context.Set(r, "username", ADMIN)
 	config.ADMIN = ADMIN
@@ -105,7 +105,7 @@ func TestGetUser(t *testing.T) {
 	userDelivery := NewUserDelivery(userUsecase, taskDelivery)
 
 	w := httptest.NewRecorder()
-	r := httptest.NewRequest("GET", LOCALHOST+"/user/1", nil)
+	r := httptest.NewRequest("GET", HOST+"/user/1", nil)
 
 	vars := map[string]string{
 		"id": "1",
@@ -141,7 +141,7 @@ func TestDeleteUserByID(t *testing.T) {
 	userDelivery := NewUserDelivery(userUsecase, taskDelivery)
 
 	w := httptest.NewRecorder()
-	r := httptest.NewRequest("DELETE", LOCALHOST+"/user/1", nil)
+	r := httptest.NewRequest("DELETE", HOST+"/user/1", nil)
 
 	vars := map[string]string{
 		"id": "1",
