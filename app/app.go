@@ -18,11 +18,12 @@ type App struct {
 }
 
 func (a *App) Init() {
-	if err := godotenv.Load("C:\\Users\\quang\\Desktop\\Project\\Go\\internship\\togo\\.env"); err != nil {
+	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error loading .env file")
 	}
 	connectURL := os.Getenv("CONNECT_STR")
 	db, err := sql.Open("postgres", connectURL)
+
 	if err != nil {
 		log.Fatal(err)
 	}

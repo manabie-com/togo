@@ -34,6 +34,7 @@ func TestSignUp(t *testing.T) {
 
 // Pass ✅
 func TestLogin(t *testing.T) {
+	signup()
 	payload := []byte(`{
 		"email":    "test_user@gmail.com",
 		"password": "123456"
@@ -60,6 +61,7 @@ func TestLogin(t *testing.T) {
 // Pass ✅
 func TestGetMe(t *testing.T) {
 	// get token from test user
+	signup()
 	token := getToken()
 	req, _ := http.NewRequest("GET", "/api/users/me", nil)
 	req.Header.Set("Authorization", token)
@@ -89,6 +91,7 @@ func TestGetMe(t *testing.T) {
 // Pass ✅
 func TestUpdateMe(t *testing.T) {
 	// get token from test user
+	signup()
 	token := getToken()
 	payload := []byte(`{
 		"name": "updated_test_user",
@@ -116,6 +119,7 @@ func TestUpdateMe(t *testing.T) {
 
 // Pass ✅
 func TestDeleteMe(t *testing.T) {
+	signup()
 	token := getToken()
 	payload := []byte(`{
 		"password": "123456"

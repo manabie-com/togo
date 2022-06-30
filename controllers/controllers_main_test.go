@@ -17,9 +17,8 @@ type response struct {
 }
 
 var (
-	a     app.App
-	r     response
-	token string = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOjUyLCJMaW1pdERheVRhc2tzIjoxMH0.PcgDnM8-LY0oyNiSfYRyQVIMryU1TfqWgEgq6geqEXc"
+	a app.App
+	r response
 )
 
 func TestMain(m *testing.M) {
@@ -63,14 +62,6 @@ func rollbackUser() error {
 
 func rollbackTask() error {
 	_, err := a.DB.Exec(`DELETE FROM tasks WHERE user_id = (SELECT users.id FROM users where email = $1)`, "test_user@gmail.com")
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func rollbackPayment(email interface{}) error {
-	_, err := a.DB.Exec(`UPDATE users SET is_payment = $1, limit_day_tasks = $2 WHERE email = $3`, false, 10, email)
 	if err != nil {
 		return err
 	}

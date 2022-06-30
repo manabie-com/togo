@@ -39,6 +39,7 @@ func TestGetTasks(t *testing.T) {
 		Message string
 		Data    []map[string]string
 	}
+	signup()
 	token := getToken()
 	// get user id here
 	req, _ := http.NewRequest("GET", "/api/tasks", nil)
@@ -64,6 +65,7 @@ func TestGetTasks(t *testing.T) {
 
 // Pass ✅
 func TestGetTask(t *testing.T) {
+	signup()
 	token := getToken()
 	id := getIdFromCreatedTask(token)
 	req, _ := http.NewRequest("GET", "/api/tasks/"+id, nil)
@@ -88,6 +90,7 @@ func TestGetTask(t *testing.T) {
 
 // Pass ✅
 func TestEdit(t *testing.T) {
+	signup()
 	token := getToken()
 	id := getIdFromCreatedTask(token)
 	payload := []byte(`{
@@ -113,6 +116,7 @@ func TestEdit(t *testing.T) {
 
 // Pass ✅
 func TestDelete(t *testing.T) {
+	signup()
 	token := getToken()
 	id := getIdFromCreatedTask(token)
 	req, _ := http.NewRequest("DELETE", "/api/tasks/"+id, nil)
@@ -129,6 +133,7 @@ func TestDelete(t *testing.T) {
 		t.Errorf("Expected type of Data to be 'nil' value. Got '%v'", r.Data)
 	}
 	rollbackTask()
+	rollbackUser()
 }
 
 func signup() {

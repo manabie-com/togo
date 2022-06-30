@@ -5,6 +5,7 @@ import (
 	"syscall"
 
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 	"github.com/manabie-com/togo/app"
 )
 
@@ -17,7 +18,7 @@ func main() {
 		port = "8000"
 	}
 	app := &app.App{}
-	defer app.DB.Close()
 	app.Init()
 	app.Run(":" + port)
+	defer app.DB.Close()
 }

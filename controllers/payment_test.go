@@ -8,6 +8,8 @@ import (
 
 // Pass ✅
 func TestPayment(t *testing.T) {
+	signup()
+	token := getToken()
 	req, _ := http.NewRequest("POST", "/api/payments", nil)
 	req.Header.Set("Authorization", token)
 	res := executeRequest(req)
@@ -17,11 +19,11 @@ func TestPayment(t *testing.T) {
 	checkResponseStatus(t, "Success", r.Status)
 	checkResponseMessage(t, "Success upgrade Premium account. Please login again to try new upgrade", r.Message)
 
-	if r.Data["name"] != "testinguser" {
-		t.Errorf("Expected user name is 'testinguser'. Got '%v'", r.Data["name"])
+	if r.Data["name"] != "test_user" {
+		t.Errorf("Expected user name is 'test_user'. Got '%v'", r.Data["name"])
 	}
-	if r.Data["email"] != "testinguser@gmail.com" {
-		t.Errorf("Expected user email is 'testinguser@gmail.com'. Got '%v'", r.Data["email"])
+	if r.Data["email"] != "test_user@gmail.com" {
+		t.Errorf("Expected user email is 'test_user@gmail.com'. Got '%v'", r.Data["email"])
 	}
 	if r.Data["is_payment"] != true {
 		t.Errorf("Expected user is_payment field is 'true'. Got '%v'", r.Data["is_payment"])
@@ -30,5 +32,5 @@ func TestPayment(t *testing.T) {
 		t.Errorf("Expected user limit task field is '20'. Got '%v'", r.Data["limit_day_tasks"])
 	}
 	// rollback before Payments
-	rollbackPayment(r.Data["email"])
+	rollbackUser()
 }

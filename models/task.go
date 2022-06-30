@@ -14,7 +14,7 @@ type Task struct {
 }
 
 func (t *Task) InsertTask(db *sql.DB) error {
-	err := db.QueryRow(`INSERT INTO tasks(name, content, user_id) VALUES($3, $2, $1) RETURNING name, content, created_at`, t.UserId, t.Content, t.Name).Scan(&t.Name, &t.Content, &t.CreatedAt)
+	err := db.QueryRow(`INSERT INTO tasks(name, content, user_id) VALUES($3, $2, $1) RETURNING id, name, content, created_at`, t.UserId, t.Content, t.Name).Scan(&t.ID, &t.Name, &t.Content, &t.CreatedAt)
 	if err != nil {
 		return err
 	}
@@ -53,16 +53,16 @@ func (t *Task) IsLimit(db *sql.DB, todayTasksLimit uint) bool {
 	return tasksLength == todayTasksLimit
 }
 
-func (t *Task) DeleteTaskById(db *sql.DB, id string) error {
-	_, err := db.Exec(`DELETE FROM tasks WHERE id = $1 AND user_id = $2`, id, t.UserId)
+func (t *Task) DeleteTaskById(db *sql.DB) error {
+	_, err := db.Exec(`DELETE FROM tasks WHERE id = $1 AND user_id = $2`, t.ID, t.UserId)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (t *Task) UpdateTaskById(db *sql.DB, id string) error {
-	_, err := db.Exec(`UPDATE tasks SET name = $3 WHERE id = $1 AND user_id = $2 RETURNING name, content, created_at`, id, t.UserId, t.Name)
+func (t *Task) UpdateTaskById(db *sql.DB) error {
+	_, err := db.Exec(`UPDATE tasks SET name = $3 WHERE id = $1 AND user_id = $2 RETURNING name, content, created_at`, t.ID, t.UserId, t.Name)
 	if err != nil {
 		return err
 	}
