@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var LOCALHOST = "http://localhost:8080"
+var HOST = "http://localhost:8080"
 
 func TestRegister(t *testing.T) {
 	ctrl := gomock.NewController(t)
@@ -22,7 +22,7 @@ func TestRegister(t *testing.T) {
 	authDelivery := NewAuthDelivery(userUsecase)
 
 	w := httptest.NewRecorder()
-	r := httptest.NewRequest("POST", LOCALHOST+"/auth/register", strings.NewReader(`
+	r := httptest.NewRequest("POST", HOST+"/auth/register", strings.NewReader(`
 	{
 		"username": "admin",
 		"password":"admin"
@@ -48,7 +48,7 @@ func TestLogin(t *testing.T) {
 	authDelivery := NewAuthDelivery(userUsecase)
 
 	w := httptest.NewRecorder()
-	r := httptest.NewRequest("POST", LOCALHOST+"/auth/login", strings.NewReader(`
+	r := httptest.NewRequest("POST", HOST+"/auth/login", strings.NewReader(`
 	{
 		"username": "admin",
 		"password":"admin"

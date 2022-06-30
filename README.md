@@ -13,18 +13,66 @@
   - What do you love about your solution?
   - What else do you want us to know about however you do not have enough time to complete?
 
-### Notes
+### Folder structure
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
-
-### How to submit your solution?
-
-- Fork this repo and show us your development progress via a PR
-
-### Interesting facts about Manabie
-
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
-
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+```bash
+.
+├── cmd
+│   └── server
+│       └── main.go
+├── d.md
+├── go.mod
+├── go.sum
+├── internal
+│   ├── config
+│   │   └── config.go
+│   ├── delivery
+│   │   ├── auth.go
+│   │   ├── auth_test.go
+│   │   ├── handler.go
+│   │   ├── plan.go
+│   │   ├── plan_test.go
+│   │   ├── task.go
+│   │   ├── task_test.go
+│   │   ├── user.go
+│   │   └── user_test.go
+│   ├── domain
+│   │   └── domain.go
+│   ├── entities
+│   │   ├── task.go
+│   │   └── user.go
+│   ├── integration
+│   │   └── integration_test.go
+│   ├── middleware
+│   │   └── middleware.go
+│   ├── repository
+│   │   ├── db.go
+│   │   ├── task.go
+│   │   ├── task_test.go
+│   │   ├── user.go
+│   │   └── user_test.go
+│   ├── routes
+│   │   ├── auth.go
+│   │   ├── plan.go
+│   │   ├── routes.go
+│   │   ├── task.go
+│   │   └── user.go
+│   └── usecase
+│       ├── task.go
+│       ├── task_test.go
+│       ├── user.go
+│       └── user_test.go
+├── LICENSE
+├── Makefile
+├── migrations
+│   ├── create_tasks_table.sql
+│   └── create_users_table.sql
+├── pkg
+│   ├── cryto.go
+│   ├── json.go
+│   ├── jwt.go
+│   ├── mock
+│   │   └── mock.go
+│   └── utils.go
+└── README.md
+```
