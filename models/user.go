@@ -6,8 +6,8 @@ import (
 
 type User struct {
 	ID            uint32 `json:"id" validate:"omitempty"`
-	Email         string `json:"email" validate:"required,email,min=10,max=30"`
-	Name          string `json:"name" validate:"required,min=5,max=20"`
+	Email         string `json:"email" validate:"required,email,min=10,max=40"`
+	Name          string `json:"name" validate:"required,min=5,max=30"`
 	Password      string `json:"password" validate:"required,min=6,max=20"`
 	IsPayment     bool   `json:"isPayment" validate:"omitempty"`
 	IsActive      bool   `json:"isActive"`
