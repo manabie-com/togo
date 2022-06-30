@@ -16,6 +16,7 @@ type TaskRepository interface {
 	DeleteTask(id int) error
 	// DeleteAllTask() error
 	DeleteAllTaskOfUser(userID int) error
+	RollbackFromDelete(task *e.Task) error // for testing
 }
 
 type TaskUsecase interface {
@@ -27,6 +28,7 @@ type TaskUsecase interface {
 	UpdateTask(id int, username string, newTask e.Task) error
 	CompleteTask(id int, username string) error
 	DeleteTask(id int, username string) error
+	RollbackFromDelete(task *e.Task) error // for testing
 }
 
 type UserRepository interface {

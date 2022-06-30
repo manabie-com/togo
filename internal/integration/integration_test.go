@@ -323,7 +323,9 @@ func TestDeleteTaskIntegration(t *testing.T) {
 	handler := setupIntegrationTest()
 	defer teardownIntegrationTest()
 
-	r, err := http.NewRequest("DELETE", LOCALHOST+"/task/3", nil)
+	task, _ := handler.TaskDelivery.TaskUsecase.GetTaskByID(4, ADMIN) // prepare for rollback
+
+	r, err := http.NewRequest("DELETE", LOCALHOST+"/task/4", nil)
 	assert.NoError(t, err)
 
 	r.Header.Set("Authorization", "Bearer "+ADMIN_TOKEN)
@@ -346,6 +348,9 @@ func TestDeleteTaskIntegration(t *testing.T) {
 	body := strings.TrimSpace(bodyBuffer.String())
 
 	assert.NotEmpty(t, body)
+
+	// rollback
+	handler.TaskDelivery.TaskUsecase.RollbackFromDelete(task)
 }
 
 func TestGetPlanIntegration(t *testing.T) {

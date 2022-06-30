@@ -197,3 +197,12 @@ func (t *taskUsecase) DeleteTask(id int, username string) error {
 	}
 	return nil
 }
+
+// for testing
+func (t *taskUsecase) RollbackFromDelete(task *e.Task) error {
+	err := t.taskRepo.RollbackFromDelete(task)
+	if err != nil {
+		return errors.New("rollback from delete task failed")
+	}
+	return nil
+}

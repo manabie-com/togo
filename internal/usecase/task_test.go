@@ -211,3 +211,19 @@ func TestDeleteTask(t *testing.T) {
 	err := taskUsecase.DeleteTask(task1.ID, user.Username)
 	assert.NoError(t, err)
 }
+
+func TestRollbackFromDelete(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	taskRepo := mock.NewMockTaskRepository(ctrl)
+	userRepo := mock.NewMockUserRepository(ctrl)
+
+	taskUsecase := NewTaskUsecase(taskRepo, userRepo)
+
+	// before test
+	taskRepo.EXPECT().RollbackFromDelete(task1).Return(nil)
+
+	err := taskUsecase.RollbackFromDelete(task1)
+	assert.NoError(t, err)
+}

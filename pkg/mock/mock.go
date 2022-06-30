@@ -151,6 +151,20 @@ func (mr *MockTaskRepositoryMockRecorder) GetTasksByUserID(id interface{}) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTasksByUserID", reflect.TypeOf((*MockTaskRepository)(nil).GetTasksByUserID), id)
 }
 
+// RollbackFromDelete mocks base method.
+func (m *MockTaskRepository) RollbackFromDelete(task *entities.Task) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RollbackFromDelete", task)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RollbackFromDelete indicates an expected call of RollbackFromDelete.
+func (mr *MockTaskRepositoryMockRecorder) RollbackFromDelete(task interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RollbackFromDelete", reflect.TypeOf((*MockTaskRepository)(nil).RollbackFromDelete), task)
+}
+
 // UpdateTask mocks base method.
 func (m *MockTaskRepository) UpdateTask(t *entities.Task) error {
 	m.ctrl.T.Helper()
@@ -290,6 +304,20 @@ func (m *MockTaskUsecase) GetTasksByUsername(username string) (*[]entities.Task,
 func (mr *MockTaskUsecaseMockRecorder) GetTasksByUsername(username interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTasksByUsername", reflect.TypeOf((*MockTaskUsecase)(nil).GetTasksByUsername), username)
+}
+
+// RollbackFromDelete mocks base method.
+func (m *MockTaskUsecase) RollbackFromDelete(task *entities.Task) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RollbackFromDelete", task)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RollbackFromDelete indicates an expected call of RollbackFromDelete.
+func (mr *MockTaskUsecaseMockRecorder) RollbackFromDelete(task interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RollbackFromDelete", reflect.TypeOf((*MockTaskUsecase)(nil).RollbackFromDelete), task)
 }
 
 // UpdateTask mocks base method.

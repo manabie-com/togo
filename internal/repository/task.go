@@ -175,3 +175,21 @@ func (r *taskRepository) DeleteAllTaskOfUser(userID int) error {
 	tx.Commit()
 	return nil
 }
+
+// for testing
+func (r *taskRepository) RollbackFromDelete(task *e.Task) error {
+	const query = `INSERT INTO tasks (
+		id, name, description, created_at, completed, user_id)
+		VALUES ($1, $2, $3, $4, $5, $6);`
+	tx, err := r.DB.Begin()
+	if err != nil {
+		return err
+	}
+	_, err = tx.Exec(query, task.ID, task.Name, task.Description, task.CreatedAt, task.Completed, task.UserID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	tx.Commit()
+	return nil
+}

@@ -232,3 +232,21 @@ func TestDeleteAllTaskOfUser(t *testing.T) {
 	err := repo.DeleteAllTaskOfUser(u.ID)
 	assert.NoError(t, err)
 }
+
+func TestRollbackFromDelete(t *testing.T) {
+	db, mock := NewMock()
+	repo := &taskRepository{db}
+	defer db.Close()
+
+	query := regexp.QuoteMeta(`INSERT INTO tasks (
+		id, name, description, created_at, completed, user_id)
+		VALUES ($1, $2, $3, $4, $5, $6);`)
+
+	mock.ExpectBegin()
+	mock.ExpectExec(query).WithArgs(task.ID, task.Name, task.Description, task.CreatedAt, task.Completed, task.UserID).WillReturnError(errors.New("error"))
+	mock.ExpectRollback()
+
+	err := repo.RollbackFromDelete(task)
+	assert.Error(t, err)
+
+}
