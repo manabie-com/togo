@@ -43,13 +43,13 @@ func (t *taskUsecase) CreateTask(task *e.Task, username string) (int, int, error
 	taskID, err := t.taskRepo.CreateTask(task)
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "add task failed")
-		return 0, 0, err
+		return 0, 0, errors.New("add task failed")
 	}
 
 	numberTask, err := t.taskRepo.GetNumberOfTaskTodayByUserID(id)
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "get number of task today failed")
-		return 0, 0, err
+		return 0, 0, errors.New("get number of task today failed")
 	}
 	return taskID, numberTask, nil
 }
@@ -105,11 +105,11 @@ func (t *taskUsecase) GetUserIDByTaskID(id int) (int, error) {
 func (t *taskUsecase) CheckLimitTaskToday(id int) (bool, error) {
 	user, err := t.userRepo.GetUserByID(id)
 	if err != nil {
-		return false, err
+		return false, errors.New("user does not exist")
 	}
 	numberTask, err := t.taskRepo.GetNumberOfTaskTodayByUserID(id)
 	if err != nil {
-		return false, err
+		return false, errors.New("get number of task today failed")
 	}
 	if numberTask >= int(user.MaxTodo) {
 		return true, nil
@@ -133,13 +133,13 @@ func (t *taskUsecase) UpdateTask(id int, username string, newTask e.Task) error 
 	_, err = t.taskRepo.GetTaskByID(id)
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "get task by id failed!")
-		return err
+		return errors.New("task does not exist")
 	}
 
 	err = t.taskRepo.UpdateTask(&newTask)
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "update task failed!")
-		return err
+		return errors.New("update task failed")
 	}
 	return nil
 }

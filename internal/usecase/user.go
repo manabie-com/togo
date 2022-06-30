@@ -42,7 +42,7 @@ func (u *userUsecase) Register(user *e.User) error {
 	err := u.userRepo.AddUser(user)
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "failed to add user!")
-		return err
+		return errors.New("failed to add user")
 	}
 
 	return nil
@@ -70,7 +70,7 @@ func (u *userUsecase) Login(user *e.User) (string, error) {
 	token, err := pkg.GenerateToken(user.Username)
 	if err != nil {
 		// pkg.ERROR(w, http.StatusInternalServerError, err, "failed to generate token!")
-		return "", err
+		return "", errors.New("failed to generate token")
 	}
 
 	return token, nil
@@ -91,7 +91,7 @@ func (u *userUsecase) GetUserByID(id int) (*e.User, error) {
 func (u *userUsecase) GetUserByName(username string) (*e.User, error) {
 	user, err := u.userRepo.GetUserByName(username)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("user not found")
 	}
 	return user, nil
 }
@@ -99,7 +99,7 @@ func (u *userUsecase) GetUserByName(username string) (*e.User, error) {
 func (u *userUsecase) GetUserIDByUsername(username string) (int, error) {
 	user, err := u.userRepo.GetUserByName(username)
 	if err != nil {
-		return 0, err
+		return 0, errors.New("user not found")
 	}
 	return user.ID, nil
 }
@@ -107,7 +107,7 @@ func (u *userUsecase) GetUserIDByUsername(username string) (int, error) {
 func (u *userUsecase) GetMaxTaskByUserID(id int) (int, error) {
 	user, err := u.userRepo.GetUserByID(id)
 	if err != nil {
-		return 0, err
+		return 0, errors.New("user not found")
 	}
 	return int(user.MaxTodo), nil
 }
@@ -152,7 +152,7 @@ func (u *userUsecase) CheckUserExist(username string) bool {
 func (u *userUsecase) DeleteUserByID(id int) error {
 	err := u.taskRepo.DeleteAllTaskOfUser(id)
 	if err != nil {
-		return err
+		return errors.New("failed to delete tasks of user")
 	}
 	return u.userRepo.DeleteUserByID(id)
 }
