@@ -15,7 +15,13 @@
 
 #### How to run
 
-`go run main.go or just click on the main.exe to run`
+`Simply run the main.exe in build folder`
+
+#### Test user
+
+Username: `dung`
+
+Password: `dung1234`
 
 #### Sample CURL:
 
