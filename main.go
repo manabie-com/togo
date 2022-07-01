@@ -17,8 +17,12 @@ func main() {
 	if !ok {
 		port = "8000"
 	}
+	CONNECT_STR, ok := syscall.Getenv("CONNECT_STR")
+	if !ok {
+		log.Fatal("Please set CONNECT_STR environment")
+	}
 	app := &app.App{}
-	app.Init()
+	app.Init(CONNECT_STR)
 	app.Run(":" + port)
 	defer app.DB.Close()
 }
