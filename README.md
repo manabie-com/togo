@@ -5,29 +5,6 @@
 
 ### Choose a suitable architecture to make your code simple, organizable, and maintainable
 
-├── cmd/
-│   └── webservice/        
-│   |   └── main.go           # main func 
-├── http/
-│   ├── handler.go            # Determine service based on url, http.Method
-│   ├── helper.go             # Utility functions for supporting http.Handler
-│   ├── mapping.go            # Register url for http.Handler
-├── mocks/ 
-│   ├── togodb.go             # mocks postgres package for testing purpose
-├── postgres/ 
-│   ├── togodb.go             # contain repository layer
-├── services/ 
-│   ├── todoservice_test.go   # for testing purpose
-│   ├── todoservice.go        # contain business layer
-├── .env                      # configuration variables for connecting postgresql
-├── .gitignore 
-├── go.mod 
-├── go.sum 
-├── LICENSE 
-├── queries.sql               # Querie to create user, todos tables and retrieve data
-├── README.md 
-├── togo.go                   # Domain types for defining all the objects in our domain and interface that we perform on those objects
-
 - Ben Johnson purposes 4 principles to structure our code.
   1. Root Package is for domain types
   2. Group subpackages by dependency
