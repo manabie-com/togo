@@ -10,7 +10,7 @@ CREATE TABLE users
 INSERT INTO users (username, password, plan, max_todo) VALUES('admin', '$2a$10$b1cUVK/l7O0D1q4TU1IM7O/sUq7uXmZU.uLiSgQJoD2jFbPmzbK2a', 'free', 10); -- password: admin
 INSERT INTO users (username, password, plan, max_todo) VALUES('admin1', '$2a$10$b1cUVK/l7O0D1q4TU1IM7O/sUq7uXmZU.uLiSgQJoD2jFbPmzbK2a', 'free', 10); -- password: admin
 INSERT INTO users (username, password, plan, max_todo) VALUES('free', '$2a$10$sn4/wbXxUodhTDHviykz8OgD0X.xugS/BX2D7J6n5A9OLgfHCsWmC', 'free', 10); -- password: password
-INSERT INTO users (username, password, plan, max_todo) VALUES('vip', '$$2a$10$sn4/wbXxUodhTDHviykz8OgD0X.xugS/BX2D7J6n5A9OLgfHCsWmC', 'free', 10); -- password: password
+INSERT INTO users (username, password, plan, max_todo) VALUES('vip', '$$2a$10$sn4/wbXxUodhTDHviykz8OgD0X.xugS/BX2D7J6n5A9OLgfHCsWmC', 'vip', 20); -- password: password
 
 
 CREATE TABLE tasks
