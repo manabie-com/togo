@@ -5,10 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -17,11 +15,7 @@ type App struct {
 	DB     *sql.DB
 }
 
-func (a *App) Init() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
-	}
-	connectURL := os.Getenv("CONNECT_STR")
+func (a *App) Init(connectURL string) {
 	db, err := sql.Open("postgres", connectURL)
 
 	if err != nil {
