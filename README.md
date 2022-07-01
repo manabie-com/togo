@@ -10,6 +10,15 @@
 	```bash
 	git clone https://github.com/qanghaa/togo.git
 	```
+- Go to ***togo*** directory
+- Using Docker to run Postgresql
+	```bash
+	docker build -t togo .
+	```
+	
+	```bash
+	docker run -dp 4001:5432 togo
+	```
 - Dependencies Installation
 
 	```bash
@@ -17,12 +26,13 @@
 	```
 - Configuration Server
 
-    create `.env` file
+    - create `.env` file
 	
-    and add your secret enviroment variables below
+    - and add your secret enviroment variables below 
+     
     ```
   PORT=3000
-  CONNECT_STR=postgres://<your_username>:<your_password>@localhost/<your_db_name>?sslmode=disable
+  CONNECT_STR=postgres://postgres:manabie@localhost:4001/togo?sslmode=disable
   SECRET_TOKEN=<your_secret_token>
 	```
 - Run Server
@@ -39,7 +49,7 @@
 
 ## 3. How to run your unit tests locally?
   - Go to ***togo*** directory
-  - type in cmd: ```go run test ./...```
+  - type in cmd: ```go test ./...```
 
 ## 4. What do you love about your solution?
   &emsp;&emsp;Overall, nothing outstanding. However I quite like the payment feature. Although the implementation is simple, it will help the user become &emsp;&emsp;a Premium user LOL. This feature helps users to overcome the limit of creating tasks in 1 day (20 tasks/day) instead òf 10 as usual.
