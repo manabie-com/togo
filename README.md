@@ -39,7 +39,10 @@ go mod tidy
 ``` bash
 CREATE DATABASE togo; \c togo
 ```
-- Copy and paste script in migrations/migrate.sql to generate necessary data
+- Copy and paste script in migrations/migrate.sql to generate necessary data, then exit psql
+```bash
+\q
+```
 
 **Run app:**
 ``` bash
@@ -77,7 +80,7 @@ curl --location --request POST 'localhost:8080/auth/login' \
 }'
 ```
 - If login successfully, you can get a token:
-``` text
+``` json
 {
   "message":"login successfully",
   "token":"this-token-is-very-very-very-long"
