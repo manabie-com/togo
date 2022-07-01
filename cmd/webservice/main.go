@@ -33,5 +33,6 @@ func run() error {
 	svc := services.NewTodoService(db)
 	h := http.NewHandler(svc)
 	http.RegisterService(h)
+	fmt.Println("Starting webservice... on localhost:3000")
 	return http.ListenAndServe(":3000", nil)
 }
