@@ -23,6 +23,7 @@
 - Clone the project
 ```bash
 git clone https://github.com/lntvan166/togo.git
+cd togo
 ```
 - Install dependencies
 ```bash
@@ -113,6 +114,11 @@ curl --location --request POST 'localhost:8080/task' \
 
   - Know more about my api: [Togo](https://documenter.getpostman.com/view/21343860/UzJERdrX) (Please add this header to curl:
   ```--header 'Authorization: Bearer ADD-TOKEN-HERE'```)
+  - Features: 
+    - Authentication: Login, register
+    - User: Get all users, get one user, get plan, upgrade plan
+    - Task: Get all own tasks, get one own task, create task, complete task, delete task
+
 
 ## How to run unit tests locally?
 
