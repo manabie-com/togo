@@ -12,8 +12,25 @@
   - How to run your unit tests locally?
   - What do you love about your solution?
   - What else do you want us to know about however you do not have enough time to complete?
+## Prerequisites:
+
+[Go](https://go.dev/dl/)
+
+[PostgreSQL](https://www.postgresql.org/download/)
 
 ## How to run source code locally?
+**Installation**
+- Clone the project
+```bash
+git clone https://github.com/lntvan166/togo.git
+```
+- Install dependencies
+```bash
+go mod tidy
+```
+- Create `.env` by checkout `.env.example` to see all required environment variables.
+
+**Setup Postgres database**
 - Open psql in your Terminal by:
 ```bash
   sudo -u postgres psql
@@ -24,7 +41,7 @@ CREATE DATABASE togo; \c togo
 ```
 - Copy and paste script in migrations/migrate.sql to generate necessary data
 
-- Run app:
+**Run app:**
 ``` bash
 make run
 ```
@@ -63,7 +80,7 @@ curl --location --request POST 'localhost:8080/auth/login' \
 ``` text
 {
   "message":"login successfully",
-  "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2NTY2MjQ5MjYsInVzZXJuYW1lIjoiYWRtaW44In0.pg-JhjyxLtiHXtEQ9Xk1pbGqIFLHmbbIerlVNPgKzrE"
+  "token":"this-token-is-very-very-very-long"
 }
 ```
 
@@ -91,55 +108,8 @@ curl --location --request POST 'localhost:8080/task' \
 }'
 ```
 
-- Get every tasks you have
-``` bash
-curl --location --request GET 'localhost:8080/task' \
---header 'Authorization: Bearer ADD-TOKEN-HERE'
-```
-
-- With operations with task, you always need token to verify. You can continue try following usecase:
-
-Get one task (replace id):
-```bash
-curl --location --request GET 'localhost:8080/task/{id}' \
---header 'Authorization: Bearer ADD-TOKEN-HERE'
-```
-Complete task (replace id):
-```bash
-curl --location --request POST 'localhost:8080/task/{id}' \
---header 'Authorization: Bearer ADD-TOKEN-HERE'
-```
-Delete task (replace id):
-```bash
-curl --location --request POST 'localhost:8080/task/{id}' \
---header 'Authorization: Bearer ADD-TOKEN-HERE'
-```
-Get your plan:
-```bash
-curl --location --request GET 'localhost:8080/plan' \
---header 'Authorization: Bearer ADD-TOKEN-HERE'
-```
-
-- I have created an admin account with Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJ1c2VybmFtZSI6ImFkbWluIn0.ei4kWxPWuJyiIQBok-ojPpwY8CA6NcFw-APrjOuI_rk
-
-have special permissions like:
-Get all users:
-```bash
-curl --location --request GET 'localhost:8080/user' \
---header 'Authorization: Bearer ADD-ADMIN-TOKEN-HERE'
-```
-Get one user (replace id):
-```bash
-curl --location --request GET 'localhost:8080/user/{id}' \
---header 'Authorization: Bearer ADD-ADMIN-TOKEN-HERE'
-```
-Upgrade user plan (replace id):
-```bash
-curl --location --request POST 'localhost:8080/plan/upgrade/{id}' \
---header 'Authorization: Bearer ADD-ADMIN-TOKEN-HERE'
-```
-
-
+  - Know more about my api: [Togo](https://documenter.getpostman.com/view/21343860/UzJERdrX) (Please add this header to curl:
+  ```--header 'Authorization: Bearer ADD-TOKEN-HERE'```)
 
 ## How to run unit tests locally?
 
