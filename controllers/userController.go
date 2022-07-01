@@ -73,7 +73,6 @@ func (bh *BaseHandler) DeleteFromUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Id invalid", http.StatusBadRequest)
 		return
 	}
-	fmt.Println("Asdfas")
 	if err := bh.BaseCtrl.DeleteAllTaskFromUser(id); err != nil {
 		http.Error(w, "delete all task of user failed, err: " +err.Error() , http.StatusFailedDependency)
 		return
