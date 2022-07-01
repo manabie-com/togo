@@ -1,12 +1,15 @@
 package controllers_test
 
 import (
+	"log"
 	"os"
+	"syscall"
 	"testing"
 
 	"net/http"
 	"net/http/httptest"
 
+	"github.com/joho/godotenv"
 	"github.com/manabie-com/togo/app"
 )
 
@@ -22,8 +25,15 @@ var (
 )
 
 func TestMain(m *testing.M) {
+	if err := godotenv.Load("../.env"); err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	CONNECT_STR, ok := syscall.Getenv("CONNECT_STR")
+	if !ok {
+		log.Fatal("Please set CONNECT_STR environment")
+	}
 	a = app.App{}
-	a.Init()
+	a.Init(CONNECT_STR)
 	code := m.Run()
 	os.Exit(code)
 }
