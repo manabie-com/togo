@@ -1,30 +1,146 @@
-### Requirements
+# **TOGO**
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+## Dscription
+  **API using GO, MongoDB and jwt for authentication**
 
-### Notes
+### **1. How to run your code locally?**
+  -Git clone repository
+  ```
+  git clone https://github.com/glucozo192/todo
+  ```
+  
+  -Dependencies Installation
+  ```
+  go mod download
+  ```
+  -Configuration Server
+  
+  creat ```.env```
+  ```
+  MONGOURI=mongodb+srv://glucozo:6677028a@cluster0.2ciga69.mongodb.net/?retryWrites=true&w=majority
+  SECRET_JWT=glucozoisbestbestbestbestbest
+  ```
+  
+  -Run sever
+  ```
+  go run TOGO
+  ```
+### **2. Sample “curl” Command:**
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+  - Token: "Bearer token"
+  
+  - Respon:
+   ```json
+   {
+   "status": 200,
+   "token": ,
+   "message: "success",
+   "data":
+   }
+   ```
+#### - Authentication
+- Signup:
+  ```
+  curl --location --request POST 'http://localhost:9099/user/signup' \
+  --data-raw '{
+    "username":"example1",
+    "password":"123456",
+    "name":"Nguyen van tuan"
+  }'
+  ```
+    
+- Login:
+  ```
+  curl --location --request POST 'http://localhost:9099/user/login' \
+  --data-raw '{
+    "username": "example1",
+    "password": "123456"
+  }'
+  ```
+#### - User
+  
+ - Get Me
+    ```
+    curl --location --request GET 'http://localhost:9099/me' \
+    -header 'Authorization: Bearer <YOUR TOKEN>'
+    ```
+ - Update Me
+    ```
+    curl --location --request PUT 'http://localhost:9099/user' \
+    --header 'Authorization Bearer <YOUTOKEN>;' \
+    --data-raw '{
+      "name":"<YOUR_NAME>",
+      "password": "YOUR_PASSWORD"
+    }'
+    ```
+  - Upgrade Premium
+    ```
+    curl --location --request PUT 'http://localhost:9099/limit' \
+    --header 'Authorization Bearer <YOUR TOKEN> ;'
+### - Admin-User
+  ```
+  "username: "admin"
+  "password: "123456"
+  ```
+- Get All User
+  ```
+  curl --location --request GET 'http://localhost:9099/users?Authorization Bearer <YOUR TOKEN>'
+  ```
+- Get One User
+  ```
+  curl --location --request GET 'http://localhost:9099/user/<USER_ID>?Authorization Bearer <YOUR TOKEN>'
+  ```
+ - Delete User
+  ```
+  curl --location --request DELETE 'http://localhost:9099/user/<USER_ID>?Authorization Bearer <YOUR TOKEN>'
+  
+  ```
+  
+ ### - Task
+- Create Task
+    ```
+    curl --location --request POST 'http://localhost:9099/task' \
+  --header 'Authorization Bearer <YOU TOKEN;' \
+  --data-raw '{
+      "name":"<YOUR_NAME>",
+      "content":"<YOUR_CONTENT>"
+   }'
+    ```  
+- Get Tasks By User
+  ```
+  curl --location --request GET 'http://localhost:9099/user-tasks' \
+  --header 'Authorization Bearer <YOUR TOKEN>;'
+  ```
+- Get Task By Id
+  ```
+  curl --location --request GET 'http://localhost:9099/task/<TASK_ID>?Authorization Bearer <YOUR TOKEN>'
+  ```
+- Get All Task Doing
+  ```
+  curl --location --request GET 'http://localhost:9099/task-status?Authorization Bearer <YOUR TOKEN>'
+  ```
+- Update Task
+  ```
+  curl --location --request PUT 'http://localhost:9099/task/<TASK_ID>?Authorization Bearer <YOUR TOKEN>' \
+  --data-raw '{
+    "name":"<TASK_NAME>",
+    "content":"<CONTENT>"
+  }'
+  ```
+- Update Task Status
+  ```
+  curl --location --request PUT 'http://localhost:9099/task/status/<TASK_ID>' \
+  --header 'Authorization Bearer <YOUR TOKEN>;' \
+  --data-raw '{
+    "status": "completed"
+  }'
+- Delete Task
+  ```
+  curl --location --request DELETE 'http://localhost:9099/task/<TASK_ID>?Authorization Bearer <YOUR TOKEN>'
+  ```
+### 3.How to run your unit tests locally?
+- Go to togo directory
+- Command:``` go test ./... ```
 
-### How to submit your solution?
-
-- Fork this repo and show us your development progress via a PR
-
-### Interesting facts about Manabie
-
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
-
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+### 4.What do you love about your solution?
+I love everything about my code, so great when coding with golang! :heartbeat::heartbeat::heartbeat::heartbeat::heartbeat:
