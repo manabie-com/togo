@@ -52,7 +52,7 @@
   - type in cmd: ```go test ./...```
 
 ## 4. What do you love about your solution?
-  &emsp;&emsp;Overall, nothing outstanding. However I quite like the payment feature. Although the implementation is simple, it will help the user become &emsp;&emsp;a Premium user LOL. This feature helps users to overcome the limit of creating tasks in 1 day (20 tasks/day) instead òf 10 as usual. Not related to feature, probably Docker, I spent 2 days learning and trying to work on it and I was able to use it in this project :D.
+  &emsp;&emsp;Overall, nothing outstanding. However I quite like the payment feature. Although the implementation is simple, it will help the user become a Premium user LOL. This feature helps users to overcome the limit of creating tasks in 1 day (20 tasks/day) instead òf 10 as usual. Not related to feature, probably Docker, I spent 2 days learning and trying to work on it and I was able to use it in this project :D.
   
 ## 5. What else do you want us to know about however you do not have enough time to complete?
   &emsp;&emsp;Probably Testing. I haven't writed unit test enough possible scenarios with my API yet. 
