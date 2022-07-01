@@ -1,11 +1,9 @@
-﻿using Manabie.BasicIdentityServer.Infrastructure.Persistence;
-using Manabie.Testing.Infrastructure.Persistence;
+﻿using Manabie.Testing.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
 
 namespace Manabie.TestingApi.Application.IntegrationTests;
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
