@@ -13,7 +13,6 @@
 
 - Ref links: https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1
 
-### Write a concise README
 ### How to run your code locally?
 
 1. Download and Install PgAdmin4 tools (postgresql): https://www.postgresql.org/download/
