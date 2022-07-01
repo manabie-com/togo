@@ -32,6 +32,17 @@ go mod tidy
 - Create `.env` by checkout `.env.example` to see all required environment variables.
 
 **Setup Postgres database**
+
+  *The first way: dockerize postgresql*
+- Config environment variables in `Dockerfile` like `.env`
+- With PORT is DATABASE_PORT in `.env`
+```bash
+sudo docker build -t togo .
+sudo docker run -p {PORT}:5432 togo
+```
+
+
+  *The second way: migrate data by script*
 - Open psql in your Terminal by:
 ```bash
   sudo -u postgres psql
