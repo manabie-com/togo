@@ -1,12 +1,6 @@
-﻿using Manabie.Testing.Application.Interfaces;
-using Manabie.Testing.Domain.Entities;
+﻿using Manabie.Testing.Domain.Entities;
 using Manabie.Testing.Infrastructure.Persistence;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Manabie.Testing.Infrastructure.Persistance
 {

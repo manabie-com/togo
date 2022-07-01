@@ -20,8 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Services\Manabie.BasicIdentityServer.Infrastructure\Manabie.BasicIdentityServer.Infrastructure.csproj" />
-    <ProjectReference Include="..\src\Services\Manabie.Testing.API\Manabie.Testing.API.csproj" />
+    <ProjectReference Include="..\..\src\Services\Manabie.Testing.API\Manabie.Testing.API.csproj" />
+    <ProjectReference Include="..\..\src\Services\Manabie.Testing.Infrastructure\Manabie.Testing.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

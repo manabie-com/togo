@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Manabie.BasicIdentityServer.Application\Manabie.BasicIdentityServer.Application.csproj" />
+    <ProjectReference Include="..\Manabie.BasicIdentityServer.Application\Manabie.BasicIdentityServer.Application.csproj" />
     <ProjectReference Include="..\Manabie.BasicIdentityServer.Domain\Manabie.BasicIdentityServer.Domain.csproj" />
   </ItemGroup>
 

@@ -11,7 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Manabie.Testing.Infrastructure\Manabie.Testing.Infrastructure.csproj" />
+    <ProjectReference Include="..\Manabie.Testing.Application\Manabie.Testing.Application.csproj" />
+    <ProjectReference Include="..\Manabie.Testing.Infrastructure\Manabie.Testing.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

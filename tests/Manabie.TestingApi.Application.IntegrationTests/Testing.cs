@@ -1,7 +1,5 @@
-﻿using Manabie.BasicIdentityServer.Infrastructure.Identity;
-using Manabie.Testing.Infrastructure.Persistence;
+﻿using Manabie.Testing.Infrastructure.Persistence;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

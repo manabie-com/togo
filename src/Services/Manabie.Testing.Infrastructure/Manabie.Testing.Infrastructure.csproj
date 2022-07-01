@@ -12,8 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Services\Manabie.Testing.Application\Manabie.Testing.Application.csproj" />
-    <ProjectReference Include="..\src\Services\Manabie.Testing.Domain\Manabie.Testing.Domain.csproj" />
+    <ProjectReference Include="..\Manabie.Testing.Application\Manabie.Testing.Application.csproj" />
   </ItemGroup>
 
 </Project>
