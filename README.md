@@ -13,18 +13,51 @@
   - What do you love about your solution?
   - What else do you want us to know about however you do not have enough time to complete?
 
-### Notes
+### Things I have used in this sample
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+- Dot NET 6, EF Core
+- MediatR, CleanArchitecture, OpenIddict for OAuth 2 standart
 
-### How to submit your solution?
+### Step to run
 
-- Fork this repo and show us your development progress via a PR
+- Make sure that you have installed .Net 6 .Net Runtime and .Net SDK
 
-### Interesting facts about Manabie
+- Start 2 Project:
+	- BasicIdentityServer: an Identity Provider Server use for granting access token.
+	- TestingApi: Web Api.
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+- Main flow:
+	- GET access_token:
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+		- Adminitrator account:
+
+			curl --location --request POST 'https://localhost:7173/api/connect/token' \
+				--header 'Content-Type: application/x-www-form-urlencoded' \
+				--data-urlencode 'grant_type=password' \
+				--data-urlencode 'username=administrator@localhost' \
+				--data-urlencode 'password=Administrator1!'
+			
+		- User account:
+		
+			curl --location --request POST 'https://localhost:7173/api/connect/token' \
+				--header 'Content-Type: application/x-www-form-urlencoded' \
+				--data-urlencode 'grant_type=password' \
+				--data-urlencode 'username=user@localhost' \
+				--data-urlencode 'password=User1!'
+			
+	- GET Todo:
+
+		- curl  --location --request GET 'https://localhost:7215/Todo/GetTodos' \
+				--header 'Authorization: Bearer access_token
+				
+	- ADD Todo:
+
+		- curl --location --request POST 'https://localhost:7215/Todo/AddTodo' \
+			--header 'Authorization: Bearer access_token' \
+			--header 'Content-Type: application/json' \
+			--data-raw '{
+				"Title": "Todo1",
+				"Note": "Note1"
+			}'
+			
+#Run Test:

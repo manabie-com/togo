@@ -1,0 +1,103 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6C6D325E-D346-4434-B53F-327D20ED936B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{88FEEFF3-2124-4DF7-904E-973B42E0DAD0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestingApi", "TestingApi", "{390D938C-4FE0-4B7F-9237-5AF723F7C520}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IdentityServer", "IdentityServer", "{8EBCC2D2-8505-4603-BC9F-697D46E2F181}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Manabie.Testing.API", "src\Services\Manabie.Testing.API\Manabie.Testing.API.csproj", "{3465F100-DA30-4F3F-90F2-12B6F3234735}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Manabie.Testing.Application", "src\Services\Manabie.Testing.Application\Manabie.Testing.Application.csproj", "{0CF58C31-91F2-4B00-BB22-759CB95DFE9E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Manabie.Testing.Domain", "src\Services\Manabie.Testing.Domain\Manabie.Testing.Domain.csproj", "{3C26F2CF-0677-4262-8571-286863EEC15F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Manabie.Testing.Infrastructure", "Manabie.Testing.Infrastructure\Manabie.Testing.Infrastructure.csproj", "{70B21C78-BD2D-4AE6-8FF7-6B0EBC7E5063}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Manabie.BasicIdentityServer.API", "src\Services\Manabie.BasicIdentityServer.API\Manabie.BasicIdentityServer.API.csproj", "{0D2AA452-6702-4C12-8BEB-B6C9CCB510BE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Manabie.BasicIdentityServer.Domain", "src\Services\Manabie.BasicIdentityServer.Domain\Manabie.BasicIdentityServer.Domain.csproj", "{F3B20A40-E6AD-4E48-BB5D-27469A0F41AF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Manabie.BasicIdentityServer.Application", "src\Manabie.BasicIdentityServer.Application\Manabie.BasicIdentityServer.Application.csproj", "{29B962BA-D3AE-4238-8610-8D89234E1D80}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Manabie.BasicIdentityServer.Infrastructure", "src\Services\Manabie.BasicIdentityServer.Infrastructure\Manabie.BasicIdentityServer.Infrastructure.csproj", "{5593A830-F17E-47F8-9770-D8D2975C9981}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{CFEAC112-D585-46F7-8C34-2AE8D955DD7D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestingApi", "TestingApi", "{F188A3EF-38CD-4F4B-9609-E6655097972C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Manabie.TestingApi.Application.IntegrationTests", "Manabie.TestingApi.Application.IntegrationTests\Manabie.TestingApi.Application.IntegrationTests.csproj", "{31C24CE7-CB49-4AA5-A6A0-CA2FFEB3E490}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BasicIdentityServer", "BasicIdentityServer", "{EE78F2B6-A0C8-435F-82A1-A7E385E0667E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3465F100-DA30-4F3F-90F2-12B6F3234735}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3465F100-DA30-4F3F-90F2-12B6F3234735}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3465F100-DA30-4F3F-90F2-12B6F3234735}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3465F100-DA30-4F3F-90F2-12B6F3234735}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CF58C31-91F2-4B00-BB22-759CB95DFE9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CF58C31-91F2-4B00-BB22-759CB95DFE9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CF58C31-91F2-4B00-BB22-759CB95DFE9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CF58C31-91F2-4B00-BB22-759CB95DFE9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C26F2CF-0677-4262-8571-286863EEC15F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C26F2CF-0677-4262-8571-286863EEC15F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C26F2CF-0677-4262-8571-286863EEC15F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C26F2CF-0677-4262-8571-286863EEC15F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70B21C78-BD2D-4AE6-8FF7-6B0EBC7E5063}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70B21C78-BD2D-4AE6-8FF7-6B0EBC7E5063}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70B21C78-BD2D-4AE6-8FF7-6B0EBC7E5063}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70B21C78-BD2D-4AE6-8FF7-6B0EBC7E5063}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D2AA452-6702-4C12-8BEB-B6C9CCB510BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D2AA452-6702-4C12-8BEB-B6C9CCB510BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D2AA452-6702-4C12-8BEB-B6C9CCB510BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D2AA452-6702-4C12-8BEB-B6C9CCB510BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3B20A40-E6AD-4E48-BB5D-27469A0F41AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3B20A40-E6AD-4E48-BB5D-27469A0F41AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3B20A40-E6AD-4E48-BB5D-27469A0F41AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3B20A40-E6AD-4E48-BB5D-27469A0F41AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29B962BA-D3AE-4238-8610-8D89234E1D80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29B962BA-D3AE-4238-8610-8D89234E1D80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29B962BA-D3AE-4238-8610-8D89234E1D80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29B962BA-D3AE-4238-8610-8D89234E1D80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5593A830-F17E-47F8-9770-D8D2975C9981}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5593A830-F17E-47F8-9770-D8D2975C9981}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5593A830-F17E-47F8-9770-D8D2975C9981}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5593A830-F17E-47F8-9770-D8D2975C9981}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31C24CE7-CB49-4AA5-A6A0-CA2FFEB3E490}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31C24CE7-CB49-4AA5-A6A0-CA2FFEB3E490}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31C24CE7-CB49-4AA5-A6A0-CA2FFEB3E490}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31C24CE7-CB49-4AA5-A6A0-CA2FFEB3E490}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{88FEEFF3-2124-4DF7-904E-973B42E0DAD0} = {6C6D325E-D346-4434-B53F-327D20ED936B}
+		{390D938C-4FE0-4B7F-9237-5AF723F7C520} = {88FEEFF3-2124-4DF7-904E-973B42E0DAD0}
+		{8EBCC2D2-8505-4603-BC9F-697D46E2F181} = {88FEEFF3-2124-4DF7-904E-973B42E0DAD0}
+		{3465F100-DA30-4F3F-90F2-12B6F3234735} = {390D938C-4FE0-4B7F-9237-5AF723F7C520}
+		{0CF58C31-91F2-4B00-BB22-759CB95DFE9E} = {390D938C-4FE0-4B7F-9237-5AF723F7C520}
+		{3C26F2CF-0677-4262-8571-286863EEC15F} = {390D938C-4FE0-4B7F-9237-5AF723F7C520}
+		{70B21C78-BD2D-4AE6-8FF7-6B0EBC7E5063} = {390D938C-4FE0-4B7F-9237-5AF723F7C520}
+		{0D2AA452-6702-4C12-8BEB-B6C9CCB510BE} = {8EBCC2D2-8505-4603-BC9F-697D46E2F181}
+		{F3B20A40-E6AD-4E48-BB5D-27469A0F41AF} = {8EBCC2D2-8505-4603-BC9F-697D46E2F181}
+		{29B962BA-D3AE-4238-8610-8D89234E1D80} = {8EBCC2D2-8505-4603-BC9F-697D46E2F181}
+		{5593A830-F17E-47F8-9770-D8D2975C9981} = {8EBCC2D2-8505-4603-BC9F-697D46E2F181}
+		{F188A3EF-38CD-4F4B-9609-E6655097972C} = {CFEAC112-D585-46F7-8C34-2AE8D955DD7D}
+		{31C24CE7-CB49-4AA5-A6A0-CA2FFEB3E490} = {F188A3EF-38CD-4F4B-9609-E6655097972C}
+		{EE78F2B6-A0C8-435F-82A1-A7E385E0667E} = {CFEAC112-D585-46F7-8C34-2AE8D955DD7D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F6416A5F-30A3-45E5-AEBB-03569CCE1CA7}
+	EndGlobalSection
+EndGlobal
