@@ -1,3 +1,10 @@
+# TOGO
+
+Backend Engineer Coding Challenge
+
+- Language: GoLang
+- Database: PostgreSQL
+
 # A. How to run this code locally?
 
 ## Install Go
@@ -122,7 +129,7 @@ $ go test -v
 
 # D. What do I love about my solution?
 
-Deciding to make simple APIs that enabled us to create a user, update a user daily task limit, create task and, delete a user that completes the cycle of integration testing based on the requirements.
+Deciding to make simple APIs that enabled us to create a user, update a user daily task limit differently, create task and, delete a user that completes the cycle of integration testing based on the requirements.
 
 # E. What else do you want us to know about however you do not have enough time to complete?
 
