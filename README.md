@@ -126,4 +126,5 @@ Deciding to make simple APIs that enabled us to create a user, update a user dai
 
 # E. What else do you want us to know about however you do not have enough time to complete?
 
-I can also create a GraphQL API endpoint with schema first approach written in Golang
+- Completing the go testing coverage
+- I can also create a GraphQL API endpoint with schema first approach written in Golang
