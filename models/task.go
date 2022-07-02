@@ -4,7 +4,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// Task model for tasks table
+// Task model for `tasks` table
 type Task struct {
 	Base
 	TaskID      uuid.UUID `json:"taskId" gorm:"column:task_id;"`

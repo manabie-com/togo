@@ -6,6 +6,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// Load for loading the .env file from dynamic path
 func Load(path string) {
 	err := godotenv.Load(path)
 	if err != nil {

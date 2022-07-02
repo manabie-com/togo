@@ -6,7 +6,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-// User model for users table
+// User model for `users` table
 type User struct {
 	UserID         uuid.UUID  `json:"id" gorm:"column:user_id;primary_key;"`
 	Username       string     `json:"username" gorm:"column:username;"`

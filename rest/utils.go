@@ -11,6 +11,7 @@ func getBeginningOfDay(t time.Time) time.Time {
 	return time.Date(year, month, day, 0, 0, 0, 0, t.Location())
 }
 
+// Validate the username if empty string or if it exceed the character limit
 func validateUsername(username string) error {
 	if trimLowerUsername(username) == "" {
 		return errors.New("username is required")
@@ -21,6 +22,7 @@ func validateUsername(username string) error {
 	return nil
 }
 
+// Validate the taskDailyLimit less than 1
 func validateTaskDailyLimit(limit int32) error {
 	if limit < 1 {
 		return errors.New("taskDailyLimit must be atleast 1")
@@ -28,6 +30,7 @@ func validateTaskDailyLimit(limit int32) error {
 	return nil
 }
 
+// Validate the title if empty string or if it exceed the character limit
 func validateTaskTitle(title string) error {
 	if title == "" {
 		return errors.New("username is required")
@@ -37,6 +40,7 @@ func validateTaskTitle(title string) error {
 	return nil
 }
 
+// Trim and transform to lowercase the username
 func trimLowerUsername(username string) string {
 	return strings.TrimSpace(strings.ToLower(username))
 }
