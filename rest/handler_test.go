@@ -11,10 +11,11 @@ import (
 	"togo/models"
 
 	"github.com/gorilla/mux"
+	uuid "github.com/satori/go.uuid"
 	"github.com/stretchr/testify/assert"
 )
 
-const username = "test_user"
+var username = uuid.NewV1().String()
 
 func Router() (*mux.Router, error) {
 	environment.Load("../.env")
@@ -39,15 +40,21 @@ func TestCreateUser(t *testing.T) {
 
 	request, _ := http.NewRequest("POST", "/api/user", bytes.NewBuffer(requestBody))
 
-	response := httptest.NewRecorder()
-
 	router, errRouter := Router()
 
 	assert.Nil(t, errRouter, "The `errRouter` should be nil")
 
-	router.ServeHTTP(response, request)
+	response1 := httptest.NewRecorder()
 
-	assert.Equal(t, 201, response.Code, "201 Created is expected")
+	router.ServeHTTP(response1, request)
+
+	assert.Equal(t, 201, response1.Code, "201 Created is expected")
+
+	response2 := httptest.NewRecorder()
+
+	router.ServeHTTP(response2, request)
+
+	assert.Equal(t, 400, response2.Code, "400 Bad Request is expected")
 }
 
 func TestUpdateUser(t *testing.T) {
@@ -59,11 +66,11 @@ func TestUpdateUser(t *testing.T) {
 
 	request, _ := http.NewRequest("PATCH", "/api/user", bytes.NewBuffer(requestBody))
 
-	response := httptest.NewRecorder()
-
 	router, errRouter := Router()
 
 	assert.Nil(t, errRouter, "The `errRouter` should be nil")
+
+	response := httptest.NewRecorder()
 
 	router.ServeHTTP(response, request)
 
@@ -82,15 +89,21 @@ func TestCreateTask(t *testing.T) {
 
 	request, _ := http.NewRequest("POST", "/api/task", bytes.NewBuffer(requestBody))
 
-	response := httptest.NewRecorder()
-
 	router, errRouter := Router()
 
 	assert.Nil(t, errRouter, "The `errRouter` should not be nil")
 
-	router.ServeHTTP(response, request)
+	response1 := httptest.NewRecorder()
 
-	assert.Equal(t, 201, response.Code, "201 Created is expected")
+	router.ServeHTTP(response1, request)
+
+	assert.Equal(t, 201, response1.Code, "201 Created is expected")
+
+	response2 := httptest.NewRecorder()
+
+	router.ServeHTTP(response2, request)
+
+	assert.Equal(t, 400, response2.Code, "400 Bad Request is expected")
 }
 
 func TestDeleteUser(t *testing.T) {
