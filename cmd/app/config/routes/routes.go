@@ -3,7 +3,7 @@ package routes
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
-	"github.com/xrexonx/togo/cmd/app/config"
+	"github.com/xrexonx/togo/cmd/app/config/environment"
 	todoService "github.com/xrexonx/togo/internal/todo"
 	"gorm.io/gorm"
 	"log"
@@ -17,7 +17,7 @@ func Init(db *gorm.DB) *mux.Router {
 	DBInstance = db
 	router := mux.NewRouter()
 
-	_apiPath := "/api/" + config.GetValue("API_VERSION")
+	_apiPath := "/api/" + environment.GetValue("API_VERSION")
 
 	router.HandleFunc(_apiPath+"/health", HealthCheckHandler)
 	router.HandleFunc(_apiPath+"/todo", AddTodoHandler).Methods("POST")

@@ -2,12 +2,19 @@ package database
 
 import (
 	"fmt"
-	"github.com/xrexonx/togo/cmd/app/config"
+	"github.com/xrexonx/togo/cmd/app/config/environment"
 	"github.com/xrexonx/togo/internal/todo"
 	"github.com/xrexonx/togo/internal/user"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
+)
+
+const (
+	_dbConnectionSuccess = "Database connection was successful!"
+	_dbConnectionFail    = "Could not connect to database"
+	_dbDNS               = "%s:%s@(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local"
+	_dbErrCreateTable    = "Could not create tables to database"
 )
 
 // Config to maintain DB configuration properties
@@ -20,7 +27,7 @@ type Config struct {
 
 // Init initialise database connection from DB configs
 func Init() *gorm.DB {
-	dbEnv := config.GetDBEnv()
+	dbEnv := environment.GetDBEnv()
 	dbConfig := Config{
 		ServerName: dbEnv.DBHost + ":" + dbEnv.DBPort,
 		User:       dbEnv.DBUser,
@@ -30,7 +37,7 @@ func Init() *gorm.DB {
 	log.Println("DBConfig:", dbConfig)
 	dbConn, err := connect(dbConfig)
 	if err != nil {
-		log.Fatal("Could not connect to database")
+		log.Fatal(_dbConnectionFail)
 	}
 
 	// Connection pooling
@@ -55,14 +62,13 @@ func connect(dbConfig Config) (*gorm.DB, error) {
 		log.Fatal(err)
 		return nil, fmt.Errorf(err.Error())
 	}
-	log.Println("Database connection was successful!!")
+	log.Println(_dbConnectionSuccess)
 	return DBConn, nil
 }
 
 // getConnectionString setup database connection string
 func getConnectionString(config Config) string {
-	_dns := "%s:%s@(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local"
-	connectionString := fmt.Sprintf(_dns, config.User, config.Password, config.ServerName, config.DB)
+	connectionString := fmt.Sprintf(_dbDNS, config.User, config.Password, config.ServerName, config.DB)
 	return connectionString
 }
 
@@ -70,7 +76,7 @@ func getConnectionString(config Config) string {
 func dbMigrate(db *gorm.DB) {
 	errCreate := db.AutoMigrate(&user.User{}, &todo.Todo{})
 	if errCreate != nil {
-		log.Fatal("Could not create tables to database", errCreate)
+		log.Fatal(_dbErrCreateTable, errCreate)
 	}
 
 	// Seeds sample users

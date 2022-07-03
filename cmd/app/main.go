@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/xrexonx/togo/cmd/app/config"
 	"github.com/xrexonx/togo/cmd/app/config/database"
+	"github.com/xrexonx/togo/cmd/app/config/environment"
 	"github.com/xrexonx/togo/cmd/app/config/routes"
 	"log"
 	"net/http"
@@ -12,7 +12,7 @@ import (
 func main() {
 
 	// Load env
-	config.LoadEnv()
+	environment.LoadEnv()
 
 	// Create Database Connection
 	db := database.Init()
@@ -21,8 +21,8 @@ func main() {
 	handler := routes.Init(db)
 
 	// Start server
-	serverHost := config.GetValue("HOST")
-	serverPort := config.GetValue("PORT")
+	serverHost := environment.GetValue("HOST")
+	serverPort := environment.GetValue("PORT")
 	_host := serverHost + ":" + serverPort
 	server := &http.Server{
 		Handler: handler,
