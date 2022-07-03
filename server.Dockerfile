@@ -1,7 +1,7 @@
-FROM golang:1.18.1-alpine
+FROM golang:1.18-alpine
 WORKDIR /app
 COPY . . 
 RUN go mod download
 RUN go build -o /togo
-EXPOSE 8000
+EXPOSE 3000
 CMD [ "/togo" ]
