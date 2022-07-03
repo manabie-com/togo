@@ -122,9 +122,15 @@ Response:
 ```
 
 ## Testing
-I'm using Goland to run test, but you can run test on terminal using this command:
+I'm using Goland to run test locally, but we can still run test on terminal using these command:
 ```bash
-go test ./... -coverprofile cover.out
+go test ./... -coverprofile cover.out # test with coverage
+```
+```bash
+go tool cover -func cover.out # generate detailed coverage
+```
+```bash
+go tool cover -html=cover.out # generate coverage report on html file
 ```
 
 >**Additional note:**<br>
@@ -142,3 +148,7 @@ Go to github [Development branch](https://github.com/xrexonx/togo/tree/mvp)
 The project structure/architecture, it's simple and maintainable and I'd like to improve it more.
 ####What else do you want us to know about however you do not have enough time to complete?
 I can implement this using Ruby/NodeJS/Java-Springboot
+
+
+##Thankyou,
+[Rexon A. De los Reyes](https://www.linkedin.com/in/xrexonx/)
