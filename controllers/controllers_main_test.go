@@ -28,12 +28,12 @@ func TestMain(m *testing.M) {
 	if err := godotenv.Load("../.env"); err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	CONNECT_STR, ok := syscall.Getenv("CONNECT_STR")
+	CONNECT_STR_FOR_TEST, ok := syscall.Getenv("CONNECT_STR_FOR_TEST")
 	if !ok {
-		log.Fatal("Please set CONNECT_STR environment")
+		log.Fatal("Please set CONNECT_STR_FOR_TEST environment")
 	}
 	a = app.App{}
-	a.Init(CONNECT_STR)
+	a.Init(CONNECT_STR_FOR_TEST)
 	code := m.Run()
 	os.Exit(code)
 }
