@@ -5,47 +5,28 @@
 &emsp;&emsp;**Simple API using Golang, Postgresql and jwt for authentication**	
 
 ## 1. How to run your code locally?
+### Requirements
+- Install [Docker Engine](https://docs.docker.com/engine/install/ubuntu/)
+- Install [docker-compose](https://docs.docker.com/compose/install/)
 - Git clone repository
 
 	```bash
 	git clone https://github.com/qanghaa/togo.git
 	```
 - Go to ***togo*** directory
-- Using Docker to run Postgresql
+- Using `docker-compose` commands
 	```bash
-	docker build -t togo .
+	# this command make sure next command working as expected
+	docker-compose down --volumes .
 	```
 	
 	```bash
-	docker run -dp 4001:5432 togo
+	docker-compose up
 	```
-- Dependencies Installation
-
-	```bash
-	go mod download
-	```
-- Configuration Server
-
-    - create `.env` file
 	
-    - and add your secret enviroment variables below 
-     
-    ```
-  PORT=3000
-  CONNECT_STR=postgres://postgres:manabie@localhost:4001/togo?sslmode=disable
-  SECRET_TOKEN=<your_secret_token>
-	```
-- Run Server
-  ```bash
-  go run main.go
-	```
-    OR
-	```bash
-  go run github.com/manabie-com/togo
-  ```
-- Go to Sample 'curl' in below document :point_down:
 ## 2. Sample “curl” Command:
  &emsp;&emsp;API Document: [here](https://documenter.getpostman.com/view/15522883/UzBvHPBC)
+ <br> &emsp;&emsp;Note: ***Using Bearer Authorization Header for endpoints required*** 
 
 ## 3. How to run your unit tests locally?
   - Go to ***togo*** directory
