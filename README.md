@@ -17,11 +17,11 @@
 - Using `docker-compose` commands
 	```bash
 	# this command make sure next command working as expected
-	docker-compose down --volumes .
+	sudo docker-compose down --volumes .
 	```
 	
 	```bash
-	docker-compose up
+	sudo docker-compose up
 	```
 	
 ## 2. Sample “curl” Command:
