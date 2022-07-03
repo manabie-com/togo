@@ -2,9 +2,9 @@ package todo
 
 import (
 	"fmt"
+	db "github.com/xrexonx/togo/cmd/app/config/database"
 	"github.com/xrexonx/togo/internal/repository"
 	userService "github.com/xrexonx/togo/internal/user"
-	"gorm.io/gorm"
 	"log"
 	"time"
 )
@@ -14,17 +14,22 @@ func getBeginningOfDay(t time.Time) time.Time {
 	return time.Date(year, month, day, 0, 0, 0, 0, t.Location())
 }
 
-func Add(db *gorm.DB, todo Todo) (Todo, error) {
+func Add(todo Todo) (Todo, error) {
 
 	var pendingTask int64
 
+	// Validate userID
+	if len(todo.UserId) == 0 {
+		return todo, fmt.Errorf("userID is required")
+	}
+
 	// Get user daily limit
-	user := userService.GetById(db, todo.UserId)
+	user := userService.GetById(todo.UserId)
 
 	// Validate
 	today := getBeginningOfDay(time.Now())
 	condition := "completed = false AND user_id = ? AND created_at >= ?"
-	results := db.Model(&Todo{}).
+	results := db.Instance.Model(&Todo{}).
 		Where(condition, todo.UserId, today).
 		Count(&pendingTask).Error
 
@@ -34,6 +39,6 @@ func Add(db *gorm.DB, todo Todo) (Todo, error) {
 		return Todo{}, fmt.Errorf("user have reached the maximum daily limit")
 	}
 
-	var newTodo, _ = repository.Create[Todo](db, todo)
+	var newTodo, _ = repository.Create[Todo](todo)
 	return newTodo, nil
 }

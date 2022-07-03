@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/xrexonx/togo/cmd/app/config/database"
 	"github.com/xrexonx/togo/cmd/app/config/environment"
+	"github.com/xrexonx/togo/cmd/app/config/migration"
 	"github.com/xrexonx/togo/cmd/app/config/routes"
 	"log"
 	"net/http"
@@ -11,14 +12,17 @@ import (
 
 func main() {
 
-	// Load env
+	// Load environment variables
 	environment.LoadEnv()
 
 	// Create Database Connection
-	db := database.Init()
+	database.Init()
+
+	// Initialize Database and tables
+	migration.Run()
 
 	// Setup routes handlers
-	handler := routes.Init(db)
+	handler := routes.Init()
 
 	// Start server
 	serverHost := environment.GetValue("HOST")

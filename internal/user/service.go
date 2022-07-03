@@ -1,11 +1,8 @@
 package user
 
-import (
-	"github.com/xrexonx/togo/internal/repository"
-	"gorm.io/gorm"
-)
+import "github.com/xrexonx/togo/internal/repository"
 
-func GetById(db *gorm.DB, id string) User {
-	var user, _ = repository.GetByID[User](db, id)
+func GetById(id string) User {
+	var user, _ = repository.GetByID[User](id)
 	return user
 }

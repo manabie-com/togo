@@ -6,16 +6,12 @@ import (
 	"github.com/xrexonx/togo/cmd/app/config/environment"
 	todoService "github.com/xrexonx/togo/internal/todo"
 	"github.com/xrexonx/togo/internal/utils/response"
-	"gorm.io/gorm"
 	"log"
 	"net/http"
 )
 
-var DBInstance *gorm.DB
+func Init() *mux.Router {
 
-func Init(db *gorm.DB) *mux.Router {
-
-	DBInstance = db
 	router := mux.NewRouter()
 
 	_apiPath := "/api/" + environment.GetValue("API_VERSION")
@@ -41,7 +37,7 @@ func parseRequestBody[T comparable](req *http.Request) T {
 func AddTodoHandler(w http.ResponseWriter, req *http.Request) {
 
 	todo := parseRequestBody[todoService.Todo](req)
-	newTodo, err := todoService.Add(DBInstance, todo)
+	newTodo, err := todoService.Add(todo)
 
 	if err != nil {
 		w.WriteHeader(http.StatusPreconditionFailed)
