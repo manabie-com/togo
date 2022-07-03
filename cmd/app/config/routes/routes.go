@@ -23,6 +23,7 @@ func Init() *mux.Router {
 	return router
 }
 
+// parseRequestBody parse request body using json new decoder instead on marshall/unmarshall
 func parseRequestBody[T comparable](req *http.Request) T {
 	reqBody := json.NewDecoder(req.Body)
 	var data T

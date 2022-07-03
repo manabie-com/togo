@@ -134,4 +134,5 @@ Go to github [Development branch](https://github.com/xrexonx/togo/tree/mvp)
 
 ##TODO
 - [ ] Add more Unit test
+- [ ] Add more data validation
 - [ ] Make repository an interface and reuse to all models
