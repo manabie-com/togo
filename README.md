@@ -8,6 +8,7 @@ Primary Tech stack
 * [Go SQL Driver](https://github.com/go-sql-driver/mysql)
 * [GORM](https://gorm.io/index.html)
 * [Gorilla Mux](https://github.com/gorilla/mux)
+* [Ginkgo](https://github.com/onsi/ginkgo)
 
 ## Project structure
 ```bash
@@ -99,16 +100,34 @@ You should be able to access this application at `http://127.0.0.1:{portInYourEn
 
 >**NOTE:**<br>
 >When you run/serve the application, there is a migration script configured already to create the DB and tables,
->as well as seeds sample users for testing purposes, see database.go line 76 triggered from line 51 on the same file
+>as well as seeds sample users for testing purposes, see main.go line 22
 
 ## Sample request
 I've configured a sample health check endpoint
 ```bash
 curl http://127.0.0.1:{yourPort}/api/v1/healthCheck -v
 ```
-Response
+Response:
 ```bash
 {"Status":"Health Checked","Message":"API is running","Code":200,"Data":null,"Date":"2022-07-03T11:59:07.901816+08:00"}
 ```
+
+Using the pre-configured user
+```bash
+curl -d '{"name":"new todo", "description":"this is todo", "userID": "1"}' -H "Content-Type: application/json" -X POST http://{yourHost}/api/v1/todo
+```
+Response:
+```bash
+{"Status":"Ok","Message":"Successfully created todo","Code":200,"Data":{"ID":20,"CreatedAt":"2022-07-03T20:14:41.724+08:00","UpdatedAt":"2022-07-03T20:14:41.724+08:00","DeletedAt":null,"name":"Take a bath","description":"value2","completed":false,"userId":"1"},"Date":"2022-07-03T20:14:41.734186+08:00"}
+```
+
+## Testing
+I'm using Goland to run test, but you can run test on terminal using this command:
+```bash
+go test ./... -coverprofile cover.out
+```
+
+>**Additional note:**<br>
+>This project is using Go's new features [Generics](https://tip.golang.org/doc/go1.18#generics) or [Type parameters](https://go.googlesource.com/proposal/+/master/design/15292/2013-12-type-params.md) and requires go version 1.18 or higher.
 
 Go to github [Development branch](https://github.com/xrexonx/togo/tree/mvp)
