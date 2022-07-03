@@ -14,12 +14,14 @@ type DBEnv struct {
 	DBName string
 }
 
+// LoadEnv load environment variables in .env files
 func LoadEnv() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("No .env file found")
 	}
 }
 
+// GetDBEnv get database related environments
 func GetDBEnv() DBEnv {
 	return DBEnv{
 		DBHost: GetValue("DB_HOST"),
@@ -30,7 +32,7 @@ func GetDBEnv() DBEnv {
 	}
 }
 
-// GetValue similar to os.Getenv("") but handles missing configs
+// GetValue similar to os.Getenv("") but handles missing env
 func GetValue(configName string) string {
 	config, exist := os.LookupEnv(configName)
 	if !exist {

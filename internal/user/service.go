@@ -2,7 +2,8 @@ package user
 
 import "github.com/xrexonx/togo/internal/repository"
 
-func GetById(id string) User {
+// FindByID get user by ID
+func FindByID(id string) User {
 	var user, _ = repository.GetByID[User](id)
 	return user
 }

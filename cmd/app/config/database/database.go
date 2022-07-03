@@ -23,6 +23,7 @@ type Config struct {
 	DB         string
 }
 
+// Instance db instance
 var Instance *gorm.DB
 
 // Init initialise database connection from DB configs
@@ -53,7 +54,7 @@ func Init() {
 // connect connection to the database
 func connect(dbConfig Config) (*gorm.DB, error) {
 	var err error
-	dsn := getConnectionString(dbConfig)
+	dsn := fmt.Sprintf(_dbDNS, dbConfig.User, dbConfig.Password, dbConfig.ServerName, dbConfig.DB)
 	DBConn, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
@@ -61,10 +62,4 @@ func connect(dbConfig Config) (*gorm.DB, error) {
 	}
 	log.Println(_dbConnectionSuccess)
 	return DBConn, nil
-}
-
-// getConnectionString setup database connection string
-func getConnectionString(config Config) string {
-	connectionString := fmt.Sprintf(_dbDNS, config.User, config.Password, config.ServerName, config.DB)
-	return connectionString
 }

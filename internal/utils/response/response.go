@@ -14,6 +14,7 @@ type Response struct {
 	Date    time.Time
 }
 
+// Render render response to client
 func Render(w http.ResponseWriter, data interface{}, code int, message string, status string) {
 	json.NewEncoder(w).Encode(Response{
 		Status:  status,

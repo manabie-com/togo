@@ -1,6 +1,7 @@
 // Package repository
 // Experiment repository to use go's new features Typed parameters
 // Use as Database access layer for all models/entities
+// TODO Create an interface for this repository
 package repository
 
 import "github.com/xrexonx/togo/cmd/app/config/database"
