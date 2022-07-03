@@ -108,5 +108,7 @@ curl http://127.0.0.1:{yourPort}/api/v1/healthCheck -v
 ```
 Response
 ```bash
-{"Status":"Health Checked","Message":"API is running","Code":200,"Data":null}
+{"Status":"Health Checked","Message":"API is running","Code":200,"Data":null,"Date":"2022-07-03T11:59:07.901816+08:00"}
 ```
+
+Go to github [Development branch](https://github.com/xrexonx/togo/tree/mvp)

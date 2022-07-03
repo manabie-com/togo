@@ -5,6 +5,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/xrexonx/togo/cmd/app/config/environment"
 	todoService "github.com/xrexonx/togo/internal/todo"
+	"github.com/xrexonx/togo/internal/utils/response"
 	"gorm.io/gorm"
 	"log"
 	"net/http"
@@ -44,20 +45,10 @@ func AddTodoHandler(w http.ResponseWriter, req *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusPreconditionFailed)
-		json.NewEncoder(w).Encode(todoService.Response{
-			Status:  "Precondition Failed",
-			Code:    http.StatusPreconditionFailed,
-			Message: err.Error(),
-			Data:    nil,
-		})
+		response.Render(w, nil, http.StatusPreconditionFailed, err.Error(), "Precondition failed")
 	} else {
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(todoService.Response{
-			Status:  "Success",
-			Code:    http.StatusOK,
-			Message: "Successfully created todo",
-			Data:    newTodo,
-		})
+		response.Render(w, newTodo, http.StatusOK, "Successfully created todo", "Ok")
 	}
 
 }
@@ -66,12 +57,7 @@ func AddTodoHandler(w http.ResponseWriter, req *http.Request) {
 func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(todoService.Response{
-		Status:  "Health Checked",
-		Code:    http.StatusOK,
-		Message: "API is running",
-		Data:    nil,
-	})
+	response.Render(w, nil, http.StatusOK, "API is running", "Health Checked")
 }
 
 // logRequest request logger for debugging purposes

@@ -9,10 +9,3 @@ type Todo struct {
 	Completed   bool   `json:"completed"`
 	UserId      string `json:"userId"`
 }
-
-type Response struct {
-	Status  string
-	Message string
-	Code    int
-	Data    interface{}
-}
