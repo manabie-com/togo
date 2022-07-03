@@ -66,23 +66,23 @@ Primary Tech stack
 * Clone this repo
 
 ```bash
-~$ git clone https://github.com/xrexonx/togo.git
+git clone https://github.com/xrexonx/togo.git
 ```
 
 * Change Directory
 
 ```bash
-~$ cd todo
+cd todo
 ```
 
 * Create `.env` file
 
 ```bash
-~$ touch .env
+touch .env
 ```
 
 ```bash
-~$ cp .env.local .env
+cp .env.local .env
 ```
 
 * Modify `.env` file with your correct database credentials and desired Port
@@ -92,7 +92,7 @@ Primary Tech stack
 To run this application, execute:
 
 ```bash
-~$ go run cmd/app/main.go
+go run cmd/app/main.go
 ```
 
 You should be able to access this application at `http://127.0.0.1:{portInYourEnvFile}`
@@ -104,7 +104,7 @@ You should be able to access this application at `http://127.0.0.1:{portInYourEn
 ## Sample request
 I've configured a sample health check endpoint
 ```bash
-$ curl http://127.0.0.1:{yourPort}/api/v1/healthCheck -v
+curl http://127.0.0.1:{yourPort}/api/v1/healthCheck -v
 ```
 Response
 ```bash
