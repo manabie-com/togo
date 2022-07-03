@@ -13,7 +13,7 @@
 	```bash
 	git clone https://github.com/qanghaa/togo.git
 	```
-- Go to ***togo*** directory
+- Go to ***togo***:open_file_folder: directory
 - Using `docker-compose` commands
 	```bash
 	# this command make sure next command working as expected
