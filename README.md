@@ -5,9 +5,9 @@
 &emsp;&emsp;**Simple API using Golang, Postgresql and jwt for authentication**	
 
 ## 1. How to run your code locally?
-### Requirements
-- Install [Docker Engine](https://docs.docker.com/engine/install/ubuntu/)
-- Install [docker-compose](https://docs.docker.com/compose/install/)
+- Requirements
+	- Install [Docker Engine](https://docs.docker.com/engine/install/)
+	- Install [docker-compose](https://docs.docker.com/compose/install/)
 - Git clone repository
 
 	```bash
