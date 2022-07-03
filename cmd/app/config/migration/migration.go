@@ -19,9 +19,9 @@ func Run() {
 	// Seeds sample users
 	result := database.Instance.Find(&user.User{})
 	if result.RowsAffected == 0 {
-		u1 := user.User{Name: "Rex", MaxDailyLimit: 5, Email: "rex@gmail.com.ph"}
-		u2 := user.User{Name: "Riz", MaxDailyLimit: 4, Email: "roux@gmail.com.ph"}
-		u3 := user.User{Name: "Roux", MaxDailyLimit: 3, Email: "roux@gmail.com.ph"}
+		u1 := user.User{Name: "Rex", MaxDailyLimit: 100, Email: "rex@gmail.com.ph"}
+		u2 := user.User{Name: "Riz", MaxDailyLimit: 5, Email: "riz@gmail.com.ph"}
+		u3 := user.User{Name: "Roux", MaxDailyLimit: 1, Email: "roux@gmail.com.ph"}
 		sampleUsers := []user.User{u1, u2, u3}
 		for _, u := range sampleUsers {
 			database.Instance.Create(&u)
