@@ -131,3 +131,7 @@ go test ./... -coverprofile cover.out
 >This project is using Go's new features [Generics](https://tip.golang.org/doc/go1.18#generics) or [Type parameters](https://go.googlesource.com/proposal/+/master/design/15292/2013-12-type-params.md) and requires go version 1.18 or higher.
 
 Go to github [Development branch](https://github.com/xrexonx/togo/tree/mvp)
+
+##TODO
+- [ ] Add more Unit test
+- [ ] Make repository an interface and reuse to all models
