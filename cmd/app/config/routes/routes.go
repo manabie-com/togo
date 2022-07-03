@@ -19,7 +19,7 @@ func Init(db *gorm.DB) *mux.Router {
 
 	_apiPath := "/api/" + environment.GetValue("API_VERSION")
 
-	router.HandleFunc(_apiPath+"/health", HealthCheckHandler)
+	router.HandleFunc(_apiPath+"/healthCheck", HealthCheckHandler)
 	router.HandleFunc(_apiPath+"/todo", AddTodoHandler).Methods("POST")
 	router.Use(logRequest)
 
@@ -48,6 +48,7 @@ func AddTodoHandler(w http.ResponseWriter, req *http.Request) {
 			Status:  "Precondition Failed",
 			Code:    http.StatusPreconditionFailed,
 			Message: err.Error(),
+			Data:    nil,
 		})
 	} else {
 		w.WriteHeader(http.StatusOK)
@@ -65,14 +66,19 @@ func AddTodoHandler(w http.ResponseWriter, req *http.Request) {
 func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Health Checked"))
+	json.NewEncoder(w).Encode(todoService.Response{
+		Status:  "Health Checked",
+		Code:    http.StatusOK,
+		Message: "API is running",
+		Data:    nil,
+	})
 }
 
 // logRequest request logger for debugging purposes
 func logRequest(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Do debugging stuff here
-		log.Println(r.RequestURI)
+		log.Println("api hit: " + r.RequestURI)
 		// Call the next handler, which can be another middleware in the chain, or the final handler.
 		next.ServeHTTP(w, r)
 	})

@@ -14,5 +14,5 @@ type Response struct {
 	Status  string
 	Message string
 	Code    int
-	Data    Todo
+	Data    interface{}
 }
