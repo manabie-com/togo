@@ -14,7 +14,7 @@
 	git clone https://github.com/qanghaa/togo.git
 	```
 - Go to ***togo***:open_file_folder: directory
-- Using `docker-compose` commands
+- Using `docker-compose` commands with ***root*** permission
 	```bash
 	# this command make sure next command working as expected
 	sudo docker-compose down --volumes .
@@ -29,7 +29,7 @@
  <br> &emsp;&emsp;Note: ***Using Bearer Authorization Header for endpoints required*** 
 
 ## 3. How to run your unit tests locally?
-  - Go to ***togo*** directory
+  - Go to ***togo***:open_file_folder: directory
   - type in cmd: 
 	```bash
 	go test ./...
