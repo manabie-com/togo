@@ -1,0 +1,41 @@
+version: '3.4'
+
+services:
+  manabie.basicidentityserver.api:
+    image: ${DOCKER_REGISTRY-}identity-app
+    build:
+      context: .
+      dockerfile: src/Services/Manabie.BasicIdentityServer.API/Dockerfile
+    networks:
+      - my-network
+    ports:
+      - 5000:80
+    environment:
+      - ASPNETCORE_URLS=http://+80
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  manabie.testing.api:
+    image: ${DOCKER_REGISTRY-}testing-app
+    build:
+      context: .
+      dockerfile: src/Services/Manabie.Testing.API/Dockerfile
+    networks:
+      - my-network
+    depends_on:
+      - manabie.basicidentityserver.api
+    ports:
+      - 5001:80
+      - 7001:443
+    environment:
+      - ASPNETCORE_URLS=https://+443;http://+80
+      - ASPNETCORE_HTTPS_PORT=7001
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticpassword
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/Manabie.BasicIdentityServer.API.pfx
+    volumes:
+      - ~/.aspnet/https:/https:ro
+networks:
+  my-network:
+    driver: bridge
+    external: true
+

@@ -1,6 +1,7 @@
 using Manabie.Testing.Application;
 using Manabie.Testing.Infrastructure;
 using Manabie.Testing.Infrastructure.Persistance;
+using Microsoft.IdentityModel.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else
+{
+}
+
+IdentityModelEventSource.ShowPII = true;
+
 
 app.UseHttpsRedirection();
 
