@@ -1,30 +1,42 @@
-### Requirements
+# TOGO
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+## Description
 
-### Notes
+&emsp;&emsp;**Simple API using Golang, Postgresql and jwt for authentication**	
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+## 1. How to run your code locally?
+- Requirements
+	- Install [Docker Engine](https://docs.docker.com/engine/install/)
+	- Install [docker-compose](https://docs.docker.com/compose/install/)
+- Git clone repository
 
-### How to submit your solution?
+	```bash
+	git clone https://github.com/qanghaa/togo.git
+	```
+- Go to ***togo***:open_file_folder: directory
+- Using `docker-compose` commands with ***root*** permission
+	```bash
+	# this command make sure next command working as expected
+	sudo docker-compose down --volumes .
+	```
+	
+	```bash
+	sudo docker-compose up
+	```
+	
+## 2. Sample “curl” Command:
+ &emsp;&emsp;API Document: [here](https://documenter.getpostman.com/view/15522883/UzBvHPBC)
+ <br> &emsp;&emsp;Note: ***Using Bearer Authorization Header for endpoints required*** 
 
-- Fork this repo and show us your development progress via a PR
+## 3. How to run your unit tests locally?
+  - Go to ***togo***:open_file_folder: directory
+  - type in cmd: 
+	```bash
+	go test ./...
+	```
 
-### Interesting facts about Manabie
-
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
-
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+## 4. What do you love about your solution?
+  &emsp;&emsp;Overall, nothing outstanding. However I quite like the payment feature. Although the implementation is simple, it will help the user become a Premium user LOL. This feature helps users to overcome the limit of creating tasks in 1 day (20 tasks/day) instead òf 10 as usual. Not related to feature, probably Docker, I spent 2 days learning and trying to work on it and I was able to use it in this project :D.
+  
+## 5. What else do you want us to know about however you do not have enough time to complete?
+Probably Testing. I haven't writed unit test enough possible scenarios with my API yet. 
