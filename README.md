@@ -1,38 +1,30 @@
-### Requirements
-
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
 
 ### Things I have used in this sample
 
 - Dot NET 6, EF Core
 - MediatR, CleanArchitecture, OpenIddict for OAuth 2 standart
+- NUnit
 
 ### about Projects:
 - BasicIdentityServer: an Identity Provider Server use for granting access token.
 - TestingApi: Web Api.
 - Using InMemory Database.
 
-### Step to run
+### Setup Prepare Resource:
+- Make sure you have installed .NET SDK 6 and .NET RUNTIME 6 .
+- Run "PublicApp.bat" in the folder solution.
+- Run "RunIdentity.bat" and "RunTestingApi.bat".
 
-- Make sure that you have installed .Net 6 .Net Runtime and .Net SDK
+- Try to setup docker but have an issue with communication between dockers.
+
+### Step Run
 
 - Main flow:
 	- GET access_token:
 
 		- Adminitrator account:
 
-			curl --location --request POST 'https://localhost:7173/api/connect/token' \
+			curl --location --request POST 'http://localhost:5000/api/connect/token' \
 				--header 'Content-Type: application/x-www-form-urlencoded' \
 				--data-urlencode 'grant_type=password' \
 				--data-urlencode 'username=administrator@localhost' \
@@ -43,7 +35,7 @@
 			
 		- User account:
 		
-			curl --location --request POST 'https://localhost:7173/api/connect/token' \
+			curl --location --request POST 'http://localhost:5000/api/connect/token' \
 				--header 'Content-Type: application/x-www-form-urlencoded' \
 				--data-urlencode 'grant_type=password' \
 				--data-urlencode 'username=user@localhost' \
@@ -54,19 +46,19 @@
 			
 	- GET Todo:
 
-		- curl  --location --request GET 'https://localhost:xxxx/Todo/GetTodos' \
+		- curl  --location --request GET 'http://localhost:7216/Todo/GetTodos' \
 				--header 'Authorization: Bearer access_token
 				
 	- ADD Todo:
 
-		- curl --location --request POST 'https://localhost:xxxx/Todo/AddTodo' \
+		- curl --location --request POST 'http://localhost:7216/Todo/AddTodo' \
 			--header 'Authorization: Bearer access_token' \
 			--header 'Content-Type: application/json' \
 			--data-raw '{
 				"Title": "Todo1",
 				"Note": "Note1"
 			}'
-		If Success, you should recive a response as below:
+		If Success, you should receive a response as below:
 		{
 			"data": 1,
 			"succeeded": true,
