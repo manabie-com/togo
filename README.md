@@ -11,7 +11,7 @@
 - Using InMemory Database.
 
 ### Setup Prepare Resource:
-
+- Create a Docker network with name "my-network"
 - Run docker compose in the folder solution.
 
 Or
@@ -19,8 +19,6 @@ Or
 - Make sure you have installed .NET SDK 6 and .NET RUNTIME 6 .
 - Run "PublicApp.bat" in the folder solution.
 - Run "RunIdentity.bat" and "RunTestingApi.bat".
-
-
 
 ### Step Run
 
