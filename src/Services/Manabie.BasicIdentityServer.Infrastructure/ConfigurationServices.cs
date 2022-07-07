@@ -88,6 +88,7 @@ namespace Manabie.BasicIdentityServer.Infrastructure
 
                  options.DisableAccessTokenEncryption();
 
+                 options.SetIssuer(new Uri("http://manabie.basicidentityserver.api:5000/"));
                  //options.RegisterScopes(OpenIddictConstants.Scopes.Email,
                  //                       OpenIddictConstants.Scopes.Profile,
                  //                       OpenIddictConstants.Scopes.Roles);

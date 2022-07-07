@@ -11,11 +11,16 @@
 - Using InMemory Database.
 
 ### Setup Prepare Resource:
+
+- Run docker compose in the folder solution.
+
+Or
+
 - Make sure you have installed .NET SDK 6 and .NET RUNTIME 6 .
 - Run "PublicApp.bat" in the folder solution.
 - Run "RunIdentity.bat" and "RunTestingApi.bat".
 
-- Try to setup docker but have an issue with communication between dockers.
+
 
 ### Step Run
 
@@ -46,12 +51,12 @@
 			
 	- GET Todo:
 
-		- curl  --location --request GET 'http://localhost:7216/Todo/GetTodos' \
+		- curl  --location --request GET 'https://localhost:7001/Todo/GetTodos' \
 				--header 'Authorization: Bearer access_token
 				
 	- ADD Todo:
 
-		- curl --location --request POST 'http://localhost:7216/Todo/AddTodo' \
+		- curl --location --request POST 'https://localhost:7001/Todo/AddTodo' \
 			--header 'Authorization: Bearer access_token' \
 			--header 'Content-Type: application/json' \
 			--data-raw '{

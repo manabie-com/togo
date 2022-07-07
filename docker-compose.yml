@@ -7,9 +7,11 @@ services:
       context: .
       dockerfile: src/Services/Manabie.BasicIdentityServer.API/Dockerfile
     ports:
-      - 5000:80
+      - 5000:5000
+    networks:
+      - my-network
     environment:
-      - ASPNETCORE_URLS=http://+80
+      - ASPNETCORE_URLS=http://+:5000
       - ASPNETCORE_ENVIRONMENT=Development
 
   manabie.testing.api:
@@ -17,13 +19,18 @@ services:
     build:
       context: .
       dockerfile: src/Services/Manabie.Testing.API/Dockerfile
-    depends_on:
-      - manabie.basicidentityserver.api
+    networks:
+      - my-network
     ports:
-      - 7215:80
+      - 5001:80
+      - 7001:443
     environment:
-      - ASPNETCORE_URLS=http://+80
+      - API_URL=manabie.basicidentityserver.api:5000
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_HTTPS_PORT=7001
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=crypticpassword
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/Manabie.BasicIdentityServer.API.pfx
     volumes:
       - ~/.aspnet/https:/https:ro
 

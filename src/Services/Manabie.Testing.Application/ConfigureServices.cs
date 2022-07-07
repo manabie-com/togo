@@ -19,7 +19,7 @@ namespace Manabie.Testing.Application
                 {
                     // Note: the validation handler uses OpenID Connect discovery
                     // to retrieve the issuer signing keys used to validate tokens.
-                    options.SetIssuer("http://localhost:5000/");
+                    options.SetIssuer("http://manabie.basicidentityserver.api:5000/");
                     //options.AddAudiences("testing_server");
                     // Register the encryption credentials. This sample uses a symmetric
                     // encryption key that is shared between the server and the Api2 sample
