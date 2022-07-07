@@ -1,4 +1,4 @@
-package com.todo.ws.model;
+package com.todo.ws.common.model;
 
 public class ResponseEntity<T> {
 	private T data;
