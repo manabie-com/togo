@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 
+import com.todo.ws.core.auth.dto.RegRequestDto;
+
 @Entity
 public class User {
 
@@ -34,11 +36,11 @@ public class User {
         this.todoLimit = todoLimit;
     }
 
-//    public User(UserRegistrationDTO dto) {
-//        this.username = dto.getUsername();
-//        this.password = dto.getPassword();
-//        this.todoLimit = (long) dto.getTodoLimit();
-//    }
+    public User(RegRequestDto dto) {
+        this.username = dto.getUsername();
+        this.password = dto.getPassword();
+        this.todoLimit = (long) dto.getTodoLimit();
+    }
 
     public Long getId() {
         return id;
