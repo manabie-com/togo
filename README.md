@@ -1,30 +1,43 @@
-### Requirements
+## DaiTV
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+### Explain
+In the first time, I thought the test only took a few hours. So i talk to the headhunter that i can do it in wednesday night.
+But, this weekend, I'm have to go back to my hometown to join my brother' wedding. So, I don't have time to do this test in this weekend and i need to do it as fast as i can. Sorry about that.
 
-### Notes
+Thank you!
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+### How to run this code locally
+ - Install golang: https://go.dev/doc/install
+ - Install mongodb: https://www.mongodb.com/docs/manual/installation/
+ - Change `CONNECTION_STRING` in `be/env/Env.go` to your connection string.
+ - Run commands bellow.
+```sh
+cd /root/project/directory
+go run be/main.go
+```
 
-### How to submit your solution?
+### Sample “curl” command to call API
+Run this command to add todo task and get header value name `Token`
+```sh
+curl -H "Content-Type: application/json" -X POST -d '{"Text":"Todo taks text"}' -v http://localhost:8008/api/todo
+```
+Run this command to continue with the same user in command above.
+```sh
+curl -H "Content-Type: application/json" -H "Token:{Token header in command above}" -X POST -d '{"Text":"Todo taks text"}' -c - http://localhost:8008/api/todo
+```
 
-- Fork this repo and show us your development progress via a PR
+### How to run unit tests locally
+ - run this code locally.
+ - Run commands bellow.
+```sh
+cd /root/project/directory
+go test ./...
+```
 
-### Interesting facts about Manabie
+### What do you love about your solution?
+I think there is nothing special in my solution.
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
-
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+### What else do you want us to know about however you do not have enough time to complete?
+ - Add more apis and code FrontEnd with VueJs to make it become a real todo list web app.
+ - Create `Dockerfile`, `docker-composer.yml`.
+ - Write test case more detail.
