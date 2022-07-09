@@ -32,7 +32,13 @@ There are 3 projects as below:
   ]
 }'
 
-**Note**: there are 2 users with info below for run locally testing:
+## Run locally with Docker
+- Clone code base
+- Navigate to root code base folder. Run `docker build -t togoservice .` for building image.
+- Run `docker run -d -p 5001:80 --name togoapi togoservice` to start container.
+- Open browser at https://localhost:5001/swagger for API document and try it or you can use CURL with above information.
+
+## Note: 2 users id for run locally testing:
 - id =BA4688FB-B389-40A7-A94C-FE43F61A2BCE - max daily tasks = 10
 - id =437A4196-7ADF-441F-8352-05F126C469B2 - max daily tasks = 0
 
