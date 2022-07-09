@@ -1,30 +1,68 @@
 ### Requirements
-
-- Implement one single API which accepts a todo task and records it
+  - Implement one single API which accepts a todo task and records it
   - There is a maximum **limit of N tasks per user** that can be added **per day**.
   - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
 
-### Notes
+### Choose a suitable architecture to make your code simple, organizable, and maintainable
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+## Ben Johnson purposes 4 principles to structure our code.
 
-### How to submit your solution?
+  1. Root Package is for domain types
+  2. Group subpackages by dependency
+  3. Use a shared mock subpackage
+  4. Main package ties together dependencies
 
-- Fork this repo and show us your development progress via a PR
+- Ref links: https://medium.com/@benbjohnson/standard-package-layout-7cdbc8391fc1
 
-### Interesting facts about Manabie
+## How to run your code locally?
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+  1. Download and Install PgAdmin4 tools (postgresql): https://www.postgresql.org/download/ 
+  2. Open queries.sql file, then Excute from "--> START" to "--< END" to create "users", "todos" tables
+  3. Download/Update go modules
+    ```bash
+    go mod tidy
+    ```
+  4. Start webservice
+    ```bash
+    go run cmd/webservice/main.go
+    ```
+  5. Send request with curl or Postman
+    ```bash
+    curl -XPOST 'http://localhost:3000/api/lawtrann/todos' -H 'Content-Type: application/json' -d '{"description":"todo something"}'
+    ```
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+## A sample “curl” command to call your API
+    ```bash
+    curl -XPOST 'http://localhost:3000/api/lawtrann/todos' -H 'Content-Type: application/json' -d '{"description":"todo something"}'
+    ```
+
+## How to run your unit tests locally?
+- Unit Test
+ ```bash
+ go test -v ./services/
+ ```
+
+- Test cases
+ - Testcase#1: Create NewUser with Description:"Todo 1"
+    ```bash
+    curl -XPOST 'http://localhost:3000/api/newuser/todos' -H 'Content-Type: application/json' -d '{"description":"Todo 1"}'
+    ```
+ - Testcase#2: add Description:"Todo 2" for NewUser on testcase#1
+    ```bash
+    curl -XPOST 'http://localhost:3000/api/newuser/todos' -H 'Content-Type: application/json' -d '{"description":"Todo 2"}'
+    ```
+ - Testcase#3: add bunch of Description:"Todo n" until getting "you have reached the limit of adding todo task per day" message
+    ```bash
+    curl -XPOST 'http://localhost:3000/api/newuser/todos' -H 'Content-Type: application/json' -d '{"description":"todo n"}'
+    ```
+
+## What do you love about your solution?
+- Testability
+  - With such a pluggable system, we can test the functionality of each layer separately by injecting a mock version of the dependent layers
+- Clear separation between layers
+  - In our domain package we can see an interface for each layer in our application. This helps us to have a clear boundary between each layer.
+  
+## What else do you want us to know about however you do not have enough time to complete?
+- I haven't dealt with the system's logging yet, nor have I used middleware in this project.
+- Using route open source like Chi to optimize router.
+- Using docker to run postgredb instead of creating manually through queries.sql file.
