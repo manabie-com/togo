@@ -2,6 +2,7 @@ const config = (sequelize, DataTypes) => {
     const Config = sequelize.define('Config', {
         role: {
             type: DataTypes.STRING,
+            unique: true,
             allowNull: false,
             validate: {
                 notEmpty: true
@@ -17,12 +18,6 @@ const config = (sequelize, DataTypes) => {
     }, {
         tableName: 'configs'
     })
-
-    Config
-        .create({
-            role: 'Admin',
-            limit: 5
-        })
 
     return Config
 }

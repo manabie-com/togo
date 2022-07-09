@@ -20,7 +20,7 @@ test
 
 1. Run yarn to install dependencies: `yarn`;
 1. Config database credentials inside `/src/config/database.js`;
-1. Create database, run `yarn sequelize db:create` to create the database and run port Docker postgresql;
+1. Create the table manually in order to start the server from the file `./database.sql`;
 1. Run `yarn dev` to start the server.
 1. Run `yarn test` to start the server.
 
@@ -32,7 +32,27 @@ test
 - Users: `http://localhost:3000/api/users`
 - Task: `http://localhost:3000/api/task`
 
-### Curl
+### Curl Sign Up
+curl --location --request POST 'http://localhost:3000/api/auth/signup' \
+--header 'Content-Type: application/json' \
+--header 'Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzUsImlhdCI6MTY1NzM3Mzk3NywiZXhwIjoxNjU3Mzc3NTc3fQ.QzE-m84YuUiMdQ_FH9zarsiYqUSX-zH3-__1SMJ_i08' \
+--data-raw '{
+    "name": "Đình Bửu",
+    "email": "dinhbuu1208@gmail.com",
+    "password": "admintodo",
+    "role": "Admin"
+}'
+
+### Curl Sign In 
+curl --location --request POST 'http://localhost:3000/api/auth/signin' \
+--header 'Content-Type: application/json' \
+--header 'Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzcsImlhdCI6MTY1NzM3NDAwNywiZXhwIjoxNjU3Mzc3NjA3fQ.Wed21w5ETRt9RHW4UNkyfDk-nVNJ-ATIBi2u2pHT4IU' \
+--data-raw '{
+    "email": "dinhbuu1208@gmail.com",
+    "password": "admintodo"
+}'
+
+### Curl Create Task
 curl --location --request POST 'http://localhost:3000/api/task' \
 --header 'Content-Type: application/json' \
 --data-raw '{

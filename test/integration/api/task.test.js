@@ -16,9 +16,6 @@ const DEFAULT_TASK = {
 let USER_TOKEN = ''
 beforeAll(async() => {
     USER_TOKEN = await signin()
-    await request(app).post(API_TASK)
-        .set('Cookie', USER_TOKEN)
-        .send(DEFAULT_TASK)
 })
 
 afterAll(async() => {

@@ -4,7 +4,7 @@
     "main": "index.js",
     "scripts": {
         "test": "jest",
-        "test:coverage": "NODE_ENV=test jest --coverage",
+        "test:coverage": "jest --coverage",
         "start": "node server.js",
         "dev": "node server.js",
         "lint": "standard --fix"

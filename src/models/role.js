@@ -9,7 +9,6 @@ const role = (sequelize, DataTypes) => {
         },
         status: {
             type: DataTypes.BOOLEAN,
-            unique: true,
             allowNull: false,
             validate: {
                 notEmpty: true
@@ -18,12 +17,6 @@ const role = (sequelize, DataTypes) => {
     }, {
         tableName: 'roles'
     })
-
-    Role
-        .create({
-            code: 'Admin',
-            status: true
-        })
 
     return Role
 }

@@ -1,10 +1,7 @@
-const ConfigService = require('../services/config')
-const UserService = require('../services/users')
-const { User } = require('../models')
-const { Config } = require('../models')
-const configService = new ConfigService(Config)
-const userService = new UserService(User)
-
+const dbConfig = require('../config/database')
+const Sequelize = require('sequelize')
+const sequelize = new Sequelize(dbConfig)
+const moment = require('moment')
 class TaskService {
     constructor(Task) {
         this.task = Task
@@ -14,9 +11,10 @@ class TaskService {
         try {
             const verifyLimitTask = await this.verifyTaskLimit(taskDTO.author)
             if (verifyLimitTask) {
-                await this.task.create(taskDTO)
+                const task = await this.task.create(taskDTO)
+                return { task, status: 201 }
             } else {
-                throw new Error('create task fail limit task')
+                throw new Error('create task fail limit task for day')
             }
         } catch (err) {
             throw new Error(err.message)
@@ -24,14 +22,16 @@ class TaskService {
     }
 
     async verifyTaskLimit(userId) {
-        const countTask = await this.task.findAll({
-            where: {
-                author: userId
-            }
-        })
-        const user = await userService.getById(userId)
-        const config = await configService.getLimitByRole(user.role)
-        if (config.limit <= countTask.length) {
+        const newDay = new Date()
+        const fromDate = moment(newDay).format("YYYY-MM-DD")
+        const toDate = moment(fromDate).add(1, 'days').format("YYYY-MM-DD")
+        const query = `SELECT * FROM "task" where author = ${userId} and "createdAt" between '${fromDate}' and '${toDate}'`;
+        const countTask = await sequelize.query(query)
+        const queryUser = `SELECT * FROM "users" where id = ${userId}`
+        const user = await sequelize.query(queryUser)
+        const queryConfig = `SELECT * FROM "configs" where role = '${user[0][0].role}'`
+        const config = await sequelize.query(queryConfig)
+        if (config[0][0].limit <= countTask[0].length) {
             return false
         }
         return true
