@@ -18,5 +18,7 @@ namespace MyTodo.Data.Entities
         public string Description { get; set; }
         public int Priority { get; set; }
         public TodoItemStatus Status { get; set; }
+        public virtual ICollection<Assignment> Assignments { get; set; }
+
     }
 }
