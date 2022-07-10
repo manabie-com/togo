@@ -14,9 +14,13 @@ There are 3 projects as below:
 
 ## Run locally
 **PLEASE UNINSTALL ALL .NET SDK IN YOUR LOCAL MACHINE IF YOU ALREADY INSTALLED ANY .NET SDK VERSION > 3.1**
+
 **INSTAL CORRECT VERSION OF .NET SDK. .NET Core SDK 3.1 WITH THE LINK ABOVE.**
+
 **YOU CAN INSTALL ANY .NET SDK VERSIONS HIGHER THAN 3.1 AFTER YOU INSTALL .NET SDK VERSION 3.1**
+
 **DO NOT install any .NET SDK versions higher than 3.1 before install version 3.1.**
+
 - Clone code base.
 - Navigate to root code base folder. Run `dotnet build`. It will restore and build solution (3 projects).
 - Navigate to TogoService.API folder. Run `dotnet run` to run it. Open browser at https://localhost:5001/swagger for API document and try it.
