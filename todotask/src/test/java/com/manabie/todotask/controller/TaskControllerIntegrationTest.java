@@ -2,13 +2,10 @@ package com.manabie.todotask.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.manabie.todotask.body.AddTaskRequest;
-import com.manabie.todotask.entity.Task;
 import com.manabie.todotask.entity.UserDailyLimit;
 import com.manabie.todotask.repository.TaskRepository;
 import com.manabie.todotask.repository.UserRepository;
 import com.manabie.todotask.service.TaskService;
-import javafx.application.Application;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,29 +13,20 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -86,7 +74,7 @@ class TaskControllerIntegrationTest {
         mockMvc.perform(requestBuilder)
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code", is(0)))
+                .andExpect(jsonPath("$.status", is(200)))
                 .andExpect(jsonPath("$.data.id", is(1)));
     }
 
@@ -108,7 +96,7 @@ class TaskControllerIntegrationTest {
         mockMvc.perform(requestBuilder)
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code", is(1)))
+                .andExpect(jsonPath("$.status", is(400)))
                 .andExpect(jsonPath("$.message", is("User with id " + userId + " does not exist")));
     }
 
@@ -136,13 +124,13 @@ class TaskControllerIntegrationTest {
             mockMvc.perform(requestBuilder)
                     .andDo(print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.code", is(0)))
+                    .andExpect(jsonPath("$.status", is(200)))
                     .andExpect(jsonPath("$.data.user_id", is(userId)));
         }
         //add when limit is reached
         mockMvc.perform(requestBuilder)
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code", is(1)));
+                .andExpect(jsonPath("$.status", is(400)));
     }
 }
