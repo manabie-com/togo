@@ -7,12 +7,8 @@ import com.manabie.todotask.exception.UserNotFoundException;
 import com.manabie.todotask.repository.TaskRepository;
 import com.manabie.todotask.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
-import javax.management.BadAttributeValueExpException;
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 @Service
@@ -23,8 +19,10 @@ public class TaskServiceImpl implements TaskService{
     UserRepository userRepository;
 
     public Task addTask(AddTaskRequest request){
+        ZonedDateTime startTime = request.getTargetDate().toLocalDate().atStartOfDay().atZone(request.getTargetDate().getZone());
+        ZonedDateTime endTime = request.getTargetDate().toLocalDate().atStartOfDay().plusDays(1).atZone(request.getTargetDate().getZone());
         return userRepository.findById(request.getUserId()).map(userDailyLimit -> {
-            int taskCount = taskRepository.countTaskByUserIdAndTargetDate(request.getUserId(), request.getTargetDate(), request.getTargetDate().plusDays(1));
+            int taskCount = taskRepository.countTaskByUserIdAndTargetDate(request.getUserId(), startTime, endTime);
             if (taskCount < userDailyLimit.getDailyTaskLimit()) {
                 return taskRepository.save(buildFromRequest(request));
             } else {
