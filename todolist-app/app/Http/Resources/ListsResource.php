@@ -14,17 +14,17 @@ class ListsResource extends JsonResource
     public function toArray($request)
     {
         return array(
-            'id'=>$this->id,
-            'task'=>$this->task,
-            'description'=>$this->description,
-            'is_complete'=>$this->is_complete
+            'id' => $this->id,
+            'task' => $this->task,
+            'description' => $this->description,
+            'is_complete' => $this->is_complete
         );
     }
 
     public function with($request)
     {
         return [
-            'author'=>'david.tunglt@gmail.com',
+            'author' => 'david.tunglt@gmail.com',
         ];
     }
 }
