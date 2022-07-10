@@ -35,6 +35,8 @@ class ListApiTest extends TestCase
             'is_complete'=>$lists->is_complete
         ));
         $response->assertStatus(201);
+        //db has one 1 recode just created
+        $this->assertCount(1, TodoList::all());
 //        $response->assertJson((array)$lists);
     }
 }

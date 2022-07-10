@@ -2,8 +2,11 @@
 
 namespace Tests\Unit;
 
+use App\Models\TodoList;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
+
+//use PHPUnit\Framework\TestCase;
 
 class ListTest extends TestCase
 {
@@ -16,5 +19,13 @@ class ListTest extends TestCase
     public function test_example()
     {
         $this->assertTrue(true);
+    }
+
+    /**
+     * @test
+     */
+    public function test_that_a_list_can_be_created()
+    {
+
     }
 }
