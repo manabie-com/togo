@@ -45,7 +45,10 @@ namespace MyTodo.Services.Impl
         public List<TodoItemViewModel> GetAll()
         {
             //return todoItemRepository.FindAll().ProjectTo<TodoItemViewModel>().ToList();
-            return mapper.ProjectTo<TodoItemViewModel>(todoItemRepository.FindAll()).ToList();
+            //return mapper.ProjectTo<TodoItemViewModel>(todoItemRepository.FindAll()).ToList();
+            var data = todoItemRepository.FindAll();
+            var result = mapper.ProjectTo<TodoItemViewModel>(data).ToList();
+            return result;
         }
 
         public List<TodoItemViewModel> GetAll(string keyword)

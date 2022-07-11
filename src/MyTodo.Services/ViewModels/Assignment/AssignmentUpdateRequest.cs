@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MyTodo.Services.ViewModels
+namespace MyTodo.Services.ViewModels.Assignment
 {
-    public class AssignmentViewModel
+    public class AssignmentUpdateRequest
     {
         public int Id { get; set; }
 

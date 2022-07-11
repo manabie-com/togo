@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MyTodo.Services.ViewModels
+namespace MyTodo.Services.ViewModels.Assignment
 {
-    public class AssignmentViewModel
+    public class AssignmentCreateRequest
     {
-        public int Id { get; set; }
-
         public int TodoItemId { get; set; }
 
         public Guid UserId { get; set; }

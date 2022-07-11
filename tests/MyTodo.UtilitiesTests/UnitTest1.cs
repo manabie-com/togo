@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 
-namespace MyTodo.BackendApi.Tests
+namespace MyTodo.UtilitiesTests
 {
     public class UnitTest1
     {
