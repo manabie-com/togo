@@ -1,0 +1,1 @@
+insert into "user_daily_limits" ("user_id", "daily_task_limit") values (1, 5)

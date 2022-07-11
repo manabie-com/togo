@@ -1,30 +1,42 @@
-### Requirements
+### Run the application
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+First, you need to install `maven` and `java` with `version >= 1.8`.
+Open terminal and  `cd` to folder `todotask`. After that, run this command `mvn spring-boot:run` to run the
+application.
 
-### Notes
+### Verify running application
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+After running application successfully, you can test the api by sending this `CURL` request.
 
-### How to submit your solution?
+```cookie
+curl --location --request PUT 'http://localhost:8080/task/add' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "user_id": 1,
+    "task_name": "test",
+    "task_description":"test",
+    "target_date":"2022-07-08T00:00:00Z"
+}'
+```
 
-- Fork this repo and show us your development progress via a PR
+### Run unit and integration tests
 
-### Interesting facts about Manabie
+For unit testing and integration testing, run this command ```mvn clean test```
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+### Some highlights about the project
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+1. This application contains three layer: controller, service and repository. Each layer communicates with each other
+   via interface not their concrete methods. Therefore, each layer is easily replaceable and extendable.
+2. `ZonedTimeDate` is used instead of `Date`. This new class helps us maintain daily limit logic for different users in
+   different timezones.
+3. `Spring Validation` and `Global Exception Handling` are used to passively verify request format and throws predefined
+   response if request format is invalid. For example, if field `user_id` or `target_date` in `AddTaskRequest` is null,
+   application will return a bad request response immediately.
+4. This project uses H2, an in-memory database, for the purpose of making the application locally runnable without an
+   external database like Postrges or Mysql. The schema and initial data defined in two files `schema.sql`
+   and `data.sql`, are stored in folder ```src/main/java/resources```. The schema file is also used for testing.
+
+### Other notes
+
+1. Database and server configuartion are configure in file ```src/main/resources/application.properties```. Server will
+   start at the default port `8080`
