@@ -1,30 +1,73 @@
-### Requirements
+  # Togo Service
+There are 3 projects as below:
+  - **TogoService.API**: It's main application for WEB API. It's a lightweight web API. Business logic is in Controller class as well.
+  - **TogoService.UnitTest**: Unit test for API. I only care about the method AddTasksForUser in UserController class. It contains all business logic.
+  - **TogoService.IntegrationTest**: Integration Test for API.
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+**Language**: C#.
+**Framework**: .NET Core 3.1
 
-### Notes
+## Prerequisite
+- .NET Core 3.1 SDK ([download](https://dotnet.microsoft.com/en-us/download/dotnet/3.1 "download"))
+- Editor: any editor you familiar with. 
+- [ SQLite Studio](https://sqlitestudio.pl/ " SQLite Studio") for viewing data 
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+## Run locally
+**PLEASE UNINSTALL ALL .NET SDK IN YOUR LOCAL MACHINE IF YOU ALREADY INSTALLED ANY .NET SDK VERSION > 3.1**
 
-### How to submit your solution?
+**INSTAL CORRECT VERSION OF .NET SDK. .NET Core SDK 3.1 WITH THE LINK ABOVE.**
 
-- Fork this repo and show us your development progress via a PR
+**YOU CAN INSTALL ANY .NET SDK VERSIONS HIGHER THAN 3.1 AFTER YOU INSTALL .NET SDK VERSION 3.1**
 
-### Interesting facts about Manabie
+**DO NOT install any .NET SDK versions higher than 3.1 before install version 3.1.**
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+- Clone code base.
+- Navigate to root code base folder. Run `dotnet build`. It will restore and build solution (3 projects).
+- Navigate to TogoService.API folder. Run `dotnet run` to run it. Open browser at https://localhost:5001/swagger for API document and try it.
+  - You can also use postman to try it.
+  - Using CURL: 
+> curl -X 'POST' \
+  'https://localhost:5001/api/users/{userId}/tasks' \
+  -H 'accept: text/plain' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "Date": "2022-07-05T03:54:32.843Z",
+  "Tasks": [
+    {
+      "Name": "task 1",
+      "Description": "task thứ nhất"
+    }
+  ]
+}'
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+## Run locally with Docker
+- Clone code base
+- Navigate to root code base folder. Run `docker build -t togoservice .` for building image.
+- Run `docker run -d -p 5001:80 --name togoapi togoservice` to start container.
+- Open browser at http://localhost:5001/swagger for API document and try it or you can use CURL with above information.
+
+## Note: 2 users id for run locally testing:
+- id =BA4688FB-B389-40A7-A94C-FE43F61A2BCE - max daily tasks = 10
+- id =437A4196-7ADF-441F-8352-05F126C469B2 - max daily tasks = 0
+
+## Unit Test - Run locally
+- Clone code base.
+- Navigate to root code base folder. Run `dotnet build`. It will restore and build solution (3 projects).
+- Navigate to TogoService.UnitTest. Run `dotnet test`.
+You can do the same with integration test.
+
+## My solution
+- It is lightweight web API project.
+- I already dockerized but did not test it.
+- Unit test coverage is 100% and integration test coverage is 80%.
+![test coverage_unit test](https://user-images.githubusercontent.com/4899325/177812275-8d8f2b01-78e7-4fa5-9450-cfbc2f120129.PNG)
+
+![test coverage_integration test](https://user-images.githubusercontent.com/4899325/177812394-e5b6d475-aa96-4563-952a-2a452f3b351a.PNG)
+
+
+## More
+If I have more time, I think there are some things we can improve:
+- Dockerization with careful testing.
+- Using environment variables for various environments (dev, qa, staging, production...).
+- Authentication and authorization for endpoints.
+- I am using SQLite without any security (credentials...). Need to pay attention here.
