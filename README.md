@@ -21,6 +21,9 @@
 Or
 
 - Make sure you have installed .NET SDK 6 and .NET RUNTIME 6 .
+- move to project solution. Create seft-certificate to use https for testing.api by using command line below
+	+ dotnet dev-certs https -ep $env:USERPROFILE\.aspnet\https\Manabie.BasicIdentityServer.API.pfx -p crypticpassword
+	+ dotnet user-secrets -p src\services\Manabie.Testing.API\Manabie.Testing.API.csproj set "Kestrel:Certificates:Development:Password" "crypticpassword"
 - Run "PublicApp.bat" in the folder solution.
 - Run "RunIdentity.bat" and "RunTestingApi.bat".
 
