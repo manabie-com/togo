@@ -12,18 +12,13 @@
 
 ### Setup Prepare Resource:
 - Create a Docker network with name "my-network"
-- move to project solution. Create seft-certificate to use https for testing.api by using command line below
-	+ dotnet dev-certs https -ep $env:USERPROFILE\.aspnet\https\Manabie.BasicIdentityServer.API.pfx -p crypticpassword
-	+ dotnet user-secrets -p src\services\Manabie.Testing.API\Manabie.Testing.API.csproj set "Kestrel:Certificates:Development:Password" "crypticpassword"
+
 
 - Run docker compose in the folder solution.
 
 Or
 
 - Make sure you have installed .NET SDK 6 and .NET RUNTIME 6 .
-- move to project solution. Create seft-certificate to use https for testing.api by using command line below
-	+ dotnet dev-certs https -ep $env:USERPROFILE\.aspnet\https\Manabie.BasicIdentityServer.API.pfx -p crypticpassword
-	+ dotnet user-secrets -p src\services\Manabie.Testing.API\Manabie.Testing.API.csproj set "Kestrel:Certificates:Development:Password" "crypticpassword"
 - Run "PublicApp.bat" in the folder solution.
 - Run "RunIdentity.bat" and "RunTestingApi.bat".
 
@@ -56,12 +51,12 @@ Or
 			
 	- GET Todo:
 
-		- curl  --location --request GET 'https://localhost:7001/Todo/GetTodos' \
+		- curl  --location --request GET 'http://localhost:7001/Todo/GetTodos' \
 				--header 'Authorization: Bearer access_token
 				
 	- ADD Todo:
 
-		- curl --location --request POST 'https://localhost:7001/Todo/AddTodo' \
+		- curl --location --request POST 'http://localhost:7001/Todo/AddTodo' \
 			--header 'Authorization: Bearer access_token' \
 			--header 'Content-Type: application/json' \
 			--data-raw '{

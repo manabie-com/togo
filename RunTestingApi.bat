@@ -1,5 +1,5 @@
 set testingOutputPath=./publish/Manabie.Testing.API
-set testingUrl=http://localhost:7216
+set testingUrl=http://localhost:7001
 set configuration=Debug
 set environment = Development
 
