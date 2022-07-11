@@ -12,6 +12,10 @@
 
 ### Setup Prepare Resource:
 - Create a Docker network with name "my-network"
+- move to project solution. Create seft-certificate to use https for testing.api by using command line below
+	+ dotnet dev-certs https -ep $env:USERPROFILE\.aspnet\https\Manabie.BasicIdentityServer.API.pfx -p crypticpassword
+	+ dotnet user-secrets -p src\services\Manabie.Testing.API\Manabie.Testing.API.csproj set "Kestrel:Certificates:Development:Password" "crypticpassword"
+
 - Run docker compose in the folder solution.
 
 Or
