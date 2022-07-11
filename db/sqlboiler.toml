@@ -1,0 +1,14 @@
+output   = "internal/interfaces/models"
+pkgname = "models"
+wipe     = true
+no-tests = true
+
+[psql]
+  dbname = "togo"
+  host   = "localhost"
+  port   = 5432
+  user   = "postgres"
+  pass   = "postgres"
+  schema = "togo"
+  blacklist = ["migrations", "other"]
+  sslmode = "disable"
