@@ -1,0 +1,22 @@
+todo:
+  security:
+    expiry: 600000
+    secret: someSecretKey
+server:
+  port: 8008
+spring:
+  datasource:
+    password: postgres
+    url: jdbc:postgresql://localhost:5432/todo_test
+    username: postgres
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      use-new-id-generator-mappings: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        globally_quoted_identifiers: true
+    show-sql: true
+  liquibase:
+    change-log: classpath:/db/changelog-master.yaml

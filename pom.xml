@@ -11,7 +11,7 @@
 	<artifactId>ws</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>TodoAPI</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Manabie Assessment</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>

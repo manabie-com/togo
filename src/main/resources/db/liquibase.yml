@@ -1,0 +1,5 @@
+changeLogFile: db/changelog-master.yaml
+driver: org.postgresql.Driver
+password: postgres
+url: jdbc:postgresql://localhost:5432/todo-test
+username: postgres
