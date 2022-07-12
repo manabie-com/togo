@@ -6,8 +6,8 @@ import (
 )
 
 type Task struct {
-	Title  string `bson:"title,omitempty"`
-	UserId string `bson:"user_id,omitempty"`
+	Title         string `bson:"title,omitempty"`
+	AssigneeEmail string `bson:"assignee_email,omitempty"`
 }
 
 func (t *Task) GetCollection() *mongo.Collection {

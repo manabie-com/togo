@@ -9,8 +9,8 @@ import (
 )
 
 type CreateTodoParam struct {
-	UserId string `json:"user_id" binding:"required"`
-	Title  string `json:"title" binding:"required"`
+	AssigneeEmail string `json:"assignee_email" binding:"required"`
+	Title         string `json:"title" binding:"required"`
 }
 
 func CreateTodoTask(c *gin.Context) {
@@ -33,8 +33,8 @@ func CreateTodoTask(c *gin.Context) {
 	c.JSON(http.StatusOK, utils.SuccessResponse(r))
 }
 
-func (p *CreateTodoParam) GetUserId() (r string) {
-	r = p.UserId
+func (p *CreateTodoParam) GetAssigneeEmail() (r string) {
+	r = p.AssigneeEmail
 	return
 }
 
