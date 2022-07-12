@@ -7,7 +7,7 @@ server:
 spring:
   datasource:
     password: postgres
-    url: jdbc:postgresql://localhost:5432/todo_test
+    url: jdbc:postgresql://localhost:5432/todo-test
     username: postgres
   jpa:
     hibernate:
