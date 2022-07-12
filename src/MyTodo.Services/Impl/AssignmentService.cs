@@ -29,9 +29,17 @@ namespace MyTodo.Services.Impl
             this._mapper = mapper;
         }
 
-        public int Add(AssignmentViewModel viewModel)
+        public int Add(AssignmentCreateRequest request)
         {
-            var model = _mapper.Map<AssignmentViewModel, Assignment>(viewModel);
+            //validation
+            var user = _userManager.Users.SingleOrDefault(x => x.Id == request.UserId);
+            var userLimitTodos = user.TaskLimit;
+            var userTodos = _assignmentRepository.FindAll().Count(x => x.UserId == request.UserId && x.AssignedDate == request.AssignedDate);
+            if (userTodos >= userLimitTodos)
+            {
+                throw new MyTodoException("Created enough tasks for the day.");
+            }
+            var model = _mapper.Map<AssignmentCreateRequest, Assignment>(request);
             _assignmentRepository.Add(model);
             _unitOfWork.Commit();
             return model.Id;
@@ -87,12 +95,18 @@ namespace MyTodo.Services.Impl
             var getItem = _assignmentRepository.FindById(request.Id);
             if (getItem == null) throw new MyTodoException($"Cannot find assignment with id: {request.Id}");
 
-            
-     
-            getItem.TodoItemId = request.TodoItemId;
-            getItem.UserId = request.UserId;
-            getItem.AssignedDate = request.AssignedDate;
+            var user = _userManager.FindByNameAsync(request.UserName);
 
+            var countAssignment = _assignmentRepository.FindAll()
+                .Where(x => x.UserId == request.AssignedUser && x.AssignedDate == request.AssignedDate).Count();
+
+
+            //getItem.TodoItemId = request.TodoItemId;
+            //getItem.UserId = user.Result.Id;
+            getItem.AssignedDate = request.AssignedDate;
+            //getItem.AssignedUser = request.AssignedUser;
+
+           
             _assignmentRepository.Update(getItem);
             return _unitOfWork.Commit();
         }

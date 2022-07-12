@@ -15,7 +15,7 @@ namespace MyTodo.Services.Interfaces
 
         AssignmentViewModel GetById(int id);
 
-        int Add(AssignmentViewModel request);
+        int Add(AssignmentCreateRequest request);
 
         int Update(AssignmentUpdateRequest request);
 

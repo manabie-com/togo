@@ -28,33 +28,15 @@ namespace MyTodo.BackendApi
                  options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
                  o => o.MigrationsAssembly("MyTodo.Data.EntityFramework")));
 
-            services.AddIdentity<AppUser, AppRole>()
-                .AddEntityFrameworkStores<MyTodoDbContext>()
-                .AddDefaultTokenProviders();
-            // Configure Identity
-            services.Configure<IdentityOptions>(options =>
-            {
-                // Password settings
-                options.Password.RequireDigit = true;
-                options.Password.RequiredLength = 6;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireLowercase = false;
-
-                // Lockout settings
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
-                options.Lockout.MaxFailedAccessAttempts = 10;
-
-                // User settings
-                options.User.RequireUniqueEmail = true;
-            });
             // Add application services.
             services.AddScoped<UserManager<AppUser>, UserManager<AppUser>>();
             services.AddScoped<RoleManager<AppRole>, RoleManager<AppRole>>();
             services.AddTransient(typeof(IUnitOfWork), typeof(EFUnitOfWork));
             services.AddTransient(typeof(IRepository<,>), typeof(EFRepository<,>));
             services.AddTransient<ITodoItemRepository, TodoItemRepository>();
+            services.AddTransient<IAssignmentRepository, AssignmentRepository>();
             services.AddTransient<ITodoItemService, TodoItemService>();
+            services.AddTransient<IAssignmentService, AssignmentService>();
             services.AddTransient<DatabaseInitializer>();
             return services;
         }

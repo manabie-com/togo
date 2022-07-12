@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
 using MyTodo.Data.Entities;
 using MyTodo.Data.EntityFramework;
@@ -42,10 +43,16 @@ namespace MyTodo.BackendApi
             //Dependency injection
             services.ConfigureDependencyInjection(Configuration);
 
+            //Add Authentication
+            services.Authenticate(Configuration);
+
             // Auto Mapper
             services.AddSingleton(AutoMapperConfig.RegisterMappings().CreateMapper());
-        
-            services.AddControllers();
+
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.PropertyNamingPolicy = null;
+            });
 
             services.ConfigureSwagger();
 
@@ -59,6 +66,9 @@ namespace MyTodo.BackendApi
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                IdentityModelEventSource.ShowPII = true;
+
+
             }
             app.ConfigureSwagger();
 
@@ -66,7 +76,8 @@ namespace MyTodo.BackendApi
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            //Add Authentication
+            app.Authenticate();
 
             app.UseEndpoints(endpoints =>
             {

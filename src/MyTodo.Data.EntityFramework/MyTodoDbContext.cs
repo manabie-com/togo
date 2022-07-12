@@ -25,7 +25,7 @@ namespace MyTodo.Data.EntityFramework
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
-                optionsBuilder.UseSqlServer(@"Server=LA-TUAN;Database=MyTodo;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer(@"Server=localhost;Database=MyTodo;Trusted_Connection=True;");
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -45,6 +45,10 @@ namespace MyTodo.Data.EntityFramework
                .HasKey(x => new { x.UserId });
 
             #endregion Identity Config
+
+            #region Seeding
+
+            #endregion
 
         }
 

@@ -4,12 +4,17 @@ using MyTodo.Services.Interfaces;
 using MyTodo.Services.ViewModels;
 using MyTodo.Services.ViewModels.Assignment;
 using MyTodo.Services.ViewModels.TodoItem;
+using System;
+using System.Linq;
+using System.Security.Authentication;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace MyTodo.BackendApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TodoItemsController : ControllerBase
     {
         private readonly ITodoItemService _todoItemService;
@@ -21,7 +26,6 @@ namespace MyTodo.BackendApi.Controllers
             this._assignmentService = assignmentService;
         }
         [HttpGet()]
-        //[Authorize]
         public IActionResult GetAll()
         {
             var result = _todoItemService.GetAll();
@@ -47,7 +51,6 @@ namespace MyTodo.BackendApi.Controllers
 
         [HttpPost]
         [Consumes("multipart/form-data")]
-        [Authorize]
         public IActionResult Create([FromForm] TodoItemViewModel viewModel)
         {
             if (!ModelState.IsValid)
@@ -65,7 +68,6 @@ namespace MyTodo.BackendApi.Controllers
 
         [HttpPut("{id}")]
         [Consumes("multipart/form-data")]
-        [Authorize]
         public async Task<IActionResult> Update([FromRoute] int id, [FromForm] TodoItemUpdateRequest request)
         {
             if (!ModelState.IsValid)
@@ -80,7 +82,6 @@ namespace MyTodo.BackendApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
             var affectedResult = _todoItemService.Remove(id);
@@ -89,22 +90,32 @@ namespace MyTodo.BackendApi.Controllers
             return Ok();
         }
         #region Assignment
-        [HttpPut("{id}")]
+        [HttpPut()]
+        [Route("{id}/assign")]
         [Consumes("multipart/form-data")]
-       // [Authorize]
-        public async Task<IActionResult> Assign([FromRoute] int id, [FromForm] AssignmentUpdateRequest request)
+        public async Task<IActionResult> Assign([FromRoute] int id, [FromForm] AssignmentCreateRequest request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            request.Id = id;
-            var affectedResult = _assignmentService.Update(request);
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
+            request.TodoItemId = id;
+            request.AssignedUser = GetLoggedUserId();
+            var affectedResult = _assignmentService.Add(request);
             if (affectedResult == 0)
                 return BadRequest();
             return Ok();
         }
 
         #endregion
+        private Guid GetLoggedUserId()
+        {
+            if (!User.Identity.IsAuthenticated)
+                throw new AuthenticationException();
+
+            var userName = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+
+            return Guid.Parse(userName);
+        }
     }
 }

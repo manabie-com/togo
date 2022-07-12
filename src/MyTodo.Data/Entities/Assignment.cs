@@ -13,10 +13,11 @@ namespace MyTodo.Data.Entities
         {
 
         }
-        public Assignment(int todoItemId, Guid userId, DateTime assignedDate)
+        public Assignment(int todoItemId, Guid userId, Guid assignedUser, DateTime assignedDate)
         {
             this.TodoItemId = todoItemId;
             this.UserId = userId;
+            this.AssignedUser = assignedUser;
             this.AssignedDate = assignedDate;
         }
         public int TodoItemId { get; set; }
@@ -28,7 +29,10 @@ namespace MyTodo.Data.Entities
 
         [ForeignKey("UserId")]
         public virtual AppUser User { get; set; }
+
         public DateTime AssignedDate { get; set; }
+
+        public Guid AssignedUser { get; set; }
 
     }
 }

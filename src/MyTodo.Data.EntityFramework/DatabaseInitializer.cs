@@ -23,68 +23,46 @@ namespace MyTodo.Data.EntityFramework
         {
             if (!roleManager.Roles.Any())
             {
-                await roleManager.CreateAsync(new AppRole()
-                {
-                    Name = "Administration",
-                    NormalizedName = "Administration",
-                });
-                await roleManager.CreateAsync(new AppRole()
-                {
-                    Name = "Staff",
-                    NormalizedName = "Staff",
-                });
+                await roleManager.CreateAsync(new AppRole() { Name = "Admin" });
+                await roleManager.CreateAsync(new AppRole() { Name = "User" });
                 context.SaveChanges();
             }
 
             if (!userManager.Users.Any())
             {
-
-                var user01 = new AppUser()
+                var adminAccount = new AppUser()
                 {
-                    UserName = "user01@mytodo.com",
-                    Email = "user01@mytodo.com",
-                    PhoneNumber = "0989774788",
+                    UserName = "admin@mytodo.com",
+                    Email = "admin@mytodo.com",
+                    PhoneNumber = "0989774722",
                     TaskCount = 0,
                     TaskLimit = 100,
 
                 };
 
-                var result = await userManager.CreateAsync(user01, "123456");
-                if (result.Succeeded)
-                    await userManager.AddToRoleAsync(user01, "Administration");
-
-
-                var user02 = new AppUser()
-                {
-                    UserName = "user02@gmail.com",
-                    Email = "user02@gmail.com",
-                    TaskCount = 0,
-                    TaskLimit = 5
-
-                };
-
-                result = await userManager.CreateAsync(user02, "123456");
+                var result = await userManager.CreateAsync(adminAccount, "123456");
                 if (result.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(user02, "Staff");
+                    await userManager.AddToRoleAsync(adminAccount, "Admin");
 
                 }
 
-                var user03 = new AppUser()
+                var userAccount = new AppUser()
                 {
-                    UserName = "user03@gmail.com",
-                    Email = "user03@gmail.com",
+                    UserName = "user@mytodo.com",
+                    Email = "user@mytodo.com",
+                    PhoneNumber = "0989774723",
                     TaskCount = 0,
-                    TaskLimit = 5
+                    TaskLimit = 2,
 
                 };
-                result = await userManager.CreateAsync(user03, "123456");
+
+                result = await userManager.CreateAsync(userAccount, "123456");
                 if (result.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(user03, "Staff");
+                    await userManager.AddToRoleAsync(userAccount, "User");
 
                 }
-
                 //
 
             }
@@ -93,10 +71,6 @@ namespace MyTodo.Data.EntityFramework
                 var todoItems = new List<TodoItem>(){
                             new TodoItem(){ Title="Task 1", Description="Task 1", Priority=1,Status=Enums.TodoItemStatus.New },
                             new TodoItem(){ Title="Task 2", Description="Task 2", Priority=2,Status=Enums.TodoItemStatus.New },
-                            new TodoItem(){ Title="Task 3", Description="Task 3", Priority=3,Status=Enums.TodoItemStatus.New },
-                            new TodoItem(){ Title="Task 4", Description="Task 4", Priority=1,Status=Enums.TodoItemStatus.New },
-                            new TodoItem(){ Title="Task 5", Description="Task 5", Priority=2,Status=Enums.TodoItemStatus.New },
-                            new TodoItem(){ Title="Task 6", Description="Task 6", Priority=3,Status=Enums.TodoItemStatus.New },
                         };
                 context.TodoItems.AddRange(todoItems);
             }

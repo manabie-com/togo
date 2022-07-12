@@ -16,6 +16,8 @@ namespace MyTodo.Services.ViewModels
 
         public virtual AppUserViewModel User { get; set; }
 
+        public Guid AssignedUser { get; set; }
+
         public DateTime AssignedDate { get; set; }
     }
 }

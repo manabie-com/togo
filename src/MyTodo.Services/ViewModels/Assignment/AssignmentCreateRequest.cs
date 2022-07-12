@@ -10,10 +10,8 @@ namespace MyTodo.Services.ViewModels.Assignment
 
         public Guid UserId { get; set; }
 
-        public virtual TodoItemViewModel TodoItem { get; set; }
-
-        public virtual AppUserViewModel User { get; set; }
-
         public DateTime AssignedDate { get; set; }
+
+        public Guid AssignedUser { get; set; }
     }
 }
