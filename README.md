@@ -41,3 +41,14 @@ LinuxOS/MacOS:
 
 ### Sample cURL request for testing and health check
 > `curl --location --request GET 'http://localhost:8008/api/v1/version'`
+
+
+### Run Unit Tests
+* navigate into project's root
+> `cd $projectDir\ `
+* run test command
+> `mvn clean test`
+
+
+### What do I love about my solution?
+* Microservice ready.
