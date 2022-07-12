@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/mongo"
 	"pt.example/grcp-test/http/actions"
 	"pt.example/grcp-test/http/utils"
 )
@@ -14,7 +15,6 @@ type CreateTodoParam struct {
 }
 
 func CreateTodoTask(c *gin.Context) {
-	var r interface{}
 	var p CreateTodoParam
 
 	if err := c.ShouldBindJSON(&p); err != nil {
@@ -22,15 +22,24 @@ func CreateTodoTask(c *gin.Context) {
 		return
 	}
 
-	ok := actions.ReduceRemainedTodoCountOfUser(&p)
+	if _, err := actions.ReduceRemainedTodoCountOfUser(c, &p); err != nil {
 
-	if !ok {
+		switch err.Error() {
+		case mongo.ErrNoDocuments.Error():
+			c.JSON(http.StatusNotFound, utils.ErrorResponse("User not found"))
+		default:
+			c.JSON(http.StatusBadRequest, utils.ErrorResponse(err.Error()))
+		}
+
 		return
 	}
 
-	r, ok = actions.SaveTodoTask(&p)
+	if _, err := actions.SaveTodoTask(c, &p); err != nil {
+		c.JSON(http.StatusBadRequest, utils.ErrorResponse(err.Error()))
+		return
+	}
 
-	c.JSON(http.StatusOK, utils.SuccessResponse(r))
+	c.JSON(http.StatusOK, utils.SuccessResponse("Added"))
 }
 
 func (p *CreateTodoParam) GetAssigneeEmail() (r string) {
