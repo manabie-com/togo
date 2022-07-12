@@ -43,8 +43,8 @@ func (p *CreateTodoParam) GetTitle() (r string) {
 	return
 }
 
-func (p *CreateTodoParam) GetTaskSavedCount() (r int) {
-	i := 1
+func (p *CreateTodoParam) GetTaskSavedCount() (r uint8) {
+	var i uint8 = 1
 	r = i
 
 	return

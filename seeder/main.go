@@ -2,9 +2,7 @@ package main
 
 import (
 	"context"
-	"time"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"pt.example/grcp-test/database"
 	"pt.example/grcp-test/models"
 )
@@ -27,9 +25,9 @@ func createUser() {
 
 	us := []models.User{
 		{
-			Email:                 "ptrung@manabie.test",
-			MaxAssignedTaskPerDay: 5,
-			LastAssignedTime:      primitive.NewDateTimeFromTime(time.Now()),
+			Email:                        "ptrung@manabie.test",
+			MaxAssignedTaskPerDay:        5,
+			RemainedAssignableTaskPerDay: 5,
 		},
 	}
 
