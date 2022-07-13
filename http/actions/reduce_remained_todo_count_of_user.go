@@ -23,7 +23,7 @@ func ReduceRemainedTodoCountOfUser(ctx context.Context, p ReduceRemainedTodoCoun
 	var ur database.Repository = &u
 
 	today := time.Now()
-	f := ur.GetCollection().FindOne(ctx, bson.D{{Key: "email", Value: p.GetAssigneeEmail()}})
+	f := ur.GetCollection().FindOneAndUpdate(ctx, bson.D{{Key: "email", Value: p.GetAssigneeEmail()}}, bson.D{{Key: "$set", Value: bson.D{{Key: "in_progress", Value: true}}}})
 
 	if f.Err() != nil {
 		err = f.Err()
@@ -31,6 +31,11 @@ func ReduceRemainedTodoCountOfUser(ctx context.Context, p ReduceRemainedTodoCoun
 	}
 
 	f.Decode(&u)
+
+	if u.InProgress {
+		err = errors.New("The user in another process")
+		return
+	}
 
 	if isNotSameDay(today.Local(), u.LastAssignedTime.Time().Local()) {
 		u.RemainedAssignableTaskPerDay = u.MaxAssignedTaskPerDay

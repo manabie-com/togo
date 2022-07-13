@@ -3,21 +3,26 @@ package main
 import (
 	"context"
 
+	"github.com/joho/godotenv"
 	"pt.example/grcp-test/database"
 	"pt.example/grcp-test/models"
 )
 
 func main() {
-	database.Init()
+	var err error
+
+	err = godotenv.Load("../.env")
+	if err != nil {
+		panic(err)
+	}
+
+	err = database.Init()
+	if err != nil {
+		panic(err)
+	}
 
 	createUser()
-
-	// var u models.User
-	// var ur database.Repository = &u
-	// r := ur.GetCollection().FindOne(context.TODO(), bson.D{{"email", "ptrung@manabie.test"}})
-	// r.Decode(&u)
-
-	// println(u.LastAssignedTime.Time().Local().Date())
+	// dropTasks()
 }
 
 func createUser() {
@@ -41,4 +46,11 @@ func createUser() {
 
 	ur.GetCollection().Drop(context.TODO())
 	ur.GetCollection().InsertMany(context.TODO(), rcs)
+}
+
+func dropTasks() {
+	t := &models.Task{}
+	var tr database.Repository = t
+
+	tr.GetCollection().Drop(context.TODO())
 }
