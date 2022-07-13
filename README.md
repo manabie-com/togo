@@ -6,6 +6,8 @@
 - Write integration (functional) tests
 - Write unit tests
 - Choose a suitable architecture to make your code simple, organizable, and maintainable
+- Using Docker to run locally
+  - Using Docker for database (if used) is mandatory.
 - Write a concise README
   - How to run your code locally?
   - A sample “curl” command to call your API
