@@ -9,5 +9,9 @@ services:
       - ${DB_PORT:-27017}:27017
     volumes:
       - ./.docker/mongodb:/data/db
-  # api:
-  #   build: ./
+  api:
+    build: ./
+    ports:
+      - ${APP_PORT:-81}:8080
+    volumes:
+      - ./:/usr/src/app
