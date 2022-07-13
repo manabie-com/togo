@@ -33,7 +33,7 @@ build: ## Show build.sh help for building binnary package under cmd
 
 .PHONY: run
 run:
-	go run cmd/server/main.go
+	go run cmd/app/main.go
 
 .PHONY: setup
 setup: ## Run setup scripts to prepare development environment

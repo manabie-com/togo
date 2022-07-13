@@ -12,7 +12,7 @@ type TaskRepository interface {
 }
 
 type TaskUseCase interface {
-	CreateTask(context.Context, *models.Task) error
+	CreateTask(context.Context, *models.Task, *models.User) error
 }
 
 const (

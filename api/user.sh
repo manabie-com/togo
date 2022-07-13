@@ -8,8 +8,8 @@ token="Bearer "$token
 
 create_one() {
   name=${1:-dat}
-  email=${2:-datshiro@gmail.com}
-  quota=${3-5}
+  quota=${2-5}
+  email=${3:-datshiro@gmail.com}
   http -vv $API_URL/users name=$name email=$email quota:=$quota
 }
 

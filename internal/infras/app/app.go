@@ -5,6 +5,7 @@ import (
 
 	"github.com/datshiro/togo-manabie/internal/infras/db"
 	"github.com/datshiro/togo-manabie/internal/interfaces"
+	"github.com/datshiro/togo-manabie/internal/interfaces/service/cache"
 	"github.com/labstack/echo/v4"
 )
 
@@ -40,7 +41,13 @@ func (a *app) RegisterHandlers() {
 		panic("Invalid database connection")
 	}
 
-	interfaces.RegisterHandlers(a.e, a.ApiPrefix, dbc)
+	cache, err := cache.CreateRedisClient(a.RedisLocation)
+	if err != nil {
+		fmt.Println(err)
+		panic("Invalid redis connection")
+	}
+
+	interfaces.RegisterHandlers(a.e, a.ApiPrefix, dbc, cache)
 }
 
 func (a *app) Run() error {

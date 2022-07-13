@@ -18,7 +18,7 @@ var (
 	DefaultHost              = "localhost"
 	DefaultLogLevel          = "error"
 	DefaultApiPrefix         = "/api"
-	DefaultRedisLocation     = "localhost:6379"
+	DefaultRedisLocation     = "redis://localhost:6379"
 	DefaultRunningClientHost = "0.0.0.0:3000"
 
 	DBUrlEnv         = "DB_URL"

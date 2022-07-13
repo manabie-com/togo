@@ -38,7 +38,7 @@ func (h TaskHandler) HandlePost(c echo.Context) error {
 		Priority:    request.GetPriority(),
 	}
 
-	if err := h.TUseCase.CreateTask(ctx, task); err != nil {
+	if err := h.TUseCase.CreateTask(ctx, task, user); err != nil {
 		return err
 	}
 	return c.JSON(http.StatusOK, task)
