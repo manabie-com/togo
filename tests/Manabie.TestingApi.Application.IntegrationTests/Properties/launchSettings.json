@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Manabie.TestingApi.Application.IntegrationTests": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+version: '3.4'
+
+services:
+  manabie.basicidentityserver.api:
+    image: ${DOCKER_REGISTRY-}identity-app
+    build:
+      context: .
+      dockerfile: src/Services/Manabie.BasicIdentityServer.API/Dockerfile
+    ports:
+      - 5000:5000
+    networks:
+      - my-network
+    environment:
+      - ASPNETCORE_URLS=http://+:5000
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  manabie.testing.api:
+    image: ${DOCKER_REGISTRY-}testing-app
+    build:
+      context: .
+      dockerfile: src/Services/Manabie.Testing.API/Dockerfile
+    networks:
+      - my-network
+    ports:
+      - 7001:80
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+      - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+      - ~/.aspnet/https:/https:ro
+
+networks:
+    my-network:
+      driver: bridge
+      external: true
+   
+
