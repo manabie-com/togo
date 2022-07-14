@@ -29,7 +29,7 @@ namespace Manabie.Testing.Application.UserLimits.Commands.CreateUserLimit
 
             switch (request.Role)
             {
-                case "Administration":
+                case "Administrator":
                     entity.TodoLimit = 5;
                     entity.AddedTodo = 0;
                     break;
