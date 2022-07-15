@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+
+  # TODO API
+  api-todo:
+    build: 
+      context: api
+      dockerfile: Dockerfile
+    image: api.todo
+    container_name: api.manabie.todo
+    command: bash -c "make run"
+    ports:
+      - 8080:8080
+    volumes:
+      - ./api:/api
+
+  # Postgres
+  postgresql:
+    image: postgres:14.4
+    container_name: postgresql.manabie.todo
+    environment:
+      POSTGRES_PASSWORD: "password"
+      POSTGRES_DB: "todo"
+    ports:
+      - 5432:5432
+    volumes:
+      - ./data/postgresql:/data/db
+      - ./init-database:/docker-entrypoint-initdb.d
