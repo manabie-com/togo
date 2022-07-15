@@ -16,7 +16,8 @@
 ![image](https://user-images.githubusercontent.com/20410120/179144735-1d3d5614-b0b0-49ea-86a6-c6f9beb0c46a.png)
 
 - Build solution & restore package
-	Ctrl + Shift + B 
+	![image](https://user-images.githubusercontent.com/20410120/179146449-2b3c52ec-f1fe-4483-8c8b-34253f5b3f0f.png)
+ 
 - Set Start up project
 	![image](https://user-images.githubusercontent.com/20410120/179145052-ebf7e339-65c0-4907-b3ae-a180681c2b77.png)
 - Migration database
