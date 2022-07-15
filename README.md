@@ -1,3 +1,47 @@
+## Prerequisite
+
+- Golang 1.16
+- Make
+- Docker/docker-compose
+
+## How to run
+
+- Docker startup, run :
+  `make docker/up`
+
+- Database migration, run:
+  `make db/up`
+
+- Start server, run:
+  `make run`
+
+## Tools I used
+
+- sqlboiler: this library generate repositories that handle database operations, with much faster speed than casual ORM
+- migrate: this is used to run migration scripts, written in sql queries, to manage database schema easily
+
+## My Design
+
+My code base was designed following clean architecture with mainly 3 layers:
+
+- UseCase: this layer is used to handle business logic
+- Infrastructure: this layer contains packages related to infrastructure and does not involve into business logic, including database, midlewares, etc.
+- Handler: this is the handler layer that expose API endpoint
+
+### Directory Structure
+
+- cmd: implemented necessary cmd, including main server application
+- internal: wrapped and encapsulated source of code that will not be exposed
+- db: includes sqlboiler configuration and migrations scripts
+- docker: includes dockerfile and docker-compose file as well as neccessary configuration files
+- bin: mostly executable plugins and generated/built applications
+- scripts: bash scripts to handle operations quickly
+
+## What I have done and have not done
+
+- [ ] Covering the core functionality with unit test
+      (As not enough time, I have implemented an unit test to demonstrate how I do test)
+
 ### Requirements
 
 - Implement one single API which accepts a todo task and records it

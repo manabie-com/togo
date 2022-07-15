@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+  web:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+    image: togo-api
+    container_name: togo_api
+    ports:
+      - 3000:3000
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - togo-network
+
+  db:
+    image: postgres
+    restart: always
+    container_name: postgres-db
+    ports:
+        - ${DB_PORT}:5432
+    volumes: 
+      - togo-volume:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_DB: ${DB_NAME}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: [ "CMD", "pg_isready" ,"--dbname", "${DB_NAME}", "--host", "db" , "--port", "5432", "--username", "${DB_USERNAME}" ]
+      timeout: 5s
+      retries: 10
+    networks:
+      - togo-network
+
+  redis:
+    image: redis:latest
+    container_name: togo-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - togo-network
+
+
+
+volumes:
+  togo-volume:
+
+networks:
+  togo-network:
+    driver: bridge
