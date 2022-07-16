@@ -10,10 +10,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type UserIndexResponse struct {
-	Users []*models.User `json:"users"`
-}
-
 type handler struct {
 	User user.UserService
 }
@@ -31,9 +27,7 @@ func (h *handler) Index(c echo.Context) error {
 		return utils.ResponseFailure(c, http.StatusInternalServerError, err)
 	}
 
-	res := UserIndexResponse{
+	return utils.ResponseSuccess(c, models.UserIndexResponse{
 		Users: users,
-	}
-
-	return utils.ResponseSuccess(c, res)
+	})
 }

@@ -9,16 +9,7 @@ import (
 	"manabie/todo/service/task"
 
 	"github.com/labstack/echo/v4"
-	"github.com/pkg/errors"
 )
-
-type StatusResponse struct {
-	Status string `json:"status"`
-}
-
-type TaskIndexResponse struct {
-	Tasks []*models.Task `json:"tasks"`
-}
 
 type handler struct {
 	Task task.TaskService
@@ -50,11 +41,9 @@ func (h *handler) Index(c echo.Context) error {
 		return utils.ResponseFailure(c, http.StatusInternalServerError, err)
 	}
 
-	res := TaskIndexResponse{
+	return utils.ResponseSuccess(c, models.TaskIndexResponse{
 		Tasks: tasks,
-	}
-
-	return utils.ResponseSuccess(c, res)
+	})
 }
 
 func (h *handler) Show(c echo.Context) error {
@@ -76,22 +65,22 @@ func (h *handler) Show(c echo.Context) error {
 func (h *handler) Create(c echo.Context) error {
 
 	id := c.Param("id")
-	tk := new(models.Task)
+	tk := new(models.TaskCreateRequest)
+
+	memberID, err := strconv.Atoi(id)
+	if err != nil {
+		return utils.ResponseFailure(c, http.StatusBadRequest, err)
+	}
 
 	if err := c.Bind(tk); err != nil {
 		return utils.ResponseFailure(c, http.StatusBadRequest, err)
 	}
 
-	// TODO Add validate
-	if no, _ := strconv.Atoi(id); no != tk.MemberID {
-		return utils.ResponseFailure(c, http.StatusBadRequest, errors.New("Member Id incorrect"))
-	}
-
-	if err := h.Task.Create(c.Request().Context(), tk); err != nil {
+	if err := h.Task.Create(c.Request().Context(), memberID, tk); err != nil {
 		return utils.ResponseFailure(c, http.StatusInternalServerError, err)
 	}
 
-	return utils.ResponseSuccess(c, StatusResponse{
+	return utils.ResponseSuccess(c, models.StatusResponse{
 		Status: "ok",
 	})
 }
@@ -108,9 +97,24 @@ func (h *handler) Update(c echo.Context) error {
 		return utils.ResponseFailure(c, http.StatusInternalServerError, err)
 	}
 
-	return utils.ResponseSuccess(c, StatusResponse{
+	return utils.ResponseSuccess(c, models.StatusResponse{
 		Status: "ok",
 	})
 }
 
-func (h *handler) Delete(c echo.Context) error { return nil }
+func (h *handler) Delete(c echo.Context) error {
+	id := c.Param("id")
+
+	taskID, err := strconv.Atoi(id)
+	if err != nil {
+		return utils.ResponseFailure(c, http.StatusBadRequest, err)
+	}
+
+	if err := h.Task.Delete(c.Request().Context(), taskID); err != nil {
+		return utils.ResponseFailure(c, http.StatusInternalServerError, err)
+	}
+
+	return utils.ResponseSuccess(c, models.StatusResponse{
+		Status: "ok",
+	})
+}

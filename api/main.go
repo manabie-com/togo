@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"manabie/todo/api/settings"
 	"manabie/todo/api/tasks"
 	"manabie/todo/api/users"
 	"manabie/todo/pkg/db"
@@ -11,6 +12,7 @@ import (
 	settingRespository "manabie/todo/repository/setting"
 	taskRespository "manabie/todo/repository/task"
 	userRespository "manabie/todo/repository/user"
+	settingService "manabie/todo/service/setting"
 	taskService "manabie/todo/service/task"
 	userService "manabie/todo/service/user"
 
@@ -55,11 +57,13 @@ func main() {
 
 	// Service
 	userSv := userService.NewUserService(userRp)
+	settingSv := settingService.NewSettingService(settingRp)
 	taskSv := taskService.NewTaskService(taskRp, settingRp)
 
 	// Handler
 	users.NewUserHandler(e, userSv)
 	tasks.NewTaskHandler(e, taskSv)
+	settings.NewSettingHandler(e, settingSv)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":8080"))

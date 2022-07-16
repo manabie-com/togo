@@ -3,6 +3,7 @@ package task
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"manabie/todo/models"
 	"manabie/todo/pkg/db"
@@ -15,9 +16,9 @@ import (
 type TaskService interface {
 	Index(ctx context.Context, memberID int, data string) ([]*models.Task, error)
 	Show(ctx context.Context, ID int) (*models.Task, error)
-	Create(ctx context.Context, t *models.Task) error
+	Create(ctx context.Context, memberID int, req *models.TaskCreateRequest) error
 	Update(ctx context.Context, t *models.Task) error
-	Delete(ctx context.Context, t *models.Task) error
+	Delete(ctx context.Context, taskID int) error
 }
 
 type service struct {
@@ -52,7 +53,7 @@ func (s *service) Index(ctx context.Context, memberID int, date string) (tasks [
 func (s *service) Show(ctx context.Context, ID int) (tk *models.Task, err error) {
 	if err := db.Transaction(ctx, nil, func(ctx context.Context, tx *sql.Tx) error {
 
-		tk, err = s.Task.FindByID(ctx, tx, ID)
+		tk, err = s.Task.FindByID(ctx, tx, ID, false)
 
 		if err != nil {
 			return err
@@ -66,7 +67,18 @@ func (s *service) Show(ctx context.Context, ID int) (tk *models.Task, err error)
 	return tk, nil
 }
 
-func (s *service) Create(ctx context.Context, t *models.Task) error {
+func (s *service) Create(ctx context.Context, memberID int, req *models.TaskCreateRequest) error {
+	target, err := time.Parse("2006-01-02", req.TargetDate)
+	if err != nil {
+		return errors.New("target_date incorrect")
+	}
+
+	t := &models.Task{
+		MemberID:   memberID,
+		Content:    req.Content,
+		TargetDate: target,
+	}
+
 	return db.Transaction(ctx, nil, func(ctx context.Context, tx *sql.Tx) error {
 		// Find setting by member ID
 		setting, err := s.Setting.FindByMemberID(ctx, tx, t.MemberID)
@@ -80,7 +92,7 @@ func (s *service) Create(ctx context.Context, t *models.Task) error {
 
 		// Row-Level Locks
 		// Find for update
-		tasks, err := s.Task.FindForUpdate(ctx, tx, t.MemberID, t.TargetDate)
+		tasks, err := s.Task.FindForUpdate(ctx, tx, t.MemberID, t.TargetDate.Format("2006-01-02"))
 		if err != nil {
 			return err
 		}
@@ -101,8 +113,9 @@ func (s *service) Create(ctx context.Context, t *models.Task) error {
 
 func (s *service) Update(ctx context.Context, t *models.Task) error {
 	return db.Transaction(ctx, nil, func(ctx context.Context, tx *sql.Tx) error {
+		// Row-Level Locks
 		// Find by ID
-		got, err := s.Task.FindByID(ctx, tx, t.ID)
+		got, err := s.Task.FindByID(ctx, tx, t.ID, true)
 		if err != nil {
 			return err
 		}
@@ -115,11 +128,16 @@ func (s *service) Update(ctx context.Context, t *models.Task) error {
 	})
 }
 
-func (s *service) Delete(ctx context.Context, t *models.Task) error {
+func (s *service) Delete(ctx context.Context, taskID int) error {
 	return db.Transaction(ctx, nil, func(ctx context.Context, tx *sql.Tx) error {
+		// Row-Level Locks
 		// Find for update
-		// Validate
+		tk, err := s.Task.FindByID(ctx, tx, taskID, true)
+		if err != nil {
+			return err
+		}
+
 		// Delele
-		return nil
+		return s.Task.Delete(ctx, tx, tk)
 	})
 }

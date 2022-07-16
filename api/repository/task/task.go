@@ -8,10 +8,17 @@ import (
 	"manabie/todo/models"
 )
 
+const (
+	queryFindByID = `SELECT * FROM task WHERE id = $1`
+	queryCreate   = `INSERT INTO task (member_id, content, target_date) VALUES ($1, $2, $3)`
+	queryUpdate   = `UPDATE task SET content = $1, updated_at = $2 WHERE id = $3`
+	queryDelete   = `DELETE FROM task WHERE id = $1`
+)
+
 type TaskRespository interface {
 	Find(ctx context.Context, tx *sql.Tx, memberID int, date string) ([]*models.Task, error)
 	FindForUpdate(ctx context.Context, tx *sql.Tx, memberID int, date string) ([]*models.Task, error)
-	FindByID(ctx context.Context, tx *sql.Tx, ID int) (*models.Task, error)
+	FindByID(ctx context.Context, tx *sql.Tx, ID int, forUpdate bool) (*models.Task, error)
 
 	Create(ctx context.Context, tx *sql.Tx, tk *models.Task) error
 	Update(ctx context.Context, tx *sql.Tx, tk *models.Task) error
@@ -28,8 +35,13 @@ func (tr *taskRespository) Find(ctx context.Context, tx *sql.Tx, memberID int, d
 	return tr.find(ctx, tx, memberID, date, false)
 }
 
-func (tr *taskRespository) FindByID(ctx context.Context, tx *sql.Tx, ID int) (*models.Task, error) {
-	row := tx.QueryRowContext(ctx, `SELECT * FROM task WHERE id = $1`, ID)
+func (tr *taskRespository) FindByID(ctx context.Context, tx *sql.Tx, ID int, forUpdate bool) (*models.Task, error) {
+	var query = queryFindByID
+	if forUpdate {
+		query = query + " FOR UPDATE"
+	}
+
+	row := tx.QueryRowContext(ctx, query, ID)
 
 	t := &models.Task{}
 
@@ -45,9 +57,7 @@ func (tr *taskRespository) FindForUpdate(ctx context.Context, tx *sql.Tx, member
 }
 
 func (tr *taskRespository) Create(ctx context.Context, tx *sql.Tx, tk *models.Task) error {
-	query := `INSERT INTO task (member_id, content, target_date) VALUES ($1, $2, $3)`
-
-	stmt, err := tx.PrepareContext(ctx, query)
+	stmt, err := tx.PrepareContext(ctx, queryCreate)
 	if err != nil {
 		return err
 	}
@@ -60,9 +70,7 @@ func (tr *taskRespository) Create(ctx context.Context, tx *sql.Tx, tk *models.Ta
 }
 
 func (tr *taskRespository) Update(ctx context.Context, tx *sql.Tx, tk *models.Task) error {
-	query := `UPDATE task SET content = $1, updated_at = $2 WHERE id = $3`
-
-	stmt, err := tx.PrepareContext(ctx, query)
+	stmt, err := tx.PrepareContext(ctx, queryUpdate)
 	if err != nil {
 		return err
 	}
@@ -75,9 +83,7 @@ func (tr *taskRespository) Update(ctx context.Context, tx *sql.Tx, tk *models.Ta
 }
 
 func (tr *taskRespository) Delete(ctx context.Context, tx *sql.Tx, tk *models.Task) error {
-	query := "DELETE FROM task WHERE id = $1"
-
-	stmt, err := tx.PrepareContext(ctx, query)
+	stmt, err := tx.PrepareContext(ctx, queryDelete)
 	if err != nil {
 		return err
 	}
