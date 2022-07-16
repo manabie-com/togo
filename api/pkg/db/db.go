@@ -31,10 +31,29 @@ type Config struct {
 type Manager struct {
 	DB     *sql.DB
 	Config Config
+
+	transactionInstanceContextKey      *contextKey
+	transactionForceRollbackContextKey *contextKey
+}
+
+// transaction contains transaction executor and its identifier.
+type transaction struct {
+	Transactor *sql.Tx
+}
+
+type contextKey struct {
+	Name string
 }
 
 // Setup itializes default database manager.
-func Setup(ctx context.Context, c Config) error {
+func Setup() error {
+	c := Config{
+		User:     "postgres",
+		Password: "password",
+		Host:     "postgresql.manabie.todo",
+		Database: "todo",
+	}
+
 	dbMutex.Lock()
 	defer dbMutex.Unlock()
 
@@ -53,6 +72,8 @@ func Setup(ctx context.Context, c Config) error {
 		return errors.Wrap(err, "database: failed to setup database manager")
 	}
 
+	DB.SetMaxOpenConns(20)
+
 	if err := DB.Ping(); err != nil {
 		return err
 	}
@@ -60,13 +81,16 @@ func Setup(ctx context.Context, c Config) error {
 	dbManager = &Manager{
 		DB:     DB,
 		Config: c,
+
+		transactionInstanceContextKey:      &contextKey{"transaction-instance-context-key"},
+		transactionForceRollbackContextKey: &contextKey{"transaction-force-rollback-context-key"},
 	}
 
 	return nil
 }
 
 // Teardown deletes default database manager.
-func (dbm *Manager) Teardown() (err error) {
+func Teardown() (err error) {
 	dbMutex.Lock()
 	defer dbMutex.Unlock()
 
@@ -85,18 +109,53 @@ func (dbm *Manager) Teardown() (err error) {
 	return nil
 }
 
-func (dbm *Manager) transaction(ctx context.Context, txOpt *sql.TxOptions, fn TransactionalExecutable) error {
-	tx, err := dbm.DB.BeginTx(ctx, txOpt)
+// withTransaction returns a copy of parent context that associated with the new tranasction.
+func (dbm *Manager) withTransaction(ctx context.Context) (context.Context, error) {
+	tx, err := dbm.DB.Begin()
+
 	if err != nil {
-		return errors.Wrap(err, "database: failed to begin transaction")
+		return ctx, errors.Wrap(err, "database: failed to begin transaction")
 	}
+
+	return context.WithValue(ctx, dbm.transactionInstanceContextKey, transaction{Transactor: tx}), nil
+}
+
+func (dbm *Manager) transaction(ctx context.Context, txOpt *sql.TxOptions, fn TransactionalExecutable) (err error) {
+	v, hasTransaction := ctx.Value(dbm.transactionInstanceContextKey).(transaction)
+
+	if !hasTransaction || v.Transactor == nil {
+		ctx, err = dbm.withTransaction(ctx)
+
+		if err != nil {
+			return errors.Wrap(err, "database: failed to begin transaction")
+		}
+
+		v, _ = ctx.Value(dbm.transactionInstanceContextKey).(transaction)
+	}
+
+	tx := v.Transactor
 
 	// CallBack function
 	err = fn(ctx, tx)
 
+	if hasTransaction {
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}
+
 	if err != nil {
 		if rberr := tx.Rollback(); rberr != nil {
 			err = errors.Wrapf(err, "rollback errors: %s", rberr.Error())
+		}
+		return err
+	}
+
+	if _, ok := ctx.Value(dbm.transactionForceRollbackContextKey).(struct{}); ok {
+		if rberr := tx.Rollback(); rberr != nil {
+			err = errors.Wrapf(err, "rollback for testing errors: %s", rberr.Error())
 		}
 		return err
 	}
@@ -114,4 +173,21 @@ func Transaction(ctx context.Context, txOpt *sql.TxOptions, fn TransactionalExec
 	}
 
 	return dbManager.transaction(ctx, txOpt, fn)
+}
+
+func TransactionForTesting(ctx context.Context, txOpt *sql.TxOptions, fn TransactionalExecutable) error {
+	if dbManager == nil {
+		return errors.New("database: manager is not initialized yet")
+	}
+
+	// TODO check ENV for testing
+
+	return dbManager.transaction(withForceRollback(ctx, dbManager.transactionForceRollbackContextKey), nil, fn)
+}
+
+// withForceRollback returns a copy of parent context that associated with the special flag.
+//
+// When the context contains this flag, Transaction() always executes tx.Rollback().
+func withForceRollback(ctx context.Context, transactionForceRollbackContextKey interface{}) context.Context {
+	return context.WithValue(ctx, transactionForceRollbackContextKey, struct{}{})
 }

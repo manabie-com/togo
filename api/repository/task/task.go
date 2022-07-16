@@ -10,7 +10,7 @@ import (
 
 const (
 	queryFindByID = `SELECT * FROM task WHERE id = $1`
-	queryCreate   = `INSERT INTO task (member_id, content, target_date) VALUES ($1, $2, $3)`
+	queryCreate   = `INSERT INTO task (member_id, content, target_date) VALUES ($1, $2, $3) RETURNING id`
 	queryUpdate   = `UPDATE task SET content = $1, updated_at = $2 WHERE id = $3`
 	queryDelete   = `DELETE FROM task WHERE id = $1`
 )
@@ -62,9 +62,17 @@ func (tr *taskRespository) Create(ctx context.Context, tx *sql.Tx, tk *models.Ta
 		return err
 	}
 
-	if _, err := stmt.ExecContext(ctx, tk.MemberID, tk.Content, tk.TargetDate); err != nil {
+	rlt, err := stmt.ExecContext(ctx, tk.MemberID, tk.Content, tk.TargetDate)
+	if err != nil {
 		return err
 	}
+
+	id, err := rlt.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	tk.ID = int(id)
 
 	return nil
 }

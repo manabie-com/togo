@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	queryCreate         = `INSERT INTO setting (member_id, limit_task) VALUES ($1, $2)`
+	queryCreate         = `INSERT INTO setting (member_id, limit_task) VALUES ($1, $2) RETURNING id`
 	queryUpdate         = `UPDATE setting SET limit_task = $1, updated_at = $2 WHERE id = $3`
 	queryFindByMemberID = `SELECT * FROM setting WHERE member_id = $1`
 	queryFindByID       = `SELECT * FROM setting WHERE id = $1`
@@ -34,9 +34,17 @@ func (sr *settingRespository) Create(ctx context.Context, tx *sql.Tx, st *models
 		return err
 	}
 
-	if _, err := stmt.ExecContext(ctx, st.MemberID, st.LimitTask); err != nil {
+	rlt, err := stmt.ExecContext(ctx, st.MemberID, st.LimitTask)
+	if err != nil {
 		return err
 	}
+
+	id, err := rlt.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	st.ID = int(id)
 
 	return nil
 }

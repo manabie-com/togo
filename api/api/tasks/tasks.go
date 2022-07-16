@@ -86,14 +86,19 @@ func (h *handler) Create(c echo.Context) error {
 }
 
 func (h *handler) Update(c echo.Context) error {
-
+	id := c.Param("id")
 	tk := new(models.Task)
+
+	ID, err := strconv.Atoi(id)
+	if err != nil {
+		return apiutils.ResponseFailure(c, errors.Wrap(apiutils.ErrInvalidValue, err.Error()))
+	}
 
 	if err := c.Bind(tk); err != nil {
 		return apiutils.ResponseFailure(c, errors.Wrap(apiutils.ErrInvalidValue, err.Error()))
 	}
 
-	if err := h.Task.Update(c.Request().Context(), tk); err != nil {
+	if err := h.Task.Update(c.Request().Context(), ID, tk); err != nil {
 		return apiutils.ResponseFailure(c, err)
 	}
 

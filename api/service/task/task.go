@@ -18,8 +18,8 @@ type TaskService interface {
 	Index(ctx context.Context, memberID int, data string) ([]*models.Task, error)
 	Show(ctx context.Context, ID int) (*models.Task, error)
 	Create(ctx context.Context, memberID int, req *models.TaskCreateRequest) error
-	Update(ctx context.Context, t *models.Task) error
-	Delete(ctx context.Context, taskID int) error
+	Update(ctx context.Context, ID int, t *models.Task) error
+	Delete(ctx context.Context, ID int) error
 }
 
 type service struct {
@@ -112,11 +112,11 @@ func (s *service) Create(ctx context.Context, memberID int, req *models.TaskCrea
 	})
 }
 
-func (s *service) Update(ctx context.Context, t *models.Task) error {
+func (s *service) Update(ctx context.Context, ID int, t *models.Task) error {
 	return db.Transaction(ctx, nil, func(ctx context.Context, tx *sql.Tx) error {
 		// Row-Level Locks
 		// Find by ID
-		got, err := s.Task.FindByID(ctx, tx, t.ID, true)
+		got, err := s.Task.FindByID(ctx, tx, ID, true)
 		if err != nil && err != sql.ErrNoRows {
 			return err
 		}

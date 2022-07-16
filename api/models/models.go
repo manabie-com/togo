@@ -5,7 +5,7 @@ type APIError struct {
 }
 
 type StatusResponse struct {
-	Status string `json:"status" validate:"oneof= ok failure"`
+	Status string `json:"status"`
 }
 
 type TaskCreateRequest struct {

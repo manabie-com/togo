@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"net/http"
+	"os"
+	"os/signal"
+	"time"
 
 	"manabie/todo/api/settings"
 	"manabie/todo/api/tasks"
@@ -36,18 +39,9 @@ func main() {
 
 	{
 		// Start Database
-
-		got := db.Config{
-			User:     "postgres",
-			Password: "password",
-			Host:     "postgresql.manabie.todo",
-			Database: "todo",
-		}
-
-		if err := db.Setup(context.Background(), got); err != nil {
+		if err := db.Setup(); err != nil {
 			panic(err)
 		}
-		e.Logger.Infof("open database")
 	}
 
 	// Repository
@@ -67,4 +61,16 @@ func main() {
 
 	// Start server
 	e.Logger.Fatal(e.Start(":8080"))
+
+	go func() {
+		e.Logger.Fatal(e.Start(":8080"))
+	}()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	e.Logger.Fatal(e.Shutdown(ctx))
 }
