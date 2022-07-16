@@ -110,8 +110,8 @@ func Teardown() (err error) {
 }
 
 // withTransaction returns a copy of parent context that associated with the new tranasction.
-func (dbm *Manager) withTransaction(ctx context.Context) (context.Context, error) {
-	tx, err := dbm.DB.Begin()
+func (dbm *Manager) withTransaction(ctx context.Context, txOpt *sql.TxOptions) (context.Context, error) {
+	tx, err := dbm.DB.BeginTx(ctx, txOpt)
 
 	if err != nil {
 		return ctx, errors.Wrap(err, "database: failed to begin transaction")
@@ -124,7 +124,7 @@ func (dbm *Manager) transaction(ctx context.Context, txOpt *sql.TxOptions, fn Tr
 	v, hasTransaction := ctx.Value(dbm.transactionInstanceContextKey).(transaction)
 
 	if !hasTransaction || v.Transactor == nil {
-		ctx, err = dbm.withTransaction(ctx)
+		ctx, err = dbm.withTransaction(ctx, txOpt)
 
 		if err != nil {
 			return errors.Wrap(err, "database: failed to begin transaction")
