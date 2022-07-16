@@ -143,12 +143,12 @@ Go to github [Development branch](https://github.com/xrexonx/togo/tree/mvp)
 - [ ] Add more data validation
 - [ ] Make repository an interface and reuse to all models
 
-###Questions:
-####What do you love about your solution?
+### Questions:
+#### What do you love about your solution?
 The project structure/architecture, it's simple and maintainable and I'd like to improve it more.
-####What else do you want us to know about however you do not have enough time to complete?
+#### What else do you want us to know about however you do not have enough time to complete?
 I can implement this using Ruby/NodeJS/Java-Springboot
 
 
-##Thankyou,
+## Thankyou,
 [Rexon A. De los Reyes](https://www.linkedin.com/in/xrexonx/)
