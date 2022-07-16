@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"manabie/todo/models"
+	"manabie/todo/pkg/apiutils"
 	"manabie/todo/pkg/db"
 	"manabie/todo/repository/setting"
 	"manabie/todo/repository/task"
@@ -55,8 +56,12 @@ func (s *service) Show(ctx context.Context, ID int) (tk *models.Task, err error)
 
 		tk, err = s.Task.FindByID(ctx, tx, ID, false)
 
-		if err != nil {
+		if err != nil && err != sql.ErrNoRows {
 			return err
+		}
+
+		if tk == nil {
+			return errors.Wrap(apiutils.ErrNotFound, "Task")
 		}
 
 		return nil
@@ -70,7 +75,7 @@ func (s *service) Show(ctx context.Context, ID int) (tk *models.Task, err error)
 func (s *service) Create(ctx context.Context, memberID int, req *models.TaskCreateRequest) error {
 	target, err := time.Parse("2006-01-02", req.TargetDate)
 	if err != nil {
-		return errors.New("target_date incorrect")
+		return errors.Wrap(apiutils.ErrInvalidValue, "target_date incorrect")
 	}
 
 	t := &models.Task{
@@ -87,7 +92,7 @@ func (s *service) Create(ctx context.Context, memberID int, req *models.TaskCrea
 		}
 
 		if setting == nil {
-			return errors.New("setting not found")
+			return errors.Wrap(apiutils.ErrNotFound, "Setting")
 		}
 
 		// Row-Level Locks
@@ -99,15 +104,11 @@ func (s *service) Create(ctx context.Context, memberID int, req *models.TaskCrea
 
 		// Validate
 		if setting.LimitTask <= len(tasks) {
-			return errors.New("user has reached the maximum daily limit")
+			return errors.Wrap(apiutils.ErrInvalidValue, "user has reached the maximum daily limit")
 		}
 
 		// Create
-		if err := s.Task.Create(ctx, tx, t); err != nil {
-			return err
-		}
-
-		return nil
+		return s.Task.Create(ctx, tx, t)
 	})
 }
 
@@ -116,8 +117,12 @@ func (s *service) Update(ctx context.Context, t *models.Task) error {
 		// Row-Level Locks
 		// Find by ID
 		got, err := s.Task.FindByID(ctx, tx, t.ID, true)
-		if err != nil {
+		if err != nil && err != sql.ErrNoRows {
 			return err
+		}
+
+		if got == nil {
+			return errors.Wrap(apiutils.ErrNotFound, "Task")
 		}
 
 		// Set data update
@@ -131,10 +136,14 @@ func (s *service) Update(ctx context.Context, t *models.Task) error {
 func (s *service) Delete(ctx context.Context, taskID int) error {
 	return db.Transaction(ctx, nil, func(ctx context.Context, tx *sql.Tx) error {
 		// Row-Level Locks
-		// Find for update
+		// Find by ID
 		tk, err := s.Task.FindByID(ctx, tx, taskID, true)
-		if err != nil {
+		if err != nil && err != sql.ErrNoRows {
 			return err
+		}
+
+		if tk == nil {
+			return errors.Wrap(apiutils.ErrNotFound, "Task")
 		}
 
 		// Delele

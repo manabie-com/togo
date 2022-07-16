@@ -1,5 +1,9 @@
 package models
 
+type APIError struct {
+	Message string `json:"message"`
+}
+
 type StatusResponse struct {
 	Status string `json:"status" validate:"oneof= ok failure"`
 }

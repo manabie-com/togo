@@ -1,10 +1,8 @@
 package users
 
 import (
-	"net/http"
-
 	"manabie/todo/models"
-	"manabie/todo/pkg/utils"
+	"manabie/todo/pkg/apiutils"
 	"manabie/todo/service/user"
 
 	"github.com/labstack/echo/v4"
@@ -24,10 +22,10 @@ func NewUserHandler(e *echo.Echo, us user.UserService) {
 func (h *handler) Index(c echo.Context) error {
 	users, err := h.User.Index(c.Request().Context())
 	if err != nil {
-		return utils.ResponseFailure(c, http.StatusInternalServerError, err)
+		return apiutils.ResponseFailure(c, err)
 	}
 
-	return utils.ResponseSuccess(c, models.UserIndexResponse{
+	return apiutils.ResponseSuccess(c, models.UserIndexResponse{
 		Users: users,
 	})
 }

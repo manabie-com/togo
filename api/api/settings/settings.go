@@ -1,14 +1,14 @@
 package settings
 
 import (
-	"net/http"
 	"strconv"
 
 	"manabie/todo/models"
-	"manabie/todo/pkg/utils"
+	"manabie/todo/pkg/apiutils"
 	"manabie/todo/service/setting"
 
 	"github.com/labstack/echo/v4"
+	"github.com/pkg/errors"
 )
 
 type handler struct {
@@ -29,15 +29,15 @@ func (h *handler) Show(c echo.Context) error {
 
 	memberID, err := strconv.Atoi(mid)
 	if err != nil {
-		return utils.ResponseFailure(c, http.StatusBadRequest, err)
+		return apiutils.ResponseFailure(c, errors.Wrap(apiutils.ErrInvalidValue, err.Error()))
 	}
 
 	st, err := h.Setting.Show(c.Request().Context(), memberID)
 	if err != nil {
-		return utils.ResponseFailure(c, http.StatusInternalServerError, err)
+		return apiutils.ResponseFailure(c, err)
 	}
 
-	return utils.ResponseSuccess(c, st)
+	return apiutils.ResponseSuccess(c, st)
 }
 
 func (h *handler) Create(c echo.Context) error {
@@ -46,18 +46,18 @@ func (h *handler) Create(c echo.Context) error {
 
 	memberID, err := strconv.Atoi(mid)
 	if err != nil {
-		return utils.ResponseFailure(c, http.StatusBadRequest, err)
+		return apiutils.ResponseFailure(c, errors.Wrap(apiutils.ErrInvalidValue, err.Error()))
 	}
 
 	if err := c.Bind(st); err != nil {
-		return utils.ResponseFailure(c, http.StatusBadRequest, err)
+		return apiutils.ResponseFailure(c, errors.Wrap(apiutils.ErrInvalidValue, err.Error()))
 	}
 
 	if err := h.Setting.Create(c.Request().Context(), memberID, st); err != nil {
-		return utils.ResponseFailure(c, http.StatusInternalServerError, err)
+		return apiutils.ResponseFailure(c, err)
 	}
 
-	return utils.ResponseSuccess(c, models.StatusResponse{
+	return apiutils.ResponseSuccess(c, models.StatusResponse{
 		Status: "ok",
 	})
 }
@@ -68,18 +68,18 @@ func (h *handler) Update(c echo.Context) error {
 
 	settingID, err := strconv.Atoi(id)
 	if err != nil {
-		return utils.ResponseFailure(c, http.StatusBadRequest, err)
+		return apiutils.ResponseFailure(c, errors.Wrap(apiutils.ErrInvalidValue, err.Error()))
 	}
 
 	if err := c.Bind(st); err != nil {
-		return utils.ResponseFailure(c, http.StatusBadRequest, err)
+		return apiutils.ResponseFailure(c, errors.Wrap(apiutils.ErrInvalidValue, err.Error()))
 	}
 
 	if err := h.Setting.Update(c.Request().Context(), settingID, st); err != nil {
-		return utils.ResponseFailure(c, http.StatusInternalServerError, err)
+		return apiutils.ResponseFailure(c, err)
 	}
 
-	return utils.ResponseSuccess(c, models.StatusResponse{
+	return apiutils.ResponseSuccess(c, models.StatusResponse{
 		Status: "ok",
 	})
 }

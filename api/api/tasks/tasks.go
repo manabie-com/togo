@@ -1,14 +1,14 @@
 package tasks
 
 import (
-	"net/http"
 	"strconv"
 
 	"manabie/todo/models"
-	"manabie/todo/pkg/utils"
+	"manabie/todo/pkg/apiutils"
 	"manabie/todo/service/task"
 
 	"github.com/labstack/echo/v4"
+	"github.com/pkg/errors"
 )
 
 type handler struct {
@@ -33,15 +33,15 @@ func (h *handler) Index(c echo.Context) error {
 
 	memberID, err := strconv.Atoi(id)
 	if err != nil {
-		return utils.ResponseFailure(c, http.StatusBadRequest, err)
+		return apiutils.ResponseFailure(c, errors.Wrap(apiutils.ErrInvalidValue, err.Error()))
 	}
 
 	tasks, err := h.Task.Index(c.Request().Context(), memberID, date)
 	if err != nil {
-		return utils.ResponseFailure(c, http.StatusInternalServerError, err)
+		return apiutils.ResponseFailure(c, err)
 	}
 
-	return utils.ResponseSuccess(c, models.TaskIndexResponse{
+	return apiutils.ResponseSuccess(c, models.TaskIndexResponse{
 		Tasks: tasks,
 	})
 }
@@ -51,15 +51,15 @@ func (h *handler) Show(c echo.Context) error {
 
 	taskID, err := strconv.Atoi(id)
 	if err != nil {
-		return utils.ResponseFailure(c, http.StatusBadRequest, err)
+		return apiutils.ResponseFailure(c, errors.Wrap(apiutils.ErrInvalidValue, err.Error()))
 	}
 
 	tk, err := h.Task.Show(c.Request().Context(), taskID)
 	if err != nil {
-		return utils.ResponseFailure(c, http.StatusNotFound, err)
+		return apiutils.ResponseFailure(c, err)
 	}
 
-	return utils.ResponseSuccess(c, tk)
+	return apiutils.ResponseSuccess(c, tk)
 }
 
 func (h *handler) Create(c echo.Context) error {
@@ -69,18 +69,18 @@ func (h *handler) Create(c echo.Context) error {
 
 	memberID, err := strconv.Atoi(id)
 	if err != nil {
-		return utils.ResponseFailure(c, http.StatusBadRequest, err)
+		return apiutils.ResponseFailure(c, errors.Wrap(apiutils.ErrInvalidValue, err.Error()))
 	}
 
 	if err := c.Bind(tk); err != nil {
-		return utils.ResponseFailure(c, http.StatusBadRequest, err)
+		return apiutils.ResponseFailure(c, errors.Wrap(apiutils.ErrInvalidValue, err.Error()))
 	}
 
 	if err := h.Task.Create(c.Request().Context(), memberID, tk); err != nil {
-		return utils.ResponseFailure(c, http.StatusInternalServerError, err)
+		return apiutils.ResponseFailure(c, err)
 	}
 
-	return utils.ResponseSuccess(c, models.StatusResponse{
+	return apiutils.ResponseSuccess(c, models.StatusResponse{
 		Status: "ok",
 	})
 }
@@ -90,14 +90,14 @@ func (h *handler) Update(c echo.Context) error {
 	tk := new(models.Task)
 
 	if err := c.Bind(tk); err != nil {
-		return utils.ResponseFailure(c, http.StatusBadRequest, err)
+		return apiutils.ResponseFailure(c, errors.Wrap(apiutils.ErrInvalidValue, err.Error()))
 	}
 
 	if err := h.Task.Update(c.Request().Context(), tk); err != nil {
-		return utils.ResponseFailure(c, http.StatusInternalServerError, err)
+		return apiutils.ResponseFailure(c, err)
 	}
 
-	return utils.ResponseSuccess(c, models.StatusResponse{
+	return apiutils.ResponseSuccess(c, models.StatusResponse{
 		Status: "ok",
 	})
 }
@@ -107,14 +107,14 @@ func (h *handler) Delete(c echo.Context) error {
 
 	taskID, err := strconv.Atoi(id)
 	if err != nil {
-		return utils.ResponseFailure(c, http.StatusBadRequest, err)
+		return apiutils.ResponseFailure(c, errors.Wrap(apiutils.ErrInvalidValue, err.Error()))
 	}
 
 	if err := h.Task.Delete(c.Request().Context(), taskID); err != nil {
-		return utils.ResponseFailure(c, http.StatusInternalServerError, err)
+		return apiutils.ResponseFailure(c, err)
 	}
 
-	return utils.ResponseSuccess(c, models.StatusResponse{
+	return apiutils.ResponseSuccess(c, models.StatusResponse{
 		Status: "ok",
 	})
 }

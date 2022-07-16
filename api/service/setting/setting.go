@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	"manabie/todo/models"
+	"manabie/todo/pkg/apiutils"
 	"manabie/todo/pkg/db"
 	"manabie/todo/repository/setting"
 
@@ -32,8 +33,12 @@ func (s *service) Show(ctx context.Context, memberID int) (st *models.Setting, e
 	if err := db.Transaction(ctx, nil, func(ctx context.Context, tx *sql.Tx) error {
 
 		st, err = s.Setting.FindByMemberID(ctx, tx, memberID)
-		if err != nil {
+		if err != nil && err != sql.ErrNoRows {
 			return err
+		}
+
+		if st == nil {
+			return errors.Wrap(apiutils.ErrNotFound, "Setting")
 		}
 
 		return nil
@@ -53,7 +58,7 @@ func (s *service) Create(ctx context.Context, memberID int, req *models.SettingC
 		}
 
 		if ext != nil {
-			return errors.New("Setting exists")
+			return errors.Wrap(apiutils.ErrInvalidValue, "Setting exists")
 		}
 
 		st := &models.Setting{
@@ -68,8 +73,12 @@ func (s *service) Create(ctx context.Context, memberID int, req *models.SettingC
 func (s *service) Update(ctx context.Context, settingID int, req *models.SettingUpdateRequest) error {
 	return db.Transaction(ctx, nil, func(ctx context.Context, tx *sql.Tx) error {
 		st, err := s.Setting.FindByID(ctx, tx, settingID)
-		if err != nil {
+		if err != nil && err != sql.ErrNoRows {
 			return err
+		}
+
+		if st == nil {
+			return errors.Wrap(apiutils.ErrNotFound, "Setting")
 		}
 
 		st.LimitTask = req.LimitTask
