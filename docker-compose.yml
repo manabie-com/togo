@@ -13,6 +13,8 @@ services:
       - 8080:8080
     volumes:
       - ./api:/api
+    depends_on:
+      - postgresql
 
   # Postgres
   postgresql:
@@ -24,5 +26,5 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./data/postgresql:/data/db
+      - ./data/postgresql:/var/lib/postgresql/data
       - ./init-database:/docker-entrypoint-initdb.d

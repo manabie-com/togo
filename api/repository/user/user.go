@@ -7,6 +7,10 @@ import (
 	"manabie/todo/models"
 )
 
+const (
+	queryFind = `SELECT * FROM member`
+)
+
 type UserRespository interface {
 	Find(ctx context.Context, tx *sql.Tx) ([]*models.User, error)
 }
@@ -18,7 +22,7 @@ func NewUserRespository() UserRespository {
 }
 
 func (ur *userRespository) Find(ctx context.Context, tx *sql.Tx) ([]*models.User, error) {
-	rows, err := tx.QueryContext(ctx, `SELECT * FROM "member"`)
+	rows, err := tx.QueryContext(ctx, queryFind)
 	if err != nil {
 		return nil, err
 	}

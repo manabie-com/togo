@@ -8,6 +8,7 @@ import (
 	"manabie/todo/api/users"
 	"manabie/todo/pkg/db"
 
+	settingRespository "manabie/todo/repository/setting"
 	taskRespository "manabie/todo/repository/task"
 	userRespository "manabie/todo/repository/user"
 	taskService "manabie/todo/service/task"
@@ -49,11 +50,12 @@ func main() {
 
 	// Repository
 	userRp := userRespository.NewUserRespository()
-	taskRp := taskRespository.NewUserRespository()
+	taskRp := taskRespository.NewTaskRespository()
+	settingRp := settingRespository.NewSettingRespository()
 
 	// Service
 	userSv := userService.NewUserService(userRp)
-	taskSv := taskService.NewTaskService(taskRp)
+	taskSv := taskService.NewTaskService(taskRp, settingRp)
 
 	// Handler
 	users.NewUserHandler(e, userSv)
