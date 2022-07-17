@@ -46,10 +46,10 @@ func (ms *mockRepository) Find(ctx context.Context, tx *sql.Tx) ([]*models.User,
 func (ms *mockRepository) Create(ctx context.Context, tx *sql.Tx, u *models.User) error { return nil }
 
 func Test_service_Index(t *testing.T) {
-	ctx := context.Background()
 
 	{
 		// Success case
+		ctx := context.Background()
 		require.Nil(t, db.TransactionForTesting(ctx, nil, func(ctx context.Context, tx *sql.Tx) error {
 
 			exs := []*models.User{
@@ -73,6 +73,7 @@ func Test_service_Index(t *testing.T) {
 
 	{
 		// Fail case
+		ctx := context.Background()
 		require.NotNil(t, db.TransactionForTesting(ctx, nil, func(ctx context.Context, tx *sql.Tx) error {
 
 			mck := new(mockRepository)

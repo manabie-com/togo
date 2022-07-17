@@ -34,6 +34,7 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 	os.Exit(exit)
+
 }
 
 type mockTaskRepository struct {

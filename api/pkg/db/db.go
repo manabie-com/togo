@@ -72,6 +72,8 @@ func Setup() error {
 		return errors.Wrap(err, "database: failed to setup database manager")
 	}
 
+	DB.SetConnMaxLifetime(10)
+	DB.SetMaxIdleConns(10)
 	DB.SetMaxOpenConns(20)
 
 	if err := DB.Ping(); err != nil {

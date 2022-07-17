@@ -85,6 +85,10 @@ func (s *service) Create(ctx context.Context, memberID int, req *models.TaskCrea
 	}
 
 	return db.Transaction(ctx, nil, func(ctx context.Context, tx *sql.Tx) error {
+		if _, err := tx.Exec(`LOCK TABLE task IN EXCLUSIVE MODE`); err != nil {
+			return err
+		}
+
 		// Find setting by member ID
 		setting, err := s.Setting.FindByMemberID(ctx, tx, t.MemberID)
 		if err != nil && err != sql.ErrNoRows {
@@ -95,7 +99,6 @@ func (s *service) Create(ctx context.Context, memberID int, req *models.TaskCrea
 			return errors.Wrap(apiutils.ErrNotFound, "Setting")
 		}
 
-		// Row-Level Locks
 		// Find for update
 		tasks, err := s.Task.FindForUpdate(ctx, tx, t.MemberID, t.TargetDate.Format("2006-01-02"))
 		if err != nil {
@@ -114,7 +117,10 @@ func (s *service) Create(ctx context.Context, memberID int, req *models.TaskCrea
 
 func (s *service) Update(ctx context.Context, ID int, t *models.Task) error {
 	return db.Transaction(ctx, nil, func(ctx context.Context, tx *sql.Tx) error {
-		// Row-Level Locks
+		if _, err := tx.Exec(`LOCK TABLE task IN EXCLUSIVE MODE`); err != nil {
+			return err
+		}
+
 		// Find by ID
 		got, err := s.Task.FindByID(ctx, tx, ID, true)
 		if err != nil && err != sql.ErrNoRows {

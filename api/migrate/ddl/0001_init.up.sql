@@ -50,3 +50,12 @@ CREATE TABLE IF NOT EXISTS task (
 
     CONSTRAINT fk_member_id FOREIGN KEY(member_id) REFERENCES member(id)
 );
+
+-- Seeder for testing
+INSERT INTO member 
+    (id, email, name)
+VALUES
+    (1, 'example_001@gmail.com', 'example_001'),
+    (2, 'example_002@gmail.com', 'example_002'),
+    (3, 'example_003@gmail.com', 'example_003'),
+    (4, 'example_004@gmail.com', 'example_004');
