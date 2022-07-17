@@ -59,10 +59,8 @@ func main() {
 	tasks.NewTaskHandler(e, taskSv)
 	settings.NewSettingHandler(e, settingSv)
 
-	// Start server
-	e.Logger.Fatal(e.Start(":8080"))
-
 	go func() {
+		// Start server
 		e.Logger.Fatal(e.Start(":8080"))
 	}()
 
