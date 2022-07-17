@@ -6,10 +6,10 @@ import (
 	"flag"
 	"os"
 	"testing"
-	"time"
 
 	"manabie/todo/models"
 	"manabie/todo/pkg/db"
+	"manabie/todo/pkg/utils"
 	"manabie/todo/repository/user"
 
 	_ "github.com/lib/pq"
@@ -50,7 +50,7 @@ func Test_settingRespository_Create(t *testing.T) {
 		require.Nil(t, db.TransactionForTesting(ctx, nil, func(ctx context.Context, tx *sql.Tx) error {
 			// Init Memeber
 			u := &models.User{
-				ID:    int(time.Now().Unix()),
+				ID:    utils.RamdomID(),
 				Email: "somthing@gmail.com",
 				Name:  "something",
 			}
@@ -103,7 +103,7 @@ func Test_settingRespository_Update(t *testing.T) {
 		require.Nil(t, db.TransactionForTesting(ctx, nil, func(ctx context.Context, tx *sql.Tx) error {
 			// Init Memeber
 			u := &models.User{
-				ID:    int(time.Now().Unix()),
+				ID:    utils.RamdomID(),
 				Email: "somthing@gmail.com",
 				Name:  "something",
 			}
@@ -149,7 +149,7 @@ func Test_settingRespository_FindByMemberID(t *testing.T) {
 		require.Nil(t, db.TransactionForTesting(ctx, nil, func(ctx context.Context, tx *sql.Tx) error {
 			// Init Memeber
 			u := &models.User{
-				ID:    int(time.Now().Unix()),
+				ID:    utils.RamdomID(),
 				Email: "somthing@gmail.com",
 				Name:  "something",
 			}
@@ -200,7 +200,7 @@ func Test_settingRespository_FindByID(t *testing.T) {
 		require.Nil(t, db.TransactionForTesting(ctx, nil, func(ctx context.Context, tx *sql.Tx) error {
 			// Init Memeber
 			u := &models.User{
-				ID:    int(time.Now().Unix()),
+				ID:    utils.RamdomID(),
 				Email: "somthing@gmail.com",
 				Name:  "something",
 			}

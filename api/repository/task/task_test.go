@@ -10,6 +10,7 @@ import (
 	"database/sql"
 	"manabie/todo/models"
 	"manabie/todo/pkg/db"
+	"manabie/todo/pkg/utils"
 	"manabie/todo/repository/user"
 
 	_ "github.com/lib/pq"
@@ -46,7 +47,7 @@ func Test_taskRespository_Find(t *testing.T) {
 		require.Nil(t, db.TransactionForTesting(ctx, nil, func(ctx context.Context, tx *sql.Tx) error {
 			// Init Memeber
 			u := &models.User{
-				ID:    int(time.Now().Unix()),
+				ID:    utils.RamdomID(),
 				Email: "somthing@gmail.com",
 				Name:  "something",
 			}
@@ -80,7 +81,7 @@ func Test_taskRespository_FindByID(t *testing.T) {
 		require.Nil(t, db.TransactionForTesting(ctx, nil, func(ctx context.Context, tx *sql.Tx) error {
 			// Init Memeber
 			u := &models.User{
-				ID:    int(time.Now().Unix()),
+				ID:    utils.RamdomID(),
 				Email: "somthing@gmail.com",
 				Name:  "something",
 			}
@@ -126,7 +127,7 @@ func Test_taskRespository_FindForUpdate(t *testing.T) {
 		require.Nil(t, db.TransactionForTesting(ctx, nil, func(ctx context.Context, tx *sql.Tx) error {
 			// Init Memeber
 			u := &models.User{
-				ID:    int(time.Now().Unix()),
+				ID:    utils.RamdomID(),
 				Email: "somthing@gmail.com",
 				Name:  "something",
 			}
@@ -161,7 +162,7 @@ func Test_taskRespository_Create(t *testing.T) {
 		require.Nil(t, db.TransactionForTesting(ctx, nil, func(ctx context.Context, tx *sql.Tx) error {
 			// Init Memeber
 			u := &models.User{
-				ID:    int(time.Now().Unix()),
+				ID:    utils.RamdomID(),
 				Email: "somthing@gmail.com",
 				Name:  "something",
 			}
@@ -207,7 +208,7 @@ func Test_taskRespository_Update(t *testing.T) {
 		require.Nil(t, db.TransactionForTesting(ctx, nil, func(ctx context.Context, tx *sql.Tx) error {
 			// Init Memeber
 			u := &models.User{
-				ID:    int(time.Now().Unix()),
+				ID:    utils.RamdomID(),
 				Email: "somthing@gmail.com",
 				Name:  "something",
 			}
@@ -247,7 +248,7 @@ func Test_taskRespository_Delete(t *testing.T) {
 		require.Nil(t, db.TransactionForTesting(ctx, nil, func(ctx context.Context, tx *sql.Tx) error {
 			// Init Memeber
 			u := &models.User{
-				ID:    int(time.Now().Unix()),
+				ID:    utils.RamdomID(),
 				Email: "somthing@gmail.com",
 				Name:  "something",
 			}

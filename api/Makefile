@@ -15,6 +15,9 @@ format:
 test:
 	go test -count=1 -cover ./...
 
+test-e2e:
+	go test -count=1 -tags=e2e_test ./api/...
+
 migrate-todo:
 	@echo "Migrating todo DB.."
 	@${MIGRATE_TODO} up
