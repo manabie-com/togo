@@ -1,17 +1,164 @@
+## Setup
+
 ### Requirements
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+1. Install Docker
+
+   - Install Docker Desktop `4.10.1` (current version) or Docker Engine `19.03.0` and Docker Compose `3.8`
+
+2. Update your /etc/hosts
+
+   Put the following configurations on your host machine's /etc/hosts.
+
+   ```
+   #Datastores
+       127.0.0.1 postgresql.manabie.todo
+   ```
+
+### How to run your code locally?
+
+1.  Run project:
+
+    #### Run:
+
+         make up
+
+    #### Migrate: (Used when the new database is initialized)
+
+         docker exec -it api.manabie.todo bash -c "make migrate-todo"
+
+2.  Use these commands to manage your containers:
+
+    #### Install
+
+        make install
+
+    #### Run
+
+        make run
+
+    #### Format
+
+        make format
+
+    #### Migrate DB
+
+        make migrate-todo
+
+    #### Drop DB
+
+        make drop-todo
+
+### A sample “curl” command to call your API
+
+1.  Users:
+
+    - Get list user
+
+      ```
+      curl --request GET 'http://localhost:8080/users'
+      ```
+
+2.  Setting limit for user
+
+    - Show setting by userId
+
+      ```
+      curl --location --request GET 'http://localhost:8080/users/1/settings'
+      ```
+
+    - Create limit task by userId
+
+      ```
+      curl --location --request POST 'http://localhost:8080/users/1/settings' \
+      --header 'Content-Type: application/json' \
+      --data-raw '{
+      "limit_task": 5
+      }'
+      ```
+
+    - Update limit task by Id
+
+      ```
+      curl --location --request PUT 'http://localhost:8080/settings/1' \
+      --header 'Content-Type: application/json' \
+      --data-raw '{
+          "limit_task": 10
+      }'
+      ```
+
+3.  Show/Insert/Update/Delete todo task for user.
+
+    - List task by user-id
+
+      ```
+      curl --location --request GET 'http://localhost:8080/users/1/tasks'
+      ```
+
+    - Create task by user-id
+
+      ```
+      curl --location --request POST 'http://localhost:8080/users/1/tasks' \
+      --header 'Content-Type: application/json' \
+      --data-raw '{
+          "content": "whatever",
+          "target_date": "2022-07-17"
+      }'
+      ```
+
+    - Get task by id
+
+      ```
+      curl --location --request GET 'http://localhost:8080/tasks/1'
+      ```
+
+    - Update task by id
+
+      ```
+      curl --location --request PUT 'http://localhost:8080/tasks/1' \
+      --header 'Content-Type: application/json' \
+      --data-raw '{
+          "id": 1,
+          "member_id": 1,
+          "content": "updated",
+          "target_date": "2022-07-17T00:00:00Z",
+          "created_at": "2022-07-17T14:44:46.981938Z"
+      }'
+      ```
+
+    - Delete task by id
+
+      ```
+      curl --location --request DELETE 'http://localhost:8080/tasks/1'
+      ```
+
+### How to run your unit tests locally?
+
+- Run a command in a running container (container: `api.manabie.todo`)
+
+  #### Test (unit test)
+
+        make test
+
+  #### Test E2E
+
+        make test-e2e
+
+### What do you love about your solution?
+
+- Build projects in different environments by `Docker`.
+- Ensure data consistency when using `Transactions` and `Locking`.
+- E2E testing and mock testing.
+- Clean Architecture in Go by Repository pattern. ([reference](https://github.com/bxcodec/go-clean-arch#the-diagram))
+
+### What else do you want us to know about however you do not have enough time to complete?
+
+- Setup information (SECRET, PUBLIC) key by environment. (ansible, vault).
+- Authentication and authorization for endpoints.
+- Restore data when make test.
+
+<hr />
+
 
 ### Notes
 
