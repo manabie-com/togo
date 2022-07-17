@@ -65,6 +65,7 @@ func Test_userRespository_Create(t *testing.T) {
 		require.Nil(t, db.TransactionForTesting(ctx, nil, func(ctx context.Context, tx *sql.Tx) error {
 			// Init Memeber
 			u := &models.User{
+				ID:    utils.RamdomID(),
 				Email: "somthing@gmail.com",
 				Name:  "something",
 			}

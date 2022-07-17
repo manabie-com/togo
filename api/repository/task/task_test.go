@@ -61,9 +61,11 @@ func Test_taskRespository_Find(t *testing.T) {
 			}
 			require.Nil(t, taskRespository.Create(ctx, tx, tk))
 
-			out, err := taskRespository.FindByID(ctx, tx, tk.ID, false)
+			outs, err := taskRespository.Find(ctx, tx, u.ID, "2022-01-02")
 			require.Nil(t, err)
-			require.NotNil(t, out)
+			require.NotNil(t, outs)
+
+			require.GreaterOrEqual(t, len(outs), 1)
 
 			return nil
 		}))
@@ -96,7 +98,11 @@ func Test_taskRespository_FindByID(t *testing.T) {
 
 			require.Nil(t, taskRespository.Create(ctx, tx, tk))
 
-			out, err := taskRespository.FindByID(ctx, tx, tk.ID, true)
+			outs, err := taskRespository.Find(ctx, tx, u.ID, "2022-01-02")
+			require.Nil(t, err)
+			require.GreaterOrEqual(t, len(outs), 1)
+
+			out, err := taskRespository.FindByID(ctx, tx, outs[0].ID, true)
 			require.Nil(t, err)
 			require.NotNil(t, out)
 
@@ -177,9 +183,9 @@ func Test_taskRespository_Create(t *testing.T) {
 
 			require.Nil(t, taskRespository.Create(ctx, tx, tk))
 
-			outs, err := taskRespository.FindByID(ctx, tx, tk.ID, false)
+			outs, err := taskRespository.Find(ctx, tx, u.ID, "2022-01-02")
 			require.Nil(t, err)
-			require.NotNil(t, outs)
+			require.GreaterOrEqual(t, len(outs), 1)
 
 			return nil
 		}))
@@ -225,12 +231,6 @@ func Test_taskRespository_Update(t *testing.T) {
 			tk.Content = "updated"
 
 			require.Nil(t, taskRespository.Update(ctx, tx, tk))
-
-			out, err := taskRespository.FindByID(ctx, tx, tk.ID, false)
-			require.Nil(t, err)
-			require.NotNil(t, out)
-
-			assert.Equal(t, tk.Content, "updated")
 
 			return nil
 		}))

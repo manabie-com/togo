@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"testing"
 
+	"manabie/todo/pkg/utils"
+
 	_ "github.com/lib/pq"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
@@ -73,19 +75,14 @@ func TestTransactionForTesting(t *testing.T) {
 	require.Nil(t, Setup())
 
 	{
-		var id int64
+		id := utils.RamdomID()
 		// Success case
 		{
 			ctx := context.Background()
 			require.NoError(t, TransactionForTesting(ctx, nil, func(ctx context.Context, tx *sql.Tx) error {
 
 				return Transaction(ctx, nil, func(ctx context.Context, tx *sql.Tx) error {
-					rlt, err := tx.Exec(`INSERT INTO member (email, name) VALUES ($1, $2) RETURNING id`, "testing@example.com", "testing")
-					if err != nil {
-						return err
-					}
-
-					id, err = rlt.RowsAffected()
+					_, err := tx.Exec(`INSERT INTO member (id, email, name) VALUES ($1, $2, $3) RETURNING id`, id, "testing@example.com", "testing")
 					if err != nil {
 						return err
 					}
