@@ -20,10 +20,10 @@ class UserView(APIView):
     # POST /api/users/
     # Create new user (registration)
     def post(self, request):
-        user = User.objects.create(**request.data)
+        user = User.objects.create_user(**request.data)
         user_profile = UserProfile.objects.get(user=user)
         response_dict = { "message": "User successfully created.", "user": UserProfileSerializer(user_profile).data }
-        return Response(response_dict, status=status.HTTP_200_OK)
+        return Response(response_dict, status=status.HTTP_201_CREATED)
 
 class TaskView(APIView):
     """
@@ -35,7 +35,7 @@ class TaskView(APIView):
     # Retrieve tasks list for currently logged-in user
     def get(self, request):
         tasks = Task.objects.filter(user=request.user)
-        response_dict = { "message": "User successfully retrieved.", "tasks": TaskSerializer(tasks, many=True).data }
+        response_dict = { "message": "Task list successfully retrieved.", "tasks": TaskSerializer(tasks, many=True).data }
         return Response(response_dict, status=status.HTTP_200_OK)
 
     # POST /api/tasks/
