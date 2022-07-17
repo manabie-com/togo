@@ -14,7 +14,8 @@ services:
     volumes:
       - ./api:/api
     depends_on:
-      - postgresql
+      postgresql:
+        condition: service_healthy
 
   # Postgres
   postgresql:
@@ -28,3 +29,8 @@ services:
     volumes:
       - ./data/postgresql:/var/lib/postgresql/data
       - ./init-database:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
