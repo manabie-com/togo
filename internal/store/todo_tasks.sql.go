@@ -70,6 +70,31 @@ func (q *Queries) GetTaskByUserID(ctx context.Context, userID uint64) ([]TodoTas
 	return items, nil
 }
 
+const getTotalTaskByUserID = `-- name: GetTotalTaskByUserID :one
+SELECT
+    user_id,
+    count(*) total_task
+FROM
+    todo_tasks
+WHERE
+    user_id = ?
+    AND DATE(created_at) = DATE(NOW())
+GROUP BY
+    user_id
+`
+
+type GetTotalTaskByUserIDRow struct {
+	UserID    uint64 `json:"user_id"`
+	TotalTask int64  `json:"total_task"`
+}
+
+func (q *Queries) GetTotalTaskByUserID(ctx context.Context, userID uint64) (GetTotalTaskByUserIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getTotalTaskByUserID, userID)
+	var i GetTotalTaskByUserIDRow
+	err := row.Scan(&i.UserID, &i.TotalTask)
+	return i, err
+}
+
 const insertTask = `-- name: InsertTask :execresult
 INSERT INTO
     todo_tasks(user_id, task_name)

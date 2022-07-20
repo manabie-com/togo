@@ -6,6 +6,18 @@ FROM
 WHERE
     id = ?;
 
+-- name: GetTotalTaskByUserID :one
+SELECT
+    user_id,
+    count(*) total_task
+FROM
+    todo_tasks
+WHERE
+    user_id = ?
+    AND DATE(created_at) = DATE(NOW())
+GROUP BY
+    user_id;
+
 -- name: GetTaskByUserID :many
 SELECT
     *

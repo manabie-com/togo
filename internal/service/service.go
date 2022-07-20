@@ -13,11 +13,12 @@ import (
 )
 
 type Service struct {
-	store store.Querier
+	store        store.Querier
+	userLimitSvc UserLimitSvc
 }
 
 func NewService(store store.Querier) *Service {
-	return &Service{store}
+	return &Service{store: store, userLimitSvc: GetUserLimiSvc()}
 }
 
 func (s *Service) Health(w http.ResponseWriter, req *http.Request) {
@@ -46,6 +47,19 @@ func (s *Service) insertTask(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	// validate daily limit
+	rs, err := s.store.GetTotalTaskByUserID(context.Background(), userID)
+	if err != nil {
+		http.Error(w, "Error getTask", http.StatusInternalServerError)
+		return
+	}
+	userLimit := s.userLimitSvc.GetUserLimit(userID)
+	if uint32(rs.TotalTask) >= userLimit {
+		http.Error(w, "Forbidden: maximum daily task reached", http.StatusForbidden)
+		return
+	}
+
+	// record data
 	_, err = s.store.InsertTask(context.Background(), store.InsertTaskParams{
 		UserID:   userID,
 		TaskName: p.Name,
