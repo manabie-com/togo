@@ -1,0 +1,26 @@
+version: '3.4'
+
+services:
+  mssqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    restart: always
+    environment:
+        ACCEPT_EULA: "Y"
+        SA_PASSWORD: "yourStrong(!)Password"
+        #MSSQL_PID: Express
+    ports:
+        - "1433:1433"
+    volumes:
+      - ~/apps/mssql/data:/var/lib/mssqlql/data
+
+  mytodo.backendapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      #- ASPNETCORE_URLS=https://+:443;http://+:80
+    depends_on:
+        - mssqlserver
+    ports:
+      - "8687:80"
+      #- "443"
+    volumes:
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro

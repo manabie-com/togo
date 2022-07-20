@@ -1,32 +1,60 @@
-### Requirements
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Using Docker to run locally
-  - Using Docker for database (if used) is mandatory.
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+# How to run
+## OS
+- Window 8, 10 (x64)
+## Download & Install
+- .NET Core SDK 2.0 (x64)
+	https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/sdk-2.0.0-windows-x64-installer
+- .NET Core SDK 3.1 (x64)
+	https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/sdk-3.1.100-windows-x64-installer
+- SQL Server Engine 2019
+	https://go.microsoft.com/fwlink/p/?linkid=866662
+- Visual Studio 2019 Professional
+	https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Professional&rel=16&src=myvs&utm_medium=microsoft&utm_source=my.visualstudio.com&utm_campaign=download&utm_content=vs+professional+2019
+## Start API
+- Open Solution
+![image](https://user-images.githubusercontent.com/20410120/179144735-1d3d5614-b0b0-49ea-86a6-c6f9beb0c46a.png)
 
-### Notes
+- Build solution & restore package
+	![image](https://user-images.githubusercontent.com/20410120/179146449-2b3c52ec-f1fe-4483-8c8b-34253f5b3f0f.png)
+ 
+- Set Start up project
+	![image](https://user-images.githubusercontent.com/20410120/179145052-ebf7e339-65c0-4907-b3ae-a180681c2b77.png)
+- Migration database
+	- Tools-> Nuget Package Manger => Package Manager Console
+	![image](https://user-images.githubusercontent.com/20410120/179145132-393e6592-7369-4f33-abcc-3f9a3ec541c0.png)
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+	- Select default project "MyTodo.Data.EntityFramework"
+	![image](https://user-images.githubusercontent.com/20410120/179145207-9658e3b3-0a3d-4ebe-8b9d-10d53ad04b3b.png)
 
-### How to submit your solution?
+	- Run "Update-Database" to generate database
+	![image](https://user-images.githubusercontent.com/20410120/179145310-57d9f0a6-b937-478a-b5e6-a7c63cb2d80a.png)
 
-- Fork this repo and show us your development progress via a PR
+- Start project (Press F5)
+![image](https://user-images.githubusercontent.com/20410120/179145505-19383655-9666-4cc6-9413-a39bdd3ca623.png)
 
-### Interesting facts about Manabie
+## Test API
+- Account
+	admin@mytodo.com/123456
+- 
+![image](https://user-images.githubusercontent.com/20410120/179145678-ec58ad70-87c5-4443-a785-2b47e503d83c.png)
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+## Run tests
+- Solution level
+![image](https://user-images.githubusercontent.com/20410120/179145780-bfdf8266-ecb9-482a-86d9-682d8846b39e.png)
+![image](https://user-images.githubusercontent.com/20410120/179145896-f39a7572-7263-46c7-aeab-16a9101332dd.png)
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+- Project level
+![image](https://user-images.githubusercontent.com/20410120/179146019-d2aac915-04ef-4c2e-ad01-99a20a46b8b5.png)
+![image](https://user-images.githubusercontent.com/20410120/179146223-51e04a21-cc55-470b-b4b8-59c682df18c6.png)
+
+- Function level
+![image](https://user-images.githubusercontent.com/20410120/179146107-61b8b6d7-0e54-4e0a-8229-05cd6f82df8e.png)
+![image](https://user-images.githubusercontent.com/20410120/179146153-41012960-9ae7-4fd6-85a9-fcfb4e791c44.png)
+
+# Todos
+- Testing bussiness rules of tasks managment as Task Limit exceeded, Assign permissions,...
+- User management, Roles management
+- Logging
+- Caching
+- etc.
