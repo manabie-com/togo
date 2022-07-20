@@ -2,14 +2,13 @@ import "reflect-metadata";
 import express, { Express, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
+dotenv.config();
 
 import userController from './controller/userController';
 import userUsecase from './usecase/userUsecase';
 import userRepo from './repo/userRepo';
-
 import { db } from './db';
 
-dotenv.config();
 const app: Express = express();
 const port = process.env.PORT || 3009;
 
