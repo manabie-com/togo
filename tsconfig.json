@@ -8,6 +8,7 @@
     "skipLibCheck": true,
     "outDir": "./bin",
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false
   }
 }
