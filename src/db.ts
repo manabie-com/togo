@@ -1,5 +1,6 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { User } from './entity/User';
+import { Todo } from './entity/Todo';
 
 const opt: DataSourceOptions = {
 	type: 'mysql',
@@ -11,7 +12,7 @@ const opt: DataSourceOptions = {
 	synchronize: true,
 	logging: false,
 	dropSchema: true,
-	entities: [User],
+	entities: [User, Todo],
 	migrations: [],
 	subscribers: [],
 }
