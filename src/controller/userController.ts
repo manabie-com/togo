@@ -11,8 +11,6 @@ const userController = (uc: UserUsecase) => async (req: Request, res: Response) 
 	res.status(200).json(user);
 	} catch (e: any) {
 		res.status(e.code).json(e.message);
-	} finally {
-		res.status(500).json({ message: 'Server error 500' });
 	}
 }
 
