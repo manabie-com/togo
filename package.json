@@ -2,11 +2,11 @@
   "name": "togo",
   "version": "1.0.0",
   "description": "- Implement one single API which accepts a todo task and records it   - There is a maximum **limit of N tasks per user** that can be added **per day**.   - Different users can have **different** maximum daily limit. - Write integration (functional) tests - Write unit tests - Choose a suitable architecture to make your code simple, organizable, and maintainable - Using Docker to run locally   - Using Docker for database (if used) is mandatory. - Write a concise README   - How to run your code locally?   - A sample “curl” command to call your API   - How to run your unit tests locally?   - What do you love about your solution?   - What else do you want us to know about however you do not have enough time to complete?",
-  "main": "server.js",
+  "main": "./bin/server.js",
   "scripts": {
     "build": "npx tsc",
     "start": "node ./bin/server.js",
-    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q bin/server.js\""
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q ./bin/server.js\""
   },
   "repository": {
     "type": "git",
