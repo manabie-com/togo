@@ -7,6 +7,7 @@ const userRepo = (db: DataSource) => ({
 		await db.manager.save(u);
 		userResponse.id = u.id;
 		userResponse.username = u.username;
+		userResponse.type = u.type;
 		return userResponse;
 	}
 })
