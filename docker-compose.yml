@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+        togo:
+                build: .
+                environment:
+                        DB_HOST: db
+                ports:
+                        - 3000:3000
+        db:
+                image: mysql:5.7
+                restart: always
+                environment:
+                        MYSQL_ROOT_PASSWORD: "password"
+                        MYSQL_DATABASE: "togo"
+                ports:
+                        - 3306:3306
