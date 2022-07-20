@@ -9,6 +9,9 @@
 *.test
 bin/
 
+# configs and env files
+.env
+
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
