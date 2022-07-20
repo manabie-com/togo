@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import UserUsecase from '../usecase/user';
-import userRequest from '../dto/userRequest';
+import { userRequest } from '../dto/userRequest';
 
 const userController = (uc: UserUsecase) => ({
 	create: async (req: Request, res: Response) => {
