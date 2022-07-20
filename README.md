@@ -1,5 +1,23 @@
+# How to run (Docker)
+1. Clone the repository
+2. At the root directory
+```
+docker-compose build
+```
+```
+docker-compose up
+```
+3. Wait for docker compose
+4. You can launch service as below url
+```sh
+http://localhost:8687/swagger/index.html
+```
+5. UAT
 
-# How to run
+- Request token:
+	- admin@mytodo.com/123456
+
+# How to run (Local)
 ## OS
 - Window 8, 10 (x64)
 ## Download & Install
@@ -33,13 +51,7 @@
 - Start project (Press F5)
 ![image](https://user-images.githubusercontent.com/20410120/179145505-19383655-9666-4cc6-9413-a39bdd3ca623.png)
 
-## Test API
-- Account
-	admin@mytodo.com/123456
-- 
-![image](https://user-images.githubusercontent.com/20410120/179145678-ec58ad70-87c5-4443-a785-2b47e503d83c.png)
-
-## Run tests
+# Run tests
 - Solution level
 ![image](https://user-images.githubusercontent.com/20410120/179145780-bfdf8266-ecb9-482a-86d9-682d8846b39e.png)
 ![image](https://user-images.githubusercontent.com/20410120/179145896-f39a7572-7263-46c7-aeab-16a9101332dd.png)
