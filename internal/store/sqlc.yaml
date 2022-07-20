@@ -1,0 +1,18 @@
+version: "1"
+packages:
+  - name: "store"
+    path: "./"
+    queries: "./queries/"
+    schema: "./schemas/"
+    engine: "mysql"
+    emit_json_tags: true
+    emit_prepared_queries: false
+    emit_interface: true
+    emit_exact_table_names: false
+overrides:
+  - column: "todo_tasks.id"
+    go_type: "uint64"
+    nullable: false
+  - column: "todo_tasks.user_id"
+    go_type: "uint64"
+    nullable: false

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -10,10 +11,10 @@ import (
 )
 
 type Service struct {
-	store store.Store
+	store store.Querier
 }
 
-func NewService(store store.Store) *Service {
+func NewService(store store.Querier) *Service {
 	return &Service{store}
 }
 
@@ -35,25 +36,38 @@ func (s *Service) insertTask(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	err = s.store.InsertTask("", "", p.Name, "")
+	_, err = s.store.InsertTask(context.Background(), store.InsertTaskParams{
+		UserID:   p.UserID,
+		TaskName: p.Name,
+	})
 	if err != nil {
 		fmt.Printf("Error InsertTask: %v \n", err)
 		http.Error(w, "Error RecordTask", http.StatusInternalServerError)
 		return
 	}
+
+	t := CreateTodoTaskResponse{Message: "Success"}
+	jd, err := json.Marshal(&t)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jd)
 }
 
 func (s *Service) getTask(w http.ResponseWriter, req *http.Request) {
-	task, err := s.store.GetTaskByID("")
+	task, err := s.store.GetTaskByID(context.Background(), 1) // TODO: use correct id
 	if err != nil {
 		http.Error(w, "Error getTask", http.StatusInternalServerError)
 		return
 	}
 
-	t := GetTodoTaskResponse{Name: task[2]}
+	t := GetTodoTaskResponse{Name: task.TaskName}
 	jd, err := json.Marshal(&t)
 	if err != nil {
-		panic(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jd)

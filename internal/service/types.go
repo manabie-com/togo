@@ -1,7 +1,8 @@
 package service
 
 type CreateTodoTaskRequest struct {
-	Name string `json:"name"`
+	Name   string `json:"name"`
+	UserID uint64 `json:"user_id"`
 }
 
 type CreateTodoTaskResponse struct {
