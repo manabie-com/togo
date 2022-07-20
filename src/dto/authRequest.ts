@@ -6,7 +6,7 @@ export interface AuthRequest {
 	validate(): void;
 }
 
-const authRequest: AuthRequest = {
+export const authRequest: AuthRequest = {
 	username: '',
 	password: '',
 	validate() {
@@ -14,5 +14,3 @@ const authRequest: AuthRequest = {
 		if (!this.password || this.password == '') Error.exec('Password is invalid', 400)
 	}
 }
-
-export default authRequest;
