@@ -7,7 +7,7 @@
 Insert task
 
 ```sh
-curl -X POST localhost:8080/task -d '{"name": "hello", "user_id": 1}'
+curl -X POST localhost:8080/user/1/task -d '{"name": "do exercise"}'
 ```
 
 Get task

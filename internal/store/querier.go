@@ -11,6 +11,7 @@ import (
 
 type Querier interface {
 	GetTaskByID(ctx context.Context, id uint64) (TodoTask, error)
+	GetTaskByUserID(ctx context.Context, userID uint64) ([]TodoTask, error)
 	InsertTask(ctx context.Context, arg InsertTaskParams) (sql.Result, error)
 }
 

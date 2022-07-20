@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/gorilla/mux"
 	"github.com/tonghia/togo/internal/service"
 	"github.com/tonghia/togo/internal/store"
 	"github.com/tonghia/togo/pkg/database"
@@ -23,6 +24,7 @@ var config = Config{
 		Port:     3306,
 		Username: "gouser",
 		Password: "gopassword",
+		Options:  "checkConnLiveness=false&loc=Local&parseTime=true&maxAllowedPacket=0",
 	},
 }
 
@@ -33,11 +35,11 @@ func main() {
 
 	service := service.NewService(mainStore)
 
-	mux := http.NewServeMux()
-	mux.HandleFunc("/health", service.Health)
-	mux.HandleFunc("/task", service.RecordTask)
+	server := mux.NewRouter()
+	server.HandleFunc("/health", service.Health)
+	server.HandleFunc("/user/{userID}/task", service.RecordTask)
 
-	err := http.ListenAndServe(config.ListenAddr, mux)
+	err := http.ListenAndServe(config.ListenAddr, server)
 	if err != nil {
 		log.Fatalf("Server could not start listening on %s. Error: %v", config.ListenAddr, err)
 	}
