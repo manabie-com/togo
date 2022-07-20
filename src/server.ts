@@ -19,7 +19,8 @@ app.get('/', (req: Request, res: Response) => {
 	res.send('Welcome Togo');
 })
 
-app.post('/user', userController(userUsecase(userRepo(db))));
+app.post('/user', userController(userUsecase(userRepo(db))).create);
+app.post('/authenticate', userController(userUsecase(userRepo(db))).authenticate);
 
 app.listen(port, () => {
 	console.log(`Server running on port: ${port}`);
