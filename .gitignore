@@ -15,5 +15,10 @@
 # vendor/
 
 out/
+/dist
+/node_modules
 
 .idea
+
+# env
+*.env
