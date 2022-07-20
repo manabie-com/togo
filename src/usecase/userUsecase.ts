@@ -9,18 +9,25 @@ import { Error } from '../error';
 const userUsecase = (repo: UserRepo) => ({
 	create: async (u: UserRequest) => {
 		u.validate();
+
 		const user = new User();
+
 		user.username = u.username;
 		user.password = await hash(u.password);
 		user.type = u.type;
+
 		const userResponse = await repo.create(user);
+
 		return userResponse;
 	},
 	authenticate: async (u: AuthRequest) => {
 		u.validate();
+
 		const user = new User();
+
 		user.username = u.username;
 		user.password = u.password;
+
 		const { username, id, type, password } = await repo.authenticate(user);
 
 		const claims = await compare(u.password, password);
