@@ -4,10 +4,8 @@ export interface UserResponse {
 	type: string;
 }
 
-const userResponse: UserResponse = {
+export const userResponse: UserResponse = {
 	id: 0,
 	username: '',
 	type: '',
 }
-
-export default userResponse;

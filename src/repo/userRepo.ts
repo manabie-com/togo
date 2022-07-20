@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import { User } from '../entity/User';
-import userResponse from '../dto/userResponse';
+import { userResponse } from '../dto/userResponse';
 import { authUserResponse } from '../dto/authResponse';
 import { Error } from '../error';
 

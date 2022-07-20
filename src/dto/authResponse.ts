@@ -9,7 +9,7 @@ export interface AuthUserResponse {
 	type: string;
 }
 
-const authResponse: AuthResponse = {
+export const authResponse: AuthResponse = {
 	token: '',
 }
 
@@ -19,5 +19,3 @@ export const authUserResponse: AuthUserResponse = {
 	password: '',
 	type: '',
 }
-
-export default authResponse;

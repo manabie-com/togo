@@ -7,7 +7,7 @@ export interface UserRequest {
 	validate(): void;
 }
 
-const userRequest: UserRequest = {
+export const userRequest: UserRequest = {
 	username: '',
 	password: '',
 	type: 'basic',
@@ -17,5 +17,3 @@ const userRequest: UserRequest = {
 		if (!this.type || this.type == '') Error.exec('Type is invalid it should be "basic" or "premium"', 400)
 	}
 }
-
-export default userRequest;
