@@ -17,3 +17,6 @@
 out/
 
 .idea
+
+# VS Code config
+**/.vscode
