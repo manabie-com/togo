@@ -27,7 +27,11 @@ app.get('/', (req: Request, res: Response) => {
 
 app.post('/user', userController(userUsecase(userRepo(db))).create);
 app.post('/authenticate', userController(userUsecase(userRepo(db))).authenticate);
+app.post('/upgrade', authorize, userController(userUsecase(userRepo(db))).upgrade);
+
 app.post('/todo', authorize, todoController(todoUsecase(todoRepo(db))).create);
+app.get('/todo', todoController(todoUsecase(todoRepo(db))).getAll);
+app.get('/todo/user/:userId', todoController(todoUsecase(todoRepo(db))).getAllByUser);
 
 app.listen(port, () => {
 	console.log(`Server running on port: ${port}`);
