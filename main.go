@@ -9,6 +9,7 @@ import (
 	"github.com/tonghia/togo/internal/service"
 	"github.com/tonghia/togo/internal/store"
 	"github.com/tonghia/togo/pkg/database"
+	"github.com/tonghia/togo/pkg/tasklimit"
 )
 
 type Config struct {
@@ -33,7 +34,7 @@ func main() {
 	db := database.NewMySQLDatabase(config.MySQLConfig)
 	mainStore := store.New(db)
 
-	service := service.NewService(mainStore)
+	service := service.NewService(mainStore, tasklimit.GetUserLimiSvc())
 
 	server := mux.NewRouter()
 	server.HandleFunc("/health", service.Health)
