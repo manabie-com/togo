@@ -2,6 +2,7 @@ import { Error } from '../error';
 
 export interface TodoRequest {
 	userId: number;
+	userType: string;
 	task: string;
 	done: boolean;
 	createdAt: Date;
@@ -10,6 +11,7 @@ export interface TodoRequest {
 
 export const todoRequest: TodoRequest = {
 	userId: 0,
+	userType: '',
 	task: '',
 	done: false,
 	createdAt: new Date(),
