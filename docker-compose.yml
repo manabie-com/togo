@@ -1,0 +1,25 @@
+services:
+  # togo:
+  #   build: .
+  #   depends_on:
+  #     - mysql
+  #   ports:
+  #     - "3000:3000"
+  #   env_file:
+  #     - .env
+    
+  mysql:
+    image: mysql:8
+    ports:
+      - 3303:3306
+    volumes:
+      - mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_PASSWORD=password
+      - MYSQL_USER=togo
+      - MYSQL_DATABASE=togo  
+
+volumes:
+  mysql: 
+    driver: local
