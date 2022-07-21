@@ -4,8 +4,8 @@ import { APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TodosModule } from './todos/todos.module';
-import { UsersModule } from './users/users.module';
+import { entities as todoEntities, TodosModule } from './todos/todos.module';
+import { entities as userEntities, UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -20,7 +20,7 @@ import { UsersModule } from './users/users.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       autoLoadEntities: true,
-      entities: ['dist/**/**.entity{.ts,.js}'],
+      entities: [...todoEntities, ...userEntities],
       logging: true
     }),
     TodosModule,

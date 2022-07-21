@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common';
-import { TodosService } from './todos.service';
-import { TodosController } from './todos.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TodoEntity } from './entities/todo.entity';
 import { UsersModule } from 'src/users/users.module';
+import { TodoEntity } from './entities/todo.entity';
+import { TodosController } from './todos.controller';
+import { TodosService } from './todos.service';
+
+export const entities = [TodoEntity]
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([TodoEntity]),
+    TypeOrmModule.forFeature(entities),
     UsersModule
   ],
   controllers: [TodosController],
