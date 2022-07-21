@@ -16,15 +16,12 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-func TestApp_ShouldRespondOkToTestRequests(t *testing.T) {
-	methods := []string{"GET", "POST"}
-	for _, method := range methods {
-		response := makeRequestTo("/", method)
+func makeRequestTo(endpoint, method string) *httptest.ResponseRecorder {
+	responseRecorder := httptest.NewRecorder()
+	request, _ := http.NewRequest(method, endpoint, nil)
+	app.Router.ServeHTTP(responseRecorder, request)
 
-		if http.StatusOK != response.Code {
-			t.Errorf("Expected response code %d. Got %d\n", http.StatusOK, response.Code)
-		}
-	}
+	return responseRecorder
 }
 
 func TestApp_ShouldHandleNonExistingRoutes(t *testing.T) {
@@ -46,10 +43,10 @@ func TestApp_ShouldHandleNonExistingRoutes(t *testing.T) {
 	}
 }
 
-func makeRequestTo(endpoint, method string) *httptest.ResponseRecorder {
-	responseRecorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(method, endpoint, nil)
-	app.Router.ServeHTTP(responseRecorder, request)
+func TestApp_ShouldHaveARouteToTodo(t *testing.T) {
+	response := makeRequestTo("/todo", "POST")
 
-	return responseRecorder
+	if http.StatusOK != response.Code {
+		t.Errorf("Expected response code %d. Got %d\n", http.StatusOK, response.Code)
+	}
 }
