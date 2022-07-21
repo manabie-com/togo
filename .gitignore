@@ -6,8 +6,8 @@
 *.dylib
 
 # Test binary, built with `go test -c`
-*.test
 bin/
+coverage/
 
 # configs and env files
 .env
