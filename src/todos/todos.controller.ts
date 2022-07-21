@@ -1,34 +1,65 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { TodosService } from './todos.service';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { UsersService } from 'src/users/users.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
+import { TodoDto } from './dto/todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
+import { TodosService } from './todos.service';
 
-@Controller('todos')
+@ApiTags('Todos')
+@Controller('users/:userId/todos')
 export class TodosController {
-  constructor(private readonly todosService: TodosService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly todosService: TodosService) { }
 
+  @ApiOkResponse({ type: TodoDto })
   @Post()
-  create(@Body() createTodoDto: CreateTodoDto) {
-    return this.todosService.create(createTodoDto);
+  async create(@Param('userId') userId: string, @Body() createTodoDto: CreateTodoDto) {
+    await this.usersService.findOne(userId);
+    return this.todosService.create({ ...createTodoDto, user: { id: userId } });
   }
 
+  @ApiOkResponse({ type: TodoDto, isArray: true })
   @Get()
-  findAll() {
-    return this.todosService.findAll();
+  async findAll(@Param('userId') userId: string) {
+    await this.usersService.findOne(userId);
+    return this.todosService.findByUserId(userId);
   }
 
+  @ApiOkResponse({ type: TodoDto })
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.todosService.findOne(+id);
+  async findOne(@Param('userId') userId: string, @Param('id') id: string) {
+    const todo = await this.todosService.findOne(id);
+
+    if (todo.user.id !== userId) {
+      throw new BadRequestException('Todo not belong to user')
+    }
+
+    return todo;
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTodoDto: UpdateTodoDto) {
-    return this.todosService.update(+id, updateTodoDto);
+  @ApiOkResponse({ type: TodoDto })
+  @Put(':id')
+  async update(@Param('userId') userId: string, @Param('id') id: string, @Body() updateTodoDto: UpdateTodoDto) {
+    const todo = await this.todosService.findOne(id);
+
+    if (todo.user.id !== userId) {
+      throw new BadRequestException('Todo not belong to user')
+    }
+
+    return this.todosService.update(id, updateTodoDto);
   }
 
+  @ApiOkResponse({ type: TodoDto })
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.todosService.remove(+id);
+  async remove(@Param('userId') userId: string, @Param('id') id: string) {
+    const todo = await this.todosService.findOne(id);
+
+    if (todo.user.id !== userId) {
+      throw new BadRequestException('Todo not belong to user')
+    }
+
+    return this.todosService.remove(id);
   }
 }
