@@ -38,7 +38,16 @@ const userUsecase = (repo: UserRepo) => ({
 
 		Error.exec('User not found on database', 401);
 		return { token: '' };
-	}
+	},
+	upgrade: async (u: UserRequest) => {
+		const user = new User();
+
+		user.id = u.id;
+
+		const userResponse = await repo.upgrade(user);
+
+		return userResponse;
+	},
 })
 
 export default userUsecase;
