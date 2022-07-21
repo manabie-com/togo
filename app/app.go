@@ -2,6 +2,7 @@ package app
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -30,9 +31,7 @@ func (app *App) Run(addr string) error {
 }
 
 func (app *App) initializeRoutes() {
-	app.Router.HandleFunc("/todo", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	}).Methods("POST")
+	app.Router.HandleFunc("/todo", app.createTodo).Methods("POST")
 }
 
 func (app *App) initializeDatabase(db *DB_Params) {
@@ -48,4 +47,13 @@ func (app *App) initializeDatabase(db *DB_Params) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func (app *App) createTodo(w http.ResponseWriter, r *http.Request) {
+	var payload []int = []int{}
+	response, _ := json.Marshal(payload)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(response)
 }

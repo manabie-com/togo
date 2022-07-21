@@ -27,6 +27,7 @@ func TestMain(m *testing.M) {
 	app.Initialize(&db_params)
 
 	ensureTablesExist()
+	createInitialUser()
 	code := m.Run()
 	clearTables()
 	os.Exit(code)
@@ -42,26 +43,32 @@ func ensureTablesExist() {
 	}
 }
 
+func createInitialUser() {
+	if _, err := app.DB.Exec(initialUserQuery); err != nil {
+		log.Fatal(err)
+	}
+}
+
 func clearTables() {
-	app.DB.Exec("DELETE * FROM todos")
-	app.DB.Exec("ALTER SEQUENCE todos_id_seq RESTART WITH 1")
-	app.DB.Exec("DELETE * FROM users")
-	app.DB.Exec("ALTER SEQUENCE users_id_seq RESTART WITH 1")
+	app.DB.Exec("DROP TABLE IF EXISTS todos")
+	app.DB.Exec("DROP TABLE IF EXISTS users")
 }
 
 const todosTableCreationQuery = `CREATE TABLE IF NOT EXISTS todos
 (
-	id TEXT NOT NULL,
+	id serial,
 	content TEXT NOT NULL,
-	user_id TEXT NOT NULL,
-	created_date TEXT NOT NULL,
+	user_id INTEGER NOT NULL,
+	created_date DATE NOT NULL DEFAULT CURRENT_DATE,
 	CONSTRAINT todos_PK PRIMARY KEY (id),
 	CONSTRAINT todos_FK FOREIGN KEY (user_id) REFERENCES users(id)
 )`
 
+const initialUserQuery = `INSERT INTO users (name, max_todo) VALUES ('test_user', 3)`
+
 const usersTableCreationQuery = `CREATE TABLE IF NOT EXISTS users (
-	id TEXT NOT NULL,
-	password TEXT NOT NULL,
+	id serial,
+	name TEXT NOT NULL,
 	max_todo INTEGER DEFAULT 5 NOT NULL,
 	CONSTRAINT users_PK PRIMARY KEY (id)
 )`
@@ -98,5 +105,18 @@ func TestApp_ShouldHaveARouteToTodo(t *testing.T) {
 
 	if http.StatusOK != response.Code {
 		t.Errorf("Expected response code %d. Got %d\n", http.StatusOK, response.Code)
+	}
+}
+
+func TestApp_ShouldBeAbleToConnectToDb(t *testing.T) {
+	clearTables()
+	response := makeRequestTo("/todo", "POST")
+
+	if http.StatusOK != response.Code {
+		t.Errorf("Expected response code %d. Got %d\n", http.StatusOK, response.Code)
+	}
+
+	if body := response.Body.String(); body != "[]" {
+		t.Errorf("Expected an empty array. Got %s", body)
 	}
 }
