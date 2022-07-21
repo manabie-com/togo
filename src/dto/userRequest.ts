@@ -1,6 +1,8 @@
 import { Error } from '../error'
+import { CONSTANTS } from '../util/constant';
 
 export interface UserRequest {
+	id: number;
 	username: string;
 	password: string;
 	type: string;
@@ -8,9 +10,10 @@ export interface UserRequest {
 }
 
 export const userRequest: UserRequest = {
+	id: 0,
 	username: '',
 	password: '',
-	type: 'basic',
+	type: CONSTANTS.ACCOUNT_TYPE.BASIC,
 	validate() {
 		if (!this.username || this.username == '') Error.exec(`Username is invalid: ${this.username}`, 400)
 		if (!this.password || this.password == '') Error.exec('Password is invalid', 400)
