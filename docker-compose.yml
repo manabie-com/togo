@@ -1,0 +1,22 @@
+version: '3.5'
+
+services:
+
+  postgres_db:
+    image: postgres
+    container_name: postgres_db
+    hostname: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${APP_DB_USERNAME}
+      POSTGRES_PASSWORD: ${APP_DB_PASSWORD}
+    ports:
+      - "5432:5432"
+  
+  adminer:
+    image: adminer
+    container_name: adminer
+    hostname: adminer
+    restart: always
+    ports:
+      - "8080:8080"
