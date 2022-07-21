@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { TodosModule } from './todos/todos.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { AppService } from './app.service';
       entities: ['dist/**/**.entity{.ts,.js}'],
       logging: true
     }),
+    TodosModule,
   ],
   controllers: [AppController],
   providers: [AppService],
