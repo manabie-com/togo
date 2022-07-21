@@ -6,6 +6,7 @@ import { AuthRequest } from '../dto/authRequest';
 interface UserUsecase {
 	create(u: UserRequest): Promise<UserResponse>
 	authenticate(u: AuthRequest): Promise<AuthResponse>
+	upgrade(u: UserRequest): Promise<boolean>
 }
 
 export default UserUsecase;
