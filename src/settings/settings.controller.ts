@@ -1,34 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { SettingsService } from './settings.service';
-import { CreateSettingDto } from './dto/create-setting.dto';
+import { Body, Controller, Get, Param, Patch, Put } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { UpdateSettingDto } from './dto/update-setting.dto';
+import { SettingsService } from './settings.service';
 
-@Controller('settings')
+@ApiTags('Settings')
+@Controller('users/:userId/settings')
 export class SettingsController {
-  constructor(private readonly settingsService: SettingsService) {}
+  constructor(private readonly settingsService: SettingsService) { }
 
-  @Post()
-  create(@Body() createSettingDto: CreateSettingDto) {
-    return this.settingsService.create(createSettingDto);
+  @Get('')
+  async findOne(@Param('userId') userId: string) {
+    return this.settingsService.findByUserId(userId);
   }
 
-  @Get()
-  findAll() {
-    return this.settingsService.findAll();
+  @Put('')
+  async update(@Param('userId') userId: string, @Body() updateSettingDto: UpdateSettingDto) {
+    const setting = await this.settingsService.findByUserId(userId);
+    return this.settingsService.update(setting.id, updateSettingDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.settingsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSettingDto: UpdateSettingDto) {
-    return this.settingsService.update(+id, updateSettingDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.settingsService.remove(+id);
-  }
 }
