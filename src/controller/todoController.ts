@@ -3,31 +3,31 @@ import TodoUsecase from '../usecase/todo';
 import { todoRequest } from '../dto/todoRequest';
 import { userRequest } from '../dto/userRequest';
 
-const todoController = (tc: TodoUsecase) => ({
-	create: async(req: any, res: Response) => {
+const todoController = (tc: TodoUsecase | any) => ({
+	create: async(req: any, res: Response | any) => {
 		try {
 			todoRequest.task = req.body.task;
 			todoRequest.userId = req.user.id;
 			todoRequest.userType = req.user.type;
 			const todo = await tc.create(todoRequest);
-			res.status(201).json(todo);
+			return res.status(201).json(todo);
 		} catch (e: any) {
 			res.status(e.code).json(e.message);
 		}
 	},
-	getAll: async(req: Request, res: Response) => {
+	getAll: async(req: Request | any, res: Response | any) => {
 		try {
 			const todos = await tc.getAll();
-			res.status(200).json(todos);
+			return res.status(200).json(todos);
 		} catch (e: any) {
 			res.status(e.code).json(e.message);
 		}
 	},
-	getAllByUser: async(req: Request, res: Response) => {
+	getAllByUser: async(req: Request | any, res: Response | any) => {
 		try {
 			userRequest.id = Number(req.params.userId);
 			const todos = await tc.getAllByUser(userRequest);
-			res.status(200).json(todos);
+			return res.status(200).json(todos);
 		} catch (e: any) {
 			res.status(e.code).json(e.message);
 		}
