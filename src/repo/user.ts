@@ -5,6 +5,7 @@ import { AuthUserResponse } from '../dto/authResponse';
 interface UserRepo {
 	create(u: User): Promise<UserResponse>
 	authenticate(u: User): Promise<AuthUserResponse>
+	upgrade(u: User): Promise<boolean>
 }
 
 export default UserRepo;
