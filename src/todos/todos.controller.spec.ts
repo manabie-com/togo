@@ -9,10 +9,33 @@ describe('TodosController', () => {
   let controller: TodosController;
   let todosRepository: Repository<TodoEntity>;
   let usersService: UsersService;
+  let todosService: TodosService;
+  const createTodoDto = {
+    title: "todo1",
+    date: new Date(),
+    user: {
+      id: "userid1"
+    }
+  }
+  const creatingTodo = {
+    ...createTodoDto,
+    id: '123'
+  }
+
+  const user = {
+    id: 'userid1'
+  }
 
   beforeEach(async () => {
-    todosRepository = jest.mock as any;
-    usersService = jest.mock as any;
+    todosRepository = {
+      create: jest.fn(() => creatingTodo),
+      save: jest.fn(),
+    } as any;
+    usersService = {
+      findOne: jest.fn(() => user),
+      save: jest.fn(),
+    } as any;
+
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TodosController],
@@ -29,9 +52,21 @@ describe('TodosController', () => {
     }).compile();
 
     controller = module.get<TodosController>(TodosController);
+    todosService = module.get<TodosService>(TodosService);
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+  });
+
+  it('should create todo', async () => {
+    const createFn = jest.spyOn(todosService, 'create')
+
+    await controller.create('userid1', {
+      title: createTodoDto.title,
+      date: createTodoDto.date
+    })
+
+    expect(createFn).toBeCalledWith(createTodoDto);
   });
 });

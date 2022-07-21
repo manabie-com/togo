@@ -6,9 +6,23 @@ import { TodosService } from './todos.service';
 describe('TodosService', () => {
   let service: TodosService;
   let todosRepository: Repository<TodoEntity>;
+  const createTodoDto = {
+    title: "todo1",
+    date: new Date(),
+    user: {
+      id: "userid1"
+    }
+  }
+  const creatingTodo = {
+    ...createTodoDto,
+    id: '123'
+  }
 
   beforeEach(async () => {
-    todosRepository = jest.mock as any;
+    todosRepository = {
+      create: jest.fn(() => creatingTodo),
+      save: jest.fn(),
+    } as any;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -25,4 +39,10 @@ describe('TodosService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
+  it('should create todo', async () => {
+    await service.create(createTodoDto);
+    expect(todosRepository.save).toBeCalledWith(creatingTodo);
+  });
+
 });
