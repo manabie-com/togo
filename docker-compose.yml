@@ -2,10 +2,13 @@ version: "3.8"
 services:
         togo:
                 build: .
+                restart: always
                 environment:
                         DB_HOST: db
                 ports:
                         - 3000:3000
+                depends_on:
+                        - db
         db:
                 image: mysql:5.7
                 restart: always
@@ -14,3 +17,4 @@ services:
                         MYSQL_DATABASE: "togo"
                 ports:
                         - 3306:3306
+
