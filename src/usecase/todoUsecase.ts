@@ -1,3 +1,8 @@
+/*
+ * Concrete implementation for
+ * Todo Usecase which mostly controls
+ * The business logic layer
+ */
 import TodoRepo from '../repo/todo';
 import { TodoRequest } from '../dto/todoRequest';
 import { UserRequest } from '../dto/userRequest';

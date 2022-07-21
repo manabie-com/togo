@@ -1,3 +1,6 @@
+/*
+ * Usecase Interface which defines usecase signature
+ */
 import { TodoRequest } from '../dto/todoRequest';
 import { UserRequest } from '../dto/userRequest';
 import { Todo } from '../entity/Todo';

@@ -1,3 +1,6 @@
+/*
+ * Usecase Interface which defines usecase signature
+ */
 import { UserRequest } from '../dto/userRequest';
 import { UserResponse } from '../dto/userResponse';
 import { AuthResponse } from '../dto/authResponse';

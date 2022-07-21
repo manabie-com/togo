@@ -2,6 +2,10 @@ import { Request, Response } from 'express';
 import UserUsecase from '../usecase/user';
 import { userRequest } from '../dto/userRequest';
 
+/* 
+ * Route Handler also holds Usecase interface
+ * to easily create a mock during test
+ */
 const userController = (uc: UserUsecase | any) => ({
 	create: async (req: Request | any, res: Response | any) => {
 		try {

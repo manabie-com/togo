@@ -1,3 +1,7 @@
+/*
+ * Concrete implementation for
+ * Todo Repository
+ */
 import { DataSource } from 'typeorm';
 import { Todo } from '../entity/Todo';
 import { User } from '../entity/User';

@@ -4,6 +4,11 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 dotenv.config();
 
+/*
+ * This API used HEXAGONAL ARCHITECTURE
+ * Which is also known as PORTS AND ADAPTERS
+ * Handling dependency from main
+ */
 import authorize from './middleware/auth';
 import userController from './controller/userController';
 import userUsecase from './usecase/userUsecase';
@@ -25,6 +30,9 @@ app.get('/', (req: Request, res: Response) => {
 	res.send('Welcome Togo');
 })
 
+/*
+ * Injecting dependency what is required
+ */
 app.post('/user', userController(userUsecase(userRepo(db))).create);
 app.post('/authenticate', userController(userUsecase(userRepo(db))).authenticate);
 app.post('/upgrade', authorize, userController(userUsecase(userRepo(db))).upgrade);

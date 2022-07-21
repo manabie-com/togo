@@ -1,3 +1,6 @@
+/*
+ * Databse instance wrapped by typeorm
+ */
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { User } from './entity/User';
 import { Todo } from './entity/Todo';

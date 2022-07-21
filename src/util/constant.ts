@@ -1,3 +1,7 @@
+/*
+ * HELPER function and CONSTANT data
+ * to drive business logic
+ */
 export const CONSTANTS = {
 	ACCOUNT_TYPE: {
 		BASIC: 'BASIC',

@@ -1,3 +1,7 @@
+/*
+ * Issues and verify token
+ * After successful authentication
+ */
 import Jwt from 'jsonwebtoken';
 
 export const jwt = {

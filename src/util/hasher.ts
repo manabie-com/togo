@@ -1,3 +1,7 @@
+/*
+ * Handles password hashing
+ * Before it will be saved in the database
+ */
 import bcrypt from 'bcrypt';
 
 const SALTROUND = 10;

@@ -1,3 +1,6 @@
+/*
+ * Repository Interface which defines repository signature
+ */
 import { User } from '../entity/User';
 import { UserResponse } from '../dto/userResponse';
 import { AuthUserResponse } from '../dto/authResponse';

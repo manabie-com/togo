@@ -1,3 +1,8 @@
+/*
+ * Concrete implementation for
+ * User Usecase which mostly controls
+ * The business logic layer
+ */
 import UserRepo from '../repo/user';
 import { UserRequest } from '../dto/userRequest';
 import { AuthRequest } from '../dto/authRequest';

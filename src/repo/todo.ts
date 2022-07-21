@@ -1,3 +1,6 @@
+/*
+ * Repository Interface which defines repository signature
+ */
 import { Todo } from '../entity/Todo';
 import { User } from '../entity/User';
 

@@ -1,3 +1,7 @@
+/* 
+ * TYPEORM entity 
+ * does the heavy lifting when accessing database
+ */
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
 
 @Entity()

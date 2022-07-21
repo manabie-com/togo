@@ -1,3 +1,8 @@
+/* 
+ * DTO - Data Transfer Object
+ * Handles data passing from controller to useCase
+ * Also Handles input validation
+ */
 import { Error } from '../error';
 
 export interface TodoRequest {

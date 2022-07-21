@@ -1,3 +1,6 @@
+/*
+ * Handles authorization for protected routes
+ */
 import { Response, NextFunction } from 'express';
 import { jwt } from '../util/jwt';
 

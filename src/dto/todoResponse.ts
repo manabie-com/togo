@@ -1,3 +1,8 @@
+/* 
+ * DTO - Data Transfer Object
+ * Handles data passing from controller to useCase
+ * Also Handles input validation
+ */
 export interface TodoResponse {
 	id: number;
 	userId: number;

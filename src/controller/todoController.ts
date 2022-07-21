@@ -3,6 +3,10 @@ import TodoUsecase from '../usecase/todo';
 import { todoRequest } from '../dto/todoRequest';
 import { userRequest } from '../dto/userRequest';
 
+/* 
+ * Route Handler also holds Usecase interface
+ * to easily create a mock during test
+ */
 const todoController = (tc: TodoUsecase | any) => ({
 	create: async(req: any, res: Response | any) => {
 		try {
