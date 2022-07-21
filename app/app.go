@@ -12,7 +12,12 @@ type App struct {
 
 func (app *App) Initialize() {
 	app.Router = mux.NewRouter()
+
 	app.Router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}).Methods("GET")
+
+	app.Router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}).Methods("POST")
 }
