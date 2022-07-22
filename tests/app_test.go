@@ -8,6 +8,7 @@ import (
 	"os"
 	"testing"
 	togo "togo/app"
+	"togo/helpers"
 
 	"github.com/joho/godotenv"
 )
@@ -27,52 +28,12 @@ func TestMain(m *testing.M) {
 
 	app.Initialize(&db_params)
 
-	ensureTablesExist()
-	createInitialUser()
+	helpers.EnsureTablesExist(app.DB)
+	helpers.CreateInitialUser(app.DB)
 	code := m.Run()
-	clearTables()
+	helpers.ClearTables(app.DB)
 	os.Exit(code)
 }
-
-func ensureTablesExist() {
-	if _, err := app.DB.Exec(usersTableCreationQuery); err != nil {
-		log.Fatal(err)
-	}
-
-	if _, err := app.DB.Exec(todosTableCreationQuery); err != nil {
-		log.Fatal(err)
-	}
-}
-
-func createInitialUser() {
-	if _, err := app.DB.Exec(initialUserQuery); err != nil {
-		log.Fatal(err)
-	}
-}
-
-func clearTables() {
-	app.DB.Exec("DROP TABLE IF EXISTS todos")
-	app.DB.Exec("DROP TABLE IF EXISTS users")
-}
-
-const todosTableCreationQuery = `CREATE TABLE IF NOT EXISTS todos
-(
-	id serial,
-	content TEXT NOT NULL,
-	user_id INTEGER NOT NULL,
-	created_date DATE NOT NULL DEFAULT CURRENT_DATE,
-	CONSTRAINT todos_PK PRIMARY KEY (id),
-	CONSTRAINT todos_FK FOREIGN KEY (user_id) REFERENCES users(id)
-)`
-
-const initialUserQuery = `INSERT INTO users (name, max_todo) VALUES ('test_user', 3)`
-
-const usersTableCreationQuery = `CREATE TABLE IF NOT EXISTS users (
-	id serial,
-	name TEXT NOT NULL,
-	max_todo INTEGER DEFAULT 5 NOT NULL,
-	CONSTRAINT users_PK PRIMARY KEY (id)
-)`
 
 func makeRequestTo(endpoint, method string, payload []byte) *httptest.ResponseRecorder {
 	var request *http.Request

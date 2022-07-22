@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"togo/helpers"
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
@@ -24,6 +25,7 @@ func (app *App) Initialize(db *DB_Params) {
 	app.Router = mux.NewRouter()
 	app.initializeRoutes()
 	app.initializeDatabase(db)
+	app.seedData()
 }
 
 func (app *App) Run(addr string) error {
@@ -47,6 +49,12 @@ func (app *App) initializeDatabase(db *DB_Params) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func (app *App) seedData() {
+	helpers.ClearTables(app.DB)
+	helpers.EnsureTablesExist(app.DB)
+	helpers.CreateInitialUser(app.DB)
 }
 
 func (app *App) createTodo(w http.ResponseWriter, r *http.Request) {
