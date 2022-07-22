@@ -15,4 +15,4 @@ RUN npm install --only-production
 COPY --from=build /opt/app/dist ./dist
 
 ENV NODE_OPTIONS=--max_old_space_size=4096
-CMD ["node", "dist/main.js"]
+CMD ["node", "dist/src/main.js"]
