@@ -1,4 +1,4 @@
-package main_test
+package app_test
 
 import (
 	"log"
@@ -97,26 +97,5 @@ func TestApp_ShouldHandleNonExistingRoutes(t *testing.T) {
 				t.Errorf("Expected response code %d. Got %d\n", http.StatusNotFound, response.Code)
 			}
 		}
-	}
-}
-
-func TestApp_ShouldHaveARouteToTodo(t *testing.T) {
-	response := makeRequestTo("/todo", "POST")
-
-	if http.StatusOK != response.Code {
-		t.Errorf("Expected response code %d. Got %d\n", http.StatusOK, response.Code)
-	}
-}
-
-func TestApp_ShouldBeAbleToConnectToDb(t *testing.T) {
-	clearTables()
-	response := makeRequestTo("/todo", "POST")
-
-	if http.StatusOK != response.Code {
-		t.Errorf("Expected response code %d. Got %d\n", http.StatusOK, response.Code)
-	}
-
-	if body := response.Body.String(); body != "[]" {
-		t.Errorf("Expected an empty array. Got %s", body)
 	}
 }

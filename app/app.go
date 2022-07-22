@@ -50,10 +50,27 @@ func (app *App) initializeDatabase(db *DB_Params) {
 }
 
 func (app *App) createTodo(w http.ResponseWriter, r *http.Request) {
-	var payload []int = []int{}
+	var todo Todo
+	decoder := json.NewDecoder(r.Body)
+
+	if err := decoder.Decode(&todo); err != nil {
+		sendJSONResponse(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	defer r.Body.Close()
+
+	if err := todo.createTodo(app.DB); err != nil {
+		sendJSONResponse(w, http.StatusInternalServerError, err.Error())
+	}
+
+	sendJSONResponse(w, http.StatusCreated, todo)
+}
+
+func sendJSONResponse(w http.ResponseWriter, code int, payload interface{}) {
 	response, _ := json.Marshal(payload)
 
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(code)
 	w.Write(response)
 }
