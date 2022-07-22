@@ -1,6 +1,7 @@
 package app_test
 
 import (
+	"bytes"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -73,9 +74,17 @@ const usersTableCreationQuery = `CREATE TABLE IF NOT EXISTS users (
 	CONSTRAINT users_PK PRIMARY KEY (id)
 )`
 
-func makeRequestTo(endpoint, method string) *httptest.ResponseRecorder {
+func makeRequestTo(endpoint, method string, payload []byte) *httptest.ResponseRecorder {
+	var request *http.Request
 	responseRecorder := httptest.NewRecorder()
-	request, _ := http.NewRequest(method, endpoint, nil)
+
+	if method == "POST" && payload != nil {
+		request, _ = http.NewRequest(method, endpoint, bytes.NewBuffer(payload))
+		request.Header.Set("Content-Type", "application/json")
+	} else {
+		request, _ = http.NewRequest(method, endpoint, nil)
+	}
+
 	app.Router.ServeHTTP(responseRecorder, request)
 
 	return responseRecorder
@@ -91,7 +100,7 @@ func TestApp_ShouldHandleNonExistingRoutes(t *testing.T) {
 
 	for method, endpoints := range routes {
 		for _, endpoint := range endpoints {
-			response := makeRequestTo(endpoint, method)
+			response := makeRequestTo(endpoint, method, nil)
 
 			if http.StatusNotFound != response.Code {
 				t.Errorf("Expected response code %d. Got %d\n", http.StatusNotFound, response.Code)
