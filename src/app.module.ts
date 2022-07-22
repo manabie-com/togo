@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { entities as todoEntities, TodosModule } from './todos/todos.module';
 import { entities as userEntities, UsersModule } from './users/users.module';
+import { SettingsModule } from './settings/settings.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { entities as userEntities, UsersModule } from './users/users.module';
     }),
     TodosModule,
     UsersModule,
+    SettingsModule,
   ],
   controllers: [AppController],
   providers: [

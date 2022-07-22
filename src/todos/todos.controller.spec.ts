@@ -10,6 +10,7 @@ describe('TodosController', () => {
   let todosRepository: Repository<TodoEntity>;
   let usersService: UsersService;
   let todosService: TodosService;
+  let trxMock: any;
   const createTodoDto = {
     title: "todo1",
     date: new Date(),
@@ -27,15 +28,27 @@ describe('TodosController', () => {
   }
 
   beforeEach(async () => {
+    trxMock = {
+      findAndCount: jest.fn(() => [{}, 0]),
+      findOne: jest.fn(() => ({ todoPerday: 1 })),
+      save: jest.fn()
+    }
+
     todosRepository = {
       create: jest.fn(() => creatingTodo),
       save: jest.fn(),
+      manager: {
+        transaction: async (type, cb) => {
+          await cb(trxMock);
+          return ({ catch: jest.fn() })
+        }
+      }
     } as any;
+
     usersService = {
       findOne: jest.fn(() => user),
       save: jest.fn(),
     } as any;
-
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TodosController],
@@ -68,5 +81,17 @@ describe('TodosController', () => {
     })
 
     expect(createFn).toBeCalledWith(createTodoDto);
+  });
+
+  it('should not create todos greater than in setting', async () => {
+    jest.spyOn(trxMock, 'findAndCount').mockImplementation(() => [, 1]);
+
+    await expect(async () => {
+      await controller.create('userid1', {
+        title: createTodoDto.title,
+        date: createTodoDto.date
+      })
+    }).rejects.toThrowError("Exceed number of todos per day");
+
   });
 });

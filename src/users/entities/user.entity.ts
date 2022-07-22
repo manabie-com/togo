@@ -1,4 +1,5 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { SettingEntity } from "src/settings/entities/setting.entity";
+import { BaseEntity, Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class UserEntity extends BaseEntity {
@@ -13,4 +14,7 @@ export class UserEntity extends BaseEntity {
 
   @Column({ name: 'last_name' })
   lastName: string;
+
+  @OneToOne(() => SettingEntity, { cascade: true })
+  setting: SettingEntity;
 }
