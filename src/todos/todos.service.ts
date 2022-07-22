@@ -1,5 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { SettingEntity } from 'src/settings/entities/setting.entity';
 import { Repository } from 'typeorm';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
@@ -12,11 +13,38 @@ export class TodosService {
   ) { }
 
   async create(createTodoDto: CreateTodoDto & { user: { id: string } }) {
-    const todo = this.todosRepository.create(createTodoDto);
+    return this.todosRepository.manager.transaction('SERIALIZABLE', async (trx) => {
 
-    await this.todosRepository.save(todo);
+      const [, todayTodoCount] = await trx.findAndCount(TodoEntity, {
+        where: {
+          date: createTodoDto.date,
+          user: {
+            id: createTodoDto.user.id
+          }
+        }
+      })
 
-    return todo;
+      const setting = await trx.findOne(SettingEntity, {
+        where: { user: { id: createTodoDto.user.id } }
+      });
+
+      if (setting.todoPerday - todayTodoCount <= 0) {
+        throw new BadRequestException(`Exceed number of todos per day`)
+      }
+
+      const todo = this.todosRepository.create(createTodoDto);
+
+      await trx.save(todo);
+
+      return todo;
+    }).catch(e => {
+      if (e?.code === 'ER_LOCK_DEADLOCK') {
+        throw new HttpException('Too many request', HttpStatus.TOO_MANY_REQUESTS)
+      } else {
+        throw e
+      }
+
+    })
   }
 
   findByUserId(userId: string) {
