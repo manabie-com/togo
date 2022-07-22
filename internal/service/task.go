@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -44,8 +45,8 @@ func (s *Service) insertTask(w http.ResponseWriter, req *http.Request) {
 
 	// validate daily limit
 	rs, err := s.store.GetTotalTaskByUserID(context.Background(), userID)
-	if err != nil {
-		http.Error(w, "Error getTask", http.StatusInternalServerError)
+	if err != nil && err != sql.ErrNoRows {
+		http.Error(w, "Error GetTotalTaskByUserID", http.StatusInternalServerError)
 		return
 	}
 	userLimit := s.userLimitSvc.GetUserLimit(userID)
@@ -88,7 +89,7 @@ func (s *Service) getTask(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	t := GetTodoTaskResponse{Message: "OK", Data: tasks}
+	t := GetTodoTaskResponse{Message: "Success", Data: tasks}
 	jd, err := json.Marshal(&t)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
