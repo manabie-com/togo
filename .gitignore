@@ -6,13 +6,17 @@
 *.dylib
 
 # Test binary, built with `go test -c`
-*.test
+bin/
+coverage/
+
+# configs and env files
+.env
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
 # Dependency directories (remove the comment below to include it)
-# vendor/
+node_modules/
 
 out/
 
