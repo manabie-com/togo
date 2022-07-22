@@ -1,8 +1,12 @@
-import { Module } from '@nestjs/common';
+import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { entities as todoEntities, TodosModule } from './todos/todos.module';
+import { entities as userEntities, UsersModule } from './users/users.module';
+import { SettingsModule } from './settings/settings.module';
 
 @Module({
   imports: [
@@ -17,11 +21,23 @@ import { AppService } from './app.service';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       autoLoadEntities: true,
-      entities: ['dist/**/**.entity{.ts,.js}'],
+      entities: [...todoEntities, ...userEntities],
       logging: true
     }),
+    TodosModule,
+    UsersModule,
+    SettingsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    {
+      provide: APP_PIPE,
+      useValue: new ValidationPipe({
+        transform: true,
+        whitelist: true,
+        forbidNonWhitelisted: true
+      })
+    },
+    AppService],
 })
 export class AppModule {}
