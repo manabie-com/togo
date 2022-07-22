@@ -1,3 +1,5 @@
+USE godb;
+
 CREATE TABLE IF NOT EXISTS `todo_tasks` (
     `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
     `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
