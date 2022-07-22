@@ -12,10 +12,19 @@ import (
 	"github.com/tonghia/togo/internal/store"
 )
 
-func (s *Service) insertTask(w http.ResponseWriter, req *http.Request) {
+func getUserIDFromReq(req *http.Request) uint64 {
 	params := mux.Vars(req)
 	userIDParam := params["userID"]
 	userID, _ := strconv.ParseUint(userIDParam, 10, 64)
+	if userID == 0 {
+		return 0
+	}
+
+	return userID
+}
+
+func (s *Service) insertTask(w http.ResponseWriter, req *http.Request) {
+	userID := getUserIDFromReq(req)
 	if userID == 0 {
 		http.Error(w, "Invalid user_id", http.StatusBadRequest)
 		return
@@ -67,9 +76,7 @@ func (s *Service) insertTask(w http.ResponseWriter, req *http.Request) {
 }
 
 func (s *Service) getTask(w http.ResponseWriter, req *http.Request) {
-	params := mux.Vars(req)
-	userIDParam := params["userID"]
-	userID, _ := strconv.ParseUint(userIDParam, 10, 64)
+	userID := getUserIDFromReq(req)
 	if userID == 0 {
 		http.Error(w, "Invalid user_id", http.StatusBadRequest)
 		return
