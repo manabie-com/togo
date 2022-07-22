@@ -10,8 +10,8 @@ import (
 
 type TodoTask struct {
 	ID        uint64    `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	CreatedAt time.Time `json:"-"`
+	UpdatedAt time.Time `json:"-"`
 	UserID    uint64    `json:"user_id"`
 	TaskName  string    `json:"task_name"`
 }

@@ -60,7 +60,6 @@ func (suite *ServiceTestSuite) TestRecordTask_POST() {
 		suite.mockQuerier.EXPECT().GetTotalTaskByUserID(gomock.Any(), tc.userID).Return(store.GetTotalTaskByUserIDRow{TotalTask: tc.userTotalTask}, nil)
 
 		// Mock user limit svc GetUserLimit
-		// fmt.Println("tc", tc.userDailyLimit)
 		suite.mockUserLimitSvc.EXPECT().GetUserLimit(tc.userID).Return(tc.userDailyLimit)
 
 		req := httptest.NewRequest("POST", fmt.Sprintf("/user/%d/task", tc.userID), strings.NewReader(tc.requestBody))
@@ -82,23 +81,85 @@ func (suite *ServiceTestSuite) TestRecordTask_POST() {
 	}
 }
 
+func (suite *ServiceTestSuite) TestRecordTask_GET() {
+	testCases := []struct {
+		userID                 uint64
+		expectedHTTPStatusCode int
+		expectedBody           string
+	}{
+
+		{
+			userID:                 0,
+			expectedHTTPStatusCode: 400,
+			expectedBody:           "Invalid user_id\n",
+		},
+		{
+			userID:                 1,
+			expectedHTTPStatusCode: 200,
+			expectedBody:           "{\"message\":\"Success\",\"data\":[{\"id\":1,\"user_id\":1,\"task_name\":\"read book\"},{\"id\":2,\"user_id\":1,\"task_name\":\"do exercise\"}]}",
+		},
+	}
+
+	// Mock Database
+	suite.mockQuerier.EXPECT().
+		GetTaskByUserID(gomock.Any(), gomock.Any()).
+		Return([]store.TodoTask{
+			{
+				ID:       1,
+				UserID:   1,
+				TaskName: "read book",
+			},
+			{
+				ID:       2,
+				UserID:   1,
+				TaskName: "do exercise",
+			},
+		}, nil)
+
+	for _, tc := range testCases {
+
+		req := httptest.NewRequest("GET", fmt.Sprintf("/user/%d/task", tc.userID), nil)
+		w := httptest.NewRecorder()
+
+		router := mux.NewRouter()
+		router.HandleFunc("/user/{userID}/task", suite.service.RecordTask)
+		router.ServeHTTP(w, req)
+
+		response := w.Result()
+		body, err := io.ReadAll(response.Body)
+
+		assert.Nil(suite.T(), err)
+		assert.Equal(suite.T(), tc.expectedHTTPStatusCode, response.StatusCode,
+			fmt.Sprintf("Expected Response Status to be: %d, Got: %d", tc.expectedHTTPStatusCode, response.StatusCode))
+		assert.Equal(suite.T(), tc.expectedBody, string(body),
+			fmt.Sprintf("Expected Response body to be: %s, Got: %s", tc.expectedBody, string(body)))
+
+	}
+}
+
 func (suite *ServiceTestSuite) TestRecordTask_MethodNotAllow() {
 	testCases := []struct {
 		userID                 uint64
-		requestBody            string
+		requestMethod          string
 		expectedHTTPStatusCode int
 		expectedBody           string
 	}{
 		{
 			userID:                 1,
-			requestBody:            "",
+			requestMethod:          "PUT",
+			expectedHTTPStatusCode: 405,
+			expectedBody:           "Method not allowed\n",
+		},
+		{
+			userID:                 1,
+			requestMethod:          "DELETE",
 			expectedHTTPStatusCode: 405,
 			expectedBody:           "Method not allowed\n",
 		},
 	}
 
 	for _, tc := range testCases {
-		req := httptest.NewRequest("PUT", fmt.Sprintf("/user/%d/task", tc.userID), strings.NewReader(tc.requestBody))
+		req := httptest.NewRequest(tc.requestMethod, fmt.Sprintf("/user/%d/task", tc.userID), nil)
 		w := httptest.NewRecorder()
 
 		router := mux.NewRouter()
