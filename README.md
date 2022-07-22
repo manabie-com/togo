@@ -21,7 +21,7 @@ git clone git@github.com:vindecodex/togo.git
 cp .env-sample .env
 ```
 
-**Note: Please create 'togo' database before running the program**
+**Note: (FOR NONE DOCKER ONLY) Please create 'togo' database before running the program**
 
 - npm run dev
 
