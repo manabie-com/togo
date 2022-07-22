@@ -27,8 +27,6 @@ cp .env-sample .env
 
 ### Run using Docker
 
-**NOTE: Docker compose should be installed v3+**
-
 **NOTE: Also close other running mysql server from your computer it will conflict with the mysql docker image**
 
 ```bash
