@@ -7,11 +7,17 @@ import (
 
 type ToGo struct {
 	ServicePort int
+
+	DBDriver string
+	DSN      string
 }
 
 func Load() *ToGo {
 	return &ToGo{
 		ServicePort: envInt("TOGO_SERVICE_PORT", 9000),
+
+		DBDriver: env("TOGO_DB_DRIVER", ""),
+		DSN:      env("TOGO_DSN", ""),
 	}
 }
 

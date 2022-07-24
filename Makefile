@@ -26,6 +26,13 @@ docker-compose:
 	DOCKER_BUILDKIT=1 docker build -f .docker/togo/Dockerfile --build-arg=COMMIT=$(VCS_REF) --build-arg=BUILD_DATE=$(BUILD_DATE) -t trangmaiq/togo .
 	docker-compose -f .docker/quickstart_postgres.yml up -d
 
+.PHONY: generate
+generate:
+	go generate ./...
 
+.PHONY: test
+test:
+	go test -timeout 5m -coverprofile cover.out ./...
+	go tool cover -html=cover.out -o cover.html
 
 
