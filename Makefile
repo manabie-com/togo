@@ -30,9 +30,12 @@ docker-compose:
 generate:
 	go generate ./...
 
-.PHONY: test
-test:
+.PHONY: unit-test
+unit-test:
 	go test -timeout 5m -coverprofile cover.out ./...
 	go tool cover -html=cover.out -o cover.html
 
+.PHONY: integration-test
+integration-test:
+	go test -tags=integration
 
