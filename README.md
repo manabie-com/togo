@@ -11,7 +11,8 @@ docker-compose up
 Default app port is `8080`, if you your `8080` port is not available, do not hesitate to change to another one in `docker-compose.yml`
 
 ### How to use the app
-1. Register new account
+1. #### Register new account
+
 Method: `POST`
 
 URL: `/api/register`
@@ -30,6 +31,7 @@ Payload:
   "password": "123@pass!word"
 }
 ```
+
 Response:
 ```json
 {
@@ -50,7 +52,8 @@ Response:
 
 Default quota for your tasks is 3 per day, you can not change this.
 
-2. Login with your email and password
+2. #### Login with your email and password
+
 Method: `POST`
 
 URL: `/api/auth/login`
@@ -69,6 +72,7 @@ Payload:
   "password": "123@pass!word"
 }
 ```
+
 Response:
 ```json
 {
@@ -83,7 +87,8 @@ Response:
 }
 ```
 
-3. Add new task
+3. #### Add new task
+
 Method: `POST`
 
 URL: `/api/tasks`
@@ -101,6 +106,7 @@ Payload:
   "content": "Do homework"
 }
 ```
+
 Response
 ```json
 {
@@ -120,7 +126,8 @@ Response
 }
 ```
 
-4. Update your task by ID
+4. #### Update your task by ID
+
 Method: `PUT`
 
 URL: `/api/tasks/:id`
@@ -138,6 +145,7 @@ Payload:
   "content": "Do homework later"
 }
 ```
+
 Response:
 ```json
 {
@@ -157,7 +165,8 @@ Response:
 }
 ```
 
-5. Remove your task by ID
+5. #### Remove your task by ID
+
 Method: `DELETE`
 
 URL: `/api/tasks/:id`
@@ -173,7 +182,8 @@ Response
 ```json
 ```
 
-6. List your tasks
+6. #### List your tasks
+
 Method: `GET`
 
 URL: `/api/tasks`
@@ -185,6 +195,7 @@ Payload:
 ```json
 
 ```
+
 Response:
 ```json
 {
