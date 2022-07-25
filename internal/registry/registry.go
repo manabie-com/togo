@@ -1,7 +1,6 @@
 package registry
 
 import (
-	"log"
 	"sync"
 
 	"github.com/jmoiron/sqlx"
@@ -37,7 +36,6 @@ func Init(cfg *config.ToGo) (err error) {
 
 		rg.persister = sql.NewPersister(db)
 		rg.limiter = limiter.New()
-		log.Prefix()
 	})
 
 	return

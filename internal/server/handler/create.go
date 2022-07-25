@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 	"time"
@@ -80,7 +79,7 @@ func (h *Handler) CreateTasks() echo.HandlerFunc {
 
 		id := uuid.NewString()
 		err = h.d.Persister().CreateTask(
-			context.TODO(),
+			c.Request().Context(),
 			&model.Task{
 				ID:        id,
 				UserID:    input.UserID.String(),
