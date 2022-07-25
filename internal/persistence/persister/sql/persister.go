@@ -28,3 +28,13 @@ func (p *Persister) CreateTask(ctx context.Context, task *model.Task) error {
 
 	return nil
 }
+
+func (p *Persister) GetTask(ctx context.Context, id string) (*model.Task, error) {
+	var task model.Task
+	err := p.db.Get(&task, `SELECT * FROM tasks WHERE id=$1`, id)
+	if err != nil {
+		return nil, fmt.Errorf("get task by id failed: %w", err)
+	}
+
+	return &task, nil
+}

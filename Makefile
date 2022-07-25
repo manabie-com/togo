@@ -1,12 +1,12 @@
 SHELL=/bin/bash -o pipefail
 
-export GO111MODULE        := on
-export PATH               := .bin:${PATH}
-export PWD                := $(shell pwd)
-
-export BUILD_DATE         := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
-export VCS_REF            := $(shell git rev-parse HEAD)
-export POSTGRESQL_URL 	  :='postgres://togo:secret@localhost:5432/togo?sslmode=disable'
+export GO111MODULE		:= on
+export PATH				:= .bin:${PATH}
+export PWD				:= $(shell pwd)
+export BUILD_DATE		:= $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
+export VCS_REF			:= $(shell git rev-parse HEAD)
+export TOGO_DSN			:=postgres://togo:secret@0.0.0.0:5432/togo?sslmode=disable
+export TOGO_DB_DRIVER	:=postgres
 
 .PHONY: install-deps
 install-deps:
@@ -15,11 +15,11 @@ install-deps:
 
 .PHONY: migrate-up
 migrate-up:
-	migrate -database ${POSTGRESQL_URL} -path internal/persistence/migrations/sql up
+	migrate -database ${TOGO_DSN} -path internal/persistence/migrations/sql up
 
 .PHONY: migrate-down
 migrate-down:
-	migrate -database ${POSTGRESQL_URL} -path internal/persistence/migrations/sql down
+	migrate -database ${TOGO_DSN} -path internal/persistence/migrations/sql down
 
 .PHONY: docker-compose
 docker-compose:
@@ -32,10 +32,11 @@ generate:
 
 .PHONY: unit-test
 unit-test:
-	go test -timeout 5m -coverprofile cover.out ./...
+	go test -v -timeout 5m -coverprofile cover.out ./...
 	go tool cover -html=cover.out -o cover.html
 
 .PHONY: integration-test
 integration-test:
-	go test -tags=integration
+	docker-compose -f .docker/quickstart_postgres.yml up -d postgresd migrate
+	go test -v -tags=integration ./...
 
