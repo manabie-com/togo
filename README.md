@@ -255,6 +255,8 @@ APP_HOST= APP_PORT=8080 APP_SECRET=8c6c19688d9f94b3900042923aa94a99 DB_HOST=loca
 
 ### Final
 
-This app need to be optimized the database, use the aggregated column for checking exceeded daily limit instead of `count` query, because `count` query is so expensive when the records grow up.
+- This app need to be optimized the database, use the aggregated column for checking exceeded daily limit instead of `count` query, because `count` query is so expensive when the records grow up.
+- We need to move the testing bash script to docker-compose.yml too
+- Add swagger instead of using Postman
 
-We need to move the testing bash script to docker-compose.yml too
+Postman Collection: `https://www.getpostman.com/collections/2cdc08395f26e9047e4f`
