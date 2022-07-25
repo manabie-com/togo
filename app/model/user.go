@@ -95,7 +95,7 @@ func (user *User) countTasksByDate(date string, ctx context.Context, db bun.IDB)
 
 // countTasksCurrentDate /**
 func (user *User) countTasksCurrentDate(ctx context.Context, db bun.IDB) int {
-	currentTime := time.Now()
+	currentTime := time.Now().UTC()
 	currentDate := currentTime.Format("2006-01-02")
 	return user.countTasksByDate(currentDate, ctx, db)
 }
