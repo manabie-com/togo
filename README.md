@@ -3,14 +3,14 @@ This app is built in Golang and PostgreSQL (for storing data). Gorilla Mux is th
 
 The app is inspired heavily by Laravel, so you would feel familiar if you had developed with Laravel. I also update JWT Authentication and full CRUD for this app.
 
-### How to run the app
+### How to run the app?
 ```shell
 docker-compose up
 ```
 
 Default app port is `8080`, if you your `8080` port is not available, do not hesitate to change to another one in `docker-compose.yml`
 
-### How to use the app
+### How to use the app?
 1. #### Register new account
 
 Method: `POST`
@@ -245,3 +245,16 @@ Response:
     }
 }
 ```
+
+### How to run test locally?
+
+Requisite: start your app with docker
+```shell
+APP_HOST= APP_PORT=8080 APP_SECRET=8c6c19688d9f94b3900042923aa94a99 DB_HOST=localhost DB_PORT=5432 DB_NAME=manabie DB_USERNAME=manabie DB_PASSWORD=12345 go test -v -count=1 ./test
+```
+
+### Final
+
+This app need to be optimized the database, use the aggregated column for checking exceeded daily limit instead of `count` query, because `count` query is so expensive when the records grow up.
+
+We need to move the testing bash script to docker-compose.yml too
