@@ -17,7 +17,8 @@ Method: `POST`
 
 URL: `/api/register`
 
-cURL: ```shell
+cURL:
+```shell
 curl --location --request POST 'http://localhost:8080/api/register' \
 --header 'Content-Type: application/json' \
 --data-raw '{
@@ -60,7 +61,8 @@ Method: `POST`
 
 URL: `/api/auth/login`
 
-cURL: ```shell
+cURL:
+```shell
 curl --location --request POST 'http://localhost:8080/api/auth/login' \
 --header 'Content-Type: application/json' \
 --data-raw '{
@@ -97,7 +99,8 @@ Method: `POST`
 
 URL: `/api/tasks`
 
-cURL: ```shell
+cURL:
+```shell
 curl --location --request POST 'http://localhost:8080/api/tasks' \
 --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imh1dXRodWFuLm5ndXllbkBob3RtYWlsLmNvbSIsImV4cCI6MTY1ODg1ODY0NH0.vfglN4fOZ7NDat1hxznivNk9T4znCgw4l8K6XFemAYQ' \
 --header 'Content-Type: application/json' \
@@ -138,7 +141,8 @@ Method: `PUT`
 
 URL: `/api/tasks/:id`
 
-cURL: ```shell
+cURL:
+```shell
 curl --location --request PUT 'http://localhost:8080/api/tasks/1' \
 --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imh1dXRodWFuLm5ndXllbkBob3RtYWlsLmNvbSIsImV4cCI6MTY1ODg1ODY0NH0.vfglN4fOZ7NDat1hxznivNk9T4znCgw4l8K6XFemAYQ' \
 --header 'Content-Type: application/json' \
@@ -179,7 +183,8 @@ Method: `DELETE`
 
 URL: `/api/tasks/:id`
 
-cURL: ```shell
+cURL:
+```shell
 curl --location --request DELETE 'http://localhost:8080/api/tasks/1' \
 --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imh1dXRodWFuLm5ndXllbkBob3RtYWlsLmNvbSIsImV4cCI6MTY1ODg1ODY0NH0.vfglN4fOZ7NDat1hxznivNk9T4znCgw4l8K6XFemAYQ'
 ```
@@ -198,7 +203,8 @@ Method: `GET`
 
 URL: `/api/tasks`
 
-cURL: ```shell
+cURL: 
+```shell
 curl --location --request GET 'http://localhost:8080/api/tasks' \
 --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imh1dXRodWFuLm5ndXllbkBob3RtYWlsLmNvbSIsImV4cCI6MTY1ODg1ODY0NH0.vfglN4fOZ7NDat1hxznivNk9T4znCgw4l8K6XFemAYQ'
 ```
