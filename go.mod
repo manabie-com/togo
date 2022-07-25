@@ -3,6 +3,7 @@ module github.com/trangmaiq/togo
 go 1.18
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/RussellLuo/slidingwindow v0.0.0-20200528002341-535bb99d338b
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
