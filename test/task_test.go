@@ -168,6 +168,11 @@ func TestMain(m *testing.M) { // life cycle testing
 // TestCreateTask /**
 func TestCreateTask(t *testing.T) {
 
+	ctx := context.Background()
+	if err := truncateTaskRecords(ctx); err != nil {
+		t.Errorf("Unable to truncate task records\n")
+	}
+
 	var jsonStr = []byte(`{"content":"Do homework"}`)
 	request, _ := http.NewRequest("POST", "/api/tasks", bytes.NewBuffer(jsonStr))
 	request.Header.Set("Content-Type", "application/json")
@@ -208,7 +213,7 @@ func TestCreateTaskReturnFailWhenUserExceededDailyLimit(t *testing.T) {
 
 	ctx := context.Background()
 	if err := truncateTaskRecords(ctx); err != nil {
-		t.Errorf("Unable to truncate task records")
+		t.Errorf("Unable to truncate task records\n")
 	}
 
 	testData := []struct {
@@ -243,7 +248,7 @@ func TestCreateTaskReturnFailWhenUserExceededDailyLimit(t *testing.T) {
 
 		// assert status code
 		if data.statusCode != responseRecorder.Code {
-			t.Errorf("Expected response code %d. Got %d\n", http.StatusOK, responseRecorder.Code)
+			t.Errorf("Expected response code %d. Got %d\n", data.statusCode, responseRecorder.Code)
 		}
 	}
 }
