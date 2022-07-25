@@ -8,7 +8,7 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.todo</groupId>
-	<artifactId>ws</artifactId>
+	<artifactId>manabie-togo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>TodoAPI</name>
 	<description>Manabie Assessment</description>
@@ -73,6 +73,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>${project.artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

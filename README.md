@@ -27,7 +27,7 @@ LinuxOS/MacOS:
 * create database
 > `CREATE DATABASE todo-test`
 
-### Running/Building locally via cli
+### Running/Building locally via docker
 * navigate into project's root 
 > `cd $projectDir\`
 * clean project
@@ -36,8 +36,10 @@ LinuxOS/MacOS:
 > `mvn clean install` 
 * run migration scripts
 > `mvn liquibase:update`
-* Run the project
-> `mvn spring-boot:run`
+* docker build
+> `docker build -t manabie-togo.jar .`
+* Run on multiple container
+> `docker-compose up -d`
 
 ### Sample cURL request for testing and health check
 > `curl --location --request GET 'http://localhost:8008/api/v1/version'`

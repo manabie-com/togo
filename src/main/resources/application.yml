@@ -6,8 +6,8 @@ server:
   port: 8008
 spring:
   datasource:
-    password: postgres
     url: jdbc:postgresql://localhost:5432/todo-test
+    password: postgres
     username: postgres
   jpa:
     hibernate:
