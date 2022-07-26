@@ -34,6 +34,7 @@ services:
     environment:
       - TOGO_DB_DRIVER=postgres
       - TOGO_DSN=postgres://togo:secret@postgresd:5432/togo?sslmode=disable
+      - TOGO_SERVICE_PORT=9000
     depends_on:
       postgresd:
         condition: service_healthy
