@@ -1,0 +1,44 @@
+version: '3.7'
+
+services:
+  postgresd:
+    image: postgres:9.6
+    ports:
+      - "5432:5432"
+    container_name: postgresd
+    environment:
+      - POSTGRES_USER=togo
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=togo
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U togo" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  migrate:
+    image: migrate/migrate
+    container_name: togo-migrate
+    volumes:
+      - ../internal/persistence/migrations/sql:/migrations
+    command: [ "-path", "/migrations", "-database", "postgres://togo:secret@postgresd:5432/togo?sslmode=disable", "up" ]
+    depends_on:
+      postgresd:
+        condition: service_healthy
+
+  togo:
+    image: trangmaiq/togo:latest
+    ports:
+      - "9000:9000"
+    container_name: togod
+    environment:
+      - TOGO_DB_DRIVER=postgres
+      - TOGO_DSN=postgres://togo:secret@postgresd:5432/togo?sslmode=disable
+      - TOGO_SERVICE_PORT=9000
+    depends_on:
+      postgresd:
+        condition: service_healthy
+      migrate:
+        condition: service_started
+    restart: on-failure
+
