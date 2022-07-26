@@ -5,6 +5,14 @@
 - Storage Backend is PostgreSQL
 - Use Sliding Window as Rate Limiter Algorithm
 
+## Design Overview
+TOGO's arch is designed along several principles
+- Runs everywhere (yay, thank you so much Go and Docker)
+- KISS principle, keep it simple stupid
+- Easy to unit tests and integration tests
+- Minimal dependencies
+- 12 factor principle 
+
 ## Getting Started
 
 ### Prerequisites
@@ -45,7 +53,7 @@ make integration-test
 
 If you'd love to run a single unit test instead of the whole suite (time, you know)
 ```shell
-go test -run CreateTasks ./ nternal/server/handler
+go test -run CreateTasks ./internal/server/handler
 ```
 
 
