@@ -5,6 +5,7 @@
 *.so
 *.dylib
 
+tmp/
 # Test binary, built with `go test -c`
 *.test
 
@@ -17,3 +18,13 @@
 out/
 
 .idea
+# Ignore master key for decrypting credentials and more.
+/config/master.key
+
+log/development.log
+db/development.sqlite3
+db/development.sqlite3
+db/test.sqlite3
+log/development.log
+log/test.log
+spec/features/task_controller_spec.rb
