@@ -41,6 +41,10 @@ func Init(cfg *config.ToGo) (err error) {
 	return
 }
 
+func Close() error {
+	return rg.persister.Close()
+}
+
 func Registry() *DefaultRegistry {
 	return &rg
 }

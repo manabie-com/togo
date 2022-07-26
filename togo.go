@@ -15,5 +15,5 @@ func main() {
 		logrus.WithField("err", err).Fatal("init service failed")
 	}
 
-	server.Start(cfg)
+	server.StartWithGracefulShutdown(cfg)
 }

@@ -38,3 +38,7 @@ func (p *Persister) GetTask(ctx context.Context, id string) (*model.Task, error)
 
 	return &task, nil
 }
+
+func (p *Persister) Close() error {
+	return p.db.Close()
+}
