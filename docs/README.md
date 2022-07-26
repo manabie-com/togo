@@ -20,7 +20,8 @@
 - Currently, there's a room for improvement to make TOGO scalable: replace in-memory ratelimiter by redis-based.
 - API docs
 - Get/Update/Delete/... a task API 
-- ...
+- logrus in echo 
+- Security consideration (HTTPS, ...)
 
 ## Getting Started
 
@@ -57,6 +58,21 @@ curl --request POST \
 	"note": "should have a better doc"
 }'
 ```
+
+###### Yay
+```json
+{
+	"id": "32878847-2dd0-408a-8e79-d4379a630df5"
+}
+```
+###### ... or Nay?
+```json
+{
+	"message": "too many requests",
+	"error_description": "a lot of requests are made in a short period of time"
+}
+```
+
 
 ##### Run Test
 
