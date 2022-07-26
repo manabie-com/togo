@@ -30,7 +30,7 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	go server.Start(cfg)
+	go server.StartWithGracefulShutdown(cfg)
 	time.Sleep(100 * time.Millisecond)
 
 	os.Exit(m.Run())
