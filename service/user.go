@@ -4,6 +4,7 @@ import (
 	"togo/dto"
 	"togo/models"
 	"togo/repository"
+	"togo/utils"
 )
 
 type UserService struct {
@@ -16,10 +17,20 @@ func NewUserService(
 	return &UserService{userRepo}
 }
 
-func (t *UserService) Create(createUserDto *dto.CreateUserDto) (*models.User, error) {
+func (t *UserService) Create(createUserDto *dto.CreateUserDto) (*dto.UserResponse, error) {
 	user := &models.User{
 		Name:       createUserDto.Name,
 		LimitCount: createUserDto.LimitCount,
 	}
-	return t.userRepo.Create(user)
+	user, err := t.userRepo.Create(user)
+	if err != nil {
+		return nil, err
+	}
+
+	var res dto.UserResponse
+	err = utils.MarshalDto(&user, &res)
+	if err != nil {
+		return nil, err
+	}
+	return &res, err
 }

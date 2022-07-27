@@ -8,17 +8,17 @@ import (
 )
 
 func init() {
+	logger.NewLogger()
 	configs.ReadConfig()
 }
 
 func main() {
 	db := databases.NewPostgres()
-	logger := logger.NewLogger()
 
 	err := migrate.Migrate(db)
 	if err != nil {
-		logger.Sugar().Error(err)
+		logger.L.Sugar().Error(err)
 	} else {
-		logger.Info("Success create table")
+		logger.L.Info("Success create table")
 	}
 }

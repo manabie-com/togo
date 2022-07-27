@@ -21,6 +21,7 @@ import (
 )
 
 func init() {
+	logger.NewLogger()
 	configs.ReadConfig()
 }
 
@@ -36,8 +37,6 @@ func main() {
 	}))
 
 	db := databases.NewPostgres()
-	log := logger.NewLogger()
-	logger.L = log
 
 	userRepo := repository.NewUserRepository(db)
 	taskRepo := repository.NewTaskRepository(db)
@@ -52,7 +51,7 @@ func main() {
 		})
 	})
 
-	taskGroup := e.Group("/tasks", middle.Middleware())
+	taskGroup := e.Group("/users/:id/tasks", middle.TaskMiddlerware())
 	handler.NewTaskHandler(taskGroup, taskService)
 
 	userGroup := e.Group("/users", middle.Middleware())
@@ -76,7 +75,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	if err := e.Shutdown(ctx); err != nil {
-		e.Logger.Printf("[CRITICAL]  Server shutdown failed: %+v", err)
+		e.Logger.Printf("[CRITICAL] Server shutdown failed: %+v", err)
 	}
 	e.Logger.Printf("server existed")
 }

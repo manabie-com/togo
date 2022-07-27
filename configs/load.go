@@ -1,7 +1,7 @@
 package configs
 
 import (
-	"log"
+	"togo/pkg/logger"
 
 	"github.com/spf13/viper"
 )
@@ -16,12 +16,12 @@ func ReadConfig() {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		log.Fatal("☠️ cannot read configuration", err)
+		logger.L.Sugar().Fatalf("☠️ cannot read configuration", err)
 	}
 	viper.AutomaticEnv()
 
 	err = viper.Unmarshal(&config)
 	if err != nil {
-		log.Fatal("☠️ environment can't be loaded: ", err)
+		logger.L.Sugar().Fatalf("☠️ environment can't be loaded: ", err)
 	}
 }

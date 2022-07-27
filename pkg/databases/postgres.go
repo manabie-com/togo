@@ -2,8 +2,8 @@ package databases
 
 import (
 	"fmt"
-	"log"
 	"togo/configs"
+	"togo/pkg/logger"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -22,7 +22,7 @@ func NewPostgres() *gorm.DB {
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatal(err)
+		logger.L.Sugar().Fatal(err)
 	}
 	return db
 }
