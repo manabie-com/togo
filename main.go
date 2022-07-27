@@ -8,16 +8,16 @@ import (
 	"syscall"
 	"time"
 	"togo/configs"
-	"togo/handler"
-	middle "togo/middleware"
+	"togo/internal/handler"
+	"togo/internal/middleware"
+	"togo/internal/repository"
+	"togo/internal/response"
+	"togo/internal/service"
 	"togo/pkg/databases"
 	"togo/pkg/logger"
-	"togo/repository"
-	"togo/response"
-	"togo/service"
 
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+	echoMiddleware "github.com/labstack/echo/v4/middleware"
 )
 
 func init() {
@@ -27,10 +27,10 @@ func init() {
 
 func main() {
 	e := echo.New()
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		Skipper:      middleware.DefaultSkipper,
+	e.Use(echoMiddleware.Logger())
+	e.Use(echoMiddleware.Recover())
+	e.Use(echoMiddleware.CORSWithConfig(echoMiddleware.CORSConfig{
+		Skipper:      echoMiddleware.DefaultSkipper,
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodDelete, http.MethodPut},
 		MaxAge:       86400,
@@ -51,11 +51,11 @@ func main() {
 		})
 	})
 
-	taskGroup := e.Group("/users/:id/tasks", middle.TaskMiddlerware())
-	handler.NewTaskHandler(taskGroup, taskService)
-
-	userGroup := e.Group("/users", middle.Middleware())
+	userGroup := e.Group("/users", middleware.Middleware())
 	handler.NewUserHandler(userGroup, userService)
+
+	taskGroup := userGroup.Group("/:id/tasks", middleware.TaskMiddlerware())
+	handler.NewTaskHandler(taskGroup, taskService)
 
 	// Start server
 	go func() {

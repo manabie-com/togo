@@ -2,7 +2,7 @@ package repository
 
 import (
 	"time"
-	"togo/models"
+	"togo/internal/models"
 	"togo/utils"
 
 	"gorm.io/gorm"

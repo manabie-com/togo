@@ -2,9 +2,9 @@ package service
 
 import (
 	"errors"
-	"togo/dto"
-	"togo/models"
-	"togo/repository"
+	"togo/internal/dto"
+	"togo/internal/models"
+	"togo/internal/repository"
 	"togo/utils"
 
 	"gorm.io/gorm"

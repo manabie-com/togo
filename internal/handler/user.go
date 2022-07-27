@@ -1,10 +1,10 @@
 package handler
 
 import (
-	"togo/dto"
+	"togo/internal/dto"
+	"togo/internal/response"
+	"togo/internal/service"
 	"togo/pkg/logger"
-	"togo/response"
-	"togo/service"
 
 	"github.com/labstack/echo/v4"
 )

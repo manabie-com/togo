@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"togo/models"
+	"togo/internal/models"
 
 	"gorm.io/gorm"
 )

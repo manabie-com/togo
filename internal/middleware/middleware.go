@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strconv"
 	"togo/constants"
-	"togo/response"
+	"togo/internal/response"
 
 	"github.com/labstack/echo/v4"
 )

@@ -6,8 +6,9 @@ import (
 
 var L *zap.Logger
 
-func NewLogger() {
+func NewLogger() *zap.Logger {
 	logger, _ := zap.NewProduction()
 	defer logger.Sync()
 	L = logger
+	return logger
 }

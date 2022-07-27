@@ -1,7 +1,7 @@
 package migrate
 
 import (
-	"togo/models"
+	"togo/internal/models"
 
 	"github.com/go-gormigrate/gormigrate/v2"
 	"gorm.io/gorm"

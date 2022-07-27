@@ -1,10 +1,13 @@
 package service
 
 import (
-	"togo/dto"
-	"togo/models"
-	"togo/repository"
+	"errors"
+	"togo/internal/dto"
+	"togo/internal/models"
+	"togo/internal/repository"
 	"togo/utils"
+
+	"gorm.io/gorm"
 )
 
 type UserService struct {
@@ -18,11 +21,19 @@ func NewUserService(
 }
 
 func (t *UserService) Create(createUserDto *dto.CreateUserDto) (*dto.UserResponse, error) {
+	userExist, err := t.userRepo.GetByName(createUserDto.Name)
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, err
+	}
+	if userExist != nil {
+		return nil, errors.New("user_with_name_exist")
+	}
+
 	user := &models.User{
 		Name:       createUserDto.Name,
 		LimitCount: createUserDto.LimitCount,
 	}
-	user, err := t.userRepo.Create(user)
+	user, err = t.userRepo.Create(user)
 	if err != nil {
 		return nil, err
 	}
