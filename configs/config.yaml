@@ -1,0 +1,11 @@
+SERVER:
+  PORT: 8081
+  TZ: Asia/Ho_Chi_Minh
+
+POSTGRESSQL:
+  HOST: 127.0.0.1
+  PORT: 5432
+  USER: root
+  PASSWORD: local
+  NAME: manabie_technical_assignment
+  SSL_MODE: disable

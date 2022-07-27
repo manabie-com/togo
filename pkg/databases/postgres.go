@@ -3,25 +3,21 @@ package databases
 import (
 	"fmt"
 	"log"
-	"os"
+	"togo/configs"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func NewPostgres() *gorm.DB {
-	sslMode := os.Getenv("SSL_MODE")
-	if sslMode == "" {
-		sslMode = "require"
-	}
 	dsn := fmt.Sprintf(
 		"host=%s user=%s dbname=%s password=%s port=%s sslmode=%s",
-		os.Getenv("DATABASE_HOST"),
-		os.Getenv("DATABASE_USER"),
-		os.Getenv("DATABASE_NAME"),
-		os.Getenv("DATABASE_PASSWORD"),
-		os.Getenv("DATABASE_PORT"),
-		sslMode,
+		configs.C.PostgreSQL.Host,
+		configs.C.PostgreSQL.User,
+		configs.C.PostgreSQL.Name,
+		configs.C.PostgreSQL.Password,
+		configs.C.PostgreSQL.Port,
+		configs.C.PostgreSQL.SslMode,
 	)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
