@@ -62,7 +62,7 @@ func TestTaskService_CreateTaskNotFoundUser(t *testing.T) {
 
 	_, err := service.Create(createTaskDto, userID)
 	assert.NotNil(t, err)
-	assert.Equal(t, err.Error(), "user_not_found")
+	assert.Equal(t, err.Error(), gorm.ErrRecordNotFound.Error())
 }
 
 func TestTaskService_CreateTaskMaxLimitCount(t *testing.T) {

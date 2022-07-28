@@ -58,8 +58,8 @@ func TestUserHandler_CreateUserSuccess(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, http.StatusOK, recorder.Code)
 
-	response1 := `{"data":{"id":1,"name":"name","limit_count":1},"status":200}`
-	response2 := `{"status":200,"data":{"id":1,"name":"name","limit_count":1}}`
+	response1 := `{"data":{"id":1,"limit_count":1,"name":"name"},"status":200}`
+	response2 := `{"status":200,"data":{"id":1,"limit_count":1,"name":"name"}}`
 	dataResponse := strings.Trim(recorder.Body.String(), "\n")
 	assert.True(t, dataResponse == response1 || dataResponse == response2)
 }

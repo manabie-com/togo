@@ -6,17 +6,15 @@ import (
 	"github.com/spf13/viper"
 )
 
-var C Config
-
 func ReadConfig() *Config {
-	config := &C
+	config := &Config{}
 	configFile := "configs/config.yaml"
 
 	viper.SetConfigFile(configFile)
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		logger.L.Sugar().Fatalf("☠️ cannot read configuration", err)
+		logger.L.Sugar().Fatalf("☠️ cannot read configuration at path: %s with err : %v", configFile, err)
 	}
 	viper.AutomaticEnv()
 

@@ -7,8 +7,6 @@ import (
 	"togo/internal/user/dto"
 	"togo/internal/user/repository"
 	"togo/utils"
-
-	"gorm.io/gorm"
 )
 
 type UserService interface {
@@ -27,7 +25,7 @@ func NewUserService(
 
 func (t *userService) Create(createUserDto *dto.CreateUserDto) (*response.UserResponse, error) {
 	userExist, err := t.userRepo.GetByName(createUserDto.Name)
-	if err != nil && err != gorm.ErrRecordNotFound {
+	if err != nil {
 		return nil, err
 	}
 	if userExist != nil {

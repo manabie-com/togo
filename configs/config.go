@@ -18,3 +18,20 @@ type PostgreSQLConfig struct {
 	Name     string `mapstructure:"NAME"`
 	SslMode  string `mapstructure:"SSL_MODE"`
 }
+
+func DefaultConfig() *Config {
+	return &Config{
+		Server: &ServerConfig{
+			Port:     "8081",
+			Timezone: "Asia/Ho_Chi_Minh",
+		},
+		PostgreSQL: &PostgreSQLConfig{
+			Host:     "127.0.0.1",
+			Port:     "5432",
+			User:     "root",
+			Password: "local",
+			Name:     "manabie_technical_assignment",
+			SslMode:  "disable",
+		},
+	}
+}

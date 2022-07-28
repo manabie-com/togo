@@ -7,7 +7,6 @@ import (
 	"togo/internal/user/mocks"
 
 	"github.com/test-go/testify/assert"
-	"gorm.io/gorm"
 )
 
 func mockCreateUserDtoAndUser() (*dto.CreateUserDto, *models.User) {
@@ -26,7 +25,7 @@ func TestUserService_CreateUserSuccess(t *testing.T) {
 	createUserDto, user := mockCreateUserDtoAndUser()
 
 	repo := mocks.NewUserRepository(t)
-	repo.On("GetByName", createUserDto.Name).Return(nil, gorm.ErrRecordNotFound)
+	repo.On("GetByName", createUserDto.Name).Return(nil, nil)
 	repo.On("Create", user).Return(user, nil)
 
 	service := NewUserService(repo)

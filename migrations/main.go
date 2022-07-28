@@ -7,18 +7,15 @@ import (
 	"togo/pkg/logger"
 )
 
-func init() {
-	logger.NewLogger()
-	configs.ReadConfig()
-}
-
 func main() {
-	db := databases.NewPostgres()
+	logger := logger.NewLogger()
+	config := configs.ReadConfig()
+	db := databases.NewPostgres(config.PostgreSQL)
 
 	err := migrate.Migrate(db)
 	if err != nil {
-		logger.L.Sugar().Error(err)
+		logger.Sugar().Error(err)
 	} else {
-		logger.L.Info("Success create table")
+		logger.Info("Success create table")
 	}
 }

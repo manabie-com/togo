@@ -46,6 +46,9 @@ func (t *taskRepository) GetByID(taskID int) (*models.Task, error) {
 	if err := t.db.Model(&models.Task{}).
 		Where("id = ?", taskID).
 		First(&result).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, nil
+		}
 		return nil, err
 	}
 

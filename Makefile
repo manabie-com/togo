@@ -16,8 +16,9 @@ run:
 
 .PHONY: unit-test
 unit-test:
-
+	go test ./...
 
 .PHONY: integration-test
 integration-test:
+	go test togo/integration/...
 	

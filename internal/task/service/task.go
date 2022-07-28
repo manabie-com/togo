@@ -32,10 +32,11 @@ func NewTaskService(
 func (t *taskService) Create(createTaskDto *dto.CreateTaskDto, userID int) (*response.TaskResponse, error) {
 	user, err := t.userRepo.GetByID(userID)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return nil, errors.New("user_not_found")
-		}
 		return nil, err
+	}
+
+	if user == nil {
+		return nil, errors.New("user_not_found")
 	}
 
 	numberOfTaskToday, err := t.taskRepo.GetNumberOfUserTaskOnToday(userID)
