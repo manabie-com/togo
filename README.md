@@ -1,9 +1,4 @@
 - How to run your code locally?
-  - Install all dependency:
-    - cd to root project
-    - install postgress: docker-compose up
-    - install all dependency: go mod tidy
-    - create table: go run migrations/main.go
 - A sample “curl” command to call your API
 - How to run your unit tests locally?
 - What do you love about your solution?

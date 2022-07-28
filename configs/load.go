@@ -8,7 +8,7 @@ import (
 
 var C Config
 
-func ReadConfig() {
+func ReadConfig() *Config {
 	config := &C
 	configFile := "configs/config.yaml"
 
@@ -24,4 +24,5 @@ func ReadConfig() {
 	if err != nil {
 		logger.L.Sugar().Fatalf("☠️ environment can't be loaded: ", err)
 	}
+	return config
 }

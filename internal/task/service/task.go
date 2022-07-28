@@ -2,27 +2,34 @@ package service
 
 import (
 	"errors"
-	"togo/internal/dto"
 	"togo/internal/models"
-	"togo/internal/repository"
+	"togo/internal/response"
+	"togo/internal/task/dto"
+	taskRepo "togo/internal/task/repository"
+	userRepo "togo/internal/user/repository"
 	"togo/utils"
 
 	"gorm.io/gorm"
 )
 
-type TaskService struct {
-	taskRepo *repository.TaskRepository
-	userRepo *repository.UserRepository
+type TaskService interface {
+	Create(createTaskDto *dto.CreateTaskDto, userID int) (*response.TaskResponse, error)
+	GetListByUserID(userID int) ([]*response.TaskResponse, error)
+}
+
+type taskService struct {
+	taskRepo taskRepo.TaskRepository
+	userRepo userRepo.UserRepository
 }
 
 func NewTaskService(
-	taskRepo *repository.TaskRepository,
-	userRepo *repository.UserRepository,
-) *TaskService {
-	return &TaskService{taskRepo, userRepo}
+	taskRepo taskRepo.TaskRepository,
+	userRepo userRepo.UserRepository,
+) TaskService {
+	return &taskService{taskRepo, userRepo}
 }
 
-func (t *TaskService) Create(createTaskDto *dto.CreateTaskDto, userID int) (*dto.TaskResponse, error) {
+func (t *taskService) Create(createTaskDto *dto.CreateTaskDto, userID int) (*response.TaskResponse, error) {
 	user, err := t.userRepo.GetByID(userID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -50,7 +57,7 @@ func (t *TaskService) Create(createTaskDto *dto.CreateTaskDto, userID int) (*dto
 		return nil, err
 	}
 
-	var res dto.TaskResponse
+	var res response.TaskResponse
 	err = utils.MarshalDto(&task, &res)
 	if err != nil {
 		return nil, err
@@ -58,7 +65,7 @@ func (t *TaskService) Create(createTaskDto *dto.CreateTaskDto, userID int) (*dto
 	return &res, err
 }
 
-func (t *TaskService) GetListByUserID(userID int) ([]*dto.TaskResponse, error) {
+func (t *taskService) GetListByUserID(userID int) ([]*response.TaskResponse, error) {
 	user, err := t.userRepo.GetByID(userID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -72,7 +79,7 @@ func (t *TaskService) GetListByUserID(userID int) ([]*dto.TaskResponse, error) {
 		return nil, err
 	}
 
-	var res []*dto.TaskResponse
+	var res []*response.TaskResponse
 	err = utils.MarshalDto(&tasks, &res)
 	if err != nil {
 		return nil, err

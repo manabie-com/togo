@@ -1,12 +1,6 @@
-package dto
+package response
 
 import "time"
-
-type UserResponse struct {
-	ID         int    ` json:"id"`
-	Name       string `json:"name"`
-	LimitCount int    `json:"limit_count"`
-}
 
 type TaskResponse struct {
 	ID          int       `json:"id"`

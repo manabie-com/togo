@@ -8,11 +8,15 @@ import (
 	"syscall"
 	"time"
 	"togo/configs"
-	"togo/internal/handler"
 	"togo/internal/middleware"
-	"togo/internal/repository"
 	"togo/internal/response"
-	"togo/internal/service"
+	taskHandler "togo/internal/task/handler"
+	taskRepo "togo/internal/task/repository"
+	taskService "togo/internal/task/service"
+	userHandler "togo/internal/user/handler"
+	userRepo "togo/internal/user/repository"
+	userservice "togo/internal/user/service"
+	"togo/internal/validator"
 	"togo/pkg/databases"
 	"togo/pkg/logger"
 
@@ -27,6 +31,7 @@ func init() {
 
 func main() {
 	e := echo.New()
+	e.Validator = validator.NewValidator()
 	e.Use(echoMiddleware.Logger())
 	e.Use(echoMiddleware.Recover())
 	e.Use(echoMiddleware.CORSWithConfig(echoMiddleware.CORSConfig{
@@ -38,11 +43,11 @@ func main() {
 
 	db := databases.NewPostgres()
 
-	userRepo := repository.NewUserRepository(db)
-	taskRepo := repository.NewTaskRepository(db)
+	userRepo := userRepo.NewUserRepository(db)
+	taskRepo := taskRepo.NewTaskRepository(db)
 
-	userService := service.NewUserService(userRepo)
-	taskService := service.NewTaskService(taskRepo, userRepo)
+	userService := userservice.NewUserService(userRepo)
+	taskService := taskService.NewTaskService(taskRepo, userRepo)
 
 	e.GET("/health", func(c echo.Context) error {
 		return response.Success(c, map[string]interface{}{
@@ -52,10 +57,10 @@ func main() {
 	})
 
 	userGroup := e.Group("/users", middleware.Middleware())
-	handler.NewUserHandler(userGroup, userService)
+	userHandler.NewUserHandler(userGroup, userService)
 
 	taskGroup := userGroup.Group("/:id/tasks", middleware.TaskMiddlerware())
-	handler.NewTaskHandler(taskGroup, taskService)
+	taskHandler.NewTaskHandler(taskGroup, taskService)
 
 	// Start server
 	go func() {

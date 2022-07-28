@@ -2,25 +2,30 @@ package service
 
 import (
 	"errors"
-	"togo/internal/dto"
 	"togo/internal/models"
-	"togo/internal/repository"
+	"togo/internal/response"
+	"togo/internal/user/dto"
+	"togo/internal/user/repository"
 	"togo/utils"
 
 	"gorm.io/gorm"
 )
 
-type UserService struct {
-	userRepo *repository.UserRepository
+type UserService interface {
+	Create(createUserDto *dto.CreateUserDto) (*response.UserResponse, error)
+}
+
+type userService struct {
+	userRepo repository.UserRepository
 }
 
 func NewUserService(
-	userRepo *repository.UserRepository,
-) *UserService {
-	return &UserService{userRepo}
+	userRepo repository.UserRepository,
+) UserService {
+	return &userService{userRepo}
 }
 
-func (t *UserService) Create(createUserDto *dto.CreateUserDto) (*dto.UserResponse, error) {
+func (t *userService) Create(createUserDto *dto.CreateUserDto) (*response.UserResponse, error) {
 	userExist, err := t.userRepo.GetByName(createUserDto.Name)
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
@@ -38,7 +43,7 @@ func (t *UserService) Create(createUserDto *dto.CreateUserDto) (*dto.UserRespons
 		return nil, err
 	}
 
-	var res dto.UserResponse
+	var res response.UserResponse
 	err = utils.MarshalDto(&user, &res)
 	if err != nil {
 		return nil, err
