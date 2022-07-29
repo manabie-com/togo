@@ -1,0 +1,15 @@
+version: "3.2"
+services:
+  postgres:
+    image: postgres:11.4
+    container_name: postgres_manabie
+    environment:
+      POSTGRES_DB: manabie_technical_assignment 
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: local
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+volumes:
+  postgres-data:
