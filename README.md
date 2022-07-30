@@ -1,4 +1,5 @@
 # Todo App
+
 Simple Todo App API
 
 ## Prerequisites
@@ -25,6 +26,7 @@ docker-compose up -d
 
 **NOTE:**
 Created 1 user for testing purposes:
+
 ```shell
 id: 1, name: 'uuhnaut69', limit_config: 10
 ```
@@ -32,11 +34,10 @@ id: 1, name: 'uuhnaut69', limit_config: 10
 Create new todo:
 
 ```shell
-
+curl -H "Content-Type: application/json" -X POST -d '{"task":"Do assignment","userId": 1}' http://localhost:8080/todos
 ```
 
-- Full API documentation can visit [here]()
-
+- Full API documentation can visit [here](http://localhost:8080/swagger-ui/index.html#/)
 
 ### Testing
 
@@ -51,7 +52,6 @@ For running Integration Tests:
 ```shell
  ./mvnw verify -Pintegration 
 ```
-
 
 ### Todo
 
