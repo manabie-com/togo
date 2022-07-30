@@ -19,7 +19,7 @@ docker-compose up -d
 ### Run project
 
 ```shell
-./mvnw spring-boot:run 
+./mvnw spring-boot:run -DskipTests=true
 ```
 
 ### Sample Curls
