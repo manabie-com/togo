@@ -1,6 +1,12 @@
-# Todo App
+## About The Project
 
-Simple Todo App API
+Simple REST API Todo List Application.
+
+List supported features:
+- Create new todo
+- Get list todo
+- Get list user
+- Get user detail
 
 ## Prerequisites
 
