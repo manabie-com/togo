@@ -114,4 +114,26 @@ public class TodoControllerIT extends BaseIT {
 
     assertEquals(10L, todoRepository.countNumberOfCreatedTodosTodayByUserId(1L));
   }
+
+  @Test
+  @Order(7)
+  @Sql({"/user.sql", "/dummy_todo.sql"})
+  void findAllTodo() {
+    var response = testRestTemplate.getForEntity("/todos", Todo[].class);
+    var body = response.getBody();
+
+    Assertions.assertNotNull(body);
+    Assertions.assertTrue(body.length > 1);
+  }
+
+  @Test
+  @Order(8)
+  @Sql({"/user.sql", "/dummy_todo.sql"})
+  void findAllTodoByUserId() {
+    var response = testRestTemplate.getForEntity("/todos?userId=1", Todo[].class);
+    var body = response.getBody();
+
+    Assertions.assertNotNull(body);
+    Assertions.assertTrue(body.length > 1);
+  }
 }

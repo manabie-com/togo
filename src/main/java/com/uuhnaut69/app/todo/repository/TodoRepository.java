@@ -1,6 +1,7 @@
 package com.uuhnaut69.app.todo.repository;
 
 import com.uuhnaut69.app.todo.model.Todo;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -17,4 +18,6 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
       AND CAST(created_at AS DATE) = CAST(CURRENT_TIMESTAMP AS DATE)
       """, nativeQuery = true)
   long countNumberOfCreatedTodosTodayByUserId(Long userId);
+
+  List<Todo> findAllByUserIdOrderByIdDesc(Long userId);
 }

@@ -7,6 +7,7 @@ import com.uuhnaut69.app.todo.model.Todo;
 import com.uuhnaut69.app.todo.model.dto.TodoRequest;
 import com.uuhnaut69.app.todo.service.TodoService;
 import java.time.Instant;
+import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -75,5 +76,30 @@ class TodoControllerTest {
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new ObjectMapper().writeValueAsString(todoRequest)))
         .andExpect(MockMvcResultMatchers.status().isBadRequest());
+  }
+
+  @Test
+  void findAllTodo() throws Exception {
+    var todo = new Todo(1L, "Test", 1L, Instant.now());
+
+    Mockito.when(todoService.findAllTodo(null)).thenReturn(Collections.singletonList(todo));
+
+    mvc.perform(MockMvcRequestBuilders.get("/todos"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$[0].id", is(1)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$[0].task", is("Test")));
+  }
+
+  @Test
+  void findAllTodoByUserId() throws Exception {
+    var todo = new Todo(1L, "Test", 1L, Instant.now());
+
+    Mockito.when(todoService.findAllTodo(1L)).thenReturn(Collections.singletonList(todo));
+
+    mvc.perform(MockMvcRequestBuilders.get("/todos")
+            .param("userId", "1"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$[0].id", is(1)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$[0].task", is("Test")));
   }
 }

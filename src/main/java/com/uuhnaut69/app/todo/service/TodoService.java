@@ -5,6 +5,8 @@ import com.uuhnaut69.app.todo.model.Todo;
 import com.uuhnaut69.app.todo.model.dto.TodoRequest;
 import com.uuhnaut69.app.todo.repository.TodoRepository;
 import com.uuhnaut69.app.user.service.UserService;
+import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -45,5 +47,18 @@ public class TodoService {
     todo.setUserId(todoRequest.getUserId());
 
     return todoRepository.save(todo);
+  }
+
+  /**
+   * Find todos
+   *
+   * @param userId Filter by user id
+   * @return return {@link List} contains all {@link Todo}
+   */
+  public List<Todo> findAllTodo(Long userId) {
+    if (Objects.isNull(userId)) {
+      return todoRepository.findAll();
+    }
+    return todoRepository.findAllByUserIdOrderByIdDesc(userId);
   }
 }

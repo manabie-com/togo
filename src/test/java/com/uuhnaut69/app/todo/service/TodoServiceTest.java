@@ -12,6 +12,7 @@ import com.uuhnaut69.app.todo.repository.TodoRepository;
 import com.uuhnaut69.app.user.model.User;
 import com.uuhnaut69.app.user.service.UserService;
 import java.time.Instant;
+import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -76,5 +77,24 @@ class TodoServiceTest {
     } catch (Exception e) {
       assertTrue(e instanceof MaximumLimitConfigException);
     }
+  }
+
+  @Test
+  void findAllTodos() {
+    var todo = new Todo(1L, "Test", 1L, Instant.now());
+    Mockito.when(todoRepository.findAll()).thenReturn(Collections.singletonList(todo));
+
+    var result = todoService.findAllTodo(null);
+    assertEquals(1, result.size());
+  }
+
+  @Test
+  void findAllTodosByUserId() {
+    var todo = new Todo(1L, "Test", 1L, Instant.now());
+    Mockito.when(todoRepository.findAllByUserIdOrderByIdDesc(1L))
+        .thenReturn(Collections.singletonList(todo));
+
+    var result = todoService.findAllTodo(1L);
+    assertEquals(1, result.size());
   }
 }
