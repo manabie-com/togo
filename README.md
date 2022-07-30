@@ -37,7 +37,7 @@ Create new todo:
 curl -H "Content-Type: application/json" -X POST -d '{"task":"Do assignment","userId": 1}' http://localhost:8080/todos
 ```
 
-- Full API documentation can visit [here](http://localhost:8080/swagger-ui/index.html#/)
+**NOTE:** Full API documentation can visit [here](http://localhost:8080/swagger-ui/index.html#/)
 
 ### Testing
 
