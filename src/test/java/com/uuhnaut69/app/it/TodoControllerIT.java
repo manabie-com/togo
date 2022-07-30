@@ -5,13 +5,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.uuhnaut69.app.todo.model.Todo;
 import com.uuhnaut69.app.todo.model.dto.TodoRequest;
 import com.uuhnaut69.app.todo.repository.TodoRepository;
-import java.util.concurrent.CountDownLatch;
+import java.util.LinkedList;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.IntStream;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.jdbc.Sql;
 
 /**
@@ -86,31 +89,19 @@ public class TodoControllerIT extends BaseIT {
   @Test
   @Order(6)
   @Sql({"/user.sql", "/clean_todo.sql"})
-  void createNewTodoParallelExecution() throws InterruptedException {
+  void createNewTodoParallelExecution() {
     assertEquals(0L, todoRepository.countNumberOfCreatedTodosTodayByUserId(1L));
 
-    var startLatch = new CountDownLatch(1);
-    var endLatch = new CountDownLatch(THREAD_COUNT);
+    var allFutures = new LinkedList<CompletableFuture<ResponseEntity<Todo>>>();
 
-    for (int i = 0; i < THREAD_COUNT; i++) {
-      new Thread(() -> {
-        try {
-          startLatch.await();
-
+    IntStream.range(0, THREAD_COUNT)
+        .forEach(value -> {
           var todoRequest = new TodoRequest("Test", 1L);
-          testRestTemplate.postForEntity("/todos", todoRequest, Todo.class);
+          var response = testRestTemplate.postForEntity("/todos", todoRequest, Todo.class);
+          allFutures.add(CompletableFuture.completedFuture(response));
+        });
 
-        } catch (Exception e) {
-          log.error("Create todo failed {}", e.getMessage());
-        } finally {
-          endLatch.countDown();
-        }
-      }).start();
-    }
-
-    log.info("Starting threads");
-    startLatch.countDown();
-    endLatch.await();
+    CompletableFuture.allOf(allFutures.toArray(new CompletableFuture[0])).join();
 
     assertEquals(10L, todoRepository.countNumberOfCreatedTodosTodayByUserId(1L));
   }
