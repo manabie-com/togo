@@ -23,13 +23,13 @@ docker-compose up -d
 
 ### Sample Curls
 
----
 **NOTE:**
 Created 1 user for testing purposes:
-- id: 1, name: 'uuhnaut69', limit_config: 10
----
+```shell
+id: 1, name: 'uuhnaut69', limit_config: 10
+```
 
-- Create new todo
+Create new todo:
 
 ```shell
 
