@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6BA11EBC-6C1B-4E4E-8A5E-8399CE8FC7BD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{2865D3A8-0189-4DD7-8FEE-213141A326BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Togo.Infrastructure", "Togo.Infrastructure\Togo.Infrastructure.csproj", "{5962D26D-D040-443A-B07C-7BC84955674A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Togo.Core", "Togo.Core\Togo.Core.csproj", "{29E02A26-85AD-4157-A43A-33BBB3D38833}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Togo.Api", "Togo.Api\Togo.Api.csproj", "{7F51F7C3-6413-442F-BF24-981FFD5107A7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5962D26D-D040-443A-B07C-7BC84955674A} = {6BA11EBC-6C1B-4E4E-8A5E-8399CE8FC7BD}
+		{29E02A26-85AD-4157-A43A-33BBB3D38833} = {6BA11EBC-6C1B-4E4E-8A5E-8399CE8FC7BD}
+		{7F51F7C3-6413-442F-BF24-981FFD5107A7} = {6BA11EBC-6C1B-4E4E-8A5E-8399CE8FC7BD}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5962D26D-D040-443A-B07C-7BC84955674A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5962D26D-D040-443A-B07C-7BC84955674A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5962D26D-D040-443A-B07C-7BC84955674A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5962D26D-D040-443A-B07C-7BC84955674A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29E02A26-85AD-4157-A43A-33BBB3D38833}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29E02A26-85AD-4157-A43A-33BBB3D38833}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29E02A26-85AD-4157-A43A-33BBB3D38833}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29E02A26-85AD-4157-A43A-33BBB3D38833}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F51F7C3-6413-442F-BF24-981FFD5107A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F51F7C3-6413-442F-BF24-981FFD5107A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F51F7C3-6413-442F-BF24-981FFD5107A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F51F7C3-6413-442F-BF24-981FFD5107A7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
