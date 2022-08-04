@@ -4,11 +4,14 @@ EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+
 WORKDIR /src
-COPY ["Togo.Api/Togo.Api.csproj", "Togo.Api/"]
-RUN dotnet restore "Togo.Api/Togo.Api.csproj"
+COPY ./Togo.sln ./*/*.csproj ./
+RUN for file in $(ls *.csproj); do mkdir -p ${file%.*}/ && mv $file ${file%.*}/; done
 COPY . .
-WORKDIR "/src/Togo.Api"
+
+WORKDIR /src/Togo.Api
+RUN dotnet restore
 RUN dotnet build "Togo.Api.csproj" -c Release -o /app/build
 
 FROM build AS publish

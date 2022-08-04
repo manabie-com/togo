@@ -16,10 +16,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\Togo.Core\Togo.Core.csproj" />
       <ProjectReference Include="..\Togo.Infrastructure\Togo.Infrastructure.csproj" />
     </ItemGroup>
