@@ -1,0 +1,17 @@
+spring:
+  r2dbc:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: r2dbc:pool:mysql://localhost:3307/togo_db
+    username: root
+    password: 123456
+
+  liquibase:
+    url: jdbc:mysql://localhost:3307/togo_db
+    user: root
+    password: 123456
+    change-log: "classpath:/db/changelog/changelog-master.yaml"
+    database-change-log-table: database_changelog
+    database-change-log-lock-table: database_changelog_lock
+
+
+
