@@ -4,7 +4,7 @@ using Togo.Infrastructure.Identities.Dtos;
 
 namespace Togo.Api.Controllers;
 
-[Route("user")]
+[Route("api/user")]
 public class UserController : ApiController
 {
     private readonly IUserService _userService;

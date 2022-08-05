@@ -1,0 +1,8 @@
+POST http://localhost:8080/api/user
+Content-Type: application/json
+
+{
+  "UserName": "user2",
+  "Password": "Abcd@1234",
+  "MaxTasksPerDay": 10
+}
