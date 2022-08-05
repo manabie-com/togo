@@ -20,7 +20,7 @@ public class UserControllerTest : IClassFixture<TogoWebApplicationFactory>
     [Fact]
     public async Task CreateAsync_WhenAllCorrect_ShouldSuccess()
     {
-        var request = new HttpRequestMessage(HttpMethod.Post, "user");
+        var request = new HttpRequestMessage(HttpMethod.Post, "api/user");
         var createUserDto = new CreateUserDto
         {
             UserName = Guid.NewGuid().ToString(),

@@ -16,7 +16,9 @@ services:
   togo.api.integration_tests:
     build:
       context: .
-      dockerfile: Dockerfile.IntegrationTests
+      dockerfile: Dockerfile-IntegrationTests
+    environment:
+      ASPNETCORE_ENVIRONMENT: IntegrationTests
     depends_on:
       - postgres
     networks:
