@@ -20,6 +20,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{6ABC0A9A
 		Dockerfile-IntegrationTests = Dockerfile-IntegrationTests
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Togo.Core.Tests", "Togo.Core.Tests\Togo.Core.Tests.csproj", "{22415DD4-4D0D-41F7-B388-9A534CB00408}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +32,7 @@ Global
 		{29E02A26-85AD-4157-A43A-33BBB3D38833} = {6BA11EBC-6C1B-4E4E-8A5E-8399CE8FC7BD}
 		{7F51F7C3-6413-442F-BF24-981FFD5107A7} = {6BA11EBC-6C1B-4E4E-8A5E-8399CE8FC7BD}
 		{1D745425-72BB-41A6-BD5E-8B7F57A5627C} = {2865D3A8-0189-4DD7-8FEE-213141A326BF}
+		{22415DD4-4D0D-41F7-B388-9A534CB00408} = {2865D3A8-0189-4DD7-8FEE-213141A326BF}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{5962D26D-D040-443A-B07C-7BC84955674A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -48,5 +51,9 @@ Global
 		{1D745425-72BB-41A6-BD5E-8B7F57A5627C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D745425-72BB-41A6-BD5E-8B7F57A5627C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D745425-72BB-41A6-BD5E-8B7F57A5627C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22415DD4-4D0D-41F7-B388-9A534CB00408}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22415DD4-4D0D-41F7-B388-9A534CB00408}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22415DD4-4D0D-41F7-B388-9A534CB00408}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22415DD4-4D0D-41F7-B388-9A534CB00408}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

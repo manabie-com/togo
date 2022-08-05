@@ -12,5 +12,5 @@ public interface IUserService
 
     Task<UserDto> GetByUserNameAsync(string userName);
 
-    Task<bool> AuthenticateAsync(LoginDto input);
+    Task<LoginResponseDto> AuthenticateAsync(LoginDto input);
 }

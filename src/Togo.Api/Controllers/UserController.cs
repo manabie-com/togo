@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Togo.Core.Exceptions;
 using Togo.Infrastructure.Identities;
 using Togo.Infrastructure.Identities.Dtos;
 
@@ -33,11 +34,13 @@ public class UserController : ApiController
     [AllowAnonymous]
     public async Task<IActionResult> LoginAsync([FromBody] LoginDto input)
     {
-        if (await _userService.AuthenticateAsync(input))
+        try
         {
-            return NoContent();
+            return Ok(await _userService.AuthenticateAsync(input));
         }
-
-        return BadRequest();
+        catch (InvalidLoginException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 }

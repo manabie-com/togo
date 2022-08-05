@@ -1,5 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using Togo.Core;
+using Togo.Core.Exceptions;
 using Togo.Infrastructure.Identities.Dtos;
 
 namespace Togo.Infrastructure.Identities;
@@ -11,11 +18,19 @@ public class UserService : IUserService
 
     private readonly UserManager<AppUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly TogoAppSettings _togoAppSettings;
+    private readonly ILogger<UserService> _logger;
 
-    public UserService(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
+    public UserService(
+        UserManager<AppUser> userManager, 
+        RoleManager<IdentityRole> roleManager,
+        ILogger<UserService> logger, 
+        TogoAppSettings togoAppSettings)
     {
         _userManager = userManager;
         _roleManager = roleManager;
+        _logger = logger;
+        _togoAppSettings = togoAppSettings;
     }
 
     public async Task SeedAdminUserAsync()
@@ -62,15 +77,56 @@ public class UserService : IUserService
         return new UserDto(user);
     }
 
-    public async Task<bool> AuthenticateAsync(LoginDto input)
+    public async Task<LoginResponseDto> AuthenticateAsync(LoginDto input) 
     {
         var user = await _userManager.FindByNameAsync(input.UserName);
 
         if (user == null)
         {
-            throw new Exception("User not found");
+            _logger.LogInformation("UserName {UserName} is not found", input.UserName);
+            throw new InvalidLoginException();
         }
 
-        return await _userManager.CheckPasswordAsync(user, input.Password);
+        if (!await _userManager.CheckPasswordAsync(user, input.Password))
+        {
+            _logger.LogInformation("UserName {UserName} logged in with wrong password", input.UserName);
+            throw new InvalidLoginException();
+        }
+
+        var sessionId = Guid.NewGuid().ToString();
+        var roles = await _userManager.GetRolesAsync(user);
+
+        return new LoginResponseDto(input.UserName, IssueToken(sessionId, user.Id, roles, user.MaxTasksPerDay));
+    }
+    
+    private string IssueToken(
+        string sessionId,
+        string userId,
+        IEnumerable<string> roleIds,
+        int maxTasksPerDay)
+    {
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_togoAppSettings.JwtBearer.SecurityKey));
+        var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
+
+        var now = DateTime.UtcNow;
+
+        var claims = new List<Claim>
+        {
+            new(JwtRegisteredClaimNames.Sid, sessionId),
+            new(JwtRegisteredClaimNames.Sub, userId),
+            new(TogoCustomClaims.MaxTasksPerDay, maxTasksPerDay.ToString())
+        };
+
+        claims.AddRange(roleIds.Select(roleId => new Claim(ClaimTypes.Role, roleId)));
+
+        var jwtSecurityToken = new JwtSecurityToken(
+            _togoAppSettings.JwtBearer.Issuer,
+            _togoAppSettings.JwtBearer.Audience,
+            claims,
+            now,
+            now.Add(TimeSpan.FromHours(8)),
+            signingCredentials);
+
+        return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
     }
 }
