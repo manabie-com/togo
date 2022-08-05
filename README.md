@@ -12,21 +12,21 @@
 - JDK 11
 
 ### Start on local
-- **Step 1**: run docker-compose 
+- **Step 1**: Run docker-compose 
 ```zsh
 docker-compose -p togo-local -f docker-compose.yml up
 ```
 
-- **Step 2**: run project with env in file ".env.sample"
+- **Step 2**: Run project with env in file ".env.sample"
 
 ### Run unitest locally
 
-- run 
+- Run 
 ```zsh
 gradle server:test
 ```
 
-### what I can improve
+### I can improve
 - Use **UUID** to save id replace **String**
 - User **redis** to **caching**
 
