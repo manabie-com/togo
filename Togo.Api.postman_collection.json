@@ -1,0 +1,127 @@
+{
+	"info": {
+		"_postman_id": "113ccbaa-d225-4ad6-9b4a-0fe4799def50",
+		"name": "Togo.Api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"UserName\": \"admin\",\n  \"Password\": \"Abcd@1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/user/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiI1NWZiMmYzNS1lZjg5LTQ5NGUtOTA5MS01MGRhMzM3YjA0OGQiLCJzdWIiOiI5MTMzZjIyYy1mZjk3LTQ0MjctYjhjMy1hODc5YzRiNzYzYWMiLCJNYXhUYXNrc1BlckRheSI6IjIxNDc0ODM2NDciLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsIm5iZiI6MTY1OTc0MDg3MywiZXhwIjoxNjU5NzY5NjczLCJpc3MiOiJUb2dvLkFwaSIsImF1ZCI6IlRvZ28uQXBwIn0.YQoimSyvwjok7DjsakLAzTaTzqANDu82-S4R683phV8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"UserName\": \"user1\",\n  \"Password\": \"Abcd@1234\",\n  \"MaxTasksPerDay\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"user"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tasks",
+			"item": [
+				{
+					"name": "Create Task",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiI1NWZiMmYzNS1lZjg5LTQ5NGUtOTA5MS01MGRhMzM3YjA0OGQiLCJzdWIiOiI5MTMzZjIyYy1mZjk3LTQ0MjctYjhjMy1hODc5YzRiNzYzYWMiLCJNYXhUYXNrc1BlckRheSI6IjIxNDc0ODM2NDciLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsIm5iZiI6MTY1OTc0MDg3MywiZXhwIjoxNjU5NzY5NjczLCJpc3MiOiJUb2dvLkFwaSIsImF1ZCI6IlRvZ28uQXBwIn0.YQoimSyvwjok7DjsakLAzTaTzqANDu82-S4R683phV8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"Title\": \"Discuss with Kelven about the next project\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/tasks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
