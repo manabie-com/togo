@@ -27,6 +27,4 @@ abstract class UseCase<in Input : UseCase.Params, out Output : Any> {
             return null
         }
     }
-
-    class EmptyParams : Params()
 }

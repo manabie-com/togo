@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.codec.ServerCodecConfigurer
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.*
-import com.example.server.display.ErrorResponse
+import com.example.server.rest.response.ErrorResponse
 
 
 @Component
@@ -33,7 +33,6 @@ class ResponseErrorHandler(
             .invoke { request ->
                 val error = attributes.mapError(request)
                 val response = when (error) {
-
                     else -> ErrorResponse(
                         statusCode = error.code,
                         error = error.message,

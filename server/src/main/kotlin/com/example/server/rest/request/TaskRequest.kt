@@ -1,4 +1,4 @@
-package com.example.server.display
+package com.example.server.rest.request
 
 data class TaskRequest(
     val title: String,

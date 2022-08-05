@@ -40,6 +40,12 @@ dependencies {
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
+    testImplementation("com.ninja-squad:springmockk:3.0.1")
+    testImplementation("com.squareup.okhttp3:okhttp:4.9.0")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.9.0")
+    testImplementation("org.testcontainers:testcontainers:1.15.3")
+    testImplementation("org.testcontainers:r2dbc:1.15.3")
+    testImplementation("org.testcontainers:mysql:1.15.3")
 }
 
 tasks.withType<KotlinCompile> {

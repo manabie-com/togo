@@ -1,4 +1,4 @@
-package com.example.server.display
+package com.example.server.rest.response
 
 abstract class Response<D, E> {
     abstract val statusCode: Int

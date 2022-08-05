@@ -12,7 +12,7 @@ class TaskRouter {
     }
 
     @Bean
-    fun TaskRoutes(
+    fun taskRoutes(
         taskHandler: TaskHandler,
     ) = coRouter {
         (accept(MediaType.APPLICATION_JSON) and TASK_API_ROUTE).nest {

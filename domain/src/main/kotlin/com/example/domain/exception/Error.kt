@@ -10,7 +10,7 @@ sealed class Error(
         const val UNEXPECTED_ERROR_STATUS_CODE = 500_000
         const val NOT_FOUND_ERROR_STATUS_CODE = 404_000
         const val OUT_OF_LIMIT_TASK_CODE = 400_001
-        const val USER_IS_NOT_EXIT = 400_002
+        const val USER_IS_NOT_EXIST = 400_002
     }
     class UnexpectedError(
         cause: Throwable?,
@@ -34,8 +34,8 @@ sealed class Error(
         cause = null,
     )
 
-    object UserIsNotExit : Error(
-        code = USER_IS_NOT_EXIT,
+    object UserIsNotExist : Error(
+        code = USER_IS_NOT_EXIST,
         message = "user is not exit",
         cause = null,
     )

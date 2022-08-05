@@ -1,4 +1,4 @@
-package com.example.server.display
+package com.example.server.rest.response
 
 data class TaskRespone(
     val code: Int = 0,
