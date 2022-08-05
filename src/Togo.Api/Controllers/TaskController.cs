@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Togo.Core.AppServices.TaskItems.Dtos;
+using Togo.Core.Exceptions;
 using Togo.Core.Interfaces.AppServices;
 
 namespace Togo.Api.Controllers;
@@ -19,6 +20,13 @@ public class TaskController : ApiController
     [Authorize]
     public async Task<IActionResult> CreateAsync(CreateTaskItemDto input)
     {
-        return Ok(await _taskItemAppService.CreateAsync(input));
+        try
+        {
+            return Ok(await _taskItemAppService.CreateAsync(input));
+        }
+        catch (TaskLimitExceededException ex)
+        {
+            return BadRequest($"Task limit of {ex.TaskLimit} exceeded");
+        }
     }
 }
