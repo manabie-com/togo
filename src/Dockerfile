@@ -12,12 +12,12 @@ COPY . .
 
 WORKDIR /src/Togo.Api
 RUN dotnet restore
-RUN dotnet build "Togo.Api.csproj" -c Release -o /app/build
+RUN dotnet build "Togo.Api.csproj" -c Release -o /app/build/api
 
 FROM build AS publish
-RUN dotnet publish "Togo.Api.csproj" -c Release -o /app/publish
+RUN dotnet publish "Togo.Api.csproj" -c Release -o /app/publish/api
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=publish /app/publish/api .
 ENTRYPOINT ["dotnet", "Togo.Api.dll"]

@@ -1,11 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6BA11EBC-6C1B-4E4E-8A5E-8399CE8FC7BD}"
-	ProjectSection(SolutionItems) = preProject
-		Dockerfile = Dockerfile
-		.dockerignore = .dockerignore
-		docker-compose.yml = docker-compose.yml
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{2865D3A8-0189-4DD7-8FEE-213141A326BF}"
 EndProject
@@ -16,6 +11,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Togo.Api", "Togo.Api\Togo.Api.csproj", "{7F51F7C3-6413-442F-BF24-981FFD5107A7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Togo.Api.IntegrationTests", "Togo.Api.IntegrationTests\Togo.Api.IntegrationTests.csproj", "{1D745425-72BB-41A6-BD5E-8B7F57A5627C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{6ABC0A9A-E43B-4019-830F-448AC9208F4E}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+		docker-compose-integration-tests.yml = docker-compose-integration-tests.yml
+		Dockerfile = Dockerfile
+		Dockerfile-IntegrationTests = Dockerfile-IntegrationTests
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

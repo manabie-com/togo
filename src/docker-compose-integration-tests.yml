@@ -9,25 +9,23 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: NoPassword1
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - postgres-integration-tests:/var/lib/postgresql/data
     networks:
-      - togo-app-network
+      - togo-app-network-integration-tests
 
-  togo.api:
+  togo.api.integration_tests:
     build:
       context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8080:80"
+      dockerfile: Dockerfile.IntegrationTests
     depends_on:
       - postgres
     networks:
-      - togo-app-network
+      - togo-app-network-integration-tests
 
 volumes:
-  postgres:
+  postgres-integration-tests:
     driver: local
 
 networks:
-  togo-app-network:
+  togo-app-network-integration-tests:
     driver: bridge

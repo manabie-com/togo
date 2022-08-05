@@ -7,6 +7,11 @@
         <IsPackable>false</IsPackable>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <VSTestLogger>trx</VSTestLogger>
+        <VSTestResultsDirectory>./test-result</VSTestResultsDirectory>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.7" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
