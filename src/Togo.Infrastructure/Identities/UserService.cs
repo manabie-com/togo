@@ -83,13 +83,13 @@ public class UserService : IUserService
 
         if (user == null)
         {
-            _logger.LogInformation("UserName {UserName} is not found", input.UserName);
+            _logger.LogWarning("User {UserName} is not found", input.UserName);
             throw new InvalidLoginException();
         }
 
         if (!await _userManager.CheckPasswordAsync(user, input.Password))
         {
-            _logger.LogInformation("UserName {UserName} logged in with wrong password", input.UserName);
+            _logger.LogWarning("User {UserName} logged in with wrong password", input.UserName);
             throw new InvalidLoginException();
         }
 

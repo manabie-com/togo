@@ -4,6 +4,6 @@ public interface ICurrentUserService
 {
     string UserId { get; }
     string SessionId { get; }
-    IList<string> RoleIds { get; }
+    IList<string> Roles { get; }
     int MaxTasksPerDay { get; }
 }

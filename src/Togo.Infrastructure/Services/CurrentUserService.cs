@@ -37,7 +37,7 @@ public class CurrentUserService : ICurrentUserService
         }
     }
     
-    public IList<string> RoleIds
+    public IList<string> Roles
     {
         get
         {
