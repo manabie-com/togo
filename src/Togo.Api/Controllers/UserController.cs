@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Togo.Core.Exceptions;
 using Togo.Infrastructure.Identities;
 using Togo.Infrastructure.Identities.Dtos;
+using Togo.Infrastructure.Identities.Exceptions;
 
 namespace Togo.Api.Controllers;
 
@@ -20,7 +21,14 @@ public class UserController : ApiController
     [Authorize(Roles = Roles.Admin)]
     public async Task<IActionResult> CreateAsync([FromBody] CreateUserDto input)
     {
-        return Ok(await _userService.CreateAsync(input));
+        try
+        {
+            return Ok(await _userService.CreateAsync(input));
+        }
+        catch (UserCreationFailedException ex)
+        {
+            return BadRequest(ex.Result);
+        }
     }
 
     [HttpGet]

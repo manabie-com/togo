@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using Togo.Core;
 using Togo.Core.Exceptions;
 using Togo.Infrastructure.Identities.Dtos;
+using Togo.Infrastructure.Identities.Exceptions;
 
 namespace Togo.Infrastructure.Identities;
 
@@ -61,7 +62,8 @@ public class UserService : IUserService
             return new UserDto(user);
         }
 
-        throw new Exception("User creation failed");
+        _logger.LogError("User creation failed");
+        throw new UserCreationFailedException(result);
     }
 
     public async Task<List<UserDto>> GetAllAsync()
