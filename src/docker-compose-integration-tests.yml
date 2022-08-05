@@ -19,6 +19,8 @@ services:
       dockerfile: Dockerfile-IntegrationTests
     environment:
       ASPNETCORE_ENVIRONMENT: IntegrationTests
+    volumes:
+      - test-results:/src/Togo.Api.IntegrationTests/test-results
     depends_on:
       - postgres
     networks:
@@ -26,6 +28,8 @@ services:
 
 volumes:
   postgres-integration-tests:
+    driver: local
+  test-results:
     driver: local
 
 networks:

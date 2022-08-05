@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Togo.Core.Interfaces;
 using Togo.Infrastructure.Identities;
@@ -18,6 +19,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IAppDbContext, AppDbContext>();
 
 builder.Services.AddIdentityCore<AppUser>()
+    .AddRoles<IdentityRole>()
+    .AddRoleManager<RoleManager<IdentityRole>>()
     .AddEntityFrameworkStores<AppDbContext>();
 
 builder.Services.AddScoped<IUserService, UserService>();
@@ -28,6 +31,9 @@ using var scope = app.Services.CreateScope();
 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 await dbContext.Database.MigrateAsync();
 
+var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+await userService.SeedAdminUserAsync();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -37,6 +43,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

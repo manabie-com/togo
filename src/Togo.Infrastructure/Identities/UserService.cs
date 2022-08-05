@@ -6,11 +6,34 @@ namespace Togo.Infrastructure.Identities;
 
 public class UserService : IUserService
 {
-    private readonly UserManager<AppUser> _userManager;
+    private const string AdminUserName = "admin";
+    private const string AdminPassword = "Abcd@1234";
 
-    public UserService(UserManager<AppUser> userManager)
+    private readonly UserManager<AppUser> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
+
+    public UserService(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
     {
         _userManager = userManager;
+        _roleManager = roleManager;
+    }
+
+    public async Task SeedAdminUserAsync()
+    {
+        var role = await _roleManager.FindByNameAsync(Roles.Admin);
+        if (role is null)
+        {
+            await _roleManager.CreateAsync(new IdentityRole(Roles.Admin));
+            await _roleManager.FindByNameAsync(Roles.Admin);
+        }
+        
+        var adminUser = await _userManager.FindByNameAsync(AdminUserName);
+        if (adminUser is null)
+        {
+            var user = AppUser.Create(AdminUserName, int.MaxValue); 
+            await _userManager.CreateAsync(user, AdminPassword);
+            await _userManager.AddToRoleAsync(user, Roles.Admin);
+        }
     }
 
     public async Task<UserDto> CreateAsync(CreateUserDto input)

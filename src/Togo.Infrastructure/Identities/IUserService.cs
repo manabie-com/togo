@@ -4,6 +4,8 @@ namespace Togo.Infrastructure.Identities;
 
 public interface IUserService
 {
+    Task SeedAdminUserAsync();
+    
     Task<UserDto> CreateAsync(CreateUserDto input);
 
     Task<List<UserDto>> GetAllAsync();

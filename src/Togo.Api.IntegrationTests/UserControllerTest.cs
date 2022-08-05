@@ -2,17 +2,18 @@ using System;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Togo.Infrastructure.Identities.Dtos;
 using Xunit;
 
 namespace Togo.Api.IntegrationTests;
 
-public class UserControllerTest : IClassFixture<TogoWebApplicationFactory>
+public class UserControllerTest : IClassFixture<WebApplicationFactory<Program>>
 {
     private readonly HttpClient _http;
     
-    public UserControllerTest(TogoWebApplicationFactory factory)
+    public UserControllerTest(WebApplicationFactory<Program> factory)
     {
         _http = factory.CreateDefaultClient();
     }

@@ -9,7 +9,7 @@
 
     <PropertyGroup>
         <VSTestLogger>trx</VSTestLogger>
-        <VSTestResultsDirectory>./test-result</VSTestResultsDirectory>
+        <VSTestResultsDirectory>./test-results</VSTestResultsDirectory>
     </PropertyGroup>
 
     <ItemGroup>
