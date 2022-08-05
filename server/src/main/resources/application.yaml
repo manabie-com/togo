@@ -1,0 +1,13 @@
+spring:
+  r2dbc:
+    url: r2dbc:pool:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  liquibase:
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    user: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    change-log: "classpath:/db/changelog/changelog-master.yaml"
+    database-change-log-table: database_changelog
+    database-change-log-lock-table: database_changelog_lock

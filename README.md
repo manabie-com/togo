@@ -1,32 +1,59 @@
-### Requirements
+# To-go
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Using Docker to run locally
-  - Using Docker for database (if used) is mandatory.
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+### Technology
+- Hexagonal Architecture
+  - Hexagonal Architecture promotes the separation of concerns by encapsulating logic in different layers of the application
 
-### Notes
+- Spring WebFlux
+  - Spring Webflux Framework is part of Spring 5 and it provides reactive programming support for web applications
+  
+### Prerequisites
+- Docker
+- JDK 11
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+### Start on local
+- **Step 1**: Run docker-compose 
+```zsh
+docker-compose -p togo-local -f docker-compose.yml up
+```
 
-### How to submit your solution?
+- **Step 2**: Run project with env in file ".env.sample"
 
-- Fork this repo and show us your development progress via a PR
+### Run unitest locally
 
-### Interesting facts about Manabie
+- Run 
+```zsh
+gradle server:test
+```
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+### I can improve
+- Use **UUID** to save id replace **String**
+- User **redis** to **caching**
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+### DB Schema
+
+```sql
+-- users definition
+CREATE TABLE users
+(
+  id         varchar(64) NOT NULL
+    primary key,
+  limit_task int         NOT NULL
+);
+
+-- tasks definition
+CREATE TABLE tasks
+(
+  id          varchar(64)                        NOT NULL
+    primary key,
+  title       varchar(64)                        NOT NULL,
+  description varchar(255)                       NOT NULL,
+  user_id     varchar(64)                        NOT NULL,
+  created_at  DateTime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  updated_at  DateTime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  constraint tasks_ibfk_1
+    foreign key (user_id) references users (id)
+      on delete cascade
+);
+
+```
