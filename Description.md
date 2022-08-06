@@ -72,11 +72,13 @@ docker compose -f docker-compose-integration-tests.yml up --build --exit-code-fr
 I personally love building flexible, reusable project template. Everytime I build a new project structure, I learn new things. This time, what I have learned are:
 
 - Separating the infrastructure (technology related) from the core business logic.
-- Fully building a solution with unit tests and integration tests 
-- Dockerising the integration tests solution
+- Fully building a solution with unit tests and integration tests.
+- Dockerising the integration tests solution.
 
 ## Why I do not have enough of time to finish?
 
 I spent a lot of time in the first couple days to find a right way to setup the integration tests, custom host creation, custom `Startup` class, custom dependency injection,... After getting stuck at that stuff for a long time, I decided to do the Docker stuff (writing Dockerfile, docker compose for all executable projects) first and go back to the integration tests when I have enough time.
 
 It turned out that when I properly dockerised the integration tests, my problem has been resolved as well. At the first stage, I should think about the examiners situation that they might not have .NET environment set up on their local machine and everything should be run on Docker containers, so I should not really need to care about isolating the integration tests environment. Thanks God.
+
+Not finished the logic behind task creating (count the number of task created by today) because I do not understand the EF Core provider Npgsql well.
