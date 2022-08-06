@@ -10,9 +10,9 @@ public abstract class DateEntity : BaseEntity
         set => _createdAt = value;
     }
 
-    private DateTimeOffset _lastModifiedAt;
+    private DateTimeOffset? _lastModifiedAt;
 
-    public DateTimeOffset LastModifiedAt
+    public DateTimeOffset? LastModifiedAt
     {
         get => _lastModifiedAt;
         set => _lastModifiedAt = value;

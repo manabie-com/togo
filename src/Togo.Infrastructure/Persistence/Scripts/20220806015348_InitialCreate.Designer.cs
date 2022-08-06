@@ -12,7 +12,7 @@ using Togo.Infrastructure.Persistence;
 namespace Togo.Infrastructure.Persistence.Scripts
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220802025429_InitialCreate")]
+    [Migration("20220806015348_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -154,6 +154,39 @@ namespace Togo.Infrastructure.Persistence.Scripts
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("Togo.Core.Entities.TaskItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("LastModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Title");
+
+                    b.ToTable("TaskItems");
                 });
 
             modelBuilder.Entity("Togo.Infrastructure.Identities.AppUser", b =>

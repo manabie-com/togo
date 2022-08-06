@@ -8,6 +8,11 @@ public class TaskItemDto
 
     public string Title { get; set; }
 
+    public TaskItemDto()
+    {
+        // For JSON deserialiser only
+    }
+
     public TaskItemDto(TaskItem item)
     {
         Id = item.Id;

@@ -169,11 +169,10 @@ namespace Togo.Infrastructure.Persistence.Scripts
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTimeOffset>("LastModifiedAt")
+                    b.Property<DateTimeOffset?>("LastModifiedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("LastModifiedBy")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Title")

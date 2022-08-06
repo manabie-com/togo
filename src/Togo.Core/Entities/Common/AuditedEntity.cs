@@ -10,9 +10,9 @@ public abstract class AuditedEntity : DateEntity
         set => _createdBy = value;
     }
 
-    private string _lastModifiedBy;
+    private string? _lastModifiedBy;
 
-    public string LastModifiedBy
+    public string? LastModifiedBy
     {
         get => _lastModifiedBy;
         set => _lastModifiedBy = value;

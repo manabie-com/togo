@@ -71,7 +71,8 @@ docker compose -f docker-compose-integration-tests.yml up --build --exit-code-fr
 
 I personally love building flexible, reusable project template. Everytime I build a new project structure, I learn new things. This time, what I have learned are:
 
-- Separating the infrastructure (technology related) from the core business logic. The only issue is that I did not fully separate the data access from the core business project, I still use the `DbSet` class which belongs to EntityFramework Core. This could be solved by implementing our own repository and unit of work. 
+- Separating the infrastructure (technology related) from the core business logic.
+- Fully building a solution with unit tests and integration tests 
 - Dockerising the integration tests solution
 
 ## Why I do not have enough of time to finish?

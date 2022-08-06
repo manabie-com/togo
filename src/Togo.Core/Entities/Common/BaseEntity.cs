@@ -7,6 +7,5 @@ public abstract class BaseEntity
     public int Id
     {
         get => _id;
-        set => _id = value;
     }
 }

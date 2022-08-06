@@ -1,4 +1,7 @@
+using System.Reflection;
 using System.Text;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +18,8 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, TogoAppSettings togoAppSettings)
     {
-        services.AddControllers();
+        services.AddControllers().AddFluentValidation();
+        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         services.AddDataAccess(togoAppSettings);
@@ -61,7 +65,7 @@ public static class DependencyInjection
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(togoAppSettings.ConnectionStrings.Default));
 
-        services.AddScoped<IAppDbContext, AppDbContext>();
+        services.AddScoped<IUnitOfWork, EfUnitOfWork>();
         
         return services;
     }

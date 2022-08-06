@@ -11,6 +11,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="FluentValidation.AspNetCore" Version="11.1.2" />
+      <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.1.0" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.7" />
       <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.7" />
       <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.22.0" />
