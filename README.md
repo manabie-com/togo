@@ -42,10 +42,15 @@ Thank you for spending time to read and attempt our take-home assessment. We are
 4. Hit http://localhost:7000/. You'll be greeted with a rather dull error message, but you're up and running alright!
 
 Test the application:
+
 5. Add items with below command:
+
 curl -X POST -H "Content-Type:application/json" -d "{\"userId\":\"bernard\", \"taskName\":\"Create\", \"taskDescription\":\"Create Record\"}" http://localhost:7000/api/tasks/todo -i
+
 curl -X POST -H "Content-Type:application/json" -d "{\"userId\":\"bernard\", \"taskName\":\"Retrieve\", \"taskDescription\":\"Retrieve Record\"}" http://localhost:7000/api/tasks/todo -i
+
 curl -X POST -H "Content-Type:application/json" -d "{\"userId\":\"bernard\", \"taskName\":\"Update\", \"taskDescription\":\"Update Record\"}" http://localhost:7000/api/tasks/todo -i
+
 curl -X POST -H "Content-Type:application/json" -d "{\"userId\":\"bernard\", \"taskName\":\"Delete\", \"taskDescription\":\"Delete Record\"}" http://localhost:7000/api/tasks/todo -i
 
 #7. Get all items:
@@ -59,8 +64,3 @@ curl -X DELETE http://localhost:7000/api/tasks/todo/{userId} -i
 
 #10. Update an item:
 #curl -X PUT -H "Content-Type:application/json" -d "{\"userId\":\"bernard\", \"taskName\":\"Test Update\", \"taskDescription\":\"Test Update\"}" http://localhost:7000/api/tasks/todo/{userId} -i
-
-11. This is not a complete solution as I do not have JUNit setup yet. I actually do not have anything setup on my personal laptop when I started working on this task. \
-So I started everything from scratch from my IDE installation to Gitbash installation, etc. Also, I just started working into this task on July 25, Sunday around 8pm 
-as I've been tied up with my 2 projects where multiple meetings, discussions and development are happening almost at the same time. 
-Please have a look at the solution and let me know what you think. Thank you!
