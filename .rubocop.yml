@@ -1,0 +1,108 @@
+inherit_gem:
+  prettier: rubocop.yml
+
+require:
+  - rubocop-rails
+  - rubocop-performance
+  - rubocop-rspec
+
+AllCops:
+  DisplayCopNames: true
+  DisplayStyleGuide: true
+
+  Exclude:
+    - "bin/**/*"
+    - "db/**/*"
+    - "coverage/**/*"
+    - "log/**/*"
+    - "public/**/*"
+    - "tmp/**/*"
+    - "vendor/**/*"
+    - "storage/**/*"
+    - "node_modules/**/*"
+
+Layout/LineLength:
+  Severity: warning
+  Max: 152
+
+Metrics/ParameterLists:
+  Max: 6
+
+Metrics/AbcSize:
+  Enabled: true
+  Exclude:
+    - "spec/**/*"
+    - "**/spec/**/*"
+
+Metrics/ClassLength:
+  Max: 200
+  Severity: warning
+  Exclude:
+    - "spec/**/*"
+    - "**/spec/**/*"
+
+Metrics/BlockLength:
+  Severity: warning
+  Max: 50
+  Exclude:
+    - "spec/**/*"
+    - "**/spec/**/*"
+    - "config/routes.rb"
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/MethodLength:
+  Severity: warning
+  Max: 40
+  Exclude:
+    - "spec/**/*"
+    - "**/spec/**/*"
+
+Metrics/ModuleLength:
+  Severity: warning
+  Max: 40
+  Exclude:
+    - "spec/**/*"
+    - "**/spec/**/*"
+
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true
+
+Lint/RaiseException:
+  Enabled: true
+  Severity: warning
+
+Lint/StructNewOverride:
+  Enabled: true
+  Severity: warning
+
+Naming/AccessorMethodName:
+  Enabled: false
+
+Rails/InverseOf:
+  Enabled: false
+
+Lint/MissingSuper:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+Rails/FilePath:
+  Enabled: false
+
+RSpec/MessageSpies:
+  Enabled: false
+
+RSpec/FilePath:
+  Enabled: false
