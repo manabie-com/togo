@@ -30,3 +30,37 @@
 - We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
 
 Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+
+-------------------------------------------------------------------------------------------------------------------
+1. Download and install Git bash
+
+2. Clone repository https://github.com/bernardcvu/togo.git
+
+3. Build application using below command:
+./gradlew bootRun
+
+4. Hit http://localhost:7000/. You'll be greeted with a rather dull error message, but you're up and running alright!
+
+Test the application:
+
+5. Add items with below command:
+
+curl -X POST -H "Content-Type:application/json" -d "{\"userId\":\"bernard\", \"taskName\":\"Create\", \"taskDescription\":\"Create Record\"}" http://localhost:7000/api/tasks/todo -i
+
+curl -X POST -H "Content-Type:application/json" -d "{\"userId\":\"bernard\", \"taskName\":\"Retrieve\", \"taskDescription\":\"Retrieve Record\"}" http://localhost:7000/api/tasks/todo -i
+
+curl -X POST -H "Content-Type:application/json" -d "{\"userId\":\"bernard\", \"taskName\":\"Update\", \"taskDescription\":\"Update Record\"}" http://localhost:7000/api/tasks/todo -i
+
+curl -X POST -H "Content-Type:application/json" -d "{\"userId\":\"bernard\", \"taskName\":\"Delete\", \"taskDescription\":\"Delete Record\"}" http://localhost:7000/api/tasks/todo -i
+
+#7. Get all items:
+#curl http://localhost:7000/api/tasks/todo -i
+
+8. Get item/s:
+curl http://localhost:7000/api/tasks/todo/?userId=bernard&date=24-07-2022 -i
+
+9. Delete an item:
+curl -X DELETE http://localhost:7000/api/tasks/todo/{userId} -i
+
+#10. Update an item:
+#curl -X PUT -H "Content-Type:application/json" -d "{\"userId\":\"bernard\", \"taskName\":\"Test Update\", \"taskDescription\":\"Test Update\"}" http://localhost:7000/api/tasks/todo/{userId} -i
