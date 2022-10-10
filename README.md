@@ -30,3 +30,31 @@
 - We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
 
 Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+
+
+### Installation
+- Run code locally
+  - docker-compose up -d
+  - access link: http://localhost:5000/swagger/index.html
+- Run unit test 
+  - Download Dotnet SDK and install: https://dotnet.microsoft.com/en-us/download
+  - dotnet test Todo.Application.Test
+  - dotnet test Todo.Api.Test
+- My solution is:
+    - Using clean code structure: https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html
+      - Todo.Api : Main project which define API.
+      - Todo.Application : Define some services for handling logic
+      - Todo.Domain : Define Entity Class
+      - Todo.Infracture: Create DbContext and communicate with Todo.Application via IApplicationDbContext(interface)
+      - Todo.Application.Test : Testing services(unit test)
+      - Todo.Api.Test : Testing controllers(intergation test)
+    - Entity Framework code first to build and manage versions.
+    - Solid principle
+    - Using docker for setup local environment
+    - Database design suit requirement
+- Other ideals:
+   - Get UserId from JWT Token to assign CreatedBy field automatically
+   - Handle Exception
+   - Define Error Message/ Status response
+   - Custom validation in Dto class
+   - Handling timezone which is depending on each user.
