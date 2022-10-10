@@ -15,18 +15,38 @@
   - What do you love about your solution?
   - What else do you want us to know about however you do not have enough time to complete?
 
-### Notes
+### Curl Commands
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+- The routes will require token authorization to proceed.
 
-### How to submit your solution?
+To start, create a sample user.
 
-- Fork this repo and show us your development progress via a PR
+    curl -c cookie.txt -X POST http://localhost:5000/register -H "Content-Type: application/json" -d '{"name": "sample_user", "password": "sample_password", "limit_per_day":1}'
 
-### Interesting facts about Manabie
+- Login test
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+Login to retrieve a token for authorization.
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+    curl --user sample_user:sample_password http://127.0.0.1:5000/login
+
+- Create Todo
+
+Create a new todo.
+
+    curl -b cookie.txt POST http://localhost:5000/todo -H "Content-Type: application/json" -H "x-access-token:<user_id>" -d '{"todo": "sample_task"}'
+
+
+
+### Running Tests
+
+- Tests are done using pytest
+  In order to run the test, you must be at the root folder and run the following command:
+
+  python3 -m pytest
+
+### Things to improve
+
+Due to the lack of time, it would be better if the user id is stored in the cookie, since the flask login is 
+causing issue when unit testing (login per endpoint is required before execution since current_user is being
+anonymous). Curl commands are also affected since in the terminal, sessions are not being stored. Although, things
+are working fine in postman.

@@ -13,7 +13,12 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
-
+app2/__pycache__
 out/
+tests/.pytest_cache
+tests/functional/.pytest_cache
+venv/
+tests/functional/__pycache__
 
 .idea
+*.db
