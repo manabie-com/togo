@@ -1,0 +1,639 @@
+openapi: 3.0.0
+info:
+  title: To do project - API docs
+  description: >-
+    [Todo - API RESTful](https://github.com/tuankien/manabie-test)
+
+    This API allows you to manage tasks after login successfully.
+  contact: {}
+  version: '1.0'
+servers:
+- url: http://localhost:8080
+  description: My localhost server using PHP built-in web server.
+
+- url: http://localhost:8081
+  description: My localhost server using docker and docker compose.
+
+paths:
+  /:
+    get:
+      tags:
+      - Info
+      summary: Get Help
+      description: Get help about this api.
+      operationId: GetHelp
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          headers:
+            Host:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: localhost:8080
+            Date:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Fri, 18 Aug 2021 07:00:00
+            Connection:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: close
+            X-Powered-By:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: PHP/7.3.4
+            Access-Control-Allow-Origin:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '*'
+            Content-Length:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '463'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetHelp'
+              example:
+                code: 200
+                status: success
+                message:
+                  endpoints:
+                    tasks: http://localhost:8080/api/v1/tasks
+                    users: http://localhost:8080/login
+                    docs: http://localhost:8080/docs/index.html
+                    status: http://localhost:8080/status
+                    this help: http://localhost:8080
+                  version: 2.13.0
+                  timestamp: 1624812953
+      deprecated: false
+  /status:
+    get:
+      tags:
+      - Info
+      summary: Get Status
+      description: Get status of this api.
+      operationId: GetStatus
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          headers:
+            Host:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: localhost:8080
+            Date:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Fri, 18 Aug 2021 07:00:00
+            Connection:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: close
+            X-Powered-By:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: PHP/7.3.4
+            Access-Control-Allow-Origin:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '*'
+            Content-Length:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '228'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetStatus'
+              example:
+                code: 200
+                status: success
+                message:
+                  stats:
+                    tasks: 8
+                    users: 42
+                    notes: 63
+                  MySQL: OK
+                  Redis: Disabled
+                  version: 2.12.0
+                  timestamp: 1624808196
+      deprecated: false
+  /login:
+    post:
+      tags:
+      - Login
+      summary: Login
+      description: Login and get a JWT Token Authorization Bearer to use this api.
+      operationId: Login
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              id: exampleUserId
+              password: OnePass1
+        required: true
+      responses:
+        '200':
+          description: OK
+          headers:
+            Host:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: localhost:8080
+            Date:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Fri, 18 Aug 2021 07:00:00
+            Connection:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: close
+            X-Powered-By:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: PHP/7.3.4
+            Access-Control-Allow-Origin:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '*'
+            Content-Length:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '291'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginOK'
+              example:
+                code: 200
+                status: success
+                message:
+                  Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMSIsImVtYWlsIjoibUBiLmNvbS5hciIsIm5hbWUiOiJNTkIiLCJpYXQiOjE1NTg1NTMwNTIsImV4cCI6MTU1OTE1Nzg1Mn0.OQyICWlGW0oSUB-ANrYL2OJTdC2v0OQQO3RQQ3W_KLo
+        '400':
+          description: Bad Request
+          headers:
+            Host:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: localhost:8080
+            Date:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Wed, 22 May 2019 19:25:28 +0000
+            Connection:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: close
+            X-Powered-By:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: PHP/7.3.4
+            Content-type:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: application/json
+            Content-Length:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '133'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginFailed1'
+              example:
+                message: 'Login failed: Id or Password incorrect.'
+                class: UserException
+                status: error
+                code: 400
+      deprecated: false
+  /api/v1/tasks:
+    get:
+      tags:
+      - Tasks
+      summary: Get All Tasks
+      description: Get all tasks of a user.
+      operationId: GetAllTasks
+      parameters:
+      - name: page
+        in: query
+        description: Number of the page
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+          example: 1
+      - name: per_page
+        in: query
+        description: Quantity of items per page
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+          example: 5
+      - name: content
+        in: query
+        description: Search by content
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        description: ''
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: '{{jwt}}'
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+    post:
+      tags:
+      - Tasks
+      summary: Create Task
+      description: Create a task.
+      operationId: CreateTask
+      parameters:
+      - name: Authorization
+        in: header
+        description: ''
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: '{{jwt}}'
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaskRequest'
+            example:
+              content: Go To play
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+  /api/v1/tasks/abc1:
+    get:
+      tags:
+      - Tasks
+      summary: Get One Task
+      description: Get one task of a user.
+      operationId: GetOneTask
+      parameters:
+      - name: Authorization
+        in: header
+        description: ''
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: '{{jwt}}'
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+  /api/v1/tasks/abc2:
+    put:
+      tags:
+      - Tasks
+      summary: Update Task
+      description: Update a task of a user.
+      operationId: UpdateTask
+      parameters:
+      - name: Authorization
+        in: header
+        description: ''
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: '{{jwt}}'
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTaskRequest'
+            example:
+              content: Go To play!!
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+    delete:
+      tags:
+      - Tasks
+      summary: Delete Task
+      description: Delete a task of a user.
+      operationId: DeleteTask
+      parameters:
+      - name: Authorization
+        in: header
+        description: ''
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: '{{jwt}}'
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+components:
+  schemas:
+    GetHelp:
+      title: GetHelp
+      required:
+      - code
+      - status
+      - message
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        status:
+          type: string
+        message:
+          $ref: '#/components/schemas/Message'
+      example:
+        code: 200
+        status: success
+        message:
+          endpoints:
+            tasks: http://localhost:8080/api/v1/tasks
+            users: http://localhost:8080/login
+            docs: http://localhost:8080/docs/index.html
+            status: http://localhost:8080/status
+            this help: http://localhost:8080
+          version: 2.13.0
+          timestamp: 1624812953
+    Message:
+      title: Message
+      required:
+      - endpoints
+      - version
+      - timestamp
+      type: object
+      properties:
+        endpoints:
+          $ref: '#/components/schemas/Endpoints'
+        version:
+          type: string
+        timestamp:
+          type: integer
+          format: int32
+      example:
+        endpoints:
+          tasks: http://localhost:8080/api/v1/tasks
+          users: http://localhost:8080/login
+          docs: http://localhost:8080/docs/index.html
+          this help: http://localhost:8080
+        version: 2.13.0
+        timestamp: 1624812953
+    Endpoints:
+      title: Endpoints
+      required:
+      - tasks
+      - users
+      - docs
+      - status
+      - this help
+      type: object
+      properties:
+        tasks:
+          type: string
+        users:
+          type: string
+        docs:
+          type: string
+        this help:
+          type: string
+      example:
+        tasks: http://localhost:8080/api/v1/tasks
+        users: http://localhost:8080/login
+        docs: http://localhost:8080/docs/index.html
+        status: http://localhost:8080/status
+        this help: http://localhost:8080
+    GetStatus:
+      title: GetStatus
+      required:
+      - code
+      - status
+      - message
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        status:
+          type: string
+        message:
+          $ref: '#/components/schemas/Message1'
+      example:
+        code: 200
+        status: success
+        message:
+          stats:
+            tasks: 8
+            users: 42
+            notes: 63
+          MySQL: OK
+          Redis: Disabled
+          version: 2.12.0
+          timestamp: 1624808196
+    Message1:
+      title: Message1
+      required:
+      - stats
+      - MySQL
+      - Redis
+      - version
+      - timestamp
+      type: object
+      properties:
+        stats:
+          $ref: '#/components/schemas/Stats'
+        MySQL:
+          type: string
+        Redis:
+          type: string
+        version:
+          type: string
+        timestamp:
+          type: integer
+          format: int32
+      example:
+        stats:
+          tasks: 8
+          users: 1
+        MySQL: OK
+        Redis: Disabled
+        version: 2.12.0
+        timestamp: 1624808196
+    Stats:
+      title: Stats
+      required:
+      - tasks
+      - users
+      type: object
+      properties:
+        tasks:
+          type: integer
+          format: int32
+        users:
+          type: integer
+          format: int32
+      example:
+        tasks: 8
+        users: 42
+    LoginRequest:
+      title: LoginRequest
+      required:
+      - id
+      - password
+      type: object
+      properties:
+        id:
+          type: string
+        password:
+          type: string
+      example:
+        id: idUser1
+        password: OnePass1
+    LoginOK:
+      title: LoginOK
+      required:
+      - code
+      - status
+      - message
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        status:
+          type: string
+        message:
+          $ref: '#/components/schemas/Message2'
+      example:
+        code: 200
+        status: success
+        message:
+          Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMSIsImVtYWlsIjoibUBiLmNvbS5hciIsIm5hbWUiOiJNTkIiLCJpYXQiOjE1NTg1NTMwNTIsImV4cCI6MTU1OTE1Nzg1Mn0.OQyICWlGW0oSUB-ANrYL2OJTdC2v0OQQO3RQQ3W_KLo
+    Message2:
+      title: Message2
+      required:
+      - Authorization
+      type: object
+      properties:
+        Authorization:
+          type: string
+      example:
+        Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMSIsImVtYWlsIjoibUBiLmNvbS5hciIsIm5hbWUiOiJNTkIiLCJpYXQiOjE1NTg1NTMwNTIsImV4cCI6MTU1OTE1Nzg1Mn0.OQyICWlGW0oSUB-ANrYL2OJTdC2v0OQQO3RQQ3W_KLo
+    LoginFailed1:
+      title: LoginFailed1
+      required:
+      - message
+      - class
+      - status
+      - code
+      type: object
+      properties:
+        message:
+          type: string
+        class:
+          type: string
+        status:
+          type: string
+        code:
+          type: integer
+          format: int32
+      example:
+        message: 'Login failed: Id or password incorrect.'
+        class: UserException
+        status: error
+        code: 400
+tags:
+- name: Info
+  description: Get information about API.
+- name: Login
+  description: User login.
+- name: Tasks
+  description: Manage Tasks.
