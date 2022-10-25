@@ -9,11 +9,12 @@
 - Using Docker to run locally
   - Using Docker for database (if used) is mandatory.
 - Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
+  - How to run your code locally? => npm install & node app.js
+  - A sample “curl” command to call your API => curl -d '{"name": "bbbb","userId": 1}' -H 'Content-Type: application/json' http://localhost:3000/tasks
+  - How to run your unit tests locally? => npm test
+  - What do you love about your solution? => I have never writen Unit test and Integration test before. I have learned some new useful knowledge while doing this test.
   - What else do you want us to know about however you do not have enough time to complete?
+    => I have completed this test withina day.
 
 ### Notes
 
