@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.7" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.7" />
+    <PackageReference Include="coverlet.collector" Version="3.1.0" />
+    <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Handles" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
+    <PackageReference Include="System.Text.Encoding.Extensions" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\akaru.dailytask.api\akaru.dailytask.api.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Test\" />
+    <None Remove="Test\Models\" />
+    <None Remove="Test\Database\" />
+    <None Remove="Test\Controller\" />
+    <None Remove="System.IO.FileSystem.Primitives" />
+    <None Remove="System.Runtime.Handles" />
+    <None Remove="System.Runtime.InteropServices" />
+    <None Remove="System.Text.Encoding.Extensions" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Test\" />
+    <Folder Include="Test\Models\" />
+    <Folder Include="Test\Database\" />
+    <Folder Include="Test\Controller\" />
+  </ItemGroup>
+</Project>
