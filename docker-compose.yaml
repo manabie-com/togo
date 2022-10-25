@@ -1,0 +1,24 @@
+version: "2.2"
+services:
+  db:
+    image: mysql:5.7
+    container_name: test-db
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - .:/test-app
+    environment:
+    # Các thông số này thay đổi theo password mysql trên máy bạn nhé.
+      MYSQL_ROOT_PASSWORD: password # 
+      MYSQL_DATABASE: testdb
+      MYSQL_USER: user_testdb
+      MYSQL_PASSWORD: password
+
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+
+volumes:
+  db_data:
