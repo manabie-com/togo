@@ -1,0 +1,19 @@
+hooks:
+  # hook scripts
+  pre-commit:
+    # - golangci-lint run
+    - husky lint-staged
+  commit-msg:
+    - husky lint-commit
+
+# list staged files do some pre-process and git add
+lint-staged:
+  "*.go":
+    - gofmt -l -w
+
+# commit message rule only support conventional commits
+lint-commit:
+  # optional custom types check regex
+  types: "^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)$"
+  # optional header check regex
+  header: "(?m)(?P<type>\\w+)(?P<scope>(?:\\([^()\r\n]*\\)|\\()?(?P<breaking>!)?)(?P<subject>:.*)?"

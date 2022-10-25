@@ -16,4 +16,15 @@
 
 out/
 
-.idea
+# Executable directories
+bin/
+dist/
+
+# Intellij IDEA directory
+.idea/
+
+# VS Code directory
+.vscode/
+
+# Env files
+app.env
