@@ -1,0 +1,9 @@
+APP:
+  jwt_secret: "v-e-r-y-s-e-c-r-e-t"
+  host: "localhost"
+  debug: true
+  port: 6000
+
+DATABASE:
+  connection: "sqlite:///data/database.db"
+

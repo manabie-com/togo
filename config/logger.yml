@@ -1,0 +1,30 @@
+version: 1
+formatters:
+  simple:
+    format: "%(asctime)s - [%(levelname)s] : %(message)s"
+    datefmt: "%Y-%m-%d %H:%M:%S"
+filters:
+  inf: ""
+  err: ""
+
+
+handlers:
+  info:
+    class: "logging.FileHandler"
+    formatter: "simple"
+    level: "INFO"
+    filename: "logs/info.log"
+    filters: [ inf ]
+  error:
+    class: "logging.FileHandler"
+    formatter: "simple"
+    level: "ERROR"
+    filename: "logs/error.log"
+    filters: [ err ]
+
+loggers:
+  program:
+    level: "DEBUG"
+    handlers:
+      - 'info'
+      - 'error'
