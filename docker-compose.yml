@@ -1,0 +1,36 @@
+version: "3"
+services:
+  app:
+    container_name: togo
+    build: .
+    ports:
+      - 8080:8080
+    restart: on-failure
+    volumes:
+      - api:/usr/src/app/
+    depends_on:
+      - postgres
+    networks:
+      - todo
+
+  postgres:
+    image: postgres:latest
+    container_name: db_postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=todoapp
+    ports:
+      - "5433:5433"
+    volumes:
+      - database_postgres:/var/lib/postgresql/data
+    networks:
+      - todo
+
+volumes:
+  api:
+  database_postgres:
+
+networks:
+  todo:
+    driver: bridge
