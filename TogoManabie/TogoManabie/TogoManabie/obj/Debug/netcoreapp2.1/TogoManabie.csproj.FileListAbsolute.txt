@@ -1,0 +1,15 @@
+C:\Users\Admin\source\repos\togo\TogoManabie\TogoManabie\TogoManabie\bin\Debug\netcoreapp2.1\TogoManabie.deps.json
+C:\Users\Admin\source\repos\togo\TogoManabie\TogoManabie\TogoManabie\bin\Debug\netcoreapp2.1\TogoManabie.runtimeconfig.json
+C:\Users\Admin\source\repos\togo\TogoManabie\TogoManabie\TogoManabie\bin\Debug\netcoreapp2.1\TogoManabie.runtimeconfig.dev.json
+C:\Users\Admin\source\repos\togo\TogoManabie\TogoManabie\TogoManabie\bin\Debug\netcoreapp2.1\TogoManabie.dll
+C:\Users\Admin\source\repos\togo\TogoManabie\TogoManabie\TogoManabie\obj\Debug\netcoreapp2.1\TogoManabie.csproj.CoreCompileInputs.cache
+C:\Users\Admin\source\repos\togo\TogoManabie\TogoManabie\TogoManabie\obj\Debug\netcoreapp2.1\TogoManabie.RazorAssemblyInfo.cache
+C:\Users\Admin\source\repos\togo\TogoManabie\TogoManabie\TogoManabie\obj\Debug\netcoreapp2.1\TogoManabie.RazorAssemblyInfo.cs
+C:\Users\Admin\source\repos\togo\TogoManabie\TogoManabie\TogoManabie\obj\Debug\netcoreapp2.1\TogoManabie.AssemblyInfoInputs.cache
+C:\Users\Admin\source\repos\togo\TogoManabie\TogoManabie\TogoManabie\obj\Debug\netcoreapp2.1\TogoManabie.AssemblyInfo.cs
+C:\Users\Admin\source\repos\togo\TogoManabie\TogoManabie\TogoManabie\obj\Debug\netcoreapp2.1\TogoManabie.RazorTargetAssemblyInfo.cache
+C:\Users\Admin\source\repos\togo\TogoManabie\TogoManabie\TogoManabie\bin\Debug\netcoreapp2.1\TogoManabie.pdb
+C:\Users\Admin\source\repos\togo\TogoManabie\TogoManabie\TogoManabie\obj\Debug\netcoreapp2.1\TogoManabie.dll
+C:\Users\Admin\source\repos\togo\TogoManabie\TogoManabie\TogoManabie\obj\Debug\netcoreapp2.1\TogoManabie.pdb
+C:\Users\Admin\source\repos\togo\TogoManabie\TogoManabie\TogoManabie\obj\Debug\netcoreapp2.1\TogoManabie.csprojAssemblyReference.cache
+C:\Users\Admin\source\repos\togo\TogoManabie\TogoManabie\TogoManabie\obj\Debug\netcoreapp2.1\UserSecretsAssemblyInfo.cs
