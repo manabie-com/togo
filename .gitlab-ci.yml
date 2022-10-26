@@ -1,0 +1,46 @@
+stages:
+  - publish
+  - connect-db
+  - test
+  - release
+  - deploy
+
+variables:
+  TAG_LATEST: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
+  TAG_COMMIT: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
+
+publish:
+  image: docker:latest
+  stage: publish
+  services:
+    - docker:dind
+  script:
+    - docker build -t $TAG_COMMIT -t $TAG_LATEST .
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - docker push $TAG_COMMIT
+    - docker push $TAG_LATEST
+
+deploy:
+  image: alpine:latest
+  stage: deploy
+  tags:
+    - deployment
+  before_script:
+    - apk update && apk add openssh-client bash
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+  script:
+    - apk add --no-cache python py-pip && pip install --no-cache-dir docker-compose
+    - ssh -o StrictHostKeyChecking=no -l deployer -p 22 137.184.207.13 "docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY"
+    - ssh -o StrictHostKeyChecking=no -l deployer -p 22 137.184.207.13 "docker pull $TAG_COMMIT"
+    - ssh -o StrictHostKeyChecking=no -l deployer -p 22 137.184.207.13 "docker container rm -f node-app-todoapp || true"
+    - ssh -o StrictHostKeyChecking=no -l deployer -p 22 137.184.207.13 "docker run -d -p 6363:6363 --name node-app-todoapp $TAG_COMMIT"
+    - ssh -o StrictHostKeyChecking=no -l deployer -p 22 137.184.207.13 "docker image prune -f"
+  environment:
+    name: deployment
+    url: $URL_SERVER
+  only:
+    - be_main
+
