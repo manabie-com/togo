@@ -1,3 +1,22 @@
+### Notes
+1. Install package
+ - npm install
+2. Start project
+ - npm start
+ - sample curl:
+ curl -X POST \
+    'http://localhost:3000/tasks' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+      "username": "hungnv2",
+      "task": "Study English",
+      "date": "2022-05-01"
+  }'
+3. Run test
+ - npm test
+
+
+
 ### Requirements
 
 - Implement one single API which accepts a todo task and records it
