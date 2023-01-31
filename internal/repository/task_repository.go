@@ -4,14 +4,17 @@ package repository
 
 import (
 	"context"
+	"time"
+
 	"github.com/gofiber/fiber/v2"
+	"github.com/sirupsen/logrus"
+
 	"github.com/trinhdaiphuc/togo/database/ent"
 	"github.com/trinhdaiphuc/togo/database/ent/predicate"
 	taskent "github.com/trinhdaiphuc/togo/database/ent/task"
 	"github.com/trinhdaiphuc/togo/internal/dto"
 	"github.com/trinhdaiphuc/togo/internal/entities"
 	"github.com/trinhdaiphuc/togo/internal/infrastructure"
-	"time"
 )
 
 type TaskRepository interface {
@@ -51,9 +54,15 @@ func (t *taskRepositoryImpl) Create(ctx context.Context, task *entities.Task) (*
 	}
 	defer func() {
 		if err != nil {
-			tx.Rollback()
+			err := tx.Rollback()
+			if err != nil {
+				logrus.Errorf("Error rolling back %v", err)
+			}
 		} else {
-			tx.Commit()
+			err := tx.Commit()
+			if err != nil {
+				logrus.Errorf("Error commit %v", err)
+			}
 		}
 	}()
 	timeNow := time.Now().Local()

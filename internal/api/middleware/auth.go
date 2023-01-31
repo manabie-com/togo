@@ -27,7 +27,7 @@ func JWTMiddleware(secret string) fiber.Handler {
 	return jwtware.New(jwtware.Config{
 		ErrorHandler:  jwtError,
 		SigningKey:    []byte(secret),
-		Claims: 	   &helper.JwtClaims{},
+		Claims:        &helper.JwtClaims{},
 		SigningMethod: jwt.SigningMethodHS256.Name,
 	})
 }

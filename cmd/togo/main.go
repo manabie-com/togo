@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/sirupsen/logrus"
+
 	"github.com/trinhdaiphuc/togo/internal"
 )
 

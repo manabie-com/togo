@@ -2,15 +2,17 @@ package api
 
 import (
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/sirupsen/logrus"
+
 	"github.com/trinhdaiphuc/togo/configs"
 	v1 "github.com/trinhdaiphuc/togo/internal/api/v1"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 type Server struct {
@@ -50,11 +52,14 @@ func (s *Server) Run() {
 
 	c := make(chan os.Signal, 1)   // Create channel to signify a signal being sent
 	signal.Notify(c, os.Interrupt, // When an interrupt or termination signal is sent, notify the channel
-		syscall.SIGTERM, syscall.SIGINT, syscall.SIGKILL, syscall.SIGHUP, syscall.SIGQUIT)
+		syscall.SIGTERM, syscall.SIGINT, syscall.SIGHUP, syscall.SIGQUIT)
 
-	_ = <-c // This blocks the main thread until an interrupt is received
+	<-c // This blocks the main thread until an interrupt is received
 	logrus.Info("Gracefully shutting down...")
-	_ = s.app.Shutdown()
+	err := s.app.Shutdown()
+	if err != nil {
+		logrus.Errorf("Failed to shutdown %v", err)
+	}
 
 	// Your cleanup tasks go here
 	logrus.Info("Fiber was successful shutdown.")

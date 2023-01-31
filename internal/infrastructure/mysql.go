@@ -2,14 +2,16 @@ package infrastructure
 
 import (
 	"context"
-	"entgo.io/ent/dialect"
 	"fmt"
+	"time"
+
+	"entgo.io/ent/dialect"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/sirupsen/logrus"
+
 	"github.com/trinhdaiphuc/togo/configs"
 	"github.com/trinhdaiphuc/togo/database/ent"
 	"github.com/trinhdaiphuc/togo/database/ent/migrate"
-	"time"
 )
 
 type DB struct {
@@ -37,7 +39,6 @@ func NewDB(cfg *configs.Config) (*DB, func(), error) {
 		migrate.WithDropIndex(true),
 		migrate.WithDropColumn(true),
 		migrate.WithForeignKeys(true),
-		migrate.WithFixture(true),
 	); err != nil {
 		logrus.Panicf("failed creating schema resources: %v", err)
 	}

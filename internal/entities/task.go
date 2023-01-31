@@ -11,8 +11,8 @@ type Task struct {
 
 type Tasks struct {
 	Tasks []*Task `json:"tasks"`
-	Total int    `json:"total"`
-	Page  int    `json:"page"`
+	Total int     `json:"total"`
+	Page  int     `json:"page"`
 }
 
 type TaskFilter struct {

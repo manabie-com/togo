@@ -3,16 +3,18 @@ package taskservice
 import (
 	"context"
 	"errors"
+	"reflect"
+	"testing"
+
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+
 	"github.com/trinhdaiphuc/togo/configs"
 	"github.com/trinhdaiphuc/togo/internal/entities"
 	"github.com/trinhdaiphuc/togo/internal/repository"
 	"github.com/trinhdaiphuc/togo/internal/repository/mock"
 	"github.com/trinhdaiphuc/togo/pkg/helper"
-	"reflect"
-	"testing"
 )
 
 func Test_TaskServiceCreateTask(t *testing.T) {

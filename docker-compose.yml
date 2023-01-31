@@ -18,10 +18,11 @@ services:
 
   mysql:
     container_name: mysql
-    image: mysql:5.7.22
+    image: bitnami/mysql:8.0
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_USER: root
+      MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: togo
     ports:
       - "3306:3306"

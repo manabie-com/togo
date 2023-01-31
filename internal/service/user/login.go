@@ -2,12 +2,14 @@ package userservice
 
 import (
 	"context"
+	"time"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/sirupsen/logrus"
+
 	"github.com/trinhdaiphuc/togo/internal/entities"
 	"github.com/trinhdaiphuc/togo/pkg/helper"
-	"time"
 )
 
 func (u *userService) Login(ctx context.Context, user *entities.User) (*entities.User, error) {
@@ -17,7 +19,7 @@ func (u *userService) Login(ctx context.Context, user *entities.User) (*entities
 		logrus.Errorf("GetUserByName err %v", err)
 		return nil, err
 	}
-	if helper.CheckPasswordHash(userResp.Password, user.Password) {
+	if !helper.CheckPasswordHash(user.Password, userResp.Password) {
 		return nil, fiber.ErrUnauthorized
 	}
 

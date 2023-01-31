@@ -1,8 +1,9 @@
 package configs
 
 import (
-	"github.com/trinhdaiphuc/env_config"
 	"time"
+
+	"github.com/trinhdaiphuc/env_config"
 )
 
 type Config struct {
@@ -12,7 +13,7 @@ type Config struct {
 	DBHost      string        `env:"DB_HOST,localhost"`
 	DBPort      int           `env:"DB_PORT,3306"`
 	DBUser      string        `env:"DB_USER,root"`
-	DBPassword  string        `env:"DB_PASSWORD,root"`
+	DBPassword  string        `env:"DB_PASSWORD,password"`
 	DBName      string        `env:"DB_NAME,togo"`
 }
 

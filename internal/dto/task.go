@@ -1,9 +1,10 @@
 package dto
 
 import (
+	"time"
+
 	"github.com/trinhdaiphuc/togo/database/ent"
 	"github.com/trinhdaiphuc/togo/internal/entities"
-	"time"
 )
 
 func Task2TaskEntity(task *ent.Task) *entities.Task {
@@ -18,9 +19,9 @@ func Task2TaskEntity(task *ent.Task) *entities.Task {
 }
 
 func Tasks2TasksEntity(tasks []*ent.Task) []*entities.Task {
-	var tasksEntity []*entities.Task
-	for _, task := range tasks {
-		tasksEntity = append(tasksEntity, Task2TaskEntity(task))
+	tasksEntity := make([]*entities.Task, len(tasks))
+	for idx, task := range tasks {
+		tasksEntity[idx] = Task2TaskEntity(task)
 	}
 	return tasksEntity
 }

@@ -18,8 +18,8 @@ import (
 var (
 	infrastructureSet = wire.NewSet(infrastructure.NewDB)
 	repositorySet     = wire.NewSet(repository.NewTaskRepository, repository.NewUserRepository)
-	serviceSet       = wire.NewSet(service.NewService, userservice.NewUserService, taskservice.NewTaskService)
-	handlerSet       = wire.NewSet(v1.NewTaskHandler, v1.NewUserHandler)
+	serviceSet        = wire.NewSet(service.NewService, userservice.NewUserService, taskservice.NewTaskService)
+	handlerSet        = wire.NewSet(v1.NewTaskHandler, v1.NewUserHandler)
 )
 
 func InitializeServer() (*api.Server, func(), error) {

@@ -1,10 +1,12 @@
 package v1
 
 import (
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
+
 	"github.com/trinhdaiphuc/togo/internal/entities"
 	"github.com/trinhdaiphuc/togo/internal/service"
-	"strconv"
 )
 
 type TaskHandler struct {
