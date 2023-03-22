@@ -17,3 +17,8 @@
 out/
 
 .idea
+node_modules/
+log/
+*/dist/
+*.dev.js
+.nyc_output/
