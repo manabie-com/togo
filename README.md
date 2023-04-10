@@ -1,6 +1,6 @@
 ### Description
 This API is to implement rate limit handling for task creation, the API was written in Nodejs.
-This API follow clean architecture with `Controller` -> `Service` -> `Model` layer and trying to follow as much as possible SOLID principle.
+This API follow `Clean Architecture` with `Controller` -> `Service` -> `Model` layer and trying to follow as much as possible SOLID principle.
 
 ### Tech stack
 - Nodejs
@@ -10,8 +10,8 @@ This API follow clean architecture with `Controller` -> `Service` -> `Model` lay
 ### Idea, Model
 There are 2 models in this case
 - User
-  - every user has his own quota of creating task, the `max_post_by_day` (default `MAX_NUMBER_TASK_CREATED` = 3)indicate maximum number of task user can create while the `remaining_post` is number of remaining tasks user is allowed to create. the `last_task_created_at` is date of the last task was created. (its null if user has never created task before)
-  - every time a task is created, app check the `remaining_post` , if user has no more quota on that day then return `IN_SUFFICIENT_QUOTA` error, otherwise duduct 1 task number.
+  - every user has his own quota of creating task, the `max_post_by_day` (default `MAX_NUMBER_TASK_CREATED` = 3) indicates maximum number of task that a user can create while the `remaining_post` is number of remaining tasks that user is allowed to create. The `last_task_created_at` is date of the last task was created. (its null if user has never created a task before)
+  - every time a task is created, the app will check the `remaining_post`, if user has no more quota on that day then return `IN_SUFFICIENT_QUOTA` error, otherwise deduct 1 task number.
   
    ```
    {
@@ -34,8 +34,8 @@ There are 2 models in this case
    }
 
 ### How to run
-- start mongo via docker : `docker-compose up`
-- run app `npm run start`
+- Start mongo via docker : `docker-compose up`
+- Run app `npm run start`
 
 ### Give a try
 - try api via swagger API at : `http://localhost:3001/api-docs`
@@ -71,7 +71,7 @@ There are 2 models in this case
     'localhost:3001/user/64342477f3de8adde575c27f' \
     --header 'Accept: */*' \
     --header 'User-Agent: Thunder Client (https://www.thunderclient.com)' \
-    --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MzQyNDc3ZjNkZThhZGRlNTc1YzI3ZiIsImlhdCI6MTY4MTEzODk1Nn0.qh5L0PQUaYjzwXXN-CnQsR0Fhg_4NrIMxnK1u2QAVgY' \
+    --header 'Authorization: Bearer JWT_TOKEN' \
     --header 'Content-Type: application/json' \
     --data-raw '{
     "email": "hai@gmail.com"
@@ -84,7 +84,7 @@ There are 2 models in this case
     'localhost:3001/task' \
     --header 'Accept: */*' \
     --header 'User-Agent: Thunder Client (https://www.thunderclient.com)' \
-    --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MzQyNDc3ZjNkZThhZGRlNTc1YzI3ZiIsImlhdCI6MTY4MTEzODk1Nn0.qh5L0PQUaYjzwXXN-CnQsR0Fhg_4NrIMxnK1u2QAVgY' \
+    --header 'Authorization: Bearer JWT_TOKEN' \
     --header 'Content-Type: application/json' \
     --data-raw '{
     "title": "this is title",
@@ -100,5 +100,7 @@ There are 2 models in this case
 ### Notes
 - What if I have more time?
   - I will try to find better solution for scale 
+- What do I like about this API?
+  - its fairly simple. hope you like it too :)
   
 
