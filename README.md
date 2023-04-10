@@ -35,6 +35,7 @@ There are 2 models in this case
 
 ### How to run
 - Start mongo via docker : `docker-compose up`
+- Install dependencies: `npm i`
 - Run app `npm run start`
 
 ### Give a try
