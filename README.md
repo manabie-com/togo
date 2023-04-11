@@ -1,32 +1,107 @@
-### Requirements
+### Description
+This API is to implement rate limit handling for task creation, the API was written in Nodejs.
+This API follow `Clean Architecture` with `Controller` -> `Service` -> `Model` layer and trying to follow as much as possible SOLID principle.
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Using Docker to run locally
-  - Using Docker for database (if used) is mandatory.
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+### Tech stack
+- Nodejs
+- MongoDB
+- Docker
+
+### Idea, Model
+There are 2 models in this case
+- User
+  - every user has his own quota of creating task, the `max_post_by_day` (default `MAX_NUMBER_TASK_CREATED` = 3) indicates maximum number of task that a user can create while the `remaining_post` is number of remaining tasks that user is allowed to create. The `last_task_created_at` is date of the last task was created. (its null if user has never created a task before)
+  - every time a task is created, the app will check the `remaining_post`, if user has no more quota on that day then return `IN_SUFFICIENT_QUOTA` error, otherwise deduct 1 task number.
+  
+   ```
+   {
+        email: { type: String, unique: true },
+        quota: {
+            max_post_by_day: { type: Number },
+            last_task_created_at: { type: Date },
+            remaining_post: { type: Number }
+        }
+   }
+
+
+- Task
+  - Simply a task object with author information
+   ```
+   {
+      title: { type: String },
+      content: { type: String },
+      author: { type: ObjectID, ref: 'user' }
+   }
+
+### How to run
+- Start mongo via docker : `docker-compose up`
+- Install dependencies: `npm i`
+- Run app `npm run start`
+
+### Give a try
+- try api via swagger API at : `http://localhost:3001/api-docs`
+- or curl
+  - Create user
+  ```
+  curl -X POST \
+    'localhost:3001/user/register' \
+    --header 'Accept: */*' \
+    --header 'User-Agent: Thunder Client (https://www.thunderclient.com)' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+    "email": "user999@gmail.com",
+    "password" : "123"
+  }'
+  ```
+
+  - Login
+  ```
+    curl -X POST \
+    'localhost:3001/user/login' \
+    --header 'Accept: */*' \
+    --header 'User-Agent: Thunder Client (https://www.thunderclient.com)' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+    "email": "user999@gmail.com",
+    "password" : "123"
+  }'
+  ```
+  - Get User
+  ```
+  curl -X GET \
+    'localhost:3001/user/64342477f3de8adde575c27f' \
+    --header 'Accept: */*' \
+    --header 'User-Agent: Thunder Client (https://www.thunderclient.com)' \
+    --header 'Authorization: Bearer JWT_TOKEN' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+    "email": "hai@gmail.com"
+  }'
+  ```
+
+  - Create task (send more than `MAX_NUMBER_TASK_CREATED` to hit rate limit)
+  ```
+    curl -X POST \
+    'localhost:3001/task' \
+    --header 'Accept: */*' \
+    --header 'User-Agent: Thunder Client (https://www.thunderclient.com)' \
+    --header 'Authorization: Bearer JWT_TOKEN' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+    "title": "this is title",
+    "content" : "123"
+  }'
+  ```
+
+### Run Test
+- unit test: `npm run test:unit`
+- integration test: `npm run test:integration`
+- all test: `npm run test`
 
 ### Notes
+- What if I have more time?
+  - I will try to find better solution for scale 
+- What do I like about this API?
+  - its fairly simple. hope you like it too :)
+  
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
-
-### How to submit your solution?
-
-- Fork this repo and show us your development progress via a PR
-
-### Interesting facts about Manabie
-
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
-
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.

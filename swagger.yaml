@@ -1,0 +1,264 @@
+openapi: 3.0.1
+info:
+  title: Togo API
+  description: "APIs document for The Togo"
+  contact:
+    email: info@togo.com
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: http://localhost:3001
+  - url: https://api.sanbong24h.vn
+
+tags:
+  - name: User
+    description: Operations about user
+  - name: Task
+    description: Operations about task
+paths:
+  /user/register:
+    post:
+      tags:
+        - User
+      summary: User registration
+      description: Create new user in the system
+      requestBody:
+        description: User information in order to be created
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: email in string
+                  example: user@gmail.com
+                password:
+                  type: string
+                  description: password in string
+                  example: pass1234
+        required: true
+      responses:
+        201:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  _id:
+                    type: string
+        400:
+          description: common error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: unexptected server internal error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_msg:
+                    type: string
+                    example: CONTACT_SUPPORT
+  /user/login:
+    post:
+      tags:
+        - User
+      summary: User login
+      description: User validation and login
+      requestBody:
+        description: User login information
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: email in string
+                  example: user@gmail.com
+                password:
+                  type: string
+                  description: password in string
+                  example: pass1234
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  access_token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MzJjNTFmMjEzMzdmOWI5NTE3YzM3YSIsImlhdCI6MTY4MTA0ODg4MH0.eqcVNFsoSU6fv4PWNKPCdMYQB3j_FmLJL7a-X5eapmc
+        400:
+          description: hit rate limit create task or common error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: unexptected server internal error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_msg:
+                    type: string
+                    example: CONTACT_SUPPORT
+  /user/{id}:
+    get:
+      tags:
+        - User
+      summary: Get user
+      description: Get user information and task creation quota
+      parameters:
+        - name: id
+          in: path
+          description: user id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/User"
+        400:
+          description: common error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: unexptected server internal error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_msg:
+                    type: string
+                    example: CONTACT_SUPPORT
+      security:
+        - JWT: []
+  /task:
+    post:
+      tags:
+        - Task
+      summary: Create task
+      description: User create task
+      requestBody:
+        description: Task information
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: task title
+                  example: Implement togo api
+                content:
+                  type: string
+                  description: task content
+                  example: Togo Api in Nodejs is awesome
+        required: true
+      responses:
+        201:
+          description: Successful create task
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+        400:
+          description: hit rate limit create task or common error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: unexptected server internal error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_msg:
+                    type: string
+                    example: CONTACT_SUPPORT
+      security:
+        - JWT: []
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+        email:
+          type: string
+        quota:
+          type: object
+          properties:
+            max_post_by_day:
+              type: number
+              example: 5
+            remaining_post:
+              type: number
+              example: 5
+            last_task_created_at:
+              type: string
+              format: date-time
+      xml:
+        name: Error
+    Task:
+      type: object
+      properties:
+        _id:
+          type: string
+        title:
+          type: string
+        content:
+          type: string
+      xml:
+        name: Error
+    Error:
+      type: object
+      properties:
+        status_code:
+          type: number
+        error_msg:
+          type: string
+      xml:
+        name: Error
+    ApiResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+  securitySchemes:
+    JWT:
+      type: apiKey
+      name: Authorization
+      in: header
