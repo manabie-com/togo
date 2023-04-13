@@ -41,3 +41,18 @@ services:
       REDIS_POOL_MAX_IDLE: 10
       REDIS_URI: redis://redis-db:6379
       SHOW_LOG: ${SHOW_LOG}
+
+  todo-server:
+    build:
+      context: ./services/todo_service
+      dockerfile: ./cmd/server/Dockerfile.dep
+    environment:
+      APP_ENV: dev
+      LOG_LEVEL: ${LOG_LEVEL}
+      MDB_GORM_DB_PING_INTERVAL: 5
+      MDB_GORM_DB_TYPE: postgres
+      MDB_GORM_DB_URI: ${MDB_GORM_DB_URI}
+      REDIS_POOL_MAX_ACTIVE:
+      REDIS_POOL_MAX_IDLE: 10
+      REDIS_URI: redis://redis-db:6379
+      SHOW_LOG: ${SHOW_LOG}

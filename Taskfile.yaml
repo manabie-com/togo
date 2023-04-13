@@ -10,6 +10,13 @@ tasks:
       - docker-compose build user-server
       - docker-compose up user-server
 
+  todo-server:
+    cmds:
+      - cd services/todo_service && GOOS=linux GARCH=amd64 CGO_ENABLED=0 go build -o togo cmd/server/main.go
+      - defer: cd services/todo_service && rm togo
+      - docker-compose build todo-server
+      - docker-compose up todo-server
+
   migrate:
     desc: migrate db
     cmds:
