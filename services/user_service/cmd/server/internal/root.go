@@ -6,7 +6,9 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/phathdt/libs/go-sdk/httpserver/middleware"
 	"user_service/common"
+	"user_service/modules/usertransport/ginuser"
 
 	"github.com/phathdt/libs/go-sdk/plugin/storage/sdkgorm"
 	"github.com/phathdt/libs/go-sdk/plugin/storage/sdkredis"
@@ -44,11 +46,18 @@ var rootCmd = &cobra.Command{
 		}
 
 		service.HTTPServer().AddHandler(func(engine *gin.Engine) {
+			engine.Use(middleware.Recover())
+
 			engine.GET("/ping", func(c *gin.Context) {
 				c.JSON(http.StatusOK, gin.H{
 					"message": "pong",
 				})
 			})
+
+			users := engine.Group("/api/users")
+			{
+				users.POST("/register", ginuser.Register(service))
+			}
 		})
 
 		if err := service.Start(); err != nil {
