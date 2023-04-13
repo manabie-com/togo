@@ -1,0 +1,43 @@
+version: "3.9"
+services:
+  postgres-db:
+    image: postgres:14.2-alpine
+    ports:
+      - "15432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123123123
+      POSTGRES_DB: togo
+
+  redis-db:
+    image: redis:7.0.5-alpine
+    ports:
+      - "16379:6379"
+
+  migrate:
+    build:
+      context: ./migrate
+      dockerfile: ./Dockerfile.dep
+    environment:
+      DB_URI: ${DB_URI}
+
+  gateway:
+    build:
+      context: ./gateway
+    ports:
+      - 4000:4000
+
+  user-server:
+    build:
+      context: ./services/user_service
+      dockerfile: ./cmd/server/Dockerfile.dep
+    environment:
+      APP_ENV: dev
+      LOG_LEVEL: ${LOG_LEVEL}
+      MDB_GORM_DB_PING_INTERVAL: 5
+      MDB_GORM_DB_TYPE: postgres
+      MDB_GORM_DB_URI: ${MDB_GORM_DB_URI}
+      REDIS_POOL_MAX_ACTIVE:
+      REDIS_POOL_MAX_IDLE: 10
+      REDIS_URI: redis://redis-db:6379
+      SHOW_LOG: ${SHOW_LOG}

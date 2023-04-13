@@ -1,0 +1,21 @@
+version: '3'
+
+dotenv: ['.env', '{{.ENV}}/.env.', '{{.HOME}}/.env']
+
+tasks:
+  user-server:
+    cmds:
+      - cd services/user_service && GOOS=linux GARCH=amd64 CGO_ENABLED=0 go build -o togo cmd/server/main.go
+      - defer: cd services/user_service && rm togo
+      - docker-compose build user-server
+      - docker-compose up user-server
+
+  migrate:
+    desc: migrate db
+    cmds:
+      - cd migrate && go run main.go {{.CLI_ARGS}}
+
+  gateway:
+    cmds:
+      - docker-compose build gateway
+      - docker-compose up gateway

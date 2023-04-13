@@ -1,0 +1,6 @@
+FROM alpine:3.17
+WORKDIR /
+COPY togo-migrate ./togo
+COPY /run.sh .
+
+ENTRYPOINT sh run.sh

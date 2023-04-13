@@ -1,0 +1,7 @@
+FROM alpine:3.17
+WORKDIR /
+RUN apk update
+COPY togo ./togo
+COPY /cmd/server/run.sh .
+
+ENTRYPOINT sh run.sh
