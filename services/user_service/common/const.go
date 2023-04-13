@@ -3,6 +3,7 @@ package common
 const (
 	DBMain                   = "mdb"
 	PluginRedis              = "redis"
+	PluginJWT                = "jwt"
 	PluginAsynqClient        = "asynq_client"
 	PluginAsynqMonitor       = "asynq_monitor"
 	PluginCronjob            = "cronjob"

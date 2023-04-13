@@ -8,13 +8,13 @@ import (
 
 // For reading
 type SQLModel struct {
-	ID        uint32    `json:"id" gorm:"id,PRIMARY_KEY"`
-	CreatedAt *JSONTime `json:"created_at,omitempty;" gorm:"column:created_at;"`
-	UpdatedAt *JSONTime `json:"updated_at,omitempty;" gorm:"column:updated_at;"`
+	ID        int        `json:"id" gorm:"id,PRIMARY_KEY"`
+	CreatedAt *time.Time `json:"created_at" gorm:"column:created_at;"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty" gorm:"column:updated_at;"`
 }
 
 func (m *SQLModel) FullFill() {
-	t := JSONTime(time.Now())
+	t := time.Now()
 
 	if m.UpdatedAt == nil {
 		m.UpdatedAt = &t
@@ -22,15 +22,15 @@ func (m *SQLModel) FullFill() {
 }
 
 func NewSQLModel() *SQLModel {
-	t := JSONTime(time.Now().UTC())
+	t := time.Now()
 	return &SQLModel{
 		CreatedAt: &t,
 		UpdatedAt: &t,
 	}
 }
 
-func NewUpsertSQLModel(id uint32) *SQLModel {
-	t := JSONTime(time.Now())
+func NewUpsertSQLModel(id int) *SQLModel {
+	t := time.Now()
 
 	return &SQLModel{
 		ID:        id,
@@ -40,7 +40,7 @@ func NewUpsertSQLModel(id uint32) *SQLModel {
 }
 
 func NewUpsertWithoutIdSQLModel() *SQLModel {
-	t := JSONTime(time.Now())
+	t := time.Now()
 
 	return &SQLModel{
 		CreatedAt: &t,

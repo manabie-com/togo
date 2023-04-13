@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/phathdt/libs/go-sdk/httpserver/middleware"
+	"github.com/phathdt/libs/go-sdk/plugin/tokenprovider/jwt"
 	"user_service/common"
 	"user_service/modules/usertransport/ginuser"
 
@@ -28,6 +29,7 @@ func newService() goservice.Service {
 		goservice.WithVersion(version),
 		goservice.WithInitRunnable(sdkgorm.NewGormDB("main", common.DBMain)),
 		goservice.WithInitRunnable(sdkredis.NewRedisDB("main", common.PluginRedis)),
+		goservice.WithInitRunnable(jwt.NewJWTProvider(common.PluginJWT)),
 	)
 
 	return s
@@ -57,6 +59,7 @@ var rootCmd = &cobra.Command{
 			users := engine.Group("/api/users")
 			{
 				users.POST("/register", ginuser.Register(service))
+				users.POST("/login", ginuser.Login(service))
 			}
 		})
 

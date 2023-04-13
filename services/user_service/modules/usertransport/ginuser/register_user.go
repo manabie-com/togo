@@ -13,7 +13,7 @@ import (
 	"user_service/modules/userstorage"
 )
 
-func Register(sc goservice.ServiceContext) func(ctx *gin.Context) {
+func Register(sc goservice.ServiceContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		var data usermodel.UserCreate
