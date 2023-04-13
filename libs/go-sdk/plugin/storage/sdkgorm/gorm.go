@@ -16,12 +16,8 @@ type GormDBType int
 const (
 	GormDBTypeMySQL GormDBType = iota + 1
 	GormDBTypePostgres
-	GormDBTypeSQLite
-	GormDBTypeMSSQL
 	GormDBTypeNotSupported
 )
-
-const retryCount = 10
 
 type GormOpt struct {
 	Uri          string
@@ -65,7 +61,7 @@ func (gdb *gormDB) InitFlags() {
 	}
 
 	flag.StringVar(&gdb.Uri, prefix+"gorm-db-uri", "", "Gorm database connection-string.")
-	flag.StringVar(&gdb.DBType, prefix+"gorm-db-type", "", "Gorm database type (mysql, postgres, sqlite, mssql)")
+	flag.StringVar(&gdb.DBType, prefix+"gorm-db-type", "", "Gorm database type (mysql, postgres)")
 	flag.IntVar(&gdb.PingInterval, prefix+"gorm-db-ping-interval", 5, "Gorm database ping check interval")
 }
 
@@ -126,10 +122,6 @@ func getDBType(dbType string) GormDBType {
 		return GormDBTypeMySQL
 	case "postgres":
 		return GormDBTypePostgres
-	case "sqlite":
-		return GormDBTypeSQLite
-	case "mssql":
-		return GormDBTypeMSSQL
 	}
 
 	return GormDBTypeNotSupported
@@ -141,10 +133,6 @@ func (gdb *gormDB) getDBConn(t GormDBType) (dbConn *gorm.DB, err error) {
 		return gormdialects.MySqlDB(gdb.Uri)
 	case GormDBTypePostgres:
 		return gormdialects.PostgresDB(gdb.Uri)
-	case GormDBTypeSQLite:
-		return gormdialects.SQLiteDB(gdb.Uri)
-	case GormDBTypeMSSQL:
-		return gormdialects.MSSqlDB(gdb.Uri)
 	}
 
 	return nil, nil
