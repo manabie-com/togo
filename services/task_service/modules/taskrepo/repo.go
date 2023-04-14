@@ -12,6 +12,7 @@ type TaskStorage interface {
 	CreateTask(ctx context.Context, data *taskmodel.TaskCreate) error
 	GetTask(ctx context.Context, cond map[string]interface{}) (*taskmodel.Task, error)
 	UpdateTask(ctx context.Context, cond map[string]interface{}, dataUpdate *taskmodel.TaskUpdate) error
+	DeleteTask(ctx context.Context, cond map[string]interface{}) error
 }
 
 type repo struct {
@@ -51,6 +52,14 @@ func (r *repo) GetTask(ctx context.Context, cond map[string]interface{}) (*taskm
 func (r *repo) UpdateTask(ctx context.Context, cond map[string]interface{}, dataUpdate *taskmodel.TaskUpdate) error {
 	if err := r.store.UpdateTask(ctx, cond, dataUpdate); err != nil {
 		return sdkcm.ErrCannotUpdateEntity("task", err)
+	}
+
+	return nil
+}
+
+func (r *repo) DeleteTask(ctx context.Context, cond map[string]interface{}) error {
+	if err := r.store.DeleteTask(ctx, cond); err != nil {
+		return sdkcm.ErrCannotDeleteEntity("task", err)
 	}
 
 	return nil

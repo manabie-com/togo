@@ -96,3 +96,12 @@ func (s *sqlStore) UpdateTask(ctx context.Context, cond map[string]interface{}, 
 
 	return nil
 }
+
+func (s *sqlStore) DeleteTask(ctx context.Context, cond map[string]interface{}) error {
+	var task taskmodel.Task
+	if err := s.db.Table(taskmodel.Task{}.TableName()).Where(cond).Delete(task).Error; err != nil {
+		return sdkcm.ErrDB(err)
+	}
+
+	return nil
+}
