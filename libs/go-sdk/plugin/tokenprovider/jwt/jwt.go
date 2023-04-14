@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt"
 	"github.com/phathdt/libs/go-sdk/plugin/tokenprovider"
+	"github.com/phathdt/libs/go-sdk/plugin/tokenprovider/common"
 )
 
 type jwtProvider struct {
@@ -31,7 +32,7 @@ func (p *jwtProvider) Name() string {
 }
 
 func (p *jwtProvider) InitFlags() {
-	flag.StringVar(&p.secret, "jwt-secret", "200Lab.io", "Secret key for generating JWT")
+	flag.StringVar(&p.secret, "jwt-secret", "secret", "Secret key for generating JWT")
 }
 
 func (p *jwtProvider) Configure() error {
@@ -59,7 +60,7 @@ func (j *jwtProvider) Generate(data tokenprovider.TokenPayload, expiry int) (tok
 	now := time.Now()
 
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256, myClaims{
-		TokenPayload{
+		common.TokenPayload{
 			UId: data.UserId(),
 		},
 		jwt.StandardClaims{
@@ -107,7 +108,7 @@ func (j *jwtProvider) Validate(myToken string) (tokenprovider.TokenPayload, erro
 }
 
 type myClaims struct {
-	Payload tokenprovider.TokenPayload `json:"payload"`
+	Payload common.TokenPayload `json:"payload"`
 	jwt.StandardClaims
 }
 

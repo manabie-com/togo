@@ -7,8 +7,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/phathdt/libs/go-sdk/httpserver/middleware"
+	middleware2 "github.com/phathdt/libs/go-sdk/plugin/middleware"
 	"github.com/phathdt/libs/go-sdk/plugin/tokenprovider/jwt"
+	"github.com/phathdt/libs/togo_appgrpc"
 	"todo_service/common"
+	"todo_service/modules/todotransport/gintodo"
 
 	"github.com/phathdt/libs/go-sdk/plugin/storage/sdkgorm"
 	"github.com/phathdt/libs/go-sdk/plugin/storage/sdkredis"
@@ -29,6 +32,7 @@ func newService() goservice.Service {
 		goservice.WithInitRunnable(sdkgorm.NewGormDB("main", common.DBMain)),
 		goservice.WithInitRunnable(sdkredis.NewRedisDB("main", common.PluginRedis)),
 		goservice.WithInitRunnable(jwt.NewJWTProvider(common.PluginJWT)),
+		goservice.WithInitRunnable(togo_appgrpc.NewUserClient(common.PluginGrpcUserClient)),
 	)
 
 	return s
@@ -54,6 +58,15 @@ var rootCmd = &cobra.Command{
 					"message": "pong",
 				})
 			})
+
+			userService := service.MustGet(common.PluginGrpcUserClient).(togo_appgrpc.UserClient)
+
+			middlewareAuth := middleware2.RequireAuth(userService, service)
+
+			todos := engine.Group("/api/todos", middlewareAuth)
+			{
+				todos.GET("", gintodo.ListTodo(service))
+			}
 		})
 
 		if err := service.Start(); err != nil {

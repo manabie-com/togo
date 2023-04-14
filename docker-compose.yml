@@ -56,3 +56,4 @@ services:
       REDIS_POOL_MAX_IDLE: 10
       REDIS_URI: redis://redis-db:6379
       SHOW_LOG: ${SHOW_LOG}
+      GRPC_USER_CLIENT_URL: user-server:50051

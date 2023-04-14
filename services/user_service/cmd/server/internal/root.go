@@ -7,14 +7,18 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/phathdt/libs/go-sdk/httpserver/middleware"
+	"github.com/phathdt/libs/go-sdk/plugin/appgrpc"
 	"github.com/phathdt/libs/go-sdk/plugin/tokenprovider/jwt"
+	"google.golang.org/grpc"
 	"user_service/common"
 	"user_service/modules/usertransport/ginuser"
+	"user_service/modules/usertransport/usergrpc"
 
 	"github.com/phathdt/libs/go-sdk/plugin/storage/sdkgorm"
 	"github.com/phathdt/libs/go-sdk/plugin/storage/sdkredis"
 
 	goservice "github.com/phathdt/libs/go-sdk"
+	protos "github.com/phathdt/libs/togo_proto/out/proto"
 	"github.com/spf13/cobra"
 )
 
@@ -30,6 +34,7 @@ func newService() goservice.Service {
 		goservice.WithInitRunnable(sdkgorm.NewGormDB("main", common.DBMain)),
 		goservice.WithInitRunnable(sdkredis.NewRedisDB("main", common.PluginRedis)),
 		goservice.WithInitRunnable(jwt.NewJWTProvider(common.PluginJWT)),
+		goservice.WithInitRunnable(appgrpc.NewGRPCServer(common.PluginGrpcServer)),
 	)
 
 	return s
@@ -42,6 +47,12 @@ var rootCmd = &cobra.Command{
 		service := newService()
 
 		serviceLogger := service.Logger("service")
+
+		service.MustGet(common.PluginGrpcServer).(interface {
+			SetRegisterHdl(hdl func(*grpc.Server))
+		}).SetRegisterHdl(func(server *grpc.Server) {
+			protos.RegisterUserServiceServer(server, usergrpc.NewUserGrpcServer(service))
+		})
 
 		if err := service.Init(); err != nil {
 			serviceLogger.Fatalln(err)
