@@ -74,3 +74,25 @@ func (s *sqlStore) CreateTask(ctx context.Context, data *taskmodel.TaskCreate) e
 
 	return nil
 }
+
+func (s *sqlStore) GetTask(ctx context.Context, cond map[string]interface{}) (*taskmodel.Task, error) {
+	var data taskmodel.Task
+
+	if err := s.db.Where(cond).First(&data).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, sdkcm.RecordNotFound
+		}
+
+		return nil, sdkcm.ErrDB(err)
+	}
+
+	return &data, nil
+}
+
+func (s *sqlStore) UpdateTask(ctx context.Context, cond map[string]interface{}, dataUpdate *taskmodel.TaskUpdate) error {
+	if err := s.db.Where(cond).Updates(dataUpdate).Error; err != nil {
+		return sdkcm.ErrDB(err)
+	}
+
+	return nil
+}
