@@ -9,6 +9,7 @@ import (
 
 type TaskStorage interface {
 	ListItem(ctx context.Context, filter *taskmodel.Filter, paging *sdkcm.Paging) ([]taskmodel.Task, error)
+	CreateTask(ctx context.Context, data *taskmodel.TaskCreate) error
 }
 
 type repo struct {
@@ -26,4 +27,12 @@ func (r *repo) ListItem(ctx context.Context, filter *taskmodel.Filter, paging *s
 	}
 
 	return tasks, nil
+}
+
+func (r *repo) CreateTask(ctx context.Context, data *taskmodel.TaskCreate) error {
+	if err := r.store.CreateTask(ctx, data); err != nil {
+		return err
+	}
+
+	return nil
 }

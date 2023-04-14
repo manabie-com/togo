@@ -58,3 +58,19 @@ func (s *sqlStore) ListItem(ctx context.Context, filter *taskmodel.Filter, pagin
 
 	return tasks, nil
 }
+
+func (s *sqlStore) CreateTask(ctx context.Context, data *taskmodel.TaskCreate) error {
+	db := s.db.Begin()
+
+	if err := db.Table(data.TableName()).Create(data).Error; err != nil {
+		db.Rollback()
+		return sdkcm.ErrDB(err)
+	}
+
+	if err := db.Commit().Error; err != nil {
+		db.Rollback()
+		return sdkcm.ErrDB(err)
+	}
+
+	return nil
+}

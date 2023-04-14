@@ -65,6 +65,7 @@ var rootCmd = &cobra.Command{
 
 			todos := engine.Group("/api/tasks", middlewareAuth)
 			{
+				todos.POST("", taskgin.CreateTask(service))
 				todos.GET("", taskgin.ListTasks(service))
 			}
 		})
