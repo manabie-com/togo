@@ -1,7 +1,7 @@
 package main
 
 import (
-	cmd "todo_service/cmd/server/internal"
+	cmd "task_service/cmd/server/internal"
 )
 
 func main() {

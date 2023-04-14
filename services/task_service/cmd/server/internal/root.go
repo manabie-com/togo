@@ -10,8 +10,8 @@ import (
 	middleware2 "github.com/phathdt/libs/go-sdk/plugin/middleware"
 	"github.com/phathdt/libs/go-sdk/plugin/tokenprovider/jwt"
 	"github.com/phathdt/libs/togo_appgrpc"
-	"todo_service/common"
-	"todo_service/modules/todotransport/gintodo"
+	"task_service/common"
+	"task_service/modules/tasktransport/taskgin"
 
 	"github.com/phathdt/libs/go-sdk/plugin/storage/sdkgorm"
 	"github.com/phathdt/libs/go-sdk/plugin/storage/sdkredis"
@@ -65,7 +65,7 @@ var rootCmd = &cobra.Command{
 
 			todos := engine.Group("/api/tasks", middlewareAuth)
 			{
-				todos.GET("", gintodo.ListTasks(service))
+				todos.GET("", taskgin.ListTasks(service))
 			}
 		})
 

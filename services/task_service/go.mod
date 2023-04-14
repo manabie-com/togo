@@ -1,4 +1,4 @@
-module todo_service
+module task_service
 
 go 1.19
 
