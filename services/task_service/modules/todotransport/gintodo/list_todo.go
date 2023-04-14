@@ -8,7 +8,7 @@ import (
 	"github.com/phathdt/libs/go-sdk/sdkcm"
 )
 
-func ListTodo(sc goservice.ServiceContext) gin.HandlerFunc {
+func ListTasks(sc goservice.ServiceContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.JSON(http.StatusOK, sdkcm.SimpleSuccessResponse("ok"))
 	}

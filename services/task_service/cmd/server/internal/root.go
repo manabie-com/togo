@@ -21,7 +21,7 @@ import (
 )
 
 var (
-	serviceName = "todo-service"
+	serviceName = "task-service"
 	version     = "1.0.0"
 )
 
@@ -40,7 +40,7 @@ func newService() goservice.Service {
 
 var rootCmd = &cobra.Command{
 	Use:   "app",
-	Short: "Start todo service",
+	Short: "Start task service",
 	Run: func(cmd *cobra.Command, args []string) {
 		service := newService()
 
@@ -63,9 +63,9 @@ var rootCmd = &cobra.Command{
 
 			middlewareAuth := middleware2.RequireAuth(userService, service)
 
-			todos := engine.Group("/api/todos", middlewareAuth)
+			todos := engine.Group("/api/tasks", middlewareAuth)
 			{
-				todos.GET("", gintodo.ListTodo(service))
+				todos.GET("", gintodo.ListTasks(service))
 			}
 		})
 

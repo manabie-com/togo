@@ -42,9 +42,9 @@ services:
       REDIS_URI: redis://redis-db:6379
       SHOW_LOG: ${SHOW_LOG}
 
-  todo-server:
+  task-server:
     build:
-      context: ./services/todo_service
+      context: services/task_service
       dockerfile: ./cmd/server/Dockerfile.dep
     environment:
       APP_ENV: dev
