@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/golang-module/carbon/v2"
 	"github.com/phathdt/libs/go-sdk/sdkcm"
 	"task_service/modules/taskmodel"
 )
@@ -11,6 +12,7 @@ import (
 type DeleteTaskRepo interface {
 	GetTask(ctx context.Context, cond map[string]interface{}) (*taskmodel.Task, error)
 	DeleteTask(ctx context.Context, cond map[string]interface{}) error
+	IncrByNumberTaskToday(ctx context.Context, userId, number int) (int, error)
 }
 
 type deleteTaskHdl struct {
@@ -35,6 +37,10 @@ func (h *deleteTaskHdl) Response(ctx context.Context, id int) error {
 
 	if err = h.repo.DeleteTask(ctx, map[string]interface{}{"id": id}); err != nil {
 		return sdkcm.ErrCannotDeleteEntity("task", err)
+	}
+
+	if data.CreatedDate.IsSameDay(carbon.Now()) {
+		h.repo.IncrByNumberTaskToday(ctx, h.requester.ID, -1)
 	}
 
 	return nil

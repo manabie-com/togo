@@ -14,6 +14,7 @@ import (
 
 type UserClient interface {
 	FindUser(ctx context.Context, conditions map[string]interface{}) (*sdkcm.SimpleUser, error)
+	GetUserLimit(ctx context.Context, userId int) (int, error)
 }
 
 type userClient struct {
@@ -94,4 +95,13 @@ func (uc *userClient) FindUser(ctx context.Context, conditions map[string]interf
 	}
 
 	return &user, nil
+}
+
+func (uc *userClient) GetUserLimit(ctx context.Context, userId int) (int, error) {
+	rs, err := uc.client.GetUserLimit(ctx, &protos.GetUserLimitRequest{UserId: int32(userId)})
+	if err != nil {
+		return 0, sdkcm.ErrCannotGetEntity("user", err)
+	}
+
+	return int(rs.Limit), nil
 }

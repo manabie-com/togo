@@ -4,8 +4,10 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v8"
 	goservice "github.com/phathdt/libs/go-sdk"
 	"github.com/phathdt/libs/go-sdk/sdkcm"
+	"github.com/phathdt/libs/togo_appgrpc"
 	"gorm.io/gorm"
 	"task_service/common"
 	"task_service/modules/taskhandler"
@@ -26,10 +28,14 @@ func CreateTask(sc goservice.ServiceContext) gin.HandlerFunc {
 
 		data.UserId = user.ID
 
+		userService := sc.MustGet(common.PluginGrpcUserClient).(togo_appgrpc.UserClient)
+
 		db := sc.MustGet(common.DBMain).(*gorm.DB)
+		redisClient := sc.MustGet(common.PluginRedis).(*redis.Client)
 		store := taskstorage.NewSQLStore(db)
-		repo := taskrepo.NewRepo(store)
-		hdl := taskhandler.NewCreateTaskHdl(repo)
+		redisStore := taskstorage.NewRedisStore(redisClient)
+		repo := taskrepo.NewRepo(store, redisStore)
+		hdl := taskhandler.NewCreateTaskHdl(repo, userService, user)
 
 		if err := hdl.Response(c.Request.Context(), &data); err != nil {
 			panic(err)

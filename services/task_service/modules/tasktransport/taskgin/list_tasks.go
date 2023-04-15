@@ -1,9 +1,11 @@
 package taskgin
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v8"
 	goservice "github.com/phathdt/libs/go-sdk"
 	"github.com/phathdt/libs/go-sdk/sdkcm"
 	"gorm.io/gorm"
@@ -31,9 +33,13 @@ func ListTasks(sc goservice.ServiceContext) gin.HandlerFunc {
 
 		queryString.Filter.UserId = user.ID
 
+		fmt.Printf("query = %#v\n", queryString.Filter)
+
 		db := sc.MustGet(common.DBMain).(*gorm.DB)
+		redisClient := sc.MustGet(common.PluginRedis).(*redis.Client)
 		store := taskstorage.NewSQLStore(db)
-		repo := taskrepo.NewRepo(store)
+		redisStore := taskstorage.NewRedisStore(redisClient)
+		repo := taskrepo.NewRepo(store, redisStore)
 		hdl := taskhandler.NewListTaskHdl(repo)
 
 		tasks, err := hdl.Response(c.Request.Context(), &queryString.Filter, &queryString.Paging)

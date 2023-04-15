@@ -30,6 +30,10 @@ func (s *sqlStore) ListItem(ctx context.Context, filter *taskmodel.Filter, pagin
 		if userId := f.UserId; userId != 0 {
 			db = db.Where("user_id = ?", userId)
 		}
+
+		if createdDate := f.CreatedDate; createdDate != nil {
+			db = db.Where("created_date = ?", createdDate)
+		}
 	}
 
 	if err := db.Select("id").Count(&paging.Total).Error; err != nil {

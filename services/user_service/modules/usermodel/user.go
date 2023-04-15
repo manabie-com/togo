@@ -7,7 +7,7 @@ type User struct {
 	Email          string `json:"email" gorm:"column:email;"`
 	Password       string `json:"password" gorm:"column:password;"`
 	Salt           string `json:"-" gorm:"column:salt;"`
-	LimitTask      string `json:"limit_task" gorm:"column:limit_task"`
+	LimitTask      int    `json:"limit_task" gorm:"column:limit_task"`
 }
 
 func (u User) TableName() string {
