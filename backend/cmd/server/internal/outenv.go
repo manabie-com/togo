@@ -6,6 +6,6 @@ var outEnvCmd = &cobra.Command{
 	Use:   "outenv",
 	Short: "Output all environment variables to std",
 	Run: func(cmd *cobra.Command, args []string) {
-		newService().OutEnv()
+		NewService().OutEnv()
 	},
 }
