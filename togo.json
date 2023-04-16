@@ -1,0 +1,210 @@
+{
+	"info": {
+		"_postman_id": "29bcacf1-4891-4638-bb13-f8869872ccde",
+		"name": "Togo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2089307"
+	},
+	"item": [
+		{
+			"name": "register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"aaa1@abc.com\",\n    \"password\": \"123123123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/users/register",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"aaa1@abc.com\",\n    \"password\": \"123123123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/users/login",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "list tasks",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/tasks?created_date=2023-04-14",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"tasks"
+					],
+					"query": [
+						{
+							"key": "created_date",
+							"value": "2023-04-14"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create task",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"content\": \"ahihi\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/tasks?is_done=true",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"tasks"
+					],
+					"query": [
+						{
+							"key": "is_done",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update task",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"content\": \"ahih1\",\n    \"is_done\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/tasks/3",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"tasks",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete task",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/tasks/3",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"tasks",
+						"3"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
