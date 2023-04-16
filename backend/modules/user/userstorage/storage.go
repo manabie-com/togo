@@ -33,15 +33,7 @@ func (s *sqlStore) FindUser(ctx context.Context, conditions map[string]interface
 }
 
 func (s *sqlStore) CreateUser(ctx context.Context, data *usermodel.UserCreate) error {
-	db := s.db.Begin()
-
-	if err := db.Table(data.TableName()).Create(data).Error; err != nil {
-		db.Rollback()
-		return sdkcm.ErrDB(err)
-	}
-
-	if err := db.Commit().Error; err != nil {
-		db.Rollback()
+	if err := s.db.Table(data.TableName()).Create(data).Error; err != nil {
 		return sdkcm.ErrDB(err)
 	}
 
