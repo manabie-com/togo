@@ -13,14 +13,17 @@ type ListTaskRepo interface {
 }
 
 type listTaskHdl struct {
-	repo ListTaskRepo
+	repo      ListTaskRepo
+	requester *sdkcm.SimpleUser
 }
 
-func NewListTaskHdl(repo ListTaskRepo) *listTaskHdl {
-	return &listTaskHdl{repo: repo}
+func NewListTaskHdl(repo ListTaskRepo, requester *sdkcm.SimpleUser) *listTaskHdl {
+	return &listTaskHdl{repo: repo, requester: requester}
 }
 
 func (h *listTaskHdl) Response(ctx context.Context, filter *taskmodel.Filter, paging *sdkcm.Paging) ([]taskmodel.Task, error) {
+	filter.UserId = h.requester.ID
+
 	data, err := h.repo.ListItem(ctx, filter, paging)
 
 	if err != nil {

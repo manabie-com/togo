@@ -32,6 +32,8 @@ func (h *createTaskHdl) Response(ctx context.Context, data *taskmodel.TaskCreate
 	revertNumber := 0
 	defer h.repo.IncrByNumberTaskToday(ctx, h.requester.ID, revertNumber)
 
+	data.UserId = h.requester.ID
+
 	limit, err := h.userRepo.GetUserLimit(ctx, h.requester.ID)
 	if err != nil {
 		return common.ErrCannotGetUserLimit

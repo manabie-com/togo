@@ -30,14 +30,12 @@ func ListTasks(sc goservice.ServiceContext) gin.HandlerFunc {
 
 		queryString.Paging.FullFill()
 
-		queryString.Filter.UserId = user.ID
-
 		db := sc.MustGet(common.DBMain).(*gorm.DB)
-		redisClient := sc.MustGet(common.PluginRedis).(*redis.Client)
 		store := taskstorage.NewSQLStore(db)
+		redisClient := sc.MustGet(common.PluginRedis).(*redis.Client)
 		redisStore := taskstorage.NewRedisStore(redisClient)
 		repo := taskrepo.NewRepo(store, redisStore)
-		hdl := taskhandler.NewListTaskHdl(repo)
+		hdl := taskhandler.NewListTaskHdl(repo, user)
 
 		tasks, err := hdl.Response(c.Request.Context(), &queryString.Filter, &queryString.Paging)
 		if err != nil {

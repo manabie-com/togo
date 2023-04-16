@@ -27,8 +27,6 @@ func CreateTask(sc goservice.ServiceContext) gin.HandlerFunc {
 			panic(err)
 		}
 
-		data.UserId = user.ID
-
 		db := sc.MustGet(common.DBMain).(*gorm.DB)
 
 		redisClient := sc.MustGet(common.PluginRedis).(*redis.Client)
