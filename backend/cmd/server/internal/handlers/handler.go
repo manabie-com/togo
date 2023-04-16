@@ -38,6 +38,8 @@ func NewHandlers(sc goservice.ServiceContext) func(engine *gin.Engine) {
 		store := userstorage.NewSQLStore(db)
 		middlewareAuth := middleware2.RequireAuth(store, sc)
 
+		engine.PATCH("/api/users/setting", middlewareAuth, ginuser.UpdateLimit(sc))
+
 		todos := engine.Group("/api/tasks", middlewareAuth)
 		{
 			todos.PATCH("/:id", taskgin.UpdateTask(sc))

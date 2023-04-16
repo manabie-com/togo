@@ -107,6 +107,17 @@ curl --location 'localhost:4000/api/users/login' \
 }'
 ```
 
+
+update user limit task by day
+```bash
+curl --location --request PATCH 'localhost:4000/api/users/setting' \
+--header 'Authorization: Bearer ${token}' \
+--header 'Content-Type: application/json' \
+--data '{
+    "limit_task": 5
+}'
+```
+
 create task
 ```bash
 curl --location 'localhost:4000/api/tasks?is_done=true' \

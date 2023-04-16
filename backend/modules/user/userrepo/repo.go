@@ -10,6 +10,7 @@ import (
 type UserStorage interface {
 	FindUser(ctx context.Context, conditions map[string]interface{}) (*usermodel.User, error)
 	CreateUser(ctx context.Context, data *usermodel.UserCreate) error
+	UpdateUser(ctx context.Context, cond map[string]interface{}, dataUpdate *usermodel.UserLimit) error
 }
 
 type repo struct {
@@ -44,4 +45,13 @@ func (r *repo) FindUser(ctx context.Context, conditions map[string]interface{}) 
 	}
 
 	return user, nil
+}
+
+func (r *repo) UpdateUser(ctx context.Context, cond map[string]interface{}, dataUpdate *usermodel.UserLimit) error {
+	err := r.store.UpdateUser(ctx, cond, dataUpdate)
+	if err != nil {
+		return sdkcm.ErrCannotUpdateEntity("user", err)
+	}
+
+	return nil
 }

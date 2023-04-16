@@ -29,9 +29,6 @@ func NewCreateTaskHdl(repo CreateTaskRepo, userRepo CreateTaskUserRepo, requeste
 }
 
 func (h *createTaskHdl) Response(ctx context.Context, data *taskmodel.TaskCreate) error {
-	revertNumber := 0
-	defer h.repo.IncrByNumberTaskToday(ctx, h.requester.ID, revertNumber)
-
 	data.UserId = h.requester.ID
 
 	limit, err := h.userRepo.GetUserLimit(ctx, h.requester.ID)
@@ -50,13 +47,13 @@ func (h *createTaskHdl) Response(ctx context.Context, data *taskmodel.TaskCreate
 	}
 
 	if numberTaskToday > limit {
-		revertNumber = -1
+		h.repo.IncrByNumberTaskToday(ctx, h.requester.ID, -1)
 
 		return common.ErrLimitTaskToday
 	}
 
 	if err = h.repo.CreateTask(ctx, data); err != nil {
-		revertNumber = -1
+		h.repo.IncrByNumberTaskToday(ctx, h.requester.ID, -1)
 
 		return sdkcm.ErrCannotCreateEntity("task", err)
 	}

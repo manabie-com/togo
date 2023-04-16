@@ -39,3 +39,11 @@ func (s *sqlStore) CreateUser(ctx context.Context, data *usermodel.UserCreate) e
 
 	return nil
 }
+
+func (s *sqlStore) UpdateUser(ctx context.Context, cond map[string]interface{}, dataUpdate *usermodel.UserLimit) error {
+	if err := s.db.Where(cond).Updates(dataUpdate).Error; err != nil {
+		return sdkcm.ErrDB(err)
+	}
+
+	return nil
+}
