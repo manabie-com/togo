@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package togo;
+
+option go_package = "togo_proto/";
+
+message SimpleUser {
+  int32 id = 1;
+  string email = 2;
+}
+
+message FindUserRequest {
+  string cond = 1;
+}
+
+message FindUserResponse {
+  SimpleUser user = 1;
+}
+
+message GetUserLimitRequest {
+  int32 userId = 1;
+}
+
+message GetUserLimitResponse {
+  int32 limit = 1;
+}
+
+service UserService {
+  rpc FindUser(FindUserRequest) returns (FindUserResponse) {};
+  rpc GetUserLimit(GetUserLimitRequest) returns (GetUserLimitResponse) {};
+}
