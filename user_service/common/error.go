@@ -7,18 +7,6 @@ import (
 )
 
 var (
-	ErrCannotGetUserLimit = sdkcm.NewCustomError(
-		errors.New("cannot get user limit"),
-		"cannot get user limit",
-		"ErrCannotGetUserLimit",
-	)
-
-	ErrLimitTaskToday = sdkcm.NewCustomError(
-		errors.New("limit task today"),
-		"limit task today",
-		"ErrLimitTaskToday",
-	)
-
 	ErrEmailOrPasswordInvalid = sdkcm.NewCustomError(
 		errors.New("email or password invalid"),
 		"email or password invalid",

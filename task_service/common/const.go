@@ -5,6 +5,4 @@ const (
 	PluginRedis          = "redis"
 	PluginJWT            = "jwt"
 	PluginGrpcUserClient = "grpc-user-client"
-	PluginNatsPub        = "nats-pub"
-	PluginNatsSub        = "nats-sub"
 )

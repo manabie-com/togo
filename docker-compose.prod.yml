@@ -23,7 +23,7 @@ services:
 
   server:
     build:
-      context: backend
+      context: task_service
       dockerfile: ./cmd/server/Dockerfile
     environment:
       APP_ENV: dev

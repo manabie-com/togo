@@ -3,12 +3,19 @@ version: '3'
 dotenv: ['.env', '{{.ENV}}/.env.', '{{.HOME}}/.env']
 
 tasks:
-  server:
+  user_server:
     cmds:
-      - cd backend && GOOS=linux GARCH=amd64 CGO_ENABLED=0 go build -o togo cmd/server/main.go
-      - defer: cd backend && rm togo
-      - docker-compose build server
-      - docker-compose up server
+      - cd user_service && GOOS=linux GARCH=amd64 CGO_ENABLED=0 go build -o togo cmd/server/main.go
+      - defer: cd user_service && rm togo
+      - docker-compose build user_server
+      - docker-compose up user_server
+
+  task_server:
+    cmds:
+      - cd task_service && GOOS=linux GARCH=amd64 CGO_ENABLED=0 go build -o togo cmd/server/main.go
+      - defer: cd task_service && rm togo
+      - docker-compose build task_server
+      - docker-compose up task_server
 
   migrate:
     desc: migrate db

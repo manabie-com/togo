@@ -8,7 +8,6 @@ import (
 	"github.com/phathdt/libs/go-sdk/httpserver/middleware"
 	"gorm.io/gorm"
 	"togo/common"
-	"togo/modules/task/tasktransport/taskgin"
 	"togo/modules/user/userstorage"
 	"togo/modules/user/usertransport/ginuser"
 	middleware2 "togo/plugin/middleware"
@@ -39,13 +38,5 @@ func NewHandlers(sc goservice.ServiceContext) func(engine *gin.Engine) {
 		middlewareAuth := middleware2.RequireAuth(store, sc)
 
 		engine.PATCH("/api/users/setting", middlewareAuth, ginuser.UpdateLimit(sc))
-
-		todos := engine.Group("/api/tasks", middlewareAuth)
-		{
-			todos.PATCH("/:id", taskgin.UpdateTask(sc))
-			todos.DELETE("/:id", taskgin.DeleteTask(sc))
-			todos.POST("", taskgin.CreateTask(sc))
-			todos.GET("", taskgin.ListTasks(sc))
-		}
 	}
 }

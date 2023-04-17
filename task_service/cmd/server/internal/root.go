@@ -8,6 +8,7 @@ import (
 	"github.com/phathdt/libs/go-sdk/plugin/storage/sdkgorm"
 	"github.com/phathdt/libs/go-sdk/plugin/storage/sdkredis"
 	"github.com/phathdt/libs/go-sdk/plugin/tokenprovider/jwt"
+	"github.com/phathdt/libs/togo_appgrpc"
 	"github.com/spf13/cobra"
 	"togo/cmd/server/internal/handlers"
 	"togo/common"
@@ -25,6 +26,7 @@ func NewService() goservice.Service {
 		goservice.WithInitRunnable(sdkgorm.NewGormDB("main", common.DBMain)),
 		goservice.WithInitRunnable(sdkredis.NewRedisDB("main", common.PluginRedis)),
 		goservice.WithInitRunnable(jwt.NewJWTProvider(common.PluginJWT)),
+		goservice.WithInitRunnable(togo_appgrpc.NewUserClient(common.PluginGrpcUserClient)),
 	)
 
 	return s

@@ -14,6 +14,12 @@ services:
     ports:
       - "16379:6379"
 
+  gateway:
+    build:
+      context: ./gateway
+    ports:
+      - 4000:4000
+
   migrate:
     build:
       context: ./migrate
@@ -21,9 +27,9 @@ services:
     environment:
       DB_URI: ${DB_URI}
 
-  server:
+  user_server:
     build:
-      context: backend
+      context: user_service
       dockerfile: ./cmd/server/Dockerfile.dep
     environment:
       APP_ENV: dev
@@ -35,5 +41,19 @@ services:
       REDIS_POOL_MAX_IDLE: 10
       REDIS_URI: redis://redis-db:6379
       SHOW_LOG: ${SHOW_LOG}
-    ports:
-      - 4000:4000
+
+  task_server:
+    build:
+      context: task_service
+      dockerfile: ./cmd/server/Dockerfile.dep
+    environment:
+      APP_ENV: dev
+      LOG_LEVEL: ${LOG_LEVEL}
+      MDB_GORM_DB_PING_INTERVAL: 5
+      MDB_GORM_DB_TYPE: postgres
+      MDB_GORM_DB_URI: ${MDB_GORM_DB_URI}
+      REDIS_POOL_MAX_ACTIVE:
+      REDIS_POOL_MAX_IDLE: 10
+      REDIS_URI: redis://redis-db:6379
+      SHOW_LOG: ${SHOW_LOG}
+      GRPC_USER_CLIENT_URL: user_server:50051
