@@ -3,6 +3,7 @@
 ## What I got
 - this project using Golang v1.19
 - split into migrate application and server application
+- split into 2 service: user and task, call each other by grpc
 - update schema database
 - add register/login user
 - authen with JWT
@@ -10,29 +11,47 @@
 - update number limit task per day of user
 - CRUD tasks with some filter
 - split service into transport, domain, handler, repo and storage
-- use `sqlc` to generate storage code
-- write unit test for handler layer
+- write unit test for task handler layer
 - use Postgres for primary database
 - use Redis for caching and handle count today task of user
 - migration with `goose`
 - development code with docker, docker-compose and taskfile
 - build a optimize dockerfile
-- setup docker-compose with postgres, redis, server
+- setup docker-compose with postgres, redis, server and gateway
 
 ## Project Structure
 ```
+.
 ├── Taskfile.yaml
-├── backend
-│   ├── cmd
-│   │   └── server #init server
-│   ├── common
-│   ├── modules
-│   │   ├── task # module task split into transport, handler, repo, storage and model
-│   │   └── user # module user split into transport, handler, storage and model
-│   └── plugin
+├── docker-compose.prod.yml
 ├── docker-compose.yml
-├── libs # libs
-└── migrate # migrate app
+├── gateway
+├── libs
+│   ├── go-sdk
+│   ├── togo_appgrpc
+│   └── togo_proto
+├── migrate
+├── task_service
+│   ├── cmd
+│   │   └── server
+│   ├── common
+│   ├── go.mod
+│   ├── go.sum
+│   ├── modules
+│   │   └── task
+│   ├── plugin
+└── user_service
+    ├── cmd
+    │   └── server
+    ├── common
+    ├── go.mod
+    ├── go.sum
+    ├── modules
+    │   └── user
+    ├── plugin
+    │   └── middleware
+    │       └── require_auth.go
+
 
 ```
 
