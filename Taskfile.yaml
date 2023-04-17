@@ -26,3 +26,7 @@ tasks:
     cmds:
       - docker-compose build gateway
       - docker-compose up gateway
+
+  test-task:
+    cmds:
+      - cd task_service && go test ./...

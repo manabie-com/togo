@@ -104,6 +104,11 @@ start server
 task server
 ```
 
+run test
+```
+task test-task
+```
+
 ## Curl help
 
 register
