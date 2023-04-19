@@ -1,0 +1,36 @@
+version: "3"
+services:
+  todo-api:
+    build:
+      context: .
+    # depends_on:
+    #   postgres:
+    #     condition: service_healthy
+    ports:
+      - 3000:3000
+    environment:
+      - TODO_API_DB_HOST=postgres
+
+  postgres:
+    image: postgres:15-alpine
+    # command: ["postgres", "-c", "log_statement=all"]
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  cloudbeaver:
+    image: dbeaver/cloudbeaver:latest
+    profiles:
+      - tools
+    ports:
+      - 8978:8978
+    volumes:
+      - cloudbeaver_workspace:/opt/cloudbeaver/workspace
+
+volumes:
+  cloudbeaver_workspace:
+  pgdata:
