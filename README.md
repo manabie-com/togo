@@ -2,6 +2,9 @@
 Use docker run command:
 - `docker-compose up`
 
+### Run Test 
+- Step 1: `cd /test`
+- Step 2: Run command `go test -v`
 ### List Api:
 #### Call curl below or import file postman in package document.
 - auth/register: register account.
@@ -47,3 +50,4 @@ reduce the load on the database, cache on redis with userId and expire at the en
 - Redis
 - Gin, Gorm
 - Docker
+- testcontainer
