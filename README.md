@@ -1,32 +1,73 @@
-### Requirements
+### How to run the code locally:
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Using Docker to run locally
-  - Using Docker for database (if used) is mandatory.
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+* Build the docker image:
 
-### Notes
+```sh
+make
+```
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+* Run the service & database using docker compose:
 
-### How to submit your solution?
+```sh
+make run
+```
 
-- Fork this repo and show us your development progress via a PR
+* While developing, run `make restart` to rebuild & reload the service.
 
-### Interesting facts about Manabie
+### How to test the api:
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+1. Build and run the service & database:
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+```sh
+make
+make run
+```
+
+2. Migrate & seed the database:
+
+```sh
+make migrate
+make seed
+```
+
+3. There are two seeded users:
+  * Email: `user@example.com`, Password: `gophers`, Maximum daily todo: `1` 
+  * Email: `user2@example.com`, Password: `gophers`, Maximum daily todo: `2` 
+
+4. Get authentication token:
+
+```sh
+curl -il 'http://localhost:3000/v1/users/auth' \
+    -H 'Content-Type: application/json' \
+    --data '{ "email": "user@example.com", "password": "gophers" }'
+```
+
+5. Create todo:
+
+```sh
+export TOKEN="<token from previous step>"
+
+curl -il 'http://localhost:3000/v1/todos' \
+    -H 'Content-Type: application/json' \
+    -H "Authorization: Bearer ${TOKEN}" \
+    --data '{ "title": "test title", "content": "test content" }'
+```
+
+### How to run tests locally:
+
+```sh
+make test
+```
+
+### What do you love about your solution?
+
+* Use some (nice) foundation/infrastucture code from the [service](https://github.com/ardanlabs/service) project.
+* Use vertical slice architecture.
+
+### What else do you want us to know about however you do not have enough time to complete?
+
+* Write tests for db queries.
+* Add some more unit tests and integration tests, currently only add one each for demonstration purposes.
+* Provide some additional APIs like register a new user, list todos, ...
+* Provide admin user and authorization, to set up daily maximum todo items for users.
+* Add tracing (via OpenTelemetry).
