@@ -1,0 +1,47 @@
+version: "3"
+
+networks:
+  go-manabie-network:
+    driver: bridge
+volumes:
+  postgres:
+
+services:
+  database-postgres:
+    image: postgres
+    container_name: c-postgres
+    hostname: postgres
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin123
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - ./postgres/script_db.sql:/docker-entrypoint-initdb.d/script_db.sql
+    networks:
+      - go-manabie-network
+  cache:
+    image: redis:6.2-alpine
+    container_name: c-cache
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass admin123
+    networks:
+      - go-manabie-network
+  api-manabie:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    container_name: c-manabie
+    hostname: manabie
+    depends_on:
+      - database-postgres
+      - cache
+    restart: always
+    ports:
+      - "9000:9000"
+    networks:
+      - go-manabie-network
