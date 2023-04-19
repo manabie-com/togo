@@ -1,0 +1,138 @@
+{
+	"info": {
+		"_postman_id": "9e203b2e-ed76-43fa-8fa1-6017da1b723f",
+		"name": "ManabieTest",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "localhost:9001/auth/register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userName\": \"admin\",\n    \"passWord\": \"123456\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:9001/auth/register",
+					"host": [
+						"localhost"
+					],
+					"port": "9001",
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:9001/auth/login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userName\": \"admin\",\n    \"passWord\": \"123456\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:9001/auth/login",
+					"host": [
+						"localhost"
+					],
+					"port": "9001",
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:9001/task/create",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODcwMjAwMDEsImlzcyI6Im1hbmliaWUtdG9kbyIsIklkIjoyfQ.VYSoGawZE_6XrXRfurkswKYo1x1doAAmFDpuplrUFcU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"content\": \"Task test danh 4\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:9001/task/create",
+					"host": [
+						"localhost"
+					],
+					"port": "9001",
+					"path": [
+						"task",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:9001/task/list?createdDate=2023-04-18",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODcwMjAwMDEsImlzcyI6Im1hbmliaWUtdG9kbyIsIklkIjoyfQ.VYSoGawZE_6XrXRfurkswKYo1x1doAAmFDpuplrUFcU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:9001/task/list?createdDate=2023-04-18",
+					"host": [
+						"localhost"
+					],
+					"port": "9001",
+					"path": [
+						"task",
+						"list"
+					],
+					"query": [
+						{
+							"key": "createdDate",
+							"value": "2023-04-18"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
