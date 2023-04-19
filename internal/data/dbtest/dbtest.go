@@ -8,11 +8,15 @@ import (
 	_ "embed"
 	"fmt"
 	"math/rand"
+	"net/mail"
 	"testing"
 	"time"
 
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/jmoiron/sqlx"
 	"github.com/manabie-com/togo/internal/data/dbmigrate"
+	authenticateStore "github.com/manabie-com/togo/internal/features/authenticate/store"
+	"github.com/manabie-com/togo/internal/web/auth"
 	"github.com/manabie-com/togo/platform/database"
 	"github.com/manabie-com/togo/platform/docker"
 	"go.uber.org/zap"
@@ -147,4 +151,66 @@ func NewUnit(t *testing.T, c *docker.Container) (*zap.SugaredLogger, *sqlx.DB, f
 	}
 
 	return log, db, teardown
+}
+
+// Test owns state for running and shutting down tests.
+type Test struct {
+	DB       *sqlx.DB
+	Log      *zap.SugaredLogger
+	Auth     *auth.Auth
+	Teardown func()
+
+	t *testing.T
+}
+
+// NewIntegration creates a database, seeds it, constructs an authenticator.
+func NewIntegration(t *testing.T, c *docker.Container) *Test {
+	log, db, teardown := NewUnit(t, c)
+
+	cfg := auth.Config{
+		SigningKey: "jwtsecret",
+	}
+	a, err := auth.New(cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	test := Test{
+		DB:       db,
+		Log:      log,
+		Auth:     a,
+		t:        t,
+		Teardown: teardown,
+	}
+
+	return &test
+}
+
+// Token generates an authenticated token for a user.
+func (test *Test) Token(email string, pass string) string {
+	test.t.Log("Generating token for test ...")
+
+	addr, _ := mail.ParseAddress(email)
+
+	store := authenticateStore.NewStore(test.Log, test.DB)
+	dbUsr, err := store.GetUserByEmail(context.Background(), *addr)
+	if err != nil {
+		return ""
+	}
+
+	claims := auth.Claims{
+		RegisteredClaims: jwt.RegisteredClaims{
+			Subject:   dbUsr.ID.String(),
+			Issuer:    "todo api project",
+			ExpiresAt: jwt.NewNumericDate(time.Now().UTC().Add(time.Hour)),
+			IssuedAt:  jwt.NewNumericDate(time.Now().UTC()),
+		},
+	}
+
+	token, err := test.Auth.GenerateToken(claims)
+	if err != nil {
+		test.t.Fatal(err)
+	}
+
+	return token
 }
