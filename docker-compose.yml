@@ -1,0 +1,53 @@
+version: "3.7"
+services:
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - '6379:6379'
+
+  ##PostgresDB for user-service
+  postgres-user:
+    container_name: postgres-user
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: user
+      POSTGRES_USER: manabie
+      POSTGRES_PASSWORD: manabie@123
+      PGDATA: /data/postgres
+    volumes:
+      - ./docker/postgres/user:/data/postgres
+    expose:
+      - "5431"
+    ports:
+      - "5431:5431"
+    command: -p 5431
+    restart: always
+
+  ##PostgresDB for task-service
+  postgres-task:
+    container_name: postgres-task
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: task
+      POSTGRES_USER: manabie
+      POSTGRES_PASSWORD: manabie@123
+      PGDATA: /data/postgres
+    volumes:
+      - ./docker/postgres/task:/data/postgres
+    expose:
+      - "5431"
+    ports:
+      - "5432:5431"
+    restart: always
+
+  postgres-admin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - '5433:80'
+
+networks:
+  common:
