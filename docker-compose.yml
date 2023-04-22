@@ -49,5 +49,30 @@ services:
     ports:
       - '5433:80'
 
+  load-balancer:
+    platform: linux/arm64/v8
+    build: ./docker/nginx
+    container_name: load-balancer
+    image: manabie-challenge/load-balancer:latest
+    ports:
+      - '8080:8080'
+
+  ## User-Service Docker Compose Config
+  user-service:
+    platform: linux/arm64/v8
+    build: ./user-service
+    container_name: user-service
+    image: manabie-challenge/user-service:latest
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+
+  ## User-Service Docker Compose Config
+  task-service:
+    platform: linux/arm64/v8
+    build: ./task-service
+    container_name: task-service
+    image: manabie-challenge/task-service:latest
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
 networks:
   common:
