@@ -1,0 +1,78 @@
+version: "3.7"
+services:
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - '6379:6379'
+
+  ##PostgresDB for user-service
+  postgres-user:
+    container_name: postgres-user
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: user
+      POSTGRES_USER: manabie
+      POSTGRES_PASSWORD: manabie@123
+      PGDATA: /data/postgres
+    volumes:
+      - ./docker/postgres/user:/data/postgres
+    expose:
+      - "5431"
+    ports:
+      - "5431:5431"
+    command: -p 5431
+    restart: always
+
+  ##PostgresDB for task-service
+  postgres-task:
+    container_name: postgres-task
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: task
+      POSTGRES_USER: manabie
+      POSTGRES_PASSWORD: manabie@123
+      PGDATA: /data/postgres
+    volumes:
+      - ./docker/postgres/task:/data/postgres
+    expose:
+      - "5431"
+    ports:
+      - "5432:5431"
+    restart: always
+
+  postgres-admin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - '5433:80'
+
+  load-balancer:
+    platform: linux/arm64/v8
+    build: ./docker/nginx
+    container_name: load-balancer
+    image: manabie-challenge/load-balancer:latest
+    ports:
+      - '8080:8080'
+
+  ## User-Service Docker Compose Config
+  user-service:
+    platform: linux/arm64/v8
+    build: ./user-service
+    container_name: user-service
+    image: manabie-challenge/user-service:latest
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+
+  ## User-Service Docker Compose Config
+  task-service:
+    platform: linux/arm64/v8
+    build: ./task-service
+    container_name: task-service
+    image: manabie-challenge/task-service:latest
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+networks:
+  common:

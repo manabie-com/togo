@@ -1,32 +1,105 @@
-### Requirements
+# Architecture
+![togo_user_domain_sequence_diagram](./docs/images/todo_context_diagram.png)
+The project's design is based on microservice architecture and communicate via Restful
 
-- Implement one single API which accepts a todo task and records it
-  - There is a maximum **limit of N tasks per user** that can be added **per day**.
-  - Different users can have **different** maximum daily limit.
-- Write integration (functional) tests
-- Write unit tests
-- Choose a suitable architecture to make your code simple, organizable, and maintainable
-- Using Docker to run locally
-  - Using Docker for database (if used) is mandatory.
-- Write a concise README
-  - How to run your code locally?
-  - A sample “curl” command to call your API
-  - How to run your unit tests locally?
-  - What do you love about your solution?
-  - What else do you want us to know about however you do not have enough time to complete?
+The system have 6 component:
+- Reverse proxy & Load balancer (`Nginx`)
+- User Service: manage user account and all setting
+- Task Service:
+  + task counter: `rate limiter` is based on `leaky bucket algorithm` with no `weight`
+  + manage task by  user
+- User Database: is a `Postgres` instance for User Service
+- Task Database: is a `Postgres` instance for Task Service
+- Distributed Lock: is a `Redis` instance for caching & concurrent lock in distributed system
 
-### Notes
+# Source structures
+```sh
+└── com
+    └── manabie
+              └──todo
+                    ├── config : infrastructure config
+                    ├── constant : All constants values that can be used in the services
+                    ├── controller : It is the public face of the application layer. It routes incoming requests and returns responses.
+                    ├── entity : Object was mapped with database
+                    ├── exception: Common exception
+                    ├── model: Object was mapped with request/response and business model
+                    ├── repository: interact with infrastructure to get resources for service layer
+                    ├── service: The domain layer is responsible for encapsulating complex business logic, or simple business logic that is reused by multiple Controller
+```
+# Software usage
+- Spring Boot
+- Spring Reactive Webflux
+>Spring Framework uses Project Reactor as the base implementation of its reactive support, and also comes with a new web framework, Spring WebFlux, which supports the development of reactive, that is, non-blocking, HTTP clients and services.
+- Docker
+>Deploying Our Microservices Using Docker
 
-- We're using Golang at Manabie. **However**, we encourage you to use the programming language that you are most comfortable with because we want you to **shine** with all your skills and knowledge.
+# Running the microservices
+1. Run `mvn clean package -Dmaven.test.skip` to build the applications.
+2. Run `docker-compose up -d` to create the docker image locally and start the applications.
+# How to use
 
-### How to submit your solution?
+1. First create new user to test
+- Sample curl
+```bash
+curl --location 'localhost:8080/api/user' --header 'Content-Type: application/json' --data '{"username":"trungnguyen.tech","maxTaskPerDay":3}'
+```
 
-- Fork this repo and show us your development progress via a PR
+Which will respond with something like:
 
-### Interesting facts about Manabie
+```json
+{
+  "status": {
+    "message": null,
+    "code": 200,
+    "success": false
+  },
+  "data": {
+    "id": 7,
+    "username": "trungnguyen.tech1",
+    "maxTaskPerDay": 3,
+    "createdAt": "2023-04-22T16:05:55.162259378",
+    "createdBy": null,
+    "updatedAt": null,
+    "updatedBy": null
+  }
+}
+```
+2. Call the create task with owner id (user was created in step 1)
+> The endpoint http://localhost:8080/api/user used as gateway to `hide` the services behind the outside.
 
-- Monthly there are about 2 million lines of code changes (inserted/updated/deleted) committed into our GitHub repositories. To avoid **regression bugs**, we write different kinds of **automated tests** (unit/integration (functionality)/end2end) as parts of the definition of done of our assigned tasks.
-- We nurture the cultural values: **knowledge sharing** and **good communication**, therefore good written documents and readable, organizable, and maintainable code are in our blood when we build any features to grow our products.
-- We have **collaborative** culture at Manabie. Feel free to ask trieu@manabie.com any questions. We are very happy to answer all of them.
+- Sample curl
+```bash
+curl --location 'http://localhost:8080/api/task' --header 'Content-Type: application/json' --data '{"title":"join daily meeting","description":"join daily meeting","owner":3}'                                
+```
 
-Thank you for spending time to read and attempt our take-home assessment. We are looking forward to your submission.
+- Sample Response
+```json
+{
+  "status": {
+    "message": null,
+    "code": 200,
+    "success": false
+  },
+  "data": {
+    "id": 1,
+    "title": "join daily meeting",
+    "description": "join daily meeting",
+    "owner": 7,
+    "status": "NEW",
+    "createdAt": "2023-04-22T16:01:59.052947339",
+    "createdBy": null,
+    "updatedAt": null,
+    "updatedBy": null
+  }
+}
+```
+
+## TODO
+- Apply Authentication & Authorization service to protect system
+- Apply *Kubernetes & Istio* as alternative deployment
+- Apply Grafana, Prometheus and Kiali ... for tracing and monitoring to easilier debug and scale.
+- Apply Kafka for internal call to get highly performant and scalable.
+- Convert from Spring boot to Quarkus to enhance the performace
+  (CPU & Memory usage).
+- Do more testing & integration test on user-service ,task-service.
+- Store user info in Redis cached for better perfomance and reduce cost.
