@@ -51,3 +51,7 @@ I think it is enough to fulfil the requirements with this limitation of time.
   - How to run your unit tests locally?
   - What do you love about your solution?
   - What else do you want us to know about however you do not have enough time to complete?
+     
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=vchitai/togo&type=Date)](https://star-history.com/#vchitai/togo&Date)
